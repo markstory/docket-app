@@ -1,15 +1,15 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id int not null auto_increment primary key,
     email varchar(255) not null,
     password varchar(255) not null,
-    created timestamp not null default current_timestamp,
-    modified timestamp not null on update current_timestamp,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp
 );
 
 -- Could add organizations and teams. Then projects would be owned
 -- by teams inside organizations.
 
-CREATE TABLE projects (
+CREATE TABLE IF NOT EXISTS projects (
     id int not null auto_increment primary key,
     user_id int not null,
     name varchar(255) not null,
@@ -18,33 +18,41 @@ CREATE TABLE projects (
     favorite boolean not null default 0,
     archived boolean not null default 0,
     ranking int not null default 0,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id)
 );
 
-CREATE TABLE todo_items (
+CREATE TABLE IF NOT EXISTS todo_items (
     id int not null auto_increment primary key,
     project_id integer not null,
     title text,
     body text,
     due_on date,
     completed boolean not null default 0,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp,
     foreign key (project_id) references projects(id)
 );
 
-CREATE TABLE todo_comments (
+CREATE TABLE IF NOT EXISTS todo_comments (
     id int not null auto_increment primary key,
     todo_item_id integer not null,
     user_id integer not null,
     body text,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id),
     foreign key (todo_item_id) references todo_items(id)
 );
 
-CREATE TABLE todo_subtasks (
+CREATE TABLE IF NOT EXISTS todo_subtasks (
     id int not null auto_increment primary key,
     todo_item_id integer not null,
     title text,
     body text,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp,
     foreign key (todo_item_id) references todo_items(id)
 );
 
@@ -52,7 +60,9 @@ CREATE TABLE todo_labels (
     id int not null auto_increment primary key,
     project_id int not null,
     label varchar(50) not null,
-    color char(6) not null
+    color char(6) not null,
+    created timestamp default current_timestamp,
+    modified timestamp default current_timestamp on update current_timestamp,
     foreign key (project_id) references projects(id)
 );
 
