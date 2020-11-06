@@ -5,6 +5,7 @@
 /logs/*
 /tmp/*
 /vendor/*
+/node_modules/*
 
 # OS generated files #
 ######################
