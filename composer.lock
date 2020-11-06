@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46d83ee2e8f259b1b5008b89653691f0",
+    "content-hash": "2ba835e6ef1f77b44c3d0d357fee2b97",
     "packages": [
         {
             "name": "aura/intl",
@@ -402,6 +402,108 @@
                 }
             ],
             "time": "2020-08-23T12:54:47+00:00"
+        },
+        {
+            "name": "ishanvyas22/asset-mix",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ishanvyas22/asset-mix.git",
+                "reference": "0ead5ecf066976a05af64df570009c201d80152b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ishanvyas22/asset-mix/zipball/0ead5ecf066976a05af64df570009c201d80152b",
+                "reference": "0ead5ecf066976a05af64df570009c201d80152b",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "^4.0.0",
+                "ext-json": "*",
+                "ext-mbstring": "*"
+            },
+            "require-dev": {
+                "cakephp/cakephp-codesniffer": "^4.2.0",
+                "phpstan/phpstan": "^0.12.32",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "AssetMix\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ishan Vyas",
+                    "homepage": "https://github.com/ishanvyas22",
+                    "role": "Author"
+                }
+            ],
+            "description": "Asset Mix plugin for CakePHP",
+            "homepage": "https://github.com/ishanvyas22/asset-mix",
+            "keywords": [
+                "assets",
+                "cakephp",
+                "cakephp-plugin",
+                "javascript",
+                "laravel-mix",
+                "less",
+                "minifier",
+                "sass"
+            ],
+            "support": {
+                "issues": "https://github.com/ishanvyas22/asset-mix/issues",
+                "source": "https://github.com/ishanvyas22/asset-mix"
+            },
+            "time": "2020-10-29T17:22:53+00:00"
+        },
+        {
+            "name": "ishanvyas22/cakephp-inertiajs",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ishanvyas22/cakephp-inertiajs.git",
+                "reference": "0b4c7232d18f991077d214f07d42b0c2a01db9d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ishanvyas22/cakephp-inertiajs/zipball/0b4c7232d18f991077d214f07d42b0c2a01db9d4",
+                "reference": "0b4c7232d18f991077d214f07d42b0c2a01db9d4",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "^4.1.0",
+                "ishanvyas22/asset-mix": "^1.0"
+            },
+            "require-dev": {
+                "cakephp/cakephp-codesniffer": "^4.2",
+                "phpstan/phpstan": "^0.12.37",
+                "phpunit/phpunit": "~8.5.0"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Inertia\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The CakePHP adapter for Inertia.js.",
+            "support": {
+                "issues": "https://github.com/ishanvyas22/cakephp-inertiajs/issues",
+                "source": "https://github.com/ishanvyas22/cakephp-inertiajs/tree/2.0.0"
+            },
+            "time": "2020-11-05T18:23:54+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
