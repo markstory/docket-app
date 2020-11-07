@@ -17,7 +17,7 @@ const el = document.getElementById('app');
 render(
   <App
     initialPage={JSON.parse(el.dataset.page)}
-    resolveComponent={name => import(`./Pages/${name}`).then(module => module.default)}
+    resolveComponent={name => require(`./Pages/${name}`).default}
   />,
   el
 );

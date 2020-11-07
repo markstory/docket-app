@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
+use Cake\Log\Log;
+
 /**
  * Users Controller
  *
@@ -11,6 +14,13 @@ namespace App\Controller;
  */
 class UsersController extends AppController
 {
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Authentication->allowUnauthenticated(['login']);
+    }
+
     /**
      * View method
      *
@@ -69,5 +79,30 @@ class UsersController extends AppController
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
+    }
+
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result->isValid()) {
+            $redirect = $this->request->getQuery('redirect', ['_name' => 'todoitems:index']);
+
+            return $this->redirect($redirect);
+        }
+
+        // display error if user submitted and authentication failed
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error(__('Invalid username or password'));
+        }
+    }
+
+    public function logout()
+    {
+        $this->Authentication->logout();
+
+        return $this->redirect('/');
     }
 }

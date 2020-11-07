@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
+use Inertia\Controller\InertiaResponseTrait;
 
 /**
  * Application Controller
@@ -28,12 +30,12 @@ use Cake\Controller\Controller;
  */
 class AppController extends Controller
 {
+    use InertiaResponseTrait {
+        beforeRender as protected inertiaBeforeRender;
+    }
+
     /**
      * Initialization hook method.
-     *
-     * Use this method to add common initialization code like loading components.
-     *
-     * e.g. `$this->loadComponent('FormProtection');`
      *
      * @return void
      */
@@ -43,11 +45,17 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+        $this->loadComponent('Authentication.Authentication');
+    }
 
-        /*
-         * Enable the following component for recommended CakePHP form protection settings.
-         * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
-         */
-        //$this->loadComponent('FormProtection');
+    public function beforeRender(EventInterface $event)
+    {
+        parent::beforeRender($event);
+        $this->inertiaBeforeRender($event);
+
+        $this->viewBuilder()
+            ->addHelper('AssetMix.AssetMix');
+
+        $this->set('identity', $this->request->getAttribute('identity'));
     }
 }
