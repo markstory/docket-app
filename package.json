@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.0.0",
-        "@babel/preset-react": "^7.0.0",
+        "@babel/preset-react": "^7.12.5",
         "@inertiajs/inertia": "^0.6.1",
         "@inertiajs/inertia-react": "^0.4.1",
         "axios": "^0.19",
@@ -25,5 +25,11 @@
         "sass-loader": "^8.0.0",
         "webpack": "^4.4.0",
         "webpack-cli": "^4.2.0"
+    },
+    "dependencies": {
+        "@types/react": "^16.9.56",
+        "@types/react-dom": "^16.9.9",
+        "ts-loader": "^8.0.10",
+        "typescript": "^4.0.5"
     }
 }

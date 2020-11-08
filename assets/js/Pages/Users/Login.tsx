@@ -1,11 +1,18 @@
 import React from 'react';
 
-export default function Login({_csrfToken, flash}) {
+import {FlashMessage} from 'app/types';
+import FlashMessages from 'app/components/flashMessages';
+
+type Props = {
+  _csrfToken: string;
+  flash: null | FlashMessage;
+};
+
+export default function Login({_csrfToken, flash}: Props) {
   return (
     <React.Fragment>
       <h1>Login</h1>
-      {/* This needs an abstraction for it */}
-      {flash && flash.message && <div className="message error">{flash.message}</div>}
+      <FlashMessages flash={flash} />
       <form method="post">
         <input type="hidden" name="_csrfToken" value={_csrfToken} />
         <div>

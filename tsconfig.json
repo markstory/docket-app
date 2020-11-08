@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "esnext",
+    "target": "es6",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types"],
+    "noEmitHelpers": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": false,
+    "resolveJsonModule": true,
+    "sourceMap": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+        "app/*": ["assets/js/*"]
+    }
+  },
+  "include": [
+      "assets/js",
+      "assets/js/**/*.tsx"
+  ],
+  "exclude": ["./node_modules"]
+}
