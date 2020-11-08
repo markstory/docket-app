@@ -132,22 +132,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Login; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia */ "./node_modules/@inertiajs/inertia/dist/index.js");
-/* harmony import */ var _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_inertiajs_inertia__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var app_components_flashMessages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! app/components/flashMessages */ "./assets/js/components/flashMessages.tsx");
-
+/* harmony import */ var app_components_flashMessages__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! app/components/flashMessages */ "./assets/js/components/flashMessages.tsx");
 
 
 function Login({ _csrfToken, flash }) {
-    function onSubmit(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_1__["Inertia"].post('/login', formData);
-    }
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null,
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Login"),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(app_components_flashMessages__WEBPACK_IMPORTED_MODULE_2__["default"], { flash: flash }),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", { method: "post", onSubmit: onSubmit },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(app_components_flashMessages__WEBPACK_IMPORTED_MODULE_1__["default"], { flash: flash }),
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", { method: "post" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "hidden", name: "_csrfToken", value: _csrfToken }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "email" }, "Email"),
@@ -157,33 +149,6 @@ function Login({ _csrfToken, flash }) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { id: "password", name: "password", type: "password", required: true })),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", { type: "submit" }, "Login"))));
 }
-
-
-/***/ }),
-
-/***/ "./assets/js/app.tsx":
-/*!***************************!*\
-  !*** ./assets/js/app.tsx ***!
-  \***************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
-/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);
-
-
-
-const el = document.getElementById('app');
-if (!el) {
-    throw new Error('Could not find application root element');
-}
-Object(react_dom__WEBPACK_IMPORTED_MODULE_2__["render"])(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__["InertiaApp"], { initialPage: JSON.parse(el.dataset.page || ''), resolveComponent: (name) => __webpack_require__("./assets/js/Pages sync recursive ^\\.\\/.*$")(`./${name}`).default }), el);
 
 
 /***/ }),
@@ -207,6 +172,33 @@ function FlashMessages({ flash }) {
     }
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "message error" }, flash.message);
 }
+
+
+/***/ }),
+
+/***/ "./assets/js/index.tsx":
+/*!*****************************!*\
+  !*** ./assets/js/index.tsx ***!
+  \*****************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
+/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const el = document.getElementById('app');
+if (!el) {
+    throw new Error('Could not find application root element');
+}
+Object(react_dom__WEBPACK_IMPORTED_MODULE_2__["render"])(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__["InertiaApp"], { initialPage: JSON.parse(el.dataset.page || ''), resolveComponent: (name) => __webpack_require__("./assets/js/Pages sync recursive ^\\.\\/.*$")(`./${name}`).default }), el);
 
 
 /***/ }),
@@ -31817,13 +31809,13 @@ if (false) {} else {
 /***/ }),
 
 /***/ 0:
-/*!********************************************************!*\
-  !*** multi ./assets/js/app.tsx ./assets/sass/app.scss ***!
-  \********************************************************/
+/*!**********************************************************!*\
+  !*** multi ./assets/js/index.tsx ./assets/sass/app.scss ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/mark/code/lists-app/assets/js/app.tsx */"./assets/js/app.tsx");
+__webpack_require__(/*! /home/mark/code/lists-app/assets/js/index.tsx */"./assets/js/index.tsx");
 module.exports = __webpack_require__(/*! /home/mark/code/lists-app/assets/sass/app.scss */"./assets/sass/app.scss");
 
 
