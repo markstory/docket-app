@@ -57,6 +57,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->get('/logout/', 'Users::logout', 'users:logout');
     $builder->get('/todos/', 'TodoItems::index', 'todoitems:index');
+    $builder->post('/todos/add', 'TodoItems::add', 'todoitems:add');
     /*
      * Connect catchall routes for all controllers.
      *

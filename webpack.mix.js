@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 
 mix
+  .disableSuccessNotifications()
   .babelConfig({
     plugins: ['@babel/plugin-syntax-dynamic-import'],
   })
