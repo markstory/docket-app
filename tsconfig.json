@@ -18,7 +18,7 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "outDir": "dist",
+    "outDir": "tmp/dist",
     "baseUrl": ".",
     "paths": {
         "app/*": ["assets/js/*"]
