@@ -6,6 +6,7 @@
 /tmp/*
 /vendor/*
 /node_modules/*
+/dist/*
 
 # OS generated files #
 ######################
