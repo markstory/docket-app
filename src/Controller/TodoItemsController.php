@@ -18,10 +18,10 @@ class TodoItemsController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Projects'],
-        ];
-        $todoItems = $this->paginate($this->TodoItems);
+        $query = $this->TodoItems->find()->contain('Projects');
+        $query = $this->Authorization->applyScope($query);
+
+        $todoItems = $this->paginate($query);
 
         $this->set(compact('todoItems'));
     }
@@ -50,6 +50,8 @@ class TodoItemsController extends AppController
     public function add()
     {
         $todoItem = $this->TodoItems->newEmptyEntity();
+        $this->Authorization->can($todoItem);
+
         if ($this->request->is('post')) {
             $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
             if ($this->TodoItems->save($todoItem)) {
@@ -74,8 +76,10 @@ class TodoItemsController extends AppController
     public function edit($id = null)
     {
         $todoItem = $this->TodoItems->get($id, [
-            'contain' => ['TodoLabels'],
+            'contain' => ['TodoLabels', 'Projects'],
         ]);
+        $this->Authorization->can($todoItem);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
             if ($this->TodoItems->save($todoItem)) {
@@ -100,7 +104,9 @@ class TodoItemsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $todoItem = $this->TodoItems->get($id);
+        $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->can($todoItem);
+
         if ($this->TodoItems->delete($todoItem)) {
             $this->Flash->success(__('The todo item has been deleted.'));
         } else {

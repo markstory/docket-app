@@ -7,17 +7,24 @@ import LoggedIn from 'app/layouts/loggedIn';
 
 type Props = {
   _csrfToken: string;
+  project: Project;
   projects: Project[];
   flash: null | FlashMessage;
   todoItems: TodoItem[];
 };
 
-export default function TodoItemsIndex({flash, projects, todoItems, _csrfToken}: Props) {
+export default function TodoItemsIndex({
+  project,
+  flash,
+  projects,
+  todoItems,
+  _csrfToken,
+}: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
     <LoggedIn projects={projects} flash={flash}>
-      <h1>Today</h1>
+      <h1>{project.name} Tasks</h1>
       {todoItems.map(todo => (
         <TodoItemRow todo={todo} key={todo.id} />
       ))}

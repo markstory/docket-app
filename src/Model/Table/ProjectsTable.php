@@ -119,4 +119,12 @@ class ProjectsTable extends Table
 
         return $rules;
     }
+
+    public function findTop(Query $query): Query
+    {
+        return $query
+            ->orderDesc('Projects.favorite')
+            ->orderDesc('Projects.name')
+            ->limit(20);
+    }
 }

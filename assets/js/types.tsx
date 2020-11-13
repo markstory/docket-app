@@ -24,3 +24,10 @@ export type TodoItem = {
   modified: string;
   project: Project;
 };
+
+export type User = {
+  id: number;
+  email: string;
+  created: string;
+  modified: string;
+};

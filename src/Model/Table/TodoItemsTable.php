@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use RuntimeException;
 
 /**
  * TodoItems Model
@@ -110,5 +111,13 @@ class TodoItemsTable extends Table
         $rules->add($rules->existsIn(['project_id'], 'Projects'), ['errorField' => 'project_id']);
 
         return $rules;
+    }
+
+    public function findForProject(Query $query, array $options)
+    {
+        if (empty($options['slug'])) {
+            throw new RuntimeException('Missing required slug argument');
+        }
+        return $query->where(['Projects.slug' => $options['slug']]);
     }
 }

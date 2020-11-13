@@ -21,6 +21,11 @@ use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\Identifier\IdentifierInterface;
 use Authentication\Middleware\AuthenticationMiddleware;
+use Authorization\AuthorizationService;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\Middleware\AuthorizationMiddleware;
+use Authorization\Policy\OrmResolver;
 use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -39,7 +44,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * want to use in your application.
  */
 class Application extends BaseApplication
-    implements AuthenticationServiceProviderInterface
+    implements AuthenticationServiceProviderInterface,
+    AuthorizationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -64,6 +70,8 @@ class Application extends BaseApplication
         }
         $this->addPlugin('AssetMix');
         $this->addPlugin('Inertia');
+        $this->addPlugin('Authentication');
+        $this->addPlugin('Authorization');
     }
 
     /**
@@ -102,7 +110,12 @@ class Application extends BaseApplication
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
             ]))
-            ->add(new AuthenticationMiddleware($this));
+            ->add(new AuthenticationMiddleware($this))
+            ->add(new AuthorizationMiddleware($this, [
+                'identityDecorator' => function ($auth, $user) {
+                    return $user->setAuthorization($auth);
+                }
+            ]));
 
         return $middlewareQueue;
     }
@@ -161,5 +174,12 @@ class Application extends BaseApplication
         ]);
 
         return $service;
+    }
+
+    public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface
+    {
+        $resolver = new OrmResolver();
+
+        return new AuthorizationService($resolver);
     }
 }

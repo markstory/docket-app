@@ -46,16 +46,24 @@ class AppController extends Controller
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
         $this->loadComponent('Authentication.Authentication');
+        $this->loadComponent('Authorization.Authorization');
     }
 
     public function beforeRender(EventInterface $event)
     {
         parent::beforeRender($event);
-        $this->inertiaBeforeRender($event);
 
         $this->viewBuilder()
             ->addHelper('AssetMix.AssetMix');
 
-        $this->set('identity', $this->request->getAttribute('identity'));
+        // Load common data.
+        $identity = $this->request->getAttribute('identity');
+        $this->set('identity', $identity);
+        if ($identity) {
+            $this->loadModel('Projects');
+            $this->set('projects', $identity->applyScope('index', $this->Projects->find('top')));
+        }
+
+        $this->inertiaBeforeRender($event);
     }
 }

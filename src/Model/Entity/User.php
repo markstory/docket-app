@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Authentication\IdentityInterface as AuthenticationIdentity;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\IdentityInterface as AuthorizationIdentity;
+use Authorization\Policy\ResultInterface;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\ORM\Entity;
 
@@ -18,7 +22,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\Project[] $projects
  * @property \App\Model\Entity\TodoComment[] $todo_comments
  */
-class User extends Entity
+class User extends Entity implements AuthenticationIdentity, AuthorizationIdentity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -58,5 +62,52 @@ class User extends Entity
         if (mb_strlen($password) > 0) {
             return (new DefaultPasswordHasher())->hash($password);
         }
+    }
+
+    public function getIdentifier(): int
+    {
+        return $this->get('id');
+    }
+
+    /**
+     * Authorization\IdentityInterface method
+     */
+    public function can($action, $resource): bool
+    {
+        return $this->authorization->can($this, $action, $resource);
+    }
+
+    /**
+     * Authorization\IdentityInterface method
+     */
+    public function canResult($action, $resource): ResultInterface
+    {
+        return $this->authorization->canResult($this, $action, $resource);
+    }
+
+    /**
+     * Authorization\IdentityInterface method
+     */
+    public function applyScope($action, $resource)
+    {
+        return $this->authorization->applyScope($this, $action, $resource);
+    }
+
+    /**
+     * Authorization\IdentityInterface method
+     */
+    public function getOriginalData()
+    {
+        return $this;
+    }
+
+    /**
+     * Setter to be used by the middleware.
+     */
+    public function setAuthorization(AuthorizationServiceInterface $service)
+    {
+        $this->authorization = $service;
+
+        return $this;
     }
 }
