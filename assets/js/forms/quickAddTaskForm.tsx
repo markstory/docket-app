@@ -1,12 +1,14 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
+import {Project} from 'app/types';
 
 type Props = {
   csrfToken: string;
   onCancel: () => void;
+  projects: Project[];
 };
 
-function QuickAddTaskForm({onCancel, csrfToken}: Props) {
+function QuickAddTaskForm({projects, onCancel, csrfToken}: Props) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -18,8 +20,11 @@ function QuickAddTaskForm({onCancel, csrfToken}: Props) {
       <input type="hidden" name="_csrfToken" value={csrfToken} />
       <input type="text" name="title" autoFocus />
       <select name="project_id">
-        {/* TODO make this dynamic */}
-        <option value="1">Home</option>
+        {projects.map(project => (
+          <option key={project.id} value={project.id}>
+            {project.name}
+          </option>
+        ))}
       </select>
       <input type="date" name="due_on" />
       <button type="submit">Save</button>

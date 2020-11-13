@@ -24,7 +24,11 @@ export default function TodoItemsIndex({flash, projects, todoItems, _csrfToken}:
       <div>
         {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
         {showForm && (
-          <QuickAddTaskForm csrfToken={_csrfToken} onCancel={() => setShowForm(false)} />
+          <QuickAddTaskForm
+            projects={projects}
+            csrfToken={_csrfToken}
+            onCancel={() => setShowForm(false)}
+          />
         )}
       </div>
     </LoggedIn>
