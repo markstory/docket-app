@@ -68,7 +68,6 @@ class Application extends BaseApplication
         if (Configure::read('debug')) {
             $this->addPlugin('DebugKit');
         }
-        $this->addPlugin('AssetMix');
         $this->addPlugin('Inertia');
         $this->addPlugin('Authentication');
         $this->addPlugin('Authorization');
