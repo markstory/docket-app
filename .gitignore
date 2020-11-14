@@ -7,6 +7,10 @@
 /vendor/*
 /node_modules/*
 
+# Compiled files.
+/webroot/js/app.js
+/webroot/css/app.css
+
 # OS generated files #
 ######################
 .DS_Store
