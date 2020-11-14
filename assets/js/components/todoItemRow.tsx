@@ -53,7 +53,8 @@ function TodoItemSummary({todo}: Pick<Props, 'todo'>) {
   );
 }
 
-type InlineEditProps = Props & {
+type InlineEditProps = {
+  todo: TodoItem;
   onCancel: () => void;
 };
 

@@ -66,4 +66,15 @@ class AppController extends Controller
 
         $this->inertiaBeforeRender($event);
     }
+
+    protected function validationErrorResponse(array $errors)
+    {
+        $flattened = [];
+        foreach ($errors as $field => $error) {
+            $flattened[$field] = implode(', ', $error);
+        }
+        return $this->response
+            ->withStatus(422)
+            ->withStringBody(json_encode(['errors' => $flattened]));
+    }
 }

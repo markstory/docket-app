@@ -2,14 +2,19 @@ import React, {useState} from 'react';
 
 import {TodoItem} from 'app/types';
 import TodoItemRow from 'app/components/todoItemRow';
-import QuickAddTaskForm from 'app/forms/quickAddTaskForm';
+import TodoItemAddForm from 'app/components/todoItemAddForm';
 
 type Props = {
   todoItems: TodoItem[];
   defaultDate?: string;
+  defaultProjectId?: number;
 };
 
-export default function TodoItemsGroup({todoItems, defaultDate}: Props) {
+export default function TodoItemsGroup({
+  todoItems,
+  defaultDate,
+  defaultProjectId,
+}: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
@@ -20,8 +25,9 @@ export default function TodoItemsGroup({todoItems, defaultDate}: Props) {
       <div>
         {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
         {showForm && (
-          <QuickAddTaskForm
+          <TodoItemAddForm
             defaultDate={defaultDate}
+            defaultProjectId={defaultProjectId}
             onCancel={() => setShowForm(false)}
           />
         )}

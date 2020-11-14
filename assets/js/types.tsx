@@ -31,3 +31,5 @@ export type User = {
   created: string;
   modified: string;
 };
+
+export type ValidationErrors = Record<string, string>;

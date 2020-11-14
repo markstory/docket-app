@@ -65,6 +65,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
         ->setPass(['id']);
 
+    $builder->post('/projects/add', 'Projects::add', 'projects:add');
     $builder->get('/projects/{slug}/todos', 'ProjectsTodoItems::view', 'projects:todoitems');
     /*
      * Connect catchall routes for all controllers.

@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import {Project, TodoItem} from 'app/types';
-import TodoItemRow from 'app/components/todoItemRow';
-import QuickAddTaskForm from 'app/forms/quickAddTaskForm';
 import LoggedIn from 'app/layouts/loggedIn';
+import TodoItemGroup from 'app/components/todoItemGroup';
 
 type Props = {
   project: Project;
@@ -11,18 +10,10 @@ type Props = {
 };
 
 export default function TodoItemsIndex({project, todoItems}: Props) {
-  const [showForm, setShowForm] = useState(false);
-
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
-      {todoItems.map(todo => (
-        <TodoItemRow key={todo.id} todo={todo} />
-      ))}
-      <div>
-        {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
-        {showForm && <QuickAddTaskForm onCancel={() => setShowForm(false)} />}
-      </div>
+      <TodoItemGroup todoItems={todoItems} defaultProjectId={project.id} />
     </LoggedIn>
   );
 }

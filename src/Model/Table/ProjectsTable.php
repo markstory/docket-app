@@ -48,6 +48,9 @@ class ProjectsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Sluggable', [
+            'label' => ['name'],
+        ]);
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
@@ -80,16 +83,11 @@ class ProjectsTable extends Table
             ->notEmptyString('name');
 
         $validator
-            ->scalar('slug')
-            ->maxLength('slug', 255)
-            ->requirePresence('slug', 'create')
-            ->notEmptyString('slug');
-
-        $validator
             ->scalar('color')
             ->maxLength('color', 6)
             ->requirePresence('color', 'create')
-            ->notEmptyString('color');
+            ->notEmptyString('color')
+            ->regex('color', '/^[a-f0-9]+$/', 'Must be a valid hex color code.');
 
         $validator
             ->boolean('favorite')

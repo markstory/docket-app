@@ -3,8 +3,14 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 
 import ProjectBadge from 'app/components/projectBadge';
 import ProjectsContext from 'app/components/projectsContext';
+import NewProjectModal from 'app/components/modals/newProjectModal';
 
 function ProjectFilter() {
+  const [showModal, setShowModal] = React.useState(false);
+  const showNewProject = () => {
+    setShowModal(true);
+  };
+
   return (
     <div>
       <ul>
@@ -28,7 +34,11 @@ function ProjectFilter() {
             ))
           }
         </ProjectsContext.Consumer>
+        <li>
+          <button onClick={showNewProject}>Create Project</button>
+        </li>
       </ul>
+      <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 }
