@@ -40,6 +40,7 @@ class TodoItem extends Entity
         'body' => true,
         'due_on' => true,
         'completed' => true,
+        'ranking' => true,
         'created' => true,
         'modified' => true,
         'project' => true,

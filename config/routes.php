@@ -57,6 +57,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->get('/logout/', 'Users::logout', 'users:logout');
     $builder->get('/todos/', 'TodoItems::index', 'todoitems:index');
+    $builder->get('/todos/today', ['controller' => 'TodoItems', 'action' => 'index', 'today'], 'todoitems:today');
+    $builder->get('/todos/upcoming', ['controller' => 'TodoItems', 'action' => 'index', 'upcoming'], 'todoitems:upcoming');
     $builder->post('/todos/add', 'TodoItems::add', 'todoitems:add');
     $builder->post('/todos/{id}/complete', 'TodoItems::complete', 'todoitems:complete')
         ->setPass(['id']);

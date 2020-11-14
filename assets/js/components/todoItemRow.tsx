@@ -10,11 +10,20 @@ type Props = {
 };
 
 function TodoItemRow({todo}: Props) {
+  const [edit, setEdit] = useState(false);
+
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     Inertia.post(`/todos/${todo.id}/complete`);
   };
-  const [edit, setEdit] = useState(false);
+
+  const handleDoubleClick = () => {
+    if (edit) {
+      return false;
+    }
+    setEdit(!edit);
+    return false;
+  };
 
   return (
     <div>
@@ -24,7 +33,7 @@ function TodoItemRow({todo}: Props) {
         onClick={handleComplete}
         defaultChecked={todo.completed}
       />
-      <div onDoubleClick={() => setEdit(!edit)}>
+      <div onDoubleClick={handleDoubleClick}>
         {edit ? (
           <TodoItemInlineEdit todo={todo} onCancel={() => setEdit(!edit)} />
         ) : (
@@ -61,18 +70,14 @@ function TodoItemInlineEdit({todo, onCancel}: InlineEditProps) {
       {projects => (
         <form onSubmit={handleSubmit}>
           <input type="text" name="title" defaultValue={todo.title} autoFocus />
-          <select name="project_id">
+          <select name="project_id" defaultValue={todo.project.id}>
             {projects.map(project => (
-              <option
-                key={project.id}
-                value={project.id}
-                selected={todo.project.id == project.id ? true : undefined}
-              >
+              <option key={project.id} value={project.id}>
                 {project.name}
               </option>
             ))}
           </select>
-          <input type="date" name="due_on" />
+          <input type="date" name="due_on" defaultValue={todo.due_on ?? undefined} />
           <button type="submit">Save</button>
           <button onClick={onCancel}>Cancel</button>
         </form>

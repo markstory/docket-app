@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -124,5 +125,13 @@ class TodoItemsTable extends Table
     public function findIncomplete(Query $query): Query
     {
         return $query->where(['TodoItems.completed' => false]);
+    }
+
+    public function findDueToday(Query $query): Query
+    {
+        return $query->where([
+            'TodoItems.due_on IS NOT' => null,
+            'TodoItems.due_on <=' => new FrozenDate('today')
+        ]);
     }
 }

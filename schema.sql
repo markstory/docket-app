@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS todo_items (
     title text,
     body text,
     due_on date,
+    ranking integer not null default 0,
     completed boolean not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,

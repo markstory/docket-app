@@ -17,14 +17,24 @@ class TodoItemsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(string $view = null)
     {
-        $query = $this->TodoItems->find('incomplete')->contain('Projects');
+        $query = $this->TodoItems
+            ->find('incomplete')
+            ->contain('Projects')
+            ->orderAsc('TodoItems.due_on')
+            ->orderDesc('TodoItems.ranking');
+
         $query = $this->Authorization->applyScope($query);
+        if ($view && in_array($view, ['today'], true)) {
+            $query = $query->find('dueToday');
+            // Set view component to use.
+            $this->set('component', 'TodoItems/Today');
+        }
 
         $todoItems = $this->paginate($query);
 
-        $this->set(compact('todoItems'));
+        $this->set(compact('todoItems', 'view'));
     }
 
     /**
@@ -42,7 +52,7 @@ class TodoItemsController extends AppController
             if ($this->TodoItems->save($todoItem)) {
                 $this->Flash->success(__('The todo item has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect($this->referer(['action' => 'index']));
             }
             $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
         }

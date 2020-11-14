@@ -7,6 +7,14 @@ import ProjectsContext from 'app/components/projectsContext';
 function ProjectFilter() {
   return (
     <div>
+      <ul>
+        <li>
+          <InertiaLink href="/todos/today">Today</InertiaLink>
+        </li>
+        <li>
+          <InertiaLink href="/todos/upcoming">Upcoming</InertiaLink>
+        </li>
+      </ul>
       <h3>Projects</h3>
       <ul>
         <ProjectsContext.Consumer>
