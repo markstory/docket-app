@@ -60,6 +60,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/todos/add', 'TodoItems::add', 'todoitems:add');
     $builder->post('/todos/{id}/complete', 'TodoItems::complete', 'todoitems:complete')
         ->setPass(['id']);
+    $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
+        ->setPass(['id']);
 
     $builder->get('/projects/{slug}/todos', 'ProjectsTodoItems::view', 'projects:todoitems');
     /*

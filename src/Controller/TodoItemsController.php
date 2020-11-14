@@ -19,7 +19,7 @@ class TodoItemsController extends AppController
      */
     public function index()
     {
-        $query = $this->TodoItems->find()->contain('Projects');
+        $query = $this->TodoItems->find('incomplete')->contain('Projects');
         $query = $this->Authorization->applyScope($query);
 
         $todoItems = $this->paginate($query);
@@ -92,14 +92,11 @@ class TodoItemsController extends AppController
             $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
             if ($this->TodoItems->save($todoItem)) {
                 $this->Flash->success(__('The todo item has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
-            $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
         }
-        $projects = $this->TodoItems->Projects->find('list', ['limit' => 200]);
-        $todoLabels = $this->TodoItems->TodoLabels->find('list', ['limit' => 200]);
-        $this->set(compact('todoItem', 'projects', 'todoLabels'));
+        return $this->redirect(['action' => 'index']);
     }
 
     /**

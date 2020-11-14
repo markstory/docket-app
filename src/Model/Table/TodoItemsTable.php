@@ -113,11 +113,16 @@ class TodoItemsTable extends Table
         return $rules;
     }
 
-    public function findForProject(Query $query, array $options)
+    public function findForProject(Query $query, array $options): Query
     {
         if (empty($options['slug'])) {
             throw new RuntimeException('Missing required slug argument');
         }
         return $query->where(['Projects.slug' => $options['slug']]);
+    }
+
+    public function findIncomplete(Query $query): Query
+    {
+        return $query->where(['TodoItems.completed' => false]);
     }
 }

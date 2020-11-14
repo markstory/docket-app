@@ -18,7 +18,7 @@ export default function TodoItemsIndex({project, projects, todoItems}: Props) {
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
       {todoItems.map(todo => (
-        <TodoItemRow todo={todo} key={todo.id} />
+        <TodoItemRow key={todo.id} todo={todo} projects={projects} />
       ))}
       <div>
         {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
