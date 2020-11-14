@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
-import {TodoItem, Project} from 'app/types';
+import {TodoItem} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
+import ProjectsContext from 'app/components/projectsContext';
 
 type Props = {
   todo: TodoItem;
-  projects: Project[];
 };
 
-function TodoItemRow({todo, projects}: Props) {
+function TodoItemRow({todo}: Props) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     Inertia.post(`/todos/${todo.id}/complete`);
@@ -26,11 +26,7 @@ function TodoItemRow({todo, projects}: Props) {
       />
       <div onDoubleClick={() => setEdit(!edit)}>
         {edit ? (
-          <TodoItemInlineEdit
-            todo={todo}
-            projects={projects}
-            onCancel={() => setEdit(!edit)}
-          />
+          <TodoItemInlineEdit todo={todo} onCancel={() => setEdit(!edit)} />
         ) : (
           <TodoItemSummary todo={todo} />
         )}
@@ -52,7 +48,7 @@ type InlineEditProps = Props & {
   onCancel: () => void;
 };
 
-function TodoItemInlineEdit({todo, projects, onCancel}: InlineEditProps) {
+function TodoItemInlineEdit({todo, onCancel}: InlineEditProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -61,23 +57,27 @@ function TodoItemInlineEdit({todo, projects, onCancel}: InlineEditProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="title" defaultValue={todo.title} autoFocus />
-      <select name="project_id">
-        {projects.map(project => (
-          <option
-            key={project.id}
-            value={project.id}
-            selected={todo.project.id == project.id ? true : undefined}
-          >
-            {project.name}
-          </option>
-        ))}
-      </select>
-      <input type="date" name="due_on" />
-      <button type="submit">Save</button>
-      <button onClick={onCancel}>Cancel</button>
-    </form>
+    <ProjectsContext.Consumer>
+      {projects => (
+        <form onSubmit={handleSubmit}>
+          <input type="text" name="title" defaultValue={todo.title} autoFocus />
+          <select name="project_id">
+            {projects.map(project => (
+              <option
+                key={project.id}
+                value={project.id}
+                selected={todo.project.id == project.id ? true : undefined}
+              >
+                {project.name}
+              </option>
+            ))}
+          </select>
+          <input type="date" name="due_on" />
+          <button type="submit">Save</button>
+          <button onClick={onCancel}>Cancel</button>
+        </form>
+      )}
+    </ProjectsContext.Consumer>
   );
 }
 

@@ -7,24 +7,21 @@ import LoggedIn from 'app/layouts/loggedIn';
 
 type Props = {
   project: Project;
-  projects: Project[];
   todoItems: TodoItem[];
 };
 
-export default function TodoItemsIndex({project, projects, todoItems}: Props) {
+export default function TodoItemsIndex({project, todoItems}: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
       {todoItems.map(todo => (
-        <TodoItemRow key={todo.id} todo={todo} projects={projects} />
+        <TodoItemRow key={todo.id} todo={todo} />
       ))}
       <div>
         {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
-        {showForm && (
-          <QuickAddTaskForm projects={projects} onCancel={() => setShowForm(false)} />
-        )}
+        {showForm && <QuickAddTaskForm onCancel={() => setShowForm(false)} />}
       </div>
     </LoggedIn>
   );

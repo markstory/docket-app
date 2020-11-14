@@ -5,6 +5,7 @@ import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import ProjectFilter from 'app/components/projectFilter';
+import ProjectsContext from 'app/components/projectsContext';
 
 type SharedPageProps = {
   props: {
@@ -21,13 +22,15 @@ function LoggedIn({children}: Props) {
   const {flash, projects} = usePage<SharedPageProps>().props;
 
   return (
-    <main>
-      <FlashMessages flash={flash} />
-      <section>
-        <ProjectFilter projects={projects} />
-      </section>
-      <section>{children}</section>
-    </main>
+    <ProjectsContext.Provider value={projects}>
+      <main>
+        <FlashMessages flash={flash} />
+        <section>
+          <ProjectFilter />
+        </section>
+        <section>{children}</section>
+      </main>
+    </ProjectsContext.Provider>
   );
 }
 
