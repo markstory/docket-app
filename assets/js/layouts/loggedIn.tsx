@@ -1,17 +1,25 @@
 import React from 'react';
+import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import ProjectFilter from 'app/components/projectFilter';
 
+type SharedPageProps = {
+  props: {
+    flash: null | FlashMessage;
+    projects: Project[];
+  };
+};
+
 type Props = {
-  flash: null | FlashMessage;
-  projects: Project[];
   children: React.ReactNode;
 };
 
-function LoggedIn({children, flash, projects}: Props) {
+function LoggedIn({children}: Props) {
+  const {flash, projects} = usePage<SharedPageProps>().props;
+
   return (
     <main>
       <FlashMessages flash={flash} />

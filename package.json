@@ -14,7 +14,6 @@
         "@babel/preset-react": "^7.12.5",
         "@inertiajs/inertia": "^0.6.1",
         "@inertiajs/inertia-react": "^0.4.1",
-        "axios": "^0.19",
         "cross-env": "^7.0",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.19",

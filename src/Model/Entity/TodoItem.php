@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 
 /**
@@ -46,4 +47,10 @@ class TodoItem extends Entity
         'todo_subtasks' => true,
         'todo_labels' => true,
     ];
+
+    public function complete(): void
+    {
+        $this->completed = true;
+        $this->due_on = new FrozenTime();
+    }
 }

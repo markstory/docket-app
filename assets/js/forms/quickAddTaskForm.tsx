@@ -3,12 +3,11 @@ import {Inertia} from '@inertiajs/inertia';
 import {Project} from 'app/types';
 
 type Props = {
-  csrfToken: string;
   onCancel: () => void;
   projects: Project[];
 };
 
-function QuickAddTaskForm({projects, onCancel, csrfToken}: Props) {
+function QuickAddTaskForm({projects, onCancel}: Props) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -17,7 +16,6 @@ function QuickAddTaskForm({projects, onCancel, csrfToken}: Props) {
 
   return (
     <form method="post" onSubmit={onSubmit}>
-      <input type="hidden" name="_csrfToken" value={csrfToken} />
       <input type="text" name="title" autoFocus />
       <select name="project_id">
         {projects.map(project => (
