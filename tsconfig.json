@@ -14,11 +14,11 @@
     "noUnusedParameters": true,
     "pretty": false,
     "resolveJsonModule": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "outDir": "tmp/dist",
+    "outDir": "webroot/js",
     "baseUrl": ".",
     "paths": {
         "app/*": ["assets/js/*"]
