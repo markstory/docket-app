@@ -13,7 +13,7 @@ export default function TodoItemsIndex({project, todoItems}: Props) {
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
-      <TodoItemGroup todoItems={todoItems} defaultProjectId={project.id} />
+      <TodoItemGroup todoItems={todoItems} defaultProjectId={project.id} showDueOn />
     </LoggedIn>
   );
 }

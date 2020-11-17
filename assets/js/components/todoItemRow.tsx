@@ -7,9 +7,11 @@ import ProjectsContext from 'app/components/projectsContext';
 
 type Props = {
   todo: TodoItem;
+  showDueOn?: boolean;
+  showProject?: boolean;
 };
 
-function TodoItemRow({todo}: Props) {
+function TodoItemRow({todo, showDueOn, showProject}: Props) {
   const [edit, setEdit] = useState(false);
 
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -37,18 +39,23 @@ function TodoItemRow({todo}: Props) {
         {edit ? (
           <TodoItemInlineEdit todo={todo} onCancel={() => setEdit(!edit)} />
         ) : (
-          <TodoItemSummary todo={todo} />
+          <TodoItemSummary todo={todo} showProject={showProject} showDueOn={showDueOn} />
         )}
       </div>
     </div>
   );
 }
 
-function TodoItemSummary({todo}: Pick<Props, 'todo'>) {
+function TodoItemSummary({
+  todo,
+  showDueOn,
+  showProject,
+}: Pick<Props, 'todo' | 'showDueOn' | 'showProject'>) {
   return (
     <React.Fragment>
       <span>{todo.title}</span>
-      <ProjectBadge project={todo.project} />
+      {showProject && <ProjectBadge project={todo.project} />}
+      {showDueOn && todo.due_on && <time dateTime={todo.due_on}>{todo.due_on}</time>}
     </React.Fragment>
   );
 }

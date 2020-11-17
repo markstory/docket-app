@@ -16,7 +16,7 @@ export default function TodoItemsToday({todoItems, view}: Props) {
   return (
     <LoggedIn>
       <h1>Today</h1>
-      <TodoItemGroup todoItems={todoItems} defaultDate={defaultDate} />
+      <TodoItemGroup todoItems={todoItems} defaultDate={defaultDate} showProject />
     </LoggedIn>
   );
 }

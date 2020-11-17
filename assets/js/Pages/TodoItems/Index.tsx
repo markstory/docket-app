@@ -14,7 +14,6 @@ export default function TodoItemsIndex({todoItems}: Props) {
     todoItems,
     item => item.due_on || 'No Due Date'
   );
-  console.log(Object.entries(byDate));
 
   return (
     <LoggedIn>
@@ -22,7 +21,7 @@ export default function TodoItemsIndex({todoItems}: Props) {
       {Object.entries(byDate).map(([date, items]) => (
         <React.Fragment key={date}>
           <h2>{date}</h2>
-          <TodoItemGroup todoItems={items} defaultDate={date} />
+          <TodoItemGroup todoItems={items} defaultDate={date} showDueOn showProject />
         </React.Fragment>
       ))}
     </LoggedIn>
