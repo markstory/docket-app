@@ -23,7 +23,7 @@ class TodoItemsController extends AppController
             ->find('incomplete')
             ->contain('Projects')
             ->orderAsc('TodoItems.due_on')
-            ->orderDesc('TodoItems.ranking');
+            ->orderDesc('TodoItems.day_order');
 
         $query = $this->Authorization->applyScope($query);
         if ($view && in_array($view, ['today'], true)) {

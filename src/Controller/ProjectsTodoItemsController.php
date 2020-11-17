@@ -33,6 +33,7 @@ class ProjectsTodoItemsController extends AppController
         $query = $this->Authorization
             ->applyScope($this->TodoItems->find(), 'index')
             ->contain('Projects')
+            ->find('incomplete')
             ->find('forProject', ['slug' => $slug]);
 
         $todoItems = $this->paginate($query);

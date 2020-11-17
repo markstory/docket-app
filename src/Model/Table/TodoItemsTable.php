@@ -119,7 +119,9 @@ class TodoItemsTable extends Table
         if (empty($options['slug'])) {
             throw new RuntimeException('Missing required slug argument');
         }
-        return $query->where(['Projects.slug' => $options['slug']]);
+        return $query
+            ->where(['Projects.slug' => $options['slug']])
+            ->orderDesc('TodoItems.child_order');
     }
 
     public function findIncomplete(Query $query): Query
