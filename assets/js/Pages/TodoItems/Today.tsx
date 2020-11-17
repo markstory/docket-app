@@ -12,11 +12,19 @@ type Props = {
 export default function TodoItemsToday({todoItems, view}: Props) {
   const defaultDate =
     view === 'today' ? new Date().toISOString().substring(0, 10) : undefined;
+  function handleChange(items: TodoItem[]) {
+    console.log('new items', items);
+  }
 
   return (
     <LoggedIn>
       <h1>Today</h1>
-      <TodoItemGroup todoItems={todoItems} defaultDate={defaultDate} showProject />
+      <TodoItemGroup
+        onReorder={handleChange}
+        todoItems={todoItems}
+        defaultDate={defaultDate}
+        showProject
+      />
     </LoggedIn>
   );
 }

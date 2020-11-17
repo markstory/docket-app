@@ -10,10 +10,18 @@ type Props = {
 };
 
 export default function TodoItemsIndex({project, todoItems}: Props) {
+  function handleChange(items: TodoItem[]) {
+    console.log('new items', items);
+  }
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
-      <TodoItemGroup todoItems={todoItems} defaultProjectId={project.id} showDueOn />
+      <TodoItemGroup
+        onReorder={handleChange}
+        todoItems={todoItems}
+        defaultProjectId={project.id}
+        showDueOn
+      />
     </LoggedIn>
   );
 }

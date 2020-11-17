@@ -1,0 +1,17 @@
+.draggable-ghost {
+  background: #fff;
+  display: block;
+  position: absolute;
+  padding: 6px;
+  border-radius: $border-radius;
+  border: 1px solid $color-border;
+  width: 600px;
+  opacity: 0.8;
+  cursor: grabbing;
+}
+
+.draggable-placeholder {
+  border: 2px dashed $color-border;
+  height: 40px;
+  border-radius: $border-radius;
+}

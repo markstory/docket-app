@@ -15,13 +15,23 @@ export default function TodoItemsIndex({todoItems}: Props) {
     item => item.due_on || 'No Due Date'
   );
 
+  function handleChange(items: TodoItem[]) {
+    console.log('new items', items);
+  }
+
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
       {Object.entries(byDate).map(([date, items]) => (
         <React.Fragment key={date}>
           <h2>{date}</h2>
-          <TodoItemGroup todoItems={items} defaultDate={date} showDueOn showProject />
+          <TodoItemGroup
+            todoItems={items}
+            defaultDate={date}
+            onReorder={handleChange}
+            showDueOn
+            showProject
+          />
         </React.Fragment>
       ))}
     </LoggedIn>
