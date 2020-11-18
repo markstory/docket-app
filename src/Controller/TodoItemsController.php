@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Exception\NotFoundException;
+
 /**
  * TodoItems Controller
  *
@@ -82,6 +85,35 @@ class TodoItemsController extends AppController
             }
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Reorder a set of items.
+     */
+    public function reorder()
+    {
+        $scope = $this->request->getData('scope');
+        if (!in_array($scope, ['day', 'child'])) {
+            throw new BadRequestException('Invalid scope parameter');
+        }
+        $itemIds = $this->request->getData('items');
+        $query = $this->TodoItems
+            ->find('incomplete')
+            ->where(['TodoItems.id IN', array_values($itemIds)]);
+        $query = $this->Authorization->applyScope($query);
+
+        $items = $query->toArray();
+        if (count($items) != count($itemIds)) {
+            throw new NotFoundException('Some of the requested items could not be found.');
+        }
+        $sorted = [];
+        foreach ($items as $item) {
+            $index = array_search($item->id, $itemIds, true);
+            $sorted[$index] = $item;
+        }
+        ksort($sorted);
+        $this->TodoItems->reorder($scope, $items);
+
     }
 
     /**

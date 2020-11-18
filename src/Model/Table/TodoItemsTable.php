@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -135,5 +136,92 @@ class TodoItemsTable extends Table
             'TodoItems.due_on IS NOT' => null,
             'TodoItems.due_on <=' => new FrozenDate('today')
         ]);
+    }
+
+    /**
+     * Reorder a set of items in the scope.
+     *
+     * Only the provided items will be reordered, other items
+     * will be left in their current order. The lowest order value will
+     * be used as the root of the sort operation.
+     */
+    public function reorder(string $scope, array $items)
+    {
+        if (!in_array($scope, ['child', 'day'])) {
+            throw new RuntimeException("Invalid scope {$scope} used");
+        }
+        if (empty($items)) {
+            return;
+        }
+        if ($scope === 'child') {
+            $this->reorderByChild($items);
+        }
+        if ($scope === 'day') {
+            $this->reorderByDay($items);
+        }
+    }
+
+    protected function reorderByChild(array $items)
+    {
+        $projectId = $items[0]->project_id;
+        foreach ($items as $item) {
+            if ($item->project_id !== $projectId) {
+                throw new InvalidArgumentException('Cannot order by scope as there are multiple projects.');
+            }
+        }
+        $minValue = 0;
+        $orderMap = [];
+        foreach ($items as $i => $item) {
+            if ($item->child_order < $minValue) {
+                $minValue = $item->child_order;
+            }
+            $orderMap[$item->id] = $i;
+        }
+        $ids = array_keys($orderMap);
+
+        $query = $this->query();
+        $cases = $values = [];
+        foreach ($orderMap as $id => $value) {
+            $cases[] = $query->newExpr()->eq('id', $id);
+            $values[] = $minValue + $value;
+        }
+        $case = $query->newExpr()
+            ->addCase($cases, $values);
+        $query
+            ->update()
+            ->set(['child_order' => $case])
+            ->where(['id IN' => $ids]);
+        $statement = $query->execute();
+
+        return $statement->rowCount();
+    }
+
+    protected function reorderByDay(array $items)
+    {
+        $minValue = 0;
+        $orderMap = [];
+        foreach ($items as $i => $item) {
+            if ($item->day_order < $minValue) {
+                $minValue = $item->day_order;
+            }
+            $orderMap[$item->id] = $i;
+        }
+        $ids = array_keys($orderMap);
+
+        $query = $this->query();
+        $cases = $values = [];
+        foreach ($orderMap as $id => $value) {
+            $cases[] = $query->newExpr()->eq('id', $id);
+            $values[] = $minValue + $value;
+        }
+        $case = $query->newExpr()
+            ->addCase($cases, $values);
+        $query
+            ->update()
+            ->set(['day_order' => $case])
+            ->where(['id IN' => $ids]);
+        $statement = $query->execute();
+
+        return $statement->rowCount();
     }
 }

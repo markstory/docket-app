@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\TodoItemsTable;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * App\Model\Table\TodoItemsTable Test Case
@@ -29,6 +30,7 @@ class TodoItemsTableTest extends TestCase
         'app.TodoComments',
         'app.TodoSubtasks',
         'app.TodoLabels',
+        'app.Users',
     ];
 
     /**
@@ -55,23 +57,61 @@ class TodoItemsTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault(): void
+    protected function makeProject($title, $userId)
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->TodoItems->Projects->newEntity([
+            'user_id' => $userId,
+            'name' => $title,
+            'color' => '663366',
+            'order' => 0,
+        ]);
+
+        return $this->TodoItems->Projects->saveOrFail($project);
+    }
+
+    protected function makeItem($title, $projectId, $order)
+    {
+        $todoItem = $this->TodoItems->newEntity([
+            'project_id' => $projectId,
+            'title' => $title,
+            'day_order' => $order,
+            'child_order' => $order,
+        ]);
+
+        return $this->TodoItems->saveOrFail($todoItem);
     }
 
     /**
-     * Test buildRules method
-     *
-     * @return void
+     * Make sure that items all have the same scope.
      */
-    public function testBuildRules(): void
+    public function testReorderChildFailMultipleScopes()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->makeProject('First', 1);
+        $one = $this->makeItem('First', 1, 0);
+        $two = $this->makeItem('Second', 2, 1);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('multiple projects');
+        $desired = [$two, $one];
+        $this->TodoItems->reorder('child', $desired);
+    }
+
+    public function testReorderDayScope()
+    {
+        $project = $this->makeProject('other', 1);
+
+        $one = $this->makeItem('First', 1, 9);
+        $two = $this->makeItem('Second', 1, 10);
+        $three = $this->makeItem('P2 First', 2, 2);
+        $four = $this->makeItem('P2 Second', 2, 3);
+
+        $desired = [
+            $one, $four, $two, $three
+        ];
+        $this->TodoItems->reorder('day', $desired);
+        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
+        foreach ($results as $i => $result) {
+            $this->assertEquals($desired[$i]->id, $result->id, "Failed on index={$i}");
+        }
     }
 }
