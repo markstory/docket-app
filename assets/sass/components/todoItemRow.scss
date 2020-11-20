@@ -1,0 +1,29 @@
+.todoitem-row {
+  display: flex;
+  width: 100%;
+
+  align-items: flex-start;
+  padding-bottom: $space * 4;
+  margin-bottom: $space * 4;
+  border-bottom: 1px solid $color-border;
+
+  > input[type="checkbox"] {
+    margin: $space * 3 $space * 4 0 0;
+  }
+
+  .title {
+    color: $color-foreground;
+    display: block;
+  }
+
+  .attributes {
+    display: grid;
+    gap: $space * 5;
+    grid-auto-flow: column;
+  }
+}
+
+.drag-ghost .todoitem-row {
+  border-bottom: 0;
+  margin-bottom: 0;
+}

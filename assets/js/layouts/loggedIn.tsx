@@ -22,15 +22,17 @@ function LoggedIn({children}: Props) {
   const {flash, projects} = usePage<SharedPageProps>().props;
 
   return (
-    <ProjectsContext.Provider value={projects}>
-      <main>
-        <FlashMessages flash={flash} />
-        <section>
-          <ProjectFilter />
-        </section>
-        <section>{children}</section>
-      </main>
-    </ProjectsContext.Provider>
+    <React.Fragment>
+      <FlashMessages flash={flash} />
+      <ProjectsContext.Provider value={projects}>
+        <main className="layout-three-quarter">
+          <section>
+            <ProjectFilter />
+          </section>
+          <section>{children}</section>
+        </main>
+      </ProjectsContext.Provider>
+    </React.Fragment>
   );
 }
 

@@ -12,7 +12,7 @@ function ProjectFilter() {
   };
 
   return (
-    <div>
+    <div className="project-filter">
       <ul>
         <li>
           <InertiaLink href="/todos/today">Today</InertiaLink>

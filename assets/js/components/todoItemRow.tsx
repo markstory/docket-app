@@ -28,7 +28,7 @@ function TodoItemRow({todo, showDueOn, showProject}: Props) {
   };
 
   return (
-    <div>
+    <div className="todoitem-row">
       <input
         type="checkbox"
         value="1"
@@ -53,9 +53,11 @@ function TodoItemSummary({
 }: Pick<Props, 'todo' | 'showDueOn' | 'showProject'>) {
   return (
     <React.Fragment>
-      <span>{todo.title}</span>
-      {showProject && <ProjectBadge project={todo.project} />}
-      {showDueOn && todo.due_on && <time dateTime={todo.due_on}>{todo.due_on}</time>}
+      <span className="title">{todo.title}</span>
+      <div className="attributes">
+        {showDueOn && todo.due_on && <time dateTime={todo.due_on}>{todo.due_on}</time>}
+        {showProject && <ProjectBadge project={todo.project} />}
+      </div>
     </React.Fragment>
   );
 }

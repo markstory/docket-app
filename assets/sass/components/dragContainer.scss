@@ -1,0 +1,42 @@
+.drag-ghost {
+  background: #fff;
+  display: flex;
+  position: absolute;
+  padding: 6px;
+  border-radius: $border-radius;
+  border: 1px solid $color-border;
+  width: 600px;
+  opacity: 0.8;
+  cursor: grabbing;
+}
+
+.drag-placeholder {
+  border: 2px dashed $color-border;
+  // TODO this should be controlled by the container
+  height: 65px;
+  border-radius: $border-radius;
+}
+
+.drag-item {
+  display: flex;
+  position: relative;
+}
+
+.drag-handle {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: -4px;
+  left: -35px;
+  background: transparent;
+  color: $color-foreground;
+  line-height: 1;
+  border: none;
+  padding: 5px;
+  margin: 0;
+
+  &:hover {
+    color: $color-foreground;
+    background: $color-bg-shade;
+  }
+}

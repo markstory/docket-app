@@ -9,7 +9,7 @@ type State = {
   top: undefined | number;
 };
 
-const DRAG_CLASS = 'draggable-item';
+const DRAG_CLASS = 'drag-item';
 const GRAB_HANDLE_FUDGE = 25;
 
 enum PlaceholderPosition {
@@ -175,7 +175,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
       left: `${left}px`,
     };
     const ghost = (
-      <div className="draggable-ghost" ref={this.dragGhostRef} style={style}>
+      <div className="drag-ghost" ref={this.dragGhostRef} style={style}>
         {this.renderItemOrPlaceholder(item, index, {isGhost: true})}
       </div>
     );
@@ -191,7 +191,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     if (isDragging && isGhost === false && draggingTargetIndex === i) {
       placeholder = (
         <div
-          className={`draggable-placeholder ${DRAG_CLASS}`}
+          className={`drag-placeholder ${DRAG_CLASS}`}
           key={`placeholder:${item.id}:true`}
         />
       );
@@ -213,6 +213,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
         {position === PlaceholderPosition.TOP && placeholder}
         <div className={isGhost ? '' : DRAG_CLASS}>
           <button
+            className="drag-handle"
             aria-label="Drag to reorder"
             onMouseDown={event => this.startDrag(event, i)}
           >
