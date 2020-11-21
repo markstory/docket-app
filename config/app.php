@@ -337,7 +337,7 @@ return [
             'flags' => [],
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
-            'log' => false,
+            // 'log' => true,
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
     ],
@@ -364,10 +364,8 @@ return [
         ],
         // To enable this dedicated query log, you need set your datasource's log flag to true
         'queries' => [
-            'className' => FileLog::class,
-            'path' => LOGS,
-            'file' => 'queries',
-            'url' => env('LOG_QUERIES_URL', null),
+            'className' => Console::class,
+            'stream' => 'php://stderr',
             'scopes' => ['queriesLog'],
         ],
     ],
