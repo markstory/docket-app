@@ -1,4 +1,5 @@
 import React from 'react';
+import {Inertia} from '@inertiajs/inertia';
 import {groupBy} from 'lodash';
 
 import {TodoItem} from 'app/types';
@@ -16,7 +17,12 @@ export default function TodoItemsIndex({todoItems}: Props) {
   );
 
   function handleChange(items: TodoItem[]) {
-    console.log('new items', items);
+    const itemIds = items.map(item => item.id);
+    const data = {
+      items: itemIds,
+      scope: 'day'
+    };
+    Inertia.post('/todos/reorder', data);
   }
 
   return (

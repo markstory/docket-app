@@ -26,7 +26,7 @@ class TodoItemsController extends AppController
             ->find('incomplete')
             ->contain('Projects')
             ->orderAsc('TodoItems.due_on')
-            ->orderDesc('TodoItems.day_order');
+            ->orderAsc('TodoItems.day_order');
 
         $query = $this->Authorization->applyScope($query);
         if ($view && in_array($view, ['today'], true)) {
@@ -84,7 +84,7 @@ class TodoItemsController extends AppController
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer(['action' => 'index']));
     }
 
     /**
@@ -97,10 +97,14 @@ class TodoItemsController extends AppController
             throw new BadRequestException('Invalid scope parameter');
         }
         $itemIds = $this->request->getData('items');
+        if (!is_array($itemIds)) {
+            throw new BadRequestException('Invalid item list.');
+        }
+        $itemIds = array_values($itemIds);
         $query = $this->TodoItems
             ->find('incomplete')
-            ->where(['TodoItems.id IN', array_values($itemIds)]);
-        $query = $this->Authorization->applyScope($query);
+            ->where(['TodoItems.id IN' => $itemIds]);
+        $query = $this->Authorization->applyScope($query, 'index');
 
         $items = $query->toArray();
         if (count($items) != count($itemIds)) {
@@ -112,8 +116,9 @@ class TodoItemsController extends AppController
             $sorted[$index] = $item;
         }
         ksort($sorted);
-        $this->TodoItems->reorder($scope, $items);
+        $this->TodoItems->reorder($scope, $sorted);
 
+        return $this->redirect($this->referer(['action' => 'index']));
     }
 
     /**

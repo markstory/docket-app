@@ -34,7 +34,9 @@ class ProjectsTodoItemsController extends AppController
             ->applyScope($this->TodoItems->find(), 'index')
             ->contain('Projects')
             ->find('incomplete')
-            ->find('forProject', ['slug' => $slug]);
+            ->find('forProject', ['slug' => $slug])
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.child_order');
 
         $todoItems = $this->paginate($query);
 

@@ -60,6 +60,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->get('/todos/today', ['controller' => 'TodoItems', 'action' => 'index', 'today'], 'todoitems:today');
     $builder->get('/todos/upcoming', ['controller' => 'TodoItems', 'action' => 'index', 'upcoming'], 'todoitems:upcoming');
     $builder->post('/todos/add', 'TodoItems::add', 'todoitems:add');
+    $builder->post('/todos/reorder', 'TodoItems::reorder', 'todoitems:reorder');
     $builder->post('/todos/{id}/complete', 'TodoItems::complete', 'todoitems:complete')
         ->setPass(['id']);
     $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
