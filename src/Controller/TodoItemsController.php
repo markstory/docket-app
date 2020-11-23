@@ -143,7 +143,7 @@ class TodoItemsController extends AppController
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer(['action' => 'index']));
     }
 
     /**
