@@ -3,6 +3,7 @@ import React from 'react';
 import {Project, TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TodoItemGroup from 'app/components/todoItemGroup';
+import TodoItemSorter from 'app/components/todoItemSorter';
 
 type Props = {
   project: Project;
@@ -10,18 +11,19 @@ type Props = {
 };
 
 export default function TodoItemsIndex({project, todoItems}: Props) {
-  function handleChange(items: TodoItem[]) {
-    console.log('new items', items);
-  }
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
-      <TodoItemGroup
-        onReorder={handleChange}
-        todoItems={todoItems}
-        defaultProjectId={project.id}
-        showDueOn
-      />
+      <TodoItemSorter todoItems={todoItems} scope="child">
+        {({handleOrderChange, items}) => (
+          <TodoItemGroup
+            onReorder={handleOrderChange}
+            todoItems={items}
+            defaultProjectId={project.id}
+            showDueOn
+          />
+        )}
+      </TodoItemSorter>
     </LoggedIn>
   );
 }

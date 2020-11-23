@@ -3,6 +3,7 @@ import React from 'react';
 import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TodoItemGroup from 'app/components/todoItemGroup';
+import TodoItemSorter from 'app/components/todoItemSorter';
 
 type Props = {
   todoItems: TodoItem[];
@@ -12,19 +13,20 @@ type Props = {
 export default function TodoItemsToday({todoItems, view}: Props) {
   const defaultDate =
     view === 'today' ? new Date().toISOString().substring(0, 10) : undefined;
-  function handleChange(items: TodoItem[]) {
-    console.log('new items', items);
-  }
 
   return (
     <LoggedIn>
       <h1>Today</h1>
-      <TodoItemGroup
-        onReorder={handleChange}
-        todoItems={todoItems}
-        defaultDate={defaultDate}
-        showProject
-      />
+      <TodoItemSorter todoItems={todoItems} scope="day">
+        {({handleOrderChange, items}) => (
+          <TodoItemGroup
+            onReorder={handleOrderChange}
+            todoItems={items}
+            defaultDate={defaultDate}
+            showProject
+          />
+        )}
+      </TodoItemSorter>
     </LoggedIn>
   );
 }
