@@ -121,9 +121,14 @@ class ProjectsTable extends Table
     public function findTop(Query $query): Query
     {
         return $query
-            ->orderDesc('Projects.favorite')
+            ->orderAsc('Projects.ranking')
             ->orderDesc('Projects.name')
-            ->limit(20);
+            ->limit(25);
+    }
+
+    public function findActive(Query $query): Query
+    {
+        return $query->where(['Projects.archived' => false]);
     }
 
     /**

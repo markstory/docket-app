@@ -46,6 +46,13 @@ class UsersFixture extends TestFixture
                 'created' => 1604198822,
                 'modified' => 1604198822,
             ],
+            [
+                'id' => 2,
+                'email' => 'sally@example.com',
+                'password' => '',
+                'created' => 1604198822,
+                'modified' => 1604198822,
+            ],
         ];
         parent::init();
     }

@@ -3,10 +3,21 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use App\Model\Entity\User;
 use Cake\ORM\TableRegistry;
 
 trait FactoryTrait
 {
+    protected function login($userId = 1)
+    {
+        $this->session([
+            'Auth' => new User([
+                'id' => $userId,
+                'name' => 'Mark Story'
+            ])
+        ]);
+    }
+
     protected function makeProject($title, $userId, $ranking = 0)
     {
         $projects = TableRegistry::get('Projects');

@@ -120,7 +120,7 @@ class TodoItemsController extends AppController
         }
         $sorted = [];
         foreach ($items as $item) {
-            $index = array_search($item->id, $itemIds, true);
+            $index = array_search($item->id, $itemIds);
             $sorted[$index] = $item;
         }
         ksort($sorted);

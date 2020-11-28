@@ -30,7 +30,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canUpdate(IdentityInterface $user, Project $project)
+    public function canEdit(IdentityInterface $user, Project $project)
     {
         return $user->id === $project->user_id;
     }

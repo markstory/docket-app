@@ -61,7 +61,7 @@ class AppController extends Controller
         $this->set('identity', $identity);
         if ($identity) {
             $this->loadModel('Projects');
-            $this->set('projects', $identity->applyScope('index', $this->Projects->find('top')));
+            $this->set('projects', $identity->applyScope('index', $this->Projects->find('active')->find('top')));
         }
 
         $this->inertiaBeforeRender($event);
