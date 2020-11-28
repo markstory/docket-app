@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\FrozenDate;
 
 /**
  * TodoItems Controller
@@ -22,6 +23,12 @@ class TodoItemsController extends AppController
      */
     public function index(string $view = null)
     {
+        try {
+            $start = new FrozenDate($this->request->getQuery('start', 'today'));
+        } catch (\Exception $e) {
+            throw new NotFoundException();
+        }
+
         $query = $this->TodoItems
             ->find('incomplete')
             ->contain('Projects')
@@ -29,13 +36,14 @@ class TodoItemsController extends AppController
             ->orderAsc('TodoItems.day_order');
 
         $query = $this->Authorization->applyScope($query);
-        if ($view && in_array($view, ['today'], true)) {
+        if ($view === 'today') {
             $query = $query->find('dueToday');
             // Set view component to use.
             $this->set('component', 'TodoItems/Today');
+        } else if ($view === 'upcoming') {
+            $query = $query->find('upcoming', ['start' => $start]);
         }
-
-        $todoItems = $this->paginate($query);
+        $todoItems = $query->all();
 
         $this->set(compact('todoItems', 'view'));
     }

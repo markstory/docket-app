@@ -118,7 +118,7 @@ class TodoItemsTable extends Table
     public function findForProject(Query $query, array $options): Query
     {
         if (empty($options['slug'])) {
-            throw new RuntimeException('Missing required slug argument');
+            throw new RuntimeException('Missing required slug option');
         }
         return $query
             ->where(['Projects.slug' => $options['slug']])
@@ -135,6 +135,19 @@ class TodoItemsTable extends Table
         return $query->where([
             'TodoItems.due_on IS NOT' => null,
             'TodoItems.due_on <=' => new FrozenDate('today')
+        ]);
+    }
+
+    public function findUpcoming(Query $query, array $options): Query
+    {
+        if (empty($options['start'])) {
+            throw new RuntimeException('Missing required `start` option.');
+        }
+        $end = $options['start']->modify('+28 days');
+        return $query->where([
+            'TodoItems.due_on IS NOT' => null,
+            'TodoItems.due_on >=' => $options['start'],
+            'TodoItems.due_on <' => $end,
         ]);
     }
 
