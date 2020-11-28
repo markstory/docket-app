@@ -1,8 +1,10 @@
 import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
+import {Project} from 'app/types';
+import DragContainer from 'app/components/dragContainer';
 import ProjectBadge from 'app/components/projectBadge';
-import ProjectsContext from 'app/components/projectsContext';
+import ProjectSorter from 'app/components/projectSorter';
 import NewProjectModal from 'app/components/modals/newProjectModal';
 
 function ProjectFilter() {
@@ -23,21 +25,27 @@ function ProjectFilter() {
       </ul>
       <h3>Projects</h3>
       <ul>
-        <ProjectsContext.Consumer>
-          {projects =>
-            projects.map(project => (
-              <li key={project.slug}>
-                <InertiaLink href={`/projects/${project.slug}/todos`}>
-                  <ProjectBadge project={project} />
-                </InertiaLink>
-              </li>
-            ))
-          }
-        </ProjectsContext.Consumer>
-        <li>
-          <button onClick={showNewProject}>Create Project</button>
-        </li>
+        <ProjectSorter>
+          {({projects, handleOrderChange}) => (
+            <DragContainer
+              itemElement={<li />}
+              items={projects}
+              renderItem={(project: Project) => (
+                <div key={project.slug}>
+                  <InertiaLink
+                    key={project.slug}
+                    href={`/projects/${project.slug}/todos`}
+                  >
+                    <ProjectBadge project={project} />
+                  </InertiaLink>
+                </div>
+              )}
+              onChange={handleOrderChange}
+            />
+          )}
+        </ProjectSorter>
       </ul>
+      <button onClick={showNewProject}>Create Project</button>
       <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );

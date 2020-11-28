@@ -2,4 +2,16 @@
   ul {
     list-style: none;
   }
+
+  .drag-ghost {
+    width: 200px;
+    height: 25px;
+
+    li {
+      padding: 0;
+    }
+  }
+  .drag-placeholder {
+    height: 30px;
+  }
 }

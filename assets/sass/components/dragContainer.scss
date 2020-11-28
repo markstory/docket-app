@@ -8,6 +8,10 @@
   width: 600px;
   opacity: 0.8;
   cursor: grabbing;
+
+  li {
+    list-style: none;
+  }
 }
 
 .drag-placeholder {
@@ -17,17 +21,13 @@
   border-radius: $border-radius;
 }
 
-.drag-item {
-  display: flex;
-  position: relative;
-}
-
 .drag-handle {
+  display: none;
   height: 30px;
   width: 30px;
   position: absolute;
   top: -4px;
-  left: -35px;
+  left: -25px;
   background: transparent;
   color: $color-foreground;
   line-height: 1;
@@ -40,3 +40,13 @@
     background: $color-bg-shade;
   }
 }
+
+.drag-item {
+  display: flex;
+  position: relative;
+
+  &:hover .drag-handle {
+    display: block;
+  }
+}
+

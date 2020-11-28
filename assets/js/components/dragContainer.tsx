@@ -26,12 +26,17 @@ type Props<Item> = {
   items: Item[];
   renderItem: (item: Item) => React.ReactNode;
   onChange: (items: Item[]) => void;
+  itemElement: JSX.Element;
 };
 
 class DragContainer<Item extends GeneralItem> extends React.Component<
   Props<Item>,
   State
 > {
+  static defaultProps = {
+    itemElement: <div />,
+  };
+
   state = {
     isDragging: false,
     draggingIndex: void 0,
@@ -185,16 +190,15 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
 
   renderItemOrPlaceholder(item: Item, i: number, {isGhost = false}: {isGhost?: boolean}) {
     const {isDragging, draggingTargetIndex, draggingIndex} = this.state;
+    const {itemElement} = this.props;
 
     let placeholder: React.ReactNode = null;
     // Add a placeholder above the target row.
     if (isDragging && isGhost === false && draggingTargetIndex === i) {
-      placeholder = (
-        <div
-          className={`drag-placeholder ${DRAG_CLASS}`}
-          key={`placeholder:${item.id}:true`}
-        />
-      );
+      placeholder = React.cloneElement(itemElement, {
+        className: `drag-placeholder ${DRAG_CLASS}`,
+        key: `placeholder:${item.id}:true`,
+      });
     }
 
     // If the current row is the row in the drag ghost return the placeholder
@@ -211,16 +215,20 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     return (
       <React.Fragment key={`${i}:${item.id}:${isGhost}`}>
         {position === PlaceholderPosition.TOP && placeholder}
-        <div className={isGhost ? '' : DRAG_CLASS}>
-          <button
-            className="drag-handle"
-            aria-label="Drag to reorder"
-            onMouseDown={event => this.startDrag(event, i)}
-          >
-            ::
-          </button>
-          {this.props.renderItem(item)}
-        </div>
+        {React.cloneElement(
+          itemElement,
+          {className: isGhost ? '' : DRAG_CLASS},
+          <React.Fragment>
+            <button
+              className="drag-handle"
+              aria-label="Drag to reorder"
+              onMouseDown={event => this.startDrag(event, i)}
+            >
+              ::
+            </button>
+            {this.props.renderItem(item)}
+          </React.Fragment>
+        )}
         {position === PlaceholderPosition.BOTTOM && placeholder}
       </React.Fragment>
     );
@@ -229,12 +237,12 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   render() {
     const {items} = this.props;
     return (
-      <div>
+      <React.Fragment>
         {this.renderGhost()}
         {items.map((item: Item, i: number) =>
           this.renderItemOrPlaceholder(item, i, {isGhost: false})
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }
