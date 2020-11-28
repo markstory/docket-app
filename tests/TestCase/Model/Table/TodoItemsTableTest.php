@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\TodoItemsTable;
+use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -12,6 +13,8 @@ use InvalidArgumentException;
  */
 class TodoItemsTableTest extends TestCase
 {
+    use FactoryTrait;
+
     /**
      * Test subject
      *
@@ -57,38 +60,16 @@ class TodoItemsTableTest extends TestCase
         parent::tearDown();
     }
 
-    protected function makeProject($title, $userId)
-    {
-        $project = $this->TodoItems->Projects->newEntity([
-            'user_id' => $userId,
-            'name' => $title,
-            'color' => '663366',
-            'order' => 0,
-        ]);
-
-        return $this->TodoItems->Projects->saveOrFail($project);
-    }
-
-    protected function makeItem($title, $projectId, $order)
-    {
-        $todoItem = $this->TodoItems->newEntity([
-            'project_id' => $projectId,
-            'title' => $title,
-            'day_order' => $order,
-            'child_order' => $order,
-        ]);
-
-        return $this->TodoItems->saveOrFail($todoItem);
-    }
-
     /**
      * Make sure that items all have the same scope.
      */
     public function testReorderChildFailMultipleScopes()
     {
-        $this->makeProject('First', 1);
-        $one = $this->makeItem('First', 1, 0);
-        $two = $this->makeItem('Second', 2, 1);
+        $first = $this->makeProject('First', 1);
+        $second = $this->makeProject('Second', 1);
+
+        $one = $this->makeItem('First', $first->id, 0);
+        $two = $this->makeItem('Second', $second->id, 1);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('multiple projects');
@@ -98,12 +79,13 @@ class TodoItemsTableTest extends TestCase
 
     public function testReorderDayScope()
     {
-        $project = $this->makeProject('other', 1);
+        $home = $this->makeProject('Home', 1);
+        $work = $this->makeProject('Work', 1);
 
-        $one = $this->makeItem('First', 1, 9);
-        $two = $this->makeItem('Second', 1, 10);
-        $three = $this->makeItem('P2 First', 2, 2);
-        $four = $this->makeItem('P2 Second', 2, 3);
+        $one = $this->makeItem('First', $home->id, 9);
+        $two = $this->makeItem('Second',$home->id, 10);
+        $three = $this->makeItem('P2 First', $work->id, 2);
+        $four = $this->makeItem('P2 Second', $work->id, 3);
 
         $desired = [
             $one, $four, $two, $three

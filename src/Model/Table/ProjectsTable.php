@@ -125,4 +125,39 @@ class ProjectsTable extends Table
             ->orderDesc('Projects.name')
             ->limit(20);
     }
+
+    /**
+     * Update the order on the list of projects
+     *
+     * @param \App\Model\Entity\Project[] $items
+     * @return void
+     */
+    public function reorder(array $items)
+    {
+        $minValue = 0;
+        $orderMap = [];
+        foreach ($items as $i => $item) {
+            if ($item->ranking < $minValue) {
+                $minValue = $item->ranking;
+            }
+            $orderMap[$item->id] = $i;
+        }
+        $ids = array_keys($orderMap);
+
+        $query = $this->query();
+        $cases = $values = [];
+        foreach ($orderMap as $id => $value) {
+            $cases[] = $query->newExpr()->eq('id', $id);
+            $values[] = $minValue + $value;
+        }
+        $case = $query->newExpr()
+            ->addCase($cases, $values);
+        $query
+            ->update()
+            ->set(['ranking' => $case])
+            ->where(['id IN' => $ids]);
+        $statement = $query->execute();
+
+        return $statement->rowCount();
+    }
 }

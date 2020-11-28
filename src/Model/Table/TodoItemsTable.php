@@ -157,6 +157,10 @@ class TodoItemsTable extends Table
      * Only the provided items will be reordered, other items
      * will be left in their current order. The lowest order value will
      * be used as the root of the sort operation.
+     *
+     * @param string $scope
+     * @param \App\Model\Entity\TodoItem[] $items
+     * @return void
      */
     public function reorder(string $scope, array $items)
     {

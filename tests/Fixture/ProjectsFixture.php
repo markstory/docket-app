@@ -40,27 +40,4 @@ class ProjectsFixture extends TestFixture
         ],
     ];
     // phpcs:enable
-    /**
-     * Init method
-     *
-     * @return void
-     */
-    public function init(): void
-    {
-        $this->records = [
-            [
-                'id' => 1,
-                'user_id' => 1,
-                'name' => 'Home',
-                'slug' => 'home',
-                'color' => '663366',
-                'favorite' => 0,
-                'archived' => 0,
-                'ranking' => 0,
-                'created' => 1604198825,
-                'modified' => 1604198825,
-            ],
-        ];
-        parent::init();
-    }
 }

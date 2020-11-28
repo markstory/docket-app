@@ -40,14 +40,4 @@ class TodoItemsFixture extends TestFixture
         ],
     ];
     // phpcs:enable
-    /**
-     * Init method
-     *
-     * @return void
-     */
-    public function init(): void
-    {
-        $this->records = [];
-        parent::init();
-    }
 }
