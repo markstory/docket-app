@@ -21,7 +21,7 @@ class TodoItemsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index(string $view = null)
+    public function index(string $view = 'upcoming')
     {
         try {
             $start = new FrozenDate($this->request->getQuery('start', 'today'));

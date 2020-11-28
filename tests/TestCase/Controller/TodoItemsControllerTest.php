@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Controller;
 
 use App\Controller\TodoItemsController;
 use App\Test\TestCase\FactoryTrait;
+use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -46,7 +47,68 @@ class TodoItemsControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $second = $this->makeItem('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeItem('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow
+        ]);
+
+        $this->login();
+        $this->get('/todos');
+
+        $this->assertResponseOk();
+        $this->assertSame('upcoming', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('todoItems')->toArray();
+        $this->assertCount(2, $items);
+        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $this->assertEquals([$first->id, $second->id], $ids);
+    }
+
+    public function testIndexToday()
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeItem('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeItem('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow
+        ]);
+
+        $this->login();
+        $this->get('/todos/today');
+        $this->assertResponseOk();
+        $this->assertSame('today', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('todoItems')->toArray();
+        $this->assertCount(1, $items);
+        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    public function testIndexPermissions()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $other = $this->makeProject('work', 2);
+        $project = $this->makeProject('work', 1);
+
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->makeItem('first', $other->id, 3, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get('/todos/upcoming');
+        $this->assertResponseOk();
+        $this->assertSame('upcoming', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('todoItems')->toArray();
+        $this->assertCount(1, $items);
+        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $this->assertEquals([$first->id], $ids);
     }
 
     /**
