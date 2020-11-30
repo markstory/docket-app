@@ -1,0 +1,32 @@
+.modal {
+  background: $color-background;
+
+  position: absolute;
+  top: 60px;
+  left: 60px;
+  right: 60px;
+  bottom: 60px;
+  padding: 20px;
+  border-radius: $border-radius-large;
+
+  & > button {
+    background: none;
+    border: none;
+    color: $color-foreground;
+    font-size: $font-size-large;
+    line-height: $font-size-large;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding: 5px;
+    margin: 0;
+  }
+}
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

@@ -36,9 +36,10 @@ function NewProjectModal({showModal, onClose}: Props) {
   };
 
   return (
-    <Modal isOpen>
-      <button onClick={onClose}>x</button>
+    <Modal className="modal" overlayClassName="modal-overlay" isOpen>
+      <button onClick={onClose}>{'\u2715'}</button>
       <form method="POST" onSubmit={handleSubmit}>
+        <h2>New Project</h2>
         <div>
           <label htmlFor="project-name">Name</label>
           <input id="project-name" type="text" name="name" required />
