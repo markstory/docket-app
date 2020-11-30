@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {TodoItem} from 'app/types';
+import {useProjects} from 'app/providers/projects';
 import ProjectBadge from 'app/components/projectBadge';
-import ProjectsContext from 'app/components/projectsContext';
 
 type Props = {
   todo: TodoItem;
@@ -74,25 +74,22 @@ function TodoItemInlineEdit({todo, onCancel}: InlineEditProps) {
     Inertia.post(`/todos/${todo.id}/edit`, formData);
     onCancel();
   };
+  const [projects] = useProjects();
 
   return (
-    <ProjectsContext.Consumer>
-      {projects => (
-        <form onSubmit={handleSubmit}>
-          <input type="text" name="title" defaultValue={todo.title} autoFocus />
-          <select name="project_id" defaultValue={todo.project.id}>
-            {projects.map(project => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-          <input type="date" name="due_on" defaultValue={todo.due_on ?? undefined} />
-          <button type="submit">Save</button>
-          <button onClick={onCancel}>Cancel</button>
-        </form>
-      )}
-    </ProjectsContext.Consumer>
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="title" defaultValue={todo.title} autoFocus />
+      <select name="project_id" defaultValue={todo.project.id}>
+        {projects.map(project => (
+          <option key={project.id} value={project.id}>
+            {project.name}
+          </option>
+        ))}
+      </select>
+      <input type="date" name="due_on" defaultValue={todo.due_on ?? undefined} />
+      <button type="submit">Save</button>
+      <button onClick={onCancel}>Cancel</button>
+    </form>
   );
 }
 
