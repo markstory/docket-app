@@ -13,10 +13,11 @@ const ProjectsContext = createContext<ContextData>({
 
 type ProviderProps = {
   children: React.ReactNode;
+  projects: Project[];
 };
 
-function ProjectsProvider({children}: ProviderProps) {
-  const [state, setState] = useState<Project[]>([]);
+function ProjectsProvider({projects, children}: ProviderProps) {
+  const [state, setState] = useState<Project[]>(projects);
   const [contextValue, setContextValue] = useState({
     state,
     // Include the inner state setter so context can be

@@ -5,7 +5,7 @@ import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import ProjectFilter from 'app/components/projectFilter';
-import {useProjects, ProjectsProvider} from 'app/providers/projects';
+import {ProjectsProvider} from 'app/providers/projects';
 
 type SharedPageProps = {
   props: {
@@ -19,8 +19,9 @@ type Props = {
 };
 
 function LoggedIn({children}: Props) {
+  const {projects} = usePage<SharedPageProps>().props;
   return (
-    <ProjectsProvider>
+    <ProjectsProvider projects={projects}>
       <Contents>{children}</Contents>
     </ProjectsProvider>
   );
@@ -31,12 +32,7 @@ function LoggedIn({children}: Props) {
  * wrapping components that want to call useProjects().
  */
 function Contents({children}: Props) {
-  const {flash, projects} = usePage<SharedPageProps>().props;
-  const [_, setProjects] = useProjects();
-
-  useEffect(() => {
-    setProjects(projects);
-  }, [projects]);
+  const {flash} = usePage<SharedPageProps>().props;
 
   return (
     <React.Fragment>
