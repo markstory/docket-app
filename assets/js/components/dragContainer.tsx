@@ -29,6 +29,7 @@ type Props<Item> = {
   itemElement: JSX.Element;
 };
 
+// TODO figure out how to make this keyboard accessible
 class DragContainer<Item extends GeneralItem> extends React.Component<
   Props<Item>,
   State

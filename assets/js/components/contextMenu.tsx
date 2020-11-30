@@ -33,6 +33,7 @@ function ContextMenu({children}: Props) {
     }
   }, [isShowing]);
 
+  // TODO fix accessibility on this.
   return (
     <div ref={menuRef} className="context-menu">
       <button onClick={handleClick}>{'\u2016'}</button>
