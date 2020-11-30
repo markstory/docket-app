@@ -2,6 +2,7 @@ import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project} from 'app/types';
+import ContextMenu from 'app/components/contextMenu';
 import DragContainer from 'app/components/dragContainer';
 import ProjectBadge from 'app/components/projectBadge';
 import ProjectSorter from 'app/components/projectSorter';
@@ -38,6 +39,11 @@ function ProjectFilter() {
                   >
                     <ProjectBadge project={project} />
                   </InertiaLink>
+                  <ContextMenu>
+                    <li>Edit Project</li>
+                    <li>Archive Project</li>
+                    <li>Delete Project</li>
+                  </ContextMenu>
                 </div>
               )}
               onChange={handleOrderChange}
