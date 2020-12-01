@@ -25,7 +25,7 @@ export default function TodoItemsGroup({
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <React.Fragment>
+    <div className="todo-item-group">
       <DragContainer
         items={todoItems}
         renderItem={(todo: TodoItem) => (
@@ -48,6 +48,6 @@ export default function TodoItemsGroup({
           />
         )}
       </div>
-    </React.Fragment>
+    </div>
   );
 }

@@ -33,13 +33,14 @@ function ContextMenu({children}: Props) {
     }
   }, [isShowing]);
 
-  // TODO fix accessibility on this.
   return (
     <div ref={menuRef} className="context-menu">
-      <button onClick={handleClick}>{'\u2016'}</button>
+      <button onClick={handleClick}>{'\u22EF'}</button>
       {isShowing && (
-        <div className="context-dropdown">
-          <ul>{children}</ul>
+        <div className="hitbox">
+          <div className="dropdown">
+            <ul>{children}</ul>
+          </div>
         </div>
       )}
     </div>

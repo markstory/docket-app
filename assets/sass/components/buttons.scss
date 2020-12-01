@@ -1,0 +1,9 @@
+.button-default {
+  color: $color-foreground;
+  background: transparent;
+
+  &:hover {
+    color: $color-foreground;
+    background: $color-button-default-hover;
+  }
+}

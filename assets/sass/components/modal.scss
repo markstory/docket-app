@@ -10,14 +10,17 @@
   border-radius: $border-radius-large;
 
   & > button {
-    background: none;
+    @extend .button-default;
+
     border: none;
-    color: $color-foreground;
+    border-radius: 50%;
     font-size: $font-size-large;
     line-height: $font-size-large;
     position: absolute;
     top: 15px;
     right: 20px;
+    height: 30px;
+    width: 30px;
     padding: 5px;
     margin: 0;
   }

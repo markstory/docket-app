@@ -32,7 +32,7 @@ function ProjectFilter() {
               itemElement={<li />}
               items={projects}
               renderItem={(project: Project) => (
-                <div key={project.slug}>
+                <div className="project-item" key={project.slug}>
                   <InertiaLink
                     key={project.slug}
                     href={`/projects/${project.slug}/todos`}

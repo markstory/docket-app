@@ -1,17 +1,39 @@
 .project-filter {
-  ul {
+  > ul {
     list-style: none;
+    margin-bottom: 8 * $space;
   }
 
-  .drag-ghost {
-    width: 200px;
-    height: 25px;
-
-    li {
-      padding: 0;
-    }
+  .drag-item {
+    margin: 0;
+    height: 40px;
   }
+
   .drag-placeholder {
-    height: 30px;
+    height: 40px;
   }
+
+}
+
+.project-filter .project-item,
+.drag-ghost .project-item {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  height: 40px;
+
+  .context-menu {
+    display: none;
+  }
+  &:hover .context-menu {
+    display: block;
+  }
+
+  .project-badge {
+    height: 40px;
+  }
+}
+
+.drag-ghost .project-item {
+    width: 200px;
 }

@@ -1,49 +1,43 @@
 .drag-ghost {
+  @extend .box-shadow-med;
+
   background: #fff;
   display: flex;
   position: absolute;
   padding: 6px;
   border-radius: $border-radius;
   border: 1px solid $color-border;
-  width: 600px;
-  opacity: 0.8;
+  width: max-content;
   cursor: grabbing;
 
   li {
     list-style: none;
+    margin-bottom: 0;
   }
 }
 
 .drag-placeholder {
   border: 2px dashed $color-border;
-  // TODO this should be controlled by the container
-  height: 65px;
   border-radius: $border-radius;
 }
 
 .drag-handle {
+  @extend .button-default;
   display: none;
+
   height: 30px;
   width: 30px;
   position: absolute;
-  top: -4px;
-  left: -25px;
-  background: transparent;
-  color: $color-foreground;
+  margin-top: 10px;
+  margin-left: -25px;
   line-height: 1;
   border: none;
   padding: 5px;
-  margin: 0;
-
-  &:hover {
-    color: $color-foreground;
-    background: $color-bg-shade;
-  }
 }
 
 .drag-item {
   display: flex;
-  position: relative;
+  align-items: center;
 
   &:hover .drag-handle {
     display: block;

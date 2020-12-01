@@ -5,11 +5,16 @@ $border-radius-large: 6px;
 
 $color-background: #fff;
 $color-border: #efefef;
+$color-border-med: #c3c3c3;
 $color-foreground: #212121;
 $color-bg-shade: rgba(0,0,0, 0.1);
+
+$color-button-default-hover: rgba(0, 0, 0, 0.12);
 
 $font-size-large: 18px;
 $font-size-med: 16px;
 $font-size-small: 14px;
 
-$space: 2px
+$space: 2px;
+
+$levels: 100, 200, 300, 400, 500;
