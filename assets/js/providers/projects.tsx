@@ -18,20 +18,10 @@ type ProviderProps = {
 
 function ProjectsProvider({projects, children}: ProviderProps) {
   const [state, setState] = useState<Project[]>(projects);
-  const [contextValue, setContextValue] = useState({
+  const contextValue = {
     state,
-    // Include the inner state setter so context can be
-    // updated later.
     setProjects: setState,
-  });
-
-  // When the internal state changes update context.
-  useEffect(() => {
-    setContextValue(prev => ({
-      ...prev,
-      state,
-    }));
-  }, [state]);
+  };
 
   return (
     <ProjectsContext.Provider value={contextValue}>{children}</ProjectsContext.Provider>
