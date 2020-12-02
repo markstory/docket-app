@@ -1,9 +1,41 @@
+button {
+  text-transform: none;
+  font-size: $font-size-small;
+  font-weight: normal;
+}
+
 .button-default {
   color: $color-foreground;
   background: transparent;
+  border: none;
 
   &:hover {
     color: $color-foreground;
     background: $color-button-default-hover;
   }
+}
+
+.button-secondary {
+  color: $color-foreground;
+  background: transparent;
+  border: 1px solid $color-border;
+
+  &:hover {
+    color: $color-foreground;
+    background: $color-button-default-hover;
+    border-color: $color-border-med;
+  }
+}
+
+.button-bar {
+  button + button {
+    margin-left: 4 * $space;
+  }
+}
+
+.button-bar-right {
+  @extend .button-bar;
+
+  display: flex;
+  justify-content: flex-end;
 }

@@ -38,8 +38,12 @@ export default function TodoItemsGroup({
         )}
         onChange={onReorder}
       />
-      <div>
-        {!showForm && <button onClick={() => setShowForm(true)}>Add Task</button>}
+      <div className="add-task">
+        {!showForm && (
+          <button className="button-secondary" onClick={() => setShowForm(true)}>
+            Add Task
+          </button>
+        )}
         {showForm && (
           <TodoItemAddForm
             defaultDate={defaultDate}

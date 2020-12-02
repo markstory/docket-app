@@ -51,7 +51,9 @@ function ProjectFilter() {
           )}
         </ProjectSorter>
       </ul>
-      <button onClick={showNewProject}>Create Project</button>
+      <button className="button-secondary" onClick={showNewProject}>
+        Create Project
+      </button>
       <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );

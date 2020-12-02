@@ -37,8 +37,12 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
         <label htmlFor="todoitem-date">Due on</label>
         <input id="todoitem-date" type="date" name="due_on" defaultValue={defaultDate} />
       </div>
-      <button type="submit">Save</button>
-      <button onClick={onCancel}>Cancel</button>
+      <div className="button-bar-right">
+        <button type="submit">Save</button>
+        <button className="button-secondary" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
