@@ -24,20 +24,36 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
   const [projects] = useProjects();
 
   return (
-    <form method="post" onSubmit={onSubmit}>
-      <input type="text" name="title" autoFocus required />
-      <select name="project_id" defaultValue={defaultProjectId}>
-        {projects.map(project => (
-          <option key={project.id} value={project.id}>
-            {project.name}
-          </option>
-        ))}
-      </select>
-      <div>
-        <label htmlFor="todoitem-date">Due on</label>
-        <input id="todoitem-date" type="date" name="due_on" defaultValue={defaultDate} />
+    <form className="todo-item-add" method="post" onSubmit={onSubmit}>
+      <div className="title">
+        <input
+          type="text"
+          name="title"
+          placeholder="Take out the trash"
+          autoFocus
+          required
+        />
       </div>
-      <div className="button-bar-right">
+      <div className="project">
+        <label htmlFor="todoitem-project">Project</label>
+        <select name="project_id" defaultValue={defaultProjectId}>
+          {projects.map(project => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="due-on">
+        <label htmlFor="todoitem-due-on">Due on</label>
+        <input
+          id="todoitem-due-on"
+          type="date"
+          name="due_on"
+          defaultValue={defaultDate}
+        />
+      </div>
+      <div className="button-bar">
         <button type="submit">Save</button>
         <button className="button-secondary" onClick={onCancel}>
           Cancel

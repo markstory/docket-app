@@ -1,0 +1,34 @@
+.todo-item-add {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 40px 1fr 1fr;
+  gap: $space * 4;
+
+  input, select {
+    margin-bottom: 0;
+  }
+  label {
+    font-size: $font-size-small;
+    margin-bottom: $space * 2;
+  }
+
+  .title {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+  }
+  .project {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+  .due-on {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+  }
+  .button-bar {
+    padding-top: $space * 4;
+    border-top: 1px solid $color-border;
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+  }
+}
+
