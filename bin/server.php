@@ -2,7 +2,7 @@
 
 $servers = [
     ['bin/cake', 'server'],
-    ['yarn', 'watch'],
+    ['npm', 'run', 'development', '--', '--watch'],
 ];
 
 $pids = [];
