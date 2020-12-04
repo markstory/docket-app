@@ -38,13 +38,12 @@
 }
 
 .context-menu .dropdown {
-  @extend .box-shadow-med;
-
   position: relative;
   background: $color-background;
   border: 1px solid $color-border-med;
   border-radius: $border-radius;
-  padding: 4 * $space;
+  box-shadow: $shadow-med;
+  padding: $space;
   min-width: 150px;
   max-width: 350px;
 

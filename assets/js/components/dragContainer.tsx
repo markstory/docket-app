@@ -213,22 +213,30 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
         ? PlaceholderPosition.TOP
         : PlaceholderPosition.BOTTOM;
 
+    const contents = (
+      <React.Fragment>
+        <button
+          className="drag-handle"
+          aria-label="Drag to reorder"
+          onMouseDown={event => this.startDrag(event, i)}
+        >
+          ::
+        </button>
+        {this.props.renderItem(item)}
+      </React.Fragment>
+    );
+
+    if (isGhost) {
+      return contents;
+    }
+
     return (
       <React.Fragment key={`${i}:${item.id}:${isGhost}`}>
         {position === PlaceholderPosition.TOP && placeholder}
         {React.cloneElement(
           itemElement,
           {className: isGhost ? '' : DRAG_CLASS},
-          <React.Fragment>
-            <button
-              className="drag-handle"
-              aria-label="Drag to reorder"
-              onMouseDown={event => this.startDrag(event, i)}
-            >
-              ::
-            </button>
-            {this.props.renderItem(item)}
-          </React.Fragment>
+          contents
         )}
         {position === PlaceholderPosition.BOTTOM && placeholder}
       </React.Fragment>

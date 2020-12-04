@@ -1,21 +1,3 @@
-.drag-ghost {
-  @extend .box-shadow-med;
-
-  background: #fff;
-  display: flex;
-  position: absolute;
-  padding: 6px;
-  border-radius: $border-radius;
-  border: 1px solid $color-border;
-  width: max-content;
-  cursor: grabbing;
-
-  li {
-    list-style: none;
-    margin-bottom: 0;
-  }
-}
-
 .drag-placeholder {
   border: 2px dashed $color-border;
   border-radius: $border-radius;
@@ -23,13 +5,11 @@
 
 .drag-handle {
   @extend .button-default;
-  display: none;
 
+  cursor: grab;
   height: 30px;
   width: 30px;
-  position: absolute;
-  margin-top: 10px;
-  margin-left: -25px;
+  margin-right: $space / 2;
   line-height: 1;
   border: none;
   padding: 5px;
@@ -38,9 +18,39 @@
 .drag-item {
   display: flex;
   align-items: center;
+}
 
-  &:hover .drag-handle {
-    display: block;
+.drag-ghost {
+  display: flex;
+  align-items: center;
+
+  background: #fff;
+  cursor: move;
+
+  position: absolute;
+  padding: $space / 2;
+  border-radius: $border-radius;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-high;
+  width: max-content;
+
+  li {
+    list-style: none;
+    margin-bottom: 0;
+  }
+
+  .drag-handle {
+    cursor: move;
   }
 }
 
+.drag-container-left-offset {
+  margin-left: -30px;
+
+  .drag-handle {
+    visibility: hidden;
+  }
+  &:hover .drag-handle {
+    visibility: visible;
+  }
+}

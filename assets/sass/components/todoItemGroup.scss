@@ -1,11 +1,11 @@
 .todo-item-group {
-  margin-bottom: $space * 6;
+  margin-bottom: $space * 2;
 
   .drag-placeholder {
     height: 70px;
   }
 
   .add-task {
-    margin-top: 4 * $space;
+    margin-top: $space;
   }
 }

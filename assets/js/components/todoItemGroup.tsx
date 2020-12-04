@@ -26,18 +26,20 @@ export default function TodoItemsGroup({
 
   return (
     <div className="todo-item-group">
-      <DragContainer
-        items={todoItems}
-        renderItem={(todo: TodoItem) => (
-          <TodoItemRow
-            key={todo.id}
-            todo={todo}
-            showProject={showProject}
-            showDueOn={showDueOn}
-          />
-        )}
-        onChange={onReorder}
-      />
+      <div className="drag-container-left-offset">
+        <DragContainer
+          items={todoItems}
+          renderItem={(todo: TodoItem) => (
+            <TodoItemRow
+              key={todo.id}
+              todo={todo}
+              showProject={showProject}
+              showDueOn={showDueOn}
+            />
+          )}
+          onChange={onReorder}
+        />
+      </div>
       <div className="add-task">
         {!showForm && (
           <button className="button-secondary" onClick={() => setShowForm(true)}>

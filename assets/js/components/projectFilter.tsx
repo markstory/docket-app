@@ -25,7 +25,7 @@ function ProjectFilter() {
         </li>
       </ul>
       <h3>Projects</h3>
-      <ul>
+      <ul className="drag-container-left-offset">
         <ProjectSorter>
           {({projects, handleOrderChange}) => (
             <DragContainer

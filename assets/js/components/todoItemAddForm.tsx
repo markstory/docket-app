@@ -24,7 +24,7 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
   const [projects] = useProjects();
 
   return (
-    <form className="todo-item-add" method="post" onSubmit={onSubmit}>
+    <form className="todoitem-add" method="post" onSubmit={onSubmit}>
       <div className="title">
         <input
           type="text"
@@ -36,7 +36,7 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
       </div>
       <div className="project">
         <label htmlFor="todoitem-project">Project</label>
-        <select name="project_id" defaultValue={defaultProjectId}>
+        <select id="todoitem-project" name="project_id" defaultValue={defaultProjectId}>
           {projects.map(project => (
             <option key={project.id} value={project.id}>
               {project.name}

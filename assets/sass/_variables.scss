@@ -3,6 +3,10 @@ $primary: #f8fafc;
 $border-radius: 3px;
 $border-radius-large: 6px;
 
+$shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
+$shadow-med: 0 4px 16px 0 rgba(18, 28, 45, 0.2);
+$shadow-high: 0 16px 24px 0 rgba(18, 28, 45, 0.2);
+
 $color-background: #fff;
 $color-border: #eee;
 $color-border-med: #c3c3c3;
@@ -15,6 +19,6 @@ $font-size-large: 18px;
 $font-size-med: 16px;
 $font-size-small: 14px;
 
-$space: 2px;
+$space: 8px;
 
 $levels: 100, 200, 300, 400, 500;

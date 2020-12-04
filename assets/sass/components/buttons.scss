@@ -30,7 +30,7 @@ button {
 
 .button-bar {
   button + button {
-    margin-left: 4 * $space;
+    margin-left: $space;
   }
 }
 

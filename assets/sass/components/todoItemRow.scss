@@ -4,12 +4,12 @@
   width: 100%;
 
   align-items: flex-start;
-  padding-top: $space * 4;
-  padding-bottom: $space * 4;
+  padding-top: $space;
+  padding-bottom: $space;
   border-bottom: 1px solid $color-border;
 
   > input[type="checkbox"] {
-    margin: $space * 3 $space * 4 0 0;
+    margin: $space * 0.75 $space 0 0;
   }
 
   .title {
@@ -19,8 +19,12 @@
 
   .attributes {
     display: grid;
-    gap: $space * 5;
+    gap: $space;
     grid-auto-flow: column;
+  }
+
+  .summary {
+    width: 100%;
   }
 }
 

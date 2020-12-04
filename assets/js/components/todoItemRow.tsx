@@ -35,7 +35,7 @@ function TodoItemRow({todo, showDueOn, showProject}: Props) {
         onClick={handleComplete}
         defaultChecked={todo.completed}
       />
-      <div onDoubleClick={handleDoubleClick}>
+      <div className="summary" onDoubleClick={handleDoubleClick}>
         {edit ? (
           <TodoItemInlineEdit todo={todo} onCancel={() => setEdit(!edit)} />
         ) : (
@@ -77,18 +77,35 @@ function TodoItemInlineEdit({todo, onCancel}: InlineEditProps) {
   const [projects] = useProjects();
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="title" defaultValue={todo.title} autoFocus />
-      <select name="project_id" defaultValue={todo.project.id}>
-        {projects.map(project => (
-          <option key={project.id} value={project.id}>
-            {project.name}
-          </option>
-        ))}
-      </select>
-      <input type="date" name="due_on" defaultValue={todo.due_on ?? undefined} />
-      <button type="submit">Save</button>
-      <button onClick={onCancel}>Cancel</button>
+    <form className="todoitem-add" onSubmit={handleSubmit}>
+      <div className="title">
+        <input type="text" name="title" defaultValue={todo.title} autoFocus />
+      </div>
+      <div className="project">
+        <label htmlFor="todoitem-project">Project</label>
+        <select name="project_id" defaultValue={todo.project.id}>
+          {projects.map(project => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="due-on">
+        <label htmlFor="todoitem-due-on">Due on</label>
+        <input
+          id="todoitem-due-on"
+          type="date"
+          name="due_on"
+          defaultValue={todo.due_on ?? undefined}
+        />
+      </div>
+      <div className="button-bar">
+        <button type="submit">Save</button>
+        <button className="button-default" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
