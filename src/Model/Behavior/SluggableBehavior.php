@@ -44,6 +44,8 @@ class SluggableBehavior extends Behavior
      * - overwrite: (boolean, optional) set to true if slugs should be re-generated when
      * updating an existing record. DEFAULTS TO: false
      *
+     * - reserved: (string[]) A list of values that cannot be used as a slug.
+     *
      * @var array
      */
     protected $_defaultConfig = [
@@ -52,6 +54,7 @@ class SluggableBehavior extends Behavior
         'separator' => '-',
         'length' => 100,
         'overwrite' => true,
+        'reserved' => [],
         'implementedMethods' => [
             'slug' => 'slug'
         ]
@@ -99,11 +102,12 @@ class SluggableBehavior extends Behavior
                 'conditions' => $conditions,
                 'fields' => array($pk, $this->getConfig('slug')),
             ));
-
             $sameUrls = $result->extract($this->getConfig('slug'))->toArray();
 
-            // If we have collissions
-            if (!empty($sameUrls)) {
+            $accepted = !empty($sameUrls) || !in_array($slug, $this->getConfig('reserved'));
+
+            // If we have collisions
+            if (!$accepted) {
                 $begginingSlug = $slug;
                 $index = 1;
 

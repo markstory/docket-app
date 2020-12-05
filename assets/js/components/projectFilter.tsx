@@ -1,11 +1,9 @@
 import React from 'react';
-import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project} from 'app/types';
-import ContextMenu from 'app/components/contextMenu';
 import DragContainer from 'app/components/dragContainer';
-import ProjectBadge from 'app/components/projectBadge';
+import ProjectItem from 'app/components/projectItem';
 import ProjectSorter from 'app/components/projectSorter';
 import NewProjectModal from 'app/components/modals/newProjectModal';
 
@@ -14,10 +12,6 @@ function ProjectFilter() {
   const showNewProject = () => {
     setShowModal(true);
   };
-
-  function handleArchive(project: Project) {
-    Inertia.post(`/projects/${project.slug}/archive`);
-  }
 
   return (
     <div className="project-filter">
@@ -37,26 +31,7 @@ function ProjectFilter() {
               itemElement={<li />}
               items={projects}
               renderItem={(project: Project) => (
-                <div className="project-item" key={project.slug}>
-                  <InertiaLink
-                    key={project.slug}
-                    href={`/projects/${project.slug}/todos`}
-                  >
-                    <ProjectBadge project={project} />
-                  </InertiaLink>
-                  <ContextMenu>
-                    <li>Edit Project</li>
-                    <li>
-                      <button
-                        className="button-default"
-                        onClick={() => handleArchive(project)}
-                      >
-                        Archive Project
-                      </button>
-                    </li>
-                    <li>Delete Project</li>
-                  </ContextMenu>
-                </div>
+                <ProjectItem key={project.slug} project={project} />
               )}
               onChange={handleOrderChange}
             />

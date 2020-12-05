@@ -14,6 +14,36 @@ use Cake\Http\Exception\NotFoundException;
  */
 class ProjectsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->loadModel('TodoItems');
+    }
+
+    /**
+     * View method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function view()
+    {
+        $slug = $this->request->getParam('slug');
+        $project = $this->Projects->findBySlug($slug)->first();
+        $this->Authorization->can($project);
+
+        $query = $this->Authorization
+            ->applyScope($this->TodoItems->find(), 'index')
+            ->contain('Projects')
+            ->find('incomplete')
+            ->find('forProject', ['slug' => $slug])
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.child_order');
+
+        $todoItems = $this->paginate($query);
+
+        $this->set(compact('project', 'todoItems'));
+    }
+
     /**
      * Add method
      *
@@ -59,6 +89,22 @@ class ProjectsController extends AppController
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
         }
         $this->set(compact('project'));
+    }
+
+    /**
+     * Archived projects
+     *
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function archived()
+    {
+        $query = $this->Projects->find('archived');
+        $query = $this->Authorization->applyScope($query, 'index');
+
+        $archived = $this->paginate($query);
+
+        $this->set('archived', $archived);
     }
 
     /**

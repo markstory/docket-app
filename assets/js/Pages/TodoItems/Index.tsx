@@ -30,20 +30,18 @@ export default function TodoItemsIndex({todoItems}: Props) {
   const dateStrings = Object.keys(byDate).sort();
   const dates = dateStrings.map(value => new Date(`${value} 00:00:00`));
 
-  const first = dates[0].getTime();
+  const first = (dates.length ? dates[0] : new Date()).getTime();
   // XXX: Time based views are for 28 days at a time.
   const end = first + 28 * ONE_DAY_IN_MS;
 
   const dateItems: DateItems[] = [];
-  if (dates.length) {
-    for (let i = first; i < end; i += ONE_DAY_IN_MS) {
-      const date = new Date(i);
-      const dateKey = toDateString(date);
-      if (byDate.hasOwnProperty(dateKey)) {
-        dateItems.push({date, items: byDate[dateKey]});
-      } else {
-        dateItems.push({date, items: []});
-      }
+  for (let i = first; i < end; i += ONE_DAY_IN_MS) {
+    const date = new Date(i);
+    const dateKey = toDateString(date);
+    if (byDate.hasOwnProperty(dateKey)) {
+      dateItems.push({date, items: byDate[dateKey]});
+    } else {
+      dateItems.push({date, items: []});
     }
   }
 

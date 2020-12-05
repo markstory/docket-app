@@ -63,9 +63,18 @@ class ProjectsControllerTest extends TestCase
      *
      * @return void
      */
-    public function testAdd(): void
+    public function testAddReserved(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/add", [
+            'name' => 'add',
+            'color' => '663366',
+        ]);
+        $this->assertResponseOk();
+        $project = $this->Projects->find()->first();
+        $this->assertEquals('add', $project->name);
+        $this->assertNotEquals('add', $project->slug);
     }
 
     /**
@@ -86,6 +95,20 @@ class ProjectsControllerTest extends TestCase
     public function testDelete(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    public function testArchived()
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $work = $this->makeProject('Work', 1, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/projects/{$home->slug}/archived");
+
+        $this->assertResponseOk();
+        $archived = $this->viewVariable('archived');
+        $this->assertCount(1, $archived);
     }
 
     public function testArchive()

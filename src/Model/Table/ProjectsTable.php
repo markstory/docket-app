@@ -50,6 +50,7 @@ class ProjectsTable extends Table
         $this->addBehavior('Timestamp');
         $this->addBehavior('Sluggable', [
             'label' => ['name'],
+            'reserved' => ['add', 'reorder'],
         ]);
 
         $this->belongsTo('Users', [
@@ -129,6 +130,11 @@ class ProjectsTable extends Table
     public function findActive(Query $query): Query
     {
         return $query->where(['Projects.archived' => false]);
+    }
+
+    public function findArchived(Query $query): Query
+    {
+        return $query->where(['Projects.archived' => true]);
     }
 
     /**
