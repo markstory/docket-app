@@ -1,4 +1,5 @@
 import React from 'react';
+import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project} from 'app/types';
@@ -13,6 +14,10 @@ function ProjectFilter() {
   const showNewProject = () => {
     setShowModal(true);
   };
+
+  function handleArchive(project: Project) {
+    Inertia.post(`/projects/${project.slug}/archive`);
+  }
 
   return (
     <div className="project-filter">
@@ -41,7 +46,14 @@ function ProjectFilter() {
                   </InertiaLink>
                   <ContextMenu>
                     <li>Edit Project</li>
-                    <li>Archive Project</li>
+                    <li>
+                      <button
+                        className="button-default"
+                        onClick={() => handleArchive(project)}
+                      >
+                        Archive Project
+                      </button>
+                    </li>
                     <li>Delete Project</li>
                   </ContextMenu>
                 </div>
@@ -54,6 +66,7 @@ function ProjectFilter() {
       <button className="button-secondary" onClick={showNewProject}>
         Create Project
       </button>
+      <a href="/projects/archived">Archived Projects</a>
       <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
