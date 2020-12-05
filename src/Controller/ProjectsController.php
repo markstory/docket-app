@@ -29,7 +29,7 @@ class ProjectsController extends AppController
     {
         $slug = $this->request->getParam('slug');
         $project = $this->Projects->findBySlug($slug)->first();
-        $this->Authorization->can($project);
+        $this->Authorization->authorize($project);
 
         $query = $this->Authorization
             ->applyScope($this->TodoItems->find(), 'index')
@@ -68,15 +68,13 @@ class ProjectsController extends AppController
     /**
      * Edit method
      *
-     * @param string|null $id Project id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit()
     {
-        $project = $this->Projects->get($id, [
-            'contain' => [],
-        ]);
+        $slug = $this->request->getParam('slug');
+        $project = $this->Projects->findBySlug($slug)->first();
         $this->Authorization->authorize($project);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -84,11 +82,13 @@ class ProjectsController extends AppController
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('The project has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['_name' => 'todoitems:upcoming']);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
+            $this->set('errors', $project->getErrors());
         }
-        $this->set(compact('project'));
+        $referer = $this->referer(['_name' => 'todoitems:upcoming']);
+        $this->set(compact('project', 'referer'));
     }
 
     /**

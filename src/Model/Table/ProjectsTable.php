@@ -50,7 +50,7 @@ class ProjectsTable extends Table
         $this->addBehavior('Timestamp');
         $this->addBehavior('Sluggable', [
             'label' => ['name'],
-            'reserved' => ['add', 'reorder'],
+            'reserved' => ['archived', 'add', 'reorder'],
         ]);
 
         $this->belongsTo('Users', [

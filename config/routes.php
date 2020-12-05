@@ -68,10 +68,11 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->post('/projects/add', 'Projects::add', 'projects:add');
     $builder->post('/projects/reorder', 'Projects::reorder', 'projects:reorder');
+    $builder->get('/projects/archived', 'Projects::archived', 'projects:archived');
 
-    $builder->get('/projects/{slug}/archived', 'Projects::archived', 'projects:archived');
     $builder->post('/projects/{slug}/archive', 'Projects::archive', 'projects:archive');
     $builder->post('/projects/{slug}/unarchive', 'Projects::unarchive', 'projects:unarchive');
+    $builder->get('/projects/{slug}/edit', 'Projects::edit', 'projects:edit');
     $builder->get('/projects/{slug}', 'Projects::view', 'projects:view');
 
     /*
