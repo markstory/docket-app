@@ -18,15 +18,15 @@ trait FactoryTrait
         ]);
     }
 
-    protected function makeProject($title, $userId, $ranking = 0)
+    protected function makeProject($title, $userId, $ranking = 0, $props = [])
     {
         $projects = TableRegistry::get('Projects');
-        $project = $projects->newEntity([
+        $project = $projects->newEntity(array_merge([
             'user_id' => $userId,
             'name' => $title,
             'color' => '663366',
             'ranking' => $ranking,
-        ]);
+        ], $props));
 
         return $projects->saveOrFail($project);
     }

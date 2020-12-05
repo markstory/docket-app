@@ -83,6 +83,28 @@ class ProjectsController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    public function archive()
+    {
+        $slug = $this->request->getParam('slug');
+        $project = $this->Projects->findBySlug($slug)->first();
+        $this->Authorization->authorize($project);
+
+        $project->archive();
+        $this->Projects->save($project);
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function unarchive()
+    {
+        $slug = $this->request->getParam('slug');
+        $project = $this->Projects->findBySlug($slug)->first();
+        $this->Authorization->authorize($project, 'archive');
+
+        $project->unarchive();
+        $this->Projects->save($project);
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
     public function reorder()
     {
         $projectIds = $this->request->getData('projects');

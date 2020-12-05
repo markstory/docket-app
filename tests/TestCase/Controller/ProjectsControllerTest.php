@@ -88,6 +88,52 @@ class ProjectsControllerTest extends TestCase
         $this->markTestIncomplete('Not implemented yet.');
     }
 
+    public function testArchive()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/archive");
+        $this->assertRedirect('/projects');
+
+        $result = $this->Projects->find()->where(['id' => $home->id])->first();
+        $this->assertTrue($result->archived);
+    }
+
+    public function testArchivePermission()
+    {
+        $home = $this->makeProject('Home', 2, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/archive");
+        $this->assertResponseCode(403);
+    }
+
+    public function testUnarchive()
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/unarchive");
+        $this->assertRedirect('/projects');
+
+        $result = $this->Projects->find()->where(['id' => $home->id])->first();
+        $this->assertFalse($result->archived);
+    }
+
+    public function testUnArchivePermission()
+    {
+        $home = $this->makeProject('Home', 2, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/unarchive");
+        $this->assertResponseCode(403);
+    }
+
     public function testReorderSuccess()
     {
         $home = $this->makeProject('Home', 1, 0);

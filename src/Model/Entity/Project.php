@@ -48,4 +48,14 @@ class Project extends Entity
         'todo_items' => true,
         'todo_labels' => true,
     ];
+
+    public function archive()
+    {
+        $this->archived = true;
+    }
+
+    public function unarchive()
+    {
+        $this->archived = false;
+    }
 }

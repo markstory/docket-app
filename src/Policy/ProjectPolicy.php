@@ -42,6 +42,18 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
+    public function canArchive(IdentityInterface $user, Project $project)
+    {
+        return $user->id === $project->user_id;
+    }
+
+    /**
+     * Check if $user can delete Project
+     *
+     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\Project $project
+     * @return bool
+     */
     public function canDelete(IdentityInterface $user, Project $project)
     {
         return $user->id === $project->user_id;
