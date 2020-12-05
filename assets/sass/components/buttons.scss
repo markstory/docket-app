@@ -28,6 +28,12 @@ button {
   }
 }
 
+.button-muted {
+  color: $color-muted;
+  border: none;
+  font-size: $font-size-small;
+}
+
 .button-bar {
   button + button {
     margin-left: $space;
@@ -39,4 +45,21 @@ button {
 
   display: flex;
   justify-content: flex-end;
+}
+
+.button-bar-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  a, button {
+    flex-shrink: 1;
+  }
+
+  a + a,
+  a + button,
+  button + a,
+  button + button {
+    margin-top: $space;
+  }
 }

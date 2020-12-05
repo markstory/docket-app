@@ -72,7 +72,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->post('/projects/{slug}/archive', 'Projects::archive', 'projects:archive');
     $builder->post('/projects/{slug}/unarchive', 'Projects::unarchive', 'projects:unarchive');
-    $builder->get('/projects/{slug}/edit', 'Projects::edit', 'projects:edit');
+    $builder->connect('/projects/{slug}/edit', 'Projects::edit', ['_name' => 'projects:edit']);
     $builder->get('/projects/{slug}', 'Projects::view', 'projects:view');
 
     /*

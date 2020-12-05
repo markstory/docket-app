@@ -38,10 +38,14 @@ function ProjectFilter() {
           )}
         </ProjectSorter>
       </ul>
-      <button className="button-secondary" onClick={showNewProject}>
-        Create Project
-      </button>
-      <a href="/projects/archived">Archived Projects</a>
+      <div className="button-bar-vertical">
+        <a className="button-muted" href="/projects/archived">
+          Archived Projects
+        </a>
+        <button className="button-secondary" onClick={showNewProject}>
+          Create Project
+        </button>
+      </div>
       <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );

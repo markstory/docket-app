@@ -57,7 +57,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
               type="checkbox"
               name="archived"
               id="project-archived"
-              checked={project.archived}
+              defaultChecked={project.archived}
             />
           </div>
           <button type="submit">Save</button>
