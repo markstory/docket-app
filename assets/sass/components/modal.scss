@@ -6,7 +6,7 @@
   left: 60px;
   right: 60px;
   bottom: 60px;
-  padding: 20px;
+  padding: 40px 20px 20px 20px;
   border-radius: $border-radius-large;
 
   & > button {
@@ -17,7 +17,7 @@
     font-size: $font-size-large;
     line-height: $font-size-large;
     position: absolute;
-    top: 15px;
+    top: 10px;
     right: 20px;
     height: 30px;
     width: 30px;

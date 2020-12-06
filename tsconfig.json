@@ -4,6 +4,7 @@
     "module": "esnext",
     "target": "es6",
     "jsx": "react",
+    "importHelpers": true,
     "moduleResolution": "node",
     "typeRoots": ["./node_modules/@types"],
     "noEmitHelpers": true,

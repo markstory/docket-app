@@ -1,9 +1,10 @@
 import React from 'react';
 import Modal from 'react-modal';
+import {Inertia} from '@inertiajs/inertia';
 
 import {Project, ValidationErrors} from 'app/types';
+import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
-import {Inertia} from '@inertiajs/inertia';
 
 type Props = {
   project: Project;
@@ -38,7 +39,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
               required
               defaultValue={project.name}
             />
-            {errors?.name && <div>{errors.name}</div>}
+            <FormError errors={errors} field="name" />
           </div>
           <div>
             <label htmlFor="project-color">Color</label>
@@ -49,7 +50,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
               required
               defaultValue={project.color}
             />
-            {errors?.color && <div>{errors.color}</div>}
+            <FormError errors={errors} field="color" />
           </div>
           <div>
             <label htmlFor="project-archived">Archived</label>

@@ -61,6 +61,7 @@ class ProjectsController extends AppController
                 return $this->response->withStatus(201);
             }
 
+            // TODO this should switch to a page load. Code is much simpler that way.
             return $this->validationErrorResponse($project->getErrors());
         }
     }
@@ -85,7 +86,7 @@ class ProjectsController extends AppController
                 return $this->redirect(['_name' => 'todoitems:upcoming']);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
-            $this->set('errors', $project->getErrors());
+            $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
         $referer = $this->referer(['_name' => 'todoitems:upcoming']);
         $this->set(compact('project', 'referer'));

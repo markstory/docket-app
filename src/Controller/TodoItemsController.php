@@ -65,6 +65,8 @@ class TodoItemsController extends AppController
 
                 return $this->redirect($this->referer(['action' => 'index']));
             }
+            // TODO this doesn't look like it will handle validation
+            // errors well.
             $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
         }
         $projects = $this->TodoItems->Projects->find('list', ['limit' => 200]);
@@ -88,6 +90,29 @@ class TodoItemsController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $todoItem->complete();
+            if (!$this->TodoItems->save($todoItem)) {
+                $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
+            }
+        }
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    /**
+     * Complete a todoitem as incomplete.
+     *
+     * @param string|null $id Todo Item id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function incomplete($id = null)
+    {
+        $todoItem = $this->TodoItems->get($id, [
+            'contain' => ['Projects'],
+        ]);
+        $this->Authorization->can($todoItem, 'edit');
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $todoItem->incomplete();
             if (!$this->TodoItems->save($todoItem)) {
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
@@ -130,7 +155,7 @@ class TodoItemsController extends AppController
     }
 
     /**
-     * Edit method
+     * Called as an XHR request from the view page.
      *
      * @param string|null $id Todo Item id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
@@ -138,20 +163,17 @@ class TodoItemsController extends AppController
      */
     public function edit($id = null)
     {
+        $this->request->allowMethod(['post', 'put', 'patch']);
         $todoItem = $this->TodoItems->get($id, [
             'contain' => ['TodoLabels', 'Projects'],
         ]);
-        $this->Authorization->can($todoItem);
+        $this->Authorization->authorize($todoItem);
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
-            if ($this->TodoItems->save($todoItem)) {
-                $this->Flash->success(__('The todo item has been saved.'));
-            } else {
-                $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
-            }
+        $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
+        if ($this->TodoItems->save($todoItem)) {
+            return $this->response->withStatus(200);
         }
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->validationErrorResponse($todoItem->getErrors());
     }
 
     /**
@@ -167,7 +189,8 @@ class TodoItemsController extends AppController
             'contain' => ['Projects', 'TodoLabels', 'TodoComments', 'TodoSubtasks'],
         ]);
 
-        $this->set(compact('todoItem'));
+        $this->set(compact('todoItem',));
+        $this->set('referer', $this->referer(['action' => 'index']));
     }
 
     /**

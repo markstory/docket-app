@@ -63,7 +63,11 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/todos/reorder', 'TodoItems::reorder', 'todoitems:reorder');
     $builder->post('/todos/{id}/complete', 'TodoItems::complete', 'todoitems:complete')
         ->setPass(['id']);
+    $builder->post('/todos/{id}/incomplete', 'TodoItems::incomplete', 'todoitems:incomplete')
+        ->setPass(['id']);
     $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
+        ->setPass(['id']);
+    $builder->get('/todos/{id}/view', 'TodoItems::view', 'todoitems:view')
         ->setPass(['id']);
 
     $builder->post('/projects/add', 'Projects::add', 'projects:add');

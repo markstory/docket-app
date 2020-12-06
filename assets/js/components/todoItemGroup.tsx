@@ -29,10 +29,10 @@ export default function TodoItemsGroup({
       <div className="drag-container-left-offset">
         <DragContainer
           items={todoItems}
-          renderItem={(todo: TodoItem) => (
+          renderItem={(todoItem: TodoItem) => (
             <TodoItemRow
-              key={todo.id}
-              todo={todo}
+              key={todoItem.id}
+              todoItem={todoItem}
               showProject={showProject}
               showDueOn={showDueOn}
             />

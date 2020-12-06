@@ -30,6 +30,9 @@ function LoggedIn({children}: Props) {
 /**
  * For the ProjectsProvider component to work it needs to be
  * wrapping components that want to call useProjects().
+ *
+ * For other elements to be able to access projects they need
+ * to be another layers of components down.
  */
 function Contents({children}: Props) {
   const {flash} = usePage<SharedPageProps>().props;

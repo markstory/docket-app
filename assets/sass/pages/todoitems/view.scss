@@ -1,0 +1,25 @@
+.todoitems-view {
+  .summary {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .completed {
+    margin: 12px $space 0 0;
+  }
+
+  .attributes {
+    display: grid;
+    gap: $space;
+    grid-auto-flow: row;
+  }
+
+  .notes {
+    margin: $space 0 0 $space * 2.5;
+
+    textarea {
+      height: max-content;
+    }
+  }
+
+}

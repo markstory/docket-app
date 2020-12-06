@@ -55,4 +55,10 @@ class TodoItem extends Entity
         $this->completed = true;
         $this->due_on = new FrozenTime();
     }
+
+    public function incomplete(): void
+    {
+        $this->completed = false;
+        $this->due_on = new FrozenTime();
+    }
 }
