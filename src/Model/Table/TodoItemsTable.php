@@ -62,8 +62,10 @@ class TodoItemsTable extends Table
         ]);
         $this->hasMany('TodoSubtasks', [
             'foreignKey' => 'todo_item_id',
+            'propertyName' => 'subtasks',
         ]);
         $this->belongsToMany('TodoLabels', [
+            'propertyName' => 'labels',
             'foreignKey' => 'todo_item_id',
             'targetForeignKey' => 'todo_label_id',
             'joinTable' => 'todo_items_todo_labels',

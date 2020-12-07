@@ -70,6 +70,11 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->get('/todos/{id}/view', 'TodoItems::view', 'todoitems:view')
         ->setPass(['id']);
 
+    $builder->post('/todos/{id}/subtasks', 'TodoSubtasks::add', 'todosubtasks:add')
+        ->setPass(['id']);
+    $builder->post('/todos/{id}/subtasks/reorder', 'TodoSubtasks::reorder', 'todosubtasks:reorder')
+        ->setPass(['id']);
+
     $builder->post('/projects/add', 'Projects::add', 'projects:add');
     $builder->post('/projects/reorder', 'Projects::reorder', 'projects:reorder');
     $builder->get('/projects/archived', 'Projects::archived', 'projects:archived');

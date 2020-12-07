@@ -104,7 +104,7 @@ class ProjectsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->get("/projects/{$home->slug}/archived");
+        $this->get("/projects/archived");
 
         $this->assertResponseOk();
         $archived = $this->viewVariable('archived');
