@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Inertia} from '@inertiajs/inertia';
 
 import {TodoItemDetailed, TodoSubtask} from 'app/types';
 import DragContainer from 'app/components/dragContainer';
@@ -21,7 +22,11 @@ export default function TodoItemSubtasks({todoItem}: Props) {
             <DragContainer
               items={items}
               renderItem={(subtask: TodoSubtask) => (
-                <TodoItemSubtaskRow key={subtask.id} subtask={subtask} />
+                <TodoItemSubtaskRow
+                  key={subtask.id}
+                  subtask={subtask}
+                  todoItemId={todoItem.id}
+                />
               )}
               onChange={handleOrderChange}
             />
@@ -43,9 +48,24 @@ export default function TodoItemSubtasks({todoItem}: Props) {
 }
 
 type RowProps = {
+  todoItemId: number;
   subtask: TodoSubtask;
 };
 
-function TodoItemSubtaskRow({subtask}: RowProps) {
-  return <div>{subtask.title}</div>;
+function TodoItemSubtaskRow({subtask, todoItemId}: RowProps) {
+  function handleComplete() {
+    Inertia.post(`/todos/${todoItemId}/subtasks/${subtask.id}/toggle`);
+  }
+
+  return (
+    <div>
+      <input
+        type="checkbox"
+        onClick={handleComplete}
+        value="1"
+        defaultChecked={subtask.completed}
+      />
+      {subtask.title}
+    </div>
+  );
 }

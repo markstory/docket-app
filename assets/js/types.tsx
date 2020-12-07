@@ -29,6 +29,7 @@ export type TodoSubtask = {
   id: number;
   title: string;
   body: string;
+  completed: boolean;
 };
 
 export type TodoItemDetailed = TodoItem & {

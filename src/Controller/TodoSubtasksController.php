@@ -51,6 +51,34 @@ class TodoSubtasksController extends AppController
     }
 
     /**
+     * Toggle a subtask as complete.
+     *
+     * @param string|null $todoId Todo Item id.
+     * @param string|null $id Subtask id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function toggle($todoItemId, $id = null)
+    {
+        $this->request->allowMethod(['post']);
+        $item = $this->getTodoItem($todoItemId);
+
+        $subtask = $this->TodoSubtasks
+            ->find()
+            ->where(['TodoSubtasks.id' => $id, 'TodoSubtasks.todo_item_id' => $item->id])
+            ->firstOrFail();
+
+        $subtask->toggle();
+        $this->TodoSubtasks->saveOrFail($subtask);
+
+        return $this->redirect($this->referer([
+            'controller' => 'TodoItems',
+            'action' => 'view',
+            'id' => $todoItemId
+        ]));
+    }
+
+    /**
      * Edit method
      *
      * @param string|null $id Todo Subtask id.

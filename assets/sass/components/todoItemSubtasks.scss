@@ -2,6 +2,9 @@
   .drag-placeholder {
     height: 40px;
   }
+  input[type=checkbox] {
+    margin-right: $space;
+  }
   .add-task {
     margin-top: $space;
   }

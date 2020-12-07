@@ -74,6 +74,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         ->setPass(['id']);
     $builder->post('/todos/{id}/subtasks/reorder', 'TodoSubtasks::reorder', 'todosubtasks:reorder')
         ->setPass(['id']);
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/toggle', 'TodoSubtasks::toggle', 'todosubtasks:toggle')
+        ->setPass(['todoItemId', 'id']);
 
     $builder->post('/projects/add', 'Projects::add', 'projects:add');
     $builder->post('/projects/reorder', 'Projects::reorder', 'projects:reorder');

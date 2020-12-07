@@ -79,6 +79,26 @@ class TodoSubtasksControllerTest extends TestCase
     }
 
     /**
+     * Test toggle method
+     *
+     * @return void
+     */
+    public function testToggle(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test toggle method
+     *
+     * @return void
+     */
+    public function testTogglePermissions(): void
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
      * Test edit method
      *
      * @return void

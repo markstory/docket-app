@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property string|null $title
  * @property string|null $body
  * @property int $ranking
+ * @property bool $completed
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -34,8 +35,14 @@ class TodoSubtask extends Entity
         'title' => true,
         'body' => true,
         'ranking' => true,
+        'completed' => true,
         'created' => true,
         'modified' => true,
         'todo_item' => true,
     ];
+
+    public function toggle()
+    {
+        $this->completed = !$this->completed;
+    }
 }
