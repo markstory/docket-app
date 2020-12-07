@@ -189,7 +189,7 @@ class TodoItemsController extends AppController
             'contain' => ['Projects', 'TodoLabels', 'TodoComments', 'TodoSubtasks'],
         ]);
 
-        $this->set(compact('todoItem',));
+        $this->set(compact('todoItem'));
         $this->set('referer', $this->referer(['action' => 'index']));
     }
 

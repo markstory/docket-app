@@ -25,6 +25,16 @@ export type TodoItem = {
   project: Project;
 };
 
+export type TodoSubtask = {
+  id: number;
+  title: string;
+  body: string;
+};
+
+export type TodoItemDetailed = TodoItem & {
+  subtasks: TodoSubtask[];
+};
+
 export type User = {
   id: number;
   email: string;

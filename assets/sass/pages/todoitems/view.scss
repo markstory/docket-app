@@ -2,6 +2,10 @@
   .summary {
     display: flex;
     align-items: flex-start;
+
+    h3 {
+      margin-bottom: $space;
+    }
   }
 
   .completed {
@@ -11,7 +15,7 @@
   .attributes {
     display: grid;
     gap: $space;
-    grid-auto-flow: row;
+    grid-auto-flow: column;
   }
 
   .notes {
@@ -25,5 +29,4 @@
       height: max-content;
     }
   }
-
 }

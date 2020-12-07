@@ -2,7 +2,9 @@ button {
   text-transform: none;
   font-size: $font-size-small;
   font-weight: normal;
+
   margin-bottom: 0;
+  padding: 0 $space * 1.5;
 }
 
 .button-default {

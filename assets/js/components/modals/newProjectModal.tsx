@@ -29,7 +29,6 @@ function NewProjectModal({showModal, onClose}: Props) {
         Inertia.reload();
       })
       .catch(error => {
-        console.log(error, error.response);
         if (error.response) {
           setErrors(error.response.data.errors);
         }

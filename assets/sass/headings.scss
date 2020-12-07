@@ -1,0 +1,11 @@
+.heading-actions {
+  display: flex;
+  align-items: center;
+
+  // Accomodate button sizes.
+  min-height: 38px;
+
+  button {
+    margin-left: $space;
+  }
+}

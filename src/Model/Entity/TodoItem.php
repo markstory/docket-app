@@ -45,9 +45,9 @@ class TodoItem extends Entity
         'created' => true,
         'modified' => true,
         'project' => true,
-        'todo_comments' => true,
-        'todo_subtasks' => true,
-        'todo_labels' => true,
+        'comments' => true,
+        'subtasks' => true,
+        'labels' => true,
     ];
 
     public function complete(): void
