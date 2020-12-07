@@ -22,7 +22,7 @@ export default function TodoItemNotes({todoItem}: Props) {
   const lines = todoItem.body ? todoItem.body.split('\n') : ['Click to add notes'];
   if (!editing) {
     return (
-      <div className="notes">
+      <div className="todoitem-notes">
         <h4 className="heading-actions">
           Notes
           <button className="button-default" onClick={() => setEditing(true)}>
@@ -39,7 +39,7 @@ export default function TodoItemNotes({todoItem}: Props) {
   }
 
   return (
-    <form className="notes" onSubmit={handleSave}>
+    <form className="todoitem-notes" onSubmit={handleSave}>
       <h4 className="heading-actions">Notes</h4>
       <textarea
         name="body"

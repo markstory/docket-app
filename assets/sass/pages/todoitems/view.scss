@@ -18,15 +18,9 @@
     grid-auto-flow: column;
   }
 
-  .notes {
-    margin: $space 0 0 $space * 2.5;
-    font-size: $font-size-med;
-    line-height: 1.5;
-
-    textarea {
-      font-size: $font-size-med;
-      line-height: 1.5;
-      height: max-content;
-    }
+  .todoitem-subtasks,
+  .todoitem-notes {
+    margin: $space * 2 0 0 $space * 2.5;
   }
+
 }

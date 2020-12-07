@@ -1,6 +1,7 @@
 .heading-actions {
   display: flex;
   align-items: center;
+  margin-bottom: $space;
 
   // Accomodate button sizes.
   min-height: 38px;

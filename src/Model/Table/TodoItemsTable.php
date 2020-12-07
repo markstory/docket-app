@@ -63,6 +63,7 @@ class TodoItemsTable extends Table
         $this->hasMany('TodoSubtasks', [
             'foreignKey' => 'todo_item_id',
             'propertyName' => 'subtasks',
+            'sort' => ['TodoSubtasks.ranking' => 'ASC']
         ]);
         $this->belongsToMany('TodoLabels', [
             'propertyName' => 'labels',
@@ -124,12 +125,15 @@ class TodoItemsTable extends Table
         }
         return $query
             ->where(['Projects.slug' => $options['slug']])
-            ->orderDesc('TodoItems.child_order');
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.child_order');
     }
 
     public function findIncomplete(Query $query): Query
     {
-        return $query->where(['TodoItems.completed' => false]);
+        return $query->where(['TodoItems.completed' => false])
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.day_order');
     }
 
     public function findDueToday(Query $query): Query
