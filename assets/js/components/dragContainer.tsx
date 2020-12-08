@@ -47,18 +47,18 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   };
 
   componentDidMount() {
-    if (!this.portal) {
-      const portal = document.createElement('div');
+    let portal: HTMLElement | null = document.getElementById('drag-container-portal');
+    if (!portal) {
+      portal = document.createElement('div');
 
+      portal.setAttribute('id', 'drag-container-portal');
       portal.style.position = 'absolute';
       portal.style.top = '0';
       portal.style.left = '0';
       portal.style.zIndex = '1000';
-
-      this.portal = portal;
-
-      document.body.appendChild(this.portal);
+      document.body.appendChild(portal);
     }
+    this.portal = portal;
   }
 
   componentWillUnmount() {
