@@ -1,3 +1,4 @@
+.button,
 button {
   text-transform: none;
   font-size: $font-size-small;
@@ -31,9 +32,15 @@ button {
 }
 
 .button-muted {
+  background: none;
   color: $color-muted;
   border: none;
   font-size: $font-size-small;
+
+  &:hover {
+    color: $color-foreground;
+    background: none;
+  }
 }
 
 .button-bar {

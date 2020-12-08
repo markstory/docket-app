@@ -58,7 +58,7 @@ function TodoItemSubtaskRow({subtask, todoItemId}: RowProps) {
   }
 
   return (
-    <div>
+    <div className="subtask-row">
       <input
         type="checkbox"
         onClick={handleComplete}

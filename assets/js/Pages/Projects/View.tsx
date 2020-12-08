@@ -14,6 +14,9 @@ export default function TodoItemsIndex({project, todoItems}: Props) {
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
+      <div className="attributes">
+        {project.archived && <span className="archived">Archived</span>}
+      </div>
       <TodoItemSorter todoItems={todoItems} scope="child">
         {({handleOrderChange, items}) => (
           <TodoItemGroup

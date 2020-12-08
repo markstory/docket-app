@@ -1,8 +1,21 @@
 .todoitem-subtasks {
-  input[type=checkbox] {
-    margin-right: $space;
-  }
   .add-task {
     margin-top: $space;
   }
+}
+
+.subtask-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+
+  min-height: 30px;
+
+  input[type=checkbox] {
+    margin-right: $space;
+  }
+}
+
+.drag-ghost .subtask-row {
+  width: 300px;
 }

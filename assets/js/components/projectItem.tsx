@@ -14,6 +14,9 @@ export default function ProjectItem({project}: Props) {
   function handleArchive(project: Project) {
     Inertia.post(`/projects/${project.slug}/archive`);
   }
+  function handleUnarchive(project: Project) {
+    Inertia.post(`/projects/${project.slug}/unarchive`);
+  }
 
   return (
     <div className="project-item">
@@ -24,12 +27,19 @@ export default function ProjectItem({project}: Props) {
         <li>
           <InertiaLink href={`/projects/${project.slug}/edit`}>Edit Project</InertiaLink>
         </li>
-        <li>
-          <button className="button-default" onClick={() => handleArchive(project)}>
-            Archive Project
-          </button>
-        </li>
-        <li>Delete Project</li>
+        {project.archived ? (
+          <li>
+            <button className="button-default" onClick={() => handleUnarchive(project)}>
+              Unarchive Project
+            </button>
+          </li>
+        ) : (
+          <li>
+            <button className="button-default" onClick={() => handleArchive(project)}>
+              Archive Project
+            </button>
+          </li>
+        )}
       </ContextMenu>
     </div>
   );

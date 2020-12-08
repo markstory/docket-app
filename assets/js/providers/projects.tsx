@@ -1,4 +1,4 @@
-import React, {useState, createContext, useContext, useEffect} from 'react';
+import React, {useState, createContext, useContext} from 'react';
 
 import {Project} from 'app/types';
 
@@ -17,6 +17,8 @@ type ProviderProps = {
 };
 
 function ProjectsProvider({projects, children}: ProviderProps) {
+  // TODO when props change the context data isn't changing.
+  // Perhaps this shouldn't be using state?
   const [state, setState] = useState<Project[]>(projects);
   const contextValue = {
     state,

@@ -39,12 +39,12 @@ function ProjectFilter() {
         </ProjectSorter>
       </ul>
       <div className="button-bar-vertical">
-        <a className="button-muted" href="/projects/archived">
-          Archived Projects
-        </a>
         <button className="button-secondary" onClick={showNewProject}>
           Create Project
         </button>
+        <InertiaLink className="button button-muted" href="/projects/archived">
+          Archived Projects
+        </InertiaLink>
       </div>
       <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>

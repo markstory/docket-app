@@ -5,9 +5,9 @@
   top: 60px;
   left: 60px;
   right: 60px;
-  bottom: 60px;
+  bottom: 0px;
   padding: 40px 20px 20px 20px;
-  border-radius: $border-radius-large;
+  border-radius: $border-radius-large $border-radius-large 0 0;
 
   & > button {
     @extend .button-default;
