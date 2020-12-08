@@ -5,6 +5,7 @@ type State = {
   isDragging: boolean;
   draggingIndex: undefined | number;
   draggingTargetIndex: undefined | number;
+  placeholderHeight: undefined | number;
   left: undefined | number;
   top: undefined | number;
 };
@@ -40,10 +41,11 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
 
   state = {
     isDragging: false,
-    draggingIndex: void 0,
-    draggingTargetIndex: void 0,
-    left: void 0,
-    top: void 0,
+    draggingIndex: undefined,
+    draggingTargetIndex: undefined,
+    placeholderHeight: undefined,
+    left: undefined,
+    top: undefined,
   };
 
   componentDidMount() {
@@ -90,10 +92,14 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     window.addEventListener('mousemove', this.onDragMove);
     window.addEventListener('mouseup', this.onDragEnd);
 
+    // event.target is the drag handle button, so we need the parentNode.
+    const dragItem = (event.target as HTMLElement).parentNode as HTMLElement;
+
     this.setState({
       isDragging: true,
       draggingIndex: index,
       draggingTargetIndex: index,
+      placeholderHeight: dragItem.getBoundingClientRect().height,
       top: event.pageY,
       left: event.pageX,
     });
@@ -158,6 +164,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
 
     this.setState({
       isDragging: false,
+      placeholderHeight: undefined,
       left: undefined,
       top: undefined,
       draggingIndex: undefined,
@@ -188,7 +195,12 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   }
 
   renderItemOrPlaceholder(item: Item, i: number, {isGhost = false}: {isGhost?: boolean}) {
-    const {isDragging, draggingTargetIndex, draggingIndex} = this.state;
+    const {
+      isDragging,
+      draggingTargetIndex,
+      draggingIndex,
+      placeholderHeight,
+    } = this.state;
     const {itemElement} = this.props;
 
     let placeholder: React.ReactNode = null;
@@ -197,11 +209,11 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
       placeholder = React.cloneElement(itemElement, {
         className: `drag-placeholder ${DRAG_CLASS} ${this.scopeClass}`,
         key: `placeholder:${item.id}:true`,
+        style: {height: `${placeholderHeight}px`},
       });
     }
 
     // If the current row is the row in the drag ghost return the placeholder
-    // or a hole if the placeholder is elsewhere.
     if (isDragging && isGhost === false && draggingIndex === i) {
       return placeholder;
     }
