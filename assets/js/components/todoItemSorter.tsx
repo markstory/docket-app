@@ -27,7 +27,7 @@ export default function TodoItemSorter({children, todoItems, scope}: Props) {
       scope,
     };
     setSorted(items);
-    Inertia.post('/todos/reorder', data);
+    Inertia.post('/todos/reorder', data, {preserveScroll: true});
   }
 
   const items = sorted || todoItems;

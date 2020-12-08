@@ -62,12 +62,10 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   }
 
   componentWillUnmount() {
-    if (this.portal) {
-      document.body.removeChild(this.portal);
-    }
     this.cleanUpListeners();
   }
 
+  scopeClass: string = `drag-scope-${Math.round(Math.random() * 10000)}`;
   previousUserSelect: string | null = null;
   portal: HTMLElement | null = null;
   dragGhostRef = React.createRef<HTMLDivElement>();
@@ -114,15 +112,15 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
       ghostDOM.style.top = `${event.pageY - GRAB_HANDLE_FUDGE}px`;
     }
 
-    const dragItems = document.querySelectorAll(`.${DRAG_CLASS}`);
+    const dragItems = document.querySelectorAll(`.${DRAG_CLASS}.${this.scopeClass}`);
 
     // Find the item that the ghost is currently over.
     const targetIndex = Array.from(dragItems).findIndex(dragItem => {
       const rects = dragItem.getBoundingClientRect();
-      const top = event.clientY;
+      const top = event.pageY;
 
-      const thresholdStart = rects.top;
-      const thresholdEnd = rects.top + rects.height;
+      const thresholdStart = window.scrollY + rects.top;
+      const thresholdEnd = window.scrollY + rects.top + rects.height;
 
       return top >= thresholdStart && top <= thresholdEnd;
     });
@@ -197,7 +195,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     // Add a placeholder above the target row.
     if (isDragging && isGhost === false && draggingTargetIndex === i) {
       placeholder = React.cloneElement(itemElement, {
-        className: `drag-placeholder ${DRAG_CLASS}`,
+        className: `drag-placeholder ${DRAG_CLASS} ${this.scopeClass}`,
         key: `placeholder:${item.id}:true`,
       });
     }
@@ -235,7 +233,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
         {position === PlaceholderPosition.TOP && placeholder}
         {React.cloneElement(
           itemElement,
-          {className: isGhost ? '' : DRAG_CLASS},
+          {className: isGhost ? '' : `${DRAG_CLASS} ${this.scopeClass}`},
           contents
         )}
         {position === PlaceholderPosition.BOTTOM && placeholder}
