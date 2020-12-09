@@ -29,8 +29,8 @@ class TodoCommentsFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'todo_comments_ibfk_2' => ['type' => 'foreign', 'columns' => ['todo_item_id'], 'references' => ['todo_items', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
-            'todo_comments_ibfk_1' => ['type' => 'foreign', 'columns' => ['user_id'], 'references' => ['users', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
+            'todo_comments_ibfk_2' => ['type' => 'foreign', 'columns' => ['todo_item_id'], 'references' => ['todo_items', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
+            'todo_comments_ibfk_1' => ['type' => 'foreign', 'columns' => ['user_id'], 'references' => ['users', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',

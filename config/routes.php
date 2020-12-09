@@ -81,6 +81,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/projects/reorder', 'Projects::reorder', 'projects:reorder');
     $builder->get('/projects/archived', 'Projects::archived', 'projects:archived');
 
+    $builder->post('/projects/{slug}/delete', 'Projects::delete', 'projects:delete');
     $builder->post('/projects/{slug}/archive', 'Projects::archive', 'projects:archive');
     $builder->post('/projects/{slug}/unarchive', 'Projects::unarchive', 'projects:unarchive');
     $builder->connect('/projects/{slug}/edit', 'Projects::edit', ['_name' => 'projects:edit']);

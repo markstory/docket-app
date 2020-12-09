@@ -28,7 +28,7 @@ class TodoLabelsFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'todo_labels_ibfk_1' => ['type' => 'foreign', 'columns' => ['project_id'], 'references' => ['projects', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
+            'todo_labels_ibfk_1' => ['type' => 'foreign', 'columns' => ['project_id'], 'references' => ['projects', 'id'], 'update' => 'cascade', 'delete' => 'cascade', 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',
@@ -36,23 +36,4 @@ class TodoLabelsFixture extends TestFixture
         ],
     ];
     // phpcs:enable
-    /**
-     * Init method
-     *
-     * @return void
-     */
-    public function init(): void
-    {
-        $this->records = [
-            [
-                'id' => 1,
-                'project_id' => 1,
-                'label' => 'Lorem ipsum dolor sit amet',
-                'color' => '',
-                'created' => 1605670077,
-                'modified' => 1605670077,
-            ],
-        ];
-        parent::init();
-    }
 }

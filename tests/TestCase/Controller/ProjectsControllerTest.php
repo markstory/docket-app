@@ -55,7 +55,15 @@ class ProjectsControllerTest extends TestCase
      */
     public function testView(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeItem('first post', $home->id, 0);
+
+        $this->login();
+        $this->get("/projects/{$home->slug}");
+
+        $this->assertResponseOk();
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(1, $this->viewVariable('todoItems'));
     }
 
     /**
@@ -94,13 +102,35 @@ class ProjectsControllerTest extends TestCase
      */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/delete");
+        $this->assertResponseOk();
+        $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
+    }
+
+    /**
+     * Test delete method
+     *
+     * @return void
+     */
+    public function testDeletePermission(): void
+    {
+        $home = $this->makeProject('Home', 2, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/delete");
+        $this->assertResponseCode(403);
+        $this->assertTrue($this->Projects->exists(['slug' => $home->slug]));
     }
 
     public function testArchived()
     {
-        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
-        $work = $this->makeProject('Work', 1, 0);
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeProject('Work', 1, 0);
 
         $this->login();
         $this->enableCsrfToken();

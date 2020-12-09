@@ -20,6 +20,13 @@ class ProjectsController extends AppController
         $this->loadModel('TodoItems');
     }
 
+    protected function getProject()
+    {
+        $slug = $this->request->getParam('slug');
+
+        return $this->Projects->findBySlug($slug)->firstOrFail();
+    }
+
     /**
      * View method
      *
@@ -27,15 +34,14 @@ class ProjectsController extends AppController
      */
     public function view()
     {
-        $slug = $this->request->getParam('slug');
-        $project = $this->Projects->findBySlug($slug)->first();
+        $project = $this->getProject();
         $this->Authorization->authorize($project);
 
         $query = $this->Authorization
             ->applyScope($this->TodoItems->find(), 'index')
             ->contain('Projects')
             ->find('incomplete')
-            ->find('forProject', ['slug' => $slug]);
+            ->find('forProject', ['slug' => $this->request->getParam('slug')]);
 
         $todoItems = $this->paginate($query);
 
@@ -72,8 +78,7 @@ class ProjectsController extends AppController
      */
     public function edit()
     {
-        $slug = $this->request->getParam('slug');
-        $project = $this->Projects->findBySlug($slug)->first();
+        $project = $this->getProject();
         $this->Authorization->authorize($project);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -109,23 +114,22 @@ class ProjectsController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id Project id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
-        $project = $this->Projects->get($id);
+        $project = $this->getProject();
         $this->Authorization->authorize($project);
 
         if ($this->Projects->delete($project)) {
-            $this->Flash->success(__('The project has been deleted.'));
+            return $this->response->withStatus(200);
         } else {
-            $this->Flash->error(__('The project could not be deleted. Please, try again.'));
+            return $this->response->withStatus(400);
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
     }
 
     public function archive()

@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS projects (
     ranking int not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (user_id) references users(id)
+    foreign key (user_id) references users(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS todo_items (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS todo_items (
     completed boolean not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (project_id) references projects(id)
+    foreign key (project_id) references projects(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS todo_comments (
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS todo_comments (
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id),
-    foreign key (todo_item_id) references todo_items(id)
+    foreign key (todo_item_id) references todo_items(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS todo_subtasks (
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS todo_subtasks (
     body text,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (todo_item_id) references todo_items(id)
+    foreign key (todo_item_id) references todo_items(id) on delete cascade
 );
 
 CREATE TABLE todo_labels (
@@ -65,13 +65,13 @@ CREATE TABLE todo_labels (
     color char(6) not null,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (project_id) references projects(id)
+    foreign key (project_id) references projects(id) on delete cascade
 );
 
 CREATE TABLE todo_items_todo_labels (
     todo_item_id int not null,
     todo_label_id int not null,
-    foreign key (todo_item_id) references todo_items(id),
-    foreign key (todo_label_id) references todo_labels(id),
+    foreign key (todo_item_id) references todo_items(id) on delete cascade,
+    foreign key (todo_label_id) references todo_labels(id) on delete cascade,
     primary key (todo_item_id, todo_label_id)
 );

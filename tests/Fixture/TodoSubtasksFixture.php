@@ -30,7 +30,7 @@ class TodoSubtasksFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'todo_subtasks_ibfk_1' => ['type' => 'foreign', 'columns' => ['todo_item_id'], 'references' => ['todo_items', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
+            'todo_subtasks_ibfk_1' => ['type' => 'foreign', 'columns' => ['todo_item_id'], 'references' => ['todo_items', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',
