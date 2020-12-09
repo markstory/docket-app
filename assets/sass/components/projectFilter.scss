@@ -10,25 +10,6 @@
   }
 }
 
-.project-filter .project-item,
-.drag-ghost .project-item {
-  display: flex;
-  justify-content: space-between;
+.project-filter .project-item {
   width: 80%;
-  height: 40px;
-
-  .context-menu {
-    display: none;
-  }
-  &:hover .context-menu {
-    display: block;
-  }
-
-  .project-badge {
-    height: 40px;
-  }
-}
-
-.drag-ghost .project-item {
-    width: 200px;
 }

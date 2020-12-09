@@ -1,6 +1,7 @@
 .drag-placeholder {
   border: 2px dashed $color-border;
   border-radius: $border-radius;
+  touch-action: none;
 }
 
 .drag-handle {
@@ -18,6 +19,7 @@
 .drag-item {
   display: flex;
   align-items: center;
+  touch-action: none;
 }
 
 .drag-ghost {
@@ -33,6 +35,7 @@
   border: 1px solid $color-border;
   box-shadow: $shadow-high;
   width: max-content;
+  touch-action: none;
 
   li {
     list-style: none;

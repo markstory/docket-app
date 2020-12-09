@@ -30,6 +30,19 @@ type Props<Item> = {
   itemElement: JSX.Element;
 };
 
+function getPosition(
+  event: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent,
+  field: 'pageX' | 'pageY'
+) {
+  if (event instanceof TouchEvent) {
+    return event.targetTouches[0][field];
+  }
+  if (event instanceof MouseEvent) {
+    return event[field];
+  }
+  return 0;
+}
+
 // TODO figure out how to make this keyboard accessible
 class DragContainer<Item extends GeneralItem> extends React.Component<
   Props<Item>,
@@ -75,15 +88,22 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   cleanUpListeners() {
     if (this.state.isDragging) {
       window.removeEventListener('mousemove', this.onDragMove);
+      window.removeEventListener('touchmove', this.onDragMove);
       window.removeEventListener('mouseup', this.onDragEnd);
+      window.removeEventListener('touchstart', this.onDragEnd);
     }
   }
 
-  startDrag(event: React.MouseEvent<HTMLButtonElement>, index: number) {
+  startDrag(
+    event: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>,
+    index: number
+  ) {
     const isDragging = this.state.isDragging;
-    if (isDragging || event.type !== 'mousedown') {
+    if (isDragging || !['mousedown', 'touchstart'].includes(event.type)) {
       return;
     }
+    event.preventDefault();
+    event.stopPropagation();
 
     // prevent the user from selecting things when dragging a column.
     this.previousUserSelect = document.body.style.userSelect;
@@ -91,6 +111,8 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     // attach event listeners so that the mouse cursor can drag anywhere
     window.addEventListener('mousemove', this.onDragMove);
     window.addEventListener('mouseup', this.onDragEnd);
+    window.addEventListener('touchmove', this.onDragMove);
+    window.addEventListener('touchend', this.onDragEnd);
 
     // event.target is the drag handle button, so we need the parentNode.
     const dragItem = (event.target as HTMLElement).parentNode as HTMLElement;
@@ -100,22 +122,24 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
       draggingIndex: index,
       draggingTargetIndex: index,
       placeholderHeight: dragItem.getBoundingClientRect().height,
-      top: event.pageY,
-      left: event.pageX,
+      top: getPosition(event, 'pageY'),
+      left: getPosition(event, 'pageX'),
     });
   }
 
-  onDragMove = (event: MouseEvent) => {
-    if (!this.state.isDragging || event.type !== 'mousemove') {
+  onDragMove = (event: MouseEvent | TouchEvent) => {
+    if (!this.state.isDragging || !['mousemove', 'touchmove'].includes(event.type)) {
       return;
     }
+    const pointerX = getPosition(event, 'pageX');
+    const pointerY = getPosition(event, 'pageY');
 
     if (this.dragGhostRef.current) {
       // move the ghost box
       const ghostDOM = this.dragGhostRef.current;
       // Adjust so cursor is over the grab handle.
-      ghostDOM.style.left = `${event.pageX - GRAB_HANDLE_FUDGE}px`;
-      ghostDOM.style.top = `${event.pageY - GRAB_HANDLE_FUDGE}px`;
+      ghostDOM.style.left = `${pointerX - GRAB_HANDLE_FUDGE}px`;
+      ghostDOM.style.top = `${pointerY - GRAB_HANDLE_FUDGE}px`;
     }
 
     const dragItems = document.querySelectorAll(`.${DRAG_CLASS}.${this.scopeClass}`);
@@ -123,7 +147,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     // Find the item that the ghost is currently over.
     const targetIndex = Array.from(dragItems).findIndex(dragItem => {
       const rects = dragItem.getBoundingClientRect();
-      const top = event.pageY;
+      const top = pointerY;
 
       const thresholdStart = window.scrollY + rects.top;
       const thresholdEnd = window.scrollY + rects.top + rects.height;
@@ -136,10 +160,12 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     }
   };
 
-  onDragEnd = (event: MouseEvent) => {
-    if (!this.state.isDragging || event.type !== 'mouseup') {
+  onDragEnd = (event: MouseEvent | TouchEvent) => {
+    if (!this.state.isDragging || !['mouseup', 'touchend'].includes(event.type)) {
       return;
     }
+    event.preventDefault();
+    event.stopPropagation();
 
     const sourceIndex = this.state.draggingIndex;
     const targetIndex = this.state.draggingTargetIndex;
@@ -229,6 +255,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
           className="drag-handle"
           aria-label="Drag to reorder"
           onMouseDown={event => this.startDrag(event, i)}
+          onTouchStart={event => this.startDrag(event, i)}
         >
           ::
         </button>
