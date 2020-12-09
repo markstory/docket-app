@@ -39,16 +39,6 @@ class ProjectsControllerTest extends TestCase
     }
 
     /**
-     * Test index method
-     *
-     * @return void
-     */
-    public function testIndex(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
      * Test view method
      *
      * @return void
@@ -107,7 +97,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/delete");
-        $this->assertResponseOk();
+        $this->assertRedirect("/todos");
         $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
     }
 

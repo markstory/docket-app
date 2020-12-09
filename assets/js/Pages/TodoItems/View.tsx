@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import Modal from 'react-modal';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
 import {TodoItemDetailed, ValidationErrors} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
+import Modal from 'app/components/modal';
 import TodoItemQuickForm from 'app/components/todoItemQuickForm';
 import TodoItemNotes from 'app/components/todoItemNotes';
 import TodoItemSubtasks from 'app/components/todoItemSubtasks';
@@ -19,8 +19,7 @@ export default function TodoItemsView({referer, todoItem}: Props) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  function handleClose(event: React.MouseEvent) {
-    event.preventDefault();
+  function handleClose() {
     Inertia.visit(referer);
   }
 
@@ -48,8 +47,7 @@ export default function TodoItemsView({referer, todoItem}: Props) {
 
   return (
     <LoggedIn>
-      <Modal className="modal" overlayClassName="modal-overlay" isOpen>
-        <button onClick={handleClose}>{'\u2715'}</button>
+      <Modal onClose={handleClose}>
         <div className="todoitems-view">
           {editing ? (
             <TodoItemQuickForm

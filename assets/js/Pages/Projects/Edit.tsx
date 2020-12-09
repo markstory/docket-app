@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from 'react-modal';
 import {Inertia} from '@inertiajs/inertia';
 
+import Modal from 'app/components/modal';
 import {Project, ValidationErrors} from 'app/types';
 import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -13,8 +13,7 @@ type Props = {
 };
 
 export default function ProjectsEdit({project, errors, referer}: Props) {
-  function handleClose(event: React.MouseEvent) {
-    event.preventDefault();
+  function handleClose() {
     Inertia.visit(referer);
   }
 
@@ -26,8 +25,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
 
   return (
     <LoggedIn>
-      <Modal className="modal" overlayClassName="modal-overlay" isOpen>
-        <button onClick={handleClose}>{'\u2715'}</button>
+      <Modal onClose={handleClose}>
         <form method="POST" onSubmit={handleSubmit}>
           <h2>Edit Project</h2>
           <div>

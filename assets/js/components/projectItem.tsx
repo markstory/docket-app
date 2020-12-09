@@ -1,8 +1,8 @@
 import React from 'react';
-import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project} from 'app/types';
+import {archiveProject, unarchiveProject} from 'app/actions/projects';
 import ContextMenu from 'app/components/contextMenu';
 import ProjectBadge from 'app/components/projectBadge';
 
@@ -11,13 +11,6 @@ type Props = {
 };
 
 export default function ProjectItem({project}: Props) {
-  function handleArchive(project: Project) {
-    Inertia.post(`/projects/${project.slug}/archive`);
-  }
-  function handleUnarchive(project: Project) {
-    Inertia.post(`/projects/${project.slug}/unarchive`);
-  }
-
   return (
     <div className="project-item">
       <InertiaLink key={project.slug} href={`/projects/${project.slug}`}>
@@ -29,13 +22,13 @@ export default function ProjectItem({project}: Props) {
         </li>
         {project.archived ? (
           <li>
-            <button className="button-default" onClick={() => handleUnarchive(project)}>
+            <button className="button-default" onClick={() => unarchiveProject(project)}>
               Unarchive Project
             </button>
           </li>
         ) : (
           <li>
-            <button className="button-default" onClick={() => handleArchive(project)}>
+            <button className="button-default" onClick={() => archiveProject(project)}>
               Archive Project
             </button>
           </li>

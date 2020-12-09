@@ -1,9 +1,9 @@
 import React from 'react';
-import Modal from 'react-modal';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
 import FormError from 'app/components/formError';
+import Modal from 'app/components/modal';
 import {ValidationErrors} from 'app/types';
 
 type Props = {
@@ -26,6 +26,7 @@ function NewProjectModal({showModal, onClose}: Props) {
     axios
       .post('/projects/add', formData)
       .then(() => {
+        onClose();
         Inertia.reload();
       })
       .catch(error => {
@@ -36,8 +37,7 @@ function NewProjectModal({showModal, onClose}: Props) {
   };
 
   return (
-    <Modal className="modal" overlayClassName="modal-overlay" isOpen>
-      <button onClick={onClose}>{'\u2715'}</button>
+    <Modal onClose={onClose}>
       <form method="POST" onSubmit={handleSubmit}>
         <h2>New Project</h2>
         <div>

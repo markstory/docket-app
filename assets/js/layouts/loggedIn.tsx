@@ -8,10 +8,8 @@ import ProjectFilter from 'app/components/projectFilter';
 import {ProjectsProvider} from 'app/providers/projects';
 
 type SharedPageProps = {
-  props: {
-    flash: null | FlashMessage;
-    projects: Project[];
-  };
+  flash: null | FlashMessage;
+  projects: Project[];
 };
 
 type Props = {
@@ -19,7 +17,7 @@ type Props = {
 };
 
 function LoggedIn({children}: Props) {
-  const {projects} = usePage<SharedPageProps>().props;
+  const {projects} = usePage().props as SharedPageProps;
   return (
     <ProjectsProvider projects={projects}>
       <Contents>{children}</Contents>
@@ -35,7 +33,7 @@ function LoggedIn({children}: Props) {
  * to be another layers of components down.
  */
 function Contents({children}: Props) {
-  const {flash} = usePage<SharedPageProps>().props;
+  const {flash} = usePage().props as SharedPageProps;
 
   return (
     <React.Fragment>

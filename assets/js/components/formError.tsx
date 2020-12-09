@@ -8,7 +8,6 @@ type Props = {
 };
 
 export default function FormError({errors, field}: Props) {
-  console.log('form error', errors, field, errors?.hasOwnProperty(field));
   if (!errors || !errors.hasOwnProperty(field)) {
     return null;
   }

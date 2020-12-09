@@ -5,6 +5,7 @@ type Props = {
 };
 
 function ContextMenu({children}: Props) {
+  let mounted = true;
   const [isShowing, setIsShowing] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -23,7 +24,9 @@ function ContextMenu({children}: Props) {
     if (menuRef?.current?.contains(event.target)) {
       return;
     }
-    setIsShowing(false);
+    if (mounted) {
+      setIsShowing(false);
+    }
     document.body.removeEventListener('click', handleOutsideClick, true);
   }
 
@@ -31,6 +34,9 @@ function ContextMenu({children}: Props) {
     if (isShowing) {
       document.body.addEventListener('click', handleOutsideClick, true);
     }
+    return function cleanup() {
+      mounted = false;
+    };
   }, [isShowing]);
 
   return (

@@ -1,5 +1,7 @@
 import React from 'react';
+import {InertiaLink} from '@inertiajs/inertia-react';
 
+import {archiveProject, deleteProject, unarchiveProject} from 'app/actions/projects';
 import {Project, TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TodoItemGroup from 'app/components/todoItemGroup';
@@ -14,6 +16,22 @@ export default function TodoItemsIndex({project, todoItems}: Props) {
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
+      <div className="button-bar">
+        {project.archived && (
+          <button className="button-default" onClick={() => unarchiveProject(project)}>
+            Unarchive
+          </button>
+        )}
+        {!project.archived && (
+          <button className="button-default" onClick={() => archiveProject(project)}>
+            Archive
+          </button>
+        )}
+        <button className="button-default" onClick={() => deleteProject(project)}>
+          Delete
+        </button>
+      </div>
+
       <div className="attributes">
         {project.archived && <span className="archived">Archived</span>}
       </div>

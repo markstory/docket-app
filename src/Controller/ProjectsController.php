@@ -124,12 +124,9 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         if ($this->Projects->delete($project)) {
-            return $this->response->withStatus(200);
-        } else {
-            return $this->response->withStatus(400);
+            return $this->redirect(['_name' => 'todoitems:today']);
         }
-
-        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
+        return $this->response->withStatus(400);
     }
 
     public function archive()
