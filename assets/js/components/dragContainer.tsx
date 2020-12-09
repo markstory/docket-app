@@ -30,15 +30,23 @@ type Props<Item> = {
   itemElement: JSX.Element;
 };
 
+function isReactEvent(
+  maybe: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent
+): maybe is React.MouseEvent | React.TouchEvent {
+  return 'nativeEvent' in maybe;
+}
+
 function getPosition(
   event: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent,
   field: 'pageX' | 'pageY'
 ) {
-  if (event instanceof TouchEvent) {
-    return event.targetTouches[0][field];
+  let actual = isReactEvent(event) ? event.nativeEvent : event;
+
+  if (window.TouchEvent && actual instanceof TouchEvent) {
+    return actual.targetTouches[0][field];
   }
-  if (event instanceof MouseEvent) {
-    return event[field];
+  if (actual instanceof MouseEvent) {
+    return actual[field];
   }
   return 0;
 }
