@@ -19,6 +19,8 @@ export type TodoItem = {
   title: string;
   body: string;
   due_on: null | string;
+  day_order: number;
+  child_order: number;
   completed: boolean;
   created: string;
   modified: string;

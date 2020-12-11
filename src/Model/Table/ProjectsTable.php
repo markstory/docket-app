@@ -137,6 +137,16 @@ class ProjectsTable extends Table
         return $query->where(['Projects.archived' => true]);
     }
 
+    public function getNextRanking(int $userId): int
+    {
+        $query = $this->find();
+        $query
+            ->select(['count' => $query->func()->count('*')])
+            ->where(['Projects.user_id' => $userId]);
+
+        return (int)$query->firstOrFail()->count;
+    }
+
     /**
      * Update the order on the list of projects
      *

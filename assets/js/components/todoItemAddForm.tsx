@@ -8,9 +8,10 @@ type Props = {
   onCancel: () => void;
   defaultDate?: string;
   defaultProjectId?: number;
+  order?: number;
 };
 
-function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
+function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId, order}: Props) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.persist();
@@ -28,6 +29,8 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId}: Props) {
     body: '',
     due_on: defaultDate ?? null,
     completed: false,
+    day_order: order ?? 0,
+    child_order: order ?? 0,
     created: '',
     modified: '',
     project: {

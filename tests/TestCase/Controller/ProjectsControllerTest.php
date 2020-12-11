@@ -70,9 +70,29 @@ class ProjectsControllerTest extends TestCase
             'color' => '663366',
         ]);
         $this->assertResponseOk();
+        $this->assertHeaderContains('Content-Type', 'application/json');
+
         $project = $this->Projects->find()->first();
         $this->assertEquals('add', $project->name);
         $this->assertNotEquals('add', $project->slug);
+    }
+
+    public function testAddAppendRanking(): void
+    {
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->disableErrorHandlerMiddleware();
+        $this->post("/projects/add", [
+            'name' => 'second',
+            'color' => '663366',
+        ]);
+        $this->assertResponseOk();
+
+        $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
+        $this->assertEquals('second', $project->name);
+        $this->assertEquals(1, $project->ranking);
     }
 
     /**
@@ -97,7 +117,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/delete");
-        $this->assertRedirect("/todos");
+        $this->assertRedirect("/todos/today");
         $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
     }
 

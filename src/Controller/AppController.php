@@ -64,7 +64,10 @@ class AppController extends Controller
             $this->set('projects', $identity->applyScope('index', $this->Projects->find('active')->find('top')));
         }
 
-        $this->inertiaBeforeRender($event);
+        // Use inertia if we aren't making a custom JSON response.
+        if (!$this->viewBuilder()->getOption('serialize')) {
+            $this->inertiaBeforeRender($event);
+        }
     }
 
     protected function flattenErrors(array $errors): array

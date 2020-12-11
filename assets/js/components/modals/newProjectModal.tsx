@@ -1,10 +1,11 @@
 import React from 'react';
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
 import FormError from 'app/components/formError';
 import Modal from 'app/components/modal';
-import {ValidationErrors} from 'app/types';
+import {useProjects} from 'app/providers/projects';
+import {Project, ValidationErrors} from 'app/types';
 
 type Props = {
   showModal: boolean;
@@ -15,6 +16,7 @@ function NewProjectModal({showModal, onClose}: Props) {
   if (!showModal) {
     return null;
   }
+  const [projects, setProjects] = useProjects();
 
   const [errors, setErrors] = React.useState<ValidationErrors>({});
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,9 +27,9 @@ function NewProjectModal({showModal, onClose}: Props) {
     // inside the modal.
     axios
       .post('/projects/add', formData)
-      .then(() => {
+      .then((resp: AxiosResponse<{project: Project}>) => {
+        setProjects([resp.data.project, ...projects]);
         onClose();
-        Inertia.reload();
       })
       .catch(error => {
         if (error.response) {

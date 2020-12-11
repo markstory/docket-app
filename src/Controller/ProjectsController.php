@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\View\JsonView;
 
 /**
  * Projects Controller
@@ -58,11 +59,17 @@ class ProjectsController extends AppController
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
         if ($this->request->is('post')) {
+            $userId = $this->request->getAttribute('identity')->getIdentifier();
             $project = $this->Projects->patchEntity($project, $this->request->getData());
-            $project->user_id = $this->request->getAttribute('identity')->getIdentifier();
+            $project->user_id = $userId;
+            $project->ranking = $this->Projects->getNextRanking($userId);
 
             if ($this->Projects->save($project)) {
-                return $this->response->withStatus(201);
+                $this->set('project', $project);
+                $this->viewBuilder()
+                    ->setClassName(JsonView::class)
+                    ->setOption('serialize', ['project']);
+                return;
             }
 
             // TODO this should switch to a page load. Code is much simpler that way.
@@ -86,7 +93,7 @@ class ProjectsController extends AppController
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('The project has been saved.'));
 
-                return $this->redirect(['_name' => 'todoitems:upcoming']);
+                return $this->redirect($this->referer(['_name' => 'todoitems:upcoming']));
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
             $this->set('errors', $this->flattenErrors($project->getErrors()));

@@ -125,23 +125,21 @@ class TodoItemsTable extends Table
         }
         return $query
             ->where(['Projects.slug' => $options['slug']])
-            ->orderAsc('TodoItems.due_on')
             ->orderAsc('TodoItems.child_order');
     }
 
     public function findIncomplete(Query $query): Query
     {
-        return $query->where(['TodoItems.completed' => false])
-            ->orderAsc('TodoItems.due_on')
-            ->orderAsc('TodoItems.day_order');
+        return $query->where(['TodoItems.completed' => false]);
     }
 
     public function findDueToday(Query $query): Query
     {
         return $query->where([
-            'TodoItems.due_on IS NOT' => null,
-            'TodoItems.due_on <=' => new FrozenDate('today')
-        ]);
+                'TodoItems.due_on IS NOT' => null,
+                'TodoItems.due_on <=' => new FrozenDate('today')
+            ])
+            ->orderAsc('TodoItems.day_order');
     }
 
     public function findUpcoming(Query $query, array $options): Query
@@ -151,10 +149,12 @@ class TodoItemsTable extends Table
         }
         $end = $options['start']->modify('+28 days');
         return $query->where([
-            'TodoItems.due_on IS NOT' => null,
-            'TodoItems.due_on >=' => $options['start'],
-            'TodoItems.due_on <' => $end,
-        ]);
+                'TodoItems.due_on IS NOT' => null,
+                'TodoItems.due_on >=' => $options['start'],
+                'TodoItems.due_on <' => $end,
+            ])
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.day_order');
     }
 
     /**
