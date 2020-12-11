@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
+import {InlineIcon} from 'app/components/icon';
 import {TodoItem} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
 
@@ -29,7 +30,10 @@ export default function TodoItemRow({todoItem, showDueOn, showProject}: Props) {
         <span className="title">{todoItem.title}</span>
         <div className="attributes">
           {showDueOn && todoItem.due_on && (
-            <time dateTime={todoItem.due_on}>{todoItem.due_on}</time>
+            <time className="due-on" dateTime={todoItem.due_on}>
+              <InlineIcon icon="calendar" width="xsmall" />
+              {todoItem.due_on}
+            </time>
           )}
           {showProject && <ProjectBadge project={todoItem.project} />}
         </div>

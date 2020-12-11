@@ -910,6 +910,16 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@iconify/icons-octicon@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@iconify/icons-octicon/-/icons-octicon-1.1.1.tgz#3f6adbff0a6b406d35720a310d43145fe84ed27b"
+  integrity sha512-js59037/OdpYmMfA0pscEluaKoGyFLgP4G2fZEwf8ImxHuccPVp8G2W2QgzBWTeuPOsg5jMSGAmqlXOyGCuIlg==
+
+"@iconify/react@2.0.0-rc.2":
+  version "2.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@iconify/react/-/react-2.0.0-rc.2.tgz#84b27d41082a571c46711e9b3c5af8cc2b267bfe"
+  integrity sha512-iugsyMA+nTGsFNlL8dWU3bkEiF4vnYQSS0Un+pXukaiVXJgSrafaL/gua0BodBim3u2GzSLFfVwTZJ6SIT6shw==
+
 "@inertiajs/inertia-react@^0.4.1":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@inertiajs/inertia-react/-/inertia-react-0.4.4.tgz#2965b22f184af65eee94166838a6edd68b7a783c"

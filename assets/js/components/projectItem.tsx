@@ -5,6 +5,7 @@ import {Project} from 'app/types';
 import {archiveProject, unarchiveProject} from 'app/actions/projects';
 import ContextMenu from 'app/components/contextMenu';
 import ProjectBadge from 'app/components/projectBadge';
+import {InlineIcon} from './icon';
 
 type Props = {
   project: Project;
@@ -18,17 +19,22 @@ export default function ProjectItem({project}: Props) {
       </InertiaLink>
       <ContextMenu>
         <li>
-          <InertiaLink href={`/projects/${project.slug}/edit`}>Edit Project</InertiaLink>
+          <InertiaLink className="context-item" href={`/projects/${project.slug}/edit`}>
+            <InlineIcon icon="pencil" />
+            Edit Project
+          </InertiaLink>
         </li>
         {project.archived ? (
           <li>
-            <button className="button-default" onClick={() => unarchiveProject(project)}>
+            <button className="context-item" onClick={() => unarchiveProject(project)}>
+              <InlineIcon icon="archive" />
               Unarchive Project
             </button>
           </li>
         ) : (
           <li>
-            <button className="button-default" onClick={() => archiveProject(project)}>
+            <button className="context-item" onClick={() => archiveProject(project)}>
+              <InlineIcon icon="archive" />
               Archive Project
             </button>
           </li>

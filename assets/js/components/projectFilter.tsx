@@ -6,6 +6,7 @@ import DragContainer from 'app/components/dragContainer';
 import ProjectItem from 'app/components/projectItem';
 import ProjectSorter from 'app/components/projectSorter';
 import NewProjectModal from 'app/components/modals/newProjectModal';
+import {InlineIcon} from './icon';
 
 function ProjectFilter() {
   const [showModal, setShowModal] = React.useState(false);
@@ -17,10 +18,16 @@ function ProjectFilter() {
     <div className="project-filter">
       <ul>
         <li>
-          <InertiaLink href="/todos/today">Today</InertiaLink>
+          <InertiaLink href="/todos/today">
+            <InlineIcon icon="clippy" />
+            Today
+          </InertiaLink>
         </li>
         <li>
-          <InertiaLink href="/todos/upcoming">Upcoming</InertiaLink>
+          <InertiaLink href="/todos/upcoming">
+            <InlineIcon icon="calendar" />
+            Upcoming
+          </InertiaLink>
         </li>
       </ul>
       <h3>Projects</h3>
@@ -40,6 +47,7 @@ function ProjectFilter() {
       </ul>
       <div className="button-bar-vertical">
         <button className="button-secondary" onClick={showNewProject}>
+          <InlineIcon icon="plus" />
           Create Project
         </button>
         <InertiaLink className="button button-muted" href="/projects/archived">

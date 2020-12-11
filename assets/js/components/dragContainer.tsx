@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Icon} from './icon';
 
 type State = {
   isDragging: boolean;
   draggingIndex: undefined | number;
   draggingTargetIndex: undefined | number;
   placeholderHeight: undefined | number;
+  ghostWidth: undefined | number;
   left: undefined | number;
   top: undefined | number;
 };
@@ -65,6 +67,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     draggingIndex: undefined,
     draggingTargetIndex: undefined,
     placeholderHeight: undefined,
+    ghostWidth: undefined,
     left: undefined,
     top: undefined,
   };
@@ -123,13 +126,15 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     window.addEventListener('touchend', this.onDragEnd);
 
     // event.target is the drag handle button, so we need the parentNode.
-    const dragItem = (event.target as HTMLElement).parentNode as HTMLElement;
+    const dragItem = (event.currentTarget as HTMLElement).parentNode as HTMLElement;
+    const dragItemRect = dragItem.getBoundingClientRect();
 
     this.setState({
       isDragging: true,
       draggingIndex: index,
       draggingTargetIndex: index,
-      placeholderHeight: dragItem.getBoundingClientRect().height,
+      placeholderHeight: dragItemRect.height,
+      ghostWidth: dragItemRect.width,
       top: getPosition(event, 'pageY'),
       left: getPosition(event, 'pageX'),
     });
@@ -199,6 +204,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     this.setState({
       isDragging: false,
       placeholderHeight: undefined,
+      ghostWidth: undefined,
       left: undefined,
       top: undefined,
       draggingIndex: undefined,
@@ -207,8 +213,9 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
   };
 
   renderGhost() {
+    const {isDragging, ghostWidth} = this.state;
     const index = this.state.draggingIndex;
-    if (typeof index !== 'number' || !this.state.isDragging || !this.portal) {
+    if (typeof index !== 'number' || !isDragging || !this.portal) {
       return null;
     }
     const top = Number(this.state.top) - GRAB_HANDLE_FUDGE;
@@ -218,6 +225,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
     const style = {
       top: `${top}px`,
       left: `${left}px`,
+      width: `${ghostWidth}px`,
     };
     const ghost = (
       <div className="drag-ghost" ref={this.dragGhostRef} style={style}>
@@ -243,7 +251,9 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
       placeholder = React.cloneElement(itemElement, {
         className: `drag-placeholder ${DRAG_CLASS} ${this.scopeClass}`,
         key: `placeholder:${item.id}:true`,
-        style: {height: `${placeholderHeight}px`},
+        style: {
+          height: `${placeholderHeight}px`,
+        },
       });
     }
 
@@ -265,7 +275,7 @@ class DragContainer<Item extends GeneralItem> extends React.Component<
           onMouseDown={event => this.startDrag(event, i)}
           onTouchStart={event => this.startDrag(event, i)}
         >
-          ::
+          <Icon icon="grabber" width="large" />
         </button>
         {this.props.renderItem(item)}
       </React.Fragment>

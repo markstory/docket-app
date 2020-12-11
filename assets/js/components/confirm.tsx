@@ -22,9 +22,14 @@ function Confirmation({
   show,
 }: Props) {
   return (
-    <Modal onClose={() => {}} canClose={false} isOpen={show}>
+    <Modal
+      className="modal modal-confirm"
+      onClose={() => {}}
+      canClose={false}
+      isOpen={show}
+    >
       <div className="confirm">
-        <h3>{title}</h3>
+        {title && <h3>{title}</h3>}
         <p className="body">{confirmation}</p>
         <div className="button-bar-right">
           <button className="button-default" onClick={() => proceed(false)}>
@@ -40,12 +45,14 @@ function Confirmation({
 }
 
 export function confirm(
+  title: string,
   confirmation: string,
-  proceedLabel: string = 'OK',
-  cancelLabel = 'cancel',
+  proceedLabel: string = 'Ok',
+  cancelLabel = 'Cancel',
   options = {}
 ) {
   return createConfirmation(confirmable(Confirmation))({
+    title,
     confirmation,
     proceedLabel,
     cancelLabel,

@@ -8,6 +8,12 @@ button {
   padding: 0 $space * 1.5;
 }
 
+a > svg,
+.button > svg,
+button > svg {
+  margin-right: $space;
+}
+
 .button-default {
   color: $color-foreground;
   background: transparent;

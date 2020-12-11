@@ -21,10 +21,16 @@
     display: grid;
     gap: $space;
     grid-auto-flow: column;
+
+    font-size: $font-size-small;
   }
 
   .summary {
     width: 100%;
+  }
+
+  .due-on svg {
+    margin-right: $space;
   }
 }
 

@@ -8,6 +8,7 @@
   bottom: 0px;
   padding: 40px 20px 20px 20px;
   border-radius: $border-radius-large $border-radius-large 0 0;
+  box-shadow: $shadow-high;
 
   & > button {
     @extend .button-default;

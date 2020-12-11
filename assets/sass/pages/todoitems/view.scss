@@ -12,6 +12,10 @@
     margin: 12px $space 0 0;
   }
 
+  .due-on svg {
+    margin-right: $space;
+  }
+
   .attributes {
     display: grid;
     gap: $space;

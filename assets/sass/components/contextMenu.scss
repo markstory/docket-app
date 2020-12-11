@@ -15,12 +15,20 @@
   > button {
     @extend .button-default;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     border: none;
     padding: 4px;
     width: 30px;
     height: 30px;
     font-size: $font-size-small;
     line-height: 1;
+
+    svg {
+      margin: 0;
+    }
   }
 
   ul {
@@ -71,5 +79,22 @@
     border-bottom-color: $color-border-med;
     border-width: 11px;
     margin-left: -11px;
+  }
+}
+
+.context-menu .context-item {
+  background: none;
+  border: none;
+  color: $color-foreground;
+
+  border-radius: 0;
+  padding: $space / 2;
+  height: auto;
+  display: block;
+  line-height: 1.2;
+
+  &:active,
+  &:hover {
+    background: $color-button-default-hover;
   }
 }

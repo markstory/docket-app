@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
+import {Icon} from './icon';
 
 type Props = {
   children: React.ReactNode;
@@ -41,7 +42,9 @@ function ContextMenu({children}: Props) {
 
   return (
     <div ref={menuRef} className="context-menu">
-      <button onClick={handleClick}>{'\u22EF'}</button>
+      <button onClick={handleClick}>
+        <Icon icon="kebab" />
+      </button>
       {isShowing && (
         <div className="hitbox">
           <div className="dropdown">

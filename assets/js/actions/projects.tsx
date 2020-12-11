@@ -12,10 +12,12 @@ export function unarchiveProject(project: Project) {
 }
 
 export async function deleteProject(project: Project) {
-  try {
-    await confirm('Are you sure? This will destroy all the todos this project contains');
+  if (
+    await confirm(
+      'Are you sure?',
+      'This will destroy all the todos this project contains'
+    )
+  ) {
     Inertia.post(`/projects/${project.slug}/delete`);
-  } catch (e) {
-    // Do nothing the user aborted.
   }
 }

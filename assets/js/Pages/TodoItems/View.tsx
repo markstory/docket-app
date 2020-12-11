@@ -9,6 +9,7 @@ import TodoItemQuickForm from 'app/components/todoItemQuickForm';
 import TodoItemNotes from 'app/components/todoItemNotes';
 import TodoItemSubtasks from 'app/components/todoItemSubtasks';
 import ProjectBadge from 'app/components/projectBadge';
+import {InlineIcon} from '@iconify/react';
 
 type Props = {
   todoItem: TodoItemDetailed;
@@ -93,7 +94,12 @@ function TodoItemSummary({todoItem, onClick}: SummaryProps) {
         <h3>{todoItem.title}</h3>
         <div className="attributes">
           {<ProjectBadge project={todoItem.project} />}
-          {todoItem.due_on && <time dateTime={todoItem.due_on}>{todoItem.due_on}</time>}
+          {todoItem.due_on && (
+            <time className="due-on" dateTime={todoItem.due_on}>
+              <InlineIcon icon="calendar" />
+              {todoItem.due_on}
+            </time>
+          )}
         </div>
       </a>
     </div>

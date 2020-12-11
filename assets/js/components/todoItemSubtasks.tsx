@@ -5,6 +5,7 @@ import {TodoItemDetailed, TodoSubtask} from 'app/types';
 import DragContainer from 'app/components/dragContainer';
 import TodoSubtaskSorter from 'app/components/todoSubtaskSorter';
 import TodoSubtaskAddForm from 'app/components/todoSubtaskAddForm';
+import {InlineIcon} from './icon';
 
 type Props = {
   todoItem: TodoItemDetailed;
@@ -36,6 +37,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
       <div className="add-task">
         {!showForm && (
           <button className="button-default" onClick={() => setShowForm(true)}>
+            <InlineIcon icon="plus" />
             Add Sub-task
           </button>
         )}

@@ -4,6 +4,7 @@ import {TodoItem} from 'app/types';
 import DragContainer from 'app/components/dragContainer';
 import TodoItemRow from 'app/components/todoItemRow';
 import TodoItemAddForm from 'app/components/todoItemAddForm';
+import {InlineIcon} from './icon';
 
 type Props = {
   todoItems: TodoItem[];
@@ -43,6 +44,7 @@ export default function TodoItemsGroup({
       <div className="add-task">
         {!showForm && (
           <button className="button-secondary" onClick={() => setShowForm(true)}>
+            <InlineIcon icon="plus" />
             Add Task
           </button>
         )}
