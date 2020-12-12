@@ -31,6 +31,7 @@ class TodoItemsControllerTest extends TestCase
         'app.Projects',
         'app.TodoComments',
         'app.TodoSubtasks',
+        'app.TodoItemsTodoLabels',
         'app.TodoLabels',
     ];
 
@@ -141,14 +142,29 @@ class TodoItemsControllerTest extends TestCase
         $this->markTestIncomplete('Not implemented yet.');
     }
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$first->id}/delete");
+
+        $this->assertRedirect('/todos');
+        $this->assertFalse($this->TodoItems->exists(['TodoItems.id' => $first->id]));
+    }
+
+    public function testDeletePermission(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$first->id}/delete");
+
+        $this->assertTrue($this->TodoItems->exists(['TodoItems.id' => $first->id]));
     }
 
     public function testReorderSuccess()

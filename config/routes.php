@@ -65,6 +65,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         ->setPass(['id']);
     $builder->post('/todos/{id}/incomplete', 'TodoItems::incomplete', 'todoitems:incomplete')
         ->setPass(['id']);
+    $builder->post('/todos/{id}/delete', 'TodoItems::delete', 'todoitems:delete')
+        ->setPass(['id']);
     $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
         ->setPass(['id']);
     $builder->get('/todos/{id}/view', 'TodoItems::view', 'todoitems:view')

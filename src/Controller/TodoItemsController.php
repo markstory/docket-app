@@ -202,7 +202,7 @@ class TodoItemsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
-        $this->Authorization->can($todoItem);
+        $this->Authorization->authorize($todoItem);
 
         if ($this->TodoItems->delete($todoItem)) {
             $this->Flash->success(__('The todo item has been deleted.'));
