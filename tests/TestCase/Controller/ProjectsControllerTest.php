@@ -77,13 +77,48 @@ class ProjectsControllerTest extends TestCase
         $this->assertNotEquals('add', $project->slug);
     }
 
+    public function testEdit(): void
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/edit", [
+            'name' => 'Home too',
+            'color' => '999999',
+        ]);
+        $this->assertRedirect('/todos/upcoming');
+
+        $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
+        $this->assertEquals('Home too', $project->name);
+        $this->assertEquals('999999', $project->color);
+        $this->assertEquals(0, $project->ranking);
+    }
+
+    public function testEditPermission(): void
+    {
+        $home = $this->makeProject('Home', 2, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/edit", [
+            'name' => 'Home too',
+            'color' => '999999',
+        ]);
+        $this->assertResponseCode(403);
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
     public function testAddAppendRanking(): void
     {
         $this->makeProject('Home', 1, 0, ['archived' => true]);
 
         $this->login();
         $this->enableCsrfToken();
-        $this->disableErrorHandlerMiddleware();
         $this->post("/projects/add", [
             'name' => 'second',
             'color' => '663366',
@@ -93,16 +128,6 @@ class ProjectsControllerTest extends TestCase
         $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
         $this->assertEquals('second', $project->name);
         $this->assertEquals(1, $project->ranking);
-    }
-
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEdit(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
