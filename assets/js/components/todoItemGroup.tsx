@@ -1,46 +1,80 @@
 import React, {useState} from 'react';
+import {Droppable, Draggable} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
-import DragContainer from 'app/components/dragContainer';
 import TodoItemRow from 'app/components/todoItemRow';
 import TodoItemAddForm from 'app/components/todoItemAddForm';
-import {InlineIcon} from './icon';
+import {Icon, InlineIcon} from './icon';
 
 type Props = {
+  dropId: string;
   todoItems: TodoItem[];
-  onReorder: (items: TodoItem[]) => void;
   defaultDate?: string;
   defaultProjectId?: number;
   showProject?: boolean;
   showDueOn?: boolean;
 };
 
-export default function TodoItemsGroup({
+export default function TodoItemGroup({
+  dropId,
   todoItems,
   defaultDate,
   defaultProjectId,
   showProject,
   showDueOn,
-  onReorder,
 }: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
     <div className="todo-item-group">
-      <div className="drag-container-left-offset">
-        <DragContainer
-          items={todoItems}
-          renderItem={(todoItem: TodoItem) => (
-            <TodoItemRow
-              key={todoItem.id}
-              todoItem={todoItem}
-              showProject={showProject}
-              showDueOn={showDueOn}
-            />
-          )}
-          onChange={onReorder}
-        />
-      </div>
+      <Droppable droppableId={dropId} type="todoitem">
+        {(provided: any, snapshot: any) => {
+          let className = 'dnd-dropper-left-offset';
+          if (snapshot.isDraggingOver) {
+            className += ' dnd-dropper-active';
+          }
+          return (
+            <div
+              ref={provided.innerRef}
+              className={className}
+              {...provided.droppableProps}
+            >
+              {todoItems.map((item, index) => (
+                <Draggable key={item.id} draggableId={String(item.id)} index={index}>
+                  {(provided: any, snapshot: any) => {
+                    let className = 'dnd-item';
+                    if (snapshot.isDragging) {
+                      className += ' dnd-item-dragging';
+                    }
+                    return (
+                      <div
+                        ref={provided.innerRef}
+                        className={className}
+                        {...provided.draggableProps}
+                      >
+                        <button
+                          className="dnd-handle"
+                          aria-label="Drag to reorder"
+                          {...provided.dragHandleProps}
+                        >
+                          <Icon icon="grabber" width="large" />
+                        </button>
+                        <TodoItemRow
+                          key={item.id}
+                          todoItem={item}
+                          showProject={showProject}
+                          showDueOn={showDueOn}
+                        />
+                      </div>
+                    );
+                  }}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          );
+        }}
+      </Droppable>
       <div className="add-task">
         {!showForm && (
           <button className="button-secondary" onClick={() => setShowForm(true)}>

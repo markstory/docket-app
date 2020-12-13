@@ -1,0 +1,30 @@
+.dnd-item {
+  display: flex;
+  align-items: center;
+}
+.dnd-handle {
+  @extend .button-default;
+
+  cursor: grab;
+  height: 30px;
+  width: 30px;
+  margin-right: $space / 2;
+  line-height: 1;
+  border: none;
+  padding: 3px;
+}
+
+.dnd-item-dragging {
+  box-shadow: $shadow-med;
+}
+
+.dnd-dropper-left-offset {
+  margin-left: -30px;
+
+  .dnd-handle {
+    visibility: hidden;
+  }
+  &:hover .dnd-handle {
+    visibility: visible;
+  }
+}

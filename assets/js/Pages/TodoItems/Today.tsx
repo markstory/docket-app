@@ -1,4 +1,5 @@
 import React from 'react';
+import {DragDropContext} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -18,13 +19,15 @@ export default function TodoItemsToday({todoItems, view}: Props) {
     <LoggedIn>
       <h1>Today</h1>
       <TodoItemSorter todoItems={todoItems} scope="day">
-        {({handleOrderChange, items}) => (
-          <TodoItemGroup
-            onReorder={handleOrderChange}
-            todoItems={items}
-            defaultDate={defaultDate}
-            showProject
-          />
+        {({items, onDragEnd}) => (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <TodoItemGroup
+              dropId="today"
+              todoItems={items}
+              defaultDate={defaultDate}
+              showProject
+            />
+          </DragDropContext>
         )}
       </TodoItemSorter>
     </LoggedIn>

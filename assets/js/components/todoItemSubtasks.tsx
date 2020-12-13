@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 import {TodoItemDetailed, TodoSubtask} from 'app/types';
-import DragContainer from 'app/components/dragContainer';
 import TodoSubtaskSorter from 'app/components/todoSubtaskSorter';
 import TodoSubtaskAddForm from 'app/components/todoSubtaskAddForm';
-import {InlineIcon} from './icon';
+import {Icon, InlineIcon} from './icon';
 
 type Props = {
   todoItem: TodoItemDetailed;
@@ -18,20 +18,57 @@ export default function TodoItemSubtasks({todoItem}: Props) {
     <div className="todoitem-subtasks">
       <h3>Sub-tasks</h3>
       <TodoSubtaskSorter todoItemId={todoItem.id} subtasks={todoItem.subtasks}>
-        {({items, handleOrderChange}) => (
-          <div className="drag-container-left-offset">
-            <DragContainer
-              items={items}
-              renderItem={(subtask: TodoSubtask) => (
-                <TodoItemSubtaskRow
-                  key={subtask.id}
-                  subtask={subtask}
-                  todoItemId={todoItem.id}
-                />
+        {({items, onDragEnd}) => (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="subtasks" type="subtask">
+              {(provided: any) => (
+                <ul
+                  ref={provided.innerRef}
+                  className="dnd-droppable-left-offset"
+                  {...provided.droppableProps}
+                >
+                  {items.map((subtask, index) => {
+                    return (
+                      <Draggable
+                        key={subtask.id}
+                        draggableId={String(subtask.id)}
+                        index={index}
+                      >
+                        {(provided: any, snapshot: any) => {
+                          let className = 'dnd-item';
+                          if (snapshot.isDragging) {
+                            className += ' dnd-item-dragging';
+                          }
+
+                          return (
+                            <li
+                              ref={provided.innerRef}
+                              className={className}
+                              {...provided.draggableProps}
+                            >
+                              <button
+                                className="dnd-handle"
+                                aria-label="Drag to reorder"
+                                {...provided.dragHandleProps}
+                              >
+                                <Icon icon="grabber" width="large" />
+                              </button>
+                              <TodoItemSubtaskRow
+                                key={subtask.id}
+                                subtask={subtask}
+                                todoItemId={todoItem.id}
+                              />
+                            </li>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </ul>
               )}
-              onChange={handleOrderChange}
-            />
-          </div>
+            </Droppable>
+          </DragDropContext>
         )}
       </TodoSubtaskSorter>
       <div className="add-task">

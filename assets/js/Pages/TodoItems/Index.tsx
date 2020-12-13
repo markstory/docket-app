@@ -1,5 +1,6 @@
 import React from 'react';
 import {groupBy} from 'lodash';
+import {DragDropContext} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -45,6 +46,8 @@ export default function TodoItemsIndex({todoItems}: Props) {
     }
   }
 
+  // TODO the drag context needs to move up here,
+  // so that items can be moved between lists.
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
@@ -54,13 +57,15 @@ export default function TodoItemsIndex({todoItems}: Props) {
           <React.Fragment key={key}>
             <h2>{key}</h2>
             <TodoItemSorter todoItems={items} scope="day">
-              {({handleOrderChange, items}) => (
-                <TodoItemGroup
-                  todoItems={items}
-                  defaultDate={key}
-                  onReorder={handleOrderChange}
-                  showProject
-                />
+              {({onDragEnd, items}) => (
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <TodoItemGroup
+                    dropId={key}
+                    todoItems={items}
+                    defaultDate={key}
+                    showProject
+                  />
+                </DragDropContext>
               )}
             </TodoItemSorter>
           </React.Fragment>

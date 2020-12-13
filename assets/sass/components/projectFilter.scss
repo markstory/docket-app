@@ -1,12 +1,13 @@
 .project-filter {
+  padding-right: $space;
+  background: $color-bg;
+
   > ul {
     list-style: none;
     margin-bottom: $space * 2;
   }
-
-  .drag-item {
-    margin: 0;
-    height: 40px;
+  .dnd-item  {
+    background: $color-bg;
   }
 }
 

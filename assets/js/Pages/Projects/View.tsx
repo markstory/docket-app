@@ -1,5 +1,6 @@
 import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import {DragDropContext} from 'react-beautiful-dnd';
 
 import {archiveProject, deleteProject, unarchiveProject} from 'app/actions/projects';
 import {Project, TodoItem} from 'app/types';
@@ -40,13 +41,15 @@ export default function TodoItemsIndex({project, todoItems}: Props) {
         {project.archived && <span className="archived">Archived</span>}
       </div>
       <TodoItemSorter todoItems={todoItems} scope="child">
-        {({handleOrderChange, items}) => (
-          <TodoItemGroup
-            onReorder={handleOrderChange}
-            todoItems={items}
-            defaultProjectId={project.id}
-            showDueOn
-          />
+        {({onDragEnd, items}) => (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <TodoItemGroup
+              dropId="project"
+              todoItems={items}
+              defaultProjectId={project.id}
+              showDueOn
+            />
+          </DragDropContext>
         )}
       </TodoItemSorter>
     </LoggedIn>

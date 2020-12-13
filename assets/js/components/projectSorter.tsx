@@ -1,10 +1,12 @@
 import React from 'react';
+import {DropResult} from 'react-beautiful-dnd';
 import {Inertia} from '@inertiajs/inertia';
 
 import {Project} from 'app/types';
 import {useProjects} from 'app/providers/projects';
 
 type ChildRenderProps = {
+  onDragEnd: (result: DropResult) => void;
   handleOrderChange: (items: Project[]) => void;
   projects: Project[];
 };
@@ -25,5 +27,25 @@ export default function ProjectSorter({children}: Props) {
     Inertia.post('/projects/reorder', data);
   }
 
-  return children({projects, handleOrderChange: handleChange});
+  function handleDragEnd(result: DropResult) {
+    // Dropped outside of a dropzone
+    if (!result.destination) {
+      return;
+    }
+    const newItems = [...projects];
+    const [moved] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, moved);
+
+    setProjects(newItems);
+    // TODO instead of sending the whole list this should send
+    // the two moved items
+    const data = {
+      projects: newItems.map(({id}) => id),
+    };
+
+    // TODO should this use axios instead so we don't repaint?
+    Inertia.post('/projects/reorder', data);
+  }
+
+  return children({projects, handleOrderChange: handleChange, onDragEnd: handleDragEnd});
 }

@@ -7,10 +7,11 @@ $shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
 $shadow-med: 0 4px 16px 0 rgba(18, 28, 45, 0.2);
 $shadow-high: 0 16px 24px 0 rgba(18, 28, 45, 0.2);
 
-$color-background: #fff;
+$color-bg: #f5f7fa;
+$color-bg-raised: #fff;
+$color-bg-shade: rgba(0,0,0, 0.1);
 $color-border: #eee;
 $color-border-med: #c3c3c3;
-$color-bg-shade: rgba(0,0,0, 0.1);
 
 $color-foreground: #212121;
 $color-muted: rgb(136, 145, 170);
