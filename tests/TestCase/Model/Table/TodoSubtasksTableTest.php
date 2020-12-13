@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\TodoSubtasksTable;
+use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -11,6 +12,8 @@ use Cake\TestSuite\TestCase;
  */
 class TodoSubtasksTableTest extends TestCase
 {
+    use FactoryTrait;
+
     /**
      * Test subject
      *
@@ -24,6 +27,7 @@ class TodoSubtasksTableTest extends TestCase
      * @var array
      */
     protected $fixtures = [
+        'app.Projects',
         'app.TodoSubtasks',
         'app.TodoItems',
     ];
@@ -52,23 +56,20 @@ class TodoSubtasksTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test validationDefault method
-     *
-     * @return void
-     */
-    public function testValidationDefault(): void
+    public function testReorder()
     {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+        $home = $this->makeProject('Home', 1, 0);
+        $laundry = $this->makeItem('Do laundry', $home->id, 3);
+        $first = $this->makeSubtask('Get clothes', $laundry->id);
+        $second = $this->makeSubtask('Open machine', $laundry->id);
+        $third = $this->makeSubtask('Put in clothes', $laundry->id);
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        $expected = [$third, $first, $second];
+        $this->TodoSubtasks->reorder($expected);
+        $results = $this->TodoSubtasks->find()->orderAsc('ranking')->toArray();
+        $this->assertSame(count($results), count($expected));
+        foreach ($expected as $i => $record) {
+            $this->assertEquals($record->id, $results[$i]->id);
+        }
     }
 }
