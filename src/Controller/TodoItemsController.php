@@ -54,10 +54,13 @@ class TodoItemsController extends AppController
     public function add()
     {
         $todoItem = $this->TodoItems->newEmptyEntity();
-        $this->Authorization->can($todoItem);
 
         if ($this->request->is('post')) {
             $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
+
+            $project = $this->TodoItems->Projects->get($todoItem->project_id);
+            $this->Authorization->authorize($project, 'edit');
+
             if ($this->TodoItems->save($todoItem)) {
                 $this->Flash->success(__('The todo item has been saved.'));
 
@@ -67,9 +70,6 @@ class TodoItemsController extends AppController
             // errors well.
             $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
         }
-        $projects = $this->TodoItems->Projects->find('list', ['limit' => 200]);
-        $todoLabels = $this->TodoItems->TodoLabels->find('list', ['limit' => 200]);
-        $this->set(compact('todoItem', 'projects', 'todoLabels'));
     }
 
     /**
@@ -186,6 +186,7 @@ class TodoItemsController extends AppController
         $todoItem = $this->TodoItems->get($id, [
             'contain' => ['Projects', 'TodoLabels', 'TodoComments', 'TodoSubtasks'],
         ]);
+        $this->Authorization->authorize($todoItem);
 
         $this->set(compact('todoItem'));
         $this->set('referer', $this->referer(['action' => 'index']));

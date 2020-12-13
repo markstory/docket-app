@@ -119,27 +119,82 @@ class TodoItemsControllerTest extends TestCase
      */
     public function testView(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/todos/{$first->id}/view");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('todoItem');
+        $this->assertSame($var->title, $first->title);
     }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
+    public function testViewPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/todos/{$first->id}/view");
+        $this->assertResponseCode(403);
+    }
+
     public function testAdd(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/add", [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+        ]);
+        $this->assertResponseCode(302);
+
+        $todo = $this->TodoItems->find()->firstOrFail();
+        $this->assertSame('first todo', $todo->title);
     }
 
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
+    public function testAddPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/add", [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+        ]);
+        $this->assertResponseCode(403);
+    }
+
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$first->id}/edit", [
+            'title' => 'updated',
+        ]);
+        $this->assertResponseCode(200);
+
+        $todo = $this->TodoItems->get($first->id);
+        $this->assertSame('updated', $todo->title);
+    }
+
+    public function testEditPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$first->id}/edit", [
+            'title' => 'updated',
+        ]);
+        $this->assertResponseCode(403);
     }
 
     public function testDelete(): void
