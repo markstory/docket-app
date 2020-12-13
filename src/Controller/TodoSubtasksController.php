@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\TodoItem;
+use App\Model\Entity\TodoSubtask;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 
@@ -21,11 +23,21 @@ class TodoSubtasksController extends AppController
         $this->loadModel('TodoSubtasks');
     }
 
-    protected function getTodoItem(string $id)
+    protected function getTodoItem(string $id): TodoItem
     {
         $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
         $this->Authorization->authorize($todoItem, 'edit');
         return $todoItem;
+    }
+
+    protected function getTodoSubtask(string $todoItemId, string $id): TodoSubtask
+    {
+        $item = $this->getTodoItem($todoItemId);
+
+        return $this->TodoSubtasks
+            ->find()
+            ->where(['TodoSubtasks.id' => $id, 'TodoSubtasks.todo_item_id' => $item->id])
+            ->firstOrFail();
     }
 
     /**
@@ -61,12 +73,7 @@ class TodoSubtasksController extends AppController
     public function toggle($todoItemId, $id = null)
     {
         $this->request->allowMethod(['post']);
-        $item = $this->getTodoItem($todoItemId);
-
-        $subtask = $this->TodoSubtasks
-            ->find()
-            ->where(['TodoSubtasks.id' => $id, 'TodoSubtasks.todo_item_id' => $item->id])
-            ->firstOrFail();
+        $subtask = $this->getTodoSubtask($todoItemId, $id);
 
         $subtask->toggle();
         $this->TodoSubtasks->saveOrFail($subtask);
@@ -81,47 +88,47 @@ class TodoSubtasksController extends AppController
     /**
      * Edit method
      *
-     * @param string|null $id Todo Subtask id.
+     * @param string $todoItemId Todo id.
+     * @param string $id Todo Subtask id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(string $todoItemId, string $id)
     {
-        // TODO implement this properly.
-        $todoSubtask = $this->TodoSubtasks->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $todoSubtask = $this->TodoSubtasks->patchEntity($todoSubtask, $this->request->getData());
-            if ($this->TodoSubtasks->save($todoSubtask)) {
-                $this->Flash->success(__('The todo subtask has been saved.'));
+        $this->request->allowMethod(['post', 'put', 'patch']);
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The todo subtask could not be saved. Please, try again.'));
+        $subtask = $this->getTodoSubtask($todoItemId, $id);
+        $subtask = $this->TodoSubtasks->patchEntity($subtask, $this->request->getData());
+        if ($this->TodoSubtasks->save($subtask)) {
+            return $this->response->withStatus(200);
         }
-        $todoItems = $this->TodoSubtasks->TodoItems->find('list', ['limit' => 200]);
-        $this->set(compact('todoSubtask', 'todoItems'));
+        return $this->validationErrorResponse($subtask->getErrors());
     }
 
     /**
      * Delete method
      *
+     * @param string|null $todoItemId Todo id.
      * @param string|null $id Todo Subtask id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(string $todoItemId, string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $todoSubtask = $this->TodoSubtasks->get($id);
-        if ($this->TodoSubtasks->delete($todoSubtask)) {
+        $subtask = $this->getTodoSubtask($todoItemId, $id);
+
+        if ($this->TodoSubtasks->delete($subtask)) {
             $this->Flash->success(__('The todo subtask has been deleted.'));
         } else {
             $this->Flash->error(__('The todo subtask could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect([
+            'controller' => 'TodoItems',
+            'action' => 'view',
+            'id' => $todoItemId,
+        ]);
     }
 
     public function reorder(string $todoItemId = null)

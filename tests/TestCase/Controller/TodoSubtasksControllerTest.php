@@ -85,7 +85,16 @@ class TodoSubtasksControllerTest extends TestCase
      */
     public function testToggle(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/toggle");
+        $this->assertRedirect("/todos/{$item->id}/view");
+        $tasks = $this->TodoSubtasks->find()->where(['TodoSubtasks.todo_item_id' => $item->id]);
+        $this->assertTrue($tasks->first()->completed);
     }
 
     /**
@@ -95,7 +104,14 @@ class TodoSubtasksControllerTest extends TestCase
      */
     public function testTogglePermissions(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 2);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/toggle");
+        $this->assertResponseCode(403);
     }
 
     /**
@@ -105,7 +121,32 @@ class TodoSubtasksControllerTest extends TestCase
      */
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/edit", [
+            'title' => 'Updated'
+        ]);
+        $this->assertResponseOk();
+        $update = $this->TodoSubtasks->get($subtask->id);
+        $this->assertSame('Updated', $update->title);
+    }
+
+    public function testEditPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/edit", [
+            'title' => 'Updated'
+        ]);
+        $this->assertResponseCode(403);
     }
 
     /**
@@ -115,7 +156,27 @@ class TodoSubtasksControllerTest extends TestCase
      */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertCount(0, $this->TodoSubtasks->find()->all());
+    }
+
+    public function testDeletePermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->assertResponseCode(403);
     }
 
     public function testReorderSuccess()
