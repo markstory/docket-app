@@ -1,7 +1,9 @@
 .dnd-item {
   display: flex;
   align-items: center;
+  background: $color-bg;
 }
+
 .dnd-handle {
   @extend .button-default;
 
@@ -16,6 +18,10 @@
 
 .dnd-item-dragging {
   box-shadow: $shadow-med;
+
+  .dnd-handle {
+    visibility: visible;
+  }
 }
 
 .dnd-dropper-left-offset {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {groupBy} from 'lodash';
-import {DragDropContext} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -46,31 +46,37 @@ export default function TodoItemsIndex({todoItems}: Props) {
     }
   }
 
-  // TODO the drag context needs to move up here,
-  // so that items can be moved between lists.
+  function handleDragComplete(result: DropResult) {
+    if (!result.destination) {
+      return;
+    }
+    console.log('drag complete', result);
+    // TODO reorder based on the source/destination index & droppableId
+  }
+
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
-      {dateItems.map(function({date, items}) {
-        const key = toDateString(date);
-        return (
-          <React.Fragment key={key}>
-            <h2>{key}</h2>
-            <TodoItemSorter todoItems={items} scope="day">
-              {({onDragEnd, items}) => (
-                <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={handleDragComplete}>
+        {dateItems.map(function({date, items}) {
+          const key = toDateString(date);
+          return (
+            <React.Fragment key={key}>
+              <h2>{key}</h2>
+              <TodoItemSorter todoItems={items} scope="day">
+                {({items}) => (
                   <TodoItemGroup
                     dropId={key}
                     todoItems={items}
                     defaultDate={key}
                     showProject
                   />
-                </DragDropContext>
-              )}
-            </TodoItemSorter>
-          </React.Fragment>
-        );
-      })}
+                )}
+              </TodoItemSorter>
+            </React.Fragment>
+          );
+        })}
+      </DragDropContext>
     </LoggedIn>
   );
 }
