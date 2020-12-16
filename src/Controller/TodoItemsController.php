@@ -6,6 +6,7 @@ namespace App\Controller;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenDate;
+use InvalidArgumentException;
 
 /**
  * TodoItems Controller
@@ -148,6 +149,25 @@ class TodoItemsController extends AppController
         }
         ksort($sorted);
         $this->TodoItems->reorder($scope, $sorted);
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function move(string $id)
+    {
+        $this->request->allowMethod(['post']);
+        $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($todoItem, 'edit');
+        $operation = [
+            'child_order' => $this->request->getData('child_order'),
+            'day_order' => $this->request->getData('day_order'),
+            'due_on' => $this->request->getData('due_on')
+        ];
+        try {
+            $this->TodoItems->move($todoItem, $operation);
+        } catch (InvalidArgumentException $e) {
+            $this->Flash->error($e->getMessage());
+        }
 
         return $this->redirect($this->referer(['action' => 'index']));
     }

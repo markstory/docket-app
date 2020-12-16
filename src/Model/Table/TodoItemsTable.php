@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\TodoItem;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Validation\Validation;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -246,5 +248,62 @@ class TodoItemsTable extends Table
         $statement = $query->execute();
 
         return $statement->rowCount();
+    }
+
+    public function move(TodoItem $item, array $operation)
+    {
+        if (isset($operation['due_on'])) {
+            if (!Validation::date($operation['due_on'], 'ymd')) {
+                throw new InvalidArgumentException('due_on must be a valid date');
+            }
+            $item->due_on = $operation['due_on'];
+        }
+        $query = $this->query()
+            ->update()
+            ->where([
+                'project_id' => $item->project_id,
+                'completed' => $item->completed,
+            ]);
+
+        if (isset($operation['day_order'])) {
+            $property = 'day_order';
+        } elseif (isset($operation['child_order'])) {
+            $property = 'child_order';
+        } else {
+            throw new InvalidArgumentException('Invalid request. Provide either day_order or child_order');
+        }
+
+        $current = $item->get($property);
+        if ($item->isDirty('due_on')) {
+            // Arbitrary number should be good enough for most days.
+            $current = 500;
+        }
+        $item->set($property, $operation[$property]);
+
+        $difference = $current - $item->get($property);
+        if ($difference === 0) {
+            throw new InvalidArgumentException('Position unchanged.');
+        }
+
+        if ($difference > 0) {
+            // Move other items down, as the current item is going up
+            $query
+                ->set([$property => $query->newExpr($property . " + 1")])
+                ->where(function ($exp) use ($property, $current, $item) {
+                    return $exp->between($property, $item->get($property), $current);
+                });
+        }
+        if ($difference < 0){
+            // Move other items up, as current item is going down
+            $query
+                ->set([$property => $query->newExpr($property . ' - 1')])
+                ->where(function ($exp) use ($property, $current, $item) {
+                    return $exp->between($property, $current, $item->get($property));
+                });
+        }
+        $this->getConnection()->transactional(function () use ($item, $query) {
+            $query->execute();
+            $this->saveOrFail($item);
+        });
     }
 }

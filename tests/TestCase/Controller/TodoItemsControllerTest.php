@@ -261,8 +261,8 @@ class TodoItemsControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $other = $this->makeProject('work', 2);
         $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 3);
-        $third = $this->makeItem('third', $other->id, 6);
+        $second = $this->makeItem('second', $project->id, 1);
+        $third = $this->makeItem('third', $other->id, 2);
 
         $this->login();
         $this->enableCsrfToken();
@@ -271,5 +271,184 @@ class TodoItemsControllerTest extends TestCase
             'items' => [$third->id, $second->id, $first->id],
         ]);
         $this->assertResponseCode(404);
+    }
+
+    public function testMovePermissions()
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeItem('first', $project->id, 0);
+        $second = $this->makeItem('second', $project->id, 1);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$second->id, $first->id];
+        $this->post("/todos/{$second->id}/move", [
+            'day_order' => 0,
+        ]);
+        $this->assertResponseCode(403);
+    }
+
+    public function testMoveInvalidDay()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/todos/{$first->id}/move", [
+            'day_order' => 0,
+            'due_on' => 'not a date'
+        ]);
+
+        $this->assertRedirect('/todos');
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveUpSameDay()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+        $second = $this->makeItem('second', $project->id, 1);
+        $third = $this->makeItem('third', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$third->id, $first->id, $second->id];
+        $this->post("/todos/{$third->id}/move", [
+            'day_order' => 0,
+        ]);
+        $this->assertRedirect('/todos');
+        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+            $this->assertNull($results[$i]->due_on);
+        }
+    }
+
+    public function testMoveDownSameDay()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+        $second = $this->makeItem('second', $project->id, 1);
+        $third = $this->makeItem('third', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$second->id, $third->id, $first->id];
+        $this->post("/todos/{$first->id}/move", [
+            'day_order' => 2,
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testMoveDifferentDay()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeItem('second', $project->id, 2, ['due_on' => '2020-12-13']);
+        $third = $this->makeItem('third', $project->id, 0, ['due_on' => '2020-12-14']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$third->id}/move", [
+            'day_order' => 2,
+            'due_on' => '2020-12-13',
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems
+            ->find()
+            ->orderAsc('day_order')->toArray();
+        $expected = [$first->id, $third->id, $second->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+            $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
+        }
+    }
+
+    public function testMoveDifferentDayMiddle()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeItem('second', $project->id, 2, ['due_on' => '2020-12-13']);
+        $third = $this->makeItem('third', $project->id, 3, ['due_on' => '2020-12-13']);
+
+        $new = $this->makeItem('new', $project->id, 0, ['due_on' => '2020-12-20']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$new->id}/move", [
+            'day_order' => 2,
+            'due_on' => '2020-12-13',
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems
+            ->find()
+            ->orderAsc('day_order')->toArray();
+        $expected = [$first->id, $new->id, $second->id, $third->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testMoveProjectUp()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+        $second = $this->makeItem('second', $project->id, 2);
+        $third = $this->makeItem('third', $project->id, 3);
+        $fourth = $this->makeItem('fourth', $project->id, 6);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$fourth->id}/move", [
+            'child_order' => 2,
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems
+            ->find()
+            ->orderAsc('child_order')->toArray();
+        $expected = [$first->id, $fourth->id, $second->id, $third->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testMoveProjectDown()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeItem('first', $project->id, 0);
+        $second = $this->makeItem('second', $project->id, 1);
+        $third = $this->makeItem('third', $project->id, 2);
+        $fourth = $this->makeItem('fourth', $project->id, 3);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$first->id}/move", [
+            'child_order' => 2,
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems
+            ->find()
+            ->orderAsc('child_order')->toArray();
+        $expected = [$second->id, $third->id, $first->id, $fourth->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 }
