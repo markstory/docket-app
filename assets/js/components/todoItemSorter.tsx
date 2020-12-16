@@ -15,6 +15,12 @@ type Props = {
   children: (props: ChildRenderProps) => JSX.Element;
 };
 
+type UpdateData = {
+  child_order?: number;
+  day_order?: number;
+  due_on?: string;
+};
+
 /**
  * Abstraction around reorder lists of todos and optimistically updating state.
  */
@@ -30,14 +36,18 @@ export default function TodoItemSorter({children, todoItems, scope}: Props) {
     const [moved] = newItems.splice(result.source.index, 1);
     newItems.splice(result.destination.index, 0, moved);
 
-    const data = {
-      items: newItems.map(({id}) => id),
-      scope,
-    };
     setSorted(newItems);
 
+    const property = scope === 'day' ? 'day_order' : 'child_order';
+    const data: UpdateData = {
+      [property]: result.destination.index,
+    };
+    if (result.source.droppableId !== result.destination.droppableId) {
+      data.due_on = result.destination.droppableId;
+    }
+
     // TODO should this use axios instead so we don't repaint?
-    Inertia.post('/todos/reorder', data, {preserveScroll: true});
+    Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
   }
 
   const items = sorted || todoItems;

@@ -290,7 +290,7 @@ class TodoItemsTable extends Table
             $query
                 ->set([$property => $query->newExpr($property . " + 1")])
                 ->where(function ($exp) use ($property, $current, $item) {
-                    return $exp->between($property, $item->get($property), $current);
+                    return $exp->between($property, $item->get($property), $current + 1);
                 });
         }
         if ($difference < 0){
@@ -298,7 +298,7 @@ class TodoItemsTable extends Table
             $query
                 ->set([$property => $query->newExpr($property . ' - 1')])
                 ->where(function ($exp) use ($property, $current, $item) {
-                    return $exp->between($property, $current, $item->get($property));
+                    return $exp->between($property, $current, $item->get($property) + 1);
                 });
         }
         $this->getConnection()->transactional(function () use ($item, $query) {
