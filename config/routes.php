@@ -105,6 +105,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         ->setPass(['todoItemId', 'id']);
     $builder->post('/todos/{todoItemId}/subtasks/{id}/toggle', 'TodoSubtasks::toggle', 'todosubtasks:toggle')
         ->setPass(['todoItemId', 'id']);
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/move', 'TodoSubtasks::move', 'todosubtasks:move')
+        ->setPass(['todoItemId', 'id']);
 
     /*
      * Connect catchall routes for all controllers.

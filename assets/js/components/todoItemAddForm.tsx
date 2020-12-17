@@ -8,10 +8,9 @@ type Props = {
   onCancel: () => void;
   defaultDate?: string;
   defaultProjectId?: number;
-  order?: number;
 };
 
-function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId, order}: Props) {
+function TodoItemAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.persist();
@@ -29,8 +28,8 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId, order}: Prop
     body: '',
     due_on: defaultDate ?? null,
     completed: false,
-    day_order: order ?? 0,
-    child_order: order ?? 0,
+    day_order: 0,
+    child_order: 0,
     created: '',
     modified: '',
     project: {
@@ -47,4 +46,4 @@ function QuickAddTaskForm({onCancel, defaultDate, defaultProjectId, order}: Prop
     <TodoItemQuickForm todoItem={todoItem} onSubmit={onSubmit} onCancel={onCancel} />
   );
 }
-export default QuickAddTaskForm;
+export default TodoItemAddForm;

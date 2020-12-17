@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\TodoItem;
+use App\Model\Entity\User;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -159,8 +160,52 @@ class TodoItemsTable extends Table
             ->orderAsc('TodoItems.day_order');
     }
 
+    public function findOverdue(Query $query): Query
+    {
+        $today = new FrozenDate('today');
+        return $query->where([
+                'TodoItems.due_on IS NOT' => null,
+                'TodoItems.due_on >=' => $today,
+            ])
+            ->orderAsc('TodoItems.due_on')
+            ->orderAsc('TodoItems.day_order');
+    }
+
+    /**
+     * Update an item so that it is appended to
+     * both the day and project.
+     */
+    public function setNextOrderProperties(User $user, TodoItem $item)
+    {
+        $query = $this->find();
+        $result = $query->select([
+            'max_child' => $query->func()->max('TodoItems.child_order'),
+        ])
+        ->where([
+            'TodoItems.project_id' => $item->project_id,
+        ])->firstOrFail();
+        $item->child_order = $result->max_child + 1;
+        if (!$item->due_on) {
+            return;
+        }
+
+        $query = $this->find();
+        $result = $query->select([
+            'max_day' => $query->func()->max('TodoItems.day_order'),
+        ])
+        ->innerJoinWith('Projects')
+        ->where([
+            'Projects.user_id' => $user->id,
+            'TodoItems.due_on' => $item->due_on,
+        ])->firstOrFail();
+        $item->day_order = $result->max_day + 1;
+    }
+
     public function move(TodoItem $item, array $operation)
     {
+        if (!isset($item->project)) {
+            throw new InvalidArgumentException('TodoItem cannot be moved, it has no project data loaded.');
+        }
         if (isset($operation['due_on'])) {
             if (!Validation::date($operation['due_on'], 'ymd')) {
                 throw new InvalidArgumentException('due_on must be a valid date');
@@ -169,13 +214,13 @@ class TodoItemsTable extends Table
         }
         $conditions = [
             'completed' => $item->completed,
-            'project_id' => $item->project_id,
         ];
         if (isset($operation['day_order'])) {
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
+            $conditions['project_id'] = $item->project_id;
         } else {
             throw new InvalidArgumentException('Invalid request. Provide either day_order or child_order');
         }
@@ -196,9 +241,16 @@ class TodoItemsTable extends Table
             $targetOffset = $currentItem->get($property);
         }
 
+        // Constrain to projects owned by the same user.
+        $projectQuery = $this->Projects->find()
+            ->select(['Projects.id'])
+            ->where(['Projects.user_id' => $item->project->user_id]);
+
         $query = $this->query()
             ->update()
-            ->where($conditions);
+            ->innerJoinWith('Projects')
+            ->where($conditions)
+            ->where(['project_id IN' => $projectQuery]);
 
         $current = $item->get($property);
         $item->set($property, $targetOffset);

@@ -16,8 +16,6 @@ export default function TodoItemQuickForm({errors, todoItem, onSubmit, onCancel}
 
   return (
     <form className="todoitem-quickform" method="post" onSubmit={onSubmit}>
-      <input type="hidden" name="child_order" value={todoItem.child_order} />
-      <input type="hidden" name="day_order" value={todoItem.day_order} />
       <div className="title">
         <input
           type="text"

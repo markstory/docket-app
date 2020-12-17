@@ -62,6 +62,8 @@ class TodoItemsController extends AppController
 
             $project = $this->TodoItems->Projects->get($todoItem->project_id);
             $this->Authorization->authorize($project, 'edit');
+            $user = $this->request->getAttribute('identity');
+            $this->TodoItems->setNextOrderProperties($user, $todoItem);
 
             if ($this->TodoItems->save($todoItem)) {
                 $this->Flash->success(__('The todo item has been saved.'));

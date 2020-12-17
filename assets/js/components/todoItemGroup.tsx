@@ -86,7 +86,6 @@ export default function TodoItemGroup({
           <TodoItemAddForm
             defaultDate={defaultDate}
             defaultProjectId={defaultProjectId}
-            order={todoItems.length}
             onCancel={() => setShowForm(false)}
           />
         )}

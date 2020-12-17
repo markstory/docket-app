@@ -155,6 +155,28 @@ class TodoItemsControllerTest extends TestCase
         $this->assertSame('first todo', $todo->title);
     }
 
+    public function testAddToBottom(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $this->makeItem('existing', $project->id, 3, [
+            'due_on' => '2020-12-17',
+            'day_order' => 9
+        ]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/add", [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+            'due_on' => '2020-12-17',
+        ]);
+        $this->assertResponseCode(302);
+
+        $todo = $this->TodoItems->findByTitle('first todo')->firstOrFail();
+        $this->assertSame(4, $todo->child_order);
+        $this->assertSame(10, $todo->day_order);
+    }
+
     public function testAddPermissions(): void
     {
         $project = $this->makeProject('work', 2);
@@ -381,6 +403,34 @@ class TodoItemsControllerTest extends TestCase
         $expected = [0, 1, 2, 3];
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->day_order);
+        }
+    }
+
+    public function testMoveDifferentDaySameOrder()
+    {
+        $project = $this->makeProject('work', 1);
+        $home = $this->makeProject('home', 1);
+
+        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeItem('second', $project->id, 1, ['due_on' => '2020-12-13']);
+        $third = $this->makeItem('third', $home->id, 1, ['due_on' => '2020-12-14']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$third->id}/move", [
+            'day_order' => 1,
+            'due_on' => '2020-12-13',
+        ]);
+        $this->assertRedirect('/todos');
+
+        $results = $this->TodoItems
+            ->find()
+            ->orderAsc('day_order')->toArray();
+        $expected = [$first->id, $third->id, $second->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+            $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
     }
 
