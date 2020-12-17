@@ -1,25 +1,26 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem, TodoSubtask} from 'app/types';
+import {useSubtasks} from 'app/providers/subtasks';
 
 type ChildRenderProps = {
-  onDragEnd: (result: DropResult) => void;
   items: TodoSubtask[];
+  setItems: (items: TodoSubtask[]) => void;
 };
 
 type Props = {
   todoItemId: TodoItem['id'];
-  subtasks: TodoSubtask[];
   children: (props: ChildRenderProps) => JSX.Element;
 };
 
 /**
  * Abstraction around reorder lists of todo subtasks and optimistically updating state.
  */
-export default function TodoSubtaskSorter({children, todoItemId, subtasks}: Props) {
+export default function TodoSubtaskSorter({children, todoItemId}: Props) {
   const [sorted, setSorted] = React.useState<TodoSubtask[] | undefined>(undefined);
+  const [subtasks, setSubtasks] = useSubtasks();
 
   function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
@@ -31,15 +32,19 @@ export default function TodoSubtaskSorter({children, todoItemId, subtasks}: Prop
     newItems.splice(result.destination.index, 0, moved);
 
     const data = {
-      items: newItems.map(({id}) => id),
+      ranking: result.destination.index,
     };
-    setSorted(newItems);
+    setSubtasks(newItems);
 
     // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/todos/${todoItemId}/subtasks/reorder`, data);
+    Inertia.post(`/todos/${todoItemId}/subtasks/${result.draggableId}/move`, data);
   }
 
   const items = sorted || subtasks;
 
-  return children({items: items, onDragEnd: handleDragEnd});
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      {children({items: items, setItems: setSorted})}
+    </DragDropContext>
+  );
 }

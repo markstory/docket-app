@@ -78,6 +78,22 @@ class TodoSubtasksControllerTest extends TestCase
         $this->assertCount(0, $tasks);
     }
 
+    public function testAddAppendRanking(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $this->makeSubtask('get mower', $project->id, 4);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks", [
+            'title' => 'start mower',
+        ]);
+        $this->assertRedirect("/todos/{$item->id}/view");
+        $task = $this->TodoSubtasks->findByTitle('start mower')->firstOrFail();
+        $this->assertSame(5, $task->ranking);
+    }
+
     /**
      * Test toggle method
      *
@@ -87,7 +103,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -106,7 +122,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -123,7 +139,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -139,7 +155,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -158,7 +174,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -171,7 +187,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $item = $this->makeItem('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -179,43 +195,63 @@ class TodoSubtasksControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testReorderSuccess()
+    public function testMoveNoData()
     {
-        $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
-        $first = $this->makeSubtask('start mower', $item->id);
-        $second = $this->makeSubtask('cut', $item->id);
-        $third = $this->makeSubtask('done', $item->id);
+        $home = $this->makeProject('Home', 1, 0);
+        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $first = $this->makeSubtask('start mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$third->id, $first->id, $second->id];
-        $this->post("/todos/{$item->id}/subtasks/reorder", [
-            'items' => $expected,
+        $this->enableRetainFlashMessages();
+        $this->post("/todos/{$item->id}/subtasks/{$first->id}/move");
+        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveDown()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $first = $this->makeSubtask('start mower', $item->id, 0);
+        $second = $this->makeSubtask('cut', $item->id, 1);
+        $third = $this->makeSubtask('done', $item->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/todos/{$item->id}/subtasks/{$first->id}/move", [
+            'ranking' => 1,
         ]);
         $this->assertRedirect("/todos/{$item->id}/view");
 
         $results = $this->TodoSubtasks->find()->orderAsc('ranking')->toArray();
+        $expected = [$second->id, $first->id, $third->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);
         }
     }
 
-    public function testReorderCrossItem()
+    public function testMoveUp()
     {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 3);
-
-        $subFirst = $this->makeSubtask('first sub', $first->id);
-        $subSecond = $this->makeSubtask('second sub', $second->id);
+        $home = $this->makeProject('Home', 1, 0);
+        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $first = $this->makeSubtask('start mower', $item->id, 0);
+        $second = $this->makeSubtask('cut', $item->id, 1);
+        $third = $this->makeSubtask('done', $item->id, 2);
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/subtasks/reorder", [
-            'items' => [$subFirst->id, $subSecond->id],
+        $this->post("/todos/{$item->id}/subtasks/{$third->id}/move", [
+            'ranking' => 0,
         ]);
-        $this->assertResponseCode(404);
+        $this->assertRedirect("/todos/{$item->id}/view");
+
+        $results = $this->TodoSubtasks->find()->orderAsc('ranking')->toArray();
+        $expected = [$third->id, $first->id, $second->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 }

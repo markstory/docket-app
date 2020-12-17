@@ -19,24 +19,26 @@ function NewProjectModal({showModal, onClose}: Props) {
   const [projects, setProjects] = useProjects();
 
   const [errors, setErrors] = React.useState<ValidationErrors>({});
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
 
     // Do an XHR request so we can handle validation errors
     // inside the modal.
-    axios
-      .post('/projects/add', formData)
-      .then((resp: AxiosResponse<{project: Project}>) => {
-        setProjects([resp.data.project, ...projects]);
-        onClose();
-      })
-      .catch(error => {
-        if (error.response) {
-          setErrors(error.response.data.errors);
-        }
-      });
-  };
+    try {
+      const resp: AxiosResponse<{project: Project}> = await axios.post(
+        '/projects/add',
+        formData
+      );
+
+      setProjects([...projects, resp.data.project]);
+      onClose();
+    } catch (error) {
+      if (error.response) {
+        setErrors(error.response.data.errors);
+      }
+    }
+  }
 
   return (
     <Modal onClose={onClose}>

@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\TodoSubtask;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * TodoSubtasks Model
@@ -90,38 +92,75 @@ class TodoSubtasksTable extends Table
         return $rules;
     }
 
-    /**
-     * Update the order on the list of subtasks
-     *
-     * @param \App\Model\Entity\TodoSubtask[] $items
-     * @return void
-     */
-    public function reorder(array $items)
+    public function getNextRanking(int $todoId)
     {
-        $minValue = 0;
-        $orderMap = [];
-        foreach ($items as $i => $item) {
-            if ($item->ranking < $minValue) {
-                $minValue = $item->ranking;
-            }
-            $orderMap[$item->id] = $i;
-        }
-        $ids = array_keys($orderMap);
+        $query = $this->find();
+        $result = $query->select([
+            'max' => $query->func()->max('TodoSubtasks.ranking')
+        ])
+        ->where([
+            'TodoSubtasks.todo_item_id' => $todoId,
+            'TodoSubtasks.completed' => false,
+        ])
+        ->firstOrFail();
 
-        $query = $this->query();
-        $cases = $values = [];
-        foreach ($orderMap as $id => $value) {
-            $cases[] = $query->newExpr()->eq('id', $id);
-            $values[] = $minValue + $value;
+        return $result->max + 1;
+    }
+
+    public function move(TodoSubtask $task, array $operation)
+    {
+        if (!isset($operation['ranking'])) {
+            throw new InvalidArgumentException('A ranking is required');
         }
-        $case = $query->newExpr()
-            ->addCase($cases, $values);
-        $query
+        $conditions = [
+            'todo_item_id' => $task->todo_item_id,
+        ];
+
+        // We have to assume that all lists are not continuous ranges, and that the order
+        // fields have holes in them. The holes can be introduced when items are 
+        // deleted/completed. Try to find the item at the target offset
+        $currentTask = $this->find()
+            ->where($conditions)
+            ->orderAsc('ranking')
+            ->offset($operation['ranking'])
+            ->first();
+
+        // If we found a record at the current offset
+        // use its order property for our update
+        $targetOffset = $operation['ranking'];
+        if ($currentTask) {
+            $targetOffset = $currentTask->get('ranking');
+        }
+
+        $query = $this->query()
             ->update()
-            ->set(['ranking' => $case])
-            ->where(['id IN' => $ids]);
-        $statement = $query->execute();
+            ->where($conditions);
 
-        return $statement->rowCount();
+        $current = $task->get('ranking');
+        $task->set('ranking', $targetOffset);
+        $difference = $current - $task->get('ranking');
+
+        if ($difference > 0) {
+            // Move other items down, as the current item is going up
+            // or is being moved from another group.
+            $query
+                ->set(['ranking' => $query->newExpr('ranking + 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $targetOffset, $current);
+                });
+        } elseif ($difference < 0) {
+            // Move other items up, as current item is going down
+            $query
+                ->set(['ranking' => $query->newExpr('ranking - 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $current, $targetOffset);
+                });
+        }
+        $this->getConnection()->transactional(function () use ($task, $query) {
+            if ($query->clause('set')) {
+                $query->execute();
+            }
+            $this->saveOrFail($task);
+        });
     }
 }

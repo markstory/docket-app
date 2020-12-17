@@ -1,7 +1,6 @@
 .dnd-item {
   display: flex;
   align-items: center;
-  background: $color-bg;
 }
 
 .dnd-handle {
@@ -18,6 +17,7 @@
 
 .dnd-item-dragging {
   box-shadow: $shadow-med;
+  background: $color-bg;
 
   .dnd-handle {
     visibility: visible;

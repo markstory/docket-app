@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import {Droppable, Draggable} from 'react-beautiful-dnd';
 
 import {TodoItemDetailed, TodoSubtask} from 'app/types';
 import TodoSubtaskSorter from 'app/components/todoSubtaskSorter';
 import TodoSubtaskAddForm from 'app/components/todoSubtaskAddForm';
+import {SubtasksProvider} from 'app/providers/subtasks';
 import {Icon, InlineIcon} from './icon';
 
 type Props = {
@@ -15,11 +16,11 @@ export default function TodoItemSubtasks({todoItem}: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="todoitem-subtasks">
-      <h3>Sub-tasks</h3>
-      <TodoSubtaskSorter todoItemId={todoItem.id} subtasks={todoItem.subtasks}>
-        {({items, onDragEnd}) => (
-          <DragDropContext onDragEnd={onDragEnd}>
+    <SubtasksProvider subtasks={todoItem.subtasks}>
+      <div className="todoitem-subtasks">
+        <h3>Sub-tasks</h3>
+        <TodoSubtaskSorter todoItemId={todoItem.id}>
+          {({items}) => (
             <Droppable droppableId="subtasks" type="subtask">
               {(provided: any) => (
                 <ul
@@ -68,21 +69,21 @@ export default function TodoItemSubtasks({todoItem}: Props) {
                 </ul>
               )}
             </Droppable>
-          </DragDropContext>
-        )}
-      </TodoSubtaskSorter>
-      <div className="add-task">
-        {!showForm && (
-          <button className="button-default" onClick={() => setShowForm(true)}>
-            <InlineIcon icon="plus" />
-            Add Sub-task
-          </button>
-        )}
-        {showForm && (
-          <TodoSubtaskAddForm todoItem={todoItem} onCancel={() => setShowForm(false)} />
-        )}
+          )}
+        </TodoSubtaskSorter>
+        <div className="add-task">
+          {!showForm && (
+            <button className="button-default" onClick={() => setShowForm(true)}>
+              <InlineIcon icon="plus" />
+              Add Sub-task
+            </button>
+          )}
+          {showForm && (
+            <TodoSubtaskAddForm todoItem={todoItem} onCancel={() => setShowForm(false)} />
+          )}
+        </div>
       </div>
-    </div>
+    </SubtasksProvider>
   );
 }
 

@@ -44,12 +44,13 @@ trait FactoryTrait
         return $todos->saveOrFail($todoItem);
     }
 
-    protected function makeSubtask($title, $todoItemId, $props = [])
+    protected function makeSubtask($title, $todoItemId, $ranking, $props = [])
     {
         $subtasks = TableRegistry::get('TodoSubtasks');
         $subtask = $subtasks->newEntity(array_merge([
             'todo_item_id' => $todoItemId,
             'title' => $title,
+            'ranking' => $ranking,
         ], $props));
 
         return $subtasks->saveOrFail($subtask);

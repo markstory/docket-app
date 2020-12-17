@@ -1,23 +1,37 @@
 import React, {useState} from 'react';
+import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
-import {TodoItem} from 'app/types';
+import {TodoItemDetailed, TodoSubtask} from 'app/types';
+import {useSubtasks} from 'app/providers/subtasks';
 
 type Props = {
-  todoItem: TodoItem;
+  todoItem: TodoItemDetailed;
   onCancel: () => void;
 };
 
 export default function TodoSubtaskAddForm({todoItem, onCancel}: Props) {
   const [value, setValue] = useState('');
-  const handleSubmit = (e: React.FormEvent) => {
+  const [subtasks, setSubtasks] = useSubtasks();
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
 
-    // Use regular post as validation errors should be rare.
-    Inertia.post(`/todos/${todoItem.id}/subtasks`, formData);
-    setValue('');
-  };
+    // Do an XHR request so we can update page state
+    // as reloading doesn't work due to sort contexts
+    try {
+      const resp: AxiosResponse<{subtask: TodoSubtask}> = await axios.post(
+        `/todos/${todoItem.id}/subtasks`,
+        formData
+      );
+      // Clear input for next task.
+      setValue('');
+      setSubtasks([...subtasks, resp.data.subtask]);
+    } catch (error) {
+      // TOOD handle this error.
+    }
+  }
 
   return (
     <form className="todosubtask-addform" method="post" onSubmit={handleSubmit}>

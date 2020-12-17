@@ -7,6 +7,8 @@ use App\Model\Entity\TodoItem;
 use App\Model\Entity\TodoSubtask;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\View\JsonView;
+use InvalidArgumentException;
 
 /**
  * TodoSubtasks Controller
@@ -52,14 +54,14 @@ class TodoSubtasksController extends AppController
 
         $todoSubtask = $this->TodoSubtasks->newEntity($this->request->getData());
         $todoSubtask->todo_item_id = $item->id;
+        $todoSubtask->ranking = $this->TodoSubtasks->getNextRanking($item->id);
 
         $this->TodoSubtasks->saveOrFail($todoSubtask);
 
-        return $this->redirect($this->referer([
-            'controller' => 'TodoItems',
-            'action' => 'view',
-            'id' => $todoItemId
-        ]));
+        $this->set('subtask', $todoSubtask);
+        $this->viewBuilder()
+            ->setClassName(JsonView::class)
+            ->setOption('serialize', ['subtask']);
     }
 
     /**
@@ -131,39 +133,26 @@ class TodoSubtasksController extends AppController
         ]);
     }
 
-    public function reorder(string $todoItemId = null)
+    public function move(string $todoItemId, string $id)
     {
-        $todoItem = $this->getTodoItem($todoItemId);
+        $this->request->allowMethod(['post']);
+        $item = $this->getTodoItem($todoItemId);
+        $this->Authorization->authorize($item, 'edit');
+        $task = $this->getTodoSubtask($todoItemId, $id);
 
-        $itemIds = $this->request->getData('items');
-        if (!is_array($itemIds)) {
-            throw new BadRequestException('Invalid subtask list.');
+        $operation = [
+            'ranking' => $this->request->getData('ranking'),
+        ];
+        try {
+            $this->TodoSubtasks->move($task, $operation);
+        } catch (InvalidArgumentException $e) {
+            $this->Flash->error($e->getMessage());
         }
-        $itemIds = array_values($itemIds);
-
-        $query = $this->TodoSubtasks
-            ->find()
-            ->where([
-                'TodoSubtasks.todo_item_id' => $todoItem->id,
-                'TodoSubtasks.id IN' => $itemIds
-            ]);
-
-        $items = $query->toArray();
-        if (count($items) != count($itemIds)) {
-            throw new NotFoundException('Some of the requested items could not be found.');
-        }
-        $sorted = [];
-        foreach ($items as $item) {
-            $index = array_search($item->id, $itemIds);
-            $sorted[$index] = $item;
-        }
-        ksort($sorted);
-        $this->TodoSubtasks->reorder($sorted);
 
         return $this->redirect($this->referer([
             'controller' => 'TodoItems',
             'action' => 'view',
-            'id' => $todoItem->id
+            'id' => $todoItemId,
         ]));
     }
 }
