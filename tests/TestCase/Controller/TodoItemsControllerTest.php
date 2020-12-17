@@ -222,66 +222,14 @@ class TodoItemsControllerTest extends TestCase
         $this->assertTrue($this->TodoItems->exists(['TodoItems.id' => $first->id]));
     }
 
-    public function testReorderSuccess()
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 3);
-        $third = $this->makeItem('third', $project->id, 6);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $expected = [$third->id, $first->id, $second->id];
-        $this->post('/todos/reorder', [
-            'scope' => 'day',
-            'items' => $expected,
-        ]);
-        $this->assertRedirect('/todos');
-
-        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
-    }
-
-    public function testReorderBadScope()
-    {
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/todos/reorder', [
-            'scope' => 'poop',
-            'items' => [],
-        ]);
-        $this->assertResponseCode(400);
-    }
-
-    public function testReorderCrossOwner()
-    {
-        $project = $this->makeProject('work', 1);
-        $other = $this->makeProject('work', 2);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 1);
-        $third = $this->makeItem('third', $other->id, 2);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/todos/reorder', [
-            'scope' => 'day',
-            'items' => [$third->id, $second->id, $first->id],
-        ]);
-        $this->assertResponseCode(404);
-    }
-
     public function testMovePermissions()
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeItem('first', $project->id, 0);
+        $this->makeItem('first', $project->id, 0);
         $second = $this->makeItem('second', $project->id, 1);
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$second->id, $first->id];
         $this->post("/todos/{$second->id}/move", [
             'day_order' => 0,
         ]);
@@ -359,7 +307,7 @@ class TodoItemsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$third->id}/move", [
-            'day_order' => 2,
+            'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
         $this->assertRedirect('/todos');
@@ -398,7 +346,7 @@ class TodoItemsControllerTest extends TestCase
         $expected = [$first->id, $new->id, $second->id, $third->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
+            $this->assertEquals($id, $results[$i]->id, "failed on {$i}");
             $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
     }
@@ -447,7 +395,7 @@ class TodoItemsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$fourth->id}/move", [
-            'child_order' => 2,
+            'child_order' => 1,
         ]);
         $this->assertRedirect('/todos');
 

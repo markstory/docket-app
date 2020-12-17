@@ -42,6 +42,7 @@ class TodoItemsController extends AppController
         } else if ($view === 'upcoming') {
             $query = $query->find('upcoming', ['start' => $start]);
         }
+        // $overdue = $this->TodoItems->find('overdue')->limit(25);
         $todoItems = $query->all();
 
         $this->set(compact('todoItems', 'view'));
@@ -116,40 +117,6 @@ class TodoItemsController extends AppController
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
-        return $this->redirect($this->referer(['action' => 'index']));
-    }
-
-    /**
-     * Reorder a set of items.
-     */
-    public function reorder()
-    {
-        $scope = $this->request->getData('scope');
-        if (!in_array($scope, ['day', 'child'])) {
-            throw new BadRequestException('Invalid scope parameter');
-        }
-        $itemIds = $this->request->getData('items');
-        if (!is_array($itemIds)) {
-            throw new BadRequestException('Invalid item list.');
-        }
-        $itemIds = array_values($itemIds);
-        $query = $this->TodoItems
-            ->find('incomplete')
-            ->where(['TodoItems.id IN' => $itemIds]);
-        $query = $this->Authorization->applyScope($query, 'index');
-
-        $items = $query->toArray();
-        if (count($items) != count($itemIds)) {
-            throw new NotFoundException('Some of the requested items could not be found.');
-        }
-        $sorted = [];
-        foreach ($items as $item) {
-            $index = array_search($item->id, $itemIds);
-            $sorted[$index] = $item;
-        }
-        ksort($sorted);
-        $this->TodoItems->reorder($scope, $sorted);
-
         return $this->redirect($this->referer(['action' => 'index']));
     }
 

@@ -159,97 +159,6 @@ class TodoItemsTable extends Table
             ->orderAsc('TodoItems.day_order');
     }
 
-    /**
-     * Reorder a set of items in the scope.
-     *
-     * Only the provided items will be reordered, other items
-     * will be left in their current order. The lowest order value will
-     * be used as the root of the sort operation.
-     *
-     * @param string $scope
-     * @param \App\Model\Entity\TodoItem[] $items
-     * @return void
-     */
-    public function reorder(string $scope, array $items)
-    {
-        if (!in_array($scope, ['child', 'day'])) {
-            throw new RuntimeException("Invalid scope {$scope} used");
-        }
-        if (empty($items)) {
-            return;
-        }
-        if ($scope === 'child') {
-            $this->reorderByChild($items);
-        }
-        if ($scope === 'day') {
-            $this->reorderByDay($items);
-        }
-    }
-
-    protected function reorderByChild(array $items)
-    {
-        $projectId = $items[0]->project_id;
-        foreach ($items as $item) {
-            if ($item->project_id !== $projectId) {
-                throw new InvalidArgumentException('Cannot order by scope as there are multiple projects.');
-            }
-        }
-        $minValue = 0;
-        $orderMap = [];
-        foreach ($items as $i => $item) {
-            if ($item->child_order < $minValue) {
-                $minValue = $item->child_order;
-            }
-            $orderMap[$item->id] = $i;
-        }
-        $ids = array_keys($orderMap);
-
-        $query = $this->query();
-        $cases = $values = [];
-        foreach ($orderMap as $id => $value) {
-            $cases[] = $query->newExpr()->eq('id', $id);
-            $values[] = $minValue + $value;
-        }
-        $case = $query->newExpr()
-            ->addCase($cases, $values);
-        $query
-            ->update()
-            ->set(['child_order' => $case])
-            ->where(['id IN' => $ids]);
-        $statement = $query->execute();
-
-        return $statement->rowCount();
-    }
-
-    protected function reorderByDay(array $items)
-    {
-        $minValue = 0;
-        $orderMap = [];
-        foreach ($items as $i => $item) {
-            if ($item->day_order < $minValue) {
-                $minValue = $item->day_order;
-            }
-            $orderMap[$item->id] = $i;
-        }
-        $ids = array_keys($orderMap);
-
-        $query = $this->query();
-        $cases = $values = [];
-        foreach ($orderMap as $id => $value) {
-            $cases[] = $query->newExpr()->eq('id', $id);
-            $values[] = $minValue + $value;
-        }
-        $case = $query->newExpr()
-            ->addCase($cases, $values);
-        $query
-            ->update()
-            ->set(['day_order' => $case])
-            ->where(['id IN' => $ids]);
-        $statement = $query->execute();
-
-        return $statement->rowCount();
-    }
-
     public function move(TodoItem $item, array $operation)
     {
         if (isset($operation['due_on'])) {
@@ -258,51 +167,69 @@ class TodoItemsTable extends Table
             }
             $item->due_on = $operation['due_on'];
         }
-        $query = $this->query()
-            ->update()
-            ->where([
-                'project_id' => $item->project_id,
-                'completed' => $item->completed,
-            ]);
-
+        $conditions = [
+            'completed' => $item->completed,
+            'project_id' => $item->project_id,
+        ];
         if (isset($operation['day_order'])) {
             $property = 'day_order';
+            $conditions['due_on IS'] = $item->due_on;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
         } else {
             throw new InvalidArgumentException('Invalid request. Provide either day_order or child_order');
         }
 
+        // We have to assume that all lists are not continuous ranges, and that the order
+        // fields have holes in them. The holes can be introduced when items are 
+        // deleted/completed. Try to find the item at the target offset
+        $currentItem = $this->find()
+            ->where($conditions)
+            ->orderAsc($property)
+            ->offset($operation[$property])
+            ->first();
+
+        // If we found a record at the current offset
+        // use its order property for our update
+        $targetOffset = $operation[$property];
+        if ($currentItem) {
+            $targetOffset = $currentItem->get($property);
+        }
+
+        $query = $this->query()
+            ->update()
+            ->where($conditions);
+
         $current = $item->get($property);
-        if ($item->isDirty('due_on')) {
-            // Arbitrary number should be good enough for most days.
-            $current = 500;
-        }
-        $item->set($property, $operation[$property]);
-
+        $item->set($property, $targetOffset);
         $difference = $current - $item->get($property);
-        if ($difference === 0) {
-            throw new InvalidArgumentException('Position unchanged.');
-        }
 
-        if ($difference > 0) {
-            // Move other items down, as the current item is going up
+        if ($item->isDirty('due_on')) {
+            // Moving an item to a new list. Shift the remainder of
+            // the new list down.
             $query
                 ->set([$property => $query->newExpr($property . " + 1")])
-                ->where(function ($exp) use ($property, $current, $item) {
-                    return $exp->between($property, $item->get($property), $current + 1);
+                ->where(["{$property} >=" => $targetOffset]);
+        } elseif ($difference > 0) {
+            // Move other items down, as the current item is going up
+            // or is being moved from another group.
+            $query
+                ->set([$property => $query->newExpr($property . " + 1")])
+                ->where(function ($exp) use ($property, $current, $targetOffset) {
+                    return $exp->between($property, $targetOffset, $current);
                 });
-        }
-        if ($difference < 0){
+        } elseif ($difference < 0) {
             // Move other items up, as current item is going down
             $query
                 ->set([$property => $query->newExpr($property . ' - 1')])
-                ->where(function ($exp) use ($property, $current, $item) {
-                    return $exp->between($property, $current, $item->get($property) + 1);
+                ->where(function ($exp) use ($property, $current, $targetOffset) {
+                    return $exp->between($property, $current, $targetOffset);
                 });
         }
         $this->getConnection()->transactional(function () use ($item, $query) {
-            $query->execute();
+            if ($query->clause('set')) {
+                $query->execute();
+            }
             $this->saveOrFail($item);
         });
     }
