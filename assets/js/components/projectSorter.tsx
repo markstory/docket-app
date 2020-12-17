@@ -1,13 +1,11 @@
 import React from 'react';
-import {DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 import {Inertia} from '@inertiajs/inertia';
 
 import {Project} from 'app/types';
 import {useProjects} from 'app/providers/projects';
 
 type ChildRenderProps = {
-  onDragEnd: (result: DropResult) => void;
-  handleOrderChange: (items: Project[]) => void;
   projects: Project[];
 };
 
@@ -45,5 +43,7 @@ export default function ProjectSorter({children}: Props) {
     Inertia.post(`/projects/${result.draggableId}/move`, data);
   }
 
-  return children({projects, handleOrderChange: handleChange, onDragEnd: handleDragEnd});
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>{children({projects})}</DragDropContext>
+  );
 }

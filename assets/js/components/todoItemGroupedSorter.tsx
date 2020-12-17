@@ -1,7 +1,7 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {groupBy} from 'lodash';
-import {DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 
@@ -9,7 +9,6 @@ type GroupedItems = {key: string; items: TodoItem[]}[];
 
 type ChildRenderProps = {
   groupedItems: GroupedItems;
-  onDragEnd: (snapshot: DropResult) => void;
 };
 
 type Props = {
@@ -88,10 +87,13 @@ export default function TodoItemGroupedSorter({children, todoItems, scope}: Prop
 
   const items = sorted || grouped;
 
-  return children({
-    groupedItems: items,
-    onDragEnd: handleDragEnd,
-  });
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      {children({
+        groupedItems: items,
+      })}
+    </DragDropContext>
+  );
 }
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;

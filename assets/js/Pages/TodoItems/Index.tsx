@@ -1,5 +1,4 @@
 import React from 'react';
-import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -15,23 +14,20 @@ export default function TodoItemsIndex({todoItems}: Props) {
     <LoggedIn>
       <h1>Upcoming</h1>
       <TodoItemGroupedSorter todoItems={todoItems} scope="day">
-        {({groupedItems, onDragEnd}) => (
-          <DragDropContext onDragEnd={onDragEnd}>
-            {groupedItems.map(function({key, items}) {
-              // The key must be used as
-              return (
-                <React.Fragment key={key}>
-                  <h2>{key}</h2>
-                  <TodoItemGroup
-                    dropId={key}
-                    todoItems={items}
-                    defaultDate={key}
-                    showProject
-                  />
-                </React.Fragment>
-              );
-            })}
-          </DragDropContext>
+        {({groupedItems}) => (
+          <React.Fragment>
+            {groupedItems.map(({key, items}) => (
+              <React.Fragment key={key}>
+                <h2>{key}</h2>
+                <TodoItemGroup
+                  dropId={key}
+                  todoItems={items}
+                  defaultDate={key}
+                  showProject
+                />
+              </React.Fragment>
+            ))}
+          </React.Fragment>
         )}
       </TodoItemGroupedSorter>
     </LoggedIn>

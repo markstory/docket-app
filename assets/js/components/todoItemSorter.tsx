@@ -1,12 +1,11 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 
 type ChildRenderProps = {
   items: TodoItem[];
-  onDragEnd: (snapshot: any) => void;
 };
 
 type Props = {
@@ -52,8 +51,9 @@ export default function TodoItemSorter({children, todoItems, scope}: Props) {
 
   const items = sorted || todoItems;
 
-  return children({
-    items: items,
-    onDragEnd: handleDragEnd,
-  });
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      {children({items: items})}
+    </DragDropContext>
+  );
 }

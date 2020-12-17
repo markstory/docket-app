@@ -1,6 +1,6 @@
 import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import {Droppable, Draggable} from 'react-beautiful-dnd';
 
 import ProjectItem from 'app/components/projectItem';
 import ProjectSorter from 'app/components/projectSorter';
@@ -31,46 +31,44 @@ function ProjectFilter() {
       </ul>
       <h3>Projects</h3>
       <ProjectSorter>
-        {({projects, onDragEnd}) => (
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="projects" type="project">
-              {(provided: any) => (
-                <ul
-                  ref={provided.innerRef}
-                  className="dnd-dropper-left-offset"
-                  {...provided.droppableProps}
-                >
-                  {projects.map((project, index) => (
-                    <Draggable key={project.id} draggableId={project.slug} index={index}>
-                      {(provided: any, snapshot: any) => {
-                        let className = 'dnd-item';
-                        if (snapshot.isDragging) {
-                          className += ' dnd-item-dragging';
-                        }
-                        return (
-                          <li
-                            ref={provided.innerRef}
-                            className={className}
-                            {...provided.draggableProps}
+        {({projects}) => (
+          <Droppable droppableId="projects" type="project">
+            {(provided: any) => (
+              <ul
+                ref={provided.innerRef}
+                className="dnd-dropper-left-offset"
+                {...provided.droppableProps}
+              >
+                {projects.map((project, index) => (
+                  <Draggable key={project.id} draggableId={project.slug} index={index}>
+                    {(provided: any, snapshot: any) => {
+                      let className = 'dnd-item';
+                      if (snapshot.isDragging) {
+                        className += ' dnd-item-dragging';
+                      }
+                      return (
+                        <li
+                          ref={provided.innerRef}
+                          className={className}
+                          {...provided.draggableProps}
+                        >
+                          <button
+                            className="dnd-handle"
+                            aria-label="Drag to reorder"
+                            {...provided.dragHandleProps}
                           >
-                            <button
-                              className="dnd-handle"
-                              aria-label="Drag to reorder"
-                              {...provided.dragHandleProps}
-                            >
-                              <Icon icon="grabber" width="large" />
-                            </button>
-                            <ProjectItem key={project.slug} project={project} />
-                          </li>
-                        );
-                      }}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+                            <Icon icon="grabber" width="large" />
+                          </button>
+                          <ProjectItem key={project.slug} project={project} />
+                        </li>
+                      );
+                    }}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
         )}
       </ProjectSorter>
       <div className="button-bar-vertical">
