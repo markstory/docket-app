@@ -56,21 +56,37 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/login/', 'Users::login', ['_name' => 'users:login']);
 
     $builder->get('/logout/', 'Users::logout', 'users:logout');
-    $builder->get('/todos/', 'TodoItems::index', 'todoitems:index');
-    $builder->get('/todos/today', ['controller' => 'TodoItems', 'action' => 'index', 'today'], 'todoitems:today');
-    $builder->get('/todos/upcoming', ['controller' => 'TodoItems', 'action' => 'index', 'upcoming'], 'todoitems:upcoming');
-    $builder->post('/todos/add', 'TodoItems::add', 'todoitems:add');
-    $builder->post('/todos/reorder', 'TodoItems::reorder', 'todoitems:reorder');
-    $builder->post('/todos/{id}/complete', 'TodoItems::complete', 'todoitems:complete')
-        ->setPass(['id']);
-    $builder->post('/todos/{id}/incomplete', 'TodoItems::incomplete', 'todoitems:incomplete')
-        ->setPass(['id']);
-    $builder->post('/todos/{id}/delete', 'TodoItems::delete', 'todoitems:delete')
-        ->setPass(['id']);
-    $builder->post('/todos/{id}/edit', 'TodoItems::edit', 'todoitems:edit')
-        ->setPass(['id']);
-    $builder->get('/todos/{id}/view', 'TodoItems::view', 'todoitems:view')
-        ->setPass(['id']);
+    $builder->scope('/todos', ['controller' => 'TodoItems'], function ($builder) {
+        $builder->get('/', ['action' => 'index'], 'todoitems:index');
+        $builder->get('/today', ['action' => 'index', 'today'], 'todoitems:today');
+        $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'todoitems:upcoming');
+
+        $builder->post('/add', ['action' => 'add'], 'todoitems:add');
+        $builder->post('/reorder', ['action' => 'reorder'], 'todoitems:reorder');
+        $builder->post('/{id}/complete', ['action' => 'complete'], 'todoitems:complete')
+            ->setPass(['id']);
+        $builder->post('/{id}/incomplete', ['action' => 'incomplete'], 'todoitems:incomplete')
+            ->setPass(['id']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'todoitems:delete')
+            ->setPass(['id']);
+        $builder->post('/{id}/edit', ['action' => 'edit'], 'todoitems:edit')
+            ->setPass(['id']);
+        $builder->get('/{id}/view', ['action' => 'view'], 'todoitems:view')
+            ->setPass(['id']);
+        $builder->post('/{id}/move', ['action' => 'move'], 'todoitems:move')
+            ->setPass(['id']);
+    });
+
+    $builder->scope('/projects', ['controller' => 'Projects'], function ($builder) {
+        $builder->post('/add', 'Projects::add', 'projects:add');
+        $builder->post('/reorder', ['action' => 'reorder'], 'projects:reorder');
+        $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
+        $builder->get('/{slug}', ['action' => 'view'], 'projects:view');
+        $builder->post('/{slug}/delete', ['action' => 'delete'], 'projects:delete');
+        $builder->post('/{slug}/archive', ['action' => 'archive'], 'projects:archive');
+        $builder->post('/{slug}/unarchive', ['action' => 'unarchive'], 'projects:unarchive');
+        $builder->connect('/{slug}/edit', ['action' => 'edit'], ['_name' => 'projects:edit']);
+    });
 
     $builder->post('/todos/{id}/subtasks', 'TodoSubtasks::add', 'todosubtasks:add')
         ->setPass(['id']);
@@ -82,16 +98,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
         ->setPass(['todoItemId', 'id']);
     $builder->post('/todos/{todoItemId}/subtasks/{id}/toggle', 'TodoSubtasks::toggle', 'todosubtasks:toggle')
         ->setPass(['todoItemId', 'id']);
-
-    $builder->post('/projects/add', 'Projects::add', 'projects:add');
-    $builder->post('/projects/reorder', 'Projects::reorder', 'projects:reorder');
-    $builder->get('/projects/archived', 'Projects::archived', 'projects:archived');
-
-    $builder->post('/projects/{slug}/delete', 'Projects::delete', 'projects:delete');
-    $builder->post('/projects/{slug}/archive', 'Projects::archive', 'projects:archive');
-    $builder->post('/projects/{slug}/unarchive', 'Projects::unarchive', 'projects:unarchive');
-    $builder->connect('/projects/{slug}/edit', 'Projects::edit', ['_name' => 'projects:edit']);
-    $builder->get('/projects/{slug}', 'Projects::view', 'projects:view');
 
     /*
      * Connect catchall routes for all controllers.

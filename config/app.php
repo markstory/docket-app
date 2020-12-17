@@ -131,20 +131,6 @@ return [
             'duration' => '+1 years',
             'url' => env('CACHE_CAKEMODEL_URL', null),
         ],
-
-        /*
-         * Configure the cache for routes. The cached routes collection is built the
-         * first time the routes are processed through `config/routes.php`.
-         * Duration will be set to '+2 seconds' in bootstrap.php when debug = true
-         */
-        '_cake_routes_' => [
-            'className' => FileEngine::class,
-            'prefix' => 'myapp_cake_routes_',
-            'path' => CACHE,
-            'serialize' => true,
-            'duration' => '+1 years',
-            'url' => env('CACHE_CAKEROUTES_URL', null),
-        ],
     ],
 
     /*
@@ -222,21 +208,6 @@ return [
     'EmailTransport' => [
         'default' => [
             'className' => MailTransport::class,
-            /*
-             * The keys host, port, timeout, username, password, client and tls
-             * are used in SMTP transports
-             */
-            'host' => 'localhost',
-            'port' => 25,
-            'timeout' => 30,
-            /*
-             * It is recommended to set these options through your environment or app_local.php
-             */
-            //'username' => null,
-            //'password' => null,
-            'client' => null,
-            'tls' => false,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
     ],
 
@@ -252,12 +223,6 @@ return [
     'Email' => [
         'default' => [
             'transport' => 'default',
-            'from' => 'you@localhost',
-            /*
-             * Will by default be set to config value of App.encoding, if that exists otherwise to UTF-8.
-             */
-            //'charset' => 'utf-8',
-            //'headerCharset' => 'utf-8',
         ],
     ],
 
@@ -338,7 +303,6 @@ return [
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
             // 'log' => true,
-            //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
     ],
 
@@ -411,9 +375,6 @@ return [
      */
     'Session' => [
         'defaults' => 'php',
+        'timeout' => 60 * 24 * 14, // 2 weeks
     ],
-
-    'DebugKit' => [
-        'ignoreAuthorization' => true,
-    ]
 ];
