@@ -37,14 +37,12 @@ export default function ProjectSorter({children}: Props) {
     newItems.splice(result.destination.index, 0, moved);
 
     setProjects(newItems);
-    // TODO instead of sending the whole list this should send
-    // the two moved items
     const data = {
-      projects: newItems.map(({id}) => id),
+      ranking: result.destination.index,
     };
 
     // TODO should this use axios instead so we don't repaint?
-    Inertia.post('/projects/reorder', data);
+    Inertia.post(`/projects/${result.draggableId}/move`, data);
   }
 
   return children({projects, handleOrderChange: handleChange, onDragEnd: handleDragEnd});

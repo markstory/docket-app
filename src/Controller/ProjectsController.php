@@ -6,6 +6,7 @@ namespace App\Controller;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\View\JsonView;
+use InvalidArgumentException;
 
 /**
  * Projects Controller
@@ -21,10 +22,8 @@ class ProjectsController extends AppController
         $this->loadModel('TodoItems');
     }
 
-    protected function getProject()
+    protected function getProject($slug)
     {
-        $slug = $this->request->getParam('slug');
-
         return $this->Projects->findBySlug($slug)->firstOrFail();
     }
 
@@ -33,9 +32,9 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function view()
+    public function view(string $slug)
     {
-        $project = $this->getProject();
+        $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
         $query = $this->Authorization
@@ -83,9 +82,9 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit()
+    public function edit(string $slug)
     {
-        $project = $this->getProject();
+        $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -124,10 +123,10 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete()
+    public function delete(string $slug)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $project = $this->getProject();
+        $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
         if ($this->Projects->delete($project)) {
@@ -136,52 +135,40 @@ class ProjectsController extends AppController
         return $this->response->withStatus(400);
     }
 
-    public function archive()
+    public function archive(string $slug)
     {
-        $slug = $this->request->getParam('slug');
-        $project = $this->Projects->findBySlug($slug)->first();
+        $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
         $project->archive();
         $this->Projects->save($project);
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
     }
 
-    public function unarchive()
+    public function unarchive(string $slug)
     {
-        $slug = $this->request->getParam('slug');
-        $project = $this->Projects->findBySlug($slug)->first();
+        $project = $this->getProject($slug);
         $this->Authorization->authorize($project, 'archive');
 
         $project->unarchive();
         $this->Projects->save($project);
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
     }
 
-    public function reorder()
+    public function move(string $slug)
     {
-        $projectIds = $this->request->getData('projects');
-        if (!is_array($projectIds)) {
-            throw new BadRequestException('Invalid project list.');
+        $this->request->allowMethod(['post']);
+        $project = $this->getProject($slug);
+        $this->Authorization->authorize($project, 'edit');
+        $operation = [
+            'ranking' => $this->request->getData('ranking'),
+        ];
+        try {
+            $this->Projects->move($project, $operation);
+        } catch (InvalidArgumentException $e) {
+            $this->Flash->error($e->getMessage());
         }
-        $projectIds = array_values($projectIds);
-        $query = $this->Projects
-            ->find('active')
-            ->where(['Projects.id IN' => $projectIds]);
-        $query = $this->Authorization->applyScope($query, 'index');
 
-        $items = $query->toArray();
-        if (count($items) != count($projectIds)) {
-            throw new NotFoundException('Some of the requested items could not be found.');
-        }
-        $sorted = [];
-        foreach ($items as $item) {
-            $index = array_search($item->id, $projectIds);
-            $sorted[$index] = $item;
-        }
-        ksort($sorted);
-        $this->Projects->reorder($sorted);
-
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
     }
 }

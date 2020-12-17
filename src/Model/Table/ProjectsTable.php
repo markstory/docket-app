@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\Project;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * Projects Model
@@ -123,7 +125,6 @@ class ProjectsTable extends Table
     {
         return $query
             ->orderAsc('Projects.ranking')
-            ->orderDesc('Projects.name')
             ->limit(25);
     }
 
@@ -147,38 +148,61 @@ class ProjectsTable extends Table
         return (int)$query->firstOrFail()->count;
     }
 
-    /**
-     * Update the order on the list of projects
-     *
-     * @param \App\Model\Entity\Project[] $items
-     * @return void
-     */
-    public function reorder(array $items)
+    public function move(Project $project, array $operation)
     {
-        $minValue = 0;
-        $orderMap = [];
-        foreach ($items as $i => $item) {
-            if ($item->ranking < $minValue) {
-                $minValue = $item->ranking;
-            }
-            $orderMap[$item->id] = $i;
+        if (!isset($operation['ranking'])) {
+            throw new InvalidArgumentException('A ranking is required');
         }
-        $ids = array_keys($orderMap);
+        $conditions = [
+            'archived' => $project->archived,
+            'user_id' => $project->user_id,
+        ];
 
-        $query = $this->query();
-        $cases = $values = [];
-        foreach ($orderMap as $id => $value) {
-            $cases[] = $query->newExpr()->eq('id', $id);
-            $values[] = $minValue + $value;
+        // We have to assume that all lists are not continuous ranges, and that the order
+        // fields have holes in them. The holes can be introduced when items are 
+        // deleted/completed. Try to find the item at the target offset
+        $currentProject = $this->find()
+            ->where($conditions)
+            ->orderAsc('ranking')
+            ->offset($operation['ranking'])
+            ->first();
+
+        // If we found a record at the current offset
+        // use its order property for our update
+        $targetOffset = $operation['ranking'];
+        if ($currentProject) {
+            $targetOffset = $currentProject->get('ranking');
         }
-        $case = $query->newExpr()
-            ->addCase($cases, $values);
-        $query
+
+        $query = $this->query()
             ->update()
-            ->set(['ranking' => $case])
-            ->where(['id IN' => $ids]);
-        $statement = $query->execute();
+            ->where($conditions);
 
-        return $statement->rowCount();
+        $current = $project->get('ranking');
+        $project->set('ranking', $targetOffset);
+        $difference = $current - $project->get('ranking');
+
+        if ($difference > 0) {
+            // Move other items down, as the current item is going up
+            // or is being moved from another group.
+            $query
+                ->set(['ranking' => $query->newExpr('ranking + 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $targetOffset, $current);
+                });
+        } elseif ($difference < 0) {
+            // Move other items up, as current item is going down
+            $query
+                ->set(['ranking' => $query->newExpr('ranking - 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $current, $targetOffset);
+                });
+        }
+        $this->getConnection()->transactional(function () use ($project, $query) {
+            if ($query->clause('set')) {
+                $query->execute();
+            }
+            $this->saveOrFail($project);
+        });
     }
 }

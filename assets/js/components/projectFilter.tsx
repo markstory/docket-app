@@ -41,11 +41,7 @@ function ProjectFilter() {
                   {...provided.droppableProps}
                 >
                   {projects.map((project, index) => (
-                    <Draggable
-                      key={project.id}
-                      draggableId={String(project.id)}
-                      index={index}
-                    >
+                    <Draggable key={project.id} draggableId={project.slug} index={index}>
                       {(provided: any, snapshot: any) => {
                         let className = 'dnd-item';
                         if (snapshot.isDragging) {

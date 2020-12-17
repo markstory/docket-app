@@ -81,11 +81,18 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->post('/add', 'Projects::add', 'projects:add');
         $builder->post('/reorder', ['action' => 'reorder'], 'projects:reorder');
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
-        $builder->get('/{slug}', ['action' => 'view'], 'projects:view');
-        $builder->post('/{slug}/delete', ['action' => 'delete'], 'projects:delete');
-        $builder->post('/{slug}/archive', ['action' => 'archive'], 'projects:archive');
-        $builder->post('/{slug}/unarchive', ['action' => 'unarchive'], 'projects:unarchive');
-        $builder->connect('/{slug}/edit', ['action' => 'edit'], ['_name' => 'projects:edit']);
+        $builder->get('/{slug}', ['action' => 'view'], 'projects:view')
+            ->setPass(['slug']);
+        $builder->post('/{slug}/delete', ['action' => 'delete'], 'projects:delete')
+            ->setPass(['slug']);
+        $builder->post('/{slug}/archive', ['action' => 'archive'], 'projects:archive')
+            ->setPass(['slug']);
+        $builder->post('/{slug}/unarchive', ['action' => 'unarchive'], 'projects:unarchive')
+            ->setPass(['slug']);
+        $builder->post('/{slug}/move', ['action' => 'move'], 'projects:move')
+            ->setPass(['slug']);
+        $builder->connect('/{slug}/edit', ['action' => 'edit'], ['_name' => 'projects:edit'])
+            ->setPass(['slug']);
     });
 
     $builder->post('/todos/{id}/subtasks', 'TodoSubtasks::add', 'todosubtasks:add')

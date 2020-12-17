@@ -183,7 +183,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/archive");
-        $this->assertRedirect('/projects');
+        $this->assertRedirect('/todos/today');
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertTrue($result->archived);
@@ -206,7 +206,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/unarchive");
-        $this->assertRedirect('/projects');
+        $this->assertRedirect('/todos/today');
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertFalse($result->archived);
@@ -222,7 +222,32 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testReorderSuccess()
+    public function testMovePermission()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 2, 3);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$work->slug}/move", [
+            'ranking' => 0,
+        ]);
+        $this->assertResponseCode(403);
+    }
+
+    public function testMoveNoData()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/projects/{$home->slug}/move");
+        $this->assertRedirect('/todos/today');
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveDown()
     {
         $home = $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 1, 3);
@@ -230,30 +255,37 @@ class ProjectsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$fun->id, $work->id, $home->id];
-        $this->post('/projects/reorder', [
-            'projects' => $expected,
+        $this->post("/projects/{$home->slug}/move", [
+            'ranking' => 1,
         ]);
-        $this->assertRedirect('/projects');
+        $this->assertRedirect('/todos/today');
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $expected = [$work->id, $home->id, $fun->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);
         }
     }
 
-    public function testReorderOtherOwner()
+    public function testMoveUp()
     {
         $home = $this->makeProject('Home', 1, 0);
-        $work = $this->makeProject('Work', 2, 3);
+        $work = $this->makeProject('Work', 1, 3);
+        $fun = $this->makeProject('Fun', 1, 6);
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$work->id, $home->id];
-        $this->post('/projects/reorder', [
-            'projects' => $expected,
+        $this->post("/projects/{$fun->slug}/move", [
+            'ranking' => 0,
         ]);
-        $this->assertResponseCode(404);
+        $this->assertRedirect('/todos/today');
+
+        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $expected = [$fun->id, $home->id, $work->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 }

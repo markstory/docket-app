@@ -56,19 +56,4 @@ class ProjectsTableTest extends TestCase
 
         parent::tearDown();
     }
-
-    public function testReorder()
-    {
-        $home = $this->makeProject('Home', 1, 0);
-        $work = $this->makeProject('Work', 1, 3);
-        $fun = $this->makeProject('Fun', 1, 6);
-
-        $expected = [$fun, $home, $work];
-        $this->Projects->reorder($expected);
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
-        $this->assertSame(count($results), count($expected));
-        foreach ($expected as $i => $record) {
-            $this->assertEquals($record->id, $results[$i]->id);
-        }
-    }
 }
