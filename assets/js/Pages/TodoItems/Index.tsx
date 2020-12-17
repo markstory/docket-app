@@ -6,11 +6,6 @@ import LoggedIn from 'app/layouts/loggedIn';
 import TodoItemGroup from 'app/components/todoItemGroup';
 import TodoItemGroupedSorter from 'app/components/todoItemGroupedSorter';
 
-type DateItems = {
-  date: Date;
-  items: TodoItem[];
-};
-
 type Props = {
   todoItems: TodoItem[];
 };
