@@ -16,15 +16,6 @@ type Props = {
 export default function ProjectSorter({children}: Props) {
   const [projects, setProjects] = useProjects();
 
-  function handleChange(items: Project[]) {
-    const itemIds = items.map(item => item.id);
-    const data = {
-      projects: itemIds,
-    };
-    setProjects(items);
-    Inertia.post('/projects/reorder', data);
-  }
-
   function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
