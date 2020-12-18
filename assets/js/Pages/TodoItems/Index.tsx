@@ -5,19 +5,11 @@ import {TodoItem} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TodoItemGroup from 'app/components/todoItemGroup';
 import TodoItemGroupedSorter, {GroupedItems} from 'app/components/todoItemGroupedSorter';
-import {toDateString} from 'app/utils/dates';
+import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/utils/dates';
 
 type Props = {
   todoItems: TodoItem[];
 };
-
-const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
-
-function parseDate(input: string): Date {
-  const date = new Date(input);
-  date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-  return date;
-}
 
 /**
  * Fill out the sparse input data to have all the days.
@@ -56,7 +48,7 @@ export default function TodoItemsIndex({todoItems}: Props) {
             <React.Fragment>
               {calendarGroups.map(({key, items}) => (
                 <React.Fragment key={key}>
-                  <h2>{key}</h2>
+                  <h2>{formatDateHeading(key)}</h2>
                   <TodoItemGroup
                     dropId={key}
                     todoItems={items}

@@ -5,6 +5,7 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 import {InlineIcon} from 'app/components/icon';
 import {TodoItem} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
+import {formatCompactDate} from 'app/utils/dates';
 
 type Props = {
   todoItem: TodoItem;
@@ -32,7 +33,7 @@ export default function TodoItemRow({todoItem, showDueOn, showProject}: Props) {
           {showDueOn && todoItem.due_on && (
             <time className="due-on" dateTime={todoItem.due_on}>
               <InlineIcon icon="calendar" width="xsmall" />
-              {todoItem.due_on}
+              {formatCompactDate(todoItem.due_on)}
             </time>
           )}
           {showProject && <ProjectBadge project={todoItem.project} />}
