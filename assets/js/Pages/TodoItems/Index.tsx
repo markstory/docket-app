@@ -13,13 +13,19 @@ type Props = {
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 
+function parseDate(input: string): Date {
+  const date = new Date(input);
+  date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+  return date;
+}
+
 /**
  * Fill out the sparse input data to have all the days.
  */
 function zeroFillItems(groups: GroupedItems): GroupedItems {
   const sorted = sortBy(groups, group => group.key);
 
-  const first = (sorted.length ? new Date(sorted[0].key) : new Date()).getTime();
+  const first = (sorted.length ? parseDate(sorted[0].key) : new Date()).getTime();
   // XXX: Time based views are for 28 days at a time.
   const end = first + 28 * ONE_DAY_IN_MS;
 
