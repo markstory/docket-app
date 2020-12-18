@@ -5,7 +5,7 @@ import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {TodoItem} from 'app/types';
 
-type GroupedItems = {key: string; items: TodoItem[]}[];
+export type GroupedItems = {key: string; items: TodoItem[]}[];
 
 type ChildRenderProps = {
   groupedItems: GroupedItems;
@@ -15,6 +15,7 @@ type Props = {
   todoItems: TodoItem[];
   scope: 'day';
   children: (props: ChildRenderProps) => JSX.Element;
+  grouper?: (todoItems: TodoItem[]) => GroupedItems;
 };
 
 type UpdateData = {
@@ -23,41 +24,35 @@ type UpdateData = {
   due_on?: string;
 };
 
+function defaultGrouper(items: TodoItem[]): GroupedItems {
+  const byDate: Record<string, TodoItem[]> = groupBy(items, item =>
+    item.due_on ? item.due_on : 'No Due Date'
+  );
+  const grouped = Object.entries(byDate).map(([key, value]) => {
+    return {key, items: value};
+  });
+  return grouped;
+}
+
 /**
  * Abstraction around reorder lists of todos and optimistically updating state.
  */
-export default function TodoItemGroupedSorter({children, todoItems, scope}: Props) {
+export default function TodoItemGroupedSorter({
+  children,
+  todoItems,
+  grouper,
+  scope,
+}: Props) {
   const [sorted, setSorted] = React.useState<GroupedItems | undefined>(undefined);
 
-  const grouped: GroupedItems = [];
-  if (scope === 'day') {
-    const byDate: Record<string, TodoItem[]> = groupBy(
-      todoItems,
-      item => item.due_on || 'No Due Date'
-    );
-    // TODO Consider moving the zero filling out to the 'rendering' components.
-    const dateStrings = Object.keys(byDate).sort();
-    const dates = dateStrings.map(value => new Date(`${value} 00:00:00`));
-
-    // XXX: Time based views are for 28 days at a time.
-    const first = (dates.length ? dates[0] : new Date()).getTime();
-    const end = first + 28 * ONE_DAY_IN_MS;
-
-    for (let i = first; i < end; i += ONE_DAY_IN_MS) {
-      const date = new Date(i);
-      const dateKey = toDateString(date);
-      if (byDate.hasOwnProperty(dateKey)) {
-        grouped.push({key: dateKey, items: byDate[dateKey]});
-      } else {
-        grouped.push({key: dateKey, items: []});
-      }
-    }
-  }
+  const groupFn = grouper ? grouper : defaultGrouper;
+  const grouped = groupFn(todoItems);
 
   function handleDragEnd(result: DropResult) {
     const destination = result.destination;
     // Dropped outside of a dropzone
     if (!destination) {
+      console.log('no dest');
       return;
     }
     const newGrouped = [...grouped];
@@ -94,11 +89,4 @@ export default function TodoItemGroupedSorter({children, todoItems, scope}: Prop
       })}
     </DragDropContext>
   );
-}
-
-const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
-
-function toDateString(date: Date): string {
-  const day = date.getDate();
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${day < 10 ? '0' + day : day}`;
 }
