@@ -1,14 +1,14 @@
 export const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-const SHORT_DAYS = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+const SHORT_DAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat'];
 const LONG_DAYS = [
+  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
   'Saturday',
-  'Sunday',
 ];
 
 const SHORT_MONTHS = [
@@ -40,7 +40,6 @@ export function parseDate(input: string): Date {
 
 export function formatCompactDate(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
-  console.log(input);
 
   const today = Math.floor(new Date().getTime() / ONE_DAY_IN_MS);
   const timestamp = Math.floor(input.getTime() / ONE_DAY_IN_MS);
