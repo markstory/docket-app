@@ -1,4 +1,4 @@
-.todoitem-row {
+.task-row {
   display: flex;
   min-width: 400px;
   width: 100%;
@@ -34,13 +34,13 @@
   }
 }
 
-.dnd-item-dragging .todoitem-row {
+.dnd-item-dragging .task-row {
   padding-left: 4px;
   border-bottom: 0;
   margin-bottom: 0;
 }
 
-.drag-ghost .todoitem-row {
+.drag-ghost .task-row {
   border-bottom: 0;
   margin-bottom: 0;
 }

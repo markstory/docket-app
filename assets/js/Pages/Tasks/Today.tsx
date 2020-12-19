@@ -1,17 +1,17 @@
 import React from 'react';
 import {partition} from 'lodash';
 
-import {TodoItem} from 'app/types';
+import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
-import TodoItemGroup from 'app/components/todoItemGroup';
-import TodoItemGroupedSorter, {GroupedItems} from 'app/components/todoItemGroupedSorter';
+import TaskGroup from 'app/components/taskGroup';
+import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString} from 'app/utils/dates';
 
 type Props = {
-  todoItems: TodoItem[];
+  tasks: Task[];
 };
 
-function grouper(items: TodoItem[]): GroupedItems {
+function grouper(items: Task[]): GroupedItems {
   const today = toDateString(new Date());
   const [overdueItems, todayItems] = partition(items, ({due_on}) => due_on !== today);
   const output = [
@@ -29,13 +29,13 @@ function grouper(items: TodoItem[]): GroupedItems {
   return output;
 }
 
-export default function TodoItemsToday({todoItems}: Props) {
+export default function TasksToday({tasks}: Props) {
   const today = new Date();
   const defaultDate = today.toISOString().substring(0, 10);
 
   return (
     <LoggedIn>
-      <TodoItemGroupedSorter todoItems={todoItems} scope="day" grouper={grouper}>
+      <TaskGroupedSorter tasks={tasks} scope="day" grouper={grouper}>
         {({groupedItems}) => {
           const [today, overdue] = groupedItems;
           return (
@@ -43,9 +43,9 @@ export default function TodoItemsToday({todoItems}: Props) {
               {overdue && (
                 <React.Fragment>
                   <h3>Overdue</h3>
-                  <TodoItemGroup
+                  <TaskGroup
                     dropId="overdue"
-                    todoItems={overdue.items}
+                    tasks={overdue.items}
                     defaultDate={defaultDate}
                     showProject
                     showDueOn
@@ -53,16 +53,16 @@ export default function TodoItemsToday({todoItems}: Props) {
                 </React.Fragment>
               )}
               <h1>Today</h1>
-              <TodoItemGroup
+              <TaskGroup
                 dropId={defaultDate}
-                todoItems={today.items}
+                tasks={today.items}
                 defaultDate={defaultDate}
                 showProject
               />
             </React.Fragment>
           );
         }}
-      </TodoItemGroupedSorter>
+      </TaskGroupedSorter>
     </LoggedIn>
   );
 }

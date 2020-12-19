@@ -1,4 +1,4 @@
-.todoitems-view {
+.task-view {
   .summary {
     display: flex;
     align-items: flex-start;
@@ -22,8 +22,8 @@
     grid-auto-flow: column;
   }
 
-  .todoitem-subtasks,
-  .todoitem-notes {
+  .task-subtasks,
+  .task-notes {
     margin: $space * 2 0 0 $space * 2.5;
   }
 

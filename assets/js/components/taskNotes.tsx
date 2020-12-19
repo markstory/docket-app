@@ -2,27 +2,27 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
-import {TodoItem} from 'app/types';
+import {Task} from 'app/types';
 
 type Props = {
-  todoItem: TodoItem;
+  task: Task;
 };
 
-export default function TodoItemNotes({todoItem}: Props) {
+export default function TaskNotes({task}: Props) {
   const [editing, setEditing] = useState(false);
 
   function handleSave(event: React.FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-    axios.post(`/todos/${todoItem.id}/edit`, formData).then(() => {
-      Inertia.visit(`/todos/${todoItem.id}/view`);
+    axios.post(`/todos/${task.id}/edit`, formData).then(() => {
+      Inertia.visit(`/todos/${task.id}/view`);
     });
   }
 
-  const lines = todoItem.body ? todoItem.body.split('\n') : ['Click to add notes'];
+  const lines = task.body ? task.body.split('\n') : ['Click to add notes'];
   if (!editing) {
     return (
-      <div className="todoitem-notes">
+      <div className="task-notes">
         <h4 className="heading-actions">
           Notes
           <button className="button-default" onClick={() => setEditing(true)}>
@@ -39,14 +39,9 @@ export default function TodoItemNotes({todoItem}: Props) {
   }
 
   return (
-    <form className="todoitem-notes" onSubmit={handleSave}>
+    <form className="task-notes" onSubmit={handleSave}>
       <h4 className="heading-actions">Notes</h4>
-      <textarea
-        name="body"
-        cols={999}
-        rows={lines.length + 3}
-        defaultValue={todoItem.body}
-      />
+      <textarea name="body" cols={999} rows={lines.length + 3} defaultValue={task.body} />
       <div className="button-bar">
         <button type="submit">Save</button>
         <button className="button-default" onClick={() => setEditing(false)}>

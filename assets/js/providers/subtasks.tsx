@@ -1,10 +1,10 @@
 import React, {useState, createContext, useContext} from 'react';
 
-import {TodoSubtask} from 'app/types';
+import {Subtask} from 'app/types';
 
 type ContextData = {
-  state: TodoSubtask[];
-  setSubtasks: (projects: TodoSubtask[]) => void;
+  state: Subtask[];
+  setSubtasks: (projects: Subtask[]) => void;
 };
 const SubtasksContext = createContext<ContextData>({
   state: [],
@@ -13,13 +13,13 @@ const SubtasksContext = createContext<ContextData>({
 
 type ProviderProps = {
   children: React.ReactNode;
-  subtasks: TodoSubtask[];
+  subtasks: Subtask[];
 };
 
 function SubtasksProvider({subtasks, children}: ProviderProps) {
   // TODO when props change the context data isn't changing.
   // Perhaps this shouldn't be using state?
-  const [state, setState] = useState<TodoSubtask[]>(subtasks);
+  const [state, setState] = useState<Subtask[]>(subtasks);
   const contextValue = {
     state,
     setSubtasks: setState,
@@ -30,7 +30,7 @@ function SubtasksProvider({subtasks, children}: ProviderProps) {
   );
 }
 
-function useSubtasks(): [TodoSubtask[], (tasks: TodoSubtask[]) => void] {
+function useSubtasks(): [Subtask[], (tasks: Subtask[]) => void] {
   const {state, setSubtasks} = useContext(SubtasksContext);
 
   return [state, setSubtasks];

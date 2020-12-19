@@ -2,14 +2,14 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
-import {TodoItem} from 'app/types';
+import {Task} from 'app/types';
 
 type ChildRenderProps = {
-  items: TodoItem[];
+  items: Task[];
 };
 
 type Props = {
-  todoItems: TodoItem[];
+  tasks: Task[];
   scope: 'day' | 'child';
   children: (props: ChildRenderProps) => JSX.Element;
 };
@@ -23,15 +23,15 @@ type UpdateData = {
 /**
  * Abstraction around reorder lists of todos and optimistically updating state.
  */
-export default function TodoItemSorter({children, todoItems, scope}: Props) {
-  const [sorted, setSorted] = React.useState<TodoItem[] | undefined>(undefined);
+export default function TaskSorter({children, tasks, scope}: Props) {
+  const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
 
   function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
     }
-    const newItems = [...todoItems];
+    const newItems = [...tasks];
     const [moved] = newItems.splice(result.source.index, 1);
     newItems.splice(result.destination.index, 0, moved);
 
@@ -49,7 +49,7 @@ export default function TodoItemSorter({children, todoItems, scope}: Props) {
     Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
   }
 
-  const items = sorted || todoItems;
+  const items = sorted || tasks;
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>

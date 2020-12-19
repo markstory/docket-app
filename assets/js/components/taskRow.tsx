@@ -3,40 +3,40 @@ import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {InlineIcon} from 'app/components/icon';
-import {TodoItem} from 'app/types';
+import {Task} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
 import {formatCompactDate} from 'app/utils/dates';
 
 type Props = {
-  todoItem: TodoItem;
+  task: Task;
   showDueOn?: boolean;
   showProject?: boolean;
 };
 
-export default function TodoItemRow({todoItem, showDueOn, showProject}: Props) {
+export default function TaskRow({task, showDueOn, showProject}: Props) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    Inertia.post(`/todos/${todoItem.id}/complete`);
+    Inertia.post(`/todos/${task.id}/complete`);
   };
 
   return (
-    <div className="todoitem-row">
+    <div className="task-row">
       <input
         type="checkbox"
         value="1"
         onClick={handleComplete}
-        defaultChecked={todoItem.completed}
+        defaultChecked={task.completed}
       />
-      <InertiaLink href={`/todos/${todoItem.id}/view`}>
-        <span className="title">{todoItem.title}</span>
+      <InertiaLink href={`/todos/${task.id}/view`}>
+        <span className="title">{task.title}</span>
         <div className="attributes">
-          {showDueOn && todoItem.due_on && (
-            <time className="due-on" dateTime={todoItem.due_on}>
+          {showDueOn && task.due_on && (
+            <time className="due-on" dateTime={task.due_on}>
               <InlineIcon icon="calendar" width="xsmall" />
-              {formatCompactDate(todoItem.due_on)}
+              {formatCompactDate(task.due_on)}
             </time>
           )}
-          {showProject && <ProjectBadge project={todoItem.project} />}
+          {showProject && <ProjectBadge project={task.project} />}
         </div>
       </InertiaLink>
     </div>

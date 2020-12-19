@@ -16,12 +16,12 @@
 @import 'components/projectBadge';
 @import 'components/projectFilter';
 @import 'components/projectItem';
-@import 'components/todoItemGroup';
-@import 'components/todoItemQuickForm';
-@import 'components/todoItemNotes';
-@import 'components/todoItemRow';
-@import 'components/todoItemSubtasks';
+@import 'components/taskGroup';
+@import 'components/taskQuickForm';
+@import 'components/taskNotes';
+@import 'components/taskRow';
+@import 'components/taskSubtasks';
 
-@import 'pages/todoitems/view.scss';
+@import 'pages/tasks/view.scss';
 
 @import 'utils'

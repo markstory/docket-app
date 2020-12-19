@@ -14,7 +14,7 @@ export type Project = {
   archived: boolean;
 };
 
-export type TodoItem = {
+export type Task = {
   id: number;
   title: string;
   body: string;
@@ -27,15 +27,15 @@ export type TodoItem = {
   project: Project;
 };
 
-export type TodoSubtask = {
+export type Subtask = {
   id: number;
   title: string;
   body: string;
   completed: boolean;
 };
 
-export type TodoItemDetailed = TodoItem & {
-  subtasks: TodoSubtask[];
+export type TaskDetailed = Task & {
+  subtasks: Subtask[];
 };
 
 export type User = {

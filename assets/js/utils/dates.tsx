@@ -40,6 +40,7 @@ export function parseDate(input: string): Date {
 
 export function formatCompactDate(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
+  console.log(input);
 
   const today = Math.floor(new Date().getTime() / ONE_DAY_IN_MS);
   const timestamp = Math.floor(input.getTime() / ONE_DAY_IN_MS);

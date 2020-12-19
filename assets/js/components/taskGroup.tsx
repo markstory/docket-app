@@ -1,23 +1,23 @@
 import React, {useState} from 'react';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
 
-import {TodoItem} from 'app/types';
-import TodoItemRow from 'app/components/todoItemRow';
-import TodoItemAddForm from 'app/components/todoItemAddForm';
+import {Task} from 'app/types';
+import TaskRow from 'app/components/taskRow';
+import TaskAddForm from 'app/components/taskAddForm';
 import {Icon, InlineIcon} from './icon';
 
 type Props = {
   dropId: string;
-  todoItems: TodoItem[];
+  tasks: Task[];
   defaultDate?: string;
   defaultProjectId?: number;
   showProject?: boolean;
   showDueOn?: boolean;
 };
 
-export default function TodoItemGroup({
+export default function TaskGroup({
   dropId,
-  todoItems,
+  tasks,
   defaultDate,
   defaultProjectId,
   showProject,
@@ -27,7 +27,7 @@ export default function TodoItemGroup({
 
   return (
     <div className="todo-item-group">
-      <Droppable droppableId={dropId} type="todoitem">
+      <Droppable droppableId={dropId} type="task">
         {(provided, snapshot) => {
           let className = 'dnd-dropper-left-offset';
           if (snapshot.isDraggingOver) {
@@ -39,7 +39,7 @@ export default function TodoItemGroup({
               className={className}
               {...provided.droppableProps}
             >
-              {todoItems.map((item, index) => (
+              {tasks.map((item, index) => (
                 <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                   {(provided, snapshot) => {
                     let className = 'dnd-item';
@@ -59,9 +59,9 @@ export default function TodoItemGroup({
                         >
                           <Icon icon="grabber" width="large" />
                         </button>
-                        <TodoItemRow
+                        <TaskRow
                           key={item.id}
-                          todoItem={item}
+                          task={item}
                           showProject={showProject}
                           showDueOn={showDueOn}
                         />
@@ -83,7 +83,7 @@ export default function TodoItemGroup({
           </button>
         )}
         {showForm && (
-          <TodoItemAddForm
+          <TaskAddForm
             defaultDate={defaultDate}
             defaultProjectId={defaultProjectId}
             onCancel={() => setShowForm(false)}

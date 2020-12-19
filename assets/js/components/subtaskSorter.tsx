@@ -2,24 +2,24 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
-import {TodoItem, TodoSubtask} from 'app/types';
+import {Task, Subtask} from 'app/types';
 import {useSubtasks} from 'app/providers/subtasks';
 
 type ChildRenderProps = {
-  items: TodoSubtask[];
-  setItems: (items: TodoSubtask[]) => void;
+  items: Subtask[];
+  setItems: (items: Subtask[]) => void;
 };
 
 type Props = {
-  todoItemId: TodoItem['id'];
+  taskId: Task['id'];
   children: (props: ChildRenderProps) => JSX.Element;
 };
 
 /**
  * Abstraction around reorder lists of todo subtasks and optimistically updating state.
  */
-export default function TodoSubtaskSorter({children, todoItemId}: Props) {
-  const [sorted, setSorted] = React.useState<TodoSubtask[] | undefined>(undefined);
+export default function SubtaskSorter({children, taskId}: Props) {
+  const [sorted, setSorted] = React.useState<Subtask[] | undefined>(undefined);
   const [subtasks, setSubtasks] = useSubtasks();
 
   function handleDragEnd(result: DropResult) {
@@ -37,7 +37,7 @@ export default function TodoSubtaskSorter({children, todoItemId}: Props) {
     setSubtasks(newItems);
 
     // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/todos/${todoItemId}/subtasks/${result.draggableId}/move`, data);
+    Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data);
   }
 
   const items = sorted || subtasks;

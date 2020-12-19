@@ -2,25 +2,25 @@ import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
 
-import {TodoItemDetailed, TodoSubtask} from 'app/types';
-import TodoSubtaskSorter from 'app/components/todoSubtaskSorter';
-import TodoSubtaskAddForm from 'app/components/todoSubtaskAddForm';
+import {TaskDetailed, Subtask} from 'app/types';
+import SubtaskSorter from 'app/components/subtaskSorter';
+import SubtaskAddForm from 'app/components/subtaskAddForm';
 import {SubtasksProvider} from 'app/providers/subtasks';
 import {Icon, InlineIcon} from './icon';
 import SubtaskEditForm from 'app/components/subtaskEditForm';
 
 type Props = {
-  todoItem: TodoItemDetailed;
+  task: TaskDetailed;
 };
 
-export default function TodoItemSubtasks({todoItem}: Props) {
+export default function TaskSubtasks({task}: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <SubtasksProvider subtasks={todoItem.subtasks}>
-      <div className="todoitem-subtasks">
+    <SubtasksProvider subtasks={task.subtasks}>
+      <div className="task-subtasks">
         <h3>Sub-tasks</h3>
-        <TodoSubtaskSorter todoItemId={todoItem.id}>
+        <SubtaskSorter taskId={task.id}>
           {({items}) => (
             <Droppable droppableId="subtasks" type="subtask">
               {provided => (
@@ -55,11 +55,11 @@ export default function TodoItemSubtasks({todoItem}: Props) {
                               >
                                 <Icon icon="grabber" width="large" />
                               </button>
-                              <TodoItemSubtaskRow
+                              <TaskSubtaskRow
                                 index={index}
                                 key={subtask.id}
                                 subtask={subtask}
-                                todoItemId={todoItem.id}
+                                taskId={task.id}
                               />
                             </li>
                           );
@@ -72,7 +72,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
               )}
             </Droppable>
           )}
-        </TodoSubtaskSorter>
+        </SubtaskSorter>
         <div className="add-task">
           {!showForm && (
             <button className="button-default" onClick={() => setShowForm(true)}>
@@ -80,9 +80,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
               Add Sub-task
             </button>
           )}
-          {showForm && (
-            <TodoSubtaskAddForm todoItem={todoItem} onCancel={() => setShowForm(false)} />
-          )}
+          {showForm && <SubtaskAddForm task={task} onCancel={() => setShowForm(false)} />}
         </div>
       </div>
     </SubtasksProvider>
@@ -90,16 +88,16 @@ export default function TodoItemSubtasks({todoItem}: Props) {
 }
 
 type RowProps = {
-  todoItemId: number;
+  taskId: number;
   index: number;
-  subtask: TodoSubtask;
+  subtask: Subtask;
 };
 
-function TodoItemSubtaskRow({index, subtask, todoItemId}: RowProps) {
+function TaskSubtaskRow({index, subtask, taskId}: RowProps) {
   const [editing, setEditing] = useState(false);
   function handleComplete(event: React.MouseEvent<HTMLInputElement>) {
     event.stopPropagation();
-    Inertia.post(`/todos/${todoItemId}/subtasks/${subtask.id}/toggle`);
+    Inertia.post(`/todos/${taskId}/subtasks/${subtask.id}/toggle`);
   }
 
   return (
@@ -114,7 +112,7 @@ function TodoItemSubtaskRow({index, subtask, todoItemId}: RowProps) {
         <SubtaskEditForm
           index={index}
           subtask={subtask}
-          todoItemId={todoItemId}
+          taskId={taskId}
           onCancel={() => setEditing(false)}
         />
       ) : (

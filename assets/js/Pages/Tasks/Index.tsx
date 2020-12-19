@@ -1,14 +1,14 @@
 import React from 'react';
 import {sortBy} from 'lodash';
 
-import {TodoItem} from 'app/types';
+import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
-import TodoItemGroup from 'app/components/todoItemGroup';
-import TodoItemGroupedSorter, {GroupedItems} from 'app/components/todoItemGroupedSorter';
+import TaskGroup from 'app/components/taskGroup';
+import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/utils/dates';
 
 type Props = {
-  todoItems: TodoItem[];
+  tasks: Task[];
 };
 
 /**
@@ -37,11 +37,11 @@ function zeroFillItems(groups: GroupedItems): GroupedItems {
   return complete;
 }
 
-export default function TodoItemsIndex({todoItems}: Props) {
+export default function TasksIndex({tasks}: Props) {
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
-      <TodoItemGroupedSorter todoItems={todoItems} scope="day">
+      <TaskGroupedSorter tasks={tasks} scope="day">
         {({groupedItems}) => {
           const calendarGroups = zeroFillItems(groupedItems);
           return (
@@ -49,9 +49,9 @@ export default function TodoItemsIndex({todoItems}: Props) {
               {calendarGroups.map(({key, items}) => (
                 <React.Fragment key={key}>
                   <h2>{formatDateHeading(key)}</h2>
-                  <TodoItemGroup
+                  <TaskGroup
                     dropId={key}
-                    todoItems={items}
+                    tasks={items}
                     defaultDate={key}
                     showProject
                   />
@@ -60,7 +60,7 @@ export default function TodoItemsIndex({todoItems}: Props) {
             </React.Fragment>
           );
         }}
-      </TodoItemGroupedSorter>
+      </TaskGroupedSorter>
     </LoggedIn>
   );
 }

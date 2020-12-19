@@ -1,22 +1,23 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
-
-import {TodoItemDetailed, ValidationErrors} from 'app/types';
-import LoggedIn from 'app/layouts/loggedIn';
-import Modal from 'app/components/modal';
-import TodoItemQuickForm from 'app/components/todoItemQuickForm';
-import TodoItemNotes from 'app/components/todoItemNotes';
-import TodoItemSubtasks from 'app/components/todoItemSubtasks';
-import ProjectBadge from 'app/components/projectBadge';
 import {InlineIcon} from '@iconify/react';
 
+import {TaskDetailed, ValidationErrors} from 'app/types';
+import LoggedIn from 'app/layouts/loggedIn';
+import Modal from 'app/components/modal';
+import TaskQuickForm from 'app/components/taskQuickForm';
+import TaskNotes from 'app/components/taskNotes';
+import TaskSubtasks from 'app/components/taskSubtasks';
+import ProjectBadge from 'app/components/projectBadge';
+import {formatCompactDate} from 'app/utils/dates';
+
 type Props = {
-  todoItem: TodoItemDetailed;
+  task: TaskDetailed;
   referer: string;
 };
 
-export default function TodoItemsView({referer, todoItem}: Props) {
+export default function TasksView({referer, task}: Props) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -31,7 +32,7 @@ export default function TodoItemsView({referer, todoItem}: Props) {
     // Do an XHR request so we can handle validation errors
     // inside the modal.
     axios
-      .post(`/todos/${todoItem.id}/edit`, formData)
+      .post(`/todos/${task.id}/edit`, formData)
       .then(() => {
         Inertia.visit(referer);
       })
@@ -49,19 +50,19 @@ export default function TodoItemsView({referer, todoItem}: Props) {
   return (
     <LoggedIn>
       <Modal onClose={handleClose}>
-        <div className="todoitems-view">
+        <div className="task-view">
           {editing ? (
-            <TodoItemQuickForm
+            <TaskQuickForm
               onSubmit={handleSubmit}
               onCancel={handleCancel}
-              todoItem={todoItem}
+              task={task}
               errors={errors}
             />
           ) : (
-            <TodoItemSummary todoItem={todoItem} onClick={() => setEditing(true)} />
+            <TaskSummary task={task} onClick={() => setEditing(true)} />
           )}
-          <TodoItemNotes todoItem={todoItem} />
-          <TodoItemSubtasks todoItem={todoItem} />
+          <TaskNotes task={task} />
+          <TaskSubtasks task={task} />
         </div>
       </Modal>
     </LoggedIn>
@@ -69,16 +70,14 @@ export default function TodoItemsView({referer, todoItem}: Props) {
 }
 
 type SummaryProps = {
-  todoItem: TodoItemDetailed;
+  task: TaskDetailed;
   onClick: () => void;
 };
 
-function TodoItemSummary({todoItem, onClick}: SummaryProps) {
+function TaskSummary({task, onClick}: SummaryProps) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    Inertia.post(
-      `/todos/${todoItem.id}/${todoItem.completed ? 'incomplete' : 'complete'}`
-    );
+    Inertia.post(`/todos/${task.id}/${task.completed ? 'incomplete' : 'complete'}`);
   };
 
   return (
@@ -88,16 +87,16 @@ function TodoItemSummary({todoItem, onClick}: SummaryProps) {
         type="checkbox"
         value="1"
         onClick={handleComplete}
-        defaultChecked={todoItem.completed}
+        defaultChecked={task.completed}
       />
       <a href="#" onClick={onClick}>
-        <h3>{todoItem.title}</h3>
+        <h3>{task.title}</h3>
         <div className="attributes">
-          {<ProjectBadge project={todoItem.project} />}
-          {todoItem.due_on && (
-            <time className="due-on" dateTime={todoItem.due_on}>
+          {<ProjectBadge project={task.project} />}
+          {task.due_on && (
+            <time className="due-on" dateTime={task.due_on}>
               <InlineIcon icon="calendar" />
-              {todoItem.due_on}
+              {formatCompactDate(task.due_on)}
             </time>
           )}
         </div>

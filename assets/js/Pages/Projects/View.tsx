@@ -2,18 +2,18 @@ import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {archiveProject, deleteProject, unarchiveProject} from 'app/actions/projects';
-import {Project, TodoItem} from 'app/types';
+import {Project, Task} from 'app/types';
 import {InlineIcon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
-import TodoItemGroup from 'app/components/todoItemGroup';
-import TodoItemSorter from 'app/components/todoItemSorter';
+import TaskGroup from 'app/components/taskGroup';
+import TaskSorter from 'app/components/taskSorter';
 
 type Props = {
   project: Project;
-  todoItems: TodoItem[];
+  tasks: Task[];
 };
 
-export default function TodoItemsIndex({project, todoItems}: Props) {
+export default function TasksIndex({project, tasks}: Props) {
   return (
     <LoggedIn>
       <h1>{project.name} Tasks</h1>
@@ -39,16 +39,16 @@ export default function TodoItemsIndex({project, todoItems}: Props) {
       <div className="attributes">
         {project.archived && <span className="archived">Archived</span>}
       </div>
-      <TodoItemSorter todoItems={todoItems} scope="child">
+      <TaskSorter tasks={tasks} scope="child">
         {({items}) => (
-          <TodoItemGroup
+          <TaskGroup
             dropId="project"
-            todoItems={items}
+            tasks={items}
             defaultProjectId={project.id}
             showDueOn
           />
         )}
-      </TodoItemSorter>
+      </TaskSorter>
     </LoggedIn>
   );
 }

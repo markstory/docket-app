@@ -1,17 +1,17 @@
 import React from 'react';
 import axios, {AxiosResponse} from 'axios';
 
-import {TodoSubtask} from 'app/types';
+import {Subtask} from 'app/types';
 import {useSubtasks} from 'app/providers/subtasks';
 
 type Props = {
-  todoItemId: number;
+  taskId: number;
   index: number;
-  subtask: TodoSubtask;
+  subtask: Subtask;
   onCancel: () => void;
 };
 
-export default function SubtaskEditForm({subtask, index, todoItemId, onCancel}: Props) {
+export default function SubtaskEditForm({subtask, index, taskId, onCancel}: Props) {
   const [subtasks, setSubtasks] = useSubtasks();
 
   async function handleSubmit(event: React.FormEvent) {
@@ -21,8 +21,8 @@ export default function SubtaskEditForm({subtask, index, todoItemId, onCancel}: 
     // Do an XHR request so we can update page state
     // as reloading doesn't work due to sort contexts
     try {
-      const resp: AxiosResponse<{subtask: TodoSubtask}> = await axios.post(
-        `/todos/${todoItemId}/subtasks/${subtask.id}/edit`,
+      const resp: AxiosResponse<{subtask: Subtask}> = await axios.post(
+        `/todos/${taskId}/subtasks/${subtask.id}/edit`,
         formData
       );
       // TODO see if we can reset contexts instead of repeating update logic here.

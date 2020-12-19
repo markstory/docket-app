@@ -2,15 +2,15 @@ import React, {useState} from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
-import {TodoItemDetailed, TodoSubtask} from 'app/types';
+import {TaskDetailed, Subtask} from 'app/types';
 import {useSubtasks} from 'app/providers/subtasks';
 
 type Props = {
-  todoItem: TodoItemDetailed;
+  task: TaskDetailed;
   onCancel: () => void;
 };
 
-export default function TodoSubtaskAddForm({todoItem, onCancel}: Props) {
+export default function SubtaskAddForm({task, onCancel}: Props) {
   const [value, setValue] = useState('');
   const [subtasks, setSubtasks] = useSubtasks();
 
@@ -21,8 +21,8 @@ export default function TodoSubtaskAddForm({todoItem, onCancel}: Props) {
     // Do an XHR request so we can update page state
     // as reloading doesn't work due to sort contexts
     try {
-      const resp: AxiosResponse<{subtask: TodoSubtask}> = await axios.post(
-        `/todos/${todoItem.id}/subtasks`,
+      const resp: AxiosResponse<{subtask: Subtask}> = await axios.post(
+        `/todos/${task.id}/subtasks`,
         formData
       );
       // Clear input for next task.

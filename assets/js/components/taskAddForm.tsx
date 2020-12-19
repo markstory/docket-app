@@ -1,8 +1,8 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
-import {TodoItem} from 'app/types';
-import TodoItemQuickForm from 'app/components/todoItemQuickForm';
+import {Task} from 'app/types';
+import TaskQuickForm from 'app/components/taskQuickForm';
 
 type Props = {
   onCancel: () => void;
@@ -10,7 +10,7 @@ type Props = {
   defaultProjectId?: number;
 };
 
-function TodoItemAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
+function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.persist();
@@ -22,7 +22,7 @@ function TodoItemAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
       onSuccess: () => onCancel(),
     });
   };
-  const todoItem: TodoItem = {
+  const task: Task = {
     id: -1,
     title: '',
     body: '',
@@ -42,8 +42,6 @@ function TodoItemAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
     },
   };
 
-  return (
-    <TodoItemQuickForm todoItem={todoItem} onSubmit={onSubmit} onCancel={onCancel} />
-  );
+  return <TaskQuickForm task={task} onSubmit={onSubmit} onCancel={onCancel} />;
 }
-export default TodoItemAddForm;
+export default TaskAddForm;
