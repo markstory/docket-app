@@ -53,7 +53,9 @@ class TodoSubtasksControllerTest extends TestCase
         $this->post("/todos/{$item->id}/subtasks", [
             'title' => 'first subtask',
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('subtask'));
+        $this->assertContentType('application/json');
         $tasks = $this->TodoSubtasks->find()->where(['TodoSubtasks.todo_item_id' => $item->id]);
         $this->assertCount(1, $tasks);
     }
@@ -89,7 +91,9 @@ class TodoSubtasksControllerTest extends TestCase
         $this->post("/todos/{$item->id}/subtasks", [
             'title' => 'start mower',
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('subtask'));
+        $this->assertContentType('application/json');
         $task = $this->TodoSubtasks->findByTitle('start mower')->firstOrFail();
         $this->assertSame(5, $task->ranking);
     }
@@ -147,6 +151,9 @@ class TodoSubtasksControllerTest extends TestCase
             'title' => 'Updated'
         ]);
         $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('subtask'));
+        $this->assertContentType('application/json');
+
         $update = $this->TodoSubtasks->get($subtask->id);
         $this->assertSame('Updated', $update->title);
     }
