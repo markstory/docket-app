@@ -8,7 +8,7 @@
 /node_modules/*
 
 # Compiled files.
-/webroot/js/app.js
+/webroot/js/*.js
 /webroot/css/app.css
 /webroot/mix-manifest.json
 

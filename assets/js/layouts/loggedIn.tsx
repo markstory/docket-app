@@ -38,10 +38,10 @@ function Contents({children}: Props) {
   return (
     <React.Fragment>
       <main className="layout-three-quarter">
-        <section>
+        <section className="sidebar">
           <ProjectFilter />
         </section>
-        <section>
+        <section className="content">
           <FlashMessages flash={flash} />
           {children}
         </section>

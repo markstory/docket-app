@@ -1,4 +1,20 @@
 .layout-three-quarter {
   display: grid;
-  grid-template-columns: 24.3% 75.6%
+  grid-template-columns: 325px 1fr;
+  height: 100%;
+
+  .sidebar, .content {
+    padding-top: $space * 5;
+    padding-bottom: $space * 5;
+  }
+  .sidebar {
+    padding-left: $space * 5;
+    background: $color-bg-section;
+  }
+
+  .content {
+    padding-right: $space * 5;
+    padding-left: $space * 5;
+  }
 }
+

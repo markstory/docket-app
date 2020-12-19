@@ -15,7 +15,7 @@ function ProjectFilter() {
 
   return (
     <div className="project-filter">
-      <ul>
+      <ul className="links">
         <li>
           <InertiaLink href="/todos/today">
             <InlineIcon icon="clippy" />

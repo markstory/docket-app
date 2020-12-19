@@ -1,10 +1,11 @@
 @use 'sass:list';
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+// Normalize reset
+@import 'normalize.min.css';
 
 // Variables
 @import 'variables';
 
+@import 'elements';
 @import 'layouts';
 @import 'buttons';
 @import 'headings';

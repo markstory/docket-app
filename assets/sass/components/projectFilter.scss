@@ -1,10 +1,13 @@
 .project-filter {
-  padding-right: $space;
-  background: $color-bg;
-
   > ul {
     list-style: none;
-    margin-bottom: $space * 2;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .links li {
+    height: 30px;
   }
 }
 

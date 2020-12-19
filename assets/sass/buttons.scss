@@ -3,9 +3,16 @@ button {
   text-transform: none;
   font-size: $font-size-small;
   font-weight: normal;
+  cursor: pointer;
 
   margin-bottom: 0;
-  padding: 0 $space * 1.5;
+  padding: $space $space * 1.5;
+  border-radius: $border-radius;
+  border: 1px solid $color-border-med;
+
+  &:hover {
+    box-shadow: $shadow-button;
+  }
 }
 
 a > svg,
