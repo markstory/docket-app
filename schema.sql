@@ -2,6 +2,8 @@ CREATE TABLE IF NOT EXISTS users (
     id int not null auto_increment primary key,
     email varchar(255) not null,
     password varchar(255) not null,
+    email_verified boolean not null default false,
+    timezone varchar(255) default 'UTC',
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp
 );
@@ -23,7 +25,7 @@ CREATE TABLE IF NOT EXISTS projects (
     foreign key (user_id) references users(id) on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS todo_items (
+CREATE TABLE IF NOT EXISTS tasks (
     id int not null auto_increment primary key,
     project_id integer not null,
     title text,
@@ -37,28 +39,28 @@ CREATE TABLE IF NOT EXISTS todo_items (
     foreign key (project_id) references projects(id) on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS todo_comments (
+CREATE TABLE IF NOT EXISTS task_comments (
     id int not null auto_increment primary key,
-    todo_item_id integer not null,
+    task_id integer not null,
     user_id integer not null,
     body text,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id),
-    foreign key (todo_item_id) references todo_items(id) on delete cascade
+    foreign key (task_id) references tasks(id) on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS todo_subtasks (
+CREATE TABLE IF NOT EXISTS subtasks (
     id int not null auto_increment primary key,
-    todo_item_id integer not null,
+    task_id integer not null,
     title text,
     body text,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (todo_item_id) references todo_items(id) on delete cascade
+    foreign key (task_id) references tasks(id) on delete cascade
 );
 
-CREATE TABLE todo_labels (
+CREATE TABLE labels (
     id int not null auto_increment primary key,
     project_id int not null,
     label varchar(50) not null,
@@ -68,10 +70,10 @@ CREATE TABLE todo_labels (
     foreign key (project_id) references projects(id) on delete cascade
 );
 
-CREATE TABLE todo_items_todo_labels (
-    todo_item_id int not null,
-    todo_label_id int not null,
-    foreign key (todo_item_id) references todo_items(id) on delete cascade,
-    foreign key (todo_label_id) references todo_labels(id) on delete cascade,
-    primary key (todo_item_id, todo_label_id)
+CREATE TABLE labels_tasks (
+    task_id int not null,
+    label_id int not null,
+    foreign key (task_id) references tasks(id) on delete cascade,
+    foreign key (label_id) references labels(id) on delete cascade,
+    primary key (task_id, todo_label_id)
 );
