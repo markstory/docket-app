@@ -8,7 +8,7 @@
     position: absolute;
     left: -11px;
     top: 0px;
-    z-index: list.nth($levels, 1);
+    z-index: $z-active-ui;
     padding: 40px 0 0 0;
   }
 
@@ -89,6 +89,8 @@
 
   border-radius: 0;
   padding: $space / 2;
+  width: 100%;
+  text-align: left;
   height: auto;
   display: block;
   line-height: 1.2;

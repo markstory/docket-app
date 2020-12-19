@@ -1,0 +1,7 @@
+// TODO has this split style heading become used
+// enough to be its own component?
+.project-view .heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
