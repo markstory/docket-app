@@ -17,7 +17,9 @@ Modal.setAppElement('#app');
 render(
   <InertiaApp
     initialPage={JSON.parse(el.dataset.page || '')}
-    resolveComponent={(name: string) => require(`./Pages/${name}`).default}
+    resolveComponent={(name: string) =>
+      import(`./Pages/${name}`).then(module => module.default)
+    }
   />,
   el
 );

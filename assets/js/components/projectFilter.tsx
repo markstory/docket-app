@@ -33,7 +33,7 @@ function ProjectFilter() {
       <ProjectSorter>
         {({projects}) => (
           <Droppable droppableId="projects" type="project">
-            {(provided: any) => (
+            {provided => (
               <ul
                 ref={provided.innerRef}
                 className="dnd-dropper-left-offset"

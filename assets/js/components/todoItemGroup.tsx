@@ -28,7 +28,7 @@ export default function TodoItemGroup({
   return (
     <div className="todo-item-group">
       <Droppable droppableId={dropId} type="todoitem">
-        {(provided: any, snapshot: any) => {
+        {(provided, snapshot) => {
           let className = 'dnd-dropper-left-offset';
           if (snapshot.isDraggingOver) {
             className += ' dnd-dropper-active';
@@ -41,7 +41,7 @@ export default function TodoItemGroup({
             >
               {todoItems.map((item, index) => (
                 <Draggable key={item.id} draggableId={String(item.id)} index={index}>
-                  {(provided: any, snapshot: any) => {
+                  {(provided, snapshot) => {
                     let className = 'dnd-item';
                     if (snapshot.isDragging) {
                       className += ' dnd-item-dragging';

@@ -7,6 +7,9 @@ mix
   })
   .webpackConfig({
     devtool: 'inline-source-map',
+    output: {
+      chunkFilename: 'js/[name].js?id=[chunkhash]',
+    },
     resolve: {
       extensions: ['.js', '.ts', '.tsx', '.jsx'],
       alias: {

@@ -101,10 +101,13 @@ class TodoSubtasksController extends AppController
 
         $subtask = $this->getTodoSubtask($todoItemId, $id);
         $subtask = $this->TodoSubtasks->patchEntity($subtask, $this->request->getData());
-        if ($this->TodoSubtasks->save($subtask)) {
-            return $this->response->withStatus(200);
+        if (!$this->TodoSubtasks->save($subtask)) {
+            return $this->validationErrorResponse($subtask->getErrors());
         }
-        return $this->validationErrorResponse($subtask->getErrors());
+        $this->set('subtask', $subtask);
+        $this->viewBuilder()
+            ->setClassName(JsonView::class)
+            ->setOption('serialize', ['subtask']);
     }
 
     /**

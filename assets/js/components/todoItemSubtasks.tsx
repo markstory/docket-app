@@ -7,6 +7,7 @@ import TodoSubtaskSorter from 'app/components/todoSubtaskSorter';
 import TodoSubtaskAddForm from 'app/components/todoSubtaskAddForm';
 import {SubtasksProvider} from 'app/providers/subtasks';
 import {Icon, InlineIcon} from './icon';
+import SubtaskEditForm from 'app/components/subtaskEditForm';
 
 type Props = {
   todoItem: TodoItemDetailed;
@@ -22,7 +23,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
         <TodoSubtaskSorter todoItemId={todoItem.id}>
           {({items}) => (
             <Droppable droppableId="subtasks" type="subtask">
-              {(provided: any) => (
+              {provided => (
                 <ul
                   ref={provided.innerRef}
                   className="dnd-droppable-left-offset"
@@ -35,7 +36,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
                         draggableId={String(subtask.id)}
                         index={index}
                       >
-                        {(provided: any, snapshot: any) => {
+                        {(provided, snapshot) => {
                           let className = 'dnd-item';
                           if (snapshot.isDragging) {
                             className += ' dnd-item-dragging';
@@ -55,6 +56,7 @@ export default function TodoItemSubtasks({todoItem}: Props) {
                                 <Icon icon="grabber" width="large" />
                               </button>
                               <TodoItemSubtaskRow
+                                index={index}
                                 key={subtask.id}
                                 subtask={subtask}
                                 todoItemId={todoItem.id}
@@ -89,11 +91,14 @@ export default function TodoItemSubtasks({todoItem}: Props) {
 
 type RowProps = {
   todoItemId: number;
+  index: number;
   subtask: TodoSubtask;
 };
 
-function TodoItemSubtaskRow({subtask, todoItemId}: RowProps) {
-  function handleComplete() {
+function TodoItemSubtaskRow({index, subtask, todoItemId}: RowProps) {
+  const [editing, setEditing] = useState(false);
+  function handleComplete(event: React.MouseEvent<HTMLInputElement>) {
+    event.stopPropagation();
     Inertia.post(`/todos/${todoItemId}/subtasks/${subtask.id}/toggle`);
   }
 
@@ -105,7 +110,18 @@ function TodoItemSubtaskRow({subtask, todoItemId}: RowProps) {
         value="1"
         defaultChecked={subtask.completed}
       />
-      {subtask.title}
+      {editing ? (
+        <SubtaskEditForm
+          index={index}
+          subtask={subtask}
+          todoItemId={todoItemId}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <div role="button" onClick={() => setEditing(true)}>
+          {subtask.title}
+        </div>
+      )}
     </div>
   );
 }
