@@ -40,15 +40,13 @@ export function parseDate(input: string): Date {
 
 function now(): Date {
   const utcNow = new Date();
-  utcNow.setTime(utcNow.getTime() + utcNow.getTimezoneOffset() * 60 * 1000);
+  utcNow.setTime(utcNow.getTime() - utcNow.getTimezoneOffset() * 60 * 1000);
 
   return utcNow;
 }
 
 export function formatCompactDate(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
-
-  console.log(now(), input);
   const today = Math.floor(now().getTime() / ONE_DAY_IN_MS);
   const timestamp = Math.floor(input.getTime() / ONE_DAY_IN_MS);
   const delta = timestamp - today;
@@ -71,7 +69,7 @@ export function formatCompactDate(date: Date | string): string {
 export function formatDateHeading(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
 
-  const today = Math.floor(new Date().getTime() / ONE_DAY_IN_MS);
+  const today = Math.floor(now().getTime() / ONE_DAY_IN_MS);
   const timestamp = Math.floor(input.getTime() / ONE_DAY_IN_MS);
   const delta = timestamp - today;
   let shortDate = `${SHORT_MONTHS[input.getMonth()]} ${input.getDate()}`;
