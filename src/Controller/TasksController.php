@@ -9,13 +9,13 @@ use Cake\I18n\FrozenDate;
 use InvalidArgumentException;
 
 /**
- * TodoItems Controller
+ * Tasks Controller
  *
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
- * @property \App\Model\Table\TodoItemsTable $TodoItems
- * @method \App\Model\Entity\TodoItem[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @property \App\Model\Table\TasksTable $Tasks
+ * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class TodoItemsController extends AppController
+class TasksController extends AppController
 {
     /**
      * Index method
@@ -30,7 +30,7 @@ class TodoItemsController extends AppController
             throw new NotFoundException();
         }
 
-        $query = $this->TodoItems
+        $query = $this->Tasks
             ->find('incomplete')
             ->contain('Projects');
 
@@ -38,14 +38,14 @@ class TodoItemsController extends AppController
         if ($view === 'today') {
             $query = $query->find('dueToday');
             // Set view component to use.
-            $this->set('component', 'TodoItems/Today');
+            $this->set('component', 'Tasks/Today');
         } else if ($view === 'upcoming') {
             $query = $query->find('upcoming', ['start' => $start]);
         }
-        // $overdue = $this->TodoItems->find('overdue')->limit(25);
-        $todoItems = $query->all();
+        // $overdue = $this->Tasks->find('overdue')->limit(25);
+        $tasks = $query->all();
 
-        $this->set(compact('todoItems', 'view'));
+        $this->set(compact('tasks', 'view'));
     }
 
     /**
@@ -55,17 +55,17 @@ class TodoItemsController extends AppController
      */
     public function add()
     {
-        $todoItem = $this->TodoItems->newEmptyEntity();
+        $task = $this->Tasks->newEmptyEntity();
 
         if ($this->request->is('post')) {
-            $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
+            $task = $this->Tasks->patchEntity($task, $this->request->getData());
 
-            $project = $this->TodoItems->Projects->get($todoItem->project_id);
+            $project = $this->Tasks->Projects->get($task->project_id);
             $this->Authorization->authorize($project, 'edit');
             $user = $this->request->getAttribute('identity');
-            $this->TodoItems->setNextOrderProperties($user, $todoItem);
+            $this->Tasks->setNextOrderProperties($user, $task);
 
-            if ($this->TodoItems->save($todoItem)) {
+            if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('The todo item has been saved.'));
 
                 return $this->redirect($this->referer(['action' => 'index']));
@@ -85,14 +85,14 @@ class TodoItemsController extends AppController
      */
     public function complete($id = null)
     {
-        $todoItem = $this->TodoItems->get($id, [
+        $task = $this->Tasks->get($id, [
             'contain' => ['Projects'],
         ]);
-        $this->Authorization->can($todoItem, 'edit');
+        $this->Authorization->can($task, 'edit');
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $todoItem->complete();
-            if (!$this->TodoItems->save($todoItem)) {
+            $task->complete();
+            if (!$this->Tasks->save($task)) {
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
@@ -108,14 +108,14 @@ class TodoItemsController extends AppController
      */
     public function incomplete($id = null)
     {
-        $todoItem = $this->TodoItems->get($id, [
+        $task = $this->Tasks->get($id, [
             'contain' => ['Projects'],
         ]);
-        $this->Authorization->can($todoItem, 'edit');
+        $this->Authorization->can($task, 'edit');
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $todoItem->incomplete();
-            if (!$this->TodoItems->save($todoItem)) {
+            $task->incomplete();
+            if (!$this->Tasks->save($task)) {
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
@@ -125,15 +125,15 @@ class TodoItemsController extends AppController
     public function move(string $id)
     {
         $this->request->allowMethod(['post']);
-        $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
-        $this->Authorization->authorize($todoItem, 'edit');
+        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($task, 'edit');
         $operation = [
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
             'due_on' => $this->request->getData('due_on')
         ];
         try {
-            $this->TodoItems->move($todoItem, $operation);
+            $this->Tasks->move($task, $operation);
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
         }
@@ -151,16 +151,16 @@ class TodoItemsController extends AppController
     public function edit($id = null)
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
-        $todoItem = $this->TodoItems->get($id, [
-            'contain' => ['TodoLabels', 'Projects'],
+        $task = $this->Tasks->get($id, [
+            'contain' => ['Labels', 'Projects'],
         ]);
-        $this->Authorization->authorize($todoItem);
+        $this->Authorization->authorize($task);
 
-        $todoItem = $this->TodoItems->patchEntity($todoItem, $this->request->getData());
-        if ($this->TodoItems->save($todoItem)) {
+        $task = $this->Tasks->patchEntity($task, $this->request->getData());
+        if ($this->Tasks->save($task)) {
             return $this->response->withStatus(200);
         }
-        return $this->validationErrorResponse($todoItem->getErrors());
+        return $this->validationErrorResponse($task->getErrors());
     }
 
     /**
@@ -172,12 +172,12 @@ class TodoItemsController extends AppController
      */
     public function view($id = null)
     {
-        $todoItem = $this->TodoItems->get($id, [
-            'contain' => ['Projects', 'TodoLabels', 'TodoComments', 'TodoSubtasks'],
+        $task = $this->Tasks->get($id, [
+            'contain' => ['Projects', 'Labels', 'TaskComments', 'Subtasks'],
         ]);
-        $this->Authorization->authorize($todoItem);
+        $this->Authorization->authorize($task);
 
-        $this->set(compact('todoItem'));
+        $this->set(compact('task'));
         $this->set('referer', $this->referer(['action' => 'index']));
     }
 
@@ -191,10 +191,10 @@ class TodoItemsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
-        $this->Authorization->authorize($todoItem);
+        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($task);
 
-        if ($this->TodoItems->delete($todoItem)) {
+        if ($this->Tasks->delete($task)) {
             $this->Flash->success(__('The todo item has been deleted.'));
         } else {
             $this->Flash->error(__('The todo item could not be deleted. Please, try again.'));

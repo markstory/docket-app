@@ -20,7 +20,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\TodoItem[] $todo_items
+ * @property \App\Model\Entity\Task[] $todo_items
  * @property \App\Model\Entity\TodoLabel[] $todo_labels
  */
 class Project extends Entity

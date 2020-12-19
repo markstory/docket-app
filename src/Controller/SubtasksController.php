@@ -3,42 +3,42 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Entity\TodoItem;
-use App\Model\Entity\TodoSubtask;
+use App\Model\Entity\Task;
+use App\Model\Entity\Subtask;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
- * TodoSubtasks Controller
+ * Subtasks Controller
  *
- * @property \App\Model\Table\TodoSubtasksTable $TodoSubtasks
+ * @property \App\Model\Table\SubtasksTable $Subtasks
  * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class TodoSubtasksController extends AppController
+class SubtasksController extends AppController
 {
     public function initialize(): void 
     {
         parent::initialize();
-        $this->loadModel('TodoItems');
-        $this->loadModel('TodoSubtasks');
+        $this->loadModel('Tasks');
+        $this->loadModel('Subtasks');
     }
 
-    protected function getTodoItem(string $id): TodoItem
+    protected function getTask(string $id): Task
     {
-        $todoItem = $this->TodoItems->get($id, ['contain' => ['Projects']]);
-        $this->Authorization->authorize($todoItem, 'edit');
-        return $todoItem;
+        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($task, 'edit');
+        return $task;
     }
 
-    protected function getTodoSubtask(string $todoItemId, string $id): TodoSubtask
+    protected function getTodoSubtask(string $taskId, string $id): Subtask
     {
-        $item = $this->getTodoItem($todoItemId);
+        $item = $this->getTask($taskId);
 
-        return $this->TodoSubtasks
+        return $this->Subtasks
             ->find()
-            ->where(['TodoSubtasks.id' => $id, 'TodoSubtasks.todo_item_id' => $item->id])
+            ->where(['Subtasks.id' => $id, 'Subtasks.task_id' => $item->id])
             ->firstOrFail();
     }
 
@@ -47,16 +47,16 @@ class TodoSubtasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add(string $todoItemId = null)
+    public function add(string $taskId = null)
     {
         $this->request->allowMethod(['post']);
-        $item = $this->getTodoItem($todoItemId);
+        $item = $this->getTask($taskId);
 
-        $todoSubtask = $this->TodoSubtasks->newEntity($this->request->getData());
-        $todoSubtask->todo_item_id = $item->id;
-        $todoSubtask->ranking = $this->TodoSubtasks->getNextRanking($item->id);
+        $todoSubtask = $this->Subtasks->newEntity($this->request->getData());
+        $todoSubtask->task_id = $item->id;
+        $todoSubtask->ranking = $this->Subtasks->getNextRanking($item->id);
 
-        $this->TodoSubtasks->saveOrFail($todoSubtask);
+        $this->Subtasks->saveOrFail($todoSubtask);
 
         $this->set('subtask', $todoSubtask);
         $this->viewBuilder()
@@ -72,36 +72,36 @@ class TodoSubtasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function toggle($todoItemId, $id = null)
+    public function toggle($taskId, $id = null)
     {
         $this->request->allowMethod(['post']);
-        $subtask = $this->getTodoSubtask($todoItemId, $id);
+        $subtask = $this->getTodoSubtask($taskId, $id);
 
         $subtask->toggle();
-        $this->TodoSubtasks->saveOrFail($subtask);
+        $this->Subtasks->saveOrFail($subtask);
 
         return $this->redirect($this->referer([
-            'controller' => 'TodoItems',
+            'controller' => 'Tasks',
             'action' => 'view',
-            'id' => $todoItemId
+            'id' => $taskId
         ]));
     }
 
     /**
      * Edit method
      *
-     * @param string $todoItemId Todo id.
+     * @param string $taskId Todo id.
      * @param string $id Todo Subtask id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $todoItemId, string $id)
+    public function edit(string $taskId, string $id)
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
 
-        $subtask = $this->getTodoSubtask($todoItemId, $id);
-        $subtask = $this->TodoSubtasks->patchEntity($subtask, $this->request->getData());
-        if (!$this->TodoSubtasks->save($subtask)) {
+        $subtask = $this->getTodoSubtask($taskId, $id);
+        $subtask = $this->Subtasks->patchEntity($subtask, $this->request->getData());
+        if (!$this->Subtasks->save($subtask)) {
             return $this->validationErrorResponse($subtask->getErrors());
         }
         $this->set('subtask', $subtask);
@@ -113,49 +113,49 @@ class TodoSubtasksController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $todoItemId Todo id.
+     * @param string|null $taskId Todo id.
      * @param string|null $id Todo Subtask id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $todoItemId, string $id)
+    public function delete(string $taskId, string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $subtask = $this->getTodoSubtask($todoItemId, $id);
+        $subtask = $this->getTodoSubtask($taskId, $id);
 
-        if ($this->TodoSubtasks->delete($subtask)) {
+        if ($this->Subtasks->delete($subtask)) {
             $this->Flash->success(__('The todo subtask has been deleted.'));
         } else {
             $this->Flash->error(__('The todo subtask could not be deleted. Please, try again.'));
         }
 
         return $this->redirect([
-            'controller' => 'TodoItems',
+            'controller' => 'Tasks',
             'action' => 'view',
-            'id' => $todoItemId,
+            'id' => $taskId,
         ]);
     }
 
-    public function move(string $todoItemId, string $id)
+    public function move(string $taskId, string $id)
     {
         $this->request->allowMethod(['post']);
-        $item = $this->getTodoItem($todoItemId);
+        $item = $this->getTask($taskId);
         $this->Authorization->authorize($item, 'edit');
-        $task = $this->getTodoSubtask($todoItemId, $id);
+        $subtask = $this->getTodoSubtask($taskId, $id);
 
         $operation = [
             'ranking' => $this->request->getData('ranking'),
         ];
         try {
-            $this->TodoSubtasks->move($task, $operation);
+            $this->Subtasks->move($subtask, $operation);
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
         }
 
         return $this->redirect($this->referer([
-            'controller' => 'TodoItems',
+            'controller' => 'Tasks',
             'action' => 'view',
-            'id' => $todoItemId,
+            'id' => $taskId,
         ]));
     }
 }

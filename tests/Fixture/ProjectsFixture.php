@@ -36,7 +36,7 @@ class ProjectsFixture extends TestFixture
         ],
         '_options' => [
             'engine' => 'InnoDB',
-            'collation' => 'latin1_swedish_ci'
+            'collation' => 'utf-8'
         ],
     ];
     // phpcs:enable

@@ -14,8 +14,8 @@ use InvalidArgumentException;
  * Projects Model
  *
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- * @property \App\Model\Table\TodoItemsTable&\Cake\ORM\Association\HasMany $TodoItems
- * @property \App\Model\Table\TodoLabelsTable&\Cake\ORM\Association\HasMany $TodoLabels
+ * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\HasMany $Tasks
+ * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\HasMany $Labels
  *
  * @method \App\Model\Entity\Project newEmptyEntity()
  * @method \App\Model\Entity\Project newEntity(array $data, array $options = [])
@@ -59,10 +59,10 @@ class ProjectsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
-        $this->hasMany('TodoItems', [
+        $this->hasMany('Tasks', [
             'foreignKey' => 'project_id',
         ]);
-        $this->hasMany('TodoLabels', [
+        $this->hasMany('Labels', [
             'foreignKey' => 'project_id',
         ]);
     }

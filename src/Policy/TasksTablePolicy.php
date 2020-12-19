@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace App\Policy;
 
-use App\Model\Table\TodoItemsTable;
+use App\Model\Table\TasksTable;
 use App\Model\Entity\User;
 use Cake\ORM\Query;
 
 /**
- * TodoItems policy
+ * Tasks policy
  */
-class TodoItemsTablePolicy
+class TasksTablePolicy
 {
     public function scopeIndex(User $user, Query $query): Query
     {

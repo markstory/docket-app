@@ -6,9 +6,9 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * TodoItemsFixture
+ * TasksFixture
  */
-class TodoItemsFixture extends TestFixture
+class TasksFixture extends TestFixture
 {
     /**
      * Fields

@@ -19,7 +19,7 @@ class ProjectsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadModel('TodoItems');
+        $this->loadModel('Tasks');
     }
 
     protected function getProject($slug)
@@ -38,14 +38,14 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         $query = $this->Authorization
-            ->applyScope($this->TodoItems->find(), 'index')
+            ->applyScope($this->Tasks->find(), 'index')
             ->contain('Projects')
             ->find('incomplete')
             ->find('forProject', ['slug' => $this->request->getParam('slug')]);
 
-        $todoItems = $this->paginate($query);
+        $tasks = $this->paginate($query);
 
-        $this->set(compact('project', 'todoItems'));
+        $this->set(compact('project', 'tasks'));
     }
 
     /**
@@ -92,12 +92,12 @@ class ProjectsController extends AppController
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('The project has been saved.'));
 
-                return $this->redirect($this->referer(['_name' => 'todoitems:upcoming']));
+                return $this->redirect($this->referer(['_name' => 'tasks:upcoming']));
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
             $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
-        $referer = $this->referer(['_name' => 'todoitems:upcoming']);
+        $referer = $this->referer(['_name' => 'tasks:upcoming']);
         $this->set(compact('project', 'referer'));
     }
 
@@ -130,7 +130,7 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         if ($this->Projects->delete($project)) {
-            return $this->redirect(['_name' => 'todoitems:today']);
+            return $this->redirect(['_name' => 'tasks:today']);
         }
         return $this->response->withStatus(400);
     }
@@ -142,7 +142,7 @@ class ProjectsController extends AppController
 
         $project->archive();
         $this->Projects->save($project);
-        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
     public function unarchive(string $slug)
@@ -152,7 +152,7 @@ class ProjectsController extends AppController
 
         $project->unarchive();
         $this->Projects->save($project);
-        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
     public function move(string $slug)
@@ -169,6 +169,6 @@ class ProjectsController extends AppController
             $this->Flash->error($e->getMessage());
         }
 
-        return $this->redirect($this->referer(['_name' => 'todoitems:today']));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 }

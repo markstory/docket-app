@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\TodoSubtasksController;
+use App\Controller\SubtasksController;
 use App\Test\TestCase\FactoryTrait;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\TodoSubtasksController Test Case
+ * App\Controller\SubtasksController Test Case
  *
- * @uses \App\Controller\TodoSubtasksController
+ * @uses \App\Controller\SubtasksController
  */
-class TodoSubtasksControllerTest extends TestCase
+class SubtasksControllerTest extends TestCase
 {
     use FactoryTrait;
     use IntegrationTestTrait;
@@ -25,8 +25,8 @@ class TodoSubtasksControllerTest extends TestCase
      * @var array
      */
     protected $fixtures = [
-        'app.TodoSubtasks',
-        'app.TodoItems',
+        'app.Subtasks',
+        'app.Tasks',
         'app.Projects',
         'app.Users',
     ];
@@ -35,7 +35,7 @@ class TodoSubtasksControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->TodoSubtasks = TableRegistry::get('TodoSubtasks');
+        $this->Subtasks = TableRegistry::get('Subtasks');
     }
 
     /**
@@ -46,7 +46,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -56,7 +56,7 @@ class TodoSubtasksControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertNotEmpty($this->viewVariable('subtask'));
         $this->assertContentType('application/json');
-        $tasks = $this->TodoSubtasks->find()->where(['TodoSubtasks.todo_item_id' => $item->id]);
+        $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertCount(1, $tasks);
     }
 
@@ -68,7 +68,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testAddPermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -76,15 +76,15 @@ class TodoSubtasksControllerTest extends TestCase
             'title' => 'first subtask',
         ]);
         $this->assertResponseCode(403);
-        $tasks = $this->TodoSubtasks->find()->where(['TodoSubtasks.todo_item_id' => $item->id]);
+        $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertCount(0, $tasks);
     }
 
     public function testAddAppendRanking(): void
     {
         $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
-        $this->makeSubtask('get mower', $project->id, 4);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
+        $this->makeSubtask('get mower', $item->id, 4);
 
         $this->login();
         $this->enableCsrfToken();
@@ -94,7 +94,7 @@ class TodoSubtasksControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertNotEmpty($this->viewVariable('subtask'));
         $this->assertContentType('application/json');
-        $task = $this->TodoSubtasks->findByTitle('start mower')->firstOrFail();
+        $task = $this->Subtasks->findByTitle('start mower')->firstOrFail();
         $this->assertSame(5, $task->ranking);
     }
 
@@ -106,14 +106,14 @@ class TodoSubtasksControllerTest extends TestCase
     public function testToggle(): void
     {
         $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/toggle");
         $this->assertRedirect("/todos/{$item->id}/view");
-        $tasks = $this->TodoSubtasks->find()->where(['TodoSubtasks.todo_item_id' => $item->id]);
+        $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertTrue($tasks->first()->completed);
     }
 
@@ -125,7 +125,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testTogglePermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
@@ -142,7 +142,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testEdit(): void
     {
         $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
@@ -154,14 +154,14 @@ class TodoSubtasksControllerTest extends TestCase
         $this->assertNotEmpty($this->viewVariable('subtask'));
         $this->assertContentType('application/json');
 
-        $update = $this->TodoSubtasks->get($subtask->id);
+        $update = $this->Subtasks->get($subtask->id);
         $this->assertSame('Updated', $update->title);
     }
 
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
@@ -180,20 +180,20 @@ class TodoSubtasksControllerTest extends TestCase
     public function testDelete(): void
     {
         $project = $this->makeProject('work', 1);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/delete");
         $this->assertRedirect("/todos/{$item->id}/view");
-        $this->assertCount(0, $this->TodoSubtasks->find()->all());
+        $this->assertCount(0, $this->Subtasks->find()->all());
     }
 
     public function testDeletePermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $item = $this->makeItem('Cut grass', $project->id, 0);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
@@ -205,7 +205,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testMoveNoData()
     {
         $home = $this->makeProject('Home', 1, 0);
-        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $item = $this->makeTask('Cut grass', $home->id, 0);
         $first = $this->makeSubtask('start mower', $item->id, 0);
 
         $this->login();
@@ -219,7 +219,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testMoveDown()
     {
         $home = $this->makeProject('Home', 1, 0);
-        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $item = $this->makeTask('Cut grass', $home->id, 0);
         $first = $this->makeSubtask('start mower', $item->id, 0);
         $second = $this->makeSubtask('cut', $item->id, 1);
         $third = $this->makeSubtask('done', $item->id, 2);
@@ -231,7 +231,7 @@ class TodoSubtasksControllerTest extends TestCase
         ]);
         $this->assertRedirect("/todos/{$item->id}/view");
 
-        $results = $this->TodoSubtasks->find()->orderAsc('ranking')->toArray();
+        $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$second->id, $first->id, $third->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -242,7 +242,7 @@ class TodoSubtasksControllerTest extends TestCase
     public function testMoveUp()
     {
         $home = $this->makeProject('Home', 1, 0);
-        $item = $this->makeItem('Cut grass', $home->id, 0);
+        $item = $this->makeTask('Cut grass', $home->id, 0);
         $first = $this->makeSubtask('start mower', $item->id, 0);
         $second = $this->makeSubtask('cut', $item->id, 1);
         $third = $this->makeSubtask('done', $item->id, 2);
@@ -254,7 +254,7 @@ class TodoSubtasksControllerTest extends TestCase
         ]);
         $this->assertRedirect("/todos/{$item->id}/view");
 
-        $results = $this->TodoSubtasks->find()->orderAsc('ranking')->toArray();
+        $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$third->id, $first->id, $second->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {

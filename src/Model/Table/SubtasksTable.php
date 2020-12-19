@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use App\Model\Entity\TodoSubtask;
+use App\Model\Entity\Subtask;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -11,9 +11,9 @@ use Cake\Validation\Validator;
 use InvalidArgumentException;
 
 /**
- * TodoSubtasks Model
+ * Subtasks Model
  *
- * @property \App\Model\Table\TodoItemsTable&\Cake\ORM\Association\BelongsTo $TodoItems
+ * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\BelongsTo $Tasks
  *
  * @method \App\Model\Entity\TodoSubtask newEmptyEntity()
  * @method \App\Model\Entity\TodoSubtask newEntity(array $data, array $options = [])
@@ -31,7 +31,7 @@ use InvalidArgumentException;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class TodoSubtasksTable extends Table
+class SubtasksTable extends Table
 {
     /**
      * Initialize method
@@ -43,14 +43,14 @@ class TodoSubtasksTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('todo_subtasks');
+        $this->setTable('subtasks');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('TodoItems', [
-            'foreignKey' => 'todo_item_id',
+        $this->belongsTo('Tasks', [
+            'foreignKey' => 'task_id',
             'joinType' => 'INNER',
         ]);
     }
@@ -87,7 +87,7 @@ class TodoSubtasksTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['todo_item_id'], 'TodoItems'), ['errorField' => 'todo_item_id']);
+        $rules->add($rules->existsIn(['task_id'], 'Tasks'), ['errorField' => 'task_id']);
 
         return $rules;
     }
@@ -96,24 +96,24 @@ class TodoSubtasksTable extends Table
     {
         $query = $this->find();
         $result = $query->select([
-            'max' => $query->func()->max('TodoSubtasks.ranking')
+            'max' => $query->func()->max('Subtasks.ranking')
         ])
         ->where([
-            'TodoSubtasks.todo_item_id' => $todoId,
-            'TodoSubtasks.completed' => false,
+            'Subtasks.task_id' => $todoId,
+            'Subtasks.completed' => false,
         ])
         ->firstOrFail();
 
         return $result->max + 1;
     }
 
-    public function move(TodoSubtask $task, array $operation)
+    public function move(Subtask $task, array $operation)
     {
         if (!isset($operation['ranking'])) {
             throw new InvalidArgumentException('A ranking is required');
         }
         $conditions = [
-            'todo_item_id' => $task->todo_item_id,
+            'task_id' => $task->task_id,
         ];
 
         // We have to assume that all lists are not continuous ranges, and that the order

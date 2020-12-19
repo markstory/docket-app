@@ -56,24 +56,24 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/login/', 'Users::login', ['_name' => 'users:login']);
 
     $builder->get('/logout/', 'Users::logout', 'users:logout');
-    $builder->scope('/todos', ['controller' => 'TodoItems'], function ($builder) {
-        $builder->get('/', ['action' => 'index'], 'todoitems:index');
-        $builder->get('/today', ['action' => 'index', 'today'], 'todoitems:today');
-        $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'todoitems:upcoming');
+    $builder->scope('/todos', ['controller' => 'Tasks'], function ($builder) {
+        $builder->get('/', ['action' => 'index'], 'tasks:index');
+        $builder->get('/today', ['action' => 'index', 'today'], 'tasks:today');
+        $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'tasks:upcoming');
 
-        $builder->post('/add', ['action' => 'add'], 'todoitems:add');
-        $builder->post('/reorder', ['action' => 'reorder'], 'todoitems:reorder');
-        $builder->post('/{id}/complete', ['action' => 'complete'], 'todoitems:complete')
+        $builder->post('/add', ['action' => 'add'], 'tasks:add');
+        $builder->post('/reorder', ['action' => 'reorder'], 'tasks:reorder');
+        $builder->post('/{id}/complete', ['action' => 'complete'], 'tasks:complete')
             ->setPass(['id']);
-        $builder->post('/{id}/incomplete', ['action' => 'incomplete'], 'todoitems:incomplete')
+        $builder->post('/{id}/incomplete', ['action' => 'incomplete'], 'tasks:incomplete')
             ->setPass(['id']);
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'todoitems:delete')
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'tasks:delete')
             ->setPass(['id']);
-        $builder->post('/{id}/edit', ['action' => 'edit'], 'todoitems:edit')
+        $builder->post('/{id}/edit', ['action' => 'edit'], 'tasks:edit')
             ->setPass(['id']);
-        $builder->get('/{id}/view', ['action' => 'view'], 'todoitems:view')
+        $builder->get('/{id}/view', ['action' => 'view'], 'tasks:view')
             ->setPass(['id']);
-        $builder->post('/{id}/move', ['action' => 'move'], 'todoitems:move')
+        $builder->post('/{id}/move', ['action' => 'move'], 'tasks:move')
             ->setPass(['id']);
     });
 
@@ -95,17 +95,17 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
     });
 
-    $builder->post('/todos/{id}/subtasks', 'TodoSubtasks::add', 'todosubtasks:add')
+    $builder->post('/todos/{id}/subtasks', 'subtasks::add', 'subtasks:add')
         ->setPass(['id']);
-    $builder->post('/todos/{id}/subtasks/reorder', 'TodoSubtasks::reorder', 'todosubtasks:reorder')
+    $builder->post('/todos/{id}/subtasks/reorder', 'subtasks::reorder', 'subtasks:reorder')
         ->setPass(['id']);
-    $builder->post('/todos/{todoItemId}/subtasks/{id}/edit', 'TodoSubtasks::edit', 'todosubtasks:edit')
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/edit', 'subtasks::edit', 'subtasks:edit')
         ->setPass(['todoItemId', 'id']);
-    $builder->post('/todos/{todoItemId}/subtasks/{id}/delete', 'TodoSubtasks::delete', 'todosubtasks:delete')
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/delete', 'subtasks::delete', 'subtasks:delete')
         ->setPass(['todoItemId', 'id']);
-    $builder->post('/todos/{todoItemId}/subtasks/{id}/toggle', 'TodoSubtasks::toggle', 'todosubtasks:toggle')
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/toggle', 'subtasks::toggle', 'subtasks:toggle')
         ->setPass(['todoItemId', 'id']);
-    $builder->post('/todos/{todoItemId}/subtasks/{id}/move', 'TodoSubtasks::move', 'todosubtasks:move')
+    $builder->post('/todos/{todoItemId}/subtasks/{id}/move', 'subtasks::move', 'subtasks:move')
         ->setPass(['todoItemId', 'id']);
 
     /*

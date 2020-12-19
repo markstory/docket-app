@@ -3,27 +3,23 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 
 /**
- * TodoItem Entity
+ * Subtask Entity
  *
  * @property int $id
- * @property int $project_id
+ * @property int $todo_item_id
  * @property string|null $title
  * @property string|null $body
- * @property \Cake\I18n\FrozenDate|null $due_on
+ * @property int $ranking
  * @property bool $completed
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
- * @property \App\Model\Entity\Project $project
- * @property \App\Model\Entity\TodoComment[] $todo_comments
- * @property \App\Model\Entity\TodoSubtask[] $todo_subtasks
- * @property \App\Model\Entity\TodoLabel[] $todo_labels
+ * @property \App\Model\Entity\Task $todo_item
  */
-class TodoItem extends Entity
+class Subtask extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -35,30 +31,18 @@ class TodoItem extends Entity
      * @var array
      */
     protected $_accessible = [
-        'project_id' => true,
+        'task_id' => true,
         'title' => true,
         'body' => true,
-        'due_on' => true,
+        'ranking' => true,
         'completed' => true,
-        'child_order' => true,
-        'day_order' => true,
         'created' => true,
         'modified' => true,
-        'project' => true,
-        'comments' => true,
-        'subtasks' => true,
-        'labels' => true,
+        'task' => true,
     ];
 
-    public function complete(): void
+    public function toggle()
     {
-        $this->completed = true;
-        $this->due_on = new FrozenTime();
-    }
-
-    public function incomplete(): void
-    {
-        $this->completed = false;
-        $this->due_on = new FrozenTime();
+        $this->completed = !$this->completed;
     }
 }

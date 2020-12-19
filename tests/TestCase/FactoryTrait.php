@@ -31,24 +31,24 @@ trait FactoryTrait
         return $projects->saveOrFail($project);
     }
 
-    protected function makeItem($title, $projectId, $order, $props = [])
+    protected function makeTask($title, $projectId, $order, $props = [])
     {
-        $todos = TableRegistry::get('TodoItems');
-        $todoItem = $todos->newEntity(array_merge([
+        $tasks = TableRegistry::get('Tasks');
+        $task = $tasks->newEntity(array_merge([
             'project_id' => $projectId,
             'title' => $title,
             'day_order' => $order,
             'child_order' => $order,
         ], $props));
 
-        return $todos->saveOrFail($todoItem);
+        return $tasks->saveOrFail($task);
     }
 
-    protected function makeSubtask($title, $todoItemId, $ranking, $props = [])
+    protected function makeSubtask($title, $taskId, $ranking, $props = [])
     {
-        $subtasks = TableRegistry::get('TodoSubtasks');
+        $subtasks = TableRegistry::get('Subtasks');
         $subtask = $subtasks->newEntity(array_merge([
-            'todo_item_id' => $todoItemId,
+            'task_id' => $taskId,
             'title' => $title,
             'ranking' => $ranking,
         ], $props));

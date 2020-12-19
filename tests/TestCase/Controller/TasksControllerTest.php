@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\TodoItemsController;
+use App\Controller\TasksController;
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
@@ -11,11 +11,11 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\TodoItemsController Test Case
+ * App\Controller\TasksController Test Case
  *
- * @uses \App\Controller\TodoItemsController
+ * @uses \App\Controller\TasksController
  */
-class TodoItemsControllerTest extends TestCase
+class TasksControllerTest extends TestCase
 {
     use FactoryTrait;
     use IntegrationTestTrait;
@@ -27,18 +27,18 @@ class TodoItemsControllerTest extends TestCase
      */
     protected $fixtures = [
         'app.Users',
-        'app.TodoItems',
+        'app.Tasks',
         'app.Projects',
-        'app.TodoComments',
-        'app.TodoSubtasks',
-        'app.TodoItemsTodoLabels',
-        'app.TodoLabels',
+        'app.TaskComments',
+        'app.Subtasks',
+        'app.LabelsTasks',
+        'app.Labels',
     ];
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->TodoItems = TableRegistry::get('TodoItems');
+        $this->Tasks = TableRegistry::get('Tasks');
     }
 
     /**
@@ -50,9 +50,9 @@ class TodoItemsControllerTest extends TestCase
     {
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $tomorrow]);
-        $second = $this->makeItem('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeItem('complete', $project->id, 0, [
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('complete', $project->id, 0, [
             'completed' => true,
             'due_on' => $tomorrow
         ]);
@@ -63,7 +63,7 @@ class TodoItemsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertSame('upcoming', $this->viewVariable('view'));
 
-        $items = $this->viewVariable('todoItems')->toArray();
+        $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(2, $items);
         $ids = array_map(function ($i) { return $i->id; }, $items);
         $this->assertEquals([$first->id, $second->id], $ids);
@@ -74,9 +74,9 @@ class TodoItemsControllerTest extends TestCase
         $today = new FrozenDate('today');
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $today]);
-        $this->makeItem('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeItem('complete', $project->id, 0, [
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('complete', $project->id, 0, [
             'completed' => true,
             'due_on' => $tomorrow
         ]);
@@ -86,7 +86,7 @@ class TodoItemsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertSame('today', $this->viewVariable('view'));
 
-        $items = $this->viewVariable('todoItems')->toArray();
+        $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
         $ids = array_map(function ($i) { return $i->id; }, $items);
         $this->assertEquals([$first->id], $ids);
@@ -98,15 +98,15 @@ class TodoItemsControllerTest extends TestCase
         $other = $this->makeProject('work', 2);
         $project = $this->makeProject('work', 1);
 
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => $tomorrow]);
-        $this->makeItem('first', $other->id, 3, ['due_on' => $tomorrow]);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
 
         $this->login();
         $this->get('/todos/upcoming');
         $this->assertResponseOk();
         $this->assertSame('upcoming', $this->viewVariable('view'));
 
-        $items = $this->viewVariable('todoItems')->toArray();
+        $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
         $ids = array_map(function ($i) { return $i->id; }, $items);
         $this->assertEquals([$first->id], $ids);
@@ -120,19 +120,19 @@ class TodoItemsControllerTest extends TestCase
     public function testView(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->get("/todos/{$first->id}/view");
         $this->assertResponseOk();
-        $var = $this->viewVariable('todoItem');
+        $var = $this->viewVariable('task');
         $this->assertSame($var->title, $first->title);
     }
 
     public function testViewPermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->get("/todos/{$first->id}/view");
@@ -151,14 +151,14 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertResponseCode(302);
 
-        $todo = $this->TodoItems->find()->firstOrFail();
+        $todo = $this->Tasks->find()->firstOrFail();
         $this->assertSame('first todo', $todo->title);
     }
 
     public function testAddToBottom(): void
     {
         $project = $this->makeProject('work', 1);
-        $this->makeItem('existing', $project->id, 3, [
+        $this->makeTask('existing', $project->id, 3, [
             'due_on' => '2020-12-17',
             'day_order' => 9
         ]);
@@ -172,7 +172,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertResponseCode(302);
 
-        $todo = $this->TodoItems->findByTitle('first todo')->firstOrFail();
+        $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
         $this->assertSame(4, $todo->child_order);
         $this->assertSame(10, $todo->day_order);
     }
@@ -193,7 +193,7 @@ class TodoItemsControllerTest extends TestCase
     public function testEdit(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -202,14 +202,14 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertResponseCode(200);
 
-        $todo = $this->TodoItems->get($first->id);
+        $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);
     }
 
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -222,33 +222,33 @@ class TodoItemsControllerTest extends TestCase
     public function testDelete(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$first->id}/delete");
 
         $this->assertRedirect('/todos');
-        $this->assertFalse($this->TodoItems->exists(['TodoItems.id' => $first->id]));
+        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
     public function testDeletePermission(): void
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
         $this->post("/todos/{$first->id}/delete");
 
-        $this->assertTrue($this->TodoItems->exists(['TodoItems.id' => $first->id]));
+        $this->assertTrue($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
     public function testMovePermissions()
     {
         $project = $this->makeProject('work', 2);
-        $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 1);
+        $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 1);
 
         $this->login();
         $this->enableCsrfToken();
@@ -261,7 +261,7 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveInvalidDay()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
+        $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
         $this->enableCsrfToken();
@@ -278,9 +278,9 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveUpSameDay()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 1);
-        $third = $this->makeItem('third', $project->id, 2);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 1);
+        $third = $this->makeTask('third', $project->id, 2);
 
         $this->login();
         $this->enableCsrfToken();
@@ -289,7 +289,7 @@ class TodoItemsControllerTest extends TestCase
             'day_order' => 0,
         ]);
         $this->assertRedirect('/todos');
-        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
+        $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);
@@ -300,9 +300,9 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveDownSameDay()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 1);
-        $third = $this->makeItem('third', $project->id, 2);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 1);
+        $third = $this->makeTask('third', $project->id, 2);
 
         $this->login();
         $this->enableCsrfToken();
@@ -312,7 +312,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems->find()->orderAsc('day_order')->toArray();
+        $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);
@@ -322,9 +322,9 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveDifferentDay()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
-        $second = $this->makeItem('second', $project->id, 2, ['due_on' => '2020-12-13']);
-        $third = $this->makeItem('third', $project->id, 0, ['due_on' => '2020-12-14']);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeTask('second', $project->id, 2, ['due_on' => '2020-12-13']);
+        $third = $this->makeTask('third', $project->id, 0, ['due_on' => '2020-12-14']);
 
         $this->login();
         $this->enableCsrfToken();
@@ -334,7 +334,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('day_order')->toArray();
         $expected = [$first->id, $third->id, $second->id];
@@ -348,11 +348,11 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveDifferentDayMiddle()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
-        $second = $this->makeItem('second', $project->id, 1, ['due_on' => '2020-12-13']);
-        $third = $this->makeItem('third', $project->id, 2, ['due_on' => '2020-12-13']);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeTask('second', $project->id, 1, ['due_on' => '2020-12-13']);
+        $third = $this->makeTask('third', $project->id, 2, ['due_on' => '2020-12-13']);
 
-        $new = $this->makeItem('new', $project->id, 0, ['due_on' => '2020-12-20']);
+        $new = $this->makeTask('new', $project->id, 0, ['due_on' => '2020-12-20']);
 
         $this->login();
         $this->enableCsrfToken();
@@ -362,7 +362,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('day_order')->toArray();
         $expected = [$first->id, $new->id, $second->id, $third->id];
@@ -376,11 +376,11 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveDifferentDayTop()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
-        $second = $this->makeItem('second', $project->id, 1, ['due_on' => '2020-12-13']);
-        $third = $this->makeItem('third', $project->id, 2, ['due_on' => '2020-12-13']);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeTask('second', $project->id, 1, ['due_on' => '2020-12-13']);
+        $third = $this->makeTask('third', $project->id, 2, ['due_on' => '2020-12-13']);
 
-        $new = $this->makeItem('new', $project->id, 6, ['due_on' => '2020-12-20']);
+        $new = $this->makeTask('new', $project->id, 6, ['due_on' => '2020-12-20']);
 
         $this->login();
         $this->enableCsrfToken();
@@ -390,7 +390,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('day_order')->toArray();
         $expected = [$new->id, $first->id, $second->id, $third->id];
@@ -411,9 +411,9 @@ class TodoItemsControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $home = $this->makeProject('home', 1);
 
-        $first = $this->makeItem('first', $project->id, 0, ['due_on' => '2020-12-13']);
-        $second = $this->makeItem('second', $project->id, 1, ['due_on' => '2020-12-13']);
-        $third = $this->makeItem('third', $home->id, 1, ['due_on' => '2020-12-14']);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
+        $second = $this->makeTask('second', $project->id, 1, ['due_on' => '2020-12-13']);
+        $third = $this->makeTask('third', $home->id, 1, ['due_on' => '2020-12-14']);
 
         $this->login();
         $this->enableCsrfToken();
@@ -423,7 +423,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('day_order')->toArray();
         $expected = [$first->id, $third->id, $second->id];
@@ -437,10 +437,10 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveProjectUp()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 2);
-        $third = $this->makeItem('third', $project->id, 3);
-        $fourth = $this->makeItem('fourth', $project->id, 6);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 2);
+        $third = $this->makeTask('third', $project->id, 3);
+        $fourth = $this->makeTask('fourth', $project->id, 6);
 
         $this->login();
         $this->enableCsrfToken();
@@ -449,7 +449,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('child_order')->toArray();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
@@ -462,10 +462,10 @@ class TodoItemsControllerTest extends TestCase
     public function testMoveProjectDown()
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeItem('first', $project->id, 0);
-        $second = $this->makeItem('second', $project->id, 1);
-        $third = $this->makeItem('third', $project->id, 2);
-        $fourth = $this->makeItem('fourth', $project->id, 3);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 1);
+        $third = $this->makeTask('third', $project->id, 2);
+        $fourth = $this->makeTask('fourth', $project->id, 3);
 
         $this->login();
         $this->enableCsrfToken();
@@ -474,7 +474,7 @@ class TodoItemsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/todos');
 
-        $results = $this->TodoItems
+        $results = $this->Tasks
             ->find()
             ->orderAsc('child_order')->toArray();
         $expected = [$second->id, $third->id, $first->id, $fourth->id];

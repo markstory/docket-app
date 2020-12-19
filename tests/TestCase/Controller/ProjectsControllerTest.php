@@ -27,8 +27,8 @@ class ProjectsControllerTest extends TestCase
     protected $fixtures = [
         'app.Projects',
         'app.Users',
-        'app.TodoItems',
-        'app.TodoLabels',
+        'app.Tasks',
+        'app.Labels',
     ];
 
     public function setUp(): void
@@ -46,14 +46,14 @@ class ProjectsControllerTest extends TestCase
     public function testView(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
-        $this->makeItem('first post', $home->id, 0);
+        $this->makeTask('first post', $home->id, 0);
 
         $this->login();
         $this->get("/projects/{$home->slug}");
 
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
-        $this->assertCount(1, $this->viewVariable('todoItems'));
+        $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
     /**

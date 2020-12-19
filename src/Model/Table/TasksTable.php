@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use App\Model\Entity\TodoItem;
+use App\Model\Entity\Task;
 use App\Model\Entity\User;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
@@ -15,30 +15,30 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * TodoItems Model
+ * Tasks Model
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\BelongsTo $Projects
- * @property \App\Model\Table\TodoCommentsTable&\Cake\ORM\Association\HasMany $TodoComments
- * @property \App\Model\Table\TodoSubtasksTable&\Cake\ORM\Association\HasMany $TodoSubtasks
- * @property \App\Model\Table\TodoLabelsTable&\Cake\ORM\Association\BelongsToMany $TodoLabels
+ * @property \App\Model\Table\TaskCommentsTable&\Cake\ORM\Association\HasMany $TaskComments
+ * @property \App\Model\Table\SubtasksTable&\Cake\ORM\Association\HasMany $Subtasks
+ * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\BelongsToMany $Labels
  *
- * @method \App\Model\Entity\TodoItem newEmptyEntity()
- * @method \App\Model\Entity\TodoItem newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\TodoItem[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\TodoItem get($primaryKey, $options = [])
- * @method \App\Model\Entity\TodoItem findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\TodoItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\TodoItem[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\TodoItem|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\TodoItem saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\TodoItem[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoItem[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoItem[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoItem[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Task newEmptyEntity()
+ * @method \App\Model\Entity\Task newEntity(array $data, array $options = [])
+ * @method \App\Model\Entity\Task[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Task get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Task findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\Task patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Task[] patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Task|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Task saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class TodoItemsTable extends Table
+class TasksTable extends Table
 {
     /**
      * Initialize method
@@ -50,7 +50,7 @@ class TodoItemsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('todo_items');
+        $this->setTable('tasks');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 
@@ -60,19 +60,19 @@ class TodoItemsTable extends Table
             'foreignKey' => 'project_id',
             'joinType' => 'INNER',
         ]);
-        $this->hasMany('TodoComments', [
-            'foreignKey' => 'todo_item_id',
+        $this->hasMany('TaskComments', [
+            'foreignKey' => 'task_id',
         ]);
-        $this->hasMany('TodoSubtasks', [
-            'foreignKey' => 'todo_item_id',
+        $this->hasMany('Subtasks', [
+            'foreignKey' => 'task_id',
             'propertyName' => 'subtasks',
-            'sort' => ['TodoSubtasks.ranking' => 'ASC']
+            'sort' => ['Subtasks.ranking' => 'ASC']
         ]);
-        $this->belongsToMany('TodoLabels', [
+        $this->belongsToMany('Labels', [
             'propertyName' => 'labels',
-            'foreignKey' => 'todo_item_id',
-            'targetForeignKey' => 'todo_label_id',
-            'joinTable' => 'todo_items_todo_labels',
+            'foreignKey' => 'task_id',
+            'targetForeignKey' => 'label_id',
+            'joinTable' => 'labels_tasks',
         ]);
     }
 
@@ -128,21 +128,21 @@ class TodoItemsTable extends Table
         }
         return $query
             ->where(['Projects.slug' => $options['slug']])
-            ->orderAsc('TodoItems.child_order');
+            ->orderAsc('Tasks.child_order');
     }
 
     public function findIncomplete(Query $query): Query
     {
-        return $query->where(['TodoItems.completed' => false]);
+        return $query->where(['Tasks.completed' => false]);
     }
 
     public function findDueToday(Query $query): Query
     {
         return $query->where([
-                'TodoItems.due_on IS NOT' => null,
-                'TodoItems.due_on <=' => new FrozenDate('today')
+                'Tasks.due_on IS NOT' => null,
+                'Tasks.due_on <=' => new FrozenDate('today')
             ])
-            ->orderAsc('TodoItems.day_order');
+            ->orderAsc('Tasks.day_order');
     }
 
     public function findUpcoming(Query $query, array $options): Query
@@ -152,37 +152,37 @@ class TodoItemsTable extends Table
         }
         $end = $options['start']->modify('+28 days');
         return $query->where([
-                'TodoItems.due_on IS NOT' => null,
-                'TodoItems.due_on >=' => $options['start'],
-                'TodoItems.due_on <' => $end,
+                'Tasks.due_on IS NOT' => null,
+                'Tasks.due_on >=' => $options['start'],
+                'Tasks.due_on <' => $end,
             ])
-            ->orderAsc('TodoItems.due_on')
-            ->orderAsc('TodoItems.day_order');
+            ->orderAsc('Tasks.due_on')
+            ->orderAsc('Tasks.day_order');
     }
 
     public function findOverdue(Query $query): Query
     {
         $today = new FrozenDate('today');
         return $query->where([
-                'TodoItems.due_on IS NOT' => null,
-                'TodoItems.due_on >=' => $today,
+                'Tasks.due_on IS NOT' => null,
+                'Tasks.due_on >=' => $today,
             ])
-            ->orderAsc('TodoItems.due_on')
-            ->orderAsc('TodoItems.day_order');
+            ->orderAsc('Tasks.due_on')
+            ->orderAsc('Tasks.day_order');
     }
 
     /**
      * Update an item so that it is appended to
      * both the day and project.
      */
-    public function setNextOrderProperties(User $user, TodoItem $item)
+    public function setNextOrderProperties(User $user, Task $item)
     {
         $query = $this->find();
         $result = $query->select([
-            'max_child' => $query->func()->max('TodoItems.child_order'),
+            'max_child' => $query->func()->max('Tasks.child_order'),
         ])
         ->where([
-            'TodoItems.project_id' => $item->project_id,
+            'Tasks.project_id' => $item->project_id,
         ])->firstOrFail();
         $item->child_order = $result->max_child + 1;
         if (!$item->due_on) {
@@ -191,20 +191,20 @@ class TodoItemsTable extends Table
 
         $query = $this->find();
         $result = $query->select([
-            'max_day' => $query->func()->max('TodoItems.day_order'),
+            'max_day' => $query->func()->max('Tasks.day_order'),
         ])
         ->innerJoinWith('Projects')
         ->where([
             'Projects.user_id' => $user->id,
-            'TodoItems.due_on' => $item->due_on,
+            'Tasks.due_on' => $item->due_on,
         ])->firstOrFail();
         $item->day_order = $result->max_day + 1;
     }
 
-    public function move(TodoItem $item, array $operation)
+    public function move(Task $item, array $operation)
     {
         if (!isset($item->project)) {
-            throw new InvalidArgumentException('TodoItem cannot be moved, it has no project data loaded.');
+            throw new InvalidArgumentException('Task cannot be moved, it has no project data loaded.');
         }
         if (isset($operation['due_on'])) {
             if (!Validation::date($operation['due_on'], 'ymd')) {

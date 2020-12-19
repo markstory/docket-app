@@ -31,7 +31,7 @@ class UsersController extends AppController
     public function view($id = null)
     {
         $user = $this->Users->get($id, [
-            'contain' => ['Projects', 'TodoComments'],
+            'contain' => ['Projects'],
         ]);
 
         $this->set(compact('user'));
@@ -91,7 +91,7 @@ class UsersController extends AppController
 
         // regardless of POST or GET, redirect if user is logged in
         if ($result->isValid()) {
-            $redirect = $this->request->getQuery('redirect', ['_name' => 'todoitems:index']);
+            $redirect = $this->request->getQuery('redirect', ['_name' => 'tasks:index']);
 
             return $this->redirect($redirect);
         }

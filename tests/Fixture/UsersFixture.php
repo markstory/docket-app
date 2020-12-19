@@ -20,6 +20,8 @@ class UsersFixture extends TestFixture
         'id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'email' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'comment' => '', 'precision' => null],
         'password' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'comment' => '', 'precision' => null],
+        'email_verified' => ['type' => 'boolean', 'null' => false, 'default' => false],
+        'timezone' => ['type' => 'string', 'default' => 'UTC'],
         'created' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [
@@ -27,7 +29,7 @@ class UsersFixture extends TestFixture
         ],
         '_options' => [
             'engine' => 'InnoDB',
-            'collation' => 'latin1_swedish_ci'
+            'collation' => 'utf8'
         ],
     ];
     // phpcs:enable
@@ -43,6 +45,7 @@ class UsersFixture extends TestFixture
                 'id' => 1,
                 'email' => 'mark@example.com',
                 'password' => '',
+                'email_verified' => true,
                 'created' => 1604198822,
                 'modified' => 1604198822,
             ],
@@ -50,6 +53,7 @@ class UsersFixture extends TestFixture
                 'id' => 2,
                 'email' => 'sally@example.com',
                 'password' => '',
+                'email_verified' => true,
                 'created' => 1604198822,
                 'modified' => 1604198822,
             ],

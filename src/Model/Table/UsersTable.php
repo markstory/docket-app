@@ -12,7 +12,7 @@ use Cake\Validation\Validator;
  * Users Model
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\HasMany $Projects
- * @property \App\Model\Table\TodoCommentsTable&\Cake\ORM\Association\HasMany $TodoComments
+ * @property \App\Model\Table\TaskCommentsTable&\Cake\ORM\Association\HasMany $TaskComments
  *
  * @method \App\Model\Entity\User newEmptyEntity()
  * @method \App\Model\Entity\User newEntity(array $data, array $options = [])
@@ -51,7 +51,7 @@ class UsersTable extends Table
         $this->hasMany('Projects', [
             'foreignKey' => 'user_id',
         ]);
-        $this->hasMany('TodoComments', [
+        $this->hasMany('TaskComments', [
             'foreignKey' => 'user_id',
         ]);
     }
