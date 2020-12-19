@@ -24,8 +24,9 @@ class TasksController extends AppController
      */
     public function index(string $view = 'upcoming')
     {
+        $identity = $this->request->getAttribute('identity');
         try {
-            $start = new FrozenDate($this->request->getQuery('start', 'today'));
+            $start = new FrozenDate($this->request->getQuery('start', 'today'), $identity->timezone);
         } catch (\Exception $e) {
             throw new NotFoundException();
         }
@@ -36,7 +37,7 @@ class TasksController extends AppController
 
         $query = $this->Authorization->applyScope($query);
         if ($view === 'today') {
-            $query = $query->find('dueToday');
+            $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
             // Set view component to use.
             $this->set('component', 'Tasks/Today');
         } else if ($view === 'upcoming') {
