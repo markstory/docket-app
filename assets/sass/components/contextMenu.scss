@@ -78,7 +78,7 @@
   // hit box bigger enabling context menus to be placed
   // in hover based UX
   .hitbox {
-    left: -11px;
+    left: -20px;
   }
 
   .dropdown:after {
@@ -100,12 +100,12 @@
   }
 
   .dropdown:after {
-    right: 25px;
+    right: 15px;
     border-width: 10px;
   }
 
   .dropdown:before {
-    right: 24px;
+    right: 14px;
   }
 }
 
