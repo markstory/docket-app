@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Routing\Router;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -25,6 +26,19 @@ class ProjectsController extends AppController
     protected function getProject($slug)
     {
         return $this->Projects->findBySlug($slug)->firstOrFail();
+    }
+
+    protected function getReferer($default = 'tasks:today')
+    {
+        $defaultUrl = Router::url(['_name' => $default]);
+        if ($this->request->is('get')) {
+            return $defaultUrl;
+        }
+        $passed = $this->request->getData('referer', $defaultUrl);
+        if (strlen($passed) && $passed[0] !== '/') {
+            return $defaultUrl;
+        }
+        return $passed;
     }
 
     /**
@@ -57,6 +71,8 @@ class ProjectsController extends AppController
     {
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
+        $referer = $this->getReferer();
+
         if ($this->request->is('post')) {
             $userId = $this->request->getAttribute('identity')->getIdentifier();
             $project = $this->Projects->patchEntity($project, $this->request->getData());
@@ -64,16 +80,12 @@ class ProjectsController extends AppController
             $project->ranking = $this->Projects->getNextRanking($userId);
 
             if ($this->Projects->save($project)) {
-                $this->set('project', $project);
-                $this->viewBuilder()
-                    ->setClassName(JsonView::class)
-                    ->setOption('serialize', ['project']);
-                return;
+                return $this->redirect($referer);
             }
-
-            // TODO this should switch to a page load. Code is much simpler that way.
-            return $this->validationErrorResponse($project->getErrors());
+            $this->Flash->error(__('The project could not be saved. Please, try again.'));
+            $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
+        $this->set('referer', $referer);
     }
 
     /**
@@ -86,19 +98,20 @@ class ProjectsController extends AppController
     {
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
+        $referer = $this->getReferer();
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $project = $this->Projects->patchEntity($project, $this->request->getData());
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('The project has been saved.'));
 
-                return $this->redirect($this->referer(['_name' => 'tasks:upcoming']));
+                return $this->redirect($referer);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
             $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
-        $referer = $this->referer(['_name' => 'tasks:upcoming']);
-        $this->set(compact('project', 'referer'));
+        $this->set('referer', $referer);
+        $this->set('project', $project);
     }
 
     /**

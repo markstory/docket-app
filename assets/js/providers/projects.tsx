@@ -4,7 +4,7 @@ import {Project} from 'app/types';
 
 type ContextData = {
   state: Project[];
-  setProjects: (projects: Project[]) => void;
+  setProjects: (projects: null | Project[]) => void;
 };
 const ProjectsContext = createContext<ContextData>({
   state: [],
@@ -17,11 +17,9 @@ type ProviderProps = {
 };
 
 function ProjectsProvider({projects, children}: ProviderProps) {
-  // TODO when props change the context data isn't changing.
-  // Perhaps this shouldn't be using state?
-  const [state, setState] = useState<Project[]>(projects);
+  const [state, setState] = useState<null | Project[]>(projects);
   const contextValue = {
-    state,
+    state: state || projects,
     setProjects: setState,
   };
 
@@ -30,7 +28,7 @@ function ProjectsProvider({projects, children}: ProviderProps) {
   );
 }
 
-function useProjects(): [Project[], (projects: Project[]) => void] {
+function useProjects(): [ContextData['state'], ContextData['setProjects']] {
   const {state, setProjects} = useContext(ProjectsContext);
 
   return [state, setProjects];

@@ -68,8 +68,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'add',
             'color' => '663366',
         ]);
-        $this->assertResponseOk();
-        $this->assertHeaderContains('Content-Type', 'application/json');
+        $this->assertRedirect('/todos/today');
 
         $project = $this->Projects->find()->first();
         $this->assertEquals('add', $project->name);
@@ -85,6 +84,7 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => '999999',
+            'referer' => '/todos/upcoming',
         ]);
         $this->assertRedirect('/todos/upcoming');
 
@@ -92,6 +92,23 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals('Home too', $project->name);
         $this->assertEquals('999999', $project->color);
         $this->assertEquals(0, $project->ranking);
+    }
+
+    public function testEditValidationError(): void
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$home->slug}/edit", [
+            'name' => 'Home too',
+            'color' => 'not a color',
+            'referer' => '/todos/upcoming',
+        ]);
+        $this->assertResponseOk();
+
+        $this->assertSame('/todos/upcoming', $this->viewVariable('referer'));
+        $this->assertArrayHasKey('color', $this->viewVariable('errors'));
     }
 
     public function testEditPermission(): void
@@ -122,7 +139,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'second',
             'color' => '663366',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect('/todos/today');
 
         $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
         $this->assertEquals('second', $project->name);

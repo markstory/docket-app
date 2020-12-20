@@ -16,7 +16,7 @@ type Props = {
 export default function ProjectSorter({children}: Props) {
   const [projects, setProjects] = useProjects();
 
-  function handleDragEnd(result: DropResult) {
+  async function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -31,7 +31,12 @@ export default function ProjectSorter({children}: Props) {
     };
 
     // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/projects/${result.draggableId}/move`, data);
+    try {
+      await Inertia.post(`/projects/${result.draggableId}/move`, data);
+      setProjects(null);
+    } catch (e) {
+      // TODO Show an error.
+    }
   }
 
   return (

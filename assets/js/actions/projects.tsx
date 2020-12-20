@@ -4,11 +4,11 @@ import {Project} from 'app/types';
 import {confirm} from 'app/components/confirm';
 
 export function archiveProject(project: Project) {
-  Inertia.post(`/projects/${project.slug}/archive`);
+  return Inertia.post(`/projects/${project.slug}/archive`);
 }
 
 export function unarchiveProject(project: Project) {
-  Inertia.post(`/projects/${project.slug}/unarchive`);
+  return Inertia.post(`/projects/${project.slug}/unarchive`);
 }
 
 export async function deleteProject(project: Project) {
@@ -18,6 +18,6 @@ export async function deleteProject(project: Project) {
       'This will destroy all the todos this project contains'
     )
   ) {
-    Inertia.post(`/projects/${project.slug}/delete`);
+    return Inertia.post(`/projects/${project.slug}/delete`);
   }
 }

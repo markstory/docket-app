@@ -4,15 +4,9 @@ import {Droppable, Draggable} from 'react-beautiful-dnd';
 
 import ProjectItem from 'app/components/projectItem';
 import ProjectSorter from 'app/components/projectSorter';
-import NewProjectModal from 'app/components/modals/newProjectModal';
 import {Icon, InlineIcon} from './icon';
 
 function ProjectFilter() {
-  const [showModal, setShowModal] = React.useState(false);
-  const showNewProject = () => {
-    setShowModal(true);
-  };
-
   return (
     <div className="project-filter">
       <ul className="links">
@@ -72,15 +66,14 @@ function ProjectFilter() {
         )}
       </ProjectSorter>
       <div className="button-bar-vertical">
-        <button className="button-secondary" onClick={showNewProject}>
+        <InertiaLink className="button-secondary" href="/projects/add">
           <InlineIcon icon="plus" />
           Create Project
-        </button>
+        </InertiaLink>
         <InertiaLink className="button button-muted" href="/projects/archived">
           Archived Projects
         </InertiaLink>
       </div>
-      <NewProjectModal showModal={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 }

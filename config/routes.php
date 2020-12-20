@@ -78,7 +78,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
 
     $builder->scope('/projects', ['controller' => 'Projects'], function ($builder) {
-        $builder->post('/add', 'Projects::add', 'projects:add');
+        $builder->connect('/add', 'Projects::add', ['_name' => 'projects:add']);
         $builder->post('/reorder', ['action' => 'reorder'], 'projects:reorder');
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
         $builder->get('/{slug}', ['action' => 'view'], 'projects:view')

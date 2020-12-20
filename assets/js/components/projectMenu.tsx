@@ -5,6 +5,7 @@ import {Project} from 'app/types';
 import {archiveProject, deleteProject, unarchiveProject} from 'app/actions/projects';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from './icon';
+import {useProjects} from 'app/providers/projects';
 
 type ContextMenuProps = React.ComponentProps<typeof ContextMenu>;
 
@@ -14,6 +15,21 @@ type Props = {
 };
 
 export default function ProjectMenu({project, alignMenu = 'left'}: Props) {
+  const [_, setProjects] = useProjects();
+
+  async function handleDelete() {
+    await deleteProject(project);
+    setProjects(null);
+  }
+  async function handleUnarchive() {
+    await unarchiveProject(project);
+    setProjects(null);
+  }
+  async function handleArchive() {
+    await archiveProject(project);
+    setProjects(null);
+  }
+
   return (
     <ContextMenu alignMenu={alignMenu}>
       <li>
@@ -24,21 +40,21 @@ export default function ProjectMenu({project, alignMenu = 'left'}: Props) {
       </li>
       {project.archived ? (
         <li>
-          <button className="context-item" onClick={() => unarchiveProject(project)}>
+          <button className="context-item" onClick={handleUnarchive}>
             <InlineIcon icon="archive" />
             Unarchive Project
           </button>
         </li>
       ) : (
         <li>
-          <button className="context-item" onClick={() => archiveProject(project)}>
+          <button className="context-item" onClick={handleArchive}>
             <InlineIcon icon="archive" />
             Archive Project
           </button>
         </li>
       )}
       <li>
-        <button className="context-item" onClick={() => deleteProject(project)}>
+        <button className="context-item" onClick={handleDelete}>
           <InlineIcon icon="trash" />
           Delete
         </button>
