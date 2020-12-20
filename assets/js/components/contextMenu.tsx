@@ -3,9 +3,10 @@ import {Icon} from './icon';
 
 type Props = {
   children: React.ReactNode;
+  alignMenu?: 'left' | 'right';
 };
 
-function ContextMenu({children}: Props) {
+function ContextMenu({children, alignMenu = 'left'}: Props) {
   let mounted = true;
   const [isShowing, setIsShowing] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -41,7 +42,7 @@ function ContextMenu({children}: Props) {
   }, [isShowing]);
 
   return (
-    <div ref={menuRef} className="context-menu">
+    <div ref={menuRef} className={`context-menu align-${alignMenu}`}>
       <button onClick={handleClick}>
         <Icon icon="kebab" />
       </button>

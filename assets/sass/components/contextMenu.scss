@@ -1,17 +1,6 @@
 .context-menu {
   position: relative;
 
-  // use a block of padding to make the angular
-  // hit box bigger enabling context menus to be placed
-  // in hover based UX
-  .hitbox {
-    position: absolute;
-    left: -11px;
-    top: 0px;
-    z-index: $z-active-ui;
-    padding: 40px 0 0 0;
-  }
-
   > button {
     @extend .button-default;
 
@@ -23,12 +12,17 @@
     padding: 4px;
     width: 30px;
     height: 30px;
-    font-size: $font-size-small;
-    line-height: 1;
 
     svg {
       margin: 0;
     }
+  }
+
+  .hitbox {
+    position: absolute;
+    top: 0px;
+    z-index: $z-active-ui;
+    padding: 40px 0 0 0;
   }
 
   ul {
@@ -58,7 +52,6 @@
   &:after,
   &:before {
     bottom: 100%;
-    left: 25px;
     border: solid transparent;
     content: "";
     height: 0;
@@ -71,16 +64,51 @@
     border-color: rgba(255, 255, 255, 0);
     border-bottom-color: $color-bg-raised;
     border-width: 10px;
-    margin-left: -10px;
   }
 
   &:before {
     border-color: rgba(255, 255, 255, 0);
     border-bottom-color: $color-border-med;
     border-width: 11px;
-    margin-left: -11px;
   }
 }
+
+.context-menu.align-left {
+  // use a block of padding to make the angular
+  // hit box bigger enabling context menus to be placed
+  // in hover based UX
+  .hitbox {
+    left: -11px;
+  }
+
+  .dropdown:after {
+    left: 25px;
+    border-width: 10px;
+  }
+
+  .dropdown:before {
+    left: 24px;
+  }
+}
+
+.context-menu.align-right {
+  // use a block of padding to make the angular
+  // hit box bigger enabling context menus to be placed
+  // in hover based UX
+  .hitbox {
+    right: -11px;
+  }
+
+  .dropdown:after {
+    right: 25px;
+    border-width: 10px;
+  }
+
+  .dropdown:before {
+    right: 24px;
+  }
+}
+
 
 .context-menu .context-item {
   background: none;
@@ -93,7 +121,9 @@
   text-align: left;
   height: auto;
   display: block;
-  line-height: 1.2;
+  line-height: 1.3;
+  font-size: $font-size-med;
+  text-decoration: none;
 
   &:active,
   &:hover {

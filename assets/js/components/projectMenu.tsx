@@ -6,13 +6,16 @@ import {archiveProject, deleteProject, unarchiveProject} from 'app/actions/proje
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from './icon';
 
+type ContextMenuProps = React.ComponentProps<typeof ContextMenu>;
+
 type Props = {
   project: Project;
+  alignMenu?: ContextMenuProps['alignMenu'];
 };
 
-export default function ProjectMenu({project}: Props) {
+export default function ProjectMenu({project, alignMenu = 'left'}: Props) {
   return (
-    <ContextMenu>
+    <ContextMenu alignMenu={alignMenu}>
       <li>
         <InertiaLink className="context-item" href={`/projects/${project.slug}/edit`}>
           <InlineIcon icon="pencil" />

@@ -22,7 +22,7 @@ export default function ProjectsView({project, tasks}: Props) {
             {project.name} Tasks
           </h1>
 
-          <ProjectMenu project={project} />
+          <ProjectMenu project={project} alignMenu="right" />
         </div>
 
         <div className="attributes">
