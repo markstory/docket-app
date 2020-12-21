@@ -6,7 +6,7 @@ module.exports = {
   semi: true,
   singleQuote: true,
   tabWidth: 2,
-  trailingComma: "es5",
+  trailingComma: 'es5',
   useTabs: false,
-  arrowParens: "avoid"
+  arrowParens: 'avoid',
 };
