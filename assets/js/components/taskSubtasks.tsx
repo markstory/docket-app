@@ -26,7 +26,7 @@ export default function TaskSubtasks({task}: Props) {
               {provided => (
                 <ul
                   ref={provided.innerRef}
-                  className="dnd-droppable-left-offset"
+                  className="dnd-dropper-left-offset"
                   {...provided.droppableProps}
                 >
                   {items.map((subtask, index) => {

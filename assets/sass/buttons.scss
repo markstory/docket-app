@@ -1,5 +1,6 @@
 .button,
 button {
+  text-decoration: none;
   text-transform: none;
   font-size: $font-size-small;
   font-weight: normal;
@@ -53,10 +54,12 @@ button > svg {
   &:hover {
     color: $color-foreground;
     background: none;
+    box-shadow: none;
   }
 }
 
 .button-bar {
+  margin-top: $space;
   button + button {
     margin-left: $space;
   }

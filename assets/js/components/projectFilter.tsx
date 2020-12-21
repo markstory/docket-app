@@ -66,7 +66,7 @@ function ProjectFilter() {
         )}
       </ProjectSorter>
       <div className="button-bar-vertical">
-        <InertiaLink className="button-secondary" href="/projects/add">
+        <InertiaLink className="button button-secondary" href="/projects/add">
           <InlineIcon icon="plus" />
           Create Project
         </InertiaLink>

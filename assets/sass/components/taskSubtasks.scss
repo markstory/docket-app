@@ -6,10 +6,11 @@
 
 .subtask-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: flex-start;
 
   min-height: 30px;
+  margin-bottom: $space / 2;
 
   input[type=checkbox] {
     margin-right: $space;

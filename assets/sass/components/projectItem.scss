@@ -3,17 +3,28 @@
   justify-content: space-between;
   height: 40px;
   width: max-content;
+  padding-right: $space / 2;
 
   .context-menu {
-    display: none;
-    margin-left: $space * 2;
+    visibility: hidden;
   }
+
+  &:hover {
+    background: $color-bg;
+  }
+
   &:hover .context-menu {
-    display: block;
+    visibility: visible;
   }
 
   .project-badge {
     height: 40px;
+  }
+
+  a {
+    flex-grow: 1;
+    color: $color-foreground;
+    text-decoration: none;
   }
 }
 

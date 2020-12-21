@@ -43,7 +43,7 @@ export default function TaskGroupedSorter({children, tasks, grouper, scope}: Pro
   const groupFn = grouper ? grouper : defaultGrouper;
   const grouped = groupFn(tasks);
 
-  function handleDragEnd(result: DropResult) {
+  async function handleDragEnd(result: DropResult) {
     const destination = result.destination;
     // Dropped outside of a dropzone
     if (!destination) {
@@ -71,8 +71,9 @@ export default function TaskGroupedSorter({children, tasks, grouper, scope}: Pro
       data.due_on = destination.droppableId;
     }
 
-    // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
+    await Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
+    // Revert local state.
+    setSorted(undefined);
   }
 
   const items = sorted || grouped;

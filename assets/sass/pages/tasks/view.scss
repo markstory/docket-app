@@ -5,6 +5,10 @@
 
     h3 {
       margin-bottom: $space;
+      color: $color-foreground;
+    }
+    a {
+      text-decoration: none;
     }
   }
 
@@ -20,6 +24,7 @@
     display: grid;
     gap: $space;
     grid-auto-flow: column;
+    color: $color-dim;
   }
 
   .task-subtasks,

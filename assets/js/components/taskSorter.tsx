@@ -26,7 +26,7 @@ type UpdateData = {
 export default function TaskSorter({children, tasks, scope}: Props) {
   const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
 
-  function handleDragEnd(result: DropResult) {
+  async function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -45,8 +45,9 @@ export default function TaskSorter({children, tasks, scope}: Props) {
       data.due_on = result.destination.droppableId;
     }
 
-    // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
+    await Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
+    // Revert local state.
+    setSorted(undefined);
   }
 
   const items = sorted || tasks;

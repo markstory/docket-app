@@ -38,7 +38,7 @@ export function parseDate(input: string): Date {
   return date;
 }
 
-function now(): Date {
+export function now(): Date {
   const utcNow = new Date();
   utcNow.setTime(utcNow.getTime() - utcNow.getTimezoneOffset() * 60 * 1000);
 

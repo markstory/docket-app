@@ -19,7 +19,7 @@ export default function TaskNotes({task}: Props) {
     });
   }
 
-  const lines = task.body ? task.body.split('\n') : ['Click to add notes'];
+  const lines = task.body ? task.body.split('\n') : [];
   if (!editing) {
     return (
       <div className="task-notes">
@@ -33,6 +33,7 @@ export default function TaskNotes({task}: Props) {
           {lines.map((text: string) => (
             <p key={text}>{text}</p>
           ))}
+          {lines.length == 0 && <p className="placeholder">Click to Edit</p>}
         </div>
       </div>
     );
@@ -41,7 +42,7 @@ export default function TaskNotes({task}: Props) {
   return (
     <form className="task-notes" onSubmit={handleSave}>
       <h4 className="heading-actions">Notes</h4>
-      <textarea name="body" cols={999} rows={lines.length + 3} defaultValue={task.body} />
+      <textarea name="body" rows={lines.length + 3} defaultValue={task.body} />
       <div className="button-bar">
         <button type="submit">Save</button>
         <button className="button-default" onClick={() => setEditing(false)}>

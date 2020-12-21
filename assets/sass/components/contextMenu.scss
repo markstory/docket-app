@@ -1,4 +1,6 @@
 .context-menu {
+  display: flex;
+  align-items: center;
   position: relative;
 
   > button {
@@ -9,6 +11,7 @@
     justify-content: center;
 
     border: none;
+    box-shadow: none;
     padding: 4px;
     width: 30px;
     height: 30px;

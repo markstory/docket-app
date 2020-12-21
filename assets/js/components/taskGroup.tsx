@@ -13,6 +13,7 @@ type Props = {
   defaultProjectId?: number;
   showProject?: boolean;
   showDueOn?: boolean;
+  showAdd?: boolean;
 };
 
 export default function TaskGroup({
@@ -22,11 +23,12 @@ export default function TaskGroup({
   defaultProjectId,
   showProject,
   showDueOn,
+  showAdd = true,
 }: Props) {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="todo-item-group">
+    <div className="task-group">
       <Droppable droppableId={dropId} type="task">
         {(provided, snapshot) => {
           let className = 'dnd-dropper-left-offset';
@@ -75,21 +77,23 @@ export default function TaskGroup({
           );
         }}
       </Droppable>
-      <div className="add-task">
-        {!showForm && (
-          <button className="button-secondary" onClick={() => setShowForm(true)}>
-            <InlineIcon icon="plus" />
-            Add Task
-          </button>
-        )}
-        {showForm && (
-          <TaskAddForm
-            defaultDate={defaultDate}
-            defaultProjectId={defaultProjectId}
-            onCancel={() => setShowForm(false)}
-          />
-        )}
-      </div>
+      {showAdd && (
+        <div className="add-task">
+          {!showForm && (
+            <button className="button-secondary" onClick={() => setShowForm(true)}>
+              <InlineIcon icon="plus" />
+              Add Task
+            </button>
+          )}
+          {showForm && (
+            <TaskAddForm
+              defaultDate={defaultDate}
+              defaultProjectId={defaultProjectId}
+              onCancel={() => setShowForm(false)}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

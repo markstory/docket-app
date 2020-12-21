@@ -1,3 +1,18 @@
+select,
+input[type=text],
+input[type=number],
+input[type=password],
+input[type=email] {
+  padding: $space / 2;
+}
+label {
+  margin-right: $space;
+}
+
+.form-input {
+  margin-bottom: $space * 2;
+}
+
 .form-error {
   color: $color-error;
   margin-bottom: $space;

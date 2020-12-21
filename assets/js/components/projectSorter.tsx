@@ -30,9 +30,9 @@ export default function ProjectSorter({children}: Props) {
       ranking: result.destination.index,
     };
 
-    // TODO should this use axios instead so we don't repaint?
     try {
       await Inertia.post(`/projects/${result.draggableId}/move`, data);
+      // Revert local state.
       setProjects(null);
     } catch (e) {
       // TODO Show an error.

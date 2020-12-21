@@ -22,7 +22,7 @@ export default function SubtaskSorter({children, taskId}: Props) {
   const [sorted, setSorted] = React.useState<Subtask[] | undefined>(undefined);
   const [subtasks, setSubtasks] = useSubtasks();
 
-  function handleDragEnd(result: DropResult) {
+  async function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -31,13 +31,18 @@ export default function SubtaskSorter({children, taskId}: Props) {
     const [moved] = newItems.splice(result.source.index, 1);
     newItems.splice(result.destination.index, 0, moved);
 
+    setSubtasks(newItems);
     const data = {
       ranking: result.destination.index,
     };
-    setSubtasks(newItems);
 
-    // TODO should this use axios instead so we don't repaint?
-    Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data);
+    try {
+      await Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data);
+      // Revert local state.
+      setSubtasks(null);
+    } catch (e) {
+      // TODO show an error.
+    }
   }
 
   const items = sorted || subtasks;
