@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
+import classnames from 'classnames';
 
 import {Task} from 'app/types';
 import TaskRow from 'app/components/taskRow';
@@ -31,10 +32,9 @@ export default function TaskGroup({
     <div className="task-group">
       <Droppable droppableId={dropId} type="task">
         {(provided, snapshot) => {
-          let className = 'dnd-dropper-left-offset';
-          if (snapshot.isDraggingOver) {
-            className += ' dnd-dropper-active';
-          }
+          const className = classnames('dnd-dropper-left-offset', {
+            'dnd-dropper-active': snapshot.isDraggingOver,
+          });
           return (
             <div
               ref={provided.innerRef}
@@ -44,10 +44,9 @@ export default function TaskGroup({
               {tasks.map((item, index) => (
                 <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                   {(provided, snapshot) => {
-                    let className = 'dnd-item';
-                    if (snapshot.isDragging) {
-                      className += ' dnd-item-dragging';
-                    }
+                    const className = classnames('dnd-item', {
+                      'dnd-item-dragging': snapshot.isDragging,
+                    });
                     return (
                       <div
                         ref={provided.innerRef}

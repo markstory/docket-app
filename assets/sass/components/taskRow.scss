@@ -39,7 +39,7 @@
   }
 
   &.is-completed .title {
-    color: $color-dim;
+    color: $color-muted;
     text-decoration: line-through;
   }
 }

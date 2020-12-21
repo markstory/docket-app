@@ -38,11 +38,9 @@ export default function TaskSubtasks({task}: Props) {
                         index={index}
                       >
                         {(provided, snapshot) => {
-                          let className = 'dnd-item';
-                          if (snapshot.isDragging) {
-                            className += ' dnd-item-dragging';
-                          }
-
+                          const className = classnames('dnd-item', {
+                            'dnd-item-dragging': snapshot.isDragging,
+                          });
                           return (
                             <li
                               ref={provided.innerRef}
