@@ -374,7 +374,11 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
+        'cookie' => 'tasksession',
         'defaults' => 'php',
         'timeout' => 60 * 24 * 14, // 2 weeks
+        'ini' => [
+            'session.gc_maxlifetime' => 60 * 24 * 14 // 2 weeks
+        ]
     ],
 ];
