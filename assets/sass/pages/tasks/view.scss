@@ -21,10 +21,12 @@
   }
 
   .attributes {
-    display: grid;
-    gap: $space;
-    grid-auto-flow: column;
+    display: flex;
     color: $color-dim;
+
+    > * + * {
+      margin-left: $space * 2;
+    }
   }
 
   .task-subtasks,
