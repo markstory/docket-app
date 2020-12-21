@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
+import classnames from 'classnames';
 
 import {TaskDetailed, Subtask} from 'app/types';
 import SubtaskSorter from 'app/components/subtaskSorter';
@@ -99,9 +100,12 @@ function TaskSubtaskRow({index, subtask, taskId}: RowProps) {
     event.stopPropagation();
     Inertia.post(`/todos/${taskId}/subtasks/${subtask.id}/toggle`);
   }
+  const className = classnames('subtask-row', {
+    'is-completed': subtask.completed,
+  });
 
   return (
-    <div className="subtask-row">
+    <div className={className}>
       <input
         type="checkbox"
         onClick={handleComplete}

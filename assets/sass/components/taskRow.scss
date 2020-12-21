@@ -24,7 +24,6 @@
 
   .attributes {
     display: flex;
-    grid-auto-flow: column;
 
     font-size: $font-size-small;
     color: $color-dim;
@@ -37,6 +36,11 @@
 
   .due-on svg {
     margin-right: $space;
+  }
+
+  &.is-completed .title {
+    color: $color-dim;
+    text-decoration: line-through;
   }
 }
 

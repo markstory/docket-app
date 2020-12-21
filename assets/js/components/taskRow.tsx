@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import classnames from 'classnames';
 
 import {InlineIcon} from 'app/components/icon';
 import {Task} from 'app/types';
@@ -18,9 +19,12 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
     e.stopPropagation();
     Inertia.post(`/todos/${task.id}/complete`);
   };
+  const className = classnames('task-row', {
+    'is-completed': task.completed,
+  });
 
   return (
-    <div className="task-row">
+    <div className={className}>
       <input
         type="checkbox"
         value="1"
