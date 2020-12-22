@@ -17,7 +17,8 @@ type Props = {
 export default function TaskRow({task, showDueOn, showProject}: Props) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    Inertia.post(`/todos/${task.id}/complete`);
+    const action = task.completed ? 'incomplete' : 'complete';
+    Inertia.post(`/todos/${task.id}/${action}`);
   };
   const className = classnames('task-row', {
     'is-completed': task.completed,

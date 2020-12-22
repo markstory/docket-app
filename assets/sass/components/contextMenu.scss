@@ -34,6 +34,7 @@
     padding: 0;
   }
   li {
+    display: flex;
     list-style: none;
   }
 
@@ -50,7 +51,7 @@
   box-shadow: $shadow-med;
   padding: $space;
   min-width: 150px;
-  max-width: 350px;
+  max-width: max-content;
 
   &:after,
   &:before {
@@ -114,16 +115,20 @@
 
 
 .context-menu .context-item {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+
   background: none;
   border: none;
   color: $color-foreground;
 
   border-radius: 0;
   padding: $space / 2;
-  width: 100%;
   text-align: left;
   height: auto;
-  display: block;
+  width: max-content;
+
   line-height: 1.3;
   font-size: $font-size-med;
   text-decoration: none;

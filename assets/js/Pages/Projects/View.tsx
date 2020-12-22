@@ -1,4 +1,5 @@
 import React from 'react';
+import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project, Task} from 'app/types';
 import {Icon} from 'app/components/icon';
@@ -24,7 +25,7 @@ export default function ProjectsView({completed, project, tasks}: Props) {
             {project.name} Tasks
           </h1>
 
-          <ProjectMenu project={project} alignMenu="right" />
+          <ProjectMenu project={project} showAll alignMenu="right" />
         </div>
 
         <div className="attributes">
@@ -40,7 +41,17 @@ export default function ProjectsView({completed, project, tasks}: Props) {
             />
           )}
         </TaskSorter>
-        {completed && <TaskList title="Completed" tasks={completed} showDueOn />}
+        {completed && (
+          <React.Fragment>
+            <TaskList title="Completed" tasks={completed} showDueOn />
+            <InertiaLink
+              className="button button-muted"
+              href={`/projects/${project.slug}`}
+            >
+              Hide completed tasks
+            </InertiaLink>
+          </React.Fragment>
+        )}
       </div>
     </LoggedIn>
   );

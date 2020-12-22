@@ -11,10 +11,15 @@ type ContextMenuProps = React.ComponentProps<typeof ContextMenu>;
 
 type Props = {
   project: Project;
+  showAll?: boolean;
   alignMenu?: ContextMenuProps['alignMenu'];
 };
 
-export default function ProjectMenu({project, alignMenu = 'left'}: Props) {
+export default function ProjectMenu({
+  project,
+  showAll = false,
+  alignMenu = 'left',
+}: Props) {
   const [_, setProjects] = useProjects();
 
   async function handleDelete() {
@@ -32,6 +37,17 @@ export default function ProjectMenu({project, alignMenu = 'left'}: Props) {
 
   return (
     <ContextMenu alignMenu={alignMenu}>
+      {showAll && (
+        <li>
+          <InertiaLink
+            className="context-item"
+            href={`/projects/${project.slug}?completed=1`}
+          >
+            <InlineIcon icon="check" />
+            View completed tasks
+          </InertiaLink>
+        </li>
+      )}
       <li>
         <InertiaLink className="context-item" href={`/projects/${project.slug}/edit`}>
           <InlineIcon icon="pencil" />
