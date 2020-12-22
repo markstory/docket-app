@@ -4,7 +4,6 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 40px 1fr 50px;
   gap: $space;
-  width: 100%;
 
   border: 1px solid $color-border-med;
   border-radius: $border-radius;
@@ -22,6 +21,10 @@
   .title {
     grid-column: 1 / 3;
     grid-row: 1 / 2;
+    display: flex;
+  }
+  .title input {
+    flex-grow: 1;
   }
   .project {
     grid-column: 1 / 2;
