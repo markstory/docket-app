@@ -22,7 +22,8 @@ export default function TasksView({referer, task}: Props) {
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   function handleClose() {
-    Inertia.visit(referer);
+    const target = referer === window.location.pathname ? '/todos/upcoming' : referer;
+    Inertia.visit(target);
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -61,7 +62,7 @@ export default function TasksView({referer, task}: Props) {
           ) : (
             <TaskSummary task={task} onClick={() => setEditing(true)} />
           )}
-          <TaskNotes task={task} />
+          <TaskNotes task={task} referer={referer} />
           <TaskSubtasks task={task} />
         </div>
       </Modal>

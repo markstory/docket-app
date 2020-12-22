@@ -25,3 +25,7 @@ h4:first-child,
 h5:first-child {
   margin-top: 0;
 }
+
+p {
+  margin: 0 0 $space * 2 0;
+}
