@@ -5,7 +5,6 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Routing\Router;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -26,19 +25,6 @@ class ProjectsController extends AppController
     protected function getProject($slug)
     {
         return $this->Projects->findBySlug($slug)->firstOrFail();
-    }
-
-    protected function getReferer($default = 'tasks:today')
-    {
-        $defaultUrl = Router::url(['_name' => $default]);
-        if ($this->request->is('get')) {
-            return $defaultUrl;
-        }
-        $passed = $this->request->getData('referer', $defaultUrl);
-        if (strlen($passed) && $passed[0] !== '/') {
-            return $defaultUrl;
-        }
-        return $passed;
     }
 
     /**

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
+import {usePage} from '@inertiajs/inertia-react';
 import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {Task, Subtask} from 'app/types';
@@ -15,12 +16,17 @@ type Props = {
   children: (props: ChildRenderProps) => JSX.Element;
 };
 
+type SharedProps = {
+  referer: string;
+};
+
 /**
  * Abstraction around reorder lists of todo subtasks and optimistically updating state.
  */
 export default function SubtaskSorter({children, taskId}: Props) {
   const [sorted, setSorted] = React.useState<Subtask[] | undefined>(undefined);
   const [subtasks, setSubtasks] = useSubtasks();
+  const {referer} = usePage().props as SharedProps;
 
   async function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
@@ -34,6 +40,7 @@ export default function SubtaskSorter({children, taskId}: Props) {
     setSubtasks(newItems);
     const data = {
       ranking: result.destination.index,
+      referer,
     };
 
     try {

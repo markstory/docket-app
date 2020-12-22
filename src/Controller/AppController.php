@@ -18,6 +18,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
+use Cake\Routing\Router;
 use Inertia\Controller\InertiaResponseTrait;
 
 /**
@@ -32,6 +33,18 @@ class AppController extends Controller
 {
     use InertiaResponseTrait {
         beforeRender as protected inertiaBeforeRender;
+    }
+
+    protected function getReferer($default = 'tasks:today')
+    {
+        $defaultUrl = Router::url(['_name' => $default]);
+
+        $getParam = $this->request->getQuery('referer', $defaultUrl);
+        $passed = $this->request->getData('referer', $getParam);
+        if (strlen($passed) && $passed[0] !== '/') {
+            return $defaultUrl;
+        }
+        return $passed;
     }
 
     /**

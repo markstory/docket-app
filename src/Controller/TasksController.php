@@ -139,7 +139,7 @@ class TasksController extends AppController
             $this->Flash->error($e->getMessage());
         }
 
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->getReferer('tasks:upcoming'));
     }
 
     /**
@@ -179,7 +179,7 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         $this->set(compact('task'));
-        $this->set('referer', $this->referer(['action' => 'index']));
+        $this->set('referer', $this->getReferer('tasks:upcoming'));
     }
 
     /**

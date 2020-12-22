@@ -271,7 +271,7 @@ class TasksControllerTest extends TestCase
             'due_on' => 'not a date'
         ]);
 
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
         $this->assertFlashElement('flash/error');
     }
 
@@ -288,7 +288,7 @@ class TasksControllerTest extends TestCase
         $this->post("/todos/{$third->id}/move", [
             'day_order' => 0,
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
         $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -310,7 +310,7 @@ class TasksControllerTest extends TestCase
         $this->post("/todos/{$first->id}/move", [
             'day_order' => 2,
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
@@ -332,7 +332,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
@@ -360,7 +360,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
@@ -388,7 +388,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 0,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
@@ -421,7 +421,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
@@ -447,7 +447,7 @@ class TasksControllerTest extends TestCase
         $this->post("/todos/{$fourth->id}/move", [
             'child_order' => 1,
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
@@ -472,7 +472,7 @@ class TasksControllerTest extends TestCase
         $this->post("/todos/{$first->id}/move", [
             'child_order' => 2,
         ]);
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/upcoming');
 
         $results = $this->Tasks
             ->find()
