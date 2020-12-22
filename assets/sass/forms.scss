@@ -1,10 +1,14 @@
 select,
+textarea,
 input[type=text],
 input[type=number],
 input[type=password],
 input[type=email] {
   padding: $space / 2;
+  border-radius: $border-radius;
+  border: 1px solid $color-border-med;
 }
+
 label {
   margin-right: $space;
 }

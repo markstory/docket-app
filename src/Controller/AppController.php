@@ -39,12 +39,16 @@ class AppController extends Controller
     {
         $defaultUrl = Router::url(['_name' => $default]);
 
-        $getParam = $this->request->getQuery('referer', $defaultUrl);
-        $passed = $this->request->getData('referer', $getParam);
-        if (strlen($passed) && $passed[0] !== '/') {
-            return $defaultUrl;
+        $get = $this->request->getQuery('referer');
+        $post = $this->request->getData('referer');
+        $header = $this->referer($defaultUrl);
+        foreach ([$post, $get, $header] as $option) {
+            if ($option && strlen($option) && $option[0] === '/') {
+                return $option;
+            }
         }
-        return $passed;
+
+        return $defaultUrl;
     }
 
     /**

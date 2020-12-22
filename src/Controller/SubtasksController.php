@@ -152,13 +152,11 @@ class SubtasksController extends AppController
             $this->Flash->error($e->getMessage());
         }
 
-        $referer = $this->referer([
-            'controller' => 'Tasks',
-            'action' => 'view',
+        $referer = [
+            '_name' => 'tasks:view',
             'id' => $taskId,
-            'query' => ['referer' => $this->getReferer()],
-        ]);
-
+            '?' => ['referer' => $this->getReferer()],
+        ];
         return $this->redirect($referer);
     }
 }

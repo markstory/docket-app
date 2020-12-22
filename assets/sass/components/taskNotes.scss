@@ -1,4 +1,6 @@
 .task-notes {
+  display: flex;
+  flex-direction: column;
   font-size: $font-size-med;
   line-height: 1.5;
 
@@ -6,6 +8,6 @@
     font-size: $font-size-med;
     line-height: 1.5;
     height: max-content;
-    width: 100%;
+    flex-grow: 1;
   }
 }

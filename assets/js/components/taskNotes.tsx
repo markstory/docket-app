@@ -42,7 +42,7 @@ export default function TaskNotes({task}: Props) {
   return (
     <form className="task-notes" onSubmit={handleSave}>
       <h4 className="heading-actions">Notes</h4>
-      <textarea name="body" rows={lines.length + 3} defaultValue={task.body} />
+      <textarea name="body" rows={lines.length + 2} defaultValue={task.body} />
       <div className="button-bar">
         <button type="submit">Save</button>
         <button className="button-default" onClick={() => setEditing(false)}>
