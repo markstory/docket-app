@@ -179,7 +179,7 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         $this->set(compact('task'));
-        $this->set('referer', $this->getReferer('tasks:upcoming'));
+        $this->set('referer', $this->getReferer('tasks:today'));
     }
 
     /**

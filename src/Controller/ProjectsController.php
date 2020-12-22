@@ -91,7 +91,10 @@ class ProjectsController extends AppController
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('The project has been saved.'));
 
-                return $this->redirect($referer);
+                return $this->redirect([
+                    '_name' => 'projects:view',
+                    'slug' => $project->slug,
+                ]);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
             $this->set('errors', $this->flattenErrors($project->getErrors()));

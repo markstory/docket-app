@@ -27,7 +27,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
     <LoggedIn>
       <Modal onClose={handleClose}>
         <h2>Edit Project</h2>
-        <form method="POST" onSubmit={handleSubmit}>
+        <form method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
           <div className="form-input">
             <label htmlFor="project-name">Name</label>

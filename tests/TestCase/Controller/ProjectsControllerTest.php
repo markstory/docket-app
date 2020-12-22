@@ -56,6 +56,46 @@ class ProjectsControllerTest extends TestCase
     }
 
     /**
+     * Test add GET
+     *
+     * @return void
+     */
+    public function testAddGet(): void
+    {
+        $this->login();
+        $this->enableCsrfToken();
+        $this->configRequest([
+            'headers' => ['Referer' => '/todos/today'],
+        ]);
+        $this->get("/projects/add");
+
+        $this->assertResponseOk();
+        $this->assertSame('/todos/today', $this->viewVariable('referer'));
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
+    public function testAddAppendRanking(): void
+    {
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/add", [
+            'name' => 'second',
+            'color' => '663366',
+        ]);
+        $this->assertRedirect('/todos/today');
+
+        $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
+        $this->assertEquals('second', $project->name);
+        $this->assertEquals(1, $project->ranking);
+    }
+
+    /**
      * Test add method
      *
      * @return void
@@ -84,9 +124,8 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => '999999',
-            'referer' => '/todos/upcoming',
         ]);
-        $this->assertRedirect('/todos/upcoming');
+        $this->assertRedirect('/projects/Home-too');
 
         $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
         $this->assertEquals('Home too', $project->name);
@@ -122,28 +161,6 @@ class ProjectsControllerTest extends TestCase
             'color' => '999999',
         ]);
         $this->assertResponseCode(403);
-    }
-
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testAddAppendRanking(): void
-    {
-        $this->makeProject('Home', 1, 0, ['archived' => true]);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/add", [
-            'name' => 'second',
-            'color' => '663366',
-        ]);
-        $this->assertRedirect('/todos/today');
-
-        $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
-        $this->assertEquals('second', $project->name);
-        $this->assertEquals(1, $project->ranking);
     }
 
     /**
