@@ -131,6 +131,11 @@ class TasksTable extends Table
             ->orderAsc('Tasks.child_order');
     }
 
+    public function findComplete(Query $query): Query
+    {
+        return $query->where(['Tasks.completed' => true]);
+    }
+
     public function findIncomplete(Query $query): Query
     {
         return $query->where(['Tasks.completed' => false]);

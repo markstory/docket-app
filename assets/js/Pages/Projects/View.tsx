@@ -1,18 +1,20 @@
 import React from 'react';
 
 import {Project, Task} from 'app/types';
-import {InlineIcon, Icon} from 'app/components/icon';
+import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
 import TaskGroup from 'app/components/taskGroup';
+import TaskList from 'app/components/taskList';
 import TaskSorter from 'app/components/taskSorter';
 
 type Props = {
   project: Project;
   tasks: Task[];
+  completed?: Task[];
 };
 
-export default function ProjectsView({project, tasks}: Props) {
+export default function ProjectsView({completed, project, tasks}: Props) {
   return (
     <LoggedIn>
       <div className="project-view">
@@ -38,6 +40,7 @@ export default function ProjectsView({project, tasks}: Props) {
             />
           )}
         </TaskSorter>
+        {completed && <TaskList title="Completed" tasks={completed} showDueOn />}
       </div>
     </LoggedIn>
   );

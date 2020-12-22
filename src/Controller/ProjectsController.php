@@ -41,11 +41,20 @@ class ProjectsController extends AppController
             ->applyScope($this->Tasks->find(), 'index')
             ->contain('Projects')
             ->find('incomplete')
-            ->find('forProject', ['slug' => $this->request->getParam('slug')]);
+            ->find('forProject', ['slug' => $slug]);
 
         $tasks = $this->paginate($query);
+        $completed = null;
+        if ($this->request->getQuery('completed')) {
+            $completedQuery = $this->Authorization
+               ->applyScope($this->Tasks->find(), 'index')
+               ->contain('Projects')
+               ->find('complete')
+               ->find('forProject', ['slug' => $slug]);
+            $completed = $this->paginate($completedQuery, ['scope' => 'completed']);
+        }
 
-        $this->set(compact('project', 'tasks'));
+        $this->set(compact('project', 'tasks', 'completed'));
     }
 
     /**
