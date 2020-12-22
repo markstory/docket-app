@@ -6,17 +6,16 @@ import {Task} from 'app/types';
 
 type Props = {
   task: Task;
-  referer: string;
 };
 
-export default function TaskNotes({task, referer}: Props) {
+export default function TaskNotes({task}: Props) {
   const [editing, setEditing] = useState(false);
 
   function handleSave(event: React.FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     axios.post(`/todos/${task.id}/edit`, formData).then(() => {
-      Inertia.get(`/todos/${task.id}/view`, {referer}, {replace: true});
+      Inertia.get(`/todos/${task.id}/view`, {}, {only: ['task'], replace: true});
     });
   }
 
@@ -42,7 +41,6 @@ export default function TaskNotes({task, referer}: Props) {
 
   return (
     <form className="task-notes" onSubmit={handleSave}>
-      <input type="hidden" name="referer" value={referer} />
       <h4 className="heading-actions">Notes</h4>
       <textarea name="body" rows={lines.length + 2} defaultValue={task.body} autoFocus />
       <div className="button-bar">

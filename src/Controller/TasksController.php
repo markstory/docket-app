@@ -69,7 +69,7 @@ class TasksController extends AppController
             if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('The todo item has been saved.'));
 
-                return $this->redirect($this->referer(['action' => 'index']));
+                return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
             // TODO this doesn't look like it will handle validation
             // errors well.
@@ -97,7 +97,7 @@ class TasksController extends AppController
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
     /**
@@ -120,7 +120,7 @@ class TasksController extends AppController
                 $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
             }
         }
-        return $this->redirect($this->referer(['action' => 'index']));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
     public function move(string $id)
@@ -139,7 +139,7 @@ class TasksController extends AppController
             $this->Flash->error($e->getMessage());
         }
 
-        return $this->redirect($this->getReferer('tasks:upcoming'));
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
     /**

@@ -20,6 +20,7 @@ type Props = {
 export default function TasksView({referer, task}: Props) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  console.log('render referer', referer);
 
   function handleClose() {
     const target = referer === window.location.pathname ? '/todos/upcoming' : referer;
@@ -35,7 +36,8 @@ export default function TasksView({referer, task}: Props) {
     axios
       .post(`/todos/${task.id}/edit`, formData)
       .then(() => {
-        Inertia.visit(referer);
+        setEditing(false);
+        Inertia.reload({only: ['task']});
       })
       .catch(error => {
         if (error.response) {
@@ -62,7 +64,7 @@ export default function TasksView({referer, task}: Props) {
           ) : (
             <TaskSummary task={task} onClick={() => setEditing(true)} />
           )}
-          <TaskNotes task={task} referer={referer} />
+          <TaskNotes task={task} />
           <TaskSubtasks task={task} />
         </div>
       </Modal>
@@ -78,7 +80,11 @@ type SummaryProps = {
 function TaskSummary({task, onClick}: SummaryProps) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    Inertia.post(`/todos/${task.id}/${task.completed ? 'incomplete' : 'complete'}`);
+    Inertia.post(
+      `/todos/${task.id}/${task.completed ? 'incomplete' : 'complete'}`,
+      {},
+      {only: ['task']}
+    );
   };
 
   return (

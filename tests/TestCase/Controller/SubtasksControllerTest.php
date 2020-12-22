@@ -212,7 +212,7 @@ class SubtasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->enableRetainFlashMessages();
         $this->post("/todos/{$item->id}/subtasks/{$first->id}/move");
-        $this->assertRedirect("/todos/{$item->id}/view?referer=%2Ftodos%2Ftoday");
+        $this->assertRedirect("/todos/{$item->id}/view");
         $this->assertFlashElement('flash/error');
     }
 
@@ -229,7 +229,7 @@ class SubtasksControllerTest extends TestCase
         $this->post("/todos/{$item->id}/subtasks/{$first->id}/move", [
             'ranking' => 1,
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view?referer=%2Ftodos%2Ftoday");
+        $this->assertRedirect("/todos/{$item->id}/view");
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$second->id, $first->id, $third->id];
@@ -252,7 +252,7 @@ class SubtasksControllerTest extends TestCase
         $this->post("/todos/{$item->id}/subtasks/{$third->id}/move", [
             'ranking' => 0,
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view?referer=%2Ftodos%2Ftoday");
+        $this->assertRedirect("/todos/{$item->id}/view");
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$third->id, $first->id, $second->id];
