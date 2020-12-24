@@ -22,9 +22,15 @@
   }
 
   a {
-    flex-grow: 1;
+    display: flex;
+    align-items: center;
+
     color: $color-foreground;
     text-decoration: none;
+  }
+
+  .counter {
+    margin-left: $space;
   }
 }
 

@@ -42,8 +42,21 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
             </time>
           )}
           {showProject && <ProjectBadge project={task.project} />}
+          <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
     </div>
+  );
+}
+
+function SubtaskSummary({task}: Pick<Props, 'task'>) {
+  if (task.subtask_count < 1) {
+    return null;
+  }
+  return (
+    <span className="counter">
+      {task.incomplete_subtask_count.toLocaleString()} /{' '}
+      {task.subtask_count.toLocaleString()}
+    </span>
   );
 }

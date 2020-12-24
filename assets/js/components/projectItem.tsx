@@ -15,6 +15,7 @@ export default function ProjectItem({project}: Props) {
     <div className="project-item">
       <InertiaLink key={project.slug} href={`/projects/${project.slug}`}>
         <ProjectBadge project={project} />
+        <span className="counter">{project.incomplete_task_count.toLocaleString()}</span>
       </InertiaLink>
       <ProjectMenu project={project} />
     </div>

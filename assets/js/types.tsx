@@ -12,6 +12,7 @@ export type Project = {
   color: string;
   favorite: boolean;
   archived: boolean;
+  incomplete_task_count: number;
 };
 
 export type Task = {
@@ -22,6 +23,8 @@ export type Task = {
   day_order: number;
   child_order: number;
   completed: boolean;
+  subtask_count: number;
+  incomplete_subtask_count: number;
   created: string;
   modified: string;
   project: Project;
