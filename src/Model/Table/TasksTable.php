@@ -156,11 +156,13 @@ class TasksTable extends Table
         if (empty($options['start'])) {
             throw new RuntimeException('Missing required `start` option.');
         }
-        $end = $options['start']->modify('+28 days');
+        if (empty($options['end'])) {
+            $options['end'] = $options['start']->modify('+28 days');
+        }
         return $query->where([
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on >=' => $options['start'],
-                'Tasks.due_on <' => $end,
+                'Tasks.due_on <' => $options['end'],
             ])
             ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.day_order');

@@ -1,5 +1,6 @@
 import React from 'react';
 import {sortBy} from 'lodash';
+import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -9,15 +10,17 @@ import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/uti
 
 type Props = {
   tasks: Task[];
+  start: string;
+  nextStart: string;
 };
 
 /**
  * Fill out the sparse input data to have all the days.
  */
-function zeroFillItems(groups: GroupedItems): GroupedItems {
+function zeroFillItems(start: string, groups: GroupedItems): GroupedItems {
   const sorted = sortBy(groups, group => group.key);
 
-  const first = (sorted.length ? parseDate(sorted[0].key) : new Date()).getTime();
+  const first = parseDate(start).getTime();
   // XXX: Time based views are for 28 days at a time.
   const end = first + 28 * ONE_DAY_IN_MS;
 
@@ -37,30 +40,33 @@ function zeroFillItems(groups: GroupedItems): GroupedItems {
   return complete;
 }
 
-export default function TasksIndex({tasks}: Props) {
+export default function TasksIndex({tasks, start, nextStart}: Props) {
+  const nextPage = nextStart ? `/todos/upcoming?start=${nextStart}` : null;
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
       <TaskGroupedSorter tasks={tasks} scope="day">
         {({groupedItems}) => {
-          const calendarGroups = zeroFillItems(groupedItems);
+          const calendarGroups = zeroFillItems(start, groupedItems);
           return (
             <React.Fragment>
               {calendarGroups.map(({key, items}) => (
                 <React.Fragment key={key}>
                   <h2>{formatDateHeading(key)}</h2>
-                  <TaskGroup
-                    dropId={key}
-                    tasks={items}
-                    defaultDate={key}
-                    showProject
-                  />
+                  <TaskGroup dropId={key} tasks={items} defaultDate={key} showProject />
                 </React.Fragment>
               ))}
             </React.Fragment>
           );
         }}
       </TaskGroupedSorter>
+      <div className="button-bar">
+        {nextPage && (
+          <InertiaLink className="button button-secondary" href={nextPage}>
+            Next
+          </InertiaLink>
+        )}
+      </div>
     </LoggedIn>
   );
 }

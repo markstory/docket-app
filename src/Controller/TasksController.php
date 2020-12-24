@@ -40,12 +40,14 @@ class TasksController extends AppController
             // Set view component to use.
             $this->set('component', 'Tasks/Today');
         } else if ($view === 'upcoming') {
-            $query = $query->find('upcoming', ['start' => $start]);
+            $end = $start->modify('+28 days');
+            $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
         }
-        // $overdue = $this->Tasks->find('overdue')->limit(25);
         $tasks = $query->all();
 
         $this->set(compact('tasks', 'view'));
+        $this->set('start', $start->format('Y-m-d'));
+        $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
     }
 
     /**
