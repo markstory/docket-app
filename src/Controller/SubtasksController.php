@@ -5,8 +5,6 @@ namespace App\Controller;
 
 use App\Model\Entity\Task;
 use App\Model\Entity\Subtask;
-use Cake\Http\Exception\BadRequestException;
-use Cake\Http\Exception\NotFoundException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -57,6 +55,7 @@ class SubtasksController extends AppController
         $todoSubtask->ranking = $this->Subtasks->getNextRanking($item->id);
 
         $this->Subtasks->saveOrFail($todoSubtask);
+        $this->Flash->success(__('Subtask updated.'));
 
         $this->set('subtask', $todoSubtask);
         $this->viewBuilder()
@@ -104,6 +103,7 @@ class SubtasksController extends AppController
         if (!$this->Subtasks->save($subtask)) {
             return $this->validationErrorResponse($subtask->getErrors());
         }
+        $this->Flash->success(__('Subtask updated.'));
         $this->set('subtask', $subtask);
         $this->viewBuilder()
             ->setClassName(JsonView::class)
@@ -124,9 +124,9 @@ class SubtasksController extends AppController
         $subtask = $this->getTodoSubtask($taskId, $id);
 
         if ($this->Subtasks->delete($subtask)) {
-            $this->Flash->success(__('The todo subtask has been deleted.'));
+            $this->Flash->success(__('Subtask deleted.'));
         } else {
-            $this->Flash->error(__('The todo subtask could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Subtask could not be deleted. Please, try again.'));
         }
 
         return $this->redirect([

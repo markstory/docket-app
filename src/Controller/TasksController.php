@@ -66,7 +66,7 @@ class TasksController extends AppController
             $this->Tasks->setNextOrderProperties($user, $task);
 
             if ($this->Tasks->save($task)) {
-                $this->Flash->success(__('The todo item has been saved.'));
+                $this->Flash->success(__('Task saved.'));
 
                 return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
@@ -93,7 +93,9 @@ class TasksController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->complete();
             if (!$this->Tasks->save($task)) {
-                $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
+                $this->Flash->success(__('Task complete.'));
+            } else {
+                $this->Flash->error(__('The task could not be completed. Please, try again.'));
             }
         }
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
@@ -115,8 +117,8 @@ class TasksController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->incomplete();
-            if (!$this->Tasks->save($task)) {
-                $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
+            if ($this->Tasks->save($task)) {
+                $this->Flash->error(__('The task could not be updated. Please, try again.'));
             }
         }
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
@@ -158,6 +160,7 @@ class TasksController extends AppController
 
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
         if ($this->Tasks->save($task)) {
+            $this->Flash->success(__('Task updated.'));
             return $this->response->withStatus(200);
         }
         return $this->validationErrorResponse($task->getErrors());

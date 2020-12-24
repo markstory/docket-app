@@ -75,6 +75,7 @@ class ProjectsController extends AppController
             $project->ranking = $this->Projects->getNextRanking($userId);
 
             if ($this->Projects->save($project)) {
+                $this->Flash->success(__('Project created.'));
                 return $this->redirect($referer);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
@@ -98,14 +99,14 @@ class ProjectsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $project = $this->Projects->patchEntity($project, $this->request->getData());
             if ($this->Projects->save($project)) {
-                $this->Flash->success(__('The project has been saved.'));
+                $this->Flash->success(__('Project saved.'));
 
                 return $this->redirect([
                     '_name' => 'projects:view',
                     'slug' => $project->slug,
                 ]);
             }
-            $this->Flash->error(__('The project could not be saved. Please, try again.'));
+            $this->Flash->error(__('Project could not be saved. Please, try again.'));
             $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
         $this->set('referer', $referer);
@@ -153,6 +154,7 @@ class ProjectsController extends AppController
 
         $project->archive();
         $this->Projects->save($project);
+        $this->Flash->success(__('Project archived'));
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -163,6 +165,7 @@ class ProjectsController extends AppController
 
         $project->unarchive();
         $this->Projects->save($project);
+        $this->Flash->success(__('Project unarchived'));
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
