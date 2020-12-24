@@ -42,8 +42,8 @@ function Contents({children}: Props) {
           <ProjectFilter />
         </section>
         <section className="content">
-          <FlashMessages flash={flash} />
           {children}
+          <FlashMessages flash={flash} />
         </section>
       </main>
     </React.Fragment>

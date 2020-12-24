@@ -1,0 +1,33 @@
+.flash-message {
+  position: fixed;
+  left: 50%;
+  width: max-content;
+  transform: translateX(-50%);
+
+  padding: $space * 2;
+  background: $color-bg-raised;
+  box-shadow: $shadow-med;
+  border-radius: $border-radius;
+
+  svg {
+    margin-right: $space;
+  }
+
+  // TODO consider using react-spring if more animation comes up.
+  transition: bottom 0.3s, opacity 0.3s;
+
+  &[data-state="visible"] {
+    bottom: 16px;
+  }
+  &[data-state="hidden"] {
+    bottom: -60px;
+    opacity: 0;
+  }
+}
+
+.flash-success svg {
+  color: $color-success;
+}
+.flash-error svg {
+  color: $color-error;
+}
