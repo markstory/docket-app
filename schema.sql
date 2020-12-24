@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS projects (
     favorite boolean not null default 0,
     archived boolean not null default 0,
     ranking int not null default 0,
+    incomplete_task_count int not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id) on delete cascade
@@ -34,6 +35,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     child_order integer not null default 0,
     day_order integer not null default 0,
     completed boolean not null default 0,
+    subtask_count int not null default 0,
+    incomplete_subtask_count int not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (project_id) references projects(id) on delete cascade
@@ -55,6 +58,7 @@ CREATE TABLE IF NOT EXISTS subtasks (
     task_id integer not null,
     title text,
     body text,
+    completed boolean not null default 0,
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (task_id) references tasks(id) on delete cascade
