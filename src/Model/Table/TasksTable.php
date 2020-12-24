@@ -54,8 +54,6 @@ class TasksTable extends Table
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
-
         $this->belongsTo('Projects', [
             'foreignKey' => 'project_id',
             'joinType' => 'INNER',
@@ -74,6 +72,14 @@ class TasksTable extends Table
             'targetForeignKey' => 'label_id',
             'joinTable' => 'labels_tasks',
         ]);
+
+        $this->addBehavior('Timestamp');
+        $this->addBehavior('CounterCache', [
+            'Projects' => [
+                'incomplete_task_count' => ['finder' => 'incomplete']
+            ]
+        ]);
+
     }
 
     /**

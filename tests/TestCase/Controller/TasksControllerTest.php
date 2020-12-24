@@ -21,6 +21,11 @@ class TasksControllerTest extends TestCase
     use IntegrationTestTrait;
 
     /**
+     * @var \App\Model\Table\TasksTable
+     */
+    protected $Tasks;
+
+    /**
      * Fixtures
      *
      * @var array
@@ -153,6 +158,9 @@ class TasksControllerTest extends TestCase
 
         $todo = $this->Tasks->find()->firstOrFail();
         $this->assertSame('first todo', $todo->title);
+
+        $project = $this->Tasks->Projects->get($project->id);
+        $this->assertEquals(1, $project->incomplete_task_count);
     }
 
     public function testAddToBottom(): void

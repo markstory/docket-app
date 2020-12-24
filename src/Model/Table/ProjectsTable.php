@@ -49,12 +49,6 @@ class ProjectsTable extends Table
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
-        $this->addBehavior('Sluggable', [
-            'label' => ['name'],
-            'reserved' => ['archived', 'add', 'reorder'],
-        ]);
-
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
@@ -65,6 +59,13 @@ class ProjectsTable extends Table
         $this->hasMany('Labels', [
             'foreignKey' => 'project_id',
         ]);
+
+        $this->addBehavior('Timestamp');
+        $this->addBehavior('Sluggable', [
+            'label' => ['name'],
+            'reserved' => ['archived', 'add'],
+        ]);
+
     }
 
     /**

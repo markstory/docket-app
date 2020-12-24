@@ -20,6 +20,11 @@ class SubtasksControllerTest extends TestCase
     use IntegrationTestTrait;
 
     /**
+     * @var \App\Model\Table\SubtasksTable
+     */
+    protected $Subtasks;
+
+    /**
      * Fixtures
      *
      * @var array
@@ -58,6 +63,10 @@ class SubtasksControllerTest extends TestCase
         $this->assertContentType('application/json');
         $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertCount(1, $tasks);
+
+        $item = $this->Subtasks->Tasks->get($item->id);
+        $this->assertEquals(1, $item->subtask_count);
+        $this->assertEquals(1, $item->incomplete_subtask_count);
     }
 
     /**

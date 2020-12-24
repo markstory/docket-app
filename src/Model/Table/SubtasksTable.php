@@ -47,11 +47,17 @@ class SubtasksTable extends Table
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
-
         $this->belongsTo('Tasks', [
             'foreignKey' => 'task_id',
             'joinType' => 'INNER',
+        ]);
+
+        $this->addBehavior('Timestamp');
+        $this->addBehavior('CounterCache', [
+            'Tasks' => [
+                'subtask_count' => ['finder' => 'all'],
+                'incomplete_subtask_count' => ['finder' => 'incomplete']
+            ]
         ]);
     }
 
@@ -105,6 +111,16 @@ class SubtasksTable extends Table
         ->firstOrFail();
 
         return $result->max + 1;
+    }
+
+    public function findComplete(Query $query): Query
+    {
+        return $query->where(['Subtasks.completed' => true]);
+    }
+
+    public function findIncomplete(Query $query): Query
+    {
+        return $query->where(['Subtasks.completed' => false]);
     }
 
     public function move(Subtask $task, array $operation)
