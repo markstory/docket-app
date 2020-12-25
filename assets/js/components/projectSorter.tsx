@@ -16,7 +16,7 @@ type Props = {
 export default function ProjectSorter({children}: Props) {
   const [projects, setProjects] = useProjects();
 
-  async function handleDragEnd(result: DropResult) {
+  function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -30,13 +30,12 @@ export default function ProjectSorter({children}: Props) {
       ranking: result.destination.index,
     };
 
-    try {
-      await Inertia.post(`/projects/${result.draggableId}/move`, data);
-      // Revert local state.
-      setProjects(null);
-    } catch (e) {
-      // TODO Show an error.
-    }
+    Inertia.post(`/projects/${result.draggableId}/move`, data, {
+      onSuccess() {
+        // Revert local state.
+        setProjects(null);
+      },
+    });
   }
 
   return (

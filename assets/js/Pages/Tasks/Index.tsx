@@ -1,6 +1,7 @@
 import React from 'react';
 import {sortBy} from 'lodash';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import {groupBy} from 'lodash';
 
 import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -17,12 +18,15 @@ type Props = {
 /**
  * Fill out the sparse input data to have all the days.
  */
-function zeroFillItems(start: string, groups: GroupedItems): GroupedItems {
+function zeroFillItems(
+  start: string,
+  numDays: number,
+  groups: GroupedItems
+): GroupedItems {
   const sorted = sortBy(groups, group => group.key);
 
   const first = parseDate(start).getTime();
-  // XXX: Time based views are for 28 days at a time.
-  const end = first + 28 * ONE_DAY_IN_MS;
+  const end = first + numDays * ONE_DAY_IN_MS;
 
   const complete: GroupedItems = [];
   for (let i = first; i < end; i += ONE_DAY_IN_MS) {
@@ -40,17 +44,28 @@ function zeroFillItems(start: string, groups: GroupedItems): GroupedItems {
   return complete;
 }
 
+function createGrouper(start: string, numDays: number) {
+  return function taskGrouper(items: Task[]): GroupedItems {
+    const byDate: Record<string, Task[]> = groupBy(items, item =>
+      item.due_on ? item.due_on : 'No Due Date'
+    );
+    const grouped = Object.entries(byDate).map(([key, value]) => {
+      return {key, items: value};
+    });
+    return zeroFillItems(start, numDays, grouped);
+  };
+}
+
 export default function TasksIndex({tasks, start, nextStart}: Props) {
   const nextPage = nextStart ? `/todos/upcoming?start=${nextStart}` : null;
   return (
     <LoggedIn>
       <h1>Upcoming</h1>
-      <TaskGroupedSorter tasks={tasks} scope="day">
+      <TaskGroupedSorter tasks={tasks} scope="day" grouper={createGrouper(start, 28)}>
         {({groupedItems}) => {
-          const calendarGroups = zeroFillItems(start, groupedItems);
           return (
             <React.Fragment>
-              {calendarGroups.map(({key, items}) => (
+              {groupedItems.map(({key, items}) => (
                 <React.Fragment key={key}>
                   <h2>{formatDateHeading(key)}</h2>
                   <TaskGroup dropId={key} tasks={items} defaultDate={key} showProject />

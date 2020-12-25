@@ -23,7 +23,7 @@ export default function SubtaskSorter({children, taskId}: Props) {
   const [sorted, setSorted] = React.useState<Subtask[] | undefined>(undefined);
   const [subtasks, setSubtasks] = useSubtasks();
 
-  async function handleDragEnd(result: DropResult) {
+  function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -37,15 +37,13 @@ export default function SubtaskSorter({children, taskId}: Props) {
       ranking: result.destination.index,
     };
 
-    try {
-      await Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data, {
-        only: ['task'],
-      });
-      // Revert local state.
-      setSubtasks(null);
-    } catch (e) {
-      // TODO show an error.
-    }
+    Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data, {
+      only: ['task'],
+      onSuccess() {
+        // Revert local state.
+        setSubtasks(null);
+      },
+    });
   }
 
   const items = sorted || subtasks;

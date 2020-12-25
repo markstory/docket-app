@@ -26,7 +26,7 @@ type UpdateData = {
 export default function TaskSorter({children, tasks, scope}: Props) {
   const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
 
-  async function handleDragEnd(result: DropResult) {
+  function handleDragEnd(result: DropResult) {
     // Dropped outside of a dropzone
     if (!result.destination) {
       return;
@@ -45,9 +45,13 @@ export default function TaskSorter({children, tasks, scope}: Props) {
       data.due_on = result.destination.droppableId;
     }
 
-    await Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
-    // Revert local state.
-    setSorted(undefined);
+    Inertia.post(`/todos/${result.draggableId}/move`, data, {
+      preserveScroll: true,
+      onSuccess() {
+        // Revert local state.
+        setSorted(undefined);
+      },
+    });
   }
 
   const items = sorted || tasks;

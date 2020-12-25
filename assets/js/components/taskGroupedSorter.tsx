@@ -1,6 +1,5 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {groupBy} from 'lodash';
 import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 
 import {Task} from 'app/types';
@@ -15,7 +14,7 @@ type Props = {
   tasks: Task[];
   scope: 'day';
   children: (props: ChildRenderProps) => JSX.Element;
-  grouper?: (tasks: Task[]) => GroupedItems;
+  grouper: (tasks: Task[]) => GroupedItems;
 };
 
 type UpdateData = {
@@ -24,30 +23,18 @@ type UpdateData = {
   due_on?: string;
 };
 
-function defaultGrouper(items: Task[]): GroupedItems {
-  const byDate: Record<string, Task[]> = groupBy(items, item =>
-    item.due_on ? item.due_on : 'No Due Date'
-  );
-  const grouped = Object.entries(byDate).map(([key, value]) => {
-    return {key, items: value};
-  });
-  return grouped;
-}
-
 /**
  * Abstraction around reorder lists of todos and optimistically updating state.
  */
 export default function TaskGroupedSorter({children, tasks, grouper, scope}: Props) {
   const [sorted, setSorted] = React.useState<GroupedItems | undefined>(undefined);
 
-  const groupFn = grouper ? grouper : defaultGrouper;
-  const grouped = groupFn(tasks);
+  const grouped = grouper(tasks);
 
-  async function handleDragEnd(result: DropResult) {
+  function handleDragEnd(result: DropResult) {
     const destination = result.destination;
     // Dropped outside of a dropzone
     if (!destination) {
-      console.log('no dest');
       return;
     }
     const newGrouped = [...grouped];
@@ -71,9 +58,13 @@ export default function TaskGroupedSorter({children, tasks, grouper, scope}: Pro
       data.due_on = destination.droppableId;
     }
 
-    await Inertia.post(`/todos/${result.draggableId}/move`, data, {preserveScroll: true});
-    // Revert local state.
-    setSorted(undefined);
+    Inertia.post(`/todos/${result.draggableId}/move`, data, {
+      preserveScroll: true,
+      onSuccess() {
+        // Revert local state.
+        setSorted(undefined);
+      },
+    });
   }
 
   const items = sorted || grouped;
