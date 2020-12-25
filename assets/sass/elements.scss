@@ -16,6 +16,10 @@ body, html, #app {
 // Headings
 h1, h2, h3, h4, h5 {
   margin: $space * 2 0;
+  
+  svg {
+    margin-right: $space / 2;
+  }
 }
 
 h1:first-child,

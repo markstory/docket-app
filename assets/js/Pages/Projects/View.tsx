@@ -37,6 +37,7 @@ export default function ProjectsView({completed, project, tasks}: Props) {
               dropId="project"
               tasks={items}
               defaultProjectId={project.id}
+              showAdd={!project.archived}
               showDueOn
             />
           )}
