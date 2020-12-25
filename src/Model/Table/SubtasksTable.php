@@ -56,7 +56,7 @@ class SubtasksTable extends Table
         $this->addBehavior('CounterCache', [
             'Tasks' => [
                 'subtask_count' => ['finder' => 'all'],
-                'incomplete_subtask_count' => ['finder' => 'incomplete']
+                'complete_subtask_count' => ['finder' => 'complete']
             ]
         ]);
     }

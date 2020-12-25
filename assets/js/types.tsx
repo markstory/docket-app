@@ -24,7 +24,7 @@ export type Task = {
   child_order: number;
   completed: boolean;
   subtask_count: number;
-  incomplete_subtask_count: number;
+  complete_subtask_count: number;
   created: string;
   modified: string;
   project: Project;

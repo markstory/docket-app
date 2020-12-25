@@ -66,7 +66,7 @@ class SubtasksControllerTest extends TestCase
 
         $item = $this->Subtasks->Tasks->get($item->id);
         $this->assertEquals(1, $item->subtask_count);
-        $this->assertEquals(1, $item->incomplete_subtask_count);
+        $this->assertEquals(0, $item->complete_subtask_count);
     }
 
     /**
