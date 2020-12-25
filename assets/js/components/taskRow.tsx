@@ -55,6 +55,7 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
   }
   return (
     <span className="counter">
+      <InlineIcon icon="workflow" width="xsmall" />
       {task.incomplete_subtask_count.toLocaleString()} /{' '}
       {task.subtask_count.toLocaleString()}
     </span>

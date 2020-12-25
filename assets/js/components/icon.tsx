@@ -17,6 +17,7 @@ import pencil16 from '@iconify/icons-octicon/pencil-16';
 import plus16 from '@iconify/icons-octicon/plus-16';
 import pluscircle16 from '@iconify/icons-octicon/plus-circle-16';
 import trash16 from '@iconify/icons-octicon/trashcan-16';
+import workflow16 from '@iconify/icons-octicon/workflow-16';
 
 addIcon('alert', alert16);
 addIcon('archive', archive16);
@@ -32,6 +33,7 @@ addIcon('plus', plus16);
 addIcon('pluscircle', pluscircle16);
 addIcon('kebab', kebab16);
 addIcon('trash', trash16);
+addIcon('workflow', workflow16);
 
 type WrappedProps = {width?: string} & IconProps;
 

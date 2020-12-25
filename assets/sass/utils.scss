@@ -4,4 +4,7 @@
 .counter {
   font-size: $font-size-small;
   color: $color-muted;
+  svg {
+    margin-right: $space / 2;
+  }
 }

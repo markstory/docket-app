@@ -20,7 +20,9 @@ export default function TaskSubtasks({task}: Props) {
   return (
     <SubtasksProvider subtasks={task.subtasks}>
       <div className="task-subtasks">
-        <h3>Sub-tasks</h3>
+        <h3>
+          <InlineIcon icon="workflow" /> Sub-tasks
+        </h3>
         <SubtaskSorter taskId={task.id}>
           {({items}) => (
             <Droppable droppableId="subtasks" type="subtask">
