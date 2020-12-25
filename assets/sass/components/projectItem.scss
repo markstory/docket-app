@@ -24,6 +24,7 @@
   a {
     display: flex;
     align-items: center;
+    flex-grow: 1;
 
     color: $color-foreground;
     text-decoration: none;

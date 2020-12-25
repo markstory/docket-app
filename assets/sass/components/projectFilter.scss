@@ -6,11 +6,20 @@
     margin-bottom: $space * 2;
   }
 
-  .links li {
-    height: 30px;
+  .links a {
+    display: block;
+    height: 40px;
+    padding: $space 0 $space $space / 2;
+    margin-right: $space * 2;
+    text-decoration: none;
+    color: $color-foreground;
+    &:hover {
+      background: $color-bg-raised;
+    }
   }
 }
 
 .project-filter .project-item {
-  width: 80%;
+  flex-grow: 1;
+  margin-right: $space * 2;
 }
