@@ -5,7 +5,7 @@ import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
-import {toDateString, now} from 'app/utils/dates';
+import {toDateString} from 'app/utils/dates';
 
 type Props = {
   tasks: Task[];
@@ -30,8 +30,8 @@ function grouper(items: Task[]): GroupedItems {
 }
 
 export default function TasksToday({tasks}: Props) {
-  const today = now();
-  const defaultDate = today.toISOString().substring(0, 10);
+  const today = new Date();
+  const defaultDate = toDateString(today);
 
   return (
     <LoggedIn>
