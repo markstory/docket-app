@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import FormError from 'app/components/formError';
+import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
 import {useProjects} from 'app/providers/projects';
 
@@ -13,6 +14,7 @@ type Props = {
 
 export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props) {
   const [projects] = useProjects();
+  const [dueOn, setDueOn] = useState(task.due_on);
 
   return (
     <form className="task-quickform" method="post" onSubmit={onSubmit}>
@@ -39,12 +41,10 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
         <FormError errors={errors} field="project_id" />
       </div>
       <div className="due-on">
-        <label htmlFor="task-due-on">Due on</label>
-        <input
-          id="task-due-on"
-          type="date"
-          name="due_on"
-          defaultValue={task.due_on ?? undefined}
+        <input type="hidden" name="due_on" value={dueOn ?? undefined} />
+        <DueOnPicker
+          selected={dueOn}
+          onChange={(value: Task['due_on']) => setDueOn(value)}
         />
         <FormError errors={errors} field="due_on" />
       </div>

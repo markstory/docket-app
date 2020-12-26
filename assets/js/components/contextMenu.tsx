@@ -41,6 +41,8 @@ function ContextMenu({children, alignMenu = 'left'}: Props) {
     };
   }, [isShowing]);
 
+  // TODO extract the dropdown aspect of this into a
+  // component that takes button & items.
   return (
     <div ref={menuRef} className={`context-menu align-${alignMenu}`}>
       <button onClick={handleClick}>
