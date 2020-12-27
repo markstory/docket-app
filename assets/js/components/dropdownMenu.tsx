@@ -57,6 +57,7 @@ function DropdownMenu({button, className, children, alignMenu = 'left'}: Props) 
   };
   const containerClass = classnames('dropdown-menu', className);
 
+  // TODO handle esc to close menu.
   return (
     <div ref={menuRef} data-align={alignMenu} className={containerClass}>
       {button ? button(buttonProps) : defaultButton(buttonProps)}

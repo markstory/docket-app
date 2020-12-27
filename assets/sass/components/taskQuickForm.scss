@@ -1,9 +1,7 @@
 // These styles are also used for the edit form
 .task-quickform {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 40px 1fr 50px;
-  gap: $space;
+  display: flex;
+  flex-direction: column;
 
   border: 1px solid $color-border-med;
   border-radius: $border-radius;
@@ -18,27 +16,27 @@
     margin-bottom: $space / 2;
   }
 
+  .attributes {
+    display: flex;
+
+    > * + * {
+      margin-left: $space * 2;
+    }
+  }
+
   .title {
-    grid-column: 1 / 3;
-    grid-row: 1 / 2;
     display: flex;
   }
   .title input {
     flex-grow: 1;
   }
-  .project {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-  }
-  .due-on {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-  }
   .button-bar {
     padding-top: $space;
     border-top: 1px solid $color-border;
-    grid-column: 1 / 3;
-    grid-row: 3 / 4;
+  }
+
+  > * + * {
+    margin-top: $space;
   }
 }
 
