@@ -41,7 +41,7 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
         <FormError errors={errors} field="project_id" />
       </div>
       <div className="due-on">
-        <input type="hidden" name="due_on" value={dueOn ?? undefined} />
+        <input type="hidden" name="due_on" value={dueOn ?? ''} />
         <DueOnPicker
           selected={dueOn}
           onChange={(value: Task['due_on']) => setDueOn(value)}
