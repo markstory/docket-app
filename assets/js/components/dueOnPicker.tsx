@@ -14,15 +14,6 @@ type Props = {
 
 export default function DueOnPicker({selected, onChange}: Props) {
   const selectedDate = typeof selected === 'string' ? parseDate(selected) : undefined;
-  const today = toDateString(new Date());
-  const tomorrow = toDateString(addDays(new Date(), 1));
-
-  function handleButtonClick(value: Task['due_on']) {
-    return function onClick(event: React.MouseEvent) {
-      event.preventDefault();
-      onChange(value);
-    };
-  }
 
   // TODO add a text input.
   // Accept a few different formats. Eg. Dec 25, Wednesday etc
@@ -39,26 +30,48 @@ export default function DueOnPicker({selected, onChange}: Props) {
         }}
         alignMenu="left"
       >
-        <button className="menu-option" onClick={handleButtonClick(today)}>
-          <InlineIcon icon="clippy" /> Today
-        </button>
-        <button className="menu-option" onClick={handleButtonClick(tomorrow)}>
-          <InlineIcon icon="sun" />
-          Tommorrow
-        </button>
-        <button className="menu-option" onClick={handleButtonClick(null)}>
-          <InlineIcon icon="trash" />
-          No Date
-        </button>
-        <DayPicker
-          disabledDays={{before: new Date()}}
-          onDayClick={value => onChange(toDateString(value))}
-          selectedDays={selectedDate}
-          numberOfMonths={2}
-          pagedNavigation
-          fixedWeeks
-        />
+        <MenuContents selected={selectedDate} onChange={onChange} />
       </DropdownMenu>
     </div>
+  );
+}
+
+type ContentsProps = {
+  selected: Date | undefined;
+  onChange: Props['onChange'];
+};
+
+export function MenuContents({selected, onChange}: ContentsProps) {
+  const today = toDateString(new Date());
+  const tomorrow = toDateString(addDays(new Date(), 1));
+
+  function handleButtonClick(value: Task['due_on']) {
+    return function onClick(event: React.MouseEvent) {
+      event.preventDefault();
+      onChange(value);
+    };
+  }
+  return (
+    <React.Fragment>
+      <button className="menu-option" onClick={handleButtonClick(today)}>
+        <InlineIcon icon="clippy" /> Today
+      </button>
+      <button className="menu-option" onClick={handleButtonClick(tomorrow)}>
+        <InlineIcon icon="sun" />
+        Tommorrow
+      </button>
+      <button className="menu-option" onClick={handleButtonClick(null)}>
+        <InlineIcon icon="trash" />
+        No Date
+      </button>
+      <DayPicker
+        disabledDays={{before: new Date()}}
+        onDayClick={value => onChange(toDateString(value))}
+        selectedDays={selected}
+        numberOfMonths={2}
+        pagedNavigation
+        fixedWeeks
+      />
+    </React.Fragment>
   );
 }
