@@ -11,6 +11,11 @@
       box-shadow: none;
     }
   }
+
+  input[type="text"] {
+    padding: $space / 2;
+    border: none;
+  }
 }
 
 .due-on-picker .dropdown-menu .hitbox {

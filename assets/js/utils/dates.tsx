@@ -1,4 +1,4 @@
-import {differenceInDays, format, parse} from 'date-fns';
+import {differenceInDays, addDays, format, parse} from 'date-fns';
 
 export const ONE_DAY_IN_MS = 60 * 60 * 24 * 1000;
 
@@ -8,6 +8,29 @@ export function toDateString(date: Date): string {
 
 export function parseDate(input: string): Date {
   return parse(input, 'yyyy-MM-dd', new Date());
+}
+
+export function parseDateInput(input: string): Date | undefined {
+  const today = getToday();
+  if (input.toLowerCase() === 'today') {
+    return today;
+  }
+  if (input.toLowerCase() === 'tomorrow') {
+    return addDays(today, 1);
+  }
+  // TODO ensure that months in the past are next year.
+  const formats = ['MMM d', 'MMM dd', 'MMMM d', 'EEEE'];
+  for (let i = 0; i < formats.length; i++) {
+    try {
+      const result = parse(input, formats[i], today);
+      if (!isNaN(result.valueOf())) {
+        return result;
+      }
+    } catch (e) {
+      // Do nothing with invalid data;
+    }
+  }
+  return undefined;
 }
 
 function getToday() {

@@ -1,10 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
 import DropdownMenu from './dropdownMenu';
 import {InlineIcon} from './icon';
-import {formatCompactDate, parseDate, toDateString} from 'app/utils/dates';
+import {
+  formatCompactDate,
+  parseDate,
+  parseDateInput,
+  toDateString,
+} from 'app/utils/dates';
 import {Task} from 'app/types';
 
 type Props = {
@@ -15,7 +20,6 @@ type Props = {
 export default function DueOnPicker({selected, onChange}: Props) {
   const selectedDate = typeof selected === 'string' ? parseDate(selected) : undefined;
 
-  // TODO add a text input.
   // Accept a few different formats. Eg. Dec 25, Wednesday etc
   return (
     <div className="due-on-picker">
@@ -44,6 +48,9 @@ type ContentsProps = {
 export function MenuContents({selected, onChange}: ContentsProps) {
   const today = toDateString(new Date());
   const tomorrow = toDateString(addDays(new Date(), 1));
+  const [inputValue, setInputValue] = useState(
+    selected ? formatCompactDate(selected) : ''
+  );
 
   function handleButtonClick(value: Task['due_on']) {
     return function onClick(event: React.MouseEvent) {
@@ -52,8 +59,26 @@ export function MenuContents({selected, onChange}: ContentsProps) {
     };
   }
 
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    setInputValue(value);
+    const parsed = parseDateInput(value);
+    if (parsed) {
+      console.log('success', parsed);
+      onChange(toDateString(parsed));
+    }
+  }
+
   return (
     <div className="due-on-menu">
+      <div className="menu-option">
+        <input
+          type="text"
+          onChange={handleInputChange}
+          value={inputValue}
+          placeholder="Type a due date"
+        />
+      </div>
       <button className="menu-option" onClick={handleButtonClick(today)}>
         <InlineIcon icon="clippy" /> Today
       </button>
