@@ -1,25 +1,7 @@
-.context-menu {
+.dropdown-menu {
   display: flex;
   align-items: center;
   position: relative;
-
-  > button {
-    @extend .button-default;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: none;
-    box-shadow: none;
-    padding: 4px;
-    width: 30px;
-    height: 30px;
-
-    svg {
-      margin: 0;
-    }
-  }
 
   .hitbox {
     position: absolute;
@@ -43,7 +25,7 @@
   }
 }
 
-.context-menu .dropdown {
+.dropdown-menu .dropdown {
   position: relative;
   background: $color-bg-raised;
   border: 1px solid $color-border-med;
@@ -51,7 +33,7 @@
   box-shadow: $shadow-med;
   padding: $space;
   min-width: 150px;
-  max-width: max-content;
+  width: max-content;
 
   &:after,
   &:before {
@@ -77,7 +59,7 @@
   }
 }
 
-.context-menu.align-left {
+.dropdown-menu[data-align="left"] {
   // use a block of padding to make the angular
   // hit box bigger enabling context menus to be placed
   // in hover based UX
@@ -95,7 +77,7 @@
   }
 }
 
-.context-menu.align-right {
+.dropdown-menu[data-align="right"] {
   // use a block of padding to make the angular
   // hit box bigger enabling context menus to be placed
   // in hover based UX
@@ -114,7 +96,7 @@
 }
 
 
-.context-menu .context-item {
+.dropdown-menu .context-item {
   display: flex;
   align-items: center;
   flex-grow: 1;

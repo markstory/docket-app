@@ -2,8 +2,9 @@ import React from 'react';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
-import {InlineIcon} from 'app/components/icon';
-import {parseDate, toDateString} from 'app/utils/dates';
+import DropdownMenu from './dropdownMenu';
+import {InlineIcon} from './icon';
+import {formatCompactDate, parseDate, toDateString} from 'app/utils/dates';
 import {Task} from 'app/types';
 
 type Props = {
@@ -16,21 +17,36 @@ export default function DueOnPicker({selected, onChange}: Props) {
   const today = toDateString(new Date());
   const tomorrow = toDateString(addDays(new Date(), 1));
 
+  function handleButtonClick(value: Task['due_on']) {
+    return function onClick(event: React.MouseEvent) {
+      event.preventDefault();
+      onChange(value);
+    };
+  }
+
   // TODO add a text input.
   // Accept a few different formats. Eg. Dec 25, Wednesday etc
   return (
-    <React.Fragment>
-      <label htmlFor="task-due-on">Due on</label>
-      <span className="form-input-like">{selected ?? 'No Due Date'}</span>
-      <div className="put-me-in-context-menu">
-        <button onClick={() => onChange(today)}>
+    <div className="due-on-picker">
+      <DropdownMenu
+        button={props => {
+          return (
+            <button {...props} className="opener">
+              <InlineIcon icon="calendar" />{' '}
+              {selectedDate ? formatCompactDate(selectedDate) : 'No Due Date'}
+            </button>
+          );
+        }}
+        alignMenu="left"
+      >
+        <button className="menu-option" onClick={handleButtonClick(today)}>
           <InlineIcon icon="clippy" /> Today
         </button>
-        <button onClick={() => onChange(tomorrow)}>
+        <button className="menu-option" onClick={handleButtonClick(tomorrow)}>
           <InlineIcon icon="sun" />
           Tommorrow
         </button>
-        <button onClick={() => onChange(null)}>
+        <button className="menu-option" onClick={handleButtonClick(null)}>
           <InlineIcon icon="trash" />
           No Date
         </button>
@@ -42,7 +58,7 @@ export default function DueOnPicker({selected, onChange}: Props) {
           pagedNavigation
           fixedWeeks
         />
-      </div>
-    </React.Fragment>
+      </DropdownMenu>
+    </div>
   );
 }

@@ -88,3 +88,19 @@ button > svg {
     margin-top: $space;
   }
 }
+
+.button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  box-shadow: none;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+
+  svg {
+    margin: 0;
+  }
+}

@@ -1,0 +1,14 @@
+.due-on-picker {
+  .menu-option {
+    display: flex;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid $color-border;
+    padding-left: 2px;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+}
