@@ -48,9 +48,7 @@ type ContentsProps = {
 export function MenuContents({selected, onChange}: ContentsProps) {
   const today = toDateString(new Date());
   const tomorrow = toDateString(addDays(new Date(), 1));
-  const [inputValue, setInputValue] = useState(
-    selected ? formatCompactDate(selected) : ''
-  );
+  const [inputValue, setInputValue] = useState('');
 
   function handleButtonClick(value: Task['due_on']) {
     return function onClick(event: React.MouseEvent) {
@@ -64,7 +62,6 @@ export function MenuContents({selected, onChange}: ContentsProps) {
     setInputValue(value);
     const parsed = parseDateInput(value);
     if (parsed) {
-      console.log('success', parsed);
       onChange(toDateString(parsed));
     }
   }
