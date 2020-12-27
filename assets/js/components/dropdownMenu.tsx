@@ -63,9 +63,7 @@ function DropdownMenu({button, className, children, alignMenu = 'left'}: Props) 
       {button ? button(buttonProps) : defaultButton(buttonProps)}
       {isShowing && (
         <div className="hitbox">
-          <div className="dropdown">
-            <ul>{children}</ul>
-          </div>
+          <div className="dropdown">{children}</div>
         </div>
       )}
     </div>

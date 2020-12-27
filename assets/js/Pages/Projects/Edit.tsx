@@ -62,6 +62,9 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
           </div>
           <div className="button-bar">
             <button type="submit">Save</button>
+            <button type="reset" className="button-secondary" onClick={handleClose}>
+              Cancel
+            </button>
           </div>
         </form>
       </Modal>

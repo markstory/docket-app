@@ -1,12 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import classnames from 'classnames';
 
+import {updateTaskField} from 'app/actions/tasks';
+import DropdownMenu from 'app/components/dropdownMenu';
 import {InlineIcon} from 'app/components/icon';
-import {Task} from 'app/types';
+import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
-import {formatCompactDate} from 'app/utils/dates';
+import {Task} from 'app/types';
+import {formatCompactDate, parseDate} from 'app/utils/dates';
 
 type Props = {
   task: Task;
@@ -45,6 +48,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
+      <TaskActions task={task} />
     </div>
   );
 }
@@ -59,5 +63,29 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
       {task.complete_subtask_count.toLocaleString()} /{' '}
       {task.subtask_count.toLocaleString()}
     </span>
+  );
+}
+
+function TaskActions({task}: Pick<Props, 'task'>) {
+  async function handleDueOnChange(value: string | null) {
+    updateTaskField(task, 'due_on', value).then(() => {
+      Inertia.reload();
+    });
+  }
+
+  const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
+  return (
+    <div className="actions">
+      <DropdownMenu
+        alignMenu="right"
+        button={props => (
+          <button className="button-icon" {...props}>
+            <InlineIcon icon="calendar" />
+          </button>
+        )}
+      >
+        <MenuContents selected={dueOn} onChange={handleDueOnChange} />
+      </DropdownMenu>
+    </div>
   );
 }

@@ -17,7 +17,7 @@ function ContextMenu({children, alignMenu = 'left'}: Props) {
         </button>
       )}
     >
-      {children}
+      <ul>{children}</ul>
     </DropdownMenu>
   );
 }

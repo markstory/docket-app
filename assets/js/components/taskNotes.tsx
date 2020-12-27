@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
+import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
 
 type Props = {
@@ -14,7 +14,7 @@ export default function TaskNotes({task}: Props) {
   function handleSave(event: React.FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-    axios.post(`/todos/${task.id}/edit`, formData).then(() => {
+    updateTask(task, formData).then(() => {
       Inertia.get(`/todos/${task.id}/view`, {}, {only: ['task'], replace: true});
     });
   }

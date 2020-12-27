@@ -5,7 +5,7 @@
   width: max-content;
   padding-right: $space / 2;
 
-  .context-menu {
+  .dropdown-menu {
     visibility: hidden;
   }
 
@@ -13,7 +13,7 @@
     background: $color-bg;
   }
 
-  &:hover .context-menu {
+  &:hover .dropdown-menu {
     visibility: visible;
   }
 

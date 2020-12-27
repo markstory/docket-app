@@ -1,4 +1,4 @@
-.due-on-picker {
+.due-on-menu {
   .menu-option {
     display: flex;
     width: 100%;
@@ -11,10 +11,10 @@
       box-shadow: none;
     }
   }
+}
 
-  .dropdown-menu .hitbox {
-    // Fiddle with positioning so arrow
-    // is aligned with icon.
-    left: -15px;
-  }
+.due-on-picker .dropdown-menu .hitbox {
+  // Fiddle with positioning so arrow
+  // is aligned with icon.
+  left: -15px;
 }

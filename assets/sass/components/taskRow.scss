@@ -1,4 +1,5 @@
 .task-row {
+  position: relative;
   display: flex;
   min-width: 400px;
   width: 100%;
@@ -41,6 +42,19 @@
   &.is-completed .title {
     color: $color-muted;
     text-decoration: line-through;
+  }
+
+  .actions {
+    display: none;
+    position: absolute;
+    top: $space;
+    right: 0;
+
+    background: $color-bg;
+    border-radius: $border-radius;
+  }
+  &:hover .actions {
+    display: block;
   }
 }
 

@@ -51,8 +51,9 @@ export function MenuContents({selected, onChange}: ContentsProps) {
       onChange(value);
     };
   }
+
   return (
-    <React.Fragment>
+    <div className="due-on-menu">
       <button className="menu-option" onClick={handleButtonClick(today)}>
         <InlineIcon icon="clippy" /> Today
       </button>
@@ -72,6 +73,6 @@ export function MenuContents({selected, onChange}: ContentsProps) {
         pagedNavigation
         fixedWeeks
       />
-    </React.Fragment>
+    </div>
   );
 }
