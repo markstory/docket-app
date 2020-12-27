@@ -1,5 +1,6 @@
 .DayPicker {
   position: relative;
+  font-size: $font-size-small;
 }
 
 // Adapted from the react-day-picker style.css
@@ -49,11 +50,8 @@
   margin-bottom: 0.5em;
   padding: 0 0.5em;
   text-align: left;
-}
-
-.DayPicker-Caption > div {
   font-weight: 500;
-  font-size: 1.15em;
+  font-size: $font-size-med;
 }
 
 .DayPicker-Weekdays {
@@ -70,7 +68,7 @@
   padding: 0.5em;
   color: #8B9898;
   text-align: center;
-  font-size: 0.875em;
+  font-size: $font-size-small;
 }
 
 .DayPicker-Weekday abbr[title] {
