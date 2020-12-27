@@ -20,7 +20,6 @@ type Props = {
 export default function TasksView({referer, task}: Props) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
-  console.log('render referer', referer);
 
   function handleClose() {
     const target = referer === window.location.pathname ? '/todos/upcoming' : referer;

@@ -10,9 +10,16 @@ export function parseDate(input: string): Date {
   return parse(input, 'yyyy-MM-dd', new Date());
 }
 
+function getToday() {
+  const today = new Date();
+  today.setHours(0);
+  today.setMinutes(0, 0, 0);
+  return today;
+}
+
 export function formatCompactDate(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
-  const delta = differenceInDays(new Date(), input);
+  const delta = differenceInDays(getToday(), input);
 
   // In the past? Show the date.
   if (delta < 0) {
@@ -31,7 +38,7 @@ export function formatCompactDate(date: Date | string): string {
 
 export function formatDateHeading(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
-  const delta = differenceInDays(input, new Date());
+  const delta = differenceInDays(input, getToday());
 
   let shortDate = format(input, delta < 7 ? 'EEEE MMM d' : 'MMM d');
   if (delta < 1) {
