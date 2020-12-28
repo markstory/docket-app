@@ -23,9 +23,15 @@ export function parseDateInput(input: string): Date | undefined {
   for (let i = 0; i < formats.length; i++) {
     try {
       const result = parse(input, formats[i], today);
-      if (!isNaN(result.valueOf())) {
-        return result;
+      if (isNaN(result.valueOf())) {
+        continue;
       }
+      // Day is in a past month. Move to the next year
+      // to ensure tasks are created in the future.
+      if (result.getTime() < today.getTime()) {
+        result.setFullYear(result.getFullYear() + 1);
+      }
+      return result;
     } catch (e) {
       // Do nothing with invalid data;
     }

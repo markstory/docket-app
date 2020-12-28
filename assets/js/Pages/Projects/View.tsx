@@ -22,7 +22,7 @@ export default function ProjectsView({completed, project, tasks}: Props) {
         <div className="heading">
           <h1>
             {project.archived && <Icon icon="archive" />}
-            {project.name} Tasks
+            {project.name}
           </h1>
 
           <ProjectMenu project={project} showAll alignMenu="right" />
