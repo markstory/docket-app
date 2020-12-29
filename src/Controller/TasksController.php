@@ -74,7 +74,7 @@ class TasksController extends AppController
             }
             // TODO this doesn't look like it will handle validation
             // errors well.
-            $this->Flash->error(__('The todo item could not be saved. Please, try again.'));
+            $this->Flash->error(__('The task could not be saved. Please, try again.'));
         }
     }
 
@@ -200,9 +200,9 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         if ($this->Tasks->delete($task)) {
-            $this->Flash->success(__('The todo item has been deleted.'));
+            $this->Flash->success(__('The task has been deleted.'));
         } else {
-            $this->Flash->error(__('The todo item could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The task could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
