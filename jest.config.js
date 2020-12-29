@@ -1,6 +1,4 @@
 /*eslint-env node*/
-const path = require('path'); // eslint-disable-line
-
 module.exports = {
   verbose: false,
   collectCoverageFrom: [
