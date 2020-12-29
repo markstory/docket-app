@@ -19,3 +19,20 @@
   }
 }
 
+
+.layout-card-bg {
+  background: $color-bg-section;
+  width: 100%;
+  height: 100%;
+  padding-top: $space * 6;
+}
+.layout-card {
+  background: $color-bg;
+  border-radius: $border-radius-large;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-low;
+  padding: $space * 3;
+  width: 75%;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}

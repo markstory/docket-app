@@ -2,16 +2,10 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
-import {FlashMessage} from 'app/types';
-import FlashMessages from 'app/components/flashMessages';
+import Card from 'app/layouts/card';
 import {t} from 'app/locale';
 
-type Props = {
-  _csrfToken: string;
-  flash: null | FlashMessage;
-};
-
-export default function Login({_csrfToken, flash}: Props) {
+export default function Login() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -19,11 +13,9 @@ export default function Login({_csrfToken, flash}: Props) {
   }
 
   return (
-    <React.Fragment>
+    <Card>
       <h1>{t('Login')}</h1>
-      <FlashMessages flash={flash} />
       <form method="post" onSubmit={onSubmit}>
-        <input type="hidden" name="_csrfToken" value={_csrfToken} />
         <div className="form-input">
           <label htmlFor="email">{t('Email')}</label>
           <input id="email" name="email" type="email" required />
@@ -34,9 +26,11 @@ export default function Login({_csrfToken, flash}: Props) {
         </div>
         <div className="button-bar">
           <button type="submit">{t('Login')}</button>
-          <InertiaLink href="/forgot">{t('Recover Password')}</InertiaLink>
+          <InertiaLink className="button button-muted" href="/forgot">
+            {t('Forgot Password?')}
+          </InertiaLink>
         </div>
       </form>
-    </React.Fragment>
+    </Card>
   );
 }

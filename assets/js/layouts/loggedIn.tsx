@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project} from 'app/types';
