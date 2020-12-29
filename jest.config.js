@@ -21,6 +21,7 @@ module.exports = {
   },
   moduleFileExtensions: ['js', 'ts', 'jsx', 'tsx'],
   globals: {},
+  setupFiles: ['<rootDir>/tests/js/setup.ts'],
 
   reporters: ['default'],
 };

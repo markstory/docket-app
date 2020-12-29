@@ -18,6 +18,7 @@ describe('utils/dates', function() {
     it('handles today', function() {
       for (let option of ['today', 'Today', 'TODAY']) {
         const result = parseDateInput(option);
+        assertDefined(result);
         expect(result).toBeInstanceOf(Date);
         expect(toDateString(result)).toEqual(toDateString(new Date()));
       }
@@ -27,6 +28,7 @@ describe('utils/dates', function() {
       const tomorrow = addDays(new Date(), 1);
       for (let option of ['tomorrow', 'Tomorrow', 'TOMORrow']) {
         const result = parseDateInput(option);
+        assertDefined(result);
         expect(result).toBeInstanceOf(Date);
         expect(toDateString(result)).toEqual(toDateString(tomorrow));
       }
@@ -35,10 +37,12 @@ describe('utils/dates', function() {
     it('handles weekdays', function() {
       const now = new Date();
       let result = parseDateInput('Wednesday');
+      assertDefined(result);
       expect(result.getDay()).toEqual(3);
       expect(result.getTime()).toBeGreaterThan(now.getMonth());
 
       result = parseDateInput('sunday');
+      assertDefined(result);
       expect(result.getDay()).toEqual(1);
       expect(result.getTime()).toBeGreaterThan(now.getMonth());
     });
@@ -47,6 +51,7 @@ describe('utils/dates', function() {
       const inPast = addMonths(new Date(), -2);
       const pastMonth = format(inPast, 'MMM');
       const result = parseDateInput(`${pastMonth} 10`);
+      assertDefined(result);
       expect(result.getDate()).toEqual(10);
       expect(result.getFullYear()).toBeGreaterThan(inPast.getFullYear());
     });
