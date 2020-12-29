@@ -27,7 +27,9 @@
   },
   "include": [
       "assets/js",
-      "assets/js/**/*.tsx"
+      "assets/js/**/*.tsx",
+      "tests/js/**/*.ts",
+      "tests/js/**/*.tsx"
   ],
   "exclude": ["./node_modules"]
 }
