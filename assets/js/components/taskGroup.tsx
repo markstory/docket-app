@@ -3,6 +3,7 @@ import {Droppable, Draggable} from 'react-beautiful-dnd';
 import classnames from 'classnames';
 
 import {Task} from 'app/types';
+import {t} from 'app/locale';
 import TaskRow from 'app/components/taskRow';
 import TaskAddForm from 'app/components/taskAddForm';
 import {Icon, InlineIcon} from './icon';
@@ -81,7 +82,7 @@ export default function TaskGroup({
           {!showForm && (
             <button className="button-secondary" onClick={() => setShowForm(true)}>
               <InlineIcon icon="plus" />
-              Add Task
+              {t('Add Task')}
             </button>
           )}
           {showForm && (

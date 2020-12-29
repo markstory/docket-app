@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 
+import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
@@ -22,7 +23,7 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
         <input
           type="text"
           name="title"
-          placeholder="Take out the trash"
+          placeholder={t('Take out the trash')}
           defaultValue={task.title}
           autoFocus
           required
@@ -31,7 +32,7 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
       </div>
       <div className="attributes">
         <div className="project">
-          <label htmlFor="task-project">Project</label>
+          <label htmlFor="task-project">{t('Project')}</label>
           <select id="task-project" name="project_id" defaultValue={task.project.id}>
             {projects.map(project => (
               <option key={project.id} value={project.id}>
@@ -51,9 +52,9 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
         </div>
       </div>
       <div className="button-bar">
-        <button type="submit">Save</button>
+        <button type="submit">{t('Save')}</button>
         <button className="button-secondary" onClick={onCancel}>
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </form>

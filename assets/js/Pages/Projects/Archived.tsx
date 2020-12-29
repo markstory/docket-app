@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {t} from 'app/locale';
 import {Project} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectItem from 'app/components/projectItem';
@@ -11,7 +12,7 @@ type Props = {
 export default function ProjectsArchived({archived}: Props) {
   return (
     <LoggedIn>
-      <h1>Archived Projects</h1>
+      <h1>{t('Archived Projects')}</h1>
       {archived.length === 0 && <NoProjects />}
       {archived.map(item => (
         <ProjectItem key={item.id} project={item} />
@@ -23,8 +24,8 @@ export default function ProjectsArchived({archived}: Props) {
 function NoProjects() {
   return (
     <div>
-      <h2>Nothing to see</h2>
-      <p>You don't have any archived projects.</p>
+      <h2>{t('Nothing to see')}</h2>
+      <p>{t("You don't have any archived projects.")}</p>
     </div>
   );
 }

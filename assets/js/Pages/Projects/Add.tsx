@@ -1,6 +1,7 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
+import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
 import Modal from 'app/components/modal';
@@ -26,16 +27,16 @@ function ProjectsAdd({errors, referer}: Props) {
   return (
     <LoggedIn>
       <Modal onClose={handleClose}>
-        <h2>New Project</h2>
+        <h2>{t('New Project')}</h2>
         <form method="POST" onSubmit={handleSubmit}>
           <input type="hidden" value={referer} name="referer" />
           <div className="form-input">
-            <label htmlFor="project-name">Name</label>
+            <label htmlFor="project-name">{t('Name')}</label>
             <input id="project-name" type="text" name="name" required />
             <FormError errors={errors} field="name" />
           </div>
           <div className="form-input">
-            <label htmlFor="project-color">Color</label>
+            <label htmlFor="project-color">{t('Color')}</label>
             <input
               id="project-color"
               type="text"
@@ -46,7 +47,7 @@ function ProjectsAdd({errors, referer}: Props) {
             <FormError errors={errors} field="color" />
           </div>
           <div className="button-bar">
-            <button type="submit">Save</button>
+            <button type="submit">{t('Save')}</button>
           </div>
         </form>
       </Modal>

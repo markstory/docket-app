@@ -1,6 +1,7 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
+import {t} from 'app/locale';
 import Modal from 'app/components/modal';
 import {Project, ValidationErrors} from 'app/types';
 import FormError from 'app/components/formError';
@@ -26,11 +27,11 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
   return (
     <LoggedIn>
       <Modal onClose={handleClose}>
-        <h2>Edit Project</h2>
+        <h2>{t('Edit Project')}</h2>
         <form method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
           <div className="form-input">
-            <label htmlFor="project-name">Name</label>
+            <label htmlFor="project-name">{t('Name')}</label>
             <input
               id="project-name"
               type="text"
@@ -41,7 +42,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             <FormError errors={errors} field="name" />
           </div>
           <div className="form-input">
-            <label htmlFor="project-color">Color</label>
+            <label htmlFor="project-color">{t('Color')}</label>
             <input
               id="project-color"
               type="text"
@@ -52,7 +53,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             <FormError errors={errors} field="color" />
           </div>
           <div className="form-input">
-            <label htmlFor="project-archived">Archived</label>
+            <label htmlFor="project-archived">{t('Archived')}</label>
             <input
               type="checkbox"
               name="archived"
@@ -61,9 +62,9 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             />
           </div>
           <div className="button-bar">
-            <button type="submit">Save</button>
+            <button type="submit">{t('Save')}</button>
             <button type="reset" className="button-secondary" onClick={handleClose}>
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         </form>

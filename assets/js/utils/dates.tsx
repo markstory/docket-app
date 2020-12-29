@@ -1,4 +1,5 @@
 import {differenceInDays, addDays, format, parse} from 'date-fns';
+import {t} from 'app/locale';
 
 export const ONE_DAY_IN_MS = 60 * 60 * 24 * 1000;
 
@@ -55,9 +56,9 @@ export function formatCompactDate(date: Date | string): string {
     return format(input, 'MMM d');
   }
   if (delta < 1) {
-    return 'Today';
+    return t('Today');
   } else if (delta < 2) {
-    return 'Tomorrow';
+    return t('Tomorrow');
   }
   if (delta < 7) {
     return format(input, 'iiii');
@@ -71,9 +72,9 @@ export function formatDateHeading(date: Date | string): string {
 
   let shortDate = format(input, delta < 7 ? 'EEEE MMM d' : 'MMM d');
   if (delta < 1) {
-    shortDate = 'Today ' + shortDate;
+    shortDate = t('Today {date}', {date: shortDate});
   } else if (delta < 2) {
-    shortDate = 'Tomorrow ' + shortDate;
+    shortDate = t('Tomorrow {date}', {date: shortDate});
   }
   return shortDate;
 }

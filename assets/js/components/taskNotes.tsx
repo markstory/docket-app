@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
+import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
 
@@ -24,16 +25,16 @@ export default function TaskNotes({task}: Props) {
     return (
       <div className="task-notes">
         <h4 className="heading-actions">
-          Notes
+          {t('Notes')}
           <button className="button-default" onClick={() => setEditing(true)}>
-            Edit
+            {t('Edit')}
           </button>
         </h4>
         <div onClick={() => setEditing(true)}>
           {lines.map((text: string) => (
             <p key={text}>{text}</p>
           ))}
-          {lines.length == 0 && <p className="placeholder">Click to Edit</p>}
+          {lines.length == 0 && <p className="placeholder">{t('Click to Edit')}</p>}
         </div>
       </div>
     );
@@ -41,12 +42,12 @@ export default function TaskNotes({task}: Props) {
 
   return (
     <form className="task-notes" onSubmit={handleSave}>
-      <h4 className="heading-actions">Notes</h4>
+      <h4 className="heading-actions">{t('Notes')}</h4>
       <textarea name="body" rows={lines.length + 2} defaultValue={task.body} autoFocus />
       <div className="button-bar">
-        <button type="submit">Save</button>
+        <button type="submit">{t('Save')}</button>
         <button className="button-default" onClick={() => setEditing(false)}>
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </form>

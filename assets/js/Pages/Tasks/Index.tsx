@@ -3,6 +3,7 @@ import {sortBy} from 'lodash';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import {groupBy} from 'lodash';
 
+import {t} from 'app/locale';
 import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroup from 'app/components/taskGroup';
@@ -47,7 +48,7 @@ function zeroFillItems(
 function createGrouper(start: string, numDays: number) {
   return function taskGrouper(items: Task[]): GroupedItems {
     const byDate: Record<string, Task[]> = groupBy(items, item =>
-      item.due_on ? item.due_on : 'No Due Date'
+      item.due_on ? item.due_on : t('No Due Date')
     );
     const grouped = Object.entries(byDate).map(([key, value]) => {
       return {key, items: value};
@@ -78,7 +79,7 @@ export default function TasksIndex({tasks, start, nextStart}: Props) {
       <div className="button-bar">
         {nextPage && (
           <InertiaLink className="button button-secondary" href={nextPage}>
-            Next
+            {t('Next')}
           </InertiaLink>
         )}
       </div>

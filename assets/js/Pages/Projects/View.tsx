@@ -1,6 +1,7 @@
 import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
+import {t} from 'app/locale';
 import {Project, Task} from 'app/types';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -29,7 +30,7 @@ export default function ProjectsView({completed, project, tasks}: Props) {
         </div>
 
         <div className="attributes">
-          {project.archived && <span className="archived">Archived</span>}
+          {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
         <TaskSorter tasks={tasks} scope="child">
           {({items}) => (
@@ -44,12 +45,12 @@ export default function ProjectsView({completed, project, tasks}: Props) {
         </TaskSorter>
         {completed && (
           <React.Fragment>
-            <TaskList title="Completed" tasks={completed} showDueOn />
+            <TaskList title={t('Completed')} tasks={completed} showDueOn />
             <InertiaLink
               className="button button-muted"
               href={`/projects/${project.slug}`}
             >
-              Hide completed tasks
+              {t('Hide completed tasks')}
             </InertiaLink>
           </React.Fragment>
         )}

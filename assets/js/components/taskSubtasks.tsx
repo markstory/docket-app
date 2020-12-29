@@ -3,6 +3,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
 import classnames from 'classnames';
 
+import {t} from 'app/locale';
 import {TaskDetailed, Subtask} from 'app/types';
 import SubtaskSorter from 'app/components/subtaskSorter';
 import SubtaskAddForm from 'app/components/subtaskAddForm';
@@ -78,7 +79,7 @@ export default function TaskSubtasks({task}: Props) {
           {!showForm && (
             <button className="button-default" onClick={() => setShowForm(true)}>
               <InlineIcon icon="plus" />
-              Add Sub-task
+              {t('Add Sub-task')}
             </button>
           )}
           {showForm && <SubtaskAddForm task={task} onCancel={() => setShowForm(false)} />}

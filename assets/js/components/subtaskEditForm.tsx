@@ -1,6 +1,7 @@
 import React from 'react';
 import axios, {AxiosResponse} from 'axios';
 
+import {t} from 'app/locale';
 import {Subtask} from 'app/types';
 import {useSubtasks} from 'app/providers/subtasks';
 
@@ -40,16 +41,16 @@ export default function SubtaskEditForm({subtask, index, taskId, onCancel}: Prop
         <input
           type="text"
           name="title"
-          placeholder="Take out the trash"
+          placeholder={t('Take out the trash')}
           defaultValue={subtask.title}
           autoFocus
           required
         />
       </div>
       <div className="button-bar">
-        <button type="submit">Save</button>
+        <button type="submit">{t('Save')}</button>
         <button className="button-secondary" onClick={onCancel}>
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </form>

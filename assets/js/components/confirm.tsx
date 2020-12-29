@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {t} from 'app/locale';
 import Modal from 'app/components/modal';
 import {confirmable, createConfirmation} from 'react-confirm';
 
@@ -47,8 +48,8 @@ function Confirmation({
 export function confirm(
   title: string,
   confirmation: string,
-  proceedLabel: string = 'Ok',
-  cancelLabel = 'Cancel',
+  proceedLabel: string = t('Ok'),
+  cancelLabel = t('Cancel'),
   options = {}
 ) {
   return createConfirmation(confirmable(Confirmation))({

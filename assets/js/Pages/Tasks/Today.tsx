@@ -2,6 +2,7 @@ import React from 'react';
 import {partition} from 'lodash';
 
 import {Task} from 'app/types';
+import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
@@ -42,7 +43,7 @@ export default function TasksToday({tasks}: Props) {
             <React.Fragment>
               {overdue && (
                 <React.Fragment>
-                  <h3>Overdue</h3>
+                  <h3>{t('Overdue')}</h3>
                   <TaskGroup
                     dropId="overdue"
                     tasks={overdue.items}
@@ -52,7 +53,7 @@ export default function TasksToday({tasks}: Props) {
                   />
                 </React.Fragment>
               )}
-              <h1>Today</h1>
+              <h1>{t('Today')}</h1>
               <TaskGroup
                 dropId={defaultDate}
                 tasks={today.items}

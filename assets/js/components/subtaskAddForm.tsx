@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
+import {t} from 'app/locale';
 import {TaskDetailed, Subtask} from 'app/types';
 import {useSubtasks} from 'app/providers/subtasks';
 
@@ -39,7 +40,7 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
         <input
           type="text"
           name="title"
-          placeholder="Take out the trash"
+          placeholder={t('Take out the trash')}
           autoFocus
           required
           value={value}
@@ -47,9 +48,9 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
         />
       </div>
       <div className="button-bar">
-        <button type="submit">Save</button>
+        <button type="submit">{t('Save')}</button>
         <button className="button-secondary" onClick={onCancel}>
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </form>

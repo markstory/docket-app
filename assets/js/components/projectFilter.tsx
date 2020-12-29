@@ -2,6 +2,7 @@ import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import {Droppable, Draggable} from 'react-beautiful-dnd';
 
+import {t} from 'app/locale';
 import ProjectItem from 'app/components/projectItem';
 import ProjectSorter from 'app/components/projectSorter';
 import {Icon, InlineIcon} from './icon';
@@ -13,17 +14,17 @@ function ProjectFilter() {
         <li>
           <InertiaLink href="/todos/today">
             <InlineIcon icon="clippy" />
-            Today
+            {t('Today')}
           </InertiaLink>
         </li>
         <li>
           <InertiaLink href="/todos/upcoming">
             <InlineIcon icon="calendar" />
-            Upcoming
+            {t('Upcoming')}
           </InertiaLink>
         </li>
       </ul>
-      <h3>Projects</h3>
+      <h3>{t('Projects')}</h3>
       <ProjectSorter>
         {({projects}) => (
           <Droppable droppableId="projects" type="project">
@@ -68,10 +69,10 @@ function ProjectFilter() {
       <div className="button-bar-vertical">
         <InertiaLink className="button button-secondary" href="/projects/add">
           <InlineIcon icon="plus" />
-          Create Project
+          {t('Create Project')}
         </InertiaLink>
         <InertiaLink className="button button-muted" href="/projects/archived">
-          Archived Projects
+          {t('Archived Projects')}
         </InertiaLink>
       </div>
     </div>

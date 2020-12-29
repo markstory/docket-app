@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
-import DropdownMenu from './dropdownMenu';
-import {InlineIcon} from './icon';
+import {t} from 'app/locale';
 import {
   formatCompactDate,
   parseDate,
@@ -11,6 +10,9 @@ import {
   toDateString,
 } from 'app/utils/dates';
 import {Task} from 'app/types';
+
+import DropdownMenu from './dropdownMenu';
+import {InlineIcon} from './icon';
 
 type Props = {
   selected: Task['due_on'];
@@ -77,15 +79,15 @@ export function MenuContents({selected, onChange}: ContentsProps) {
         />
       </div>
       <button className="menu-option" onClick={handleButtonClick(today)}>
-        <InlineIcon icon="clippy" /> Today
+        <InlineIcon icon="clippy" /> {t('Today')}
       </button>
       <button className="menu-option" onClick={handleButtonClick(tomorrow)}>
         <InlineIcon icon="sun" />
-        Tommorrow
+        {t('Tommorrow')}
       </button>
       <button className="menu-option" onClick={handleButtonClick(null)}>
         <InlineIcon icon="trash" />
-        No Date
+        {t('No Date')}
       </button>
       <DayPicker
         disabledDays={{before: new Date()}}
