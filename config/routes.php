@@ -106,6 +106,9 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['taskId', 'id']);
     });
 
+    $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
+        $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
+    });
     /*
      * Connect catchall routes for all controllers.
      *

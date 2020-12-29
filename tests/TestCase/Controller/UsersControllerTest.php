@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\UsersController;
+use App\Test\TestCase\FactoryTrait;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -14,6 +15,7 @@ use Cake\TestSuite\TestCase;
  */
 class UsersControllerTest extends TestCase
 {
+    use FactoryTrait;
     use IntegrationTestTrait;
 
     /**
@@ -24,27 +26,12 @@ class UsersControllerTest extends TestCase
     protected $fixtures = [
         'app.Users',
         'app.Projects',
-        'app.TaskComments',
     ];
 
-    /**
-     * Test index method
-     *
-     * @return void
-     */
-    public function testIndex(): void
+    public function setUp(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        parent::setUp();
+        $this->Users = TableRegistry::get('Users');
     }
 
     /**
@@ -62,18 +49,31 @@ class UsersControllerTest extends TestCase
      *
      * @return void
      */
-    public function testEdit(): void
+    public function testEditLoginRequired(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->enableCsrfToken();
+        $this->post('/users/profile', [
+            'email' => 'example@example.com'
+        ]);
+        $this->assertRedirectContains('/login');
     }
 
     /**
-     * Test delete method
+     * Test edit method
      *
      * @return void
      */
-    public function testDelete(): void
+    public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/users/profile', [
+            'email' => 'example@example.com',
+            'timezone' => 'America/San_Francisco',
+        ]);
+        $this->assertRedirect('/todos/today');
+        $user = $this->Users->get(1);
+        $this->assertSame('example@example.com', $user->email);
+        $this->assertFalse($user->email_verified);
     }
 }

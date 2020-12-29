@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\User;
+use Cake\Event\EventInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -75,9 +77,12 @@ class UsersTable extends Table
 
         $validator
             ->scalar('password')
+            ->minLength('password', 10)
             ->maxLength('password', 255)
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
+
+        // TODO add timezone validation.
 
         return $validator;
     }
@@ -94,5 +99,13 @@ class UsersTable extends Table
         $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
 
         return $rules;
+    }
+
+    public function afterMarshal(EventInterface $event, User $user)
+    {
+        // Reset verified flag when email changes without verified also being modified.
+        if ($user->isDirty('email') && $user->email_verified && !$user->isDirty('email_verified')) {
+            $user->email_verified = false;
+        }
     }
 }

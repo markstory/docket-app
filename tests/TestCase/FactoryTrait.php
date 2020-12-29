@@ -18,6 +18,18 @@ trait FactoryTrait
         ]);
     }
 
+    protected function makeUser($email, $props = [])
+    {
+        $users = TableRegistry::get('Users');
+        $user = $users->newEntity(array_merge([
+            'email' => $email,
+            'email_verified' => true,
+            'password' => 'super sekret',
+        ], $props));
+
+        return $users->saveOrFail($user);
+    }
+
     protected function makeProject($title, $userId, $ranking = 0, $props = [])
     {
         $projects = TableRegistry::get('Projects');

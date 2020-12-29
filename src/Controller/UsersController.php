@@ -22,22 +22,6 @@ class UsersController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $user = $this->Users->get($id, [
-            'contain' => ['Projects'],
-        ]);
-
-        $this->set(compact('user'));
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
@@ -67,17 +51,20 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+        $identity = $this->request->getAttribute('identity');
+        $user = $this->Users->get($identity->id);
+        $this->Authorization->authorize($user);
 
-                return $this->redirect(['action' => 'index']);
+        $allowedFields = ['email', 'name', 'timezone'];
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
+
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Your profile has been updated'));
+
+                return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Your profile not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
     }
