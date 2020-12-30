@@ -11,7 +11,7 @@
   border-radius: $border-radius-large $border-radius-large 0 0;
   box-shadow: $shadow-high;
 
-  & > button {
+  .modal-close {
     @extend .button-default;
 
     border: none;

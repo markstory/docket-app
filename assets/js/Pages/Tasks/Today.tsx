@@ -43,7 +43,7 @@ export default function TasksToday({tasks}: Props) {
             <React.Fragment>
               {overdue && (
                 <React.Fragment>
-                  <h3>{t('Overdue')}</h3>
+                  <h2>{t('Overdue')}</h2>
                   <TaskGroup
                     dropId="overdue"
                     tasks={overdue.items}
@@ -53,7 +53,7 @@ export default function TasksToday({tasks}: Props) {
                   />
                 </React.Fragment>
               )}
-              <h1>{t('Today')}</h1>
+              <h2>{t('Today')}</h2>
               <TaskGroup
                 dropId={defaultDate}
                 tasks={today.items}

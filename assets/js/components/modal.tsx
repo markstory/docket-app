@@ -22,10 +22,23 @@ export default function Modal({
     onClose();
   }
 
+  function handleRequestClose() {
+    onClose();
+  }
+
   return (
-    <BaseModal className={className} overlayClassName="modal-overlay" isOpen={isOpen}>
-      {canClose && <button onClick={handleClose}>{'\u2715'}</button>}
-      {children}
+    <BaseModal
+      className={className}
+      overlayClassName="modal-overlay"
+      isOpen={isOpen}
+      onRequestClose={handleRequestClose}
+    >
+      {canClose && (
+        <button className="modal-close" onClick={handleClose}>
+          {'\u2715'}
+        </button>
+      )}
+      <div className="modal-contents">{children}</div>
     </BaseModal>
   );
 }
