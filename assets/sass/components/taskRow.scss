@@ -53,7 +53,7 @@
     background: $color-bg;
     border-radius: $border-radius;
   }
-  .actions * + * {
+  .actions > * + * {
     margin-left: $space;
   }
   &:hover .actions {
@@ -64,11 +64,6 @@
 
 .dnd-item-dragging .task-row {
   padding-left: 4px;
-  border-bottom: 0;
-  margin-bottom: 0;
-}
-
-.drag-ghost .task-row {
   border-bottom: 0;
   margin-bottom: 0;
 }

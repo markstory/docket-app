@@ -73,7 +73,7 @@ export default function ProjectMenu({
       <li>
         <button className="context-item" onClick={handleDelete}>
           <InlineIcon icon="trash" />
-          {t('Delete')}
+          {t('Delete Project')}
         </button>
       </li>
     </ContextMenu>

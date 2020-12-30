@@ -23,6 +23,12 @@
   ul li:last-child {
     margin-bottom: 0;
   }
+
+  > .button-icon {
+    // Stack buttons higher than the hitbox so that
+    // adjacent buttons with dropdowns can be clicked.
+    z-index: $z-active-ui + 1;
+  }
 }
 
 .dropdown-menu .dropdown {
@@ -32,7 +38,6 @@
   border-radius: $border-radius;
   box-shadow: $shadow-med;
   padding: $space;
-  min-width: 150px;
   width: max-content;
 
   &:after,
