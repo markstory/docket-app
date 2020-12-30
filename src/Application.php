@@ -158,7 +158,12 @@ class Application extends BaseApplication
         ]);
 
         // Load the authenticators, you want session first
-        $service->loadAuthenticator('Authentication.Session');
+        $service->loadAuthenticator('Authentication.Session', [
+            'identify' => true,
+            'fields' => [
+                IdentifierInterface::CREDENTIAL_USERNAME => 'email',
+            ],
+        ]);
         $service->loadAuthenticator('Authentication.Form', [
             'loginUrl' => '/login',
             'fields' => [
