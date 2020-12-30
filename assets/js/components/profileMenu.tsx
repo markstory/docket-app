@@ -24,7 +24,7 @@ export default function ProfileMenu() {
         )}
       >
         <ul>
-          <li className="name">{identity.name}</li>
+          <li className="context-item-text separator">{identity.name}</li>
           <li>
             <InertiaLink className="context-item" href="/users/profile">
               <InlineIcon icon="pencil" />

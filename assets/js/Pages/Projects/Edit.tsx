@@ -28,7 +28,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
     <LoggedIn>
       <Modal onClose={handleClose}>
         <h2>{t('Edit Project')}</h2>
-        <form method="post" onSubmit={handleSubmit}>
+        <form className="form-vertical" method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
           <div className="form-input">
             <label htmlFor="project-name">{t('Name')}</label>
@@ -52,7 +52,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             />
             <FormError errors={errors} field="color" />
           </div>
-          <div className="form-input">
+          <div className="form-input-horizontal">
             <label htmlFor="project-archived">{t('Archived')}</label>
             <input
               type="checkbox"

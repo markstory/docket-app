@@ -26,8 +26,13 @@ export default function UsersEdit({identity, referer}: Props) {
     <LoggedIn>
       <Modal onClose={handleClose}>
         <h1>{t('Edit Profile')}</h1>
-        <form method="post" onSubmit={handleSubmit}>
+        <form method="post" className="form-vertical" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
+          <div className="form-input">
+            <label htmlFor="name">{t('Name')}</label>
+            <input name="name" type="text" defaultValue={identity.name} />
+          </div>
+
           <div className="form-input">
             <label htmlFor="unverified_email">{t('Email Address')}</label>
             <input name="unverified_email" type="email" defaultValue={identity.email} />

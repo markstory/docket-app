@@ -11,6 +11,8 @@
   }
 
   ul {
+    display: flex;
+    flex-direction: column;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -34,37 +36,68 @@
     // Tweak the active button backdown.
     z-index: $z-active-ui;
   }
-}
 
-.dropdown-menu .dropdown {
-  position: relative;
-  background: $color-bg-raised;
-  border: 1px solid $color-border-med;
-  border-radius: $border-radius;
-  box-shadow: $shadow-med;
-  width: max-content;
+  .dropdown {
+    position: relative;
+    background: $color-bg-raised;
+    border: 1px solid $color-border-med;
+    border-radius: $border-radius;
+    box-shadow: $shadow-med;
+    width: max-content;
 
-  &:after,
-  &:before {
-    bottom: 100%;
-    border: solid transparent;
-    content: "";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
+    &:after,
+    &:before {
+      bottom: 100%;
+      border: solid transparent;
+      content: "";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    &:after {
+      border-color: rgba(255, 255, 255, 0);
+      border-bottom-color: $color-bg-raised;
+      border-width: 10px;
+    }
+
+    &:before {
+      border-color: rgba(255, 255, 255, 0);
+      border-bottom-color: $color-border-med;
+      border-width: 11px;
+    }
   }
 
-  &:after {
-    border-color: rgba(255, 255, 255, 0);
-    border-bottom-color: $color-bg-raised;
-    border-width: 10px;
+  .context-item-text,
+  .context-item {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    background: none;
+    border: none;
+    color: $color-foreground;
+
+    border-radius: 0;
+    box-shadow: none;
+    padding: $space $space * 1.5;
+    text-align: left;
+    height: auto;
+
+    line-height: 1.3;
+    text-decoration: none;
   }
 
-  &:before {
-    border-color: rgba(255, 255, 255, 0);
-    border-bottom-color: $color-border-med;
-    border-width: 11px;
+  .separator {
+    border-bottom: 1px solid $color-border;
+  }
+
+  .context-item {
+    &:active,
+    &:hover {
+      background: $color-button-default-hover;
+    }
   }
 }
 
@@ -105,27 +138,3 @@
 }
 
 
-.dropdown-menu .context-item {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-
-  background: none;
-  border: none;
-  color: $color-foreground;
-
-  border-radius: 0;
-  box-shadow: none;
-  padding: $space $space * 1.5;
-  text-align: left;
-  height: auto;
-  width: max-content;
-
-  line-height: 1.3;
-  text-decoration: none;
-
-  &:active,
-  &:hover {
-    background: $color-button-default-hover;
-  }
-}
