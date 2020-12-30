@@ -77,8 +77,11 @@ class AppController extends Controller
         $identity = $this->request->getAttribute('identity');
         $this->set('identity', $identity);
         if ($identity) {
-            $this->loadModel('Projects');
-            $this->set('projects', $identity->applyScope('index', $this->Projects->find('active')->find('top')));
+            // Use a function to defer query exection on partial loads.
+            $this->set('projects', function () use ($identity) {
+                $this->loadModel('Projects');
+                return $identity->applyScope('index', $this->Projects->find('active')->find('top'));
+            });
         }
 
         // Use inertia if we aren't making a custom JSON response.
