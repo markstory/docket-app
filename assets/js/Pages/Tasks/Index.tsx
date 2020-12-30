@@ -66,12 +66,18 @@ export default function TasksIndex({tasks, start, nextStart}: Props) {
         {({groupedItems}) => {
           return (
             <React.Fragment>
-              {groupedItems.map(({key, items}) => (
-                <React.Fragment key={key}>
-                  <h2>{formatDateHeading(key)}</h2>
-                  <TaskGroup dropId={key} tasks={items} defaultDate={key} showProject />
-                </React.Fragment>
-              ))}
+              {groupedItems.map(({key, items}) => {
+                const [heading, subheading] = formatDateHeading(key);
+                return (
+                  <React.Fragment key={key}>
+                    <h3>
+                      {heading}
+                      {subheading && <span className="minor">{subheading}</span>}
+                    </h3>
+                    <TaskGroup dropId={key} tasks={items} defaultDate={key} showProject />
+                  </React.Fragment>
+                );
+              })}
             </React.Fragment>
           );
         }}

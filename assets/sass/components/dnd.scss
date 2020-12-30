@@ -14,6 +14,7 @@
   line-height: 1;
   border: none;
   padding: 3px;
+  visibility: hidden;
 }
 
 .dnd-item-dragging {
@@ -28,11 +29,8 @@
 .dnd-dropper-left-offset {
   margin-left: -34px;
   padding-left: 0;
+}
 
-  .dnd-handle {
-    visibility: hidden;
-  }
-  &:hover .dnd-handle {
-    visibility: visible;
-  }
+.dnd-item:hover .dnd-handle {
+  visibility: visible;
 }

@@ -68,15 +68,17 @@ export function formatCompactDate(date: Date | string): string {
   return format(input, 'MMM d');
 }
 
-export function formatDateHeading(date: Date | string): string {
+export function formatDateHeading(date: Date | string): [heading: string, subheading: string] {
   const input = date instanceof Date ? date : parseDate(date);
   const delta = differenceInDays(input, getToday());
 
-  let shortDate = format(input, delta < 7 ? 'EEEE MMM d' : 'MMM d');
+  let shortDate = format(input, 'MMM d');
   if (delta < 1) {
-    shortDate = t('Today {date}', {date: shortDate});
+    return [t('Today'), shortDate];
   } else if (delta < 2) {
-    shortDate = t('Tomorrow {date}', {date: shortDate});
+    return [t('Tomorrow'), shortDate];
+  } else if (delta < 7) {
+    return [format(input, 'EEEE'), shortDate];
   }
-  return shortDate;
+  return [shortDate, ''];
 }

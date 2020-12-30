@@ -42,8 +42,10 @@ type WrappedProps = {width?: string} & IconProps;
 function getWidth(size: string): number {
   switch (size) {
     case 'xsmall':
-      return 13;
+      return 12;
     case 'small':
+      return 14;
+    case 'normal':
       return 16;
     case 'medium':
       return 18;
@@ -54,11 +56,11 @@ function getWidth(size: string): number {
   }
 }
 
-function WrappedIcon({width = 'small', ...props}: WrappedProps) {
+function WrappedIcon({width = 'normal', ...props}: WrappedProps) {
   return <Icon width={getWidth(width)} {...props} />;
 }
 
-function WrappedInlineIcon({width = 'small', ...props}: WrappedProps) {
+function WrappedInlineIcon({width = 'normal', ...props}: WrappedProps) {
   return <InlineIcon width={getWidth(width)} {...props} />;
 }
 

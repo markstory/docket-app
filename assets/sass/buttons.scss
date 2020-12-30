@@ -2,7 +2,6 @@
 button {
   text-decoration: none;
   text-transform: none;
-  font-size: $font-size-small;
   font-weight: normal;
   cursor: pointer;
 
@@ -49,7 +48,6 @@ button > svg {
   background: none;
   color: $color-muted;
   border: none;
-  font-size: $font-size-small;
 
   &:hover {
     color: $color-foreground;
