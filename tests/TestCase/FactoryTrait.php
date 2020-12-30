@@ -22,6 +22,7 @@ trait FactoryTrait
     {
         $users = TableRegistry::get('Users');
         $user = $users->newEntity(array_merge([
+            'name' => 'Unknown',
             'email' => $email,
             'email_verified' => true,
             'password' => 'super sekret',

@@ -51,22 +51,24 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+        $referer = $this->getReferer();
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
 
-        $allowedFields = ['email', 'name', 'timezone'];
+        $allowedFields = ['unverified_email', 'name', 'timezone'];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
 
+            // TODO send email verification out.
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Your profile has been updated'));
 
-                return $this->redirect($this->referer(['_name' => 'tasks:today']));
+                return $this->redirect($referer);
             }
             $this->Flash->error(__('Your profile not be saved. Please, try again.'));
         }
-        $this->set(compact('user'));
+        $this->set(compact('user', 'referer'));
     }
 
     public function login()

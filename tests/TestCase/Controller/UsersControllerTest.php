@@ -53,7 +53,7 @@ class UsersControllerTest extends TestCase
     {
         $this->enableCsrfToken();
         $this->post('/users/profile', [
-            'email' => 'example@example.com'
+            'unverified_email' => 'example@example.com'
         ]);
         $this->assertRedirectContains('/login');
     }
@@ -68,12 +68,14 @@ class UsersControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post('/users/profile', [
-            'email' => 'example@example.com',
+            'email' => 'badthings@example.com',
+            'unverified_email' => 'example@example.com',
             'timezone' => 'America/San_Francisco',
         ]);
         $this->assertRedirect('/todos/today');
         $user = $this->Users->get(1);
-        $this->assertSame('example@example.com', $user->email);
-        $this->assertFalse($user->email_verified);
+        $this->assertNotEquals('badthings@example.com', $user->email);
+        $this->assertTrue($user->email_verified);
+        $this->assertEquals('example@example.com', $user->unverified_email);
     }
 }

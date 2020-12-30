@@ -34,12 +34,9 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      * @var array
      */
     protected $_accessible = [
-        'email' => true,
-        'password' => true,
-        'created' => true,
+        'name' => true,
+        'unverified_email' => true,
         'modified' => true,
-        'projects' => true,
-        'todo_comments' => true,
     ];
 
     /**
@@ -49,7 +46,15 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      */
     protected $_hidden = [
         'password',
+        'email_verified',
     ];
+
+    protected $_virtual = ['avatar_hash'];
+
+    protected function _getAvatarHash()
+    {
+        return md5(strtolower($this->email));
+    }
 
     /**
      * Hash password

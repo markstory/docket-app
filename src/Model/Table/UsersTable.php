@@ -76,6 +76,9 @@ class UsersTable extends Table
             ->notEmptyString('email');
 
         $validator
+            ->email('unverified_email');
+
+        $validator
             ->scalar('password')
             ->minLength('password', 10)
             ->maxLength('password', 255)
@@ -99,13 +102,5 @@ class UsersTable extends Table
         $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
 
         return $rules;
-    }
-
-    public function afterMarshal(EventInterface $event, User $user)
-    {
-        // Reset verified flag when email changes without verified also being modified.
-        if ($user->isDirty('email') && $user->email_verified && !$user->isDirty('email_verified')) {
-            $user->email_verified = false;
-        }
     }
 }

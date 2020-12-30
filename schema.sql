@@ -1,8 +1,10 @@
 CREATE TABLE IF NOT EXISTS users (
     id int not null auto_increment primary key,
     email varchar(255) not null,
-    password varchar(255) not null,
     email_verified boolean not null default false,
+    password varchar(255) not null,
+    name varchar(255) not null default '',
+    unverified_email varchar(255) not null default '',
     timezone varchar(255) default 'UTC',
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp
