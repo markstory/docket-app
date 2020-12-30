@@ -1,0 +1,22 @@
+.profile-menu {
+  .avatar,
+  .avatar:hover {
+    padding: 0 0 0 $space * 2;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  img {
+    border-radius: 50%;
+    border: 1px solid transparent;
+  }
+  .avatar:hover img {
+    border-color: $color-border-med;
+  }
+
+  .dropdown-menu .hitbox {
+    top: 20px;
+    left: 3px;
+  }
+}

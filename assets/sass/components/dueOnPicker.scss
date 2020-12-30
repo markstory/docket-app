@@ -5,7 +5,7 @@
     background: none;
     border: none;
     border-bottom: 1px solid $color-border;
-    padding-left: 2px;
+    padding: $space $space * 1.5;
 
     &:hover {
       box-shadow: none;
@@ -13,8 +13,15 @@
   }
 
   input[type="text"] {
-    padding: $space / 2;
+    padding: $space;
     border: none;
+  }
+
+  .DayPicker {
+    padding: 0 $space;
+  }
+  .DayPicker-NavButton {
+    right: $space;
   }
 }
 

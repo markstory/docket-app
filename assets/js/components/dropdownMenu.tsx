@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
 import classnames from 'classnames';
-import {Icon} from './icon';
 
 type ButtonProps = {
   onClick: (event: React.MouseEvent) => void;
@@ -8,18 +7,36 @@ type ButtonProps = {
 
 type Props = {
   children: React.ReactNode;
+  /**
+   * Which side of the button to align the menu with.
+   */
   alignMenu?: 'left' | 'right';
   className?: string;
+  /**
+   * A render function that must return an element
+   * to trigger showing the menu. The `props` parameter
+   * has event handlers.
+   */
   button?: (props: ButtonProps) => React.ReactNode;
+  /**
+   * Should the menu show by default?
+   */
+  show?: boolean;
 };
 
 function defaultButton(props: ButtonProps) {
   return <button {...props}>Open</button>;
 }
 
-function DropdownMenu({button, className, children, alignMenu = 'left'}: Props) {
+function DropdownMenu({
+  button,
+  className,
+  children,
+  alignMenu = 'left',
+  show = false,
+}: Props) {
   let mounted = true;
-  const [isShowing, setIsShowing] = useState<boolean>(false);
+  const [isShowing, setIsShowing] = useState<boolean>(show);
   const menuRef = useRef<HTMLDivElement>(null);
 
   function handleClick(event: React.MouseEvent) {
@@ -54,16 +71,18 @@ function DropdownMenu({button, className, children, alignMenu = 'left'}: Props) 
 
   const buttonProps = {
     onClick: handleClick,
+    'data-active': isShowing,
   };
   const containerClass = classnames('dropdown-menu', className);
 
-  // TODO handle esc to close menu.
   return (
     <div ref={menuRef} data-align={alignMenu} className={containerClass}>
       {button ? button(buttonProps) : defaultButton(buttonProps)}
       {isShowing && (
         <div className="hitbox">
-          <div className="dropdown">{children}</div>
+          <div className="dropdown" onClick={handleClick}>
+            {children}
+          </div>
         </div>
       )}
     </div>

@@ -14,6 +14,7 @@ export default function FlashMessages({flash}: Props) {
   if (!flash || !flash.message) {
     return null;
   }
+  let mounted = true;
   const timer = useRef<number | undefined>(undefined);
   const [showing, setShowing] = useState(false);
   const [hovering, setHovering] = useState(false);
@@ -35,8 +36,13 @@ export default function FlashMessages({flash}: Props) {
   useEffect(
     function() {
       window.setTimeout(function() {
-        setShowing(true);
+        if (mounted) {
+          setShowing(true);
+        }
       }, 0);
+      return function cleanup() {
+        mounted = false;
+      };
     },
     [flash]
   );
@@ -52,7 +58,9 @@ export default function FlashMessages({flash}: Props) {
 
   function handleMouseEnter() {
     window.clearTimeout(timer.current);
-    setHovering(true);
+    if (mounted) {
+      setHovering(true);
+    }
   }
 
   return (

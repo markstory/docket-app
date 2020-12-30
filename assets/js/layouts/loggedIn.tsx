@@ -5,6 +5,7 @@ import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import ProjectFilter from 'app/components/projectFilter';
+import ProfileMenu from 'app/components/profileMenu';
 import {ProjectsProvider} from 'app/providers/projects';
 
 type SharedPageProps = {
@@ -39,6 +40,7 @@ function Contents({children}: Props) {
     <React.Fragment>
       <main className="layout-three-quarter">
         <section className="sidebar">
+          <ProfileMenu />
           <ProjectFilter />
         </section>
         <section className="content">

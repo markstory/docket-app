@@ -53,8 +53,7 @@ export function MenuContents({selected, onChange}: ContentsProps) {
   const [inputValue, setInputValue] = useState('');
 
   function handleButtonClick(value: Task['due_on']) {
-    return function onClick(event: React.MouseEvent) {
-      event.preventDefault();
+    return function onClick() {
       onChange(value);
     };
   }
@@ -87,7 +86,7 @@ export function MenuContents({selected, onChange}: ContentsProps) {
       </button>
       <button className="menu-option" onClick={handleButtonClick(null)}>
         <InlineIcon icon="trash" />
-        {t('No Date')}
+        {t('No Due Date')}
       </button>
       <DayPicker
         disabledDays={{before: new Date()}}

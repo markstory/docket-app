@@ -29,6 +29,11 @@
     // adjacent buttons with dropdowns can be clicked.
     z-index: $z-active-ui + 1;
   }
+
+  > [data-active=true] {
+    // Tweak the active button backdown.
+    z-index: $z-active-ui;
+  }
 }
 
 .dropdown-menu .dropdown {
@@ -37,7 +42,6 @@
   border: 1px solid $color-border-med;
   border-radius: $border-radius;
   box-shadow: $shadow-med;
-  padding: $space;
   width: max-content;
 
   &:after,
@@ -111,7 +115,8 @@
   color: $color-foreground;
 
   border-radius: 0;
-  padding: $space / 2;
+  box-shadow: none;
+  padding: $space $space * 1.5;
   text-align: left;
   height: auto;
   width: max-content;

@@ -43,7 +43,10 @@ export type TaskDetailed = Task & {
 
 export type User = {
   id: number;
+  name: string;
   email: string;
+  avatar_hash: string;
+  timezone: string;
   created: string;
   modified: string;
 };
