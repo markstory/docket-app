@@ -19,7 +19,6 @@ export function parseDateInput(input: string): Date | undefined {
   if (input.toLowerCase() === 'tomorrow') {
     return addDays(today, 1);
   }
-  // TODO ensure that months in the past are next year.
   const formats = ['MMM d', 'MMM dd', 'MMMM d', 'EEEE'];
   for (let i = 0; i < formats.length; i++) {
     try {
@@ -40,7 +39,7 @@ export function parseDateInput(input: string): Date | undefined {
   return undefined;
 }
 
-function getToday() {
+export function getToday() {
   const today = new Date();
   today.setHours(0);
   today.setMinutes(0, 0, 0);
@@ -49,9 +48,12 @@ function getToday() {
 
 export function formatCompactDate(date: Date | string): string {
   const input = date instanceof Date ? date : parseDate(date);
-  const delta = differenceInDays(getToday(), input);
+  const delta = differenceInDays(input, getToday());
 
   // In the past? Show the date.
+  if (delta < -90) {
+    return format(input, 'MMM d yyyy');
+  }
   if (delta < 0) {
     return format(input, 'MMM d');
   }

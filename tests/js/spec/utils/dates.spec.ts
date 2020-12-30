@@ -1,5 +1,11 @@
 import {addDays, addMonths, format} from 'date-fns';
-import {parseDate, parseDateInput, toDateString} from 'app/utils/dates';
+import {
+  formatCompactDate,
+  getToday,
+  parseDate,
+  parseDateInput,
+  toDateString,
+} from 'app/utils/dates';
 
 describe('utils/dates', function() {
   describe('parseDate()', function() {
@@ -47,13 +53,32 @@ describe('utils/dates', function() {
       expect(result.getTime()).toBeGreaterThan(now.getMonth());
     });
 
-    it('handles wrapping days in the past', function() {
+    it('handles wrapping days in the past to the next year', function() {
       const inPast = addMonths(new Date(), -2);
       const pastMonth = format(inPast, 'MMM');
       const result = parseDateInput(`${pastMonth} 10`);
       assertDefined(result);
       expect(result.getDate()).toEqual(10);
       expect(result.getFullYear()).toBeGreaterThan(inPast.getFullYear());
+    });
+  });
+
+  describe('formatCompactDate()', function() {
+    const today = getToday();
+    const tomorrow = addDays(today, 1);
+
+    it('accepts Date objects', function() {
+      expect(formatCompactDate(today)).toEqual('Today');
+      expect(formatCompactDate(tomorrow)).toEqual('Tomorrow');
+    });
+
+    it('formats weekdays', function() {
+      const day = addDays(new Date(), 3);
+      expect(formatCompactDate(day)).toMatch(/^.*day$/);
+    });
+
+    it('accepts strings', function() {
+      expect(formatCompactDate('2019-12-20')).toEqual('Dec 20 2019');
     });
   });
 });
