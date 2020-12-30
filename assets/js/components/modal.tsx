@@ -32,6 +32,7 @@ export default function Modal({
       overlayClassName="modal-overlay"
       isOpen={isOpen}
       onRequestClose={handleRequestClose}
+      shouldReturnFocusAfterClose={true}
     >
       {canClose && (
         <button className="modal-close" onClick={handleClose}>
