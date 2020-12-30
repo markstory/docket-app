@@ -3,8 +3,10 @@ import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import classnames from 'classnames';
 
+import {t} from 'app/locale';
 import {updateTaskField} from 'app/actions/tasks';
 import DropdownMenu from 'app/components/dropdownMenu';
+import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
@@ -73,6 +75,11 @@ function TaskActions({task}: Pick<Props, 'task'>) {
     });
   }
 
+  function handleDelete(event: React.MouseEvent) {
+    event.preventDefault();
+    Inertia.post(`/todos/${task.id}/delete`);
+  }
+
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
     <div className="actions">
@@ -86,6 +93,14 @@ function TaskActions({task}: Pick<Props, 'task'>) {
       >
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
       </DropdownMenu>
+      <ContextMenu alignMenu="right">
+        <li>
+          <button className="context-item" onClick={handleDelete}>
+            <InlineIcon icon="trash" />
+            {t('Delete Task')}
+          </button>
+        </li>
+      </ContextMenu>
     </div>
   );
 }

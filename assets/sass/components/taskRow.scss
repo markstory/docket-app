@@ -53,8 +53,12 @@
     background: $color-bg;
     border-radius: $border-radius;
   }
+  .actions * + * {
+    margin-left: $space;
+  }
   &:hover .actions {
-    display: block;
+    display: flex;
+    align-items: center;
   }
 }
 

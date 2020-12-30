@@ -79,9 +79,9 @@ class TasksController extends AppController
     }
 
     /**
-     * Complete a todoitem as complete.
+     * Complete a task as complete.
      *
-     * @param string|null $id Todo Item id.
+     * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -104,9 +104,9 @@ class TasksController extends AppController
     }
 
     /**
-     * Complete a todoitem as incomplete.
+     * Complete a task as incomplete.
      *
-     * @param string|null $id Todo Item id.
+     * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -148,7 +148,7 @@ class TasksController extends AppController
     /**
      * Called as an XHR request from the view page.
      *
-     * @param string|null $id Todo Item id.
+     * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -171,7 +171,7 @@ class TasksController extends AppController
     /**
      * View method
      *
-     * @param string|null $id Todo Item id.
+     * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -189,7 +189,7 @@ class TasksController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id Todo Item id.
+     * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -205,6 +205,6 @@ class TasksController extends AppController
             $this->Flash->error(__('The task could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 }

@@ -77,7 +77,7 @@ export default function TaskSubtasks({task}: Props) {
         </SubtaskSorter>
         <div className="add-task">
           {!showForm && (
-            <button className="button-default" onClick={() => setShowForm(true)}>
+            <button className="button-secondary" onClick={() => setShowForm(true)}>
               <InlineIcon icon="plus" />
               {t('Add Sub-task')}
             </button>
