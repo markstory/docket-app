@@ -77,6 +77,7 @@ return [
      */
     'Security' => [
         'salt' => env('SECURITY_SALT'),
+        'emailSalt' => env('EMAIL_SALT'),
     ],
 
     /*

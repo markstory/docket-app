@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\User;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Log\Log;
+use RuntimeException;
 
 /**
  * Users Controller
@@ -18,7 +21,7 @@ class UsersController extends AppController
     {
         parent::beforeFilter($event);
 
-        $this->Authentication->allowUnauthenticated(['login']);
+        $this->Authentication->allowUnauthenticated(['login', 'verifyEmail']);
     }
 
     /**
@@ -69,6 +72,22 @@ class UsersController extends AppController
             $this->Flash->error(__('Your profile not be saved. Please, try again.'));
         }
         $this->set(compact('user', 'referer'));
+    }
+
+    public function verifyEmail(string $token)
+    {
+        $this->Authorization->skipAuthorization();
+        try {
+            $tokenData = User::decodeEmailVerificationToken($token);
+            $user = $this->Users->get($tokenData->uid);
+            $user->updateEmailIfMatch($tokenData->val);
+        } catch (RuntimeException $e) {
+            $this->Flash->error($e->getMessage());
+            return;
+        }
+        $this->Users->save($user);
+        $this->Flash->success(__('Your email has been verified'));
+        $this->redirect(['_name' => 'tasks:today']);
     }
 
     public function login()

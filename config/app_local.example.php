@@ -23,9 +23,13 @@ return [
      * - salt - A random string used in security hashing methods.
      *   The salt value is also used as the encryption key.
      *   You should treat it as extremely sensitive data.
+     * - emailSalt - A random string used to create
+     *   email verification tokens, and password reset
+     *   tokens.
      */
     'Security' => [
         'salt' => env('SECURITY_SALT', '__SALT__'),
+        'emailSalt' => env('EMAIL_SALT', '__SALT__'),
     ],
 
     /*

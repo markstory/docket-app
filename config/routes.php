@@ -108,6 +108,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
+        $builder->get('/verifyEmail/{token}', ['action' => 'verifyEmail'], 'users:verifyEmail')
+            ->setPass(['token']);
     });
 });
 

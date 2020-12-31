@@ -236,7 +236,7 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/todos/{$first->id}/delete");
 
-        $this->assertRedirect('/todos');
+        $this->assertRedirect('/todos/today');
         $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
