@@ -78,6 +78,7 @@ class UsersTable extends Table
         $validator
             ->email('unverified_email');
 
+        // If this changes also update validationUpdatePassword()
         $validator
             ->scalar('password')
             ->minLength('password', 10)
@@ -86,6 +87,22 @@ class UsersTable extends Table
             ->notEmptyString('password');
 
         // TODO add timezone validation.
+
+        return $validator;
+    }
+
+    public function validationUpdatePassword(Validator $validator): Validator
+    {
+        $validator
+            ->scalar('password')
+            ->minLength('password', 10)
+            ->maxLength('password', 255)
+            ->requirePresence('password');
+
+        $validator
+            ->scalar('confirm_password')
+            ->equaltoField('confirm_password', 'password')
+            ->requirePresence('confirm_password');
 
         return $validator;
     }

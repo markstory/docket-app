@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\User;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Log\Log;
+use Cake\Mailer\MailerAwareTrait;
 use RuntimeException;
 
 /**
@@ -17,11 +19,15 @@ use RuntimeException;
  */
 class UsersController extends AppController
 {
+    use MailerAwareTrait;
+
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
 
-        $this->Authentication->allowUnauthenticated(['login', 'verifyEmail']);
+        $this->Authentication->allowUnauthenticated([
+            'login', 'verifyEmail', 'resetPassword', 'newPassword'
+        ]);
     }
 
     /**
@@ -88,6 +94,50 @@ class UsersController extends AppController
         $this->Users->save($user);
         $this->Flash->success(__('Your email has been verified'));
         $this->redirect(['_name' => 'tasks:today']);
+    }
+
+    public function resetPassword()
+    {
+        $this->Authorization->skipAuthorization();
+        if ($this->request->is('post')) {
+            $email = $this->request->getData('email');
+            try {
+                $user = $this->Users->findByEmail($email)->firstOrFail();
+                $this->getMailer('Users')->send('resetPassword', [$user]);
+            } catch (RecordNotFoundException $e) {
+                // Do nothing.
+            }
+            $this->Flash->success(__('A password reset email has been sent if the email has a registered account.'));
+        }
+    }
+
+    public function newPassword(string $token)
+    {
+        $this->Authorization->skipAuthorization();
+        try {
+            $tokenData = User::decodePasswordResetToken($token);
+        } catch (RuntimeException $e) {
+            $this->Flash->error($e->getMessage());
+            return;
+        }
+
+        if ($this->request->is('post')) {
+            $user = $this->Users->get($tokenData->uid);
+            $user = $this->Users->patchEntity($user, $this->request->getData(), [
+                'fields' => ['password', 'confirm_password'],
+                'validate' => 'updatePassword'
+            ]);
+
+            if ($user->hasErrors()) {
+                $errors = $this->flattenErrors($user->getErrors());
+                $this->Flash->error(implode(', ', $errors));
+                return;
+            }
+
+            $this->Users->save($user);
+            $this->Flash->success(__('Your password has been reset.'));
+            $this->redirect(['_name' => 'users:login']);
+        }
     }
 
     public function login()

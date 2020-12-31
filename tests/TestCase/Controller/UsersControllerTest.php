@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -16,6 +18,7 @@ use Cake\TestSuite\TestCase;
 class UsersControllerTest extends TestCase
 {
     use FactoryTrait;
+    use EmailTrait;
     use IntegrationTestTrait;
 
     /**
@@ -128,5 +131,136 @@ class UsersControllerTest extends TestCase
         $this->assertEquals('newer@example.com', $user->email);
         $this->assertTrue($user->email_verified);
         $this->assertFlashElement('flash/success');
+    }
+
+    public function testPasswordResetGet()
+    {
+        $this->get("/password/reset");
+        $this->assertResponseOk();
+    }
+
+    public function testPasswordResetPostNoMatch()
+    {
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/reset", [
+            'email' => 'nosuch@user.com',
+        ]);
+        // Should quack like it worked.
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/success');
+        $this->assertMailCount(0);
+    }
+
+    public function testPasswordResetPostMatch()
+    {
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/reset", [
+            'email' => 'mark@example.com',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/success');
+
+        $this->assertMailCount(1);
+        $this->assertMailSentTo('mark@example.com');
+        $this->assertMailSubjectContains('Password');
+        $this->assertMailContainsText('/password/new/');
+    }
+
+    public function testNewPasswordResetGetTokenBadFormat()
+    {
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->get("/password/new/not-good-data");
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testNewPasswordResetGetTokenExpired()
+    {
+        FrozenTime::setTestNow(new FrozenTime('-6 hours'));
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+        FrozenTime::setTestNow(null);
+
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->get("/password/new/{$token}");
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testNewPasswordResetGetTokenOk()
+    {
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+
+        $this->enableCsrfToken();
+        $this->get("/password/new/{$token}");
+        $this->assertResponseOk();
+    }
+
+    public function testNewPasswordResetPostMissingFields()
+    {
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/new/{$token}", [
+            'password' => 'super sekret',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testNewPasswordResetPostValidationError()
+    {
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/new/{$token}", [
+            'password' => 'super sekret',
+            'confirm_password' => 'super bad',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testNewPasswordResetPostExpiredToken()
+    {
+        FrozenTime::setTestNow(new FrozenTime('-6 hours'));
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+        FrozenTime::setTestNow(null);
+
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/new/{$token}", [
+            'password' => 'super sekret tech',
+            'confirm_password' => 'super sekret tech',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testNewPasswordResetPostOk()
+    {
+        $user = $this->Users->get(1);
+        $token = $user->passwordResetToken();
+
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+        $this->post("/password/new/{$token}", [
+            'password' => 'super sekret tech',
+            'confirm_password' => 'super sekret tech',
+        ]);
+        $this->assertRedirect('/login');
+        $this->assertFlashElement('flash/success');
+        $update = $this->Users->get($user->id);
+        $this->assertNotEquals($user->password, $update->password);
     }
 }

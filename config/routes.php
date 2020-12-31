@@ -111,6 +111,11 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/verifyEmail/{token}', ['action' => 'verifyEmail'], 'users:verifyEmail')
             ->setPass(['token']);
     });
+    $builder->scope('/password', ['controller' => 'Users'], function ($builder) {
+        $builder->connect('/reset', ['action' => 'resetPassword'], ['_name' => 'users:passwordReset']);
+        $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
+            ->setPass(['token']);
+    });
 });
 
 /*
