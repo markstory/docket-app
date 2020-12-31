@@ -45,6 +45,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
+  unverified_email: string;
   avatar_hash: string;
   timezone: string;
   created: string;

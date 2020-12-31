@@ -36,6 +36,14 @@ export default function UsersEdit({identity, referer}: Props) {
           <div className="form-input">
             <label htmlFor="unverified_email">{t('Email Address')}</label>
             <input name="unverified_email" type="email" defaultValue={identity.email} />
+            {identity.unverified_email && (
+              <p className="form-help">
+                {t(
+                  'You have a pending email address change for {email} that needs to be verified.',
+                  {email: identity.unverified_email}
+                )}
+              </p>
+            )}
             <p className="form-help">
               {t(
                 'Until your new email address is verified, you must continue to login with your current email address.'
