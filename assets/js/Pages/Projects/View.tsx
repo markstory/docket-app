@@ -46,12 +46,14 @@ export default function ProjectsView({completed, project, tasks}: Props) {
         {completed && (
           <React.Fragment>
             <TaskList title={t('Completed')} tasks={completed} showDueOn />
-            <InertiaLink
-              className="button button-muted"
-              href={`/projects/${project.slug}`}
-            >
-              {t('Hide completed tasks')}
-            </InertiaLink>
+            <div className="button-bar">
+              <InertiaLink
+                className="button button-muted"
+                href={`/projects/${project.slug}`}
+              >
+                {t('Hide completed tasks')}
+              </InertiaLink>
+            </div>
           </React.Fragment>
         )}
       </div>
