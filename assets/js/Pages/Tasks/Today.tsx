@@ -35,7 +35,7 @@ export default function TasksToday({tasks}: Props) {
   const defaultDate = toDateString(today);
 
   return (
-    <LoggedIn>
+    <LoggedIn title={t("Today's Tasks")}>
       <TaskGroupedSorter tasks={tasks} scope="day" grouper={grouper}>
         {({groupedItems}) => {
           const [today, overdue] = groupedItems;

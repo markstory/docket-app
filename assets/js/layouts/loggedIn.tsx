@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project} from 'app/types';
@@ -14,11 +14,18 @@ type SharedPageProps = {
 };
 
 type Props = {
+  title?: string;
   children: React.ReactNode;
 };
 
-function LoggedIn({children}: Props) {
+function LoggedIn({children, title}: Props) {
   const {projects} = usePage().props as SharedPageProps;
+  useEffect(() => {
+    if (title) {
+      document.title = title;
+    }
+  }, [title]);
+
   return (
     <ProjectsProvider projects={projects}>
       <Contents>{children}</Contents>

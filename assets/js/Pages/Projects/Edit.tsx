@@ -25,7 +25,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
   }
 
   return (
-    <LoggedIn>
+    <LoggedIn title={t('Edit {project} Project', {project: project.name})}>
       <Modal onClose={handleClose}>
         <h2>{t('Edit Project')}</h2>
         <form className="form-vertical" method="post" onSubmit={handleSubmit}>

@@ -11,7 +11,7 @@ type Props = {
 
 export default function ProjectsArchived({archived}: Props) {
   return (
-    <LoggedIn>
+    <LoggedIn title={t('Archived Projects')}>
       <h1>{t('Archived Projects')}</h1>
       {archived.length === 0 && <NoProjects />}
       {archived.map(item => (

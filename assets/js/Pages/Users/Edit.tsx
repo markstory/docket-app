@@ -23,7 +23,7 @@ export default function UsersEdit({identity, referer}: Props) {
   }
 
   return (
-    <LoggedIn>
+    <LoggedIn title={t('Edit Profile')}>
       <Modal onClose={handleClose}>
         <h1>{t('Edit Profile')}</h1>
         <form method="post" className="form-vertical" onSubmit={handleSubmit}>

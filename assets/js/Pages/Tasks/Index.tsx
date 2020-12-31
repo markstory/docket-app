@@ -60,7 +60,7 @@ function createGrouper(start: string, numDays: number) {
 export default function TasksIndex({tasks, start, nextStart}: Props) {
   const nextPage = nextStart ? `/todos/upcoming?start=${nextStart}` : null;
   return (
-    <LoggedIn>
+    <LoggedIn title={t('Upcoming Tasks')}>
       <h1>Upcoming</h1>
       <TaskGroupedSorter tasks={tasks} scope="day" grouper={createGrouper(start, 28)}>
         {({groupedItems}) => {

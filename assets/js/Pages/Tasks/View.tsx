@@ -4,6 +4,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {InlineIcon} from '@iconify/react';
 
 import {TaskDetailed, ValidationErrors} from 'app/types';
+import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
 import Modal from 'app/components/modal';
 import TaskQuickForm from 'app/components/taskQuickForm';
@@ -50,7 +51,7 @@ export default function TasksView({referer, task}: Props) {
   }
 
   return (
-    <LoggedIn>
+    <LoggedIn title={t('View {task}', {task: task.title})}>
       <Modal onClose={handleClose}>
         <div className="task-view">
           {editing ? (

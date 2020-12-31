@@ -18,7 +18,7 @@ type Props = {
 
 export default function ProjectsView({completed, project, tasks}: Props) {
   return (
-    <LoggedIn>
+    <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
         <div className="heading">
           <h1>
