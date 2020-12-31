@@ -4,16 +4,17 @@
   height: 100%;
 
   .sidebar, .content {
-    padding-top: $space * 5;
     padding-bottom: $space * 5;
   }
 
   .sidebar {
+    padding-top: $space * 3;
     padding-left: $space * 5;
     background: $color-bg-section;
   }
 
   .content {
+    padding-top: $space * 5;
     padding-right: $space * 5;
     padding-left: $space * 5;
   }

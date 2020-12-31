@@ -10,7 +10,7 @@
   border-bottom: 1px solid $color-border;
 
   > input[type="checkbox"] {
-    margin: 3px $space 0 0;
+    margin: 1px $space 0 0;
   }
 
   > a {
@@ -47,7 +47,7 @@
   .actions {
     display: none;
     position: absolute;
-    top: $space;
+    top: $space * 0.75;
     right: 0;
 
     background: $color-bg;

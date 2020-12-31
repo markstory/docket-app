@@ -13,7 +13,7 @@ export default function Login() {
   }
 
   return (
-    <Card>
+    <Card title={t('Login')}>
       <h1>{t('Login')}</h1>
       <form method="post" onSubmit={onSubmit}>
         <div className="form-input">

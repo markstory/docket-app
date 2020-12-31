@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage} from 'app/types';
@@ -11,14 +11,20 @@ type SharedPageProps = {
 
 type Props = {
   children: React.ReactNode;
+  title?: string;
 };
 
 /**
  * Simple Layout that wraps children in a centered
  * container card element
  */
-function Card({children}: Props) {
+function Card({children, title}: Props) {
   const {flash} = usePage().props as SharedPageProps;
+  useEffect(() => {
+    if (title) {
+      document.title = title;
+    }
+  }, [title]);
 
   return (
     <div className="layout-card-bg">
