@@ -113,6 +113,7 @@ class UsersController extends AppController
 
     public function newPassword(string $token)
     {
+        $this->set('token', $token);
         $this->Authorization->skipAuthorization();
         try {
             $tokenData = User::decodePasswordResetToken($token);
@@ -129,8 +130,9 @@ class UsersController extends AppController
             ]);
 
             if ($user->hasErrors()) {
+                $this->Flash->error(__('We could not reset your password.'));
                 $errors = $this->flattenErrors($user->getErrors());
-                $this->Flash->error(implode(', ', $errors));
+                $this->set('errors', $errors);
                 return;
             }
 

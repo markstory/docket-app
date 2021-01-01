@@ -29,11 +29,9 @@ function Card({children, title}: Props) {
   return (
     <div className="layout-card-bg">
       <main className="layout-card">
-        <section className="content">
-          {children}
-          <FlashMessages flash={flash} />
-        </section>
+        <section className="content">{children}</section>
       </main>
+      <FlashMessages flash={flash} />
     </div>
   );
 }

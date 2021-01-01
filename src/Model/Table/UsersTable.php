@@ -95,13 +95,13 @@ class UsersTable extends Table
     {
         $validator
             ->scalar('password')
-            ->minLength('password', 10)
-            ->maxLength('password', 255)
+            ->minLength('password', 10, __('Passwords must be at least 10 characters long'))
+            ->maxLength('password', 255, __('Passwords cannot be longer than 255 characters.'))
             ->requirePresence('password');
 
         $validator
             ->scalar('confirm_password')
-            ->equaltoField('confirm_password', 'password')
+            ->equaltoField('confirm_password', 'password', __('Your passwords must match.'))
             ->requirePresence('confirm_password');
 
         return $validator;
