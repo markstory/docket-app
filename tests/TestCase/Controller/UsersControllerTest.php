@@ -88,7 +88,7 @@ class UsersControllerTest extends TestCase
         $this->login();
         $this->enableRetainFlashMessages();
         $this->get('/users/verifyEmail/N0t?base?64');
-        $this->assertResponseOk();
+        $this->assertRedirect('/login');
         $this->assertFlashElement('flash/error');
     }
 
@@ -99,7 +99,7 @@ class UsersControllerTest extends TestCase
         $this->disableErrorHandlerMiddleware();
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
-        $this->assertResponseOk();
+        $this->assertRedirect('/login');
         $this->assertFlashElement('flash/error');
     }
 
@@ -111,7 +111,7 @@ class UsersControllerTest extends TestCase
 
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
-        $this->assertResponseOk();
+        $this->assertRedirect('/login');
         $this->assertFlashElement('flash/error');
     }
 

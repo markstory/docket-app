@@ -89,7 +89,7 @@ class UsersController extends AppController
             $user->updateEmailIfMatch($tokenData->val);
         } catch (RuntimeException $e) {
             $this->Flash->error($e->getMessage());
-            return;
+            return $this->redirect(['_name' => 'users:login']);
         }
         $this->Users->save($user);
         $this->Flash->success(__('Your email has been verified'));
