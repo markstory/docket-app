@@ -16,9 +16,16 @@
       background: $color-bg-raised;
     }
   }
+
+  .dnd-item {
+    background: $color-bg-section;
+  }
+
+  .dnd-dropper-left-offset {
+    margin-right: $space * 2;
+  }
 }
 
 .project-filter .project-item {
   flex-grow: 1;
-  margin-right: $space * 2;
 }

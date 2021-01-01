@@ -26,8 +26,14 @@
   }
 }
 
+.dnd-dropper-active {
+  background: $color-dropper-active;
+}
+
 .dnd-dropper-left-offset {
-  margin-left: -34px;
+  .dnd-item {
+    margin-left: -34px;
+  }
   padding-left: 0;
 }
 
