@@ -1,5 +1,8 @@
 .task-group {
   margin-bottom: $space * 2;
+  // Necesary to stack row hovers underneath menus.
+  position: relative;
+  z-index: $z-bg;
 
   .add-task {
     margin-top: $space;
