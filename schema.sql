@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     timezone varchar(255) default 'UTC',
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Could add organizations and teams. Then projects would be owned
 -- by teams inside organizations.
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS projects (
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id) on delete cascade
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS tasks (
     id int not null auto_increment primary key,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (project_id) references projects(id) on delete cascade
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS task_comments (
     id int not null auto_increment primary key,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS task_comments (
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (user_id) references users(id),
     foreign key (task_id) references tasks(id) on delete cascade
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS subtasks (
     id int not null auto_increment primary key,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS subtasks (
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (task_id) references tasks(id) on delete cascade
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE labels (
     id int not null auto_increment primary key,
@@ -74,7 +74,7 @@ CREATE TABLE labels (
     created timestamp default current_timestamp,
     modified timestamp default current_timestamp on update current_timestamp,
     foreign key (project_id) references projects(id) on delete cascade
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE labels_tasks (
     task_id int not null,
@@ -82,4 +82,4 @@ CREATE TABLE labels_tasks (
     foreign key (task_id) references tasks(id) on delete cascade,
     foreign key (label_id) references labels(id) on delete cascade,
     primary key (task_id, todo_label_id)
-);
+) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
