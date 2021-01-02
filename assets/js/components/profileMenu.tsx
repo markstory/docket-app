@@ -32,6 +32,12 @@ export default function ProfileMenu() {
             </InertiaLink>
           </li>
           <li>
+            <InertiaLink className="context-item" href="/users/updatePassword">
+              <InlineIcon icon="lock" />
+              {t('Update Password')}
+            </InertiaLink>
+          </li>
+          <li>
             <InertiaLink className="context-item" href="/logout">
               {t('Logout')}
             </InertiaLink>

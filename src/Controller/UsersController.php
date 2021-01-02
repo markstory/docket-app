@@ -83,6 +83,10 @@ class UsersController extends AppController
         $this->set(compact('user', 'referer'));
     }
 
+    /**
+     * Update password for a logged in User.
+     * Commonly accessed via edit profile.
+     */
     public function updatePassword()
     {
         $referer = $this->getReferer();
@@ -99,7 +103,7 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Your password has been updated.'));
             } else {
-                $this->Flash->error(__('Your password was not be saved. Please, try again.'));
+                $this->Flash->error(__('Your password was not updated. Please, try again.'));
                 $errors = $this->flattenErrors($user->getErrors());
                 $this->set('errors', $errors);
             }

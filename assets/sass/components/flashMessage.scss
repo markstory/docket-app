@@ -8,6 +8,7 @@
   background: $color-bg-raised;
   box-shadow: $shadow-med;
   border-radius: $border-radius;
+  z-index: $z-flash;
 
   svg {
     margin-right: $space;
