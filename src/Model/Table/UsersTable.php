@@ -78,11 +78,9 @@ class UsersTable extends Table
         $validator
             ->email('unverified_email');
 
-        // If this changes also update validationUpdatePassword()
+        $validator = $this->validationPassword($validator);
+
         $validator
-            ->scalar('password')
-            ->minLength('password', 10)
-            ->maxLength('password', 255)
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
@@ -91,7 +89,7 @@ class UsersTable extends Table
         return $validator;
     }
 
-    public function validationUpdatePassword(Validator $validator): Validator
+    public function validationPassword(Validator $validator): Validator
     {
         $validator
             ->scalar('password')
@@ -99,10 +97,28 @@ class UsersTable extends Table
             ->maxLength('password', 255, __('Passwords cannot be longer than 255 characters.'))
             ->requirePresence('password');
 
+        return $validator;
+    }
+
+    public function validationResetPassword(Validator $validator): Validator
+    {
+        $validator = $this->validationPassword($validator);
+
         $validator
             ->scalar('confirm_password')
             ->equaltoField('confirm_password', 'password', __('Your passwords must match.'))
             ->requirePresence('confirm_password');
+
+        return $validator;
+    }
+
+    public function validationUpdatePassword(Validator $validator): Validator
+    {
+        $validator = $this->validationResetPassword($validator);
+
+        $validator
+            ->scalar('current_password')
+            ->requirePresence('current_password');
 
         return $validator;
     }
@@ -117,6 +133,20 @@ class UsersTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+
+        $rules->addUpdate(function (User $entity) {
+            if (!($entity->isDirty('password') && $entity->isDirty('current_password'))) {
+                return true;
+            }
+            $hasher = $entity->passwordHasher();
+            return $hasher->check(
+                $entity->current_password,
+                $entity->getOriginal('password')
+            );
+        }, 'currentPasswordMatch', [
+            'errorField' => 'current_password',
+            'message' => __('Your current password is not correct.'),
+        ]);
 
         return $rules;
     }

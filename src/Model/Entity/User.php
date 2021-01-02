@@ -73,13 +73,18 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     protected function _setPassword(string $password) : ?string
     {
         if (mb_strlen($password) > 0) {
-            return (new DefaultPasswordHasher())->hash($password);
+            return $this->passwordHasher()->hash($password);
         }
     }
 
     protected function unverifiedEmailChecksum()
     {
         return hash_hmac('sha256', $this->unverified_email, Configure::read('Security.emailSalt'));
+    }
+
+    public function passwordHasher(): DefaultPasswordHasher
+    {
+        return new DefaultPasswordHasher();
     }
 
     public function emailVerificationToken(): string

@@ -86,6 +86,91 @@ class UsersControllerTest extends TestCase
         $this->assertMailSubjectContains('Verify your email');
     }
 
+    public function testUpdatePasswordRequiresLogin()
+    {
+        $this->enableCsrfToken();
+        $this->post('/users/updatePassword', [
+            'current_password' => 'password12',
+            'password' => 'password124',
+            'confirm_password' => 'password124',
+        ]);
+        $this->assertRedirectContains('/login');
+    }
+
+    public function testUpdatePasswordCurrentMustMatch()
+    {
+        $user = $this->Users->get(1);
+        $user->password = 'password123';
+        $this->Users->save($user);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/updatePassword', [
+            'current_password' => 'password12',
+            'password' => 'new-password',
+            'confirm_password' => 'new-password',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+        $this->assertNotEmpty($this->viewVariable('errors'));
+    }
+
+    public function testUpdatePasswordNewMustMatch()
+    {
+        $user = $this->Users->get(1);
+        $user->password = 'password123';
+        $this->Users->save($user);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/updatePassword', [
+            'current_password' => 'password123',
+            'password' => 'new password',
+            'confirm_password' => 'not password',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+        $this->assertNotEmpty($this->viewVariable('errors'));
+    }
+
+    public function testUpdatePasswordCurrentRequired()
+    {
+        $user = $this->Users->get(1);
+        $user->password = 'password123';
+        $this->Users->save($user);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/updatePassword', [
+            'password' => 'new password',
+            'confirm_password' => 'not password',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+        $this->assertNotEmpty($this->viewVariable('errors'));
+    }
+
+    public function testUpdatePasswordSuccess()
+    {
+        $user = $this->Users->get(1);
+        $user->password = 'password123';
+        $this->Users->save($user);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/updatePassword', [
+            'current_password' => 'password123',
+            'password' => 'new password',
+            'confirm_password' => 'new password',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/success');
+    }
+
     public function testVerifyEmailInvalidTokenFormat()
     {
         $this->login();

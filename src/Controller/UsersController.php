@@ -54,11 +54,10 @@ class UsersController extends AppController
     /**
      * Edit method
      *
-     * @param string|null $id User id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit()
     {
         $referer = $this->getReferer();
         $identity = $this->request->getAttribute('identity');
@@ -67,10 +66,10 @@ class UsersController extends AppController
 
         $allowedFields = ['unverified_email', 'name', 'timezone'];
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
+            $user = $this->Users->patchEntity($user, $this->request->getData(), [
+                'fields' => $allowedFields
+            ]);
             $emailChanged = $user->isDirty('unverified_email');
-
-            // TODO send email verification out.
             if ($this->Users->save($user)) {
                 if ($emailChanged) {
                     $this->getMailer('Users')->send('verifyEmail', [$user]);
@@ -80,6 +79,30 @@ class UsersController extends AppController
                 return $this->redirect($referer);
             }
             $this->Flash->error(__('Your profile not be saved. Please, try again.'));
+        }
+        $this->set(compact('user', 'referer'));
+    }
+
+    public function updatePassword()
+    {
+        $referer = $this->getReferer();
+        $identity = $this->request->getAttribute('identity');
+        $user = $this->Users->get($identity->id);
+        $this->Authorization->authorize($user, 'edit');
+
+        $allowedFields = ['password', 'current_password', 'confirm_password'];
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $user = $this->Users->patchEntity($user, $this->request->getData(), [
+                'fields' => $allowedFields,
+                'validate' => 'updatePassword',
+            ]);
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Your password has been updated.'));
+            } else {
+                $this->Flash->error(__('Your password was not be saved. Please, try again.'));
+                $errors = $this->flattenErrors($user->getErrors());
+                $this->set('errors', $errors);
+            }
         }
         $this->set(compact('user', 'referer'));
     }
@@ -131,7 +154,7 @@ class UsersController extends AppController
             $user = $this->Users->get($tokenData->uid);
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
                 'fields' => ['password', 'confirm_password'],
-                'validate' => 'updatePassword'
+                'validate' => 'resetPassword'
             ]);
 
             if ($user->hasErrors()) {
