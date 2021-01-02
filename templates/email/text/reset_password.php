@@ -1,4 +1,4 @@
-Hi <?= $name ?>
+Hi <?= $name ?>,
 
 Someone (hopefully you) has requested a password reset for TODO.
 If this was you, follow the URL below to complete the process.

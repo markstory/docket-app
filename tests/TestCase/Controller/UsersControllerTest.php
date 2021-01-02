@@ -81,6 +81,9 @@ class UsersControllerTest extends TestCase
         $this->assertNotEquals('badthings@example.com', $user->email);
         $this->assertTrue($user->email_verified);
         $this->assertEquals('example@example.com', $user->unverified_email);
+
+        $this->assertMailCount(1);
+        $this->assertMailSubjectContains('Verify your email');
     }
 
     public function testVerifyEmailInvalidTokenFormat()
@@ -96,7 +99,7 @@ class UsersControllerTest extends TestCase
     {
         $token = base64_encode(json_encode(['uid' => 1]));
 
-        $this->disableErrorHandlerMiddleware();
+        $this->login();
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
         $this->assertRedirect('/login');
@@ -109,10 +112,27 @@ class UsersControllerTest extends TestCase
         $user->unverified_email = 'newer@example.com';
         $token = $user->emailVerificationToken();
 
+        $this->login();
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
         $this->assertRedirect('/login');
         $this->assertFlashElement('flash/error');
+    }
+
+    public function testVerifyEmailRequireLogin()
+    {
+        $user = $this->Users->get(1);
+        $user->unverified_email = 'newer@example.com';
+        $this->Users->save($user);
+        $token = $user->emailVerificationToken();
+
+        $this->enableRetainFlashMessages();
+        $this->get("/users/verifyEmail/{$token}");
+
+        $this->assertRedirectContains('/login');
+        $user = $this->Users->get(1);
+        $this->assertNotEmpty($user->unverified_email);
+        $this->assertNotEquals('newer@example.com', $user->email);
     }
 
     public function testVerifyEmailSuccess()
@@ -120,12 +140,13 @@ class UsersControllerTest extends TestCase
         $user = $this->Users->get(1);
         $user->unverified_email = 'newer@example.com';
         $this->Users->save($user);
-
         $token = $user->emailVerificationToken();
+
+        $this->login();
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
 
-        $this->assertResponseCode(302);
+        $this->assertRedirect('/todos/today');
         $user = $this->Users->get(1);
         $this->assertEquals('', $user->unverified_email);
         $this->assertEquals('newer@example.com', $user->email);

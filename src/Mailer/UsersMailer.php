@@ -30,4 +30,18 @@ class UsersMailer extends Mailer
                 'token' => $token,
             ]);
     }
+
+    public function verifyEmail(User $user)
+    {
+        $token = $user->emailVerificationToken();
+        $this->setTo($user->unverified_email)
+            ->setEmailFormat('text')
+            ->setSubject('Verify your email address')
+            ->setViewVars([
+                'name' => $user->name,
+                'email' => $user->email,
+                'unverified_email' => $user->unverified_email,
+                'token' => $token,
+            ]);
+    }
 }

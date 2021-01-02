@@ -26,7 +26,7 @@ class UsersController extends AppController
         parent::beforeFilter($event);
 
         $this->Authentication->allowUnauthenticated([
-            'login', 'verifyEmail', 'resetPassword', 'newPassword'
+            'login', 'resetPassword', 'newPassword'
         ]);
     }
 
@@ -68,10 +68,14 @@ class UsersController extends AppController
         $allowedFields = ['unverified_email', 'name', 'timezone'];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
+            $emailChanged = $user->isDirty('unverified_email');
 
             // TODO send email verification out.
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('Your profile has been updated'));
+                if ($emailChanged) {
+                    $this->getMailer('Users')->send('verifyEmail', [$user]);
+                }
+                $this->Flash->success(__('Your profile has been updated.'));
 
                 return $this->redirect($referer);
             }
@@ -82,17 +86,18 @@ class UsersController extends AppController
 
     public function verifyEmail(string $token)
     {
-        $this->Authorization->skipAuthorization();
         try {
             $tokenData = User::decodeEmailVerificationToken($token);
             $user = $this->Users->get($tokenData->uid);
+            $this->Authorization->authorize($user, 'edit');
             $user->updateEmailIfMatch($tokenData->val);
         } catch (RuntimeException $e) {
+            $this->Authorization->skipAuthorization();
             $this->Flash->error($e->getMessage());
             return $this->redirect(['_name' => 'users:login']);
         }
         $this->Users->save($user);
-        $this->Flash->success(__('Your email has been verified'));
+        $this->Flash->success(__('Your email has been verified.'));
         $this->redirect(['_name' => 'tasks:today']);
     }
 

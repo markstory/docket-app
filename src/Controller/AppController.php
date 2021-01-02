@@ -35,22 +35,6 @@ class AppController extends Controller
         beforeRender as protected inertiaBeforeRender;
     }
 
-    protected function getReferer($default = 'tasks:today')
-    {
-        $defaultUrl = Router::url(['_name' => $default]);
-
-        $get = $this->request->getQuery('referer');
-        $post = $this->request->getData('referer');
-        $header = $this->referer($defaultUrl);
-        foreach ([$post, $get, $header] as $option) {
-            if ($option && strlen($option) && $option[0] === '/') {
-                return $option;
-            }
-        }
-
-        return $defaultUrl;
-    }
-
     /**
      * Initialization hook method.
      *
@@ -106,4 +90,21 @@ class AppController extends Controller
             ->withStatus(422)
             ->withStringBody(json_encode(['errors' => $this->flattenErrors($errors)]));
     }
+
+    protected function getReferer($default = 'tasks:today')
+    {
+        $defaultUrl = Router::url(['_name' => $default]);
+
+        $get = $this->request->getQuery('referer');
+        $post = $this->request->getData('referer');
+        $header = $this->referer($defaultUrl);
+        foreach ([$post, $get, $header] as $option) {
+            if ($option && strlen($option) && $option[0] === '/') {
+                return $option;
+            }
+        }
+
+        return $defaultUrl;
+    }
+
 }
