@@ -84,7 +84,25 @@ class UsersTable extends Table
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
-        // TODO add timezone validation.
+        // TODO add better timezone validation.
+        $validator->scalar('timezone');
+
+        return $validator;
+    }
+
+    public function validationRegister(Validator $validator): Validator
+    {
+        $validator
+            ->email('email')
+            ->requirePresence('email')
+            ->notEmptyString('email');
+
+        $validator = $this->validationResetPassword($validator);
+
+        $validator->requirePresence('password');
+
+        // TODO add better timezone validation.
+        $validator->scalar('timezone');
 
         return $validator;
     }

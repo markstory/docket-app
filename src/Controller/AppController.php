@@ -27,6 +27,9 @@ use Inertia\Controller\InertiaResponseTrait;
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
+ * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
+ * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
+ * @property \Cake\Controller\Component\FlashComponent $Flash
  * @link https://book.cakephp.org/4/en/controllers.html#the-app-controller
  */
 class AppController extends Controller
@@ -44,7 +47,6 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
         $this->loadComponent('Authentication.Authentication');
         $this->loadComponent('Authorization.Authorization');

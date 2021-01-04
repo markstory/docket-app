@@ -11,7 +11,7 @@ type Props = {
   referer: string;
 };
 
-export default function UsersEdit({identity, referer}: Props) {
+export default function Edit({identity, referer}: Props) {
   function handleClose() {
     Inertia.visit(referer);
   }

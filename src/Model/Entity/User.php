@@ -61,6 +61,9 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
 
     protected function _getAvatarHash()
     {
+        if (!$this->email) {
+            return null;
+        }
         return md5(strtolower($this->email));
     }
 
@@ -79,7 +82,11 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
 
     protected function unverifiedEmailChecksum()
     {
-        return hash_hmac('sha256', $this->unverified_email, Configure::read('Security.emailSalt'));
+        $email = $this->unverified_email;
+        if (!$this->email_verified) {
+            $email = $this->email;
+        }
+        return hash_hmac('sha256', $email, Configure::read('Security.emailSalt'));
     }
 
     public function passwordHasher(): DefaultPasswordHasher

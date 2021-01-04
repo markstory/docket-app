@@ -26,7 +26,7 @@ class UsersController extends AppController
         parent::beforeFilter($event);
 
         $this->Authentication->allowUnauthenticated([
-            'login', 'resetPassword', 'newPassword'
+            'add', 'login', 'resetPassword', 'newPassword'
         ]);
     }
 
@@ -38,15 +38,22 @@ class UsersController extends AppController
     public function add()
     {
         $this->Authorization->skipAuthorization();
+
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
+            $user = $this->Users->newEntity($this->request->getData(), [
+                'fields' => ['name', 'email', 'password', 'timezone'],
+                'validate' => 'register',
+            ]);
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->getMailer('Users')->send('verifyEmail', [$user]);
+                $this->Authentication->setIdentity($user);
+                $this->Flash->success(__('Your account has been created. We have sent an email to verify it.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['_name' => 'tasks:today']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('We could not complete your registration'));
+            $this->set('errors', $this->flattenErrors($user->getErrors()));
         }
         $this->set(compact('user'));
     }

@@ -12,7 +12,7 @@ type Props = {
   referer: string;
 };
 
-export default function UsersUpdatePassword({errors, referer}: Props) {
+export default function UpdatePassword({errors, referer}: Props) {
   function handleClose() {
     Inertia.visit(referer);
   }

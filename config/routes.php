@@ -107,6 +107,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
 
     $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
+        $builder->connect('/add/', ['action' => 'add'], ['_name' => 'users:add']);
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
         $builder->connect('/updatePassword/', ['action' => 'updatePassword'], ['_name' => 'users:updatePassword']);
         $builder->get('/verifyEmail/{token}', ['action' => 'verifyEmail'], 'users:verifyEmail')

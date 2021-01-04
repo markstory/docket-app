@@ -42,9 +42,44 @@ class UsersControllerTest extends TestCase
      *
      * @return void
      */
-    public function testAdd(): void
+    public function testAddValidationErrors(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/add', [
+            'name' => 'Sally Example',
+            'email' => 'not-valid',
+            'password' => 'password',
+            'confirm_password' => 'password',
+            'timezone' => 'UTC',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/error');
+        $this->assertNotEmpty($this->viewVariable('errors'));
+        $this->assertMailCount(0);
+    }
+
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testAddSuccess(): void
+    {
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/add', [
+            'name' => 'Wally Example',
+            'email' => 'wally@example.com',
+            'password' => 'password123',
+            'confirm_password' => 'password123',
+            'timezone' => 'UTC'
+        ]);
+        $this->assertRedirect('/todos/today');
+        $this->assertFlashElement('flash/success');
+
+        $this->assertMailCount(1);
+        $this->assertMailSubjectContains('Verify your email');
     }
 
     /**
