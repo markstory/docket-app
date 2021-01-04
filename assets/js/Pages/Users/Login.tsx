@@ -30,6 +30,12 @@ export default function Login() {
             {t('Forgot Password?')}
           </InertiaLink>
         </div>
+        <div className="button-bar">
+          {t("Don't have an account?")}
+          <InertiaLink className="button button-muted" href="/users/add">
+            {t('Sign Up')}
+          </InertiaLink>
+        </div>
       </form>
     </Card>
   );
