@@ -37,6 +37,32 @@ class UsersControllerTest extends TestCase
         $this->Users = TableRegistry::get('Users');
     }
 
+    public function testLogin()
+    {
+        $this->enableCsrfToken();
+        $this->post('/login', [
+            'email' => 'mark@example.com',
+            'password' => 'password123',
+        ]);
+        $this->assertRedirect('/todos/today');
+        $this->assertSession('mark@example.com', 'Auth.email');
+    }
+
+    public function testLoginUpdateTimezone()
+    {
+        $this->enableCsrfToken();
+        $this->post('/login', [
+            'email' => 'mark@example.com',
+            'password' => 'password123',
+            'timezone' => 'America/New_York'
+        ]);
+        $this->assertRedirect('/todos/today');
+        $this->assertSession('mark@example.com', 'Auth.email');
+
+        $user = $this->Users->get(1);
+        $this->assertSame('America/New_York', $user->timezone);
+    }
+
     /**
      * Test add method
      *

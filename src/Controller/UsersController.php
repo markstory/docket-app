@@ -85,6 +85,7 @@ class UsersController extends AppController
 
                 return $this->redirect($referer);
             }
+            $this->set('errors', $this->flattenErrors($user->getErrors()));
             $this->Flash->error(__('Your profile not be saved. Please, try again.'));
         }
         $this->set(compact('user', 'referer'));
@@ -190,7 +191,12 @@ class UsersController extends AppController
 
         // regardless of POST or GET, redirect if user is logged in
         if ($result->isValid()) {
-            $redirect = $this->request->getQuery('redirect', ['_name' => 'tasks:index']);
+            $redirect = $this->request->getQuery('redirect', ['_name' => 'tasks:today']);
+            $identity = $this->request->getAttribute('identity');
+            if ($this->request->getData('timezone')) {
+                $identity = $this->Users->patchEntity($identity, $this->request->getData());
+                $this->Users->save($identity);
+            }
 
             return $this->redirect($redirect);
         }

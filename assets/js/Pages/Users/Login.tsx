@@ -9,6 +9,12 @@ export default function Login() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      formData.append('timezone', timezone);
+    } catch (e) {
+      // Do nothing we'll use their last timezone.
+    }
     Inertia.post('/login', formData);
   }
 

@@ -15,6 +15,12 @@ export default function Add({errors}: Props) {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      formData.append('timezone', timezone);
+    } catch (e) {
+      // Do nothing we'll use their last timezone.
+    }
     Inertia.post('/users/add/', formData);
   }
 
@@ -48,20 +54,6 @@ export default function Add({errors}: Props) {
           <input id="confirm_password" name="confirm_password" type="password" required />
           <FormError errors={errors} field="confirm_password" />
           <p className="form-help">{t('One more time please.')}</p>
-        </div>
-        <div className="form-input">
-          <label htmlFor="timezone">{t('Timezone')}</label>
-          <input
-            id="timezone"
-            name="timezone"
-            type="text"
-            required
-            defaultValue="America/New_York"
-          />
-          <FormError errors={errors} field="timezone" />
-          <p className="form-help">
-            {t('Used so we know what day is today in your part of the world.')}
-          </p>
         </div>
         <div className="button-bar">
           <button type="submit">{t('Sign Up')}</button>

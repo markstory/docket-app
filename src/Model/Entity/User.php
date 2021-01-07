@@ -45,6 +45,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         'name' => true,
         'unverified_email' => true,
         'modified' => true,
+        'timezone' => true,
     ];
 
     /**

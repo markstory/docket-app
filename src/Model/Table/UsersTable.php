@@ -9,6 +9,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use DateTimeZone;
+use Exception;
 
 /**
  * Users Model
@@ -84,8 +86,19 @@ class UsersTable extends Table
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
-        // TODO add better timezone validation.
-        $validator->scalar('timezone');
+        $validator->scalar('timezone')
+                  ->add('timezone', 'validtimezone', [
+                      'rule' => function ($value) {
+                          try {
+                              $tz = new DateTimeZone($value);
+
+                              return true;
+                          } catch (Exception $e) {
+                              return false;
+                          }
+                      },
+                      'message' => 'Timezone is not valid.',
+                  ]);
 
         return $validator;
     }
