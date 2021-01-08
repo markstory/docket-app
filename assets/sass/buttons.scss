@@ -9,6 +9,7 @@ button {
   padding: $space $space * 1.5;
   border-radius: $border-radius;
   border: 1px solid $color-border-med;
+  height: 38px;
 
   &:hover {
     box-shadow: $shadow-button;

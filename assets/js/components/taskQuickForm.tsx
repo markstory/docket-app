@@ -4,7 +4,7 @@ import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
-import {useProjects} from 'app/providers/projects';
+import ProjectSelect from 'app/components/projectSelect';
 
 type Props = {
   task: Task;
@@ -14,7 +14,6 @@ type Props = {
 };
 
 export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props) {
-  const [projects] = useProjects();
   const [dueOn, setDueOn] = useState(task.due_on);
 
   return (
@@ -32,14 +31,7 @@ export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props)
       </div>
       <div className="attributes">
         <div className="project">
-          <label htmlFor="task-project">{t('Project')}</label>
-          <select id="task-project" name="project_id" defaultValue={task.project.id}>
-            {projects.map(project => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+          <ProjectSelect value={task.project.id} />
           <FormError errors={errors} field="project_id" />
         </div>
         <div className="due-on">
