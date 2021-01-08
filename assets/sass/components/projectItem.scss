@@ -8,11 +8,13 @@
     visibility: hidden;
   }
 
-  &:hover {
+  &:hover,
+  &[data-active=true] {
     background: $color-bg;
   }
 
-  &:hover .dropdown-menu {
+  &:hover .dropdown-menu,
+  &[data-active=true] .dropdown-menu {
     visibility: visible;
   }
 

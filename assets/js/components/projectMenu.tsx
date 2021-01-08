@@ -14,10 +14,14 @@ type Props = {
   project: Project;
   showAll?: boolean;
   alignMenu?: ContextMenuProps['alignMenu'];
+  onOpen?: ContextMenuProps['onOpen'];
+  onClose?: ContextMenuProps['onClose'];
 };
 
 export default function ProjectMenu({
   project,
+  onOpen,
+  onClose,
   showAll = false,
   alignMenu = 'left',
 }: Props) {
@@ -37,7 +41,7 @@ export default function ProjectMenu({
   }
 
   return (
-    <ContextMenu alignMenu={alignMenu}>
+    <ContextMenu alignMenu={alignMenu} onClose={onClose} onOpen={onOpen}>
       {showAll && (
         <li>
           <InertiaLink

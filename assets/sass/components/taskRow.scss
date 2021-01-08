@@ -57,6 +57,7 @@
   .actions > * + * {
     margin-left: $space;
   }
+  &[data-active=true] .actions,
   &:hover .actions {
     display: flex;
     align-items: center;

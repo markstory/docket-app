@@ -20,6 +20,8 @@ type Props = {
 };
 
 export default function TaskRow({task, showDueOn, showProject}: Props) {
+  const [active, setActive] = useState(false);
+
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const action = task.completed ? 'incomplete' : 'complete';
@@ -30,7 +32,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
   });
 
   return (
-    <div className={className}>
+    <div className={className} data-active={active}>
       <input
         type="checkbox"
         value="1"
@@ -50,7 +52,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
-      <TaskActions task={task} />
+      <TaskActions task={task} setActive={setActive} />
     </div>
   );
 }
@@ -68,7 +70,11 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
   );
 }
 
-function TaskActions({task}: Pick<Props, 'task'>) {
+type ActionsProps = Pick<Props, 'task'> & {
+  setActive: (val: boolean) => void;
+};
+
+function TaskActions({task, setActive}: ActionsProps) {
   async function handleDueOnChange(value: string | null) {
     updateTaskField(task, 'due_on', value).then(() => {
       Inertia.reload();
@@ -84,6 +90,8 @@ function TaskActions({task}: Pick<Props, 'task'>) {
   return (
     <div className="actions">
       <DropdownMenu
+        onOpen={() => setActive(true)}
+        onClose={() => setActive(false)}
         alignMenu="right"
         button={props => (
           <button className="button-icon" {...props}>
@@ -93,7 +101,11 @@ function TaskActions({task}: Pick<Props, 'task'>) {
       >
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
       </DropdownMenu>
-      <ContextMenu alignMenu="right">
+      <ContextMenu
+        alignMenu="right"
+        onOpen={() => setActive(true)}
+        onClose={() => setActive(false)}
+      >
         <li>
           <button className="context-item" onClick={handleDelete}>
             <InlineIcon icon="trash" />
