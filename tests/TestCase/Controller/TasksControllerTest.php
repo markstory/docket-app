@@ -34,7 +34,6 @@ class TasksControllerTest extends TestCase
         'app.Users',
         'app.Tasks',
         'app.Projects',
-        'app.TaskComments',
         'app.Subtasks',
         'app.LabelsTasks',
         'app.Labels',

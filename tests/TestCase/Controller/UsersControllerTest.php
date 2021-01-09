@@ -134,7 +134,8 @@ class UsersControllerTest extends TestCase
         $this->post('/users/profile', [
             'email' => 'badthings@example.com',
             'unverified_email' => 'example@example.com',
-            'timezone' => 'America/San_Francisco',
+            'timezone' => 'America/New_York',
+            'referer' => '/todos/today',
         ]);
         $this->assertRedirect('/todos/today');
         $this->assertFlashElement('flash/success');

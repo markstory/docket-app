@@ -44,17 +44,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     foreign key (project_id) references projects(id) on delete cascade
 ) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS task_comments (
-    id int not null auto_increment primary key,
-    task_id integer not null,
-    user_id integer not null,
-    body text,
-    created timestamp default current_timestamp,
-    modified timestamp default current_timestamp on update current_timestamp,
-    foreign key (user_id) references users(id),
-    foreign key (task_id) references tasks(id) on delete cascade
-) CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS subtasks (
     id int not null auto_increment primary key,
     task_id integer not null,

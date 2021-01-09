@@ -19,9 +19,8 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\Project $project
- * @property \App\Model\Entity\TodoComment[] $todo_comments
- * @property \App\Model\Entity\TodoSubtask[] $todo_subtasks
- * @property \App\Model\Entity\TodoLabel[] $todo_labels
+ * @property \App\Model\Entity\Subtask[] $subtasks
+ * @property \App\Model\Entity\Label[] $labels
  */
 class Task extends Entity
 {
@@ -45,7 +44,6 @@ class Task extends Entity
         'created' => true,
         'modified' => true,
         'project' => true,
-        'comments' => true,
         'subtasks' => true,
         'labels' => true,
     ];

@@ -178,7 +178,7 @@ class TasksController extends AppController
     public function view($id = null)
     {
         $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Labels', 'TaskComments', 'Subtasks'],
+            'contain' => ['Projects', 'Labels', 'Subtasks'],
         ]);
         $this->Authorization->authorize($task);
 

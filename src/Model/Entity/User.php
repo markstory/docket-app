@@ -26,7 +26,6 @@ use RuntimeException;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\Project[] $projects
- * @property \App\Model\Entity\TodoComment[] $todo_comments
  */
 class User extends Entity implements AuthenticationIdentity, AuthorizationIdentity
 {

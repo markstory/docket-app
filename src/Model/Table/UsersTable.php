@@ -16,7 +16,6 @@ use Exception;
  * Users Model
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\HasMany $Projects
- * @property \App\Model\Table\TaskCommentsTable&\Cake\ORM\Association\HasMany $TaskComments
  *
  * @method \App\Model\Entity\User newEmptyEntity()
  * @method \App\Model\Entity\User newEntity(array $data, array $options = [])
@@ -53,9 +52,6 @@ class UsersTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('Projects', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasMany('TaskComments', [
             'foreignKey' => 'user_id',
         ]);
     }

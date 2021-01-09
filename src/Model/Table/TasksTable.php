@@ -18,7 +18,6 @@ use RuntimeException;
  * Tasks Model
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\BelongsTo $Projects
- * @property \App\Model\Table\TaskCommentsTable&\Cake\ORM\Association\HasMany $TaskComments
  * @property \App\Model\Table\SubtasksTable&\Cake\ORM\Association\HasMany $Subtasks
  * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\BelongsToMany $Labels
  *
@@ -57,9 +56,6 @@ class TasksTable extends Table
         $this->belongsTo('Projects', [
             'foreignKey' => 'project_id',
             'joinType' => 'INNER',
-        ]);
-        $this->hasMany('TaskComments', [
-            'foreignKey' => 'task_id',
         ]);
         $this->hasMany('Subtasks', [
             'foreignKey' => 'task_id',
