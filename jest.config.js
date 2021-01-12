@@ -10,6 +10,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|png|jpg|mp4|svg)$': '<rootDir>/tests/js/__mocks__/styleMock.js',
     '^app(.*)$': '<rootDir>/assets/js$1',
+    '^tests(.*)$': '<rootDir>/tests/js$1',
   },
   modulePaths: ['<rootDir>/assets/js'],
   testMatch: ['<rootDir>/tests/js/**/*(*.)@(spec|test).(js|ts)?(x)'],

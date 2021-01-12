@@ -22,7 +22,8 @@
     "outDir": "webroot/js",
     "baseUrl": ".",
     "paths": {
-        "app/*": ["assets/js/*"]
+        "app/*": ["assets/js/*"],
+        "tests/*": ["tests/js/*"]
     }
   },
   "include": [
