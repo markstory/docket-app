@@ -8,6 +8,9 @@
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
+
+        <!-- Database URL for acceptance and integration tests -->
+        <env name="DATABASE_TEST_URL" value="mysql://lists:password@localhost/cake_test" />
     </php>
 
     <!-- Add any additional test suites you want to run here -->
@@ -15,7 +18,9 @@
         <testsuite name="app">
             <directory>tests/TestCase/</directory>
         </testsuite>
-        <!-- Add plugin test suites here. -->
+        <testsuite name="acceptance">
+            <directory>tests/Acceptance/</directory>
+        </testsuite>
     </testsuites>
 
     <!-- Setup a listener for fixtures -->
@@ -26,6 +31,10 @@
             </arguments>
         </listener>
     </listeners>
+
+    <extensions>
+        <extension class="Symfony\Component\Panther\ServerExtension" />
+    </extensions>
 
     <!-- Ignore vendor tests in code coverage reports -->
     <filter>

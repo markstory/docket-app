@@ -45,7 +45,7 @@ function Contents({children}: Props) {
 
   return (
     <React.Fragment>
-      <main className="layout-three-quarter">
+      <main className="layout-three-quarter" data-testid="loggedin">
         <section className="sidebar">
           <ProfileMenu />
           <ProjectFilter />

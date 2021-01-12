@@ -28,6 +28,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 require dirname(__DIR__) . '/config/bootstrap.php';
 
+// Turns off debugkit
+define('IS_TESTS', true);
+
 $_SERVER['PHP_SELF'] = '/';
 
 Configure::write('App.fullBaseUrl', 'http://localhost');
@@ -50,3 +53,9 @@ ConnectionManager::alias('test_debug_kit', 'debug_kit');
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
+
+// Setup server for panther tests.
+// Panther doesn't make the router script absolute.
+$_SERVER['PANTHER_WEB_SERVER_ROUTER'] = realpath('./webroot/index.php');
+$_SERVER['PANTHER_WEB_SERVER_DIR'] = './webroot';
+$_SERVER['PANTHER_APP_ENV'] = 'acceptance';
