@@ -14,6 +14,10 @@ return [
      */
     'debug' => true,
 
+    'App' => [
+        'inTest' => true,
+    ],
+
     /*
      * Security and encryption configuration
      *

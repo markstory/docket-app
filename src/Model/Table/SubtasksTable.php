@@ -15,19 +15,19 @@ use InvalidArgumentException;
  *
  * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\BelongsTo $Tasks
  *
- * @method \App\Model\Entity\TodoSubtask newEmptyEntity()
- * @method \App\Model\Entity\TodoSubtask newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\TodoSubtask[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\TodoSubtask get($primaryKey, $options = [])
- * @method \App\Model\Entity\TodoSubtask findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\TodoSubtask patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\TodoSubtask[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\TodoSubtask|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\TodoSubtask saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Subtask newEmptyEntity()
+ * @method \App\Model\Entity\Subtask newEntity(array $data, array $options = [])
+ * @method \App\Model\Entity\Subtask[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Subtask get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Subtask findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\Subtask patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Subtask[] patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Subtask|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Subtask saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

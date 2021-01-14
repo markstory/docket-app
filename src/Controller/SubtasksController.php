@@ -30,7 +30,7 @@ class SubtasksController extends AppController
         return $task;
     }
 
-    protected function getTodoSubtask(string $taskId, string $id): Subtask
+    protected function getSubtask(string $taskId, string $id): Subtask
     {
         $item = $this->getTask($taskId);
 
@@ -74,7 +74,7 @@ class SubtasksController extends AppController
     public function toggle($taskId, $id = null)
     {
         $this->request->allowMethod(['post']);
-        $subtask = $this->getTodoSubtask($taskId, $id);
+        $subtask = $this->getSubtask($taskId, $id);
 
         $subtask->toggle();
         $this->Subtasks->saveOrFail($subtask);
@@ -98,7 +98,7 @@ class SubtasksController extends AppController
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
 
-        $subtask = $this->getTodoSubtask($taskId, $id);
+        $subtask = $this->getSubtask($taskId, $id);
         $subtask = $this->Subtasks->patchEntity($subtask, $this->request->getData());
         if (!$this->Subtasks->save($subtask)) {
             return $this->validationErrorResponse($subtask->getErrors());
@@ -121,7 +121,7 @@ class SubtasksController extends AppController
     public function delete(string $taskId, string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $subtask = $this->getTodoSubtask($taskId, $id);
+        $subtask = $this->getSubtask($taskId, $id);
 
         if ($this->Subtasks->delete($subtask)) {
             $this->Flash->success(__('Subtask deleted.'));
@@ -141,7 +141,7 @@ class SubtasksController extends AppController
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
         $this->Authorization->authorize($item, 'edit');
-        $subtask = $this->getTodoSubtask($taskId, $id);
+        $subtask = $this->getSubtask($taskId, $id);
 
         $operation = [
             'ranking' => $this->request->getData('ranking'),
