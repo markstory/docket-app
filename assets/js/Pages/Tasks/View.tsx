@@ -23,7 +23,7 @@ export default function TasksView({referer, task}: Props) {
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   function handleClose() {
-    const target = referer === window.location.pathname ? '/todos/upcoming' : referer;
+    const target = referer === window.location.pathname ? '/tasks/upcoming' : referer;
     Inertia.visit(target);
   }
 
@@ -34,7 +34,7 @@ export default function TasksView({referer, task}: Props) {
     // Do an XHR request so we can handle validation errors
     // inside the modal.
     axios
-      .post(`/todos/${task.id}/edit`, formData)
+      .post(`/tasks/${task.id}/edit`, formData)
       .then(() => {
         setEditing(false);
         Inertia.reload({only: ['task']});
@@ -81,7 +81,7 @@ function TaskSummary({task, onClick}: SummaryProps) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     Inertia.post(
-      `/todos/${task.id}/${task.completed ? 'incomplete' : 'complete'}`,
+      `/tasks/${task.id}/${task.completed ? 'incomplete' : 'complete'}`,
       {},
       {only: ['task']}
     );

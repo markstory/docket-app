@@ -11,12 +11,12 @@ export function updateTaskField(
     [field]: value,
   };
 
-  return axios.post(`/todos/${task.id}/edit`, data);
+  return axios.post(`/tasks/${task.id}/edit`, data);
 }
 
 export function updateTask(
   task: Task,
   data: FormData | Record<keyof Task, string | number | null>
 ): Promise<AxiosResponse<undefined>> {
-  return axios.post(`/todos/${task.id}/edit`, data);
+  return axios.post(`/tasks/${task.id}/edit`, data);
 }

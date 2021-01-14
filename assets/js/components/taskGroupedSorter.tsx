@@ -24,7 +24,7 @@ type UpdateData = {
 };
 
 /**
- * Abstraction around reorder lists of todos and optimistically updating state.
+ * Abstraction around reorder lists of tasks and optimistically updating state.
  */
 export default function TaskGroupedSorter({children, tasks, grouper, scope}: Props) {
   const [sorted, setSorted] = React.useState<GroupedItems | undefined>(undefined);
@@ -58,7 +58,7 @@ export default function TaskGroupedSorter({children, tasks, grouper, scope}: Pro
       data.due_on = destination.droppableId;
     }
 
-    Inertia.post(`/todos/${result.draggableId}/move`, data, {
+    Inertia.post(`/tasks/${result.draggableId}/move`, data, {
       preserveScroll: true,
       onSuccess() {
         // Revert local state.

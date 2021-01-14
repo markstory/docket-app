@@ -16,7 +16,7 @@ export default function TaskNotes({task}: Props) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     updateTask(task, formData).then(() => {
-      Inertia.get(`/todos/${task.id}/view`, {}, {only: ['task'], replace: true});
+      Inertia.get(`/tasks/${task.id}/view`, {}, {only: ['task'], replace: true});
     });
   }
 

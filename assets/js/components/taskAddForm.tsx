@@ -18,7 +18,7 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    Inertia.post('/todos/add', formData, {
+    Inertia.post('/tasks/add', formData, {
       onSuccess: () => onCancel(),
     });
   };

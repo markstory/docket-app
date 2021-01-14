@@ -25,7 +25,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const action = task.completed ? 'incomplete' : 'complete';
-    Inertia.post(`/todos/${task.id}/${action}`);
+    Inertia.post(`/tasks/${task.id}/${action}`);
   };
   const className = classnames('task-row', {
     'is-completed': task.completed,
@@ -39,7 +39,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
         onClick={handleComplete}
         defaultChecked={task.completed}
       />
-      <InertiaLink href={`/todos/${task.id}/view`}>
+      <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
         <div className="attributes">
           {showDueOn && task.due_on && (
@@ -83,7 +83,7 @@ function TaskActions({task, setActive}: ActionsProps) {
 
   function handleDelete(event: React.MouseEvent) {
     event.preventDefault();
-    Inertia.post(`/todos/${task.id}/delete`);
+    Inertia.post(`/tasks/${task.id}/delete`);
   }
 
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;

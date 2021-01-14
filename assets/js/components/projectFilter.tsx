@@ -13,13 +13,13 @@ function ProjectFilter() {
     <div className="project-filter">
       <ul className="links">
         <li>
-          <InertiaLink href="/todos/today">
+          <InertiaLink href="/tasks/today">
             <InlineIcon icon="clippy" />
             {t('Today')}
           </InertiaLink>
         </li>
         <li>
-          <InertiaLink href="/todos/upcoming">
+          <InertiaLink href="/tasks/upcoming">
             <InlineIcon icon="calendar" />
             {t('Upcoming')}
           </InertiaLink>

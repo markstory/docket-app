@@ -21,7 +21,7 @@ type UpdateData = {
 };
 
 /**
- * Abstraction around reorder lists of todos and optimistically updating state.
+ * Abstraction around reorder lists of tasks and optimistically updating state.
  */
 export default function TaskSorter({children, tasks, scope}: Props) {
   const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
@@ -45,7 +45,7 @@ export default function TaskSorter({children, tasks, scope}: Props) {
       data.due_on = result.destination.droppableId;
     }
 
-    Inertia.post(`/todos/${result.draggableId}/move`, data, {
+    Inertia.post(`/tasks/${result.draggableId}/move`, data, {
       preserveScroll: true,
       onSuccess() {
         // Revert local state.

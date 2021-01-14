@@ -23,7 +23,7 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
     // as reloading doesn't work due to sort contexts
     try {
       const resp: AxiosResponse<{subtask: Subtask}> = await axios.post(
-        `/todos/${task.id}/subtasks`,
+        `/tasks/${task.id}/subtasks`,
         formData
       );
       // Clear input for next task.
@@ -35,7 +35,7 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
   }
 
   return (
-    <form className="todosubtask-addform" method="post" onSubmit={handleSubmit}>
+    <form className="subtask-addform" method="post" onSubmit={handleSubmit}>
       <div className="title">
         <input
           type="text"

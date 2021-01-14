@@ -15,7 +15,7 @@ export async function deleteProject(project: Project) {
   if (
     await confirm(
       'Are you sure?',
-      'This will destroy all the todos this project contains'
+      'This will destroy all the tasks this project contains'
     )
   ) {
     return Inertia.post(`/projects/${project.slug}/delete`);

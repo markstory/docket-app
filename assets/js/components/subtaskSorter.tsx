@@ -37,7 +37,7 @@ export default function SubtaskSorter({children, taskId}: Props) {
       ranking: result.destination.index,
     };
 
-    Inertia.post(`/todos/${taskId}/subtasks/${result.draggableId}/move`, data, {
+    Inertia.post(`/tasks/${taskId}/subtasks/${result.draggableId}/move`, data, {
       only: ['task'],
       onSuccess() {
         // Revert local state.

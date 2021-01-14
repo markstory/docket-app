@@ -99,7 +99,7 @@ function TaskSubtaskRow({index, subtask, taskId}: RowProps) {
   const [editing, setEditing] = useState(false);
   function handleComplete(event: React.MouseEvent<HTMLInputElement>) {
     event.stopPropagation();
-    Inertia.post(`/todos/${taskId}/subtasks/${subtask.id}/toggle`);
+    Inertia.post(`/tasks/${taskId}/subtasks/${subtask.id}/toggle`);
   }
   const className = classnames('subtask-row', {
     'is-completed': subtask.completed,

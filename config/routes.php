@@ -56,7 +56,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/login/', 'Users::login', ['_name' => 'users:login']);
     $builder->get('/logout/', 'Users::logout', 'users:logout');
 
-    $builder->scope('/todos', ['controller' => 'Tasks'], function ($builder) {
+    $builder->scope('/tasks', ['controller' => 'Tasks'], function ($builder) {
         $builder->get('/', ['action' => 'index'], 'tasks:index');
         $builder->get('/today', ['action' => 'index', 'today'], 'tasks:today');
         $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'tasks:upcoming');
@@ -93,7 +93,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
     });
 
-    $builder->scope('/todos/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
+    $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
         $builder->post('/', ['action' => 'add'], 'subtasks:add')
             ->setPass(['taskId']);
         $builder->post('/{id}/edit', ['action' => 'edit'], 'subtasks:edit')

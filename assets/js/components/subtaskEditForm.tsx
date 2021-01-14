@@ -23,7 +23,7 @@ export default function SubtaskEditForm({subtask, index, taskId, onCancel}: Prop
     // as reloading doesn't work due to sort contexts
     try {
       const resp: AxiosResponse<{subtask: Subtask}> = await axios.post(
-        `/todos/${taskId}/subtasks/${subtask.id}/edit`,
+        `/tasks/${taskId}/subtasks/${subtask.id}/edit`,
         formData
       );
       // TODO see if we can reset contexts instead of repeating update logic here.
