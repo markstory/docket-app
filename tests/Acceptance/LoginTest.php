@@ -3,30 +3,11 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use App\Test\TestCase\FactoryTrait;
-use Cake\TestSuite\TestCase;
-use Symfony\Component\Panther\PantherTestCaseTrait;
-
-class LoginTest extends TestCase
+class LoginTest extends AcceptanceTestCase
 {
-    // TODO move all of this to a base class.
-    public const CHROME = 'chrome';
-    public const FIREFOX = 'firefox';
-    use PantherTestCaseTrait;
-    use FactoryTrait;
-
-    protected $fixtures = [
-        'app.Users',
-        'app.Projects',
-        'app.Tasks',
-        'app.Subtasks',
-        'app.Labels',
-        'app.LabelsTasks',
-    ];
-
     public function testLoginRedirectToToday()
     {
-        $client = static::createPantherClient(['browser' => static::FIREFOX]);
+        $client = $this->createClient();
 
         $client->request('GET', '/login');
         $client->waitFor('input[name="password"]');
