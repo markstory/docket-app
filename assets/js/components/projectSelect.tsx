@@ -42,7 +42,8 @@ function ProjectSelect({value, onChange}: Props) {
     label: project.name,
     project,
   }));
-  const valueOption = options.find(opt => opt.value === value);
+  const selected = value ? value : options?.[0]?.value;
+  const valueOption = options.find(opt => opt.value === selected);
 
   return (
     <Select

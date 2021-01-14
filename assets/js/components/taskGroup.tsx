@@ -80,7 +80,11 @@ export default function TaskGroup({
       {showAdd && (
         <div className="add-task">
           {!showForm && (
-            <button className="button-secondary" onClick={() => setShowForm(true)}>
+            <button
+              data-testid="add-task"
+              className="button-secondary"
+              onClick={() => setShowForm(true)}
+            >
               <InlineIcon icon="plus" />
               {t('Add Task')}
             </button>
