@@ -12,7 +12,9 @@ input[type=email] {
 }
 
 label {
+  display: inline-block;
   margin-right: $space;
+  min-width: 100px;
 }
 
 

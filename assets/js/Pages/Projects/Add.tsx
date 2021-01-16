@@ -13,6 +13,11 @@ type Props = {
 };
 
 function ProjectsAdd({errors, referer}: Props) {
+  function handleCancel(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    handleClose();
+  }
+
   function handleClose() {
     Inertia.visit(referer);
   }
@@ -48,6 +53,9 @@ function ProjectsAdd({errors, referer}: Props) {
           </div>
           <div className="button-bar">
             <button type="submit">{t('Save')}</button>
+            <button className="button-secondary" onClick={handleCancel}>
+              {t('Cancel')}
+            </button>
           </div>
         </form>
       </Modal>
