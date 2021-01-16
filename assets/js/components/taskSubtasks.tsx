@@ -75,7 +75,7 @@ export default function TaskSubtasks({task}: Props) {
             </Droppable>
           )}
         </SubtaskSorter>
-        <div className="add-task">
+        <div className="add-subtask">
           {!showForm && (
             <button className="button-secondary" onClick={() => setShowForm(true)}>
               <InlineIcon icon="plus" />

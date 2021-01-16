@@ -88,6 +88,52 @@ class TasksTest extends AcceptanceTestCase
         $this->assertEquals('Cut grass', $task->title);
     }
 
+    public function testCreateSubtaskOnView()
+    {
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0);
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Click the add subtask button
+        $crawler->filter('.add-subtask button')->click();
+
+        // Fill out the form and submit it.
+        $client->waitFor('.subtask-addform');
+        $form = $crawler->filter('.subtask-addform')->form();
+        $form->get('title')->setValue('Get soap');
+        $crawler->filter('[data-testid="save-subtask"]')->click();
+
+        $subtask = $this->Tasks->Subtasks
+            ->find()
+            ->where(['Subtasks.task_id' => $task->id])
+            ->firstOrFail();
+
+        $this->assertNotEmpty($subtask);
+        $this->assertEquals('Get soap', $subtask->title);
+    }
+
+    public function testCompleteSubtaskOnView()
+    {
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0);
+        $subtask = $this->makeSubtask('Get soap', $task->id, 0);
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Complete the subtask
+        $crawler->filter('.subtask-row input[type="checkbox"]')->click();
+
+        $subtask = $this->Tasks->Subtasks->get($subtask->id);
+        $this->assertTrue($subtask->completed);
+    }
+
     public function testTaskCreateFromToday()
     {
         $this->markTestIncomplete();

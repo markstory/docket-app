@@ -1,27 +1,22 @@
 .task-subtasks {
-  .add-task {
+  .add-subtask {
     margin-top: $space;
   }
-}
+  .subtask-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 
-.subtask-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+    min-height: 30px;
+    margin-bottom: $space / 2;
 
-  min-height: 30px;
-  margin-bottom: $space / 2;
+    input[type=checkbox] {
+      margin-right: $space;
+    }
 
-  input[type=checkbox] {
-    margin-right: $space;
+    &.is-completed {
+      color: $color-muted;
+      text-decoration: line-through;
+    }
   }
-
-  &.is-completed {
-    color: $color-muted;
-    text-decoration: line-through;
-  }
-}
-
-.drag-ghost .subtask-row {
-  width: 300px;
 }
