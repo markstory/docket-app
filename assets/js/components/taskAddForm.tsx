@@ -35,7 +35,7 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
     complete_subtask_count: 0,
     subtask_count: 0,
     project: {
-      id: defaultProjectId ? Number(defaultProjectId) : -1,
+      id: defaultProjectId ? Number(defaultProjectId) : 0,
       name: '',
       slug: '',
       color: '',
@@ -45,6 +45,8 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
     },
   };
 
-  return <TaskQuickForm task={task} onSubmit={onSubmit} onCancel={onCancel} />;
+  return (
+    <TaskQuickForm url="/tasks/add" task={task} onSubmit={onSubmit} onCancel={onCancel} />
+  );
 }
 export default TaskAddForm;

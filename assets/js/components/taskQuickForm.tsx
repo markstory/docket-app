@@ -8,16 +8,17 @@ import ProjectSelect from 'app/components/projectSelect';
 
 type Props = {
   task: Task;
+  url: string;
   errors?: null | ValidationErrors;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 };
 
-export default function TaskQuickForm({errors, task, onSubmit, onCancel}: Props) {
+export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: Props) {
   const [dueOn, setDueOn] = useState(task.due_on);
 
   return (
-    <form className="task-quickform" method="post" onSubmit={onSubmit}>
+    <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
       <div className="title">
         <input
           type="text"
