@@ -56,6 +56,7 @@ export default function TasksView({referer, task}: Props) {
         <div className="task-view">
           {editing ? (
             <TaskQuickForm
+              url={`/tasks/${task.id}/edit`}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
               task={task}
