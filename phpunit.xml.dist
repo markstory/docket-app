@@ -4,6 +4,7 @@
     processIsolation="false"
     stopOnFailure="false"
     bootstrap="tests/bootstrap.php"
+    defaultTestSuite="functional"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
@@ -15,7 +16,7 @@
 
     <!-- Add any additional test suites you want to run here -->
     <testsuites>
-        <testsuite name="app">
+        <testsuite name="functional">
             <directory>tests/TestCase/</directory>
         </testsuite>
         <testsuite name="acceptance">

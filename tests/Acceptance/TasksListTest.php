@@ -25,7 +25,6 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testCreateFromToday()
     {
-        $this->markTestIncomplete();
         $project = $this->makeProject('Work', 1);
 
         $client = $this->login();
@@ -39,9 +38,8 @@ class TasksListTest extends AcceptanceTestCase
 
         $form = $client->getCrawler()->filter('.task-quickform')->form();
         $form->setValues(['title' => 'A new task']);
-        // TODO operate react select with webdriver.
-        // $client->getCrawler()->filter('...)
 
+        // Use the default project value as it is hard to automate with webdriver.
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
 
