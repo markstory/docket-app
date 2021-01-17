@@ -148,6 +148,7 @@ class SubtasksController extends AppController
         ];
         try {
             $this->Subtasks->move($subtask, $operation);
+            $this->Flash->success(__('Subtask reordered.'));
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
         }

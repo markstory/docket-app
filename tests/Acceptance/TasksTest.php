@@ -20,32 +20,17 @@ class TasksTest extends AcceptanceTestCase
         $this->Tasks = TableRegistry::get('Tasks');
     }
 
-    public function testCompleteOnUpcomingList()
+    protected function setupTask()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
-        $client = $this->login();
-        $client->get('/tasks/upcoming');
-        $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
-
-        $title = $crawler->filter('.task-row .title')->first();
-        $this->assertEquals($task->title, $title->getText());
-        $checkbox = $crawler->filter('.task-row input[type="checkbox"]')->first();
-        $checkbox->click();
-
-        $task = $this->Tasks->get($task->id);
-        $this->assertNotEmpty($task);
-        $this->assertTrue($task->completed);
+        return $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
     }
 
     public function testCompleteOnView()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
-        $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
+        $task = $this->setupTask();
 
         $client = $this->login();
         $client->get("/tasks/{$task->id}/view");
@@ -62,11 +47,38 @@ class TasksTest extends AcceptanceTestCase
         $this->assertTrue($task->completed);
     }
 
+    public function testUpdateDateOnView()
+    {
+        $task = $this->setupTask();
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Click the summary to get the form.
+        $summary = $crawler->filter('.summary > a')->first();
+        $summary->click();
+        $client->waitFor('.task-quickform');
+
+        // Open the date menu, clear the due date
+        $crawler->filter('.due-on .opener')->click();
+        $client->waitFor('.due-on-menu');
+        $crawler->filter('.due-on-menu [data-testid="not-due"]')->click();
+
+        // Submit the form
+        $crawler->filter('[data-testid="save-task"]')->click();
+
+        $task = $this->Tasks->get($task->id);
+        $this->assertNotEmpty($task);
+        $this->assertNull($task->due_on);
+    }
+
     public function testRenameOnView()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
         $client = $this->login();
         $client->get("/tasks/{$task->id}/view");
@@ -90,8 +102,7 @@ class TasksTest extends AcceptanceTestCase
 
     public function testCreateSubtaskOnView()
     {
-        $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0);
+        $task = $this->setupTask();
 
         $client = $this->login();
         $client->get("/tasks/{$task->id}/view");
@@ -118,8 +129,7 @@ class TasksTest extends AcceptanceTestCase
 
     public function testCompleteSubtaskOnView()
     {
-        $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0);
+        $task = $this->setupTask();
         $subtask = $this->makeSubtask('Get soap', $task->id, 0);
 
         $client = $this->login();
@@ -134,30 +144,26 @@ class TasksTest extends AcceptanceTestCase
         $this->assertTrue($subtask->completed);
     }
 
-    public function testTaskCreateFromToday()
+    public function testReorderSubtasks()
     {
-        $this->markTestIncomplete();
-        $project = $this->makeProject('Work', 1);
-
+        $task = $this->setupTask();
+        $subtasks = [
+            $this->makeSubtask('Get soap', $task->id, 0),
+            $this->makeSubtask('Get brush', $task->id, 1),
+            $this->makeSubtask('Fill sink', $task->id, 2),
+        ];
         $client = $this->login();
-        $client->get('/tasks/today');
+        $client->get("/tasks/{$task->id}/view");
         $client->waitFor('[data-testid="loggedin"]');
 
-        // Open the add form
-        $button = $client->getCrawler()->filter('.add-task button');
-        $button->click();
-        $client->waitFor('.task-quickform');
+        // Do a drag from the top to the bottom subtask
+        $mouse = $client->getMouse();
+        $mouse->mouseDownTo('.task-subtasks li:first-child .dnd-handle')
+            ->mouseMoveTo('.task-subtasks li:last-child')
+            ->mouseUpTo('.task-subtasks li:last-child');
+        $client->waitFor('.flash-message');
 
-        $form = $client->getCrawler()->filter('.task-quickform')->form();
-        $form->setValues(['title' => 'A new task']);
-        // TODO operate react select with webdriver.
-        // $client->getCrawler()->filter('...)
-
-        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
-        $button->click();
-
-        $task = $this->Tasks->find()->first();
-        $this->assertNotEmpty($task, 'No task saved');
-        $this->assertEquals('A new task', $task->title);
+        $subtask = $this->Tasks->Subtasks->get($subtasks[0]->id);
+        $this->assertGreaterThan(0, $subtask->ranking);
     }
 }

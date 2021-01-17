@@ -138,6 +138,7 @@ class TasksController extends AppController
         ];
         try {
             $this->Tasks->move($task, $operation);
+            $this->Flash->success(__('Task reordered.'));
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
         }

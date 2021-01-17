@@ -57,3 +57,6 @@ session_id('cli');
 $_SERVER['PANTHER_WEB_SERVER_ROUTER'] = realpath('./webroot/index.php');
 $_SERVER['PANTHER_WEB_SERVER_DIR'] = './webroot';
 $_SERVER['PANTHER_APP_ENV'] = 'acceptance';
+
+// Uncomment to have a browser attached for panther tests.
+// $_SERVER['PANTHER_NO_HEADLESS'] = true;

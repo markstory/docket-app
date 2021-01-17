@@ -142,6 +142,7 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         if ($this->Projects->delete($project)) {
+            $this->Flash->success(__('Project deleted'));
             return $this->redirect(['_name' => 'tasks:today']);
         }
         return $this->response->withStatus(400);
@@ -179,6 +180,7 @@ class ProjectsController extends AppController
         ];
         try {
             $this->Projects->move($project, $operation);
+            $this->Flash->success(__('Project reordered.'));
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
         }

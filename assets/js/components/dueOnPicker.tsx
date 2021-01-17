@@ -77,14 +77,26 @@ export function MenuContents({selected, onChange}: ContentsProps) {
           placeholder="Type a due date"
         />
       </div>
-      <button className="menu-option" onClick={handleButtonClick(today)}>
+      <button
+        className="menu-option"
+        data-testid="today"
+        onClick={handleButtonClick(today)}
+      >
         <InlineIcon icon="clippy" /> {t('Today')}
       </button>
-      <button className="menu-option" onClick={handleButtonClick(tomorrow)}>
+      <button
+        className="menu-option"
+        data-testid="tomorrow"
+        onClick={handleButtonClick(tomorrow)}
+      >
         <InlineIcon icon="sun" />
         {t('Tommorrow')}
       </button>
-      <button className="menu-option" onClick={handleButtonClick(null)}>
+      <button
+        className="menu-option"
+        data-testid="not-due"
+        onClick={handleButtonClick(null)}
+      >
         <InlineIcon icon="trash" />
         {t('No Due Date')}
       </button>
