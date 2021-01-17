@@ -48,6 +48,7 @@ class TasksListTest extends AcceptanceTestCase
         $task = $this->Tasks->find()->first();
         $this->assertNotEmpty($task, 'No task saved');
         $this->assertEquals('A new task', $task->title);
+        $this->assertEquals($project->id, $task->project_id);
     }
 
     public function testCompleteOnUpcomingList()
@@ -73,11 +74,44 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testChangeDateWithContextMenuOnUpcomingList()
     {
+        $today = new FrozenDate('tomorrow', 'UTC');
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
         $this->markTestIncomplete();
+    }
+
+    public function testReorderInToday()
+    {
+        $today = new FrozenDate('yesterday', 'UTC');
+        $project = $this->makeProject('Work', 1);
+
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $today]);
+        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $today]);
+
+        $client = $this->login();
+        $client->get('/tasks/today');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
+
+        // Do a drag from the top to the bottom subtask
+        $mouse = $client->getMouse();
+        $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
+            ->mouseMove($last->getCoordinates())
+            ->mouseUp($last->getCoordinates());
+
+        $client->waitFor('.flash-message');
+
+        $task = $this->Tasks->get($task->id);
+        $this->assertGreaterThan(0, $task->day_order);
     }
 
     public function testDragToNewDateOnUpcomingList()
     {
+        $today = new FrozenDate('tomorrow', 'UTC');
+        $project = $this->makeProject('Work', 1);
+
         $this->markTestIncomplete();
     }
 }
