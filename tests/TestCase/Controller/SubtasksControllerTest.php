@@ -55,7 +55,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks", [
+        $this->post("/tasks/{$item->id}/subtasks", [
             'title' => 'first subtask',
         ]);
         $this->assertResponseOk();
@@ -81,7 +81,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks", [
+        $this->post("/tasks/{$item->id}/subtasks", [
             'title' => 'first subtask',
         ]);
         $this->assertResponseCode(403);
@@ -97,7 +97,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks", [
+        $this->post("/tasks/{$item->id}/subtasks", [
             'title' => 'start mower',
         ]);
         $this->assertResponseOk();
@@ -120,8 +120,8 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/toggle");
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
+        $this->assertRedirect("/tasks/{$item->id}/view");
         $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertTrue($tasks->first()->completed);
     }
@@ -139,7 +139,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/toggle");
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
         $this->assertResponseCode(403);
     }
 
@@ -156,7 +156,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/edit", [
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
             'title' => 'Updated'
         ]);
         $this->assertResponseOk();
@@ -175,7 +175,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/edit", [
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
             'title' => 'Updated'
         ]);
         $this->assertResponseCode(403);
@@ -194,8 +194,8 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/delete");
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->assertRedirect("/tasks/{$item->id}/view");
         $this->assertCount(0, $this->Subtasks->find()->all());
     }
 
@@ -207,7 +207,7 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
         $this->assertResponseCode(403);
     }
 
@@ -220,8 +220,8 @@ class SubtasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->enableRetainFlashMessages();
-        $this->post("/todos/{$item->id}/subtasks/{$first->id}/move");
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->post("/tasks/{$item->id}/subtasks/{$first->id}/move");
+        $this->assertRedirect("/tasks/{$item->id}/view");
         $this->assertFlashElement('flash/error');
     }
 
@@ -235,10 +235,10 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$first->id}/move", [
+        $this->post("/tasks/{$item->id}/subtasks/{$first->id}/move", [
             'ranking' => 1,
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertRedirect("/tasks/{$item->id}/view");
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$second->id, $first->id, $third->id];
@@ -258,10 +258,10 @@ class SubtasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$item->id}/subtasks/{$third->id}/move", [
+        $this->post("/tasks/{$item->id}/subtasks/{$third->id}/move", [
             'ranking' => 0,
         ]);
-        $this->assertRedirect("/todos/{$item->id}/view");
+        $this->assertRedirect("/tasks/{$item->id}/view");
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$third->id, $first->id, $second->id];

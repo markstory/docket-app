@@ -65,12 +65,12 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->configRequest([
-            'headers' => ['Referer' => '/todos/today'],
+            'headers' => ['Referer' => '/tasks/today'],
         ]);
         $this->get("/projects/add");
 
         $this->assertResponseOk();
-        $this->assertSame('/todos/today', $this->viewVariable('referer'));
+        $this->assertSame('/tasks/today', $this->viewVariable('referer'));
     }
 
     /**
@@ -88,7 +88,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'second',
             'color' => '663366',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
         $this->assertEquals('second', $project->name);
@@ -108,7 +108,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'add',
             'color' => '663366',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $project = $this->Projects->find()->first();
         $this->assertEquals('add', $project->name);
@@ -142,11 +142,11 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => 'not a color',
-            'referer' => '/todos/upcoming',
+            'referer' => '/tasks/upcoming',
         ]);
         $this->assertResponseOk();
 
-        $this->assertSame('/todos/upcoming', $this->viewVariable('referer'));
+        $this->assertSame('/tasks/upcoming', $this->viewVariable('referer'));
         $this->assertArrayHasKey('color', $this->viewVariable('errors'));
     }
 
@@ -175,7 +175,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/delete");
-        $this->assertRedirect("/todos/today");
+        $this->assertRedirect("/tasks/today");
         $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
     }
 
@@ -216,7 +216,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/archive");
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertTrue($result->archived);
@@ -239,7 +239,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/unarchive");
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertFalse($result->archived);
@@ -276,7 +276,7 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->enableRetainFlashMessages();
         $this->post("/projects/{$home->slug}/move");
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/error');
     }
 
@@ -291,7 +291,7 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$home->slug}/move", [
             'ranking' => 1,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];
@@ -312,7 +312,7 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$fun->slug}/move", [
             'ranking' => 0,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$fun->id, $home->id, $work->id];

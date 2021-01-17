@@ -44,7 +44,7 @@ class UsersControllerTest extends TestCase
             'email' => 'mark@example.com',
             'password' => 'password123',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertSession('mark@example.com', 'Auth.email');
     }
 
@@ -56,7 +56,7 @@ class UsersControllerTest extends TestCase
             'password' => 'password123',
             'timezone' => 'America/New_York'
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertSession('mark@example.com', 'Auth.email');
 
         $user = $this->Users->get(1);
@@ -101,7 +101,7 @@ class UsersControllerTest extends TestCase
             'confirm_password' => 'password123',
             'timezone' => 'UTC'
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
 
         $this->assertMailCount(1);
@@ -135,9 +135,9 @@ class UsersControllerTest extends TestCase
             'email' => 'badthings@example.com',
             'unverified_email' => 'example@example.com',
             'timezone' => 'America/New_York',
-            'referer' => '/todos/today',
+            'referer' => '/tasks/today',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
         $user = $this->Users->get(1);
         $this->assertNotEquals('badthings@example.com', $user->email);
@@ -293,7 +293,7 @@ class UsersControllerTest extends TestCase
         $this->enableRetainFlashMessages();
         $this->get("/users/verifyEmail/{$token}");
 
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $user = $this->Users->get(1);
         $this->assertEquals('', $user->unverified_email);
         $this->assertEquals('newer@example.com', $user->email);

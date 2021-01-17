@@ -62,7 +62,7 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->get('/todos');
+        $this->get('/tasks');
 
         $this->assertResponseOk();
         $this->assertSame('upcoming', $this->viewVariable('view'));
@@ -86,7 +86,7 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->get('/todos/today');
+        $this->get('/tasks/today');
         $this->assertResponseOk();
         $this->assertSame('today', $this->viewVariable('view'));
 
@@ -106,7 +106,7 @@ class TasksControllerTest extends TestCase
         $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
 
         $this->login();
-        $this->get('/todos/upcoming');
+        $this->get('/tasks/upcoming');
         $this->assertResponseOk();
         $this->assertSame('upcoming', $this->viewVariable('view'));
 
@@ -127,7 +127,7 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
-        $this->get("/todos/{$first->id}/view");
+        $this->get("/tasks/{$first->id}/view");
         $this->assertResponseOk();
         $var = $this->viewVariable('task');
         $this->assertSame($var->title, $first->title);
@@ -139,7 +139,7 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
 
         $this->login();
-        $this->get("/todos/{$first->id}/view");
+        $this->get("/tasks/{$first->id}/view");
         $this->assertResponseCode(403);
     }
 
@@ -149,7 +149,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/add", [
+        $this->post("/tasks/add", [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
@@ -172,7 +172,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/add", [
+        $this->post("/tasks/add", [
             'title' => 'first todo',
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
@@ -190,7 +190,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/add", [
+        $this->post("/tasks/add", [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
@@ -204,7 +204,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/edit", [
+        $this->post("/tasks/{$first->id}/edit", [
             'title' => 'updated',
         ]);
         $this->assertResponseCode(200);
@@ -220,7 +220,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/edit", [
+        $this->post("/tasks/{$first->id}/edit", [
             'title' => 'updated',
         ]);
         $this->assertResponseCode(403);
@@ -233,9 +233,9 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/delete");
+        $this->post("/tasks/{$first->id}/delete");
 
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
@@ -246,7 +246,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/delete");
+        $this->post("/tasks/{$first->id}/delete");
 
         $this->assertTrue($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
@@ -259,7 +259,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$second->id}/move", [
+        $this->post("/tasks/{$second->id}/move", [
             'day_order' => 0,
         ]);
         $this->assertResponseCode(403);
@@ -273,12 +273,12 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->enableRetainFlashMessages();
-        $this->post("/todos/{$first->id}/move", [
+        $this->post("/tasks/{$first->id}/move", [
             'day_order' => 0,
             'due_on' => 'not a date'
         ]);
 
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/error');
     }
 
@@ -292,10 +292,10 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $expected = [$third->id, $first->id, $second->id];
-        $this->post("/todos/{$third->id}/move", [
+        $this->post("/tasks/{$third->id}/move", [
             'day_order' => 0,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
         $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -314,10 +314,10 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $expected = [$second->id, $third->id, $first->id];
-        $this->post("/todos/{$first->id}/move", [
+        $this->post("/tasks/{$first->id}/move", [
             'day_order' => 2,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
         $this->assertCount(count($expected), $results);
@@ -335,11 +335,11 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$third->id}/move", [
+        $this->post("/tasks/{$third->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
@@ -363,11 +363,11 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$new->id}/move", [
+        $this->post("/tasks/{$new->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
@@ -391,11 +391,11 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$new->id}/move", [
+        $this->post("/tasks/{$new->id}/move", [
             'day_order' => 0,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
@@ -424,11 +424,11 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$third->id}/move", [
+        $this->post("/tasks/{$third->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
@@ -451,10 +451,10 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$fourth->id}/move", [
+        $this->post("/tasks/{$fourth->id}/move", [
             'child_order' => 1,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
@@ -476,10 +476,10 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/todos/{$first->id}/move", [
+        $this->post("/tasks/{$first->id}/move", [
             'child_order' => 2,
         ]);
-        $this->assertRedirect('/todos/today');
+        $this->assertRedirect('/tasks/today');
 
         $results = $this->Tasks
             ->find()
