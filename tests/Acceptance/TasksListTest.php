@@ -40,6 +40,8 @@ class TasksListTest extends AcceptanceTestCase
         $form->setValues(['title' => 'A new task']);
 
         // Use the default project value as it is hard to automate with webdriver.
+        // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
+        // when needing to automate that component comes up again.
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
 
