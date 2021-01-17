@@ -94,7 +94,7 @@ function TaskActions({task, setActive}: ActionsProps) {
         onClose={() => setActive(false)}
         alignMenu="right"
         button={props => (
-          <button className="button-icon" {...props}>
+          <button className="button-icon" data-testid="task-reschedule" {...props}>
             <InlineIcon icon="calendar" />
           </button>
         )}

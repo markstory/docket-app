@@ -66,6 +66,7 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertEquals($task->title, $title->getText());
         $checkbox = $crawler->filter('.task-row input[type="checkbox"]')->first();
         $checkbox->click();
+        $client->waitFor('.flash-message');
 
         $task = $this->Tasks->get($task->id);
         $this->assertNotEmpty($task);
@@ -74,20 +75,37 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testChangeDateWithContextMenuOnUpcomingList()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
-        $this->markTestIncomplete();
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Trigger the hover.
+        $client->getMouse()->mouseMoveTo('.task-row');
+        $crawler = $client->getCrawler();
+
+        // Open the due menu
+        $crawler->filter('.actions [data-testid="task-reschedule"]')->click();
+
+        // click today
+        $crawler->filter('.due-on-menu [data-testid="today"]')->click();
+        $client->waitFor('.flash-message');
+
+        $updated = $this->Tasks->get($task->id);
+        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
     }
 
     public function testReorderInToday()
     {
-        $today = new FrozenDate('yesterday', 'UTC');
+        $yesterday = new FrozenDate('yesterday', 'UTC');
         $project = $this->makeProject('Work', 1);
 
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
-        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $today]);
-        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $today]);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $yesterday]);
+        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $yesterday]);
+        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $yesterday]);
 
         $client = $this->login();
         $client->get('/tasks/today');
@@ -95,7 +113,7 @@ class TasksListTest extends AcceptanceTestCase
 
         $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
 
-        // Do a drag from the top to the bottom subtask
+        // Do a drag from the top to the bottom
         $mouse = $client->getMouse();
         $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
             ->mouseMove($last->getCoordinates())
@@ -109,9 +127,34 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testDragToNewDateOnUpcomingList()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $twoDays = new FrozenDate('+2 days', 'UTC');
 
-        $this->markTestIncomplete();
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
+        $other = $this->makeTask('Vacuum', $project->id, 0, ['due_on' => $twoDays]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Get the last item. It will be in a different group than the first.
+        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
+
+        // Do a drag from the current day to the other day.
+        $mouse = $client->getMouse();
+        $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
+            ->mouseMove($last->getCoordinates())
+            ->mouseUp($last->getCoordinates());
+        $client->waitFor('.flash-message');
+
+        $updated = $this->Tasks->get($task->id);
+        $this->assertEquals($twoDays, $updated->due_on);
+        $this->assertEquals(0, $updated->day_order);
+
+        $updated = $this->Tasks->get($other->id);
+        $this->assertEquals($twoDays, $updated->due_on);
+        $this->assertEquals(1, $updated->day_order);
     }
 }
