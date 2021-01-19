@@ -1,0 +1,20 @@
+.color-select__control {
+  min-width: 200px;
+  max-width: 400px;
+
+}
+
+.color-select__input input {
+  height: auto;
+}
+
+.color-select__menu .color,
+.color-select__control .color {
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: relative;
+    top: 1px;
+  }
+}
