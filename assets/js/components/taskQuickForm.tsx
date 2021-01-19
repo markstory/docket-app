@@ -45,10 +45,10 @@ export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: P
         </div>
       </div>
       <div className="button-bar">
-        <button type="submit" data-testid="save-task">
+        <button type="submit" className="button-primary" data-testid="save-task">
           {t('Save')}
         </button>
-        <button className="button-secondary" onClick={onCancel}>
+        <button className="button-muted" onClick={onCancel}>
           {t('Cancel')}
         </button>
       </div>

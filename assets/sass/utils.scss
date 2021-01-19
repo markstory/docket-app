@@ -1,9 +1,9 @@
 .placeholder {
-  color: $color-muted;
+  color: var(--color-muted);
 }
 .counter {
   font-size: $font-size-normal;
-  color: $color-muted;
+  color: var(--color-muted);
   svg {
     margin-right: $space / 2;
   }

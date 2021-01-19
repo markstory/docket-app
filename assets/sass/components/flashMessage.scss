@@ -5,7 +5,7 @@
   transform: translateX(-50%);
 
   padding: $space * 2;
-  background: $color-bg-raised;
+  background: var(--color-bg);
   box-shadow: $shadow-med;
   border-radius: $border-radius;
   z-index: $z-flash;
@@ -27,8 +27,8 @@
 }
 
 .flash-success svg {
-  color: $color-success;
+  color: var(--color-success-fg);
 }
 .flash-error svg {
-  color: $color-error;
+  color: var(--color-error-fg);
 }

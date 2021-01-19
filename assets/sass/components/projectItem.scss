@@ -10,7 +10,7 @@
 
   &:hover,
   &[data-active=true] {
-    background: $color-bg;
+    background: var(--color-bg);
   }
 
   &:hover .dropdown-menu,
@@ -27,7 +27,7 @@
     align-items: center;
     flex-grow: 1;
 
-    color: $color-foreground;
+    color: var(--color-foreground);
     text-decoration: none;
   }
 

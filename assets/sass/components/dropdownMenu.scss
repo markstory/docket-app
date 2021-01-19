@@ -30,8 +30,8 @@
     width: max-content;
     z-index: $z-active-ui;
 
-    background: $color-bg-raised;
-    border: 1px solid $color-border-med;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-med);
     border-radius: $border-radius;
     box-shadow: $shadow-med;
 
@@ -48,13 +48,13 @@
 
     &:after {
       border-color: rgba(255, 255, 255, 0);
-      border-bottom-color: $color-bg-raised;
+      border-bottom-color: var(--color-bg);
       border-width: 10px;
     }
 
     &:before {
       border-color: rgba(255, 255, 255, 0);
-      border-bottom-color: $color-border-med;
+      border-bottom-color: var(--color-border-med);
       border-width: 11px;
     }
   }
@@ -67,7 +67,7 @@
 
     background: none;
     border: none;
-    color: $color-foreground;
+    color: var(--color-foreground);
 
     border-radius: 0;
     box-shadow: none;
@@ -80,13 +80,13 @@
   }
 
   .separator {
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .context-item {
     &:active,
     &:hover {
-      background: $color-button-default-hover;
+      background: var(--color-muted);
     }
   }
 }
@@ -126,5 +126,3 @@
     right: 14px;
   }
 }
-
-

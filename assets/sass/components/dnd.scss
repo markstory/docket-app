@@ -4,7 +4,7 @@
 }
 
 .dnd-handle {
-  @extend .button-default;
+  @extend .button;
 
   box-shadow: none;
   cursor: grab;
@@ -19,7 +19,7 @@
 
 .dnd-item-dragging {
   box-shadow: $shadow-med;
-  background: $color-bg;
+  background: var(--color-bg);
 
   .dnd-handle {
     visibility: visible;
@@ -27,7 +27,7 @@
 }
 
 .dnd-dropper-active {
-  background: $color-dropper-active;
+  background: var(--color-bg-low);
 }
 
 .dnd-dropper-left-offset {

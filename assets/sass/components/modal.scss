@@ -1,5 +1,5 @@
 .modal {
-  background: $color-bg-raised;
+  background: var(--color-bg);
 
   position: absolute;
   z-index: $z-modal;
@@ -12,7 +12,7 @@
   box-shadow: $shadow-high;
 
   .modal-close {
-    @extend .button-default;
+    @extend .button;
 
     border: none;
     border-radius: 50%;

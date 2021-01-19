@@ -15,7 +15,7 @@
     }
 
     &.is-completed {
-      color: $color-muted;
+      color: var(--color-muted);
       text-decoration: line-through;
     }
   }

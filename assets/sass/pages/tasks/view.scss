@@ -5,7 +5,7 @@
 
     h3 {
       margin-bottom: $space;
-      color: $color-foreground;
+      color: var(--color-foreground);
     }
     a {
       text-decoration: none;
@@ -22,7 +22,7 @@
 
   .attributes {
     display: flex;
-    color: $color-dim;
+    color: var(--color-low-emphasis);
 
     > * + * {
       margin-left: $space * 2;

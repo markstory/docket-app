@@ -11,14 +11,14 @@
     padding: $space 0 $space $space / 2;
     margin-right: $space * 2;
     text-decoration: none;
-    color: $color-foreground;
+    color: var(--color-foreground);
     &:hover {
-      background: $color-bg-raised;
+      background: var(--color-bg);
     }
   }
 
   .dnd-item {
-    background: $color-bg-section;
+    background: var(--color-bg-low);
   }
 
   .dnd-dropper-left-offset {
