@@ -38,7 +38,7 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
       id: defaultProjectId ? Number(defaultProjectId) : 0,
       name: '',
       slug: '',
-      color: '',
+      color: 0,
       favorite: false,
       archived: false,
       incomplete_task_count: 0,

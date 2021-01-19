@@ -35,6 +35,8 @@ use InvalidArgumentException;
  */
 class ProjectsTable extends Table
 {
+    const NUM_COLORS = 16;
+
     /**
      * Initialize method
      *
@@ -87,11 +89,10 @@ class ProjectsTable extends Table
             ->notEmptyString('name');
 
         $validator
-            ->scalar('color')
-            ->maxLength('color', 6)
+            ->integer('color')
             ->requirePresence('color', 'create')
-            ->notEmptyString('color')
-            ->regex('color', '/^[a-f0-9]+$/', 'Must be a valid hex color code.');
+            ->greaterThanOrEqual('color', 0)
+            ->lessThanOrEqual('color', 15);
 
         $validator
             ->boolean('favorite')

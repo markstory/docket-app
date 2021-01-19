@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS projects (
     user_id int not null,
     name varchar(255) not null,
     slug varchar(255) not null,
-    color varchar(6) not null,
+    color int not null,
     favorite boolean not null default 0,
     archived boolean not null default 0,
     ranking int not null default 0,

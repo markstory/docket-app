@@ -26,7 +26,7 @@ export function makeProject(props?: Partial<Project>): Project {
     id: 1,
     name: 'Work',
     slug: 'work',
-    color: '993399',
+    color: 0,
     favorite: false,
     archived: false,
     incomplete_task_count: 0,

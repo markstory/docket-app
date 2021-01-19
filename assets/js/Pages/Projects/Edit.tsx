@@ -4,6 +4,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {t} from 'app/locale';
 import Modal from 'app/components/modal';
 import {Project, ValidationErrors} from 'app/types';
+import ColorSelect from 'app/components/colorSelect';
 import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
 
@@ -43,13 +44,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
           </div>
           <div className="form-input">
             <label htmlFor="project-color">{t('Color')}</label>
-            <input
-              id="project-color"
-              type="text"
-              name="color"
-              required
-              defaultValue={project.color}
-            />
+            <ColorSelect value={project.color} />
             <FormError errors={errors} field="color" />
           </div>
           <div className="form-input-horizontal">

@@ -9,7 +9,7 @@ export type Project = {
   id: number;
   name: string;
   slug: string;
-  color: string;
+  color: number;
   favorite: boolean;
   archived: boolean;
   incomplete_task_count: number;

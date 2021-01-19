@@ -34,7 +34,7 @@ trait FactoryTrait
         $project = $projects->newEntity(array_merge([
             'user_id' => $userId,
             'name' => $title,
-            'color' => '663366',
+            'color' => 1,
             'ranking' => $ranking,
         ], $props));
 
