@@ -3,12 +3,8 @@ import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
 import {t} from 'app/locale';
-import {
-  formatCompactDate,
-  parseDate,
-  parseDateInput,
-  toDateString,
-} from 'app/utils/dates';
+import {parseDate, parseDateInput, toDateString} from 'app/utils/dates';
+import DueOn from 'app/components/dueOn';
 import {Task} from 'app/types';
 
 import DropdownMenu from './dropdownMenu';
@@ -28,9 +24,8 @@ export default function DueOnPicker({selected, onChange}: Props) {
       <DropdownMenu
         button={props => {
           return (
-            <button {...props} className="opener">
-              <InlineIcon icon="calendar" />{' '}
-              {selectedDate ? formatCompactDate(selectedDate) : 'No Due Date'}
+            <button {...props} className="button-secondary opener">
+              <DueOn value={selectedDate} showNull />
             </button>
           );
         }}
@@ -78,14 +73,14 @@ export function MenuContents({selected, onChange}: ContentsProps) {
         />
       </div>
       <button
-        className="menu-option"
+        className="menu-option today"
         data-testid="today"
         onClick={handleButtonClick(today)}
       >
         <InlineIcon icon="clippy" /> {t('Today')}
       </button>
       <button
-        className="menu-option"
+        className="menu-option tomorrow"
         data-testid="tomorrow"
         onClick={handleButtonClick(tomorrow)}
       >
@@ -93,7 +88,7 @@ export function MenuContents({selected, onChange}: ContentsProps) {
         {t('Tommorrow')}
       </button>
       <button
-        className="menu-option"
+        className="menu-option not-due"
         data-testid="not-due"
         onClick={handleButtonClick(null)}
       >

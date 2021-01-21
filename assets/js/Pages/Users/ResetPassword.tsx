@@ -22,8 +22,10 @@ export default function ResetPassword() {
           <input id="email" name="email" type="email" required />
         </div>
         <div className="button-bar">
-          <button type="submit">{t('Reset Password')}</button>
-          <InertiaLink className="button button-muted" href="/login">
+          <button type="submit" className="button-primary">
+            {t('Reset Password')}
+          </button>
+          <InertiaLink className="button-muted" href="/login">
             {t('Log in')}
           </InertiaLink>
         </div>

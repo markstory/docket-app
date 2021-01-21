@@ -1,18 +1,27 @@
-.button,
-button {
-  color: var(--color-foreground);
-  background: var(--color-button-default-bg);
+// Base mixin for buttons to get sizing and spacing
+.button-bare {
+  display: inline-block;
+  font-size: $font-size-normal;
+  line-height: 1.4;
 
   text-decoration: none;
   text-transform: none;
   font-weight: normal;
   cursor: pointer;
 
+  border: none;
   margin-bottom: 0;
   padding: $space $space * 1.5;
   border-radius: $border-radius;
-  border: 1px solid var(--color-border-med);
   height: 38px;
+}
+
+// Add borders, background, boxshadow
+button {
+  @extend .button-bare;
+  color: var(--color-foreground);
+  background: var(--color-button-default-bg);
+  border: 1px solid var(--color-border-med);
 
   &:hover {
     box-shadow: $shadow-button;
@@ -20,18 +29,19 @@ button {
   }
 }
 
-a > svg,
-.button > svg,
-button > svg {
+// Space icons away from button text.
+a > svg:not(:last-child),
+.button > svg:not(:last-child),
+button > svg:not(:last-child) {
   margin-right: $space;
 }
 
+// bright background with reverse text.
 .button-primary {
-  @extend .button;
+  @extend .button-bare;
 
   color: var(--color-invert-foreground);
   background: var(--color-button-primary-bg);
-  border: none;
 
   &:hover {
     color: var(--color-invert-foreground);
@@ -39,26 +49,26 @@ button > svg {
   }
 }
 
+// background blend, bordered with accent color on hover
 .button-secondary {
-  @extend .button;
+  @extend .button-bare;
 
   color: var(--color-foreground);
-  background: transparent;
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
 
   &:hover {
-    color: var(--color-foreground);
+    color: var(--color-primary);
     background: var(--color-bg);
-    border-color: var(--color-border-med);
   }
 }
 
+// Background blend no border, mild hover effect
 .button-muted {
-  @extend .button;
+  @extend .button-bare;
 
   background: none;
   color: var(--color-low-emphasis);
-  border: none;
 
   &:hover {
     color: var(--color-foreground);
@@ -67,8 +77,71 @@ button > svg {
   }
 }
 
+// Buttons that only have an icon inside.
+.button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 2px;
+  width: 26px;
+  height: 26px;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg-low-hover);
+  }
+
+  svg {
+    margin: 0;
+  }
+}
+
+.button-sidebar-action {
+  @extend .button-bare;
+
+  display: flex;
+  align-items: center;
+
+  background: transparent;
+  padding: $space 0;
+  text-decoration: none;
+  color: var(--color-low-emphasis);
+  border: none;
+
+  &:hover {
+    background: transparent;
+    color: var(--color-primary);
+    box-shadow: none;
+  }
+
+  svg {
+    margin-right: $space;
+  }
+}
+
+.button-sidebar-action-primary {
+  @extend .button-sidebar-action;
+
+  color: var(--color-button-primary-bg);
+
+  &:hover {
+    color: var(--color-button-primary-hover);
+  }
+}
+
 .button-bar {
+  display: flex;
+  align-items: center;
+
   margin-top: $space;
+
+  a + a,
+  a + button,
+  button + a,
   button + button {
     margin-left: $space;
   }
@@ -98,19 +171,9 @@ button > svg {
   }
 }
 
-.button-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  box-shadow: none;
-  background: var(--color-bg);
-  padding: 2px;
-  width: 26px;
-  height: 26px;
-
-  svg {
-    margin: 0;
-  }
+// Shorter button format
+.button-narrow {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  height: 32px;
 }

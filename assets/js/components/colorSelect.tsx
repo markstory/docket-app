@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core';
+import classnames from 'classnames';
 import Select, {
   OptionTypeBase,
   ValueType,
@@ -12,8 +13,17 @@ import {InlineIcon} from 'app/components/icon';
 
 function ColorOption(props: OptionProps<OptionTypeBase, false>) {
   const {getStyles, innerRef, innerProps, data} = props;
+  const className = classnames({
+    'is-selected': props.isSelected,
+    'is-focused': props.isFocused,
+  });
   return (
-    <div css={getStyles('option', props)} ref={innerRef} {...innerProps}>
+    <div
+      css={getStyles('option', props)}
+      className={className}
+      ref={innerRef}
+      {...innerProps}
+    >
       <Color color={data.color} name={data.label} />
     </div>
   );
@@ -60,7 +70,7 @@ function ColorSelect({value, onChange}: Props) {
 
   return (
     <Select
-      classNamePrefix="color-select"
+      classNamePrefix="select"
       defaultValue={valueOption}
       menuPlacement="auto"
       name="color"

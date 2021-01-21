@@ -47,8 +47,10 @@ function ProjectsAdd({errors, referer}: Props) {
             <FormError errors={errors} field="color" />
           </div>
           <div className="button-bar">
-            <button type="submit">{t('Save')}</button>
-            <button className="button-secondary" onClick={handleCancel}>
+            <button className="button-primary" type="submit">
+              {t('Save')}
+            </button>
+            <button className="button-muted" onClick={handleCancel}>
               {t('Cancel')}
             </button>
           </div>

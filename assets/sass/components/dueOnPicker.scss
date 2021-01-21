@@ -10,6 +10,16 @@
     &:hover {
       box-shadow: none;
     }
+
+    &.today svg {
+      color: var(--color-due-today);
+    }
+    &.tomorrow svg {
+      color: var(--color-due-tomorrow);
+    }
+    &.not-due svg {
+      color: var(--color-muted);
+    }
   }
 
   input[type="text"] {

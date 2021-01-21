@@ -1,8 +1,9 @@
 .profile-menu {
-  margin-bottom: $space * 2;
+  margin-bottom: $space * 3;
 
   .avatar,
   .avatar:hover {
+    height: 50px;
     padding: 0 0 0 $space;
     background: none;
     border: none;
@@ -11,14 +12,14 @@
 
   img {
     border-radius: 50%;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
   }
   .avatar:hover img {
-    border-color: var(--color-border-med);
+    border-color: var(--color-secondary);
   }
 
-  .dropdown-menu .hitbox {
-    top: 20px;
-    left: 0;
+  .dropdown-menu .dropdown {
+    top: 60px;
+    left: -2px;
   }
 }

@@ -36,10 +36,6 @@
     }
   }
 
-  .due-on svg {
-    margin-right: $space;
-  }
-
   &.is-completed .title {
     color: var(--color-muted);
     text-decoration: line-through;

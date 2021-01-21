@@ -1,5 +1,7 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core';
+import classnames from 'classnames';
+
 import Select, {
   OptionTypeBase,
   ValueType,
@@ -12,8 +14,17 @@ import {useProjects} from 'app/providers/projects';
 
 function ProjectOption(props: OptionProps<OptionTypeBase, false>) {
   const {getStyles, innerRef, innerProps, data} = props;
+  const className = classnames({
+    'is-selected': props.isSelected,
+    'is-focused': props.isFocused,
+  });
   return (
-    <div css={getStyles('option', props)} ref={innerRef} {...innerProps}>
+    <div
+      css={getStyles('option', props)}
+      className={className}
+      ref={innerRef}
+      {...innerProps}
+    >
       <ProjectBadge project={data.project} />
     </div>
   );
@@ -47,7 +58,7 @@ function ProjectSelect({value, onChange}: Props) {
 
   return (
     <Select
-      classNamePrefix="project-select"
+      classNamePrefix="select"
       defaultValue={valueOption}
       menuPlacement="auto"
       name="project_id"

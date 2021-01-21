@@ -6,6 +6,7 @@
 .dnd-handle {
   @extend .button;
 
+  background: transparent;
   box-shadow: none;
   cursor: grab;
   height: 30px;
@@ -15,6 +16,12 @@
   border: none;
   padding: 3px;
   visibility: hidden;
+
+  &:hover {
+    color: var(--color-primary);
+    background: transparent;
+    box-shadow: none;
+  }
 }
 
 .dnd-item-dragging {

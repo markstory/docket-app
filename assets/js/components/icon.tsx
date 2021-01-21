@@ -52,7 +52,7 @@ function getWidth(size: string): number {
     case 'medium':
       return 18;
     case 'large':
-      return 22;
+      return 20;
     default:
       return parseInt(size, 10);
   }

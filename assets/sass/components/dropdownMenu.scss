@@ -79,15 +79,34 @@
     text-decoration: none;
   }
 
-  .separator {
-    border-bottom: 1px solid var(--color-border);
-  }
-
   .context-item {
     &:active,
     &:hover {
-      background: var(--color-muted);
+      background: var(--color-menu-hover);
     }
+  }
+
+  .context-item svg {
+    margin-right: $space;
+  }
+
+  // Action specific styles
+  .context-item.delete svg,
+  .context-item.delete:hover {
+    color: var(--color-action-delete);
+  }
+  .context-item.archive svg {
+    color: var(--color-low-emphasis);
+  }
+  .context-item.edit svg {
+    color: var(--color-action-edit);
+  }
+  .context-item.lock svg {
+    color: var(--color-action-lock);
+  }
+
+  .separator {
+    border-bottom: 1px solid var(--color-border);
   }
 }
 

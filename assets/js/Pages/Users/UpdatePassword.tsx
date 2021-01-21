@@ -48,8 +48,10 @@ export default function UpdatePassword({errors, referer}: Props) {
           </div>
 
           <div className="button-bar">
-            <button type="submit">{t('Save')}</button>
-            <button type="reset" className="button-secondary" onClick={handleClose}>
+            <button type="submit" className="button-primary">
+              {t('Save')}
+            </button>
+            <button type="reset" className="button-muted" onClick={handleClose}>
               {t('Cancel')}
             </button>
           </div>

@@ -33,7 +33,7 @@ function Confirmation({
         {title && <h3>{title}</h3>}
         <p className="body">{confirmation}</p>
         <div className="button-bar-right">
-          <button className="button-default" onClick={() => proceed(false)}>
+          <button className="button-muted" onClick={() => proceed(false)}>
             {cancelLabel}
           </button>
           <button className="button-danger" onClick={() => proceed(true)}>

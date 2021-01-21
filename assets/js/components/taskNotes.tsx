@@ -26,7 +26,10 @@ export default function TaskNotes({task}: Props) {
       <div className="task-notes">
         <h4 className="heading-actions">
           {t('Notes')}
-          <button className="button-default" onClick={() => setEditing(true)}>
+          <button
+            className="button-secondary button-narrow"
+            onClick={() => setEditing(true)}
+          >
             {t('Edit')}
           </button>
         </h4>
@@ -45,8 +48,10 @@ export default function TaskNotes({task}: Props) {
       <h4 className="heading-actions">{t('Notes')}</h4>
       <textarea name="body" rows={lines.length + 2} defaultValue={task.body} autoFocus />
       <div className="button-bar">
-        <button type="submit">{t('Save')}</button>
-        <button className="button-default" onClick={() => setEditing(false)}>
+        <button type="submit" className="button-primary">
+          {t('Save')}
+        </button>
+        <button className="button-muted" onClick={() => setEditing(false)}>
           {t('Cancel')}
         </button>
       </div>

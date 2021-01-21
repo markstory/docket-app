@@ -1,0 +1,26 @@
+.select__control {
+  min-width: 200px;
+  max-width: 400px;
+}
+.select__input input {
+  height: auto;
+}
+.select__menu .is-focused {
+  background: var(--color-menu-hover);
+}
+.select__menu .is-selected {
+  background: var(--color-menu-selected);
+  color: var(--color-foreground);
+}
+
+// Components inside select controls
+.select__menu .color,
+.select__control .color {
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: relative;
+    top: 1px;
+  }
+}

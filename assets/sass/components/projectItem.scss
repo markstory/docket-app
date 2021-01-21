@@ -10,7 +10,7 @@
 
   &:hover,
   &[data-active=true] {
-    background: var(--color-bg);
+    background: var(--color-bg-low-hover);
   }
 
   &:hover .dropdown-menu,

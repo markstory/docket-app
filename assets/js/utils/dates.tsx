@@ -7,7 +7,10 @@ export function toDateString(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
-export function parseDate(input: string): Date {
+export function parseDate(input: string | Date): Date {
+  if (input instanceof Date) {
+    return input;
+  }
   return parse(input, 'yyyy-MM-dd', new Date());
 }
 
@@ -46,8 +49,14 @@ export function getToday() {
   return today;
 }
 
+export function getDiff(date: Date | string, compare?: Date) {
+  compare = compare || getToday();
+  const input = parseDate(date);
+  return differenceInDays(input, compare);
+}
+
 export function formatCompactDate(date: Date | string): string {
-  const input = date instanceof Date ? date : parseDate(date);
+  const input = parseDate(date);
   const delta = differenceInDays(input, getToday());
 
   // In the past? Show the date.
@@ -69,7 +78,7 @@ export function formatCompactDate(date: Date | string): string {
 }
 
 export function formatDateHeading(date: Date | string): [heading: string, subheading: string] {
-  const input = date instanceof Date ? date : parseDate(date);
+  const input = parseDate(date);
   const delta = differenceInDays(input, getToday());
 
   let shortDate = format(input, 'MMM d');

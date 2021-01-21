@@ -1,17 +1,16 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
-import {InlineIcon} from '@iconify/react';
 
 import {TaskDetailed, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
+import DueOn from 'app/components/dueOn';
 import Modal from 'app/components/modal';
 import TaskQuickForm from 'app/components/taskQuickForm';
 import TaskNotes from 'app/components/taskNotes';
 import TaskSubtasks from 'app/components/taskSubtasks';
 import ProjectBadge from 'app/components/projectBadge';
-import {formatCompactDate} from 'app/utils/dates';
 
 type Props = {
   task: TaskDetailed;
@@ -101,12 +100,7 @@ function TaskSummary({task, onClick}: SummaryProps) {
         <h3>{task.title}</h3>
         <div className="attributes">
           {<ProjectBadge project={task.project} />}
-          {task.due_on && (
-            <time className="due-on" dateTime={task.due_on}>
-              <InlineIcon icon="calendar" />
-              {formatCompactDate(task.due_on)}
-            </time>
-          )}
+          {task.due_on && <DueOn value={task.due_on} />}
         </div>
       </a>
     </div>

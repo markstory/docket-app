@@ -14,13 +14,13 @@ function ProjectFilter() {
       <ul className="links">
         <li>
           <InertiaLink href="/tasks/today">
-            <InlineIcon icon="clippy" />
+            <InlineIcon icon="clippy" className="today" />
             {t('Today')}
           </InertiaLink>
         </li>
         <li>
           <InertiaLink href="/tasks/upcoming">
-            <InlineIcon icon="calendar" />
+            <InlineIcon icon="calendar" className="upcoming" />
             {t('Upcoming')}
           </InertiaLink>
         </li>
@@ -73,11 +73,11 @@ function ProjectFilter() {
         )}
       </ProjectSorter>
       <div className="button-bar-vertical">
-        <InertiaLink className="button button-secondary" href="/projects/add">
+        <InertiaLink className="button-sidebar-action-primary " href="/projects/add">
           <InlineIcon icon="plus" />
-          {t('Create Project')}
+          {t('New Project')}
         </InertiaLink>
-        <InertiaLink className="button button-muted" href="/projects/archived">
+        <InertiaLink className="button-sidebar-action" href="/projects/archived">
           {t('Archived Projects')}
         </InertiaLink>
       </div>

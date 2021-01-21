@@ -54,28 +54,31 @@ export default function ProjectMenu({
         </li>
       )}
       <li>
-        <InertiaLink className="context-item" href={`/projects/${project.slug}/edit`}>
+        <InertiaLink
+          className="context-item edit"
+          href={`/projects/${project.slug}/edit`}
+        >
           <InlineIcon icon="pencil" />
           {t('Edit Project')}
         </InertiaLink>
       </li>
       {project.archived ? (
         <li>
-          <button className="context-item" onClick={handleUnarchive}>
+          <button className="context-item archive" onClick={handleUnarchive}>
             <InlineIcon icon="archive" />
             {t('Unarchive Project')}
           </button>
         </li>
       ) : (
         <li>
-          <button className="context-item" onClick={handleArchive}>
+          <button className="context-item archive" onClick={handleArchive}>
             <InlineIcon icon="archive" />
             {t('Archive Project')}
           </button>
         </li>
       )}
       <li>
-        <button className="context-item" onClick={handleDelete}>
+        <button className="context-item delete" onClick={handleDelete}>
           <InlineIcon icon="trash" />
           {t('Delete Project')}
         </button>

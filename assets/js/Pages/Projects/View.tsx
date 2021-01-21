@@ -20,7 +20,7 @@ export default function ProjectsView({completed, project, tasks}: Props) {
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
-        <div className="heading">
+        <div className="heading" data-archived={project.archived}>
           <h1>
             {project.archived && <Icon icon="archive" />}
             {project.name}

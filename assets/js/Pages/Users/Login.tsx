@@ -31,7 +31,9 @@ export default function Login() {
           <input id="password" name="password" type="password" required />
         </div>
         <div className="button-bar">
-          <button type="submit">{t('Login')}</button>
+          <button className="button-primary" type="submit">
+            {t('Login')}
+          </button>
           <InertiaLink className="button button-muted" href="/password/reset">
             {t('Forgot Password?')}
           </InertiaLink>

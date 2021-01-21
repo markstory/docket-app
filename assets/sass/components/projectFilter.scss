@@ -1,4 +1,8 @@
 .project-filter {
+  h3 {
+    color: var(--color-low-emphasis);
+  }
+
   > ul {
     list-style: none;
     padding: 0;
@@ -7,14 +11,26 @@
   }
 
   .links a {
-    display: block;
+    height: 40px;
+    display: flex;
+    align-items: center;
     padding: $space 0 $space $space / 2;
     margin-right: $space * 2;
     text-decoration: none;
     color: var(--color-foreground);
     &:hover {
-      background: var(--color-bg);
+      background: var(--color-bg-low-hover);
     }
+    svg {
+      margin-right: $space;
+    }
+  }
+
+  .today {
+    color: var(--color-due-today);
+  }
+  .upcoming {
+    color: var(--color-due-tomorrow);
   }
 
   .dnd-item {

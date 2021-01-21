@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import {t} from 'app/locale';
 import {updateTaskField} from 'app/actions/tasks';
 import DropdownMenu from 'app/components/dropdownMenu';
+import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
@@ -42,12 +43,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
         <div className="attributes">
-          {showDueOn && task.due_on && (
-            <time className="due-on" dateTime={task.due_on}>
-              <InlineIcon icon="calendar" width="xsmall" />
-              {formatCompactDate(task.due_on)}
-            </time>
-          )}
+          {showDueOn && <DueOn value={task.due_on} />}
           {showProject && <ProjectBadge project={task.project} />}
           <SubtaskSummary task={task} />
         </div>
@@ -107,7 +103,7 @@ function TaskActions({task, setActive}: ActionsProps) {
         onClose={() => setActive(false)}
       >
         <li>
-          <button className="context-item" onClick={handleDelete}>
+          <button className="context-item delete" onClick={handleDelete}>
             <InlineIcon icon="trash" />
             {t('Delete Task')}
           </button>

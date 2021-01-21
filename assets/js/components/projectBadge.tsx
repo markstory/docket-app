@@ -12,7 +12,7 @@ function ProjectBadge({project}: Props) {
   const color = PROJECT_COLORS[project.color].code ?? PROJECT_COLORS[0].code;
   return (
     <span className="project-badge">
-      <InlineIcon icon="dot" color={color} width="medium" />
+      <InlineIcon icon="dot" color={color} width="large" />
       <span>{project.name}</span>
     </span>
   );

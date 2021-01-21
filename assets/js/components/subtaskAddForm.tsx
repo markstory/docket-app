@@ -48,10 +48,10 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
         />
       </div>
       <div className="button-bar">
-        <button data-testid="save-subtask" type="submit">
+        <button className="button-primary" data-testid="save-subtask" type="submit">
           {t('Save')}
         </button>
-        <button className="button-secondary" onClick={onCancel}>
+        <button className="button-muted" onClick={onCancel}>
           {t('Cancel')}
         </button>
       </div>

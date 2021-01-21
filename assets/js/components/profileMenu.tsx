@@ -26,13 +26,13 @@ export default function ProfileMenu() {
         <ul>
           <li className="context-item-text separator">{identity.name}</li>
           <li>
-            <InertiaLink className="context-item" href="/users/profile">
+            <InertiaLink className="context-item edit" href="/users/profile">
               <InlineIcon icon="pencil" />
               {t('Edit Profile')}
             </InertiaLink>
           </li>
           <li>
-            <InertiaLink className="context-item" href="/users/updatePassword">
+            <InertiaLink className="context-item lock" href="/users/updatePassword">
               <InlineIcon icon="lock" />
               {t('Update Password')}
             </InertiaLink>

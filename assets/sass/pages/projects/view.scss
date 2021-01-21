@@ -6,7 +6,18 @@
   justify-content: space-between;
   margin-bottom: $space * 2;
 
+  &[data-archived="true"] {
+    color: var(--color-muted);
+  }
+
   h1 {
+    display: flex;
+    align-items: center;
+
     margin-bottom: 0;
+
+    svg {
+      margin-left: $space;
+    }
   }
 }

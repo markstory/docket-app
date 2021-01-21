@@ -1,0 +1,21 @@
+.due-on {
+  svg {
+    margin-right: $space;
+  }
+
+  &.overdue {
+    color: var(--color-due-overdue);
+  }
+  &.today {
+    color: var(--color-due-today);
+  }
+  &.tomorrow svg {
+    color: var(--color-due-tomorrow);
+  }
+  &.week svg {
+    color: var(--color-due-week);
+  }
+  &.fortnight svg {
+    color: var(--color-due-fortnight);
+  }
+}
