@@ -1,4 +1,7 @@
 .task-view {
+  .task-quickform {
+    margin: 0 $space * 5 0 $space * 2;
+  }
   .summary {
     display: flex;
     align-items: flex-start;

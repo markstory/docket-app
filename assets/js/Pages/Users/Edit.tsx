@@ -67,8 +67,10 @@ export default function Edit({identity, referer, errors}: Props) {
           </div>
 
           <div className="button-bar">
-            <button type="submit">{t('Save')}</button>
-            <button type="reset" className="button-secondary" onClick={handleClose}>
+            <button className="button-primary" type="submit">
+              {t('Save')}
+            </button>
+            <button type="reset" className="button-muted" onClick={handleClose}>
               {t('Cancel')}
             </button>
           </div>
