@@ -65,6 +65,18 @@ label {
   margin-bottom: $space * 2;
 
   label {
+    min-width: auto;
     margin-right: $space;
+  }
+}
+
+.form-input-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: $space * 2;
+
+  label {
+    margin: 0 $space 0 0;
+    min-width: auto;
   }
 }

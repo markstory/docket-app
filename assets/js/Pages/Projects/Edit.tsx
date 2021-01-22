@@ -47,7 +47,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             <ColorSelect value={project.color} />
             <FormError errors={errors} field="color" />
           </div>
-          <div className="form-input-horizontal">
+          <div className="form-input-checkbox">
             <label htmlFor="project-archived">{t('Archived')}</label>
             <input
               type="checkbox"
