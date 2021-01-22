@@ -19,7 +19,7 @@
     display: flex;
 
     > * + * {
-      margin-left: $space * 2;
+      margin-left: $space;
     }
   }
 
@@ -28,6 +28,9 @@
   }
   .title input {
     flex-grow: 1;
+  }
+  .due-on-picker .opener {
+    border-color: var(--color-border-med);
   }
   .button-bar {
     border-top: 1px solid var(--color-border-med);

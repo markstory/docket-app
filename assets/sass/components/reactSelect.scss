@@ -1,6 +1,11 @@
-.select__control {
+div.select__control {
   min-width: 200px;
   max-width: 400px;
+  border-color: var(--color-border-med);
+
+  &:hover {
+    border-color: var(--color-input-focus-border);
+  }
 }
 .select__control.select__control--is-focused {
   border-color: var(--color-input-focus-border);
