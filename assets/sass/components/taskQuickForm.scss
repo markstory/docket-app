@@ -3,9 +3,8 @@
   display: flex;
   flex-direction: column;
 
-  border: 1px solid var(--color-border-med);
+  border: 2px solid var(--color-border);
   border-radius: $border-radius;
-  box-shadow: $shadow-low;
   padding: $space;
 
   input, select {
@@ -31,8 +30,7 @@
     flex-grow: 1;
   }
   .button-bar {
-    padding-top: $space;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border-med);
   }
 
   > * + * {

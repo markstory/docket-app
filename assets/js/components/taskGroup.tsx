@@ -59,7 +59,7 @@ export default function TaskGroup({
                           aria-label="Drag to reorder"
                           {...provided.dragHandleProps}
                         >
-                          <Icon icon="grabber" width="large" />
+                          <Icon icon="grabber" width="xlarge" />
                         </button>
                         <TaskRow
                           key={item.id}

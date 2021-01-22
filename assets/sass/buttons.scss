@@ -1,6 +1,8 @@
 // Base mixin for buttons to get sizing and spacing
 .button-bare {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+
   font-size: $font-size-normal;
   line-height: 1.4;
 
@@ -14,6 +16,18 @@
   padding: $space $space * 1.5;
   border-radius: $border-radius;
   height: 38px;
+
+  & > svg:not(:last-child) {
+    margin-right: $space / 2;
+  }
+
+  outline: none;
+
+  &:active,
+  &:focus {
+    outline: none;
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
 }
 
 // Add borders, background, boxshadow
@@ -30,9 +44,7 @@ button {
 }
 
 // Space icons away from button text.
-a > svg:not(:last-child),
-.button > svg:not(:last-child),
-button > svg:not(:last-child) {
+a > svg:not(:last-child) {
   margin-right: $space;
 }
 
@@ -138,6 +150,7 @@ button > svg:not(:last-child) {
   align-items: center;
 
   margin-top: $space;
+  padding-top: $space;
 
   a + a,
   a + button,

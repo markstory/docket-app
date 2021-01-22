@@ -1,13 +1,20 @@
 .due-on-menu {
   .menu-option {
     display: flex;
+    align-items: center;
+
     width: 100%;
     background: none;
     border: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border-med);
+    border-radius: 0;
     padding: $space $space * 1.5;
 
+    svg {
+      margin-right: $space / 2;
+    }
     &:hover {
+      background: var(--color-menu-hover);
       box-shadow: none;
     }
 

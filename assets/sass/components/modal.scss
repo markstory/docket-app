@@ -12,7 +12,7 @@
   box-shadow: $shadow-high;
 
   .modal-close {
-    @extend .button;
+    @extend .button-bare;
 
     border: none;
     border-radius: 50%;
@@ -23,7 +23,7 @@
     right: 20px;
     height: 30px;
     width: 30px;
-    padding: 5px;
+    padding: 5px 7px;
     margin: 0;
   }
 }

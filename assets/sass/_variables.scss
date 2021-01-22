@@ -102,6 +102,8 @@ body {
   --color-button-primary-hover: var(--color-purple-700);
   --color-button-muted-hover: var(--color-gray-100);
 
+  --color-input-focus-shadow: var(--color-blue-100);
+  --color-input-focus-border: var(--color-blue-300);
   --color-menu-hover: var(--color-ochre-100);
   --color-menu-selected: var(--color-ochre-300);
 
@@ -113,4 +115,5 @@ body {
   --color-due-today: var(--color-purple-500);
   --color-due-tomorrow: var(--color-green-500);
   --color-due-week: var(--color-blue-500);
+  --color-due-fortnight: var(--color-gray-500);
 }

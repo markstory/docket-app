@@ -56,18 +56,33 @@ export function MenuContents({selected, onChange}: ContentsProps) {
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
     setInputValue(value);
-    const parsed = parseDateInput(value);
-    if (parsed) {
-      onChange(toDateString(parsed));
+  }
+
+  function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
+    const key = event.key;
+    if (key === 'Enter') {
+      const target = event.target as HTMLInputElement;
+      const parsed = parseDateInput(target.value);
+      if (parsed) {
+        onChange(toDateString(parsed));
+      }
+    }
+  }
+
+  function clickSink(event: React.MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (target.nodeName === 'INPUT' || target.className.includes('NavButton')) {
+      event.stopPropagation();
     }
   }
 
   return (
-    <div className="due-on-menu">
+    <div className="due-on-menu" onClick={clickSink}>
       <div className="menu-option">
         <input
           type="text"
           onChange={handleInputChange}
+          onKeyDown={handleInputKeydown}
           value={inputValue}
           placeholder="Type a due date"
         />

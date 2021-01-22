@@ -57,7 +57,7 @@ function ProjectFilter() {
                               aria-label="Drag to reorder"
                               {...provided.dragHandleProps}
                             >
-                              <Icon icon="grabber" width="large" />
+                              <Icon icon="grabber" width="xlarge" />
                             </button>
                             <ProjectItem key={project.slug} project={project} />
                           </li>

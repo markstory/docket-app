@@ -9,6 +9,24 @@ input[type=email] {
   padding: $space / 2;
   border-radius: $border-radius;
   border: 1px solid var(--color-border-med);
+  outline: none;
+
+  &:active,
+  &:focus {
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
+}
+
+input[type=checkbox],
+input[type=radio] {
+  outline: none;
+
+  &:active,
+  &:focus {
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
 }
 
 label {
@@ -16,7 +34,6 @@ label {
   margin-right: $space;
   min-width: 100px;
 }
-
 
 .form-error {
   color: var(--color-error-fg);
