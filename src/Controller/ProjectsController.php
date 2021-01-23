@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Http\Exception\BadRequestException;
-use Cake\Http\Exception\NotFoundException;
-use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
@@ -76,6 +73,7 @@ class ProjectsController extends AppController
 
             if ($this->Projects->save($project)) {
                 $this->Flash->success(__('Project created.'));
+
                 return $this->redirect($referer);
             }
             $this->Flash->error(__('The project could not be saved. Please, try again.'));
@@ -143,8 +141,10 @@ class ProjectsController extends AppController
 
         if ($this->Projects->delete($project)) {
             $this->Flash->success(__('Project deleted'));
+
             return $this->redirect(['_name' => 'tasks:today']);
         }
+
         return $this->response->withStatus(400);
     }
 
@@ -156,6 +156,7 @@ class ProjectsController extends AppController
         $project->archive();
         $this->Projects->save($project);
         $this->Flash->success(__('Project archived'));
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -167,6 +168,7 @@ class ProjectsController extends AppController
         $project->unarchive();
         $this->Projects->save($project);
         $this->Flash->success(__('Project unarchived'));
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 

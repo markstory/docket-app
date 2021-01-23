@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Entity\Task;
 use App\Model\Entity\Subtask;
+use App\Model\Entity\Task;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -16,7 +16,7 @@ use InvalidArgumentException;
  */
 class SubtasksController extends AppController
 {
-    public function initialize(): void 
+    public function initialize(): void
     {
         parent::initialize();
         $this->loadModel('Tasks');
@@ -27,6 +27,7 @@ class SubtasksController extends AppController
     {
         $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
         $this->Authorization->authorize($task, 'edit');
+
         return $task;
     }
 
@@ -45,7 +46,7 @@ class SubtasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add(string $taskId = null)
+    public function add(?string $taskId = null)
     {
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
@@ -66,7 +67,7 @@ class SubtasksController extends AppController
     /**
      * Toggle a subtask as complete.
      *
-     * @param string|null $todoId Todo Item id.
+     * @param null $taskId Todo Item id.
      * @param string|null $id Subtask id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
@@ -82,7 +83,7 @@ class SubtasksController extends AppController
         return $this->redirect($this->referer([
             'controller' => 'Tasks',
             'action' => 'view',
-            'id' => $taskId
+            'id' => $taskId,
         ]));
     }
 

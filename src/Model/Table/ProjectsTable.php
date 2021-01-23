@@ -16,7 +16,6 @@ use InvalidArgumentException;
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\HasMany $Tasks
  * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\HasMany $Labels
- *
  * @method \App\Model\Entity\Project newEmptyEntity()
  * @method \App\Model\Entity\Project newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Project[] newEntities(array $data, array $options = [])
@@ -30,12 +29,11 @@ use InvalidArgumentException;
  * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ProjectsTable extends Table
 {
-    const NUM_COLORS = 16;
+    public const NUM_COLORS = 16;
 
     /**
      * Initialize method
@@ -67,7 +65,6 @@ class ProjectsTable extends Table
             'label' => ['name'],
             'reserved' => ['archived', 'add'],
         ]);
-
     }
 
     /**
@@ -161,7 +158,7 @@ class ProjectsTable extends Table
         ];
 
         // We have to assume that all lists are not continuous ranges, and that the order
-        // fields have holes in them. The holes can be introduced when items are 
+        // fields have holes in them. The holes can be introduced when items are
         // deleted/completed. Try to find the item at the target offset
         $currentProject = $this->find()
             ->where($conditions)

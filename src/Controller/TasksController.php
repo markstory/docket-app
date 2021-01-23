@@ -39,7 +39,7 @@ class TasksController extends AppController
             $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
             // Set view component to use.
             $this->set('component', 'Tasks/Today');
-        } else if ($view === 'upcoming') {
+        } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
             $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
         }
@@ -100,6 +100,7 @@ class TasksController extends AppController
                 $this->Flash->error(__('The task could not be completed. Please, try again.'));
             }
         }
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -123,6 +124,7 @@ class TasksController extends AppController
                 $this->Flash->error(__('The task could not be updated. Please, try again.'));
             }
         }
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -134,7 +136,7 @@ class TasksController extends AppController
         $operation = [
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
-            'due_on' => $this->request->getData('due_on')
+            'due_on' => $this->request->getData('due_on'),
         ];
         try {
             $this->Tasks->move($task, $operation);
@@ -164,8 +166,10 @@ class TasksController extends AppController
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
         if ($this->Tasks->save($task)) {
             $this->Flash->success(__('Task updated.'));
+
             return $this->response->withStatus(200);
         }
+
         return $this->validationErrorResponse($task->getErrors());
     }
 

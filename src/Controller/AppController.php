@@ -71,6 +71,7 @@ class AppController extends Controller
             // Use a function to defer query exection on partial loads.
             $this->set('projects', function () use ($identity) {
                 $this->loadModel('Projects');
+
                 return $identity->applyScope('index', $this->Projects->find('active')->find('top'));
             });
         }
@@ -113,5 +114,4 @@ class AppController extends Controller
 
         return $defaultUrl;
     }
-
 }

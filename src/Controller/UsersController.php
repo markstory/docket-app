@@ -6,8 +6,6 @@ namespace App\Controller;
 use App\Model\Entity\User;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
-use Cake\Http\Exception\BadRequestException;
-use Cake\Log\Log;
 use Cake\Mailer\MailerAwareTrait;
 use RuntimeException;
 
@@ -26,7 +24,7 @@ class UsersController extends AppController
         parent::beforeFilter($event);
 
         $this->Authentication->allowUnauthenticated([
-            'add', 'login', 'resetPassword', 'newPassword'
+            'add', 'login', 'resetPassword', 'newPassword',
         ]);
     }
 
@@ -74,7 +72,7 @@ class UsersController extends AppController
         $allowedFields = ['unverified_email', 'name', 'timezone'];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
-                'fields' => $allowedFields
+                'fields' => $allowedFields,
             ]);
             $emailChanged = $user->isDirty('unverified_email');
             if ($this->Users->save($user)) {
@@ -129,6 +127,7 @@ class UsersController extends AppController
         } catch (RuntimeException $e) {
             $this->Authorization->skipAuthorization();
             $this->Flash->error($e->getMessage());
+
             return $this->redirect(['_name' => 'users:login']);
         }
         $this->Users->save($user);
@@ -159,6 +158,7 @@ class UsersController extends AppController
             $tokenData = User::decodePasswordResetToken($token);
         } catch (RuntimeException $e) {
             $this->Flash->error($e->getMessage());
+
             return;
         }
 
@@ -166,13 +166,14 @@ class UsersController extends AppController
             $user = $this->Users->get($tokenData->uid);
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
                 'fields' => ['password', 'confirm_password'],
-                'validate' => 'resetPassword'
+                'validate' => 'resetPassword',
             ]);
 
             if ($user->hasErrors()) {
                 $this->Flash->error(__('We could not reset your password.'));
                 $errors = $this->flattenErrors($user->getErrors());
                 $this->set('errors', $errors);
+
                 return;
             }
 

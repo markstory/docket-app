@@ -21,7 +21,7 @@ use RuntimeException;
  * @property string $email
  * @property string $password
  * @property string $unverified_email
- * @property boolean $email_verified
+ * @property bool $email_verified
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -29,7 +29,7 @@ use RuntimeException;
  */
 class User extends Entity implements AuthenticationIdentity, AuthorizationIdentity
 {
-    const PASSWORD_TOKEN_DURATION = '+4 hours';
+    public const PASSWORD_TOKEN_DURATION = '+4 hours';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -64,6 +64,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$this->email) {
             return null;
         }
+
         return md5(strtolower($this->email));
     }
 
@@ -73,7 +74,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      * @param string $password
      * @return string|null
      */
-    protected function _setPassword(string $password) : ?string
+    protected function _setPassword(string $password): ?string
     {
         if (mb_strlen($password) > 0) {
             return $this->passwordHasher()->hash($password);
@@ -86,6 +87,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$this->email_verified) {
             $email = $this->email;
         }
+
         return hash_hmac('sha256', $email, Configure::read('Security.emailSalt'));
     }
 
@@ -101,6 +103,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
             'uid' => $this->id,
             'val' => $checksum,
         ];
+
         return base64_encode(json_encode($data));
     }
 
@@ -148,6 +151,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
             'val' => $emailHash,
             'exp' => $expires->getTimestamp(),
         ];
+
         return base64_encode(json_encode($data));
     }
 

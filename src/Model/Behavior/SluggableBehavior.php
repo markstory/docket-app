@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Sluggable Behavior class file.
  *
@@ -14,8 +16,8 @@
 namespace App\Model\Behavior;
 
 use Cake\Event\Event;
-use Cake\ORM\Behavior;
 use Cake\Log\LogTrait;
+use Cake\ORM\Behavior;
 use Cake\Utility\Text;
 
 /**
@@ -49,15 +51,15 @@ class SluggableBehavior extends Behavior
      * @var array
      */
     protected $_defaultConfig = [
-        'label' => array('title'),
+        'label' => ['title'],
         'slug' => 'slug',
         'separator' => '-',
         'length' => 100,
         'overwrite' => true,
         'reserved' => [],
         'implementedMethods' => [
-            'slug' => 'slug'
-        ]
+            'slug' => 'slug',
+        ],
     ];
 
     /**
@@ -67,7 +69,7 @@ class SluggableBehavior extends Behavior
     {
         // Make label fields an array
         if (!is_array($this->_config['label'])) {
-            $this->_config['label'] = array($this->_config['label']);
+            $this->_config['label'] = [$this->_config['label']];
         }
 
         $alias = $this->_table->getAlias();
@@ -85,6 +87,7 @@ class SluggableBehavior extends Behavior
             // Keep on going only if we've got something to slug
             if (empty($label)) {
                 $this->log('No label, skipping slug generation', 'debug');
+
                 return;
             }
 
@@ -92,16 +95,16 @@ class SluggableBehavior extends Behavior
             $slug = $this->slug($label, $this->getConfig());
 
             // Look for slugs that start with the same slug we've just generated
-            $conditions = array($alias . '.' . $this->getConfig('slug') . ' LIKE' => $slug . '%');
+            $conditions = [$alias . '.' . $this->getConfig('slug') . ' LIKE' => $slug . '%'];
 
             if (!empty($entity[$pk])) {
                 $conditions[$alias . '.' . $pk . ' !='] = $entity[$pk];
             }
 
-            $result = $this->_table->find('all', array(
+            $result = $this->_table->find('all', [
                 'conditions' => $conditions,
-                'fields' => array($pk, $this->getConfig('slug')),
-            ));
+                'fields' => [$pk, $this->getConfig('slug')],
+            ]);
             $sameUrls = $result->extract($this->getConfig('slug'))->toArray();
 
             $accepted = !empty($sameUrls) || !in_array($slug, $this->getConfig('reserved'));

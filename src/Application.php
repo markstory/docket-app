@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace App;
 
-use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
+use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Identifier\IdentifierInterface;
 use Authentication\Middleware\AuthenticationMiddleware;
 use Authorization\AuthorizationService;
@@ -43,8 +43,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication
-    implements AuthenticationServiceProviderInterface,
+class Application extends BaseApplication implements
+    AuthenticationServiceProviderInterface,
     AuthorizationServiceProviderInterface
 {
     /**
@@ -112,7 +112,7 @@ class Application extends BaseApplication
             ->add(new AuthorizationMiddleware($this, [
                 'identityDecorator' => function ($auth, $user) {
                     return $user->setAuthorization($auth);
-                }
+                },
             ]));
 
         return $middlewareQueue;

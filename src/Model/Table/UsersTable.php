@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\User;
-use Cake\Event\EventInterface;
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -16,7 +14,6 @@ use Exception;
  * Users Model
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\HasMany $Projects
- *
  * @method \App\Model\Entity\User newEmptyEntity()
  * @method \App\Model\Entity\User newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
@@ -30,7 +27,6 @@ use Exception;
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class UsersTable extends Table
@@ -85,13 +81,13 @@ class UsersTable extends Table
         $validator->scalar('timezone')
                   ->add('timezone', 'validtimezone', [
                       'rule' => function ($value) {
-                          try {
-                              $tz = new DateTimeZone($value);
+                        try {
+                            $tz = new DateTimeZone($value);
 
-                              return true;
-                          } catch (Exception $e) {
-                              return false;
-                          }
+                            return true;
+                        } catch (Exception $e) {
+                            return false;
+                        }
                       },
                       'message' => 'Timezone is not valid.',
                   ]);
@@ -166,6 +162,7 @@ class UsersTable extends Table
                 return true;
             }
             $hasher = $entity->passwordHasher();
+
             return $hasher->check(
                 $entity->current_password,
                 $entity->getOriginal('password')

@@ -9,8 +9,8 @@ use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
-use Cake\Validation\Validator;
 use Cake\Validation\Validation;
+use Cake\Validation\Validator;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -20,7 +20,6 @@ use RuntimeException;
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\BelongsTo $Projects
  * @property \App\Model\Table\SubtasksTable&\Cake\ORM\Association\HasMany $Subtasks
  * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\BelongsToMany $Labels
- *
  * @method \App\Model\Entity\Task newEmptyEntity()
  * @method \App\Model\Entity\Task newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Task[] newEntities(array $data, array $options = [])
@@ -34,7 +33,6 @@ use RuntimeException;
  * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class TasksTable extends Table
@@ -60,7 +58,7 @@ class TasksTable extends Table
         $this->hasMany('Subtasks', [
             'foreignKey' => 'task_id',
             'propertyName' => 'subtasks',
-            'sort' => ['Subtasks.ranking' => 'ASC']
+            'sort' => ['Subtasks.ranking' => 'ASC'],
         ]);
         $this->belongsToMany('Labels', [
             'propertyName' => 'labels',
@@ -72,10 +70,9 @@ class TasksTable extends Table
         $this->addBehavior('Timestamp');
         $this->addBehavior('CounterCache', [
             'Projects' => [
-                'incomplete_task_count' => ['finder' => 'incomplete']
-            ]
+                'incomplete_task_count' => ['finder' => 'incomplete'],
+            ],
         ]);
-
     }
 
     /**
@@ -128,6 +125,7 @@ class TasksTable extends Table
         if (empty($options['slug'])) {
             throw new RuntimeException('Missing required slug option');
         }
+
         return $query
             ->where(['Projects.slug' => $options['slug']])
             ->orderAsc('Tasks.child_order');
@@ -146,9 +144,10 @@ class TasksTable extends Table
     public function findDueToday(Query $query, array $options): Query
     {
         $timezone = $options['timezone'] ?: 'UTC';
+
         return $query->where([
                 'Tasks.due_on IS NOT' => null,
-                'Tasks.due_on <=' => new FrozenDate('today', $timezone)
+                'Tasks.due_on <=' => new FrozenDate('today', $timezone),
             ])
             ->orderAsc('Tasks.day_order');
     }
@@ -161,6 +160,7 @@ class TasksTable extends Table
         if (empty($options['end'])) {
             $options['end'] = $options['start']->modify('+28 days');
         }
+
         return $query->where([
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on >=' => $options['start'],
@@ -173,6 +173,7 @@ class TasksTable extends Table
     public function findOverdue(Query $query): Query
     {
         $today = new FrozenDate('today');
+
         return $query->where([
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on >=' => $today,
@@ -236,7 +237,7 @@ class TasksTable extends Table
         }
 
         // We have to assume that all lists are not continuous ranges, and that the order
-        // fields have holes in them. The holes can be introduced when items are 
+        // fields have holes in them. The holes can be introduced when items are
         // deleted/completed. Try to find the item at the target offset
         $currentItem = $this->find()
             ->where($conditions)
@@ -270,13 +271,13 @@ class TasksTable extends Table
             // Moving an item to a new list. Shift the remainder of
             // the new list down.
             $query
-                ->set([$property => $query->newExpr($property . " + 1")])
+                ->set([$property => $query->newExpr($property . ' + 1')])
                 ->where(["{$property} >=" => $targetOffset]);
         } elseif ($difference > 0) {
             // Move other items down, as the current item is going up
             // or is being moved from another group.
             $query
-                ->set([$property => $query->newExpr($property . " + 1")])
+                ->set([$property => $query->newExpr($property . ' + 1')])
                 ->where(function ($exp) use ($property, $current, $targetOffset) {
                     return $exp->between($property, $targetOffset, $current);
                 });

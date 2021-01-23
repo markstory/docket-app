@@ -36,6 +36,7 @@ class TaskPolicy
         if (empty($task->project)) {
             throw new RuntimeException('Cannot check todo item permission, no project is set.');
         }
+
         return $user->id === $task->project->user_id;
     }
 
@@ -51,6 +52,7 @@ class TaskPolicy
         if (empty($task->project)) {
             throw new RuntimeException('Cannot check todo item permission, no project is set.');
         }
+
         return $user->id === $task->project->user_id;
     }
 
@@ -66,6 +68,7 @@ class TaskPolicy
         if (empty($task->project)) {
             throw new RuntimeException('Cannot check todo item permission, no project is set.');
         }
+
         return $user->id === $task->project->user_id;
     }
 }

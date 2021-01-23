@@ -14,7 +14,6 @@ use InvalidArgumentException;
  * Subtasks Model
  *
  * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\BelongsTo $Tasks
- *
  * @method \App\Model\Entity\Subtask newEmptyEntity()
  * @method \App\Model\Entity\Subtask newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Subtask[] newEntities(array $data, array $options = [])
@@ -28,7 +27,6 @@ use InvalidArgumentException;
  * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Subtask[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SubtasksTable extends Table
@@ -56,8 +54,8 @@ class SubtasksTable extends Table
         $this->addBehavior('CounterCache', [
             'Tasks' => [
                 'subtask_count' => ['finder' => 'all'],
-                'complete_subtask_count' => ['finder' => 'complete']
-            ]
+                'complete_subtask_count' => ['finder' => 'complete'],
+            ],
         ]);
     }
 
@@ -102,7 +100,7 @@ class SubtasksTable extends Table
     {
         $query = $this->find();
         $result = $query->select([
-            'max' => $query->func()->max('Subtasks.ranking')
+            'max' => $query->func()->max('Subtasks.ranking'),
         ])
         ->where([
             'Subtasks.task_id' => $todoId,
@@ -133,7 +131,7 @@ class SubtasksTable extends Table
         ];
 
         // We have to assume that all lists are not continuous ranges, and that the order
-        // fields have holes in them. The holes can be introduced when items are 
+        // fields have holes in them. The holes can be introduced when items are
         // deleted/completed. Try to find the item at the target offset
         $currentTask = $this->find()
             ->where($conditions)
