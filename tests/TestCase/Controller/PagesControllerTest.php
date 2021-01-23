@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace App\Test\TestCase\Controller;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 

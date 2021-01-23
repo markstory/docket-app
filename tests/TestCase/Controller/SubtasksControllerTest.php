@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\SubtasksController;
 use App\Test\TestCase\FactoryTrait;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -157,7 +156,7 @@ class SubtasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
-            'title' => 'Updated'
+            'title' => 'Updated',
         ]);
         $this->assertResponseOk();
         $this->assertNotEmpty($this->viewVariable('subtask'));
@@ -176,7 +175,7 @@ class SubtasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
-            'title' => 'Updated'
+            'title' => 'Updated',
         ]);
         $this->assertResponseCode(403);
     }

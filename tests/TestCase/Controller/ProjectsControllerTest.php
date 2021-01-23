@@ -67,7 +67,7 @@ class ProjectsControllerTest extends TestCase
         $this->configRequest([
             'headers' => ['Referer' => '/tasks/today'],
         ]);
-        $this->get("/projects/add");
+        $this->get('/projects/add');
 
         $this->assertResponseOk();
         $this->assertSame('/tasks/today', $this->viewVariable('referer'));
@@ -84,7 +84,7 @@ class ProjectsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/projects/add", [
+        $this->post('/projects/add', [
             'name' => 'second',
             'color' => '663366',
         ]);
@@ -104,7 +104,7 @@ class ProjectsControllerTest extends TestCase
     {
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/projects/add", [
+        $this->post('/projects/add', [
             'name' => 'add',
             'color' => '663366',
         ]);
@@ -175,7 +175,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/delete");
-        $this->assertRedirect("/tasks/today");
+        $this->assertRedirect('/tasks/today');
         $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
     }
 
@@ -202,7 +202,7 @@ class ProjectsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->get("/projects/archived");
+        $this->get('/projects/archived');
 
         $this->assertResponseOk();
         $archived = $this->viewVariable('archived');

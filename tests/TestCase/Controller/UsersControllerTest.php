@@ -54,7 +54,7 @@ class UsersControllerTest extends TestCase
         $this->post('/login', [
             'email' => 'mark@example.com',
             'password' => 'password123',
-            'timezone' => 'America/New_York'
+            'timezone' => 'America/New_York',
         ]);
         $this->assertRedirect('/tasks/today');
         $this->assertSession('mark@example.com', 'Auth.email');
@@ -99,7 +99,7 @@ class UsersControllerTest extends TestCase
             'email' => 'wally@example.com',
             'password' => 'password123',
             'confirm_password' => 'password123',
-            'timezone' => 'UTC'
+            'timezone' => 'UTC',
         ]);
         $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
@@ -117,7 +117,7 @@ class UsersControllerTest extends TestCase
     {
         $this->enableCsrfToken();
         $this->post('/users/profile', [
-            'unverified_email' => 'example@example.com'
+            'unverified_email' => 'example@example.com',
         ]);
         $this->assertRedirectContains('/login');
     }
@@ -303,7 +303,7 @@ class UsersControllerTest extends TestCase
 
     public function testPasswordResetGet()
     {
-        $this->get("/password/reset");
+        $this->get('/password/reset');
         $this->assertResponseOk();
     }
 
@@ -311,7 +311,7 @@ class UsersControllerTest extends TestCase
     {
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
-        $this->post("/password/reset", [
+        $this->post('/password/reset', [
             'email' => 'nosuch@user.com',
         ]);
         // Should quack like it worked.
@@ -324,7 +324,7 @@ class UsersControllerTest extends TestCase
     {
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
-        $this->post("/password/reset", [
+        $this->post('/password/reset', [
             'email' => 'mark@example.com',
         ]);
         $this->assertResponseOk();
@@ -340,7 +340,7 @@ class UsersControllerTest extends TestCase
     {
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
-        $this->get("/password/new/not-good-data");
+        $this->get('/password/new/not-good-data');
         $this->assertResponseOk();
         $this->assertFlashElement('flash/error');
     }

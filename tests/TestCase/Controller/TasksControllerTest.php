@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\TasksController;
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
@@ -58,7 +57,7 @@ class TasksControllerTest extends TestCase
         $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
         $this->makeTask('complete', $project->id, 0, [
             'completed' => true,
-            'due_on' => $tomorrow
+            'due_on' => $tomorrow,
         ]);
 
         $this->login();
@@ -69,7 +68,10 @@ class TasksControllerTest extends TestCase
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(2, $items);
-        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $ids = array_map(function ($i) {
+
+            return $i->id;
+        }, $items);
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
@@ -82,7 +84,7 @@ class TasksControllerTest extends TestCase
         $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
         $this->makeTask('complete', $project->id, 0, [
             'completed' => true,
-            'due_on' => $tomorrow
+            'due_on' => $tomorrow,
         ]);
 
         $this->login();
@@ -92,7 +94,10 @@ class TasksControllerTest extends TestCase
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
-        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $ids = array_map(function ($i) {
+
+            return $i->id;
+        }, $items);
         $this->assertEquals([$first->id], $ids);
     }
 
@@ -112,7 +117,10 @@ class TasksControllerTest extends TestCase
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
-        $ids = array_map(function ($i) { return $i->id; }, $items);
+        $ids = array_map(function ($i) {
+
+            return $i->id;
+        }, $items);
         $this->assertEquals([$first->id], $ids);
     }
 
@@ -149,7 +157,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/tasks/add", [
+        $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
@@ -167,12 +175,12 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $this->makeTask('existing', $project->id, 3, [
             'due_on' => '2020-12-17',
-            'day_order' => 9
+            'day_order' => 9,
         ]);
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/tasks/add", [
+        $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
@@ -190,7 +198,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/tasks/add", [
+        $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
@@ -275,7 +283,7 @@ class TasksControllerTest extends TestCase
         $this->enableRetainFlashMessages();
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 0,
-            'due_on' => 'not a date'
+            'due_on' => 'not a date',
         ]);
 
         $this->assertRedirect('/tasks/today');
