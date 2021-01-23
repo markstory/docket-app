@@ -21,6 +21,7 @@
         "cakephp/debug_kit": "^4.1",
         "josegonzalez/dotenv": "^3.2",
         "phpunit/phpunit": "~8.5.0",
+        "psalm/phar": "^3.6",
         "psy/psysh": "@stable",
         "symfony/panther": "^0.9.0"
     },
