@@ -86,7 +86,7 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post('/projects/add', [
             'name' => 'second',
-            'color' => '663366',
+            'color' => '8',
         ]);
         $this->assertRedirect('/tasks/today');
 
@@ -106,7 +106,7 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post('/projects/add', [
             'name' => 'add',
-            'color' => '663366',
+            'color' => '8',
         ]);
         $this->assertRedirect('/tasks/today');
 
@@ -123,13 +123,13 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/edit", [
             'name' => 'Home too',
-            'color' => '999999',
+            'color' => '8',
         ]);
         $this->assertRedirect('/projects/Home-too');
 
         $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
         $this->assertEquals('Home too', $project->name);
-        $this->assertEquals('999999', $project->color);
+        $this->assertEquals('8', $project->color);
         $this->assertEquals(0, $project->ranking);
     }
 
