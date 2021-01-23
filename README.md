@@ -25,7 +25,7 @@ data.
 You're now ready to build the assets:
 
 ```
-yarn build
+yarn dev
 ```
 
 next setup your database configuration in `config/app_local.php`. Docket is tested against
@@ -48,6 +48,6 @@ Then visit `http://localhost:8765` to see the login page.
 
 ## Configuration
 
-Read and edit the environment specific `config/app_local.php` and setup the 
+Read and edit the environment specific `config/app_local.php` and setup the
 `'Datasources'` and any other configuration relevant for your application.
 Other environment agnostic settings can be changed in `config/app.php`.
