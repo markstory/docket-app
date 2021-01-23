@@ -15,7 +15,7 @@ class TaskPolicy
     /**
      * Check if $user can create Task
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
@@ -27,7 +27,7 @@ class TaskPolicy
     /**
      * Check if $user can edit Task
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
@@ -43,7 +43,7 @@ class TaskPolicy
     /**
      * Check if $user can delete Task
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
@@ -59,7 +59,7 @@ class TaskPolicy
     /**
      * Check if $user can view Task
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Task $task
      * @return bool
      */

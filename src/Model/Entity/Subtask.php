@@ -9,7 +9,7 @@ use Cake\ORM\Entity;
  * Subtask Entity
  *
  * @property int $id
- * @property int $todo_item_id
+ * @property int $task_id
  * @property string|null $title
  * @property string|null $body
  * @property int $ranking

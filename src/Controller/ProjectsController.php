@@ -10,7 +10,6 @@ use InvalidArgumentException;
  *
  * @property \App\Model\Table\TasksTable $Tasks
  * @property \App\Model\Table\ProjectsTable $Projects
- * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class ProjectsController extends AppController
 {

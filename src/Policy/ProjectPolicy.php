@@ -14,7 +14,7 @@ class ProjectPolicy
     /**
      * Check if $user can create Project
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
@@ -26,7 +26,7 @@ class ProjectPolicy
     /**
      * Check if $user can update Project
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
@@ -38,7 +38,7 @@ class ProjectPolicy
     /**
      * Check if $user can delete Project
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
@@ -50,7 +50,7 @@ class ProjectPolicy
     /**
      * Check if $user can delete Project
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
@@ -62,7 +62,7 @@ class ProjectPolicy
     /**
      * Check if $user can view Project
      *
-     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $user The user.
      * @param \App\Model\Entity\Project $project
      * @return bool
      */

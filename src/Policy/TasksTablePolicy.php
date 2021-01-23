@@ -11,6 +11,10 @@ use Cake\ORM\Query;
  */
 class TasksTablePolicy
 {
+    /**
+     * @param \App\Model\Entity\User $user
+     * @param \Cake\ORM\Query $query
+     */
     public function scopeIndex(User $user, Query $query): Query
     {
         return $query->innerJoinWith('Projects')

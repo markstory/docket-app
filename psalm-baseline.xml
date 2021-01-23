@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="3.18.2@19aa905f7c3c7350569999a93c40ae91ae4e1626">
+  <file src="src/Model/Table/ProjectsTable.php">
+    <NoInterfaceProperties occurrences="1">
+      <code>$query-&gt;firstOrFail()-&gt;count</code>
+    </NoInterfaceProperties>
+  </file>
+  <file src="src/Model/Table/SubtasksTable.php">
+    <NoInterfaceProperties occurrences="1">
+      <code>$result-&gt;max</code>
+    </NoInterfaceProperties>
+  </file>
+  <file src="src/Model/Table/TasksTable.php">
+    <NoInterfaceProperties occurrences="2">
+      <code>$result-&gt;max_child</code>
+      <code>$result-&gt;max_day</code>
+    </NoInterfaceProperties>
+  </file>
+  <file src="src/Model/Table/UsersTable.php">
+    <UndefinedMagicPropertyFetch occurrences="1">
+      <code>$entity-&gt;current_password</code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+</files>

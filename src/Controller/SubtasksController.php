@@ -13,7 +13,6 @@ use InvalidArgumentException;
  *
  * @property \App\Model\Table\TasksTable $Tasks
  * @property \App\Model\Table\SubtasksTable $Subtasks
- * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class SubtasksController extends AppController
 {

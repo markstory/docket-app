@@ -14,8 +14,8 @@ class UserPolicy
     /**
      * Check if $user can create Task
      *
-     * @param \Authorization\IdentityInterface $identity The user.
-     * @param \App\Model\Entity\Task $user
+     * @param \App\Model\Entity\User  $identity The user.
+     * @param \App\Model\Entity\User $user
      * @return bool
      */
     public function canAdd(IdentityInterface $identity, User $user)
@@ -26,8 +26,8 @@ class UserPolicy
     /**
      * Check if $user can edit Task
      *
-     * @param \Authorization\IdentityInterface $identity The user.
-     * @param \App\Model\Entity\Task $user
+     * @param \App\Model\Entity\User  $identity The user.
+     * @param \App\Model\Entity\User $user
      * @return bool
      */
     public function canEdit(IdentityInterface $identity, User $user)
