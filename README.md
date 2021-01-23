@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/cakephp/app/CakePHP%20App%20CI/master?style=flat-square)](https://github.com/cakephp/app/actions)
 
-A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/)(along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs) for Inertia), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
+A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/)(along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
 Heavily inspired in functionality and design by [Todoist](http://todoist.com)
 and [Things](http://culturedcode.com/things).
 
