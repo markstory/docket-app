@@ -2,8 +2,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/cakephp/app/CakePHP%20App%20CI/master?style=flat-square)](https://github.com/cakephp/app/actions)
 
-A todo list application. This project began as an exercise in learning to use
-Inertia.js, React and CakePHP together,  and to try a new approach to CSS.
+A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/)(along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
 Heavily inspired in functionality and design by [Todoist](http://todoist.com)
 and [Things](http://culturedcode.com/things).
 
@@ -25,7 +24,7 @@ data.
 You're now ready to build the assets:
 
 ```
-yarn build
+yarn dev
 ```
 
 next setup your database configuration in `config/app_local.php`. Docket is tested against
@@ -48,6 +47,6 @@ Then visit `http://localhost:8765` to see the login page.
 
 ## Configuration
 
-Read and edit the environment specific `config/app_local.php` and setup the 
+Read and edit the environment specific `config/app_local.php` and setup the
 `'Datasources'` and any other configuration relevant for your application.
 Other environment agnostic settings can be changed in `config/app.php`.

@@ -33,6 +33,10 @@ $_SERVER['PHP_SELF'] = '/';
 Configure::write('App.fullBaseUrl', 'http://localhost');
 Configure::write('App.inTest', true);
 
+// Set security salt
+Configure::write('Security.salt', 'a-random-value-that-you-cannot-guess');
+Configure::write('Security.emailSalt', 'a-random-value-used-for-emails');
+
 // DebugKit skips settings these connection config if PHP SAPI is CLI / PHPDBG.
 // But since PagesControllerTest is run with debug enabled and DebugKit is loaded
 // in application, without setting up these config DebugKit errors out.

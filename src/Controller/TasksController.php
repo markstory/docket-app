@@ -93,7 +93,7 @@ class TasksController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->complete();
-            if (!$this->Tasks->save($task)) {
+            if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('Task complete.'));
             } else {
                 $this->Flash->error(__('The task could not be completed. Please, try again.'));
