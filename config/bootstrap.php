@@ -166,20 +166,6 @@ Log::setConfig(Configure::consume('Log'));
 Security::setSalt(Configure::consume('Security.salt'));
 
 /*
- * Setup detectors for mobile and tablet.
- */
-ServerRequest::addDetector('mobile', function ($request) {
-    $detector = new \Detection\MobileDetect();
-
-    return $detector->isMobile();
-});
-ServerRequest::addDetector('tablet', function ($request) {
-    $detector = new \Detection\MobileDetect();
-
-    return $detector->isTablet();
-});
-
-/*
  * You can set whether the ORM uses immutable or mutable Time types.
  * The default changed in 4.0 to immutable types. You can uncomment
  * below to switch back to mutable types.
