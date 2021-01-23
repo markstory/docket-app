@@ -1,53 +1,53 @@
-# CakePHP Application Skeleton
+# Docket App
 
 [![Build Status](https://img.shields.io/github/workflow/status/cakephp/app/CakePHP%20App%20CI/master?style=flat-square)](https://github.com/cakephp/app/actions)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%207-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 4.x.
+A todo list application. This project began as an exercise in learning to use
+Inertia.js, React and CakePHP together,  and to try a new approach to CSS.
+Heavily inspired in functionality and design by [Todoist](http://todoist.com)
+and [Things](http://culturedcode.com/things).
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+This project is great if you want to host and operate your personal todo lists
+in your personal cloud, where you know exactly what is being done with your
+data.
 
 ## Installation
 
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
+1. Clone this repository.
+2. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
+3. Ensure you have a nodejs environment with yarn.
+4. Install dependencies:
+   ```
+   php composer.phar install
+   yarn install
+   ```
 
-If Composer is installed globally, run
+You're now ready to build the assets:
 
-```bash
-composer create-project --prefer-dist cakephp/app
+```
+yarn build
 ```
 
-In case you want to use a custom app dir name (e.g. `/myapp/`):
+next setup your database configuration in `config/app_local.php`. Docket is tested against
+MySQL, Postgres and SQLite. Then run migrations:
 
-```bash
-composer create-project --prefer-dist cakephp/app myapp
+```php
+bin/cake migrations migrate
 ```
 
-You can now either use your machine's webserver to view the default home page, or start
-up the built-in webserver with:
+You can now serve Docket using either the built-in PHP webserver, or more robust
+webserver like Apache or Nginx.
+
+To use the built-in PHP server run:
 
 ```bash
 bin/cake server -p 8765
 ```
 
-Then visit `http://localhost:8765` to see the welcome page.
-
-## Update
-
-Since this skeleton is a starting point for your application and various files
-would have been modified as per your needs, there isn't a way to provide
-automated upgrades, so you have to do any updates manually.
+Then visit `http://localhost:8765` to see the login page.
 
 ## Configuration
 
 Read and edit the environment specific `config/app_local.php` and setup the 
 `'Datasources'` and any other configuration relevant for your application.
 Other environment agnostic settings can be changed in `config/app.php`.
-
-## Layout
-
-The app skeleton uses [Milligram](https://milligram.io/) (v1.3) minimalist CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.

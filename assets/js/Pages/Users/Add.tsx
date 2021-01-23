@@ -40,8 +40,8 @@ export default function Add({errors}: Props) {
         <div className="form-input">
           <label htmlFor="email">{t('Email')}</label>
           <input id="email" name="email" type="email" required />
-          <FormError errors={errors} field="email" />
           <p className="form-help">{t('Used to email you and to login.')}</p>
+          <FormError errors={errors} field="email" />
         </div>
         <div className="form-input">
           <label htmlFor="password">{t('Password')}</label>
@@ -56,7 +56,9 @@ export default function Add({errors}: Props) {
           <p className="form-help">{t('One more time please.')}</p>
         </div>
         <div className="button-bar">
-          <button type="submit">{t('Sign Up')}</button>
+          <button className="button-primary" type="submit">
+            {t('Sign Up')}
+          </button>
         </div>
       </form>
     </Card>

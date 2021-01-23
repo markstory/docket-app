@@ -52,6 +52,11 @@ class AppController extends Controller
         $this->loadComponent('Authorization.Authorization');
     }
 
+    protected function useInertia()
+    {
+        return true;
+    }
+
     public function beforeRender(EventInterface $event)
     {
         parent::beforeRender($event);
@@ -71,7 +76,7 @@ class AppController extends Controller
         }
 
         // Use inertia if we aren't making a custom JSON response.
-        if (!$this->viewBuilder()->getOption('serialize')) {
+        if ($this->useInertia() && !$this->viewBuilder()->getOption('serialize')) {
             $this->inertiaBeforeRender($event);
         }
     }
