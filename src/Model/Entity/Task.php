@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use Cake\I18n\FrozenTime;
+use Cake\I18n\FrozenDate;
 use Cake\ORM\Entity;
 
 /**
@@ -51,12 +51,12 @@ class Task extends Entity
     public function complete(): void
     {
         $this->completed = true;
-        $this->due_on = new FrozenTime();
+        $this->due_on = new FrozenDate();
     }
 
     public function incomplete(): void
     {
         $this->completed = false;
-        $this->due_on = new FrozenTime();
+        $this->due_on = new FrozenDate();
     }
 }

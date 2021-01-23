@@ -30,7 +30,7 @@ use Inertia\Controller\InertiaResponseTrait;
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  * @property \Cake\Controller\Component\FlashComponent $Flash
- * @link https://book.cakephp.org/4/en/controllers.html#the-app-controller
+ * @property \App\Model\Table\ProjectsTable $Projects
  */
 class AppController extends Controller
 {

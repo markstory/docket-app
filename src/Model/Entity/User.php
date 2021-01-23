@@ -59,6 +59,11 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
 
     protected $_virtual = ['avatar_hash'];
 
+    /**
+     * @var \Authorization\AuthorizationServiceInterface|null
+     */
+    protected $authorization = null;
+
     protected function _getAvatarHash()
     {
         if (!$this->email) {
@@ -77,8 +82,12 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     protected function _setPassword(string $password): ?string
     {
         if (mb_strlen($password) > 0) {
-            return $this->passwordHasher()->hash($password);
+            $hash = $this->passwordHasher()->hash($password);
+
+            return $hash ? $hash : null;
         }
+
+        return null;
     }
 
     protected function unverifiedEmailChecksum()

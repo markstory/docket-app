@@ -11,6 +11,7 @@ use InvalidArgumentException;
 /**
  * Subtasks Controller
  *
+ * @property \App\Model\Table\TasksTable $Tasks
  * @property \App\Model\Table\SubtasksTable $Subtasks
  * @method \App\Model\Entity\TodoSubtask[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
@@ -31,7 +32,7 @@ class SubtasksController extends AppController
         return $task;
     }
 
-    protected function getSubtask(string $taskId, string $id): Subtask
+    protected function getSubtask(string $taskId, string $id)
     {
         $item = $this->getTask($taskId);
 
@@ -46,7 +47,7 @@ class SubtasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add(?string $taskId = null)
+    public function add(string $taskId = null)
     {
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
@@ -67,12 +68,12 @@ class SubtasksController extends AppController
     /**
      * Toggle a subtask as complete.
      *
-     * @param null $taskId Todo Item id.
-     * @param string|null $id Subtask id.
+     * @param string $taskId Todo Item id.
+     * @param string $id Subtask id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function toggle($taskId, $id = null)
+    public function toggle(string $taskId, string $id)
     {
         $this->request->allowMethod(['post']);
         $subtask = $this->getSubtask($taskId, $id);
@@ -114,8 +115,8 @@ class SubtasksController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $taskId Todo id.
-     * @param string|null $id Todo Subtask id.
+     * @param string $taskId Todo id.
+     * @param string $id Todo Subtask id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
