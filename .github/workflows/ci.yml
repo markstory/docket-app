@@ -116,7 +116,11 @@ jobs:
 
     - name: Run PHPUnit
       run: |
-        vendor/bin/phpunit --testsuite=acceptance
+        # vendor/bin/phpunit --testsuite=acceptance
+        vendor/bin/phpunit tests/Acceptance/LoginTest.php
+        vendor/bin/phpunit tests/Acceptance/ProjectsTest.php
+        # vendor/bin/phpunit tests/Acceptance/TasksTest.php
+        # vendor/bin/phpunit tests/Acceptance/TasksListTest.php
 
 
   cs-stan:
