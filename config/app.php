@@ -166,7 +166,12 @@ return [
     'Error' => [
         'errorLevel' => E_ALL,
         'exceptionRenderer' => ExceptionRenderer::class,
-        'skipLog' => [],
+        'skipLog' => [
+            'Authorization\Exception\ForbiddenException',
+            'Cake\Http\Exception\ForbiddenException',
+            'Cake\Http\Exception\InvalidCsrfTokenException',
+            'Cake\Http\Exception\NotFoundException',
+        ],
         'log' => true,
         'trace' => true,
     ],
