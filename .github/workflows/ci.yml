@@ -116,11 +116,12 @@ jobs:
 
     - name: Run PHPUnit
       run: |
-        # vendor/bin/phpunit --testsuite=acceptance
+        # Run suites individually so we abort on first failure
+        # a string of timeouts takes a long time to work through.
         vendor/bin/phpunit tests/Acceptance/LoginTest.php
         vendor/bin/phpunit tests/Acceptance/ProjectsTest.php
-        # vendor/bin/phpunit tests/Acceptance/TasksTest.php
-        # vendor/bin/phpunit tests/Acceptance/TasksListTest.php
+        vendor/bin/phpunit tests/Acceptance/TasksTest.php
+        vendor/bin/phpunit tests/Acceptance/TasksListTest.php
 
 
   cs-stan:
