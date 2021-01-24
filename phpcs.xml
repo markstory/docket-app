@@ -3,4 +3,16 @@
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer"/>
 
     <rule ref="CakePHP"/>
+    <rule ref="CakePHP.Commenting.FunctionComment.Missing">
+        <severity>0</severity>
+    </rule>
+    <rule ref="CakePHP.Commenting.FunctionComment.MissingParamTag">
+        <severity>0</severity>
+    </rule>
+    <rule ref="CakePHP.Commenting.FunctionComment.MissingReturn">
+        <severity>0</severity>
+    </rule>
+    <rule ref="CakePHP.Commenting.FunctionComment.MissingParamComment">
+        <severity>0</severity>
+    </rule>
 </ruleset>

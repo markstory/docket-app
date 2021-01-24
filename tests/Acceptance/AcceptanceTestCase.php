@@ -9,11 +9,11 @@ use Symfony\Component\Panther\PantherTestCaseTrait;
 
 abstract class AcceptanceTestCase extends TestCase
 {
-    public const CHROME = 'chrome';
-    public const FIREFOX = 'firefox';
-
     use PantherTestCaseTrait;
     use FactoryTrait;
+
+    public const CHROME = 'chrome';
+    public const FIREFOX = 'firefox';
 
     protected $fixtures = [
         'app.Users',

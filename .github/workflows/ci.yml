@@ -120,7 +120,7 @@ jobs:
       run: composer update
 
     - name: Run PHP CodeSniffer
-      run: vendor/bin/phpcs --report=checkstyle src/ tests/
+      run: vendor/bin/phpcs src/ tests/
 
     - name: Run psalm
       if: success() || failure()

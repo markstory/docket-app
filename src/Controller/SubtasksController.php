@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Entity\Subtask;
 use App\Model\Entity\Task;
 use Cake\View\JsonView;
 use InvalidArgumentException;
@@ -46,7 +45,7 @@ class SubtasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add(string $taskId = null)
+    public function add(string $taskId)
     {
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
