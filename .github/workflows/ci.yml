@@ -50,9 +50,9 @@ jobs:
     - name: composer install
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
-          composer update --prefer-lowest --prefer-stable
+          composer update --no-progress --prefer-lowest --prefer-stable
         else
-          composer update
+          composer update --no-progress
         fi
 
     - name: Run PHPUnit
@@ -93,7 +93,7 @@ jobs:
 
     - name: composer install
       run: |
-        composer update
+        composer update --no-progress
 
     - name: Run PHPUnit
       run: |
@@ -117,7 +117,7 @@ jobs:
         coverage: none
 
     - name: composer install
-      run: composer update
+      run: composer update --no-progress
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs src/ tests/
