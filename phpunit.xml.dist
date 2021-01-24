@@ -11,7 +11,9 @@
         <ini name="apc.enable_cli" value="1"/>
 
         <!-- Database URL for acceptance and integration tests -->
+        <!--
         <env name="DATABASE_TEST_URL" value="mysql://lists:password@localhost/cake_test" />
+        -->
         <env name="SECURITY_SALT" value="a-random-value-that-you-cannot-guess" />
     </php>
 
