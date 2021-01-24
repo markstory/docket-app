@@ -55,6 +55,11 @@ jobs:
           composer update --no-progress
         fi
 
+    - name: yarn install & build
+      run: |
+        yarn install
+        yarn dev
+
     - name: Run PHPUnit
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DATABASE_TEST_URL=$SQLITE_URL; fi
@@ -91,9 +96,11 @@ jobs:
         extensions: mbstring, intl, pdo_mysql
         coverage: pcov
 
-    - name: composer install
+    - name: install & build
       run: |
         composer update --no-progress
+        yarn install
+        yarn dev
 
     - name: Run PHPUnit
       run: |
