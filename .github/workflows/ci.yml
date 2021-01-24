@@ -16,11 +16,6 @@ jobs:
       matrix:
         php-version: ['7.2', '7.4']
         db-type: [sqlite, mysql, pgsql]
-        prefer-lowest: ['']
-        include:
-          - php-version: '7.2'
-            db-type: 'sqlite'
-            prefer-lowest: 'prefer-lowest'
 
     env:
       MYSQL_URL: mysql://root:root@127.0.0.1/docket
