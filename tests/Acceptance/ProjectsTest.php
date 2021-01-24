@@ -13,7 +13,7 @@ class ProjectsTest extends AcceptanceTestCase
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
 
-        $link = $client->getCrawler()->selectLink('Create Project')->link();
+        $link = $client->getCrawler()->selectLink('New Project')->link();
         $client->click($link);
 
         // Wait for page to load
