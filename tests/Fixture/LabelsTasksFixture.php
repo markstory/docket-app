@@ -27,10 +27,6 @@ class LabelsTasksFixture extends TestFixture
             'labels_tasks_ibfk_2' => ['type' => 'foreign', 'columns' => ['label_id'], 'references' => ['labels', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
             'labels_tasks_ibfk_1' => ['type' => 'foreign', 'columns' => ['task_id'], 'references' => ['tasks', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
         ],
-        '_options' => [
-            'engine' => 'InnoDB',
-            'collation' => 'utf8'
-        ],
     ];
     // phpcs:enable
 }
