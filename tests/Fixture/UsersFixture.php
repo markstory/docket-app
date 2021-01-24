@@ -42,7 +42,6 @@ class UsersFixture extends TestFixture
         $hasher = new DefaultPasswordHasher();
         $this->records = [
             [
-                'id' => 1,
                 'name' => 'Mark',
                 'email' => 'mark@example.com',
                 'password' => $hasher->hash('password123'),
@@ -52,7 +51,6 @@ class UsersFixture extends TestFixture
                 'modified' => 1604198822,
             ],
             [
-                'id' => 2,
                 'name' => 'Sally',
                 'email' => 'sally@example.com',
                 'password' => $hasher->hash('hunter12abc'),
