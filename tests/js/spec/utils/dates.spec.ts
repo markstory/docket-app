@@ -47,12 +47,12 @@ describe('utils/dates', function() {
       let result = parseDateInput('Wednesday');
       assertDefined(result);
       expect(result.getDay()).toEqual(3);
-      expect(result.getTime()).toBeGreaterThan(today.getTime());
+      expect(result.getTime()).toBeGreaterThanOrEqual(today.getTime());
 
       result = parseDateInput('sunday');
       assertDefined(result);
-      expect(result.getDay()).toEqual(1);
-      expect(result.getTime()).toBeGreaterThan(today.getTime());
+      expect(result.getDay()).toEqual(0);
+      expect(result.getTime()).toBeGreaterThanOrEqual(today.getTime());
     });
 
     it('handles wrapping days in the past to the next year', function() {
