@@ -300,15 +300,8 @@ return [
          * The test connection is used during the test suite.
          */
         'test' => [
-            'className' => Connection::class,
-            'driver' => Mysql::class,
-            'persistent' => false,
-            'timezone' => 'UTC',
-            //'encoding' => 'utf8mb4',
-            'flags' => [],
-            'cacheMetadata' => true,
-            'quoteIdentifiers' => false,
-            // 'log' => true,
+            // Configure the test database from phpunit.xml
+            'url' => env('DATABASE_TEST_URL', null),
         ],
     ],
 
