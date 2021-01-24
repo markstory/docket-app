@@ -64,16 +64,8 @@ return [
             'url' => env('DATABASE_URL', null),
         ],
 
-        /*
-         * The test connection is used during the test suite.
-         */
         'test' => [
-            'host' => 'localhost',
-            //'port' => 'non_standard_port_number',
-            'username' => 'my_app',
-            'password' => 'secret',
-            'database' => 'test_myapp',
-            //'schema' => 'myapp',
+            // Configure the test database from phpunit.xml
             'url' => env('DATABASE_TEST_URL', null),
         ],
     ],
