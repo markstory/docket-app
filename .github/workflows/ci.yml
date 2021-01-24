@@ -76,13 +76,31 @@ jobs:
       if: matrix.php-version == '7.4'
       uses: codecov/codecov-action@v1
 
+  jest:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: yarn install & build
+      run: |
+        yarn install
+
+    - name: Run Jest
+      run:
+        yarn test
+
   acceptance:
     name: Browser Acceptance
     runs-on: ubuntu-18.04
 
+    env:
+      DATABASE_TEST_URL: mysql://root:root@127.0.0.1/docket
+
     steps:
     - name: Setup MySQL latest
-      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
+      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=docket -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
 
     - uses: actions/checkout@v1
       with:
