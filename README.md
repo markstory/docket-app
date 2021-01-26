@@ -27,7 +27,7 @@ You're now ready to build the assets:
 yarn dev
 ```
 
-next setup your database configuration in `config/app_local.php`. Docket is tested against
+Next setup your database configuration in `config/app_local.php`. Docket is tested against
 MySQL, Postgres and SQLite. Then run migrations:
 
 ```php
@@ -43,10 +43,30 @@ To use the built-in PHP server run:
 bin/cake server -p 8765
 ```
 
-Then visit `http://localhost:8765` to see the login page.
+Then visit `http://localhost:8765` to see the landing page, and create your account.
 
 ## Configuration
 
-Read and edit the environment specific `config/app_local.php` and setup the
-`'Datasources'` and any other configuration relevant for your application.
-Other environment agnostic settings can be changed in `config/app.php`.
+While you shouldn't need to configure much, if you do want to tweak settings,
+the `config/app_local.php` file is where you should make any changes specific to
+your setup. During application start, this file is loaded and merged onto the 
+defaults in `config/app.php`.
+
+## Testing
+
+Server tests can be run via `phpunit`. By default only the functional and
+integration tests are run. Docket also uses
+[panther](https://github.com/symfony/panther) to do automated browser testing.
+Running acceptance tests requires you to have a browser driver available. Follow
+the installation guide in panther to get started.  Once you have a driver
+installed acceptance tests can be run using `phpunit`:
+
+```sh
+phpunit --testsuite=acceptance
+```
+
+Javascript tests can be run via `jest`:
+
+```sh
+yarn test
+```
