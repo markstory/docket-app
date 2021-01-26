@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
@@ -46,6 +46,16 @@ export function MenuContents({selected, onChange}: ContentsProps) {
   const today = toDateString(new Date());
   const tomorrow = toDateString(addDays(new Date(), 1));
   const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(
+    function() {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    },
+    [inputRef]
+  );
 
   function handleButtonClick(value: Task['due_on']) {
     return function onClick() {
@@ -80,6 +90,7 @@ export function MenuContents({selected, onChange}: ContentsProps) {
     <div className="due-on-menu" onClick={clickSink}>
       <div className="menu-option">
         <input
+          ref={inputRef}
           type="text"
           onChange={handleInputChange}
           onKeyDown={handleInputKeydown}
