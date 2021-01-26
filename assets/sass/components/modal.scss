@@ -28,6 +28,14 @@
   }
 }
 
+@media (max-width: $breakpoint-narrow) {
+  .modal {
+    top: $space * 2;
+    left: 5px;
+    right: 5px;
+  }
+}
+
 .modal-confirm {
   padding-top: 20px;
 }

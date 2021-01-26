@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: 325px 1fr;
   height: 100%;
+  position: relative;
 
   .sidebar, .content {
     padding-bottom: $space * 5;
@@ -11,12 +12,53 @@
     padding-top: $space * 3;
     padding-left: $space * 5;
     background: var(--color-bg-low);
+    position: relative;
   }
 
   .content {
     padding-top: $space * 5;
     padding-right: $space * 5;
     padding-left: $space * 5;
+  }
+
+  .expander {
+    display: none;
+  }
+}
+
+@media (max-width: $breakpoint-narrow) {
+  .layout-three-quarter {
+    left: -315px;
+
+    .sidebar,
+    .content {
+      padding-left: $space * 4;
+    }
+
+    .expander {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 10px;
+      height: 100%;
+      background: var(--color-bg-low);
+      padding: 0;
+      border: none;
+      border-radius: 0;
+
+      &:focus,
+      &:active,
+      &:hover {
+        box-shadow: none;
+        background: var(--color-button-default-hover);
+      }
+    }
+  }
+  .layout-three-quarter[data-expanded="true"] {
+    overflow: hidden;
+    left: 0;
   }
 }
 
