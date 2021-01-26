@@ -29,7 +29,7 @@ return [
      */
     'Security' => [
         'salt' => env('SECURITY_SALT', '__SALT__'),
-        'emailSalt' => env('EMAIL_SALT', '__SALT__'),
+        'emailSalt' => env('EMAIL_SALT', '__EMAIL_SALT__'),
     ],
 
     /*
