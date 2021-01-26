@@ -295,14 +295,6 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
-
-        /*
-         * The test connection is used during the test suite.
-         */
-        'test' => [
-            // Configure the test database from phpunit.xml
-            'url' => env('DATABASE_TEST_URL', null),
-        ],
     ],
 
     /*

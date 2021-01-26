@@ -63,11 +63,7 @@ return [
              */
             'url' => env('DATABASE_URL', null),
         ],
-
-        'test' => [
-            // Configure the test database from phpunit.xml
-            'url' => env('DATABASE_TEST_URL', null),
-        ],
+        // Test database is setup in tests/bootstrap.php
     ],
 
     /*

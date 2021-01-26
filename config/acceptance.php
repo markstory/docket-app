@@ -43,9 +43,6 @@ return [
         'default' => [
             'url' => env('DATABASE_TEST_URL', null),
         ],
-        'test' => [
-            'url' => env('DATABASE_TEST_URL', null),
-        ],
     ],
 
     /*
