@@ -4,6 +4,7 @@ import {usePage} from '@inertiajs/inertia-react';
 import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
+import {Icon} from 'app/components/icon';
 import ProjectFilter from 'app/components/projectFilter';
 import ProfileMenu from 'app/components/profileMenu';
 import {t} from 'app/locale';
@@ -61,7 +62,9 @@ function Contents({children}: Props) {
             className="expander"
             title={t('Show project menu')}
             onClick={() => setExpanded(!expanded)}
-          ></button>
+          >
+            <Icon icon="kebab" width="large" />
+          </button>
         </section>
         <section className="content">
           {children}

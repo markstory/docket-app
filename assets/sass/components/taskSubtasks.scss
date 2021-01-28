@@ -1,4 +1,8 @@
 .task-subtasks {
+  h3 svg {
+    color: var(--color-muted);
+  }
+
   .add-subtask {
     margin-top: $space;
   }

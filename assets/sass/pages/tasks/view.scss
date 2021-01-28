@@ -44,5 +44,6 @@
 @media (max-width: $breakpoint-narrow) {
   .task-view .task-quickform {
     margin-right: 0;
+    margin-bottom: $space * 3;
   }
 }
