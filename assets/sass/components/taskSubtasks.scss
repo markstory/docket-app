@@ -14,9 +14,13 @@
       margin-right: $space;
     }
 
-    &.is-completed {
+    &.is-completed .title {
       color: var(--color-muted);
       text-decoration: line-through;
     }
+  }
+
+  .dnd-item {
+    background: var(--color-bg);
   }
 }

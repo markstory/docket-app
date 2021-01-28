@@ -38,3 +38,9 @@
   }
 }
 
+@media (max-width: $breakpoint-narrow) {
+  .task-quickform .projectid {
+    flex-grow: 1;
+  }
+}
+

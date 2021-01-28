@@ -39,10 +39,11 @@
 }
 
 .dnd-dropper-left-offset {
+  padding-left: 0;
+
   .dnd-item {
     margin-left: -34px;
   }
-  padding-left: 0;
 }
 
 .dnd-item:hover .dnd-handle {
