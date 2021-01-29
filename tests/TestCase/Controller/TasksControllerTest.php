@@ -334,6 +334,29 @@ class TasksControllerTest extends TestCase
         }
     }
 
+    public function testMoveDownDuplicateOrder()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 2);
+        $third = $this->makeTask('a third', $project->id, 2);
+        $fourth = $this->makeTask('fourth', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$first->id, $fourth->id, $second->id, $third->id];
+        $this->post("/tasks/{$fourth->id}/move", [
+            'day_order' => 1,
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->Tasks->find()->orderAsc('day_order')->toArray();
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
     public function testMoveDifferentDay()
     {
         $project = $this->makeProject('work', 1);

@@ -58,7 +58,10 @@ class TasksTable extends Table
         $this->hasMany('Subtasks', [
             'foreignKey' => 'task_id',
             'propertyName' => 'subtasks',
-            'sort' => ['Subtasks.ranking' => 'ASC'],
+            'sort' => [
+                'Subtasks.ranking' => 'ASC',
+                'Subtasks.title' => 'ASC',
+            ],
         ]);
         $this->belongsToMany('Labels', [
             'propertyName' => 'labels',
@@ -128,7 +131,8 @@ class TasksTable extends Table
 
         return $query
             ->where(['Projects.slug' => $options['slug']])
-            ->orderAsc('Tasks.child_order');
+            ->orderAsc('Tasks.child_order')
+            ->orderAsc('Tasks.title');
     }
 
     public function findComplete(Query $query): Query
@@ -149,7 +153,8 @@ class TasksTable extends Table
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on <=' => new FrozenDate('today', $timezone),
             ])
-            ->orderAsc('Tasks.day_order');
+            ->orderAsc('Tasks.day_order')
+            ->orderAsc('Tasks.title');
     }
 
     public function findUpcoming(Query $query, array $options): Query
@@ -167,7 +172,8 @@ class TasksTable extends Table
                 'Tasks.due_on <' => $options['end'],
             ])
             ->orderAsc('Tasks.due_on')
-            ->orderAsc('Tasks.day_order');
+            ->orderAsc('Tasks.day_order')
+            ->orderAsc('Tasks.title');
     }
 
     public function findOverdue(Query $query): Query
@@ -242,6 +248,7 @@ class TasksTable extends Table
         $currentItem = $this->find()
             ->where($conditions)
             ->orderAsc($property)
+            ->orderAsc('title')
             ->offset($operation[$property])
             ->first();
 
@@ -273,7 +280,7 @@ class TasksTable extends Table
             $query
                 ->set([$property => $query->newExpr($property . ' + 1')])
                 ->where(["{$property} >=" => $targetOffset]);
-        } elseif ($difference > 0) {
+        } elseif ($difference >= 0) {
             // Move other items down, as the current item is going up
             // or is being moved from another group.
             $query

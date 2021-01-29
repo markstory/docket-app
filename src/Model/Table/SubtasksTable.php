@@ -136,6 +136,7 @@ class SubtasksTable extends Table
         $currentTask = $this->find()
             ->where($conditions)
             ->orderAsc('ranking')
+            ->orderAsc('title')
             ->offset($operation['ranking'])
             ->first();
 
@@ -154,7 +155,7 @@ class SubtasksTable extends Table
         $task->set('ranking', $targetOffset);
         $difference = $current - $task->get('ranking');
 
-        if ($difference > 0) {
+        if ($difference >= 0) {
             // Move other items down, as the current item is going up
             // or is being moved from another group.
             $query
