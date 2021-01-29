@@ -1,22 +1,85 @@
+$sidebar-width: 325px;
+
 .layout-three-quarter {
-  display: grid;
-  grid-template-columns: 325px 1fr;
   height: 100%;
+  position: relative;
+  padding-left: $sidebar-width;
 
   .sidebar, .content {
     padding-bottom: $space * 5;
   }
 
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: $sidebar-width;
+
     padding-top: $space * 3;
     padding-left: $space * 5;
     background: var(--color-bg-low);
+    transition: all 0.26s ease-in-out;
   }
 
   .content {
     padding-top: $space * 5;
     padding-right: $space * 5;
     padding-left: $space * 5;
+  }
+
+  .expander {
+    display: none;
+    svg {
+      position: relative;
+      left: -6px;
+      transform: rotate(90deg);
+      color: var(--color-primary);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-narrow) {
+  .layout-three-quarter {
+    padding-left: 10px;
+
+    .sidebar,
+    .content {
+      padding-left: $space * 4;
+    }
+
+    .sidebar {
+      transform: translateX($sidebar-width * -1 + 10px);
+      z-index: $z-active-ui;
+    }
+
+    .expander {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 10px;
+      height: 100%;
+
+      background: var(--color-bg-low);
+      padding: 0;
+      border: none;
+      border-radius: 0;
+
+      &:focus,
+      &:active,
+      &:hover {
+        box-shadow: none;
+        background: var(--color-button-default-hover);
+      }
+    }
+  }
+
+  .layout-three-quarter[data-expanded="true"] {
+    .sidebar {
+      transform: translateX(0px);
+    }
   }
 }
 
@@ -25,7 +88,7 @@
   background: var(--color-bg-low);
   width: 100%;
   height: 100%;
-  padding-top: $space * 6;
+  padding-top: 1px;
 }
 .layout-card {
   background: var(--color-bg);
@@ -34,6 +97,15 @@
   box-shadow: $shadow-low;
   padding: $space * 3;
   width: 75%;
+  margin-top: $space * 6;
   margin-left: 50%;
   transform: translateX(-50%);
+}
+
+@media (max-width: $breakpoint-narrow) {
+  .layout-card {
+    margin: $space * 2 $space * 2 0;
+    transform: none;
+    width: auto;
+  }
 }

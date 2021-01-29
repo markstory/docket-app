@@ -88,20 +88,22 @@ function TaskSummary({task, onClick}: SummaryProps) {
   };
 
   return (
-    <div className="summary">
-      <input
-        className="completed"
-        type="checkbox"
-        value="1"
-        onClick={handleComplete}
-        defaultChecked={task.completed}
-      />
-      <a href="#" onClick={onClick}>
-        <h3>{task.title}</h3>
-        <div className="attributes">
-          {<ProjectBadge project={task.project} />}
-          {task.due_on && <DueOn value={task.due_on} />}
-        </div>
+    <div className="task-view-summary">
+      <div className="title">
+        <input
+          className="checkbox"
+          type="checkbox"
+          value="1"
+          onClick={handleComplete}
+          defaultChecked={task.completed}
+        />
+        <a href="#" role="button" onClick={onClick}>
+          <h3>{task.title}</h3>
+        </a>
+      </div>
+      <a href="#" onClick={onClick} className="attributes">
+        {<ProjectBadge project={task.project} />}
+        {task.due_on && <DueOn value={task.due_on} />}
       </a>
     </div>
   );

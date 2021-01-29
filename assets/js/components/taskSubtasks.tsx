@@ -27,51 +27,56 @@ export default function TaskSubtasks({task}: Props) {
         <SubtaskSorter taskId={task.id}>
           {({items}) => (
             <Droppable droppableId="subtasks" type="subtask">
-              {provided => (
-                <ul
-                  ref={provided.innerRef}
-                  className="dnd-dropper-left-offset"
-                  {...provided.droppableProps}
-                >
-                  {items.map((subtask, index) => {
-                    return (
-                      <Draggable
-                        key={subtask.id}
-                        draggableId={String(subtask.id)}
-                        index={index}
-                      >
-                        {(provided, snapshot) => {
-                          const className = classnames('dnd-item', {
-                            'dnd-item-dragging': snapshot.isDragging,
-                          });
-                          return (
-                            <li
-                              ref={provided.innerRef}
-                              className={className}
-                              {...provided.draggableProps}
-                            >
-                              <button
-                                className="dnd-handle"
-                                aria-label="Drag to reorder"
-                                {...provided.dragHandleProps}
+              {(provided, snapshot) => {
+                const className = classnames('dnd-dropper-left-offset', {
+                  'dnd-dropper-active': snapshot.isDraggingOver,
+                });
+                return (
+                  <ul
+                    ref={provided.innerRef}
+                    className={className}
+                    {...provided.droppableProps}
+                  >
+                    {items.map((subtask, index) => {
+                      return (
+                        <Draggable
+                          key={subtask.id}
+                          draggableId={String(subtask.id)}
+                          index={index}
+                        >
+                          {(provided, snapshot) => {
+                            const className = classnames('dnd-item', {
+                              'dnd-item-dragging': snapshot.isDragging,
+                            });
+                            return (
+                              <li
+                                ref={provided.innerRef}
+                                className={className}
+                                {...provided.draggableProps}
                               >
-                                <Icon icon="grabber" width="large" />
-                              </button>
-                              <TaskSubtaskRow
-                                index={index}
-                                key={subtask.id}
-                                subtask={subtask}
-                                taskId={task.id}
-                              />
-                            </li>
-                          );
-                        }}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </ul>
-              )}
+                                <button
+                                  className="dnd-handle"
+                                  aria-label="Drag to reorder"
+                                  {...provided.dragHandleProps}
+                                >
+                                  <Icon icon="grabber" width="xlarge" />
+                                </button>
+                                <TaskSubtaskRow
+                                  index={index}
+                                  key={subtask.id}
+                                  subtask={subtask}
+                                  taskId={task.id}
+                                />
+                              </li>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </ul>
+                );
+              }}
             </Droppable>
           )}
         </SubtaskSorter>
@@ -121,7 +126,7 @@ function TaskSubtaskRow({index, subtask, taskId}: RowProps) {
           onCancel={() => setEditing(false)}
         />
       ) : (
-        <div role="button" onClick={() => setEditing(true)}>
+        <div className="title" role="button" onClick={() => setEditing(true)}>
           {subtask.title}
         </div>
       )}

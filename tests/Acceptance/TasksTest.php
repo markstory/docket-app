@@ -37,9 +37,9 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('[data-testid="loggedin"]');
         $crawler = $client->getCrawler();
 
-        $title = $crawler->filter('.summary h3')->first();
+        $title = $crawler->filter('.task-view-summary h3')->first();
         $this->assertEquals($task->title, $title->getText());
-        $checkbox = $crawler->filter('.summary input[type="checkbox"]')->first();
+        $checkbox = $crawler->filter('.task-view-summary input[type="checkbox"]')->first();
         $checkbox->click();
 
         $task = $this->Tasks->get($task->id);
@@ -56,8 +56,8 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('[data-testid="loggedin"]');
         $crawler = $client->getCrawler();
 
-        // Click the summary to get the form.
-        $summary = $crawler->filter('.summary > a')->first();
+        // Click the title to get the form.
+        $summary = $crawler->filter('.task-view-summary h3')->first();
         $summary->click();
         $client->waitFor('.task-quickform');
 
@@ -86,7 +86,7 @@ class TasksTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Click the summary to get the form.
-        $summary = $crawler->filter('.summary > a')->first();
+        $summary = $crawler->filter('.task-view-summary h3')->first();
         $summary->click();
         $client->waitFor('.task-quickform');
 

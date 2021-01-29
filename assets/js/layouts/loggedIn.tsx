@@ -1,11 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
+import {Icon} from 'app/components/icon';
 import ProjectFilter from 'app/components/projectFilter';
 import ProfileMenu from 'app/components/profileMenu';
+import {t} from 'app/locale';
 import {ProjectsProvider} from 'app/providers/projects';
 
 type SharedPageProps = {
@@ -42,13 +44,27 @@ function LoggedIn({children, title}: Props) {
  */
 function Contents({children}: Props) {
   const {flash} = usePage().props as SharedPageProps;
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <React.Fragment>
-      <main className="layout-three-quarter" data-testid="loggedin">
+      <main
+        className="layout-three-quarter"
+        data-expanded={expanded}
+        data-testid="loggedin"
+      >
         <section className="sidebar">
-          <ProfileMenu />
-          <ProjectFilter />
+          <div className="menu">
+            <ProfileMenu />
+            <ProjectFilter />
+          </div>
+          <button
+            className="expander"
+            title={t('Show project menu')}
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Icon icon="kebab" width="large" />
+          </button>
         </section>
         <section className="content">
           {children}

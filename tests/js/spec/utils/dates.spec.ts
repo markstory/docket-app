@@ -46,12 +46,12 @@ describe('utils/dates', function() {
     it('handles weekdays', function() {
       let result = parseDateInput('Wednesday');
       assertDefined(result);
-      expect(result.getDay()).toEqual(3);
+      expect(result.getDay()).toEqual(4);
       expect(result.getTime()).toBeGreaterThanOrEqual(today.getTime());
 
       result = parseDateInput('sunday');
       assertDefined(result);
-      expect(result.getDay()).toEqual(0);
+      expect(result.getDay()).toEqual(1);
       expect(result.getTime()).toBeGreaterThanOrEqual(today.getTime());
     });
 

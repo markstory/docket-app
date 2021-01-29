@@ -48,8 +48,10 @@ export default function SubtaskEditForm({subtask, index, taskId, onCancel}: Prop
         />
       </div>
       <div className="button-bar">
-        <button type="submit">{t('Save')}</button>
-        <button className="button-secondary" onClick={onCancel}>
+        <button className="button-primary" type="submit">
+          {t('Save')}
+        </button>
+        <button className="button-muted" onClick={onCancel}>
           {t('Cancel')}
         </button>
       </div>

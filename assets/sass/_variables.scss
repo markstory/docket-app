@@ -15,6 +15,9 @@ $font-size-small: 12px;
 
 $space: 8px;
 
+$breakpoint-narrow: 800px;
+$breakpoint-laptop: 1200px;
+
 // Z-indexes
 // base background level
 $z-bg: 0;
@@ -82,7 +85,7 @@ body {
   --color-foreground: var(--color-gray-900);
   --color-invert-foreground: var(--color-white);
   --color-disabled: var(--color-gray-300);
-  --color-muted: var(--color-gray-500);
+  --color-muted: var(--color-gray-600);
   --color-low-emphasis: var(--color-gray-700);
 
   --color-border: var(--color-gray-300);

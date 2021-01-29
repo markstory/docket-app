@@ -31,7 +31,7 @@ export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: P
         <FormError errors={errors} field="title" />
       </div>
       <div className="attributes">
-        <div className="project">
+        <div className="projectid">
           <ProjectSelect value={task.project.id} />
           <FormError errors={errors} field="project_id" />
         </div>
