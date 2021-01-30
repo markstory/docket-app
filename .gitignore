@@ -6,12 +6,15 @@
 /logs/*
 /tmp/*
 /vendor/*
+
+# Node packages
 /node_modules/*
 
 # Compiled files.
 /webroot/js/*.js
 /webroot/css/app.css
 /webroot/mix-manifest.json
+/docket.sqlite
 
 # OS generated files #
 ######################
@@ -29,6 +32,8 @@ Thumbs.db
 #######################
 # PHPUnit
 .phpunit.result.cache
+/phpunit.xml
+
 # vim
 *~
 *.swp
