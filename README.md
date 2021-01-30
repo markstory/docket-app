@@ -1,6 +1,6 @@
 <h1>
     <img src="https://raw.githubusercontent.com/markstory/docket-app/master/webroot/img/docket-logo.svg" width="75" height="75" style="margin-right: 40px" />
-    &nbsp;&nbsp;
+    &nbsp;
     Docket App
 </h1>
 
