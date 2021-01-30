@@ -1,4 +1,7 @@
-# <img src="https://raw.githubusercontent.com/markstory/docket-app/master/webroot/img/docket-logo.svg" width="75" height="75" /> Docket App
+<div style="display: flex; align-items: center;">
+    <img src="https://raw.githubusercontent.com/markstory/docket-app/master/webroot/img/docket-logo.svg" width="75" height="75" style="margin-right: 40px" />
+    <h1>Docket App</h1>
+</div>
 
 [![Build Status](https://img.shields.io/github/workflow/status/markstory/docket-app/CI)](https://github.com/markstory/docket-app/actions)
 
