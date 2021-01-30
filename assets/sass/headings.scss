@@ -10,3 +10,11 @@
     margin-left: $space;
   }
 }
+
+.heading-logo {
+  display: flex;
+  align-items: center;
+  img {
+    margin-right: $space;
+  }
+}

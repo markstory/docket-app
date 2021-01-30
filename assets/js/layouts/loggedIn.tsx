@@ -55,8 +55,11 @@ function Contents({children}: Props) {
       >
         <section className="sidebar">
           <div className="menu">
-            <ProfileMenu />
-            <ProjectFilter />
+            <div>
+              <ProfileMenu />
+              <ProjectFilter />
+            </div>
+            <img src="/img/docket-logo-translucent.svg" width="30" height="30" />
           </div>
           <button
             className="expander"

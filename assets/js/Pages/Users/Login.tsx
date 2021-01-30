@@ -20,7 +20,10 @@ export default function Login() {
 
   return (
     <Card title={t('Login')}>
-      <h1>{t('Login')}</h1>
+      <h1 className="heading-logo">
+        <img src="/img/docket-logo.svg" width="45" height="45" />
+        {t('Login')}
+      </h1>
       <form method="post" onSubmit={onSubmit}>
         <div className="form-input">
           <label htmlFor="email">{t('Email')}</label>
