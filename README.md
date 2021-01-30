@@ -1,10 +1,6 @@
-# Docket App
+# <img src="https://raw.githubusercontent.com/markstory/docket-app/master/webroot/img/docket-logo.svg" width="75" height="75" /> Docket App
 
 [![Build Status](https://img.shields.io/github/workflow/status/markstory/docket-app/CI)](https://github.com/markstory/docket-app/actions)
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/markstory/docket-app/master/webroot/img/docket-logo.svg" width="75" height="75" />
-</p>
 
 A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/)(along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
 Heavily inspired in functionality and design by [Todoist](http://todoist.com)
