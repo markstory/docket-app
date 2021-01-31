@@ -3,6 +3,9 @@ linters:
   phpcs:
     standard: ./phpcs.xml
     fixer: true
+  eslint:
+    config: ./.eslintrc.js
+    fixer: true
 
 fixers:
   enable: true
