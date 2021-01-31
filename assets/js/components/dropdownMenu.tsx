@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import classnames from 'classnames';
 
 type ButtonProps = {
+  ref: React.Ref<HTMLButtonElement>;
   onClick: (event: React.MouseEvent) => void;
 };
 
@@ -39,9 +40,9 @@ function DropdownMenu({
   alignMenu = 'left',
   show = false,
 }: Props): JSX.Element {
-  let mounted = true;
   const [isShowing, setIsShowing] = useState<boolean>(show);
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   function handleClick(event: React.MouseEvent) {
     event.preventDefault();
@@ -55,32 +56,28 @@ function DropdownMenu({
   }
 
   function handleOutsideClick(event: MouseEvent) {
-    if (!event.target) {
+    if (!menuRef.current || !triggerRef.current) {
       return;
     }
-    if (!(event.target instanceof HTMLElement)) {
+    const target = event.target as HTMLElement;
+    if (triggerRef.current.contains(target) || menuRef.current.contains(target)) {
       return;
     }
-    if (menuRef?.current?.contains(event.target)) {
-      return;
-    }
-    if (mounted) {
-      setIsShowing(false);
-      onClose?.();
-    }
-    document.body.removeEventListener('click', handleOutsideClick, true);
+    setIsShowing(false);
+    onClose?.();
   }
 
   useEffect(() => {
     if (isShowing) {
-      document.body.addEventListener('click', handleOutsideClick, true);
+      document.addEventListener('click', handleOutsideClick, true);
     }
     return function cleanup() {
-      mounted = false;
+      document.removeEventListener('click', handleOutsideClick, true);
     };
-  }, [isShowing]);
+  });
 
   const buttonProps = {
+    ref: triggerRef,
     onClick: handleClick,
     'data-active': isShowing,
   };
