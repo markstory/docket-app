@@ -84,10 +84,10 @@ function DropdownMenu({
   const containerClass = classnames('dropdown-menu', className);
 
   return (
-    <div ref={menuRef} data-align={alignMenu} className={containerClass}>
+    <div data-align={alignMenu} className={containerClass}>
       {button ? button(buttonProps) : defaultButton(buttonProps)}
       {isShowing && (
-        <div className="dropdown" onClick={handleClick}>
+        <div ref={menuRef} className="dropdown" onClick={handleClick}>
           {children}
         </div>
       )}

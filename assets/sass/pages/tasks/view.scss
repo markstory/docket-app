@@ -1,6 +1,7 @@
 .task-view {
   padding-left: $space * 2;
 
+  .task-quickform,
   .task-subtasks,
   .task-notes {
     margin: 0 0 $space * 3;
