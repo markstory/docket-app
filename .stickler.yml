@@ -1,0 +1,8 @@
+---
+linters:
+  phpcs:
+    standard: ./phpcs.xml
+    fixer: true
+
+fixers:
+  enable: true
