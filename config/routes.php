@@ -52,6 +52,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
      */
     $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $builder->connect('/pages/*', 'Pages::display');
+    $builder->connect('/manifest.webmanifest', ['controller' => 'Pages', 'action' => 'display', 'webmanifest']);
 
     $builder->connect('/login/', 'Users::login', ['_name' => 'users:login']);
     $builder->get('/logout/', 'Users::logout', 'users:logout');

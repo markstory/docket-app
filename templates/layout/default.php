@@ -23,6 +23,7 @@
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
+    <?= $this->Html->meta('manifest', 'manifest.webmanifest') ?>
 
     <?= $this->AssetMix->css('app') ?>
 
