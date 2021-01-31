@@ -38,7 +38,7 @@ function DropdownMenu({
   onClose,
   alignMenu = 'left',
   show = false,
-}: Props) {
+}: Props): JSX.Element {
   let mounted = true;
   const [isShowing, setIsShowing] = useState<boolean>(show);
   const menuRef = useRef<HTMLDivElement>(null);
