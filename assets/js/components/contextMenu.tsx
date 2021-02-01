@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React from 'react';
 import {Icon} from './icon';
 import DropdownMenu from './dropdownMenu';
 
@@ -11,7 +11,12 @@ type Props = {
   onClose?: DropdownMenuProps['onClose'];
 };
 
-function ContextMenu({children, onOpen, onClose, alignMenu = 'left'}: Props) {
+function ContextMenu({
+  children,
+  onOpen,
+  onClose,
+  alignMenu = 'left',
+}: Props): JSX.Element {
   return (
     <DropdownMenu
       onOpen={onOpen}
