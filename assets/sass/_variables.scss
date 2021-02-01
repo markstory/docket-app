@@ -22,14 +22,18 @@ $breakpoint-laptop: 1200px;
 // base background level
 $z-bg: 0;
 
-// active UI elements popovers or menus.
+// active UI elements
 $z-active-ui: 100;
 
 // modal window and overlay
 $z-modal: 500;
 
+// dropdown menus. Needs to be higher than modal
+// as menus can be in modals.
+$z-menu: 600;
+
 // flash messages
-$z-flash: 600;
+$z-flash: 700;
 
 html {
   --color-white: #fff;

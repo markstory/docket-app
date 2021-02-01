@@ -1,7 +1,52 @@
 .dropdown-menu {
   display: flex;
   align-items: center;
-  position: relative;
+
+  > [data-active=true] {
+    // Tweak the active button backdown.
+    z-index: $z-active-ui;
+  }
+
+}
+
+/**
+ * Because of portals this is a top level selector.
+ */
+.dropdown-menu-menu {
+  visibility: hidden;
+  width: max-content;
+  z-index: $z-menu;
+
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+  box-shadow: $shadow-med;
+
+  &[data-visible="true"] {
+    visibility: visible;
+  }
+
+  .arrow {
+    width: 16px;
+    height: 16px;
+    z-index: -1;
+  }
+  .arrow:after {
+    position: relative;
+    top: -9px;
+    display: block;
+    width: 16px;
+    height: 16px;
+    content: '';
+    transform: rotate(-45deg);
+
+    background: var(--color-bg);
+    border: 1px solid transparent;
+  }
+  &[data-popper-placement^="bottom"] .arrow:after {
+    border-top-color: var(--color-border-med);
+    border-right-color: var(--color-border-med);
+  }
 
   ul {
     display: flex;
@@ -17,46 +62,6 @@
 
   ul li:last-child {
     margin-bottom: 0;
-  }
-
-  > [data-active=true] {
-    // Tweak the active button backdown.
-    z-index: $z-active-ui;
-  }
-
-  .dropdown {
-    position: absolute;
-    top: 40px;
-    width: max-content;
-    z-index: $z-active-ui;
-
-    background: var(--color-bg);
-    border: 1px solid var(--color-border-med);
-    border-radius: $border-radius;
-    box-shadow: $shadow-med;
-
-    &:after,
-    &:before {
-      bottom: 100%;
-      border: solid transparent;
-      content: "";
-      height: 0;
-      width: 0;
-      position: absolute;
-      pointer-events: none;
-    }
-
-    &:after {
-      border-color: rgba(255, 255, 255, 0);
-      border-bottom-color: var(--color-bg);
-      border-width: 10px;
-    }
-
-    &:before {
-      border-color: rgba(255, 255, 255, 0);
-      border-bottom-color: var(--color-border-med);
-      border-width: 11px;
-    }
   }
 
   .context-item-text,
@@ -107,41 +112,5 @@
 
   .separator {
     border-bottom: 1px solid var(--color-border);
-  }
-}
-
-.dropdown-menu[data-align="left"] {
-  // use a block of padding to make the angular
-  // hit box bigger enabling context menus to be placed
-  // in hover based UX
-  .dropdown {
-    left: -20px;
-  }
-
-  .dropdown:after {
-    left: 25px;
-    border-width: 10px;
-  }
-
-  .dropdown:before {
-    left: 24px;
-  }
-}
-
-.dropdown-menu[data-align="right"] {
-  // use a block of padding to make the angular
-  // hit box bigger enabling context menus to be placed
-  // in hover based UX
-  .dropdown {
-    right: -11px;
-  }
-
-  .dropdown:after {
-    right: 15px;
-    border-width: 10px;
-  }
-
-  .dropdown:before {
-    right: 14px;
   }
 }
