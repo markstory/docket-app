@@ -25,14 +25,20 @@ export function parseDateInput(input: string): Date | undefined {
   const formats = ['MMM d', 'MMM dd', 'MMMM d', 'EEEE'];
   for (let i = 0; i < formats.length; i++) {
     try {
-      const result = parse(input, formats[i], today);
+      let result = parse(input, formats[i], today);
       if (isNaN(result.valueOf())) {
         continue;
       }
-      // Day is in a past month. Move to the next year
+      // Day is in the past. Move to the next period
       // to ensure tasks are created in the future.
       if (result.getTime() < today.getTime()) {
-        result.setFullYear(result.getFullYear() + 1);
+        if (formats[i] === 'EEEE') {
+          // Was a weekday go to next week.
+          result = addDays(result, 7);
+        } else {
+          // Was a month day expression, move to next year.
+          result.setFullYear(result.getFullYear() + 1);
+        }
       }
       return result;
     } catch (e) {
@@ -77,11 +83,13 @@ export function formatCompactDate(date: Date | string): string {
   return format(input, 'MMM d');
 }
 
-export function formatDateHeading(date: Date | string): [heading: string, subheading: string] {
+export function formatDateHeading(
+  date: Date | string
+): [heading: string, subheading: string] {
   const input = parseDate(date);
   const delta = differenceInDays(input, getToday());
 
-  let shortDate = format(input, 'MMM d');
+  const shortDate = format(input, 'MMM d');
   if (delta < 1) {
     return [t('Today'), shortDate];
   } else if (delta < 2) {
