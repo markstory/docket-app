@@ -45,7 +45,7 @@
         ],
         "cs-check": "phpcs --colors -p  src/ tests/",
         "cs-fix": "phpcbf --colors -p src/ tests/",
-        "stan": "phpstan analyse src/",
+        "psalm": "psalm.phar --show-info=false",
         "test": "phpunit --colors=always"
     },
     "prefer-stable": true,
