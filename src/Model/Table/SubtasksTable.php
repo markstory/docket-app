@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\Subtask;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -143,7 +144,7 @@ class SubtasksTable extends Table
         // If we found a record at the current offset
         // use its order property for our update
         $targetOffset = $operation['ranking'];
-        if ($currentTask) {
+        if ($currentTask instanceof EntityInterface) {
             $targetOffset = $currentTask->get('ranking');
         }
 

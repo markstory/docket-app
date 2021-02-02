@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenDate;
 use InvalidArgumentException;
@@ -24,7 +25,11 @@ class TasksController extends AppController
     {
         $identity = $this->request->getAttribute('identity');
         try {
-            $start = new FrozenDate($this->request->getQuery('start', 'today'), $identity->timezone);
+            $startVal = $this->request->getQuery('start', 'today');
+            if (!is_string($startVal)) {
+                throw new BadRequestException(__('Invalid start value provided.'));
+            }
+            $start = new FrozenDate($startVal, $identity->timezone);
         } catch (\Exception $e) {
             throw new NotFoundException();
         }

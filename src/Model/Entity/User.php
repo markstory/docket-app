@@ -195,6 +195,9 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      */
     public function can($action, $resource): bool
     {
+        if (!$this->authorization) {
+            throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
+        }
         return $this->authorization->can($this, $action, $resource);
     }
 
@@ -203,6 +206,9 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      */
     public function canResult($action, $resource): ResultInterface
     {
+        if (!$this->authorization) {
+            throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
+        }
         return $this->authorization->canResult($this, $action, $resource);
     }
 
@@ -211,6 +217,9 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      */
     public function applyScope($action, $resource)
     {
+        if (!$this->authorization) {
+            throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
+        }
         return $this->authorization->applyScope($this, $action, $resource);
     }
 

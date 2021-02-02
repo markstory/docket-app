@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Entity\Task;
 use App\Model\Entity\User;
+use Cake\Datasource\EntityInterface;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -255,7 +256,7 @@ class TasksTable extends Table
         // If we found a record at the current offset
         // use its order property for our update
         $targetOffset = $operation[$property];
-        if ($currentItem) {
+        if ($currentItem instanceof EntityInterface) {
             $targetOffset = $currentItem->get($property);
         }
 

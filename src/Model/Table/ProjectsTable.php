@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\Project;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -170,7 +171,7 @@ class ProjectsTable extends Table
         // If we found a record at the current offset
         // use its order property for our update
         $targetOffset = $operation['ranking'];
-        if ($currentProject) {
+        if ($currentProject instanceof EntityInterface) {
             $targetOffset = $currentProject->get('ranking');
         }
 

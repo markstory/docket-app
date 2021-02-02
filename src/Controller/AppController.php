@@ -107,7 +107,7 @@ class AppController extends Controller
         $post = $this->request->getData('referer');
         $header = $this->referer($defaultUrl);
         foreach ([$post, $get, $header] as $option) {
-            if ($option && strlen($option) && $option[0] === '/') {
+            if (is_string($option) && strlen($option) && $option[0] === '/') {
                 return $option;
             }
         }

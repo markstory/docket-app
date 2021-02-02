@@ -190,7 +190,7 @@ class UsersController extends AppController
         $result = $this->Authentication->getResult();
 
         // regardless of POST or GET, redirect if user is logged in
-        if ($result->isValid()) {
+        if ($result && $result->isValid()) {
             $redirect = $this->request->getQuery('redirect', ['_name' => 'tasks:today']);
             $identity = $this->request->getAttribute('identity');
             if ($this->request->getData('timezone')) {
@@ -198,11 +198,13 @@ class UsersController extends AppController
                 $this->Users->save($identity);
             }
 
-            return $this->redirect($redirect);
+            if ($redirect) {
+                return $this->redirect($redirect);
+            }
         }
 
         // display error if user submitted and authentication failed
-        if ($this->request->is('post') && !$result->isValid()) {
+        if ($this->request->is('post') && !($result && $result->isValid())) {
             $this->Flash->error(__('Invalid username or password'));
         }
     }
