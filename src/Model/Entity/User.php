@@ -198,6 +198,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$this->authorization) {
             throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
         }
+
         return $this->authorization->can($this, $action, $resource);
     }
 
@@ -209,6 +210,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$this->authorization) {
             throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
         }
+
         return $this->authorization->canResult($this, $action, $resource);
     }
 
@@ -220,6 +222,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$this->authorization) {
             throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
         }
+
         return $this->authorization->applyScope($this, $action, $resource);
     }
 
