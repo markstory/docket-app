@@ -15,4 +15,6 @@ export const PROJECT_COLORS = [
   {id: 13, name: 'sky', code: '#91b5ff'},
   {id: 14, name: 'slate', code: '#525876'},
   {id: 15, name: 'smoke', code: '#9197af'},
+  {id: 16, name: 'brick', code: '#b60909'},
+  {id: 17, name: 'flame', code: '#f14949'},
 ];

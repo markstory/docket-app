@@ -91,7 +91,7 @@ class ProjectsTable extends Table
             ->integer('color')
             ->requirePresence('color', 'create')
             ->greaterThanOrEqual('color', 0)
-            ->lessThanOrEqual('color', 15);
+            ->lessThanOrEqual('color', 17);
 
         $validator
             ->boolean('favorite')
