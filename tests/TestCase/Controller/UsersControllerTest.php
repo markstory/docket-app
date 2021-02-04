@@ -229,7 +229,7 @@ class UsersControllerTest extends TestCase
             'password' => 'new password',
             'confirm_password' => 'new password',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
     }
 
