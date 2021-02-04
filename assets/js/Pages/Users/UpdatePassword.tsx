@@ -31,7 +31,7 @@ export default function UpdatePassword({errors, referer}: Props) {
           <input type="hidden" name="referer" value={referer} />
           <div className="form-input">
             <label htmlFor="current_password">{t('Current password')}</label>
-            <input name="current_password" type="password" />
+            <input name="current_password" type="password" autoFocus />
             <FormError errors={errors} field="current_password" />
           </div>
 

@@ -107,6 +107,7 @@ class UsersController extends AppController
             ]);
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Your password has been updated.'));
+                $this->redirect($referer);
             } else {
                 $this->Flash->error(__('Your password was not updated. Please, try again.'));
                 $errors = $this->flattenErrors($user->getErrors());

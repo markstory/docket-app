@@ -38,7 +38,7 @@ function ProjectsAdd({errors, referer}: Props) {
           <input type="hidden" value={referer} name="referer" />
           <div className="form-input">
             <label htmlFor="project-name">{t('Name')}</label>
-            <input id="project-name" type="text" name="name" required />
+            <input id="project-name" type="text" name="name" required autoFocus />
             <FormError errors={errors} field="name" />
           </div>
           <div className="form-input">
