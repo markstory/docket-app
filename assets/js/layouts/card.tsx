@@ -18,7 +18,7 @@ type Props = {
  * Simple Layout that wraps children in a centered
  * container card element
  */
-function Card({children, title}: Props) {
+function Card({children, title}: Props): JSX.Element {
   const {flash} = usePage().props as SharedPageProps;
   useEffect(() => {
     if (title) {
