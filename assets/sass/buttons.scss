@@ -4,7 +4,7 @@
   align-items: center;
 
   font-size: $font-size-normal;
-  line-height: 1.4;
+  line-height: 1.1;
 
   text-decoration: none;
   text-transform: none;
@@ -15,7 +15,7 @@
   margin-bottom: 0;
   padding: $space $space * 1.5;
   border-radius: $border-radius;
-  height: 38px;
+  height: $button-med-height;
 
   & > svg:not(:last-child) {
     margin-right: $space / 2;
@@ -188,5 +188,5 @@ a > svg:not(:last-child) {
 .button-narrow {
   padding-top: 4px;
   padding-bottom: 4px;
-  height: 32px;
+  height: $button-narrow-height;
 }
