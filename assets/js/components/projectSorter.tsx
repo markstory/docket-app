@@ -23,8 +23,8 @@ import classnames from 'classnames';
 
 import {Project} from 'app/types';
 import {useProjects} from 'app/providers/projects';
+import DragHandle from './dragHandle';
 import ProjectItem from './projectItem';
-import {Icon} from './icon';
 
 export default function ProjectSorter(): JSX.Element {
   const [projects, setProjects] = useProjects();
@@ -70,6 +70,7 @@ export default function ProjectSorter(): JSX.Element {
       },
     });
   }
+
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -92,9 +93,7 @@ export default function ProjectSorter(): JSX.Element {
       <DragOverlay>
         {activeProject ? (
           <li className="dnd-item dnd-item-dragging">
-            <button className="dnd-handle" aria-label="Drag to reorder">
-              <Icon icon="grabber" width="xlarge" />
-            </button>
+            <DragHandle />
             <ProjectItem project={activeProject} />
           </li>
         ) : null}
@@ -121,14 +120,7 @@ function SortableItem({project, id, active}: ItemProps): JSX.Element {
   });
   return (
     <li className={className} ref={setNodeRef} style={style}>
-      <button
-        className="dnd-handle"
-        aria-label="Drag to reorder"
-        {...attributes}
-        {...listeners}
-      >
-        <Icon icon="grabber" width="xlarge" />
-      </button>
+      <DragHandle attributes={attributes} listeners={listeners} />
       <ProjectItem key={project.slug} project={project} />
     </li>
   );
