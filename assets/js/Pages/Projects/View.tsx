@@ -16,7 +16,7 @@ type Props = {
   completed?: Task[];
 };
 
-export default function ProjectsView({completed, project, tasks}: Props) {
+export default function ProjectsView({completed, project, tasks}: Props): JSX.Element {
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
@@ -32,10 +32,11 @@ export default function ProjectsView({completed, project, tasks}: Props) {
         <div className="attributes">
           {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
-        <TaskSorter tasks={tasks} scope="child">
-          {({items}) => (
+        <TaskSorter tasks={tasks} scope="child" showDueOn idPrefix="project">
+          {({items, activeTask}) => (
             <TaskGroup
               dropId="project"
+              activeTask={activeTask}
               tasks={items}
               defaultProjectId={project.id}
               showAdd={!project.archived}

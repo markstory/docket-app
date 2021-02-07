@@ -39,7 +39,7 @@ function zeroFillItems(
         complete.push(values);
       }
     } else {
-      complete.push({key: dateKey, items: []});
+      complete.push({key: dateKey, items: [], ids: []});
     }
   }
   return complete;
@@ -51,19 +51,19 @@ function createGrouper(start: string, numDays: number) {
       item.due_on ? item.due_on : t('No Due Date')
     );
     const grouped = Object.entries(byDate).map(([key, value]) => {
-      return {key, items: value};
+      return {key, items: value, ids: value.map(task => `${key}:${task.id}`)};
     });
     return zeroFillItems(start, numDays, grouped);
   };
 }
 
-export default function TasksIndex({tasks, start, nextStart}: Props) {
+export default function TasksIndex({tasks, start, nextStart}: Props): JSX.Element {
   const nextPage = nextStart ? `/tasks/upcoming?start=${nextStart}` : null;
   return (
     <LoggedIn title={t('Upcoming Tasks')}>
       <h1>Upcoming</h1>
       <TaskGroupedSorter tasks={tasks} scope="day" grouper={createGrouper(start, 28)}>
-        {({groupedItems}) => {
+        {({groupedItems, activeTask}) => {
           return (
             <React.Fragment>
               {groupedItems.map(({key, items}) => {
@@ -74,7 +74,13 @@ export default function TasksIndex({tasks, start, nextStart}: Props) {
                       {heading}
                       {subheading && <span className="minor">{subheading}</span>}
                     </h3>
-                    <TaskGroup dropId={key} tasks={items} defaultDate={key} showProject />
+                    <TaskGroup
+                      dropId={key}
+                      tasks={items}
+                      activeTask={activeTask}
+                      defaultDate={key}
+                      showProject
+                    />
                   </React.Fragment>
                 );
               })}

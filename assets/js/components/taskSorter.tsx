@@ -1,17 +1,38 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {DragDropContext, DropResult} from 'react-beautiful-dnd';
+import {
+  DndContext,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  DragEndEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
+import DragHandle from 'app/components/dragHandle';
+import TaskRow from 'app/components/taskRow';
 
 type ChildRenderProps = {
   items: Task[];
+  activeTask: Task | null;
 };
 
 type Props = {
   tasks: Task[];
   scope: 'day' | 'child';
+  idPrefix: string;
   children: (props: ChildRenderProps) => JSX.Element;
+  showDueOn?: boolean;
 };
 
 type UpdateData = {
@@ -23,29 +44,54 @@ type UpdateData = {
 /**
  * Abstraction around reorder lists of tasks and optimistically updating state.
  */
-export default function TaskSorter({children, tasks, scope}: Props) {
+export default function TaskSorter({
+  children,
+  tasks,
+  scope,
+  idPrefix,
+  showDueOn,
+}: Props): JSX.Element {
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
+  const items = sorted || tasks;
+  const taskIds = items.map(task => `${idPrefix}:${task.id}`);
 
-  function handleDragEnd(result: DropResult) {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  function handleDragStart(event: DragStartEvent) {
+    const activeId = Number(event.active.id.split(':')[1]);
+    setActiveTask(items.find(p => p.id === activeId) ?? null);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const {active, over} = event;
+    setActiveTask(null);
+
     // Dropped outside of a dropzone
-    if (!result.destination) {
+    if (!over) {
       return;
     }
-    const newItems = [...tasks];
-    const [moved] = newItems.splice(result.source.index, 1);
-    newItems.splice(result.destination.index, 0, moved);
+    const activeId = active.id;
+    const overId = over.id;
+
+    const oldIndex = taskIds.indexOf(activeId);
+    const newIndex = taskIds.indexOf(overId);
+    const newItems = arrayMove(tasks, oldIndex, newIndex);
 
     setSorted(newItems);
 
     const property = scope === 'day' ? 'day_order' : 'child_order';
     const data: UpdateData = {
-      [property]: result.destination.index,
+      [property]: newIndex,
     };
-    if (result.source.droppableId !== result.destination.droppableId) {
-      data.due_on = result.destination.droppableId;
-    }
 
-    Inertia.post(`/tasks/${result.draggableId}/move`, data, {
+    const activeTaskId = activeId.split(':')[1];
+    Inertia.post(`/tasks/${activeTaskId}/move`, data, {
       preserveScroll: true,
       onSuccess() {
         // Revert local state.
@@ -54,11 +100,24 @@ export default function TaskSorter({children, tasks, scope}: Props) {
     });
   }
 
-  const items = sorted || tasks;
-
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      {children({items: items})}
-    </DragDropContext>
+    <DndContext
+      collisionDetection={closestCorners}
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+        {children({items: items, activeTask})}
+      </SortableContext>
+      <DragOverlay>
+        {activeTask ? (
+          <div className="dnd-item dnd-item-dragging">
+            <DragHandle />
+            <TaskRow task={activeTask} showDueOn={showDueOn} />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

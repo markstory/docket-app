@@ -19,18 +19,20 @@ function grouper(items: Task[]): GroupedItems {
     {
       key: today,
       items: todayItems,
+      ids: todayItems.map(task => `${today}:${task.id}`),
     },
   ];
   if (overdueItems.length) {
     output.push({
       key: 'overdue',
       items: overdueItems,
+      ids: overdueItems.map(task => `overdue:${task.id}`),
     });
   }
   return output;
 }
 
-export default function TasksToday({tasks}: Props) {
+export default function TasksToday({tasks}: Props): JSX.Element {
   const today = new Date();
   const defaultDate = toDateString(today);
 
@@ -45,7 +47,7 @@ export default function TasksToday({tasks}: Props) {
                 <React.Fragment>
                   <h2>{t('Overdue')}</h2>
                   <TaskGroup
-                    dropId="overdue"
+                    dropId={overdue.key}
                     tasks={overdue.items}
                     showProject
                     showDueOn
@@ -55,7 +57,7 @@ export default function TasksToday({tasks}: Props) {
               )}
               <h2>{t('Today')}</h2>
               <TaskGroup
-                dropId={defaultDate}
+                dropId={today.key}
                 tasks={today.items}
                 defaultDate={defaultDate}
                 showProject
