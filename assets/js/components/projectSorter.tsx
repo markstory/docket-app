@@ -23,8 +23,9 @@ import classnames from 'classnames';
 
 import {Project} from 'app/types';
 import {useProjects} from 'app/providers/projects';
-import DragHandle from './dragHandle';
-import ProjectItem from './projectItem';
+import SortableItem from 'app/components/sortableItem';
+import DragHandle from 'app/components/dragHandle';
+import ProjectItem from 'app/components/projectItem';
 
 export default function ProjectSorter(): JSX.Element {
   const [projects, setProjects] = useProjects();
@@ -85,8 +86,9 @@ export default function ProjectSorter(): JSX.Element {
               key={project.slug}
               id={project.slug}
               active={activeProject?.slug}
-              project={project}
-            />
+            >
+              <ProjectItem key={project.slug} project={project} />
+            </SortableItem>
           ))}
         </ul>
       </SortableContext>
@@ -99,29 +101,5 @@ export default function ProjectSorter(): JSX.Element {
         ) : null}
       </DragOverlay>
     </DndContext>
-  );
-}
-
-type ItemProps = {
-  id: string;
-  project: Project;
-  active?: string;
-};
-function SortableItem({project, id, active}: ItemProps): JSX.Element {
-  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
-    id,
-  });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-  const className = classnames('dnd-item', {
-    'dnd-ghost': id === active,
-  });
-  return (
-    <li className={className} ref={setNodeRef} style={style}>
-      <DragHandle attributes={attributes} listeners={listeners} />
-      <ProjectItem key={project.slug} project={project} />
-    </li>
   );
 }

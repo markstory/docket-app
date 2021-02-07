@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import classnames from 'classnames';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,
@@ -17,12 +16,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
   sortableKeyboardCoordinates,
-  useSortable,
 } from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
 
 import {Task, Subtask} from 'app/types';
 import SubtaskItem from 'app/components/subtaskItem';
+import SortableItem from 'app/components/sortableItem';
 import {useSubtasks} from 'app/providers/subtasks';
 
 import DragHandle from './dragHandle';
@@ -91,11 +89,10 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
             <SortableItem
               key={subtask.id}
               id={String(subtask.id)}
-              index={index}
               active={String(activeSubtask?.id)}
-              subtask={subtask}
-              taskId={taskId}
-            />
+            >
+              <SubtaskItem subtask={subtask} taskId={taskId} index={index} />
+            </SortableItem>
           ))}
         </ul>
       </SortableContext>
@@ -108,32 +105,5 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
         ) : null}
       </DragOverlay>
     </DndContext>
-  );
-}
-
-type ItemProps = {
-  id: string;
-  subtask: Subtask;
-  index: number;
-  taskId: number;
-  active?: string;
-};
-function SortableItem({active, id, index, subtask, taskId}: ItemProps): JSX.Element {
-  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
-    id,
-  });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-  const className = classnames('dnd-item', {
-    'dnd-ghost': id === active,
-  });
-  return (
-    <li className={className} ref={setNodeRef} style={style}>
-      <DragHandle attributes={attributes} listeners={listeners} />
-
-      <SubtaskItem subtask={subtask} taskId={taskId} index={index} />
-    </li>
   );
 }
