@@ -15,33 +15,38 @@ export default function FlashMessages({flash}: Props) {
     return null;
   }
   let mounted = true;
-  const timer = useRef<number | undefined>(undefined);
+  const hideTimer = useRef<number | undefined>(undefined);
+  const showTimer = useRef<number | undefined>(undefined);
   const [showing, setShowing] = useState(false);
   const [hovering, setHovering] = useState(false);
 
   // Set a hide delay when hovering or showing is changed.
   useEffect(
-    function() {
-      if (hovering || !showing) {
+    function () {
+      if (hovering || !showing || !mounted) {
         return;
       }
-      timer.current = window.setTimeout(function() {
+      hideTimer.current = window.setTimeout(function () {
         setShowing(false);
       }, TIMEOUT);
+      return function cleanup() {
+        clearTimeout(hideTimer.current);
+      };
     },
     [hovering, showing]
   );
 
   // Toggle state on mount to animate in.
   useEffect(
-    function() {
-      window.setTimeout(function() {
+    function () {
+      showTimer.current = window.setTimeout(function () {
         if (mounted) {
           setShowing(true);
         }
       }, 0);
       return function cleanup() {
         mounted = false;
+        clearTimeout(showTimer.current);
       };
     },
     [flash]
@@ -57,7 +62,8 @@ export default function FlashMessages({flash}: Props) {
   }
 
   function handleMouseEnter() {
-    window.clearTimeout(timer.current);
+    window.clearTimeout(showTimer.current);
+    window.clearTimeout(hideTimer.current);
     if (mounted) {
       setHovering(true);
     }
