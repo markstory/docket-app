@@ -74,6 +74,8 @@ export default function TasksIndex({
         tasks={tasks}
         scope="day"
         grouper={createGrouper(start, 28)}
+        showProject
+        showDueOn
       >
         {({groupedItems, activeTask}) => {
           return (

@@ -31,6 +31,8 @@ type Props = {
   scope: 'day';
   children: (props: ChildRenderProps) => JSX.Element;
   grouper: (tasks: Task[]) => GroupedItems;
+  showProject?: boolean;
+  showDueOn?: boolean;
 };
 
 type UpdateData = {
@@ -61,6 +63,8 @@ export default function TaskGroupedSorter({
   tasks,
   grouper,
   scope,
+  showProject,
+  showDueOn,
 }: Props): JSX.Element {
   const grouped = grouper(tasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -196,7 +200,11 @@ export default function TaskGroupedSorter({
           {activeTask ? (
             <div className="dnd-item dnd-item-dragging">
               <DragHandle />
-              <TaskRow task={activeTask} showProject />
+              <TaskRow
+                task={activeTask}
+                showProject={showProject}
+                showDueOn={showDueOn}
+              />
             </div>
           ) : null}
         </DragOverlay>,

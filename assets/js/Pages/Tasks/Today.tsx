@@ -37,7 +37,13 @@ export default function TasksToday({tasks}: Props): JSX.Element {
 
   return (
     <LoggedIn title={t("Today's Tasks")}>
-      <TaskGroupedSorter tasks={tasks} scope="day" grouper={grouper}>
+      <TaskGroupedSorter
+        tasks={tasks}
+        scope="day"
+        grouper={grouper}
+        showProject
+        showDueOn
+      >
         {({groupedItems, activeTask}) => {
           const [overdue, today] = groupedItems;
           return (
