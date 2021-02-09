@@ -32,7 +32,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         <div className="attributes">
           {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
-        <TaskSorter tasks={tasks} scope="child" showDueOn idPrefix="project">
+        <TaskSorter tasks={tasks} scope="child" showDueOn>
           {({items, activeTask}) => (
             <TaskGroup
               dropId="project"

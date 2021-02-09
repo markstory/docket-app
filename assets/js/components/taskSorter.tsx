@@ -30,7 +30,6 @@ type ChildRenderProps = {
 type Props = {
   tasks: Task[];
   scope: 'day' | 'child';
-  idPrefix: string;
   children: (props: ChildRenderProps) => JSX.Element;
   showDueOn?: boolean;
 };
@@ -48,13 +47,12 @@ export default function TaskSorter({
   children,
   tasks,
   scope,
-  idPrefix,
   showDueOn,
 }: Props): JSX.Element {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
   const items = sorted || tasks;
-  const taskIds = items.map(task => `${idPrefix}:${task.id}`);
+  const taskIds = items.map(task => String(task.id));
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -63,8 +61,8 @@ export default function TaskSorter({
     })
   );
 
-  function handleDragStart(event: DragStartEvent) {
-    const activeId = Number(event.active.id.split(':')[1]);
+  function handleDragStart({active}: DragStartEvent) {
+    const activeId = Number(active.id);
     setActiveTask(items.find(p => p.id === activeId) ?? null);
   }
 
@@ -90,8 +88,7 @@ export default function TaskSorter({
       [property]: newIndex,
     };
 
-    const activeTaskId = activeId.split(':')[1];
-    Inertia.post(`/tasks/${activeTaskId}/move`, data, {
+    Inertia.post(`/tasks/${activeId}/move`, data, {
       preserveScroll: true,
       onSuccess() {
         // Revert local state.

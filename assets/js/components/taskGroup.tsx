@@ -31,25 +31,20 @@ export default function TaskGroup({
   showAdd = true,
 }: Props): JSX.Element {
   const [showForm, setShowForm] = useState(false);
-  const {over, isOver, setNodeRef} = useDroppable({id: dropId + ':'});
+  const {over, isOver, setNodeRef} = useDroppable({id: dropId});
   const taskIds = tasks.map(t => t.id);
 
-  const className = classnames('task-group dnd-dropper-left-offset', {
+  const className = classnames('dnd-dropper-left-offset', {
     'dnd-dropper-active':
       isOver || (over && activeTask ? taskIds.includes(activeTask.id) : null),
   });
-  const activeId = activeTask ? `${dropId}:${activeTask.id}` : undefined;
+  const activeId = activeTask ? String(activeTask.id) : undefined;
 
   return (
     <div className="task-group">
       <div className={className} ref={setNodeRef}>
         {tasks.map(item => (
-          <SortableItem
-            key={item.id}
-            id={`${dropId}:${item.id}`}
-            active={activeId}
-            tag="div"
-          >
+          <SortableItem key={item.id} id={String(item.id)} active={activeId} tag="div">
             <TaskRow task={item} showProject={showProject} showDueOn={showDueOn} />
           </SortableItem>
         ))}

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {createPortal} from 'react-dom';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,
@@ -9,13 +10,10 @@ import {
   useSensors,
   DragOverlay,
   DragEndEvent,
+  DragOverEvent,
   DragStartEvent,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
+import {arrayMove, sortableKeyboardCoordinates} from '@dnd-kit/sortable';
 import DragHandle from 'app/components/dragHandle';
 import TaskRow from 'app/components/taskRow';
 
@@ -41,6 +39,20 @@ type UpdateData = {
   due_on?: string;
 };
 
+function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
+  return [...items.slice(0, index), insert, ...items.slice(index, items.length)];
+}
+
+/**
+ * Find a group by its group key or task id.
+ *
+ * Group keys are received when a SortableItem goes over an empty
+ * Droppable. Otherwise the id will be another Sortable (task).
+ */
+function findGroupIndex(groups: GroupedItems, id: string): number {
+  return groups.findIndex(group => group.key === id || group.ids.includes(id));
+}
+
 /**
  * Abstraction around reorder lists of tasks and optimistically updating state.
  */
@@ -50,11 +62,10 @@ export default function TaskGroupedSorter({
   grouper,
   scope,
 }: Props): JSX.Element {
+  const grouped = grouper(tasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [sorted, setSorted] = React.useState<GroupedItems | undefined>(undefined);
-
-  const grouped = grouper(tasks);
-  const taskIds = grouped.reduce<string[]>((acc, group) => acc.concat(group.ids), []);
+  const items = sorted || grouped;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -63,84 +74,134 @@ export default function TaskGroupedSorter({
     })
   );
 
-  function handleDragStart(event: DragStartEvent) {
-    const activeId = Number(event.active.id.split(':')[1]);
+  function handleDragStart({active}: DragStartEvent) {
+    const activeId = Number(active.id);
     setActiveTask(tasks.find(p => p.id === activeId) ?? null);
   }
 
-  function handleDragEnd(event: DragEndEvent) {
-    const {active, over} = event;
+  function handleDragEnd({active, over}: DragEndEvent) {
     setActiveTask(null);
-
     // Dropped outside of a dropzone
     if (!over) {
       return;
     }
-    const [activeGroupId, activeTaskId] = active.id.split(':');
-    const [overGroupId, overTaskId] = over.id.split(':');
+    const overId = over?.id || '';
+    const sourceGroupIndex = findGroupIndex(items, active.id);
+    const destinationGroupIndex = findGroupIndex(items, overId);
 
-    const newGrouped = [...grouped];
-    const sourceGroup = newGrouped.find(group => group.key === activeGroupId);
-    const destinationGroup = newGrouped.find(group => group.key === overGroupId);
-    if (!destinationGroup || !sourceGroup) {
+    // If either group couldn't be found bail.
+    if (sourceGroupIndex === -1 || destinationGroupIndex === -1) {
       return;
     }
-    const sourceIndex = sourceGroup.ids.indexOf(active.id);
-
-    // If we don't have an overTaskId, we are moving to an empty group.
-    let destinationIndex = 0;
-    if (overTaskId.length > 0) {
-      destinationIndex = destinationGroup.ids.indexOf(over.id);
+    const sourceIndex = items[sourceGroupIndex].ids.indexOf(active.id);
+    if (sourceIndex === -1) {
+      return;
     }
-
-    const [moved] = sourceGroup.items.splice(sourceIndex, 1);
-    destinationGroup.items.splice(destinationIndex, 0, moved);
-
-    setSorted(newGrouped);
+    const destinationGroup = items[destinationGroupIndex];
+    let destinationIndex = destinationGroup.ids.indexOf(overId);
+    if (destinationIndex === -1) {
+      destinationIndex = 0;
+    }
 
     const property = scope === 'day' ? 'day_order' : 'child_order';
     const data: UpdateData = {
       [property]: destinationIndex,
     };
-    if (activeGroupId !== overGroupId) {
-      data.due_on = overGroupId;
-    }
+    const task = items[sourceGroupIndex].items[sourceIndex];
 
-    Inertia.post(`/tasks/${activeTaskId}/move`, data, {
+    const newItems = [...items];
+    newItems[sourceGroupIndex].items = arrayMove(
+      newItems[sourceGroupIndex].items,
+      sourceIndex,
+      destinationIndex
+    );
+
+    if (scope === 'day' && destinationGroup.key !== task.due_on) {
+      data.due_on = destinationGroup.key;
+    }
+    setSorted(newItems);
+
+    Inertia.post(`/tasks/${active.id}/move`, data, {
       preserveScroll: true,
       onSuccess() {
-        // Revert local state.
         setSorted(undefined);
       },
     });
   }
 
-  const items = sorted || grouped;
+  function handleDragOver({active, over, draggingRect}: DragOverEvent) {
+    const overId = over?.id || '';
 
-  // TODO figure out how to show the row attributes correctly.
-  // TaskGroup could use context to avoid prop drilling.
-  // TODO implement onDragOver to avoid shifting elements around.
+    const activeGroupIndex = findGroupIndex(items, active.id);
+    const overGroupIndex = findGroupIndex(items, overId);
+    if (
+      activeGroupIndex === -1 ||
+      overGroupIndex === -1 ||
+      activeGroupIndex === overGroupIndex
+    ) {
+      return;
+    }
+    const activeGroup = items[activeGroupIndex];
+    const overGroup = items[overGroupIndex];
+
+    // Use the id lists to find offsets as using the
+    // tasks requires another extract.
+    const activeTaskIndex = activeGroup.ids.indexOf(active.id);
+    const overTaskIndex = overGroup.ids.indexOf(overId);
+
+    const isBelowLastItem =
+      over &&
+      overTaskIndex === overGroup.ids.length - 1 &&
+      draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
+
+    const modifier = isBelowLastItem ? 1 : 0;
+    const newIndex =
+      overTaskIndex >= 0 ? overTaskIndex + modifier : overGroup.ids.length + 1;
+    const activeId = Number(active.id);
+
+    // Remove the active item from its current group.
+    const newActiveGroup = {
+      key: activeGroup.key,
+      items: activeGroup.items.filter(task => task.id !== activeId),
+      ids: activeGroup.ids.filter(id => id !== active.id),
+    };
+    // Splice it into the destination group.
+    const newOverGroup = {
+      key: overGroup.key,
+      items: insertAtIndex(overGroup.items, newIndex, activeGroup.items[activeTaskIndex]),
+      ids: insertAtIndex(overGroup.ids, newIndex, active.id),
+    };
+
+    const newItems = [...items];
+    newItems[activeGroupIndex] = newActiveGroup;
+    newItems[overGroupIndex] = newOverGroup;
+
+    setSorted(newItems);
+  }
+
   return (
     <DndContext
       collisionDetection={closestCorners}
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
     >
-      <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-        {children({
-          groupedItems: items,
-          activeTask,
-        })}
-      </SortableContext>
-      <DragOverlay>
-        {activeTask ? (
-          <div className="dnd-item dnd-item-dragging">
-            <DragHandle />
-            <TaskRow task={activeTask} />
-          </div>
-        ) : null}
-      </DragOverlay>
+      {children({
+        groupedItems: items,
+        activeTask,
+      })}
+      {createPortal(
+        <DragOverlay>
+          {activeTask ? (
+            <div className="dnd-item dnd-item-dragging">
+              <DragHandle />
+              <TaskRow task={activeTask} showProject />
+            </div>
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 }
