@@ -34,11 +34,8 @@
   .dnd-handle {
     color: var(--color-primary);
     visibility: visible;
+    cursor: grabbing;
   }
-}
-
-.dnd-dropper-active {
-  background: var(--color-bg-low);
 }
 
 .dnd-dropper-left-offset {
@@ -55,5 +52,5 @@
 
 .dnd-ghost {
   z-index: $z-bg;
-  opacity: 0.5;
+  opacity: 0.4;
 }
