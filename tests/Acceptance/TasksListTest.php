@@ -151,10 +151,10 @@ class TasksListTest extends AcceptanceTestCase
 
         $updated = $this->Tasks->get($task->id);
         $this->assertEquals($twoDays, $updated->due_on);
-        $this->assertEquals(0, $updated->day_order);
+        $this->assertEquals(1, $updated->day_order);
 
         $updated = $this->Tasks->get($other->id);
         $this->assertEquals($twoDays, $updated->due_on);
-        $this->assertEquals(1, $updated->day_order);
+        $this->assertEquals(0, $updated->day_order);
     }
 }

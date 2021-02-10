@@ -89,6 +89,7 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
             <SortableItem
               key={subtask.id}
               id={String(subtask.id)}
+              tag="li"
               active={String(activeSubtask?.id)}
             >
               <SubtaskItem subtask={subtask} taskId={taskId} index={index} />
