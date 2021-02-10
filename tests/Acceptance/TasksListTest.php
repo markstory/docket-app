@@ -100,12 +100,13 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testReorderInToday()
     {
-        $yesterday = new FrozenDate('yesterday', 'UTC');
+        $date = new FrozenDate('yesterday', 'UTC');
         $project = $this->makeProject('Work', 1);
 
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $yesterday]);
-        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $yesterday]);
-        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $yesterday]);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $date]);
+        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $date]);
+        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $date]);
+        $this->makeTask('Clean Bathtub', $project->id, 3, ['due_on' => $date]);
 
         $client = $this->login();
         $client->get('/tasks/today');
