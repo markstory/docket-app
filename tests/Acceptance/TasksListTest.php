@@ -112,7 +112,7 @@ class TasksListTest extends AcceptanceTestCase
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
 
-        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
+        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
 
         // Do a drag from the top to the bottom
         $mouse = $client->getMouse();
