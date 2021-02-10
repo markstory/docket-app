@@ -109,6 +109,9 @@
   .context-item.lock svg {
     color: var(--color-action-lock);
   }
+  .context-item.complete svg {
+    color: var(--color-action-complete);
+  }
 
   .separator {
     border-bottom: 1px solid var(--color-border);

@@ -11,8 +11,9 @@ import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
+import Tooltip from 'app/components/tooltip';
 import {Task} from 'app/types';
-import {formatCompactDate, parseDate} from 'app/utils/dates';
+import {parseDate} from 'app/utils/dates';
 
 type Props = {
   task: Task;
@@ -90,9 +91,11 @@ function TaskActions({task, setActive}: ActionsProps) {
         onClose={() => setActive(false)}
         alignMenu="right"
         button={props => (
-          <button className="button-icon" data-testid="task-reschedule" {...props}>
-            <InlineIcon icon="calendar" />
-          </button>
+          <Tooltip label={t('Reschedule')}>
+            <button className="button-icon" data-testid="task-reschedule" {...props}>
+              <InlineIcon icon="calendar" />
+            </button>
+          </Tooltip>
         )}
       >
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />

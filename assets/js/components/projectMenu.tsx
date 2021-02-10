@@ -45,7 +45,7 @@ export default function ProjectMenu({
       {showAll && (
         <li>
           <InertiaLink
-            className="context-item"
+            className="context-item complete"
             href={`/projects/${project.slug}?completed=1`}
           >
             <InlineIcon icon="check" />
