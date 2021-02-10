@@ -290,6 +290,22 @@ class TasksControllerTest extends TestCase
         $this->assertFlashElement('flash/error');
     }
 
+    public function testMoveInvalidOrder()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/move", [
+            'day_order' => -1,
+        ]);
+
+        $this->assertRedirect('/tasks/today');
+        $this->assertFlashElement('flash/error');
+    }
+
     public function testMoveUpSameDay()
     {
         $project = $this->makeProject('work', 1);

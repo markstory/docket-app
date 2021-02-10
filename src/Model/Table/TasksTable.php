@@ -242,6 +242,9 @@ class TasksTable extends Table
         } else {
             throw new InvalidArgumentException('Invalid request. Provide either day_order or child_order');
         }
+        if ($operation[$property] < 0) {
+            throw new InvalidArgumentException('Invalid request. Order values must be 0 or greater.');
+        }
 
         // We have to assume that all lists are not continuous ranges, and that the order
         // fields have holes in them. The holes can be introduced when items are

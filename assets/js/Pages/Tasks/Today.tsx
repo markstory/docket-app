@@ -1,5 +1,6 @@
 import React from 'react';
 import {partition} from 'lodash';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
 import {t} from 'app/locale';
@@ -17,49 +18,62 @@ function grouper(items: Task[]): GroupedItems {
   const [overdueItems, todayItems] = partition(items, ({due_on}) => due_on !== today);
   const output = [
     {
-      key: today,
-      items: todayItems,
-    },
-  ];
-  if (overdueItems.length) {
-    output.push({
       key: 'overdue',
       items: overdueItems,
-    });
-  }
+      ids: overdueItems.map(task => String(task.id)),
+    },
+    {
+      key: today,
+      items: todayItems,
+      ids: todayItems.map(task => String(task.id)),
+    },
+  ];
   return output;
 }
 
-export default function TasksToday({tasks}: Props) {
+export default function TasksToday({tasks}: Props): JSX.Element {
   const today = new Date();
   const defaultDate = toDateString(today);
 
   return (
     <LoggedIn title={t("Today's Tasks")}>
-      <TaskGroupedSorter tasks={tasks} scope="day" grouper={grouper}>
-        {({groupedItems}) => {
-          const [today, overdue] = groupedItems;
+      <TaskGroupedSorter
+        tasks={tasks}
+        scope="day"
+        grouper={grouper}
+        showProject
+        showDueOn
+      >
+        {({groupedItems, activeTask}) => {
+          const [overdue, today] = groupedItems;
           return (
             <React.Fragment>
-              {overdue && (
-                <React.Fragment>
+              {overdue.ids && (
+                <SortableContext
+                  items={overdue.ids}
+                  strategy={verticalListSortingStrategy}
+                >
                   <h2>{t('Overdue')}</h2>
                   <TaskGroup
-                    dropId="overdue"
+                    dropId={overdue.key}
                     tasks={overdue.items}
+                    activeTask={activeTask}
                     showProject
                     showDueOn
                     showAdd={false}
                   />
-                </React.Fragment>
+                </SortableContext>
               )}
-              <h2>{t('Today')}</h2>
-              <TaskGroup
-                dropId={defaultDate}
-                tasks={today.items}
-                defaultDate={defaultDate}
-                showProject
-              />
+              <SortableContext items={today.ids} strategy={verticalListSortingStrategy}>
+                <h2>{t('Today')}</h2>
+                <TaskGroup
+                  dropId={today.key}
+                  tasks={today.items}
+                  activeTask={activeTask}
+                  defaultDate={defaultDate}
+                  showProject
+                />
+              </SortableContext>
             </React.Fragment>
           );
         }}

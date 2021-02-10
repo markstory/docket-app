@@ -1,43 +1,73 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
-import {usePage} from '@inertiajs/inertia-react';
-import {DragDropContext, DropResult} from 'react-beautiful-dnd';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  DragEndEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
 
 import {Task, Subtask} from 'app/types';
+import SubtaskItem from 'app/components/subtaskItem';
+import SortableItem from 'app/components/sortableItem';
 import {useSubtasks} from 'app/providers/subtasks';
 
-type ChildRenderProps = {
-  items: Subtask[];
-  setItems: (items: Subtask[]) => void;
-};
+import DragHandle from './dragHandle';
 
 type Props = {
   taskId: Task['id'];
-  children: (props: ChildRenderProps) => JSX.Element;
 };
 
 /**
  * Abstraction around reorder lists of todo subtasks and optimistically updating state.
  */
-export default function SubtaskSorter({children, taskId}: Props) {
-  const [sorted, setSorted] = React.useState<Subtask[] | undefined>(undefined);
+export default function SubtaskSorter({taskId}: Props): JSX.Element {
   const [subtasks, setSubtasks] = useSubtasks();
+  const subtaskIds = subtasks.map(subtask => String(subtask.id));
 
-  function handleDragEnd(result: DropResult) {
+  const [activeSubtask, setActiveSubtask] = useState<Subtask | null>(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  function handleDragStart(event: DragStartEvent) {
+    const activeId = Number(event.active.id);
+    setActiveSubtask(subtasks.find(p => p.id === activeId) ?? null);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const {active, over} = event;
+    setActiveSubtask(null);
+
     // Dropped outside of a dropzone
-    if (!result.destination) {
+    if (!over) {
       return;
     }
-    const newItems = [...subtasks];
-    const [moved] = newItems.splice(result.source.index, 1);
-    newItems.splice(result.destination.index, 0, moved);
+    const oldIndex = subtaskIds.indexOf(active.id);
+    const newIndex = subtaskIds.indexOf(over.id);
+    const newItems = arrayMove(subtasks, oldIndex, newIndex);
 
     setSubtasks(newItems);
+
     const data = {
-      ranking: result.destination.index,
+      ranking: newIndex,
     };
 
-    Inertia.post(`/tasks/${taskId}/subtasks/${result.draggableId}/move`, data, {
+    Inertia.post(`/tasks/${taskId}/subtasks/${active.id}/move`, data, {
       only: ['task', 'flash'],
       onSuccess() {
         // Revert local state.
@@ -46,11 +76,35 @@ export default function SubtaskSorter({children, taskId}: Props) {
     });
   }
 
-  const items = sorted || subtasks;
-
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      {children({items: items, setItems: setSorted})}
-    </DragDropContext>
+    <DndContext
+      collisionDetection={closestCenter}
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={subtaskIds} strategy={verticalListSortingStrategy}>
+        <ul className="dnd-dropper-left-offset">
+          {subtasks.map((subtask, index) => (
+            <SortableItem
+              key={subtask.id}
+              id={String(subtask.id)}
+              tag="li"
+              active={String(activeSubtask?.id)}
+            >
+              <SubtaskItem subtask={subtask} taskId={taskId} index={index} />
+            </SortableItem>
+          ))}
+        </ul>
+      </SortableContext>
+      <DragOverlay>
+        {activeSubtask ? (
+          <li className="dnd-item dnd-item-dragging">
+            <DragHandle />
+            <SubtaskItem index={0} subtask={activeSubtask} taskId={taskId} />
+          </li>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

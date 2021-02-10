@@ -100,18 +100,19 @@ class TasksListTest extends AcceptanceTestCase
 
     public function testReorderInToday()
     {
-        $yesterday = new FrozenDate('yesterday', 'UTC');
+        $date = new FrozenDate('yesterday', 'UTC');
         $project = $this->makeProject('Work', 1);
 
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $yesterday]);
-        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $yesterday]);
-        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $yesterday]);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $date]);
+        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $date]);
+        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $date]);
+        $this->makeTask('Clean Bathtub', $project->id, 3, ['due_on' => $date]);
 
         $client = $this->login();
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
 
-        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
+        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
 
         // Do a drag from the top to the bottom
         $mouse = $client->getMouse();
@@ -151,10 +152,10 @@ class TasksListTest extends AcceptanceTestCase
 
         $updated = $this->Tasks->get($task->id);
         $this->assertEquals($twoDays, $updated->due_on);
-        $this->assertEquals(0, $updated->day_order);
+        $this->assertEquals(1, $updated->day_order);
 
         $updated = $this->Tasks->get($other->id);
         $this->assertEquals($twoDays, $updated->due_on);
-        $this->assertEquals(1, $updated->day_order);
+        $this->assertEquals(0, $updated->day_order);
     }
 }

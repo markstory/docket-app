@@ -52,6 +52,7 @@ class TasksController extends AppController
         $this->set(compact('tasks', 'view'));
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
+        $this->set('generation', uniqid());
     }
 
     /**

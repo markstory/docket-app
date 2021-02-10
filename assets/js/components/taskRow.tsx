@@ -43,8 +43,8 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
         <div className="attributes">
-          {showDueOn && <DueOn value={task.due_on} />}
           {showProject && <ProjectBadge project={task.project} />}
+          {showDueOn && <DueOn value={task.due_on} />}
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>

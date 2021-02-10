@@ -16,6 +16,7 @@
   border: none;
   padding: 3px;
   visibility: hidden;
+  touch-action: none;
 
   &:hover {
     color: var(--color-primary);
@@ -25,17 +26,16 @@
 }
 
 .dnd-item-dragging {
-  box-shadow: $shadow-med;
+  box-shadow: $shadow-drag;
   background: var(--color-bg);
+  position: relative;
+  z-index: $z-active-ui;
 
   .dnd-handle {
     color: var(--color-primary);
     visibility: visible;
+    cursor: grabbing;
   }
-}
-
-.dnd-dropper-active {
-  background: var(--color-bg-low);
 }
 
 .dnd-dropper-left-offset {
@@ -48,4 +48,9 @@
 
 .dnd-item:hover .dnd-handle {
   visibility: visible;
+}
+
+.dnd-ghost {
+  z-index: $z-bg;
+  opacity: 0.4;
 }

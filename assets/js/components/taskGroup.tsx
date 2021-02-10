@@ -1,16 +1,18 @@
 import React, {useState} from 'react';
-import {Droppable, Draggable} from 'react-beautiful-dnd';
 import classnames from 'classnames';
+import {useDroppable} from '@dnd-kit/core';
 
 import {Task} from 'app/types';
 import {t} from 'app/locale';
 import TaskRow from 'app/components/taskRow';
 import TaskAddForm from 'app/components/taskAddForm';
-import {Icon, InlineIcon} from './icon';
+import SortableItem from 'app/components/sortableItem';
+import {InlineIcon} from './icon';
 
 type Props = {
   dropId: string;
   tasks: Task[];
+  activeTask?: Task | null;
   defaultDate?: string;
   defaultProjectId?: number;
   showProject?: boolean;
@@ -20,63 +22,33 @@ type Props = {
 
 export default function TaskGroup({
   dropId,
+  activeTask,
   tasks,
   defaultDate,
   defaultProjectId,
   showProject,
   showDueOn,
   showAdd = true,
-}: Props) {
+}: Props): JSX.Element {
   const [showForm, setShowForm] = useState(false);
+  const {over, isOver, setNodeRef} = useDroppable({id: dropId});
+  const taskIds = tasks.map(t => t.id);
+
+  const className = classnames('dnd-dropper-left-offset', {
+    'dnd-dropper-active':
+      isOver || (over && activeTask ? taskIds.includes(activeTask.id) : null),
+  });
+  const activeId = activeTask ? String(activeTask.id) : undefined;
 
   return (
     <div className="task-group">
-      <Droppable droppableId={dropId} type="task">
-        {(provided, snapshot) => {
-          const className = classnames('dnd-dropper-left-offset', {
-            'dnd-dropper-active': snapshot.isDraggingOver,
-          });
-          return (
-            <div
-              ref={provided.innerRef}
-              className={className}
-              {...provided.droppableProps}
-            >
-              {tasks.map((item, index) => (
-                <Draggable key={item.id} draggableId={String(item.id)} index={index}>
-                  {(provided, snapshot) => {
-                    const className = classnames('dnd-item', {
-                      'dnd-item-dragging': snapshot.isDragging,
-                    });
-                    return (
-                      <div
-                        ref={provided.innerRef}
-                        className={className}
-                        {...provided.draggableProps}
-                      >
-                        <button
-                          className="dnd-handle"
-                          aria-label="Drag to reorder"
-                          {...provided.dragHandleProps}
-                        >
-                          <Icon icon="grabber" width="xlarge" />
-                        </button>
-                        <TaskRow
-                          key={item.id}
-                          task={item}
-                          showProject={showProject}
-                          showDueOn={showDueOn}
-                        />
-                      </div>
-                    );
-                  }}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          );
-        }}
-      </Droppable>
+      <div className={className} ref={setNodeRef}>
+        {tasks.map(item => (
+          <SortableItem key={item.id} id={String(item.id)} active={activeId} tag="div">
+            <TaskRow task={item} showProject={showProject} showDueOn={showDueOn} />
+          </SortableItem>
+        ))}
+      </div>
       {showAdd && (
         <div className="add-task">
           {!showForm && (
