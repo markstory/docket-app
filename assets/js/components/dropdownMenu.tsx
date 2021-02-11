@@ -20,8 +20,12 @@ function defaultButton() {
 function DropdownMenu({button, children}: Props): JSX.Element {
   return (
     <Menu>
-      {button ? button() : defaultButton()}
-      <MenuList>{children}</MenuList>
+      {({isExpanded}) => (
+        <React.Fragment>
+          {button ? button() : defaultButton()}
+          {isExpanded && <MenuList>{children}</MenuList>}
+        </React.Fragment>
+      )}
     </Menu>
   );
 }
