@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useRef} from 'react';
+import {AlertDialog, AlertDialogLabel, AlertDialogDescription} from '@reach/alert-dialog';
 
 import {t} from 'app/locale';
-import Modal from 'app/components/modal';
 import {confirmable, createConfirmation} from 'react-confirm';
 
 type Props = {
@@ -22,26 +22,25 @@ function Confirmation({
   proceed,
   show,
 }: Props) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   return (
-    <Modal
-      className="modal modal-confirm"
-      onClose={() => {}}
-      canClose={false}
+    <AlertDialog
+      onDismiss={() => proceed(false)}
       isOpen={show}
+      leastDestructiveRef={cancelRef}
     >
-      <div className="confirm">
-        {title && <h3>{title}</h3>}
-        <p className="body">{confirmation}</p>
-        <div className="button-bar-right">
-          <button className="button-muted" onClick={() => proceed(false)}>
-            {cancelLabel}
-          </button>
-          <button className="button-danger" onClick={() => proceed(true)}>
-            {proceedLabel}
-          </button>
-        </div>
+      {title && <AlertDialogLabel>{title}</AlertDialogLabel>}
+      <AlertDialogDescription>{confirmation}</AlertDialogDescription>
+      <div className="button-bar-right">
+        <button className="button-muted" ref={cancelRef} onClick={() => proceed(false)}>
+          {cancelLabel}
+        </button>
+        <button className="button-danger" onClick={() => proceed(true)}>
+          {proceedLabel}
+        </button>
       </div>
-    </Modal>
+    </AlertDialog>
   );
 }
 
@@ -51,7 +50,7 @@ export function confirm(
   proceedLabel: string = t('Ok'),
   cancelLabel = t('Cancel'),
   options = {}
-) {
+): Promise<string> {
   return createConfirmation(confirmable(Confirmation))({
     title,
     confirmation,

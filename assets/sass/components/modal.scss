@@ -28,13 +28,10 @@
     margin: 0;
   }
 }
+
 .modal-contents {
   height: 100%;
   overflow: auto;
-}
-
-.modal-confirm {
-  padding-top: 20px;
 }
 
 @media (max-width: $breakpoint-narrow) {

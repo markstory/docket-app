@@ -42,6 +42,8 @@ $z-flash: 700;
 :root {
   --reach-tooltip: 1;
   --reach-dialog: 1;
+  --reach-alert-dialog: 1;
+  --reach-menu-button: 1;
 }
 
 html {
@@ -116,6 +118,9 @@ body {
 
   --color-button-default-bg: var(--color-gray-200);
   --color-button-default-hover: var(--color-gray-300);
+
+  --color-button-danger-bg: var(--color-red-500);
+  --color-button-danger-hover: var(--color-red-700);
 
   --color-button-primary-bg: var(--color-purple-500);
   --color-button-primary-hover: var(--color-purple-700);
