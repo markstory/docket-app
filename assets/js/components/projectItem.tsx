@@ -17,11 +17,7 @@ export default function ProjectItem({project}: Props) {
         <ProjectBadge project={project} />
         <span className="counter">{project.incomplete_task_count.toLocaleString()}</span>
       </InertiaLink>
-      <ProjectMenu
-        project={project}
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-      />
+      <ProjectMenu project={project} onClick={() => setActive(!active)} />
     </div>
   );
 }

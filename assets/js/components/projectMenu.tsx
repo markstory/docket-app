@@ -1,4 +1,5 @@
 import React from 'react';
+import {MenuItem, MenuLink} from '@reach/menu-button';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {Project} from 'app/types';
@@ -8,23 +9,17 @@ import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from './icon';
 import {useProjects} from 'app/providers/projects';
 
-type ContextMenuProps = React.ComponentProps<typeof ContextMenu>;
-
 type Props = {
   project: Project;
   showAll?: boolean;
-  alignMenu?: ContextMenuProps['alignMenu'];
-  onOpen?: ContextMenuProps['onOpen'];
-  onClose?: ContextMenuProps['onClose'];
+  onClick?: (event: React.MouseEvent) => void;
 };
 
 export default function ProjectMenu({
   project,
-  onOpen,
-  onClose,
+  onClick,
   showAll = false,
-  alignMenu = 'left',
-}: Props) {
+}: Props): JSX.Element {
   const [_, setProjects] = useProjects();
 
   async function handleDelete() {
@@ -41,48 +36,42 @@ export default function ProjectMenu({
   }
 
   return (
-    <ContextMenu alignMenu={alignMenu} onClose={onClose} onOpen={onOpen}>
-      {showAll && (
-        <li>
-          <InertiaLink
-            className="context-item complete"
+    <div onClick={onClick}>
+      <ContextMenu>
+        {showAll && (
+          <MenuLink
+            as={InertiaLink}
+            className="complete"
             href={`/projects/${project.slug}?completed=1`}
           >
             <InlineIcon icon="check" />
             {t('View completed tasks')}
-          </InertiaLink>
-        </li>
-      )}
-      <li>
-        <InertiaLink
-          className="context-item edit"
+          </MenuLink>
+        )}
+        <MenuLink
+          as={InertiaLink}
+          className="edit"
           href={`/projects/${project.slug}/edit`}
         >
           <InlineIcon icon="pencil" />
           {t('Edit Project')}
-        </InertiaLink>
-      </li>
-      {project.archived ? (
-        <li>
-          <button className="context-item archive" onClick={handleUnarchive}>
+        </MenuLink>
+        {project.archived ? (
+          <MenuItem className="archive" onSelect={handleUnarchive}>
             <InlineIcon icon="archive" />
             {t('Unarchive Project')}
-          </button>
-        </li>
-      ) : (
-        <li>
-          <button className="context-item archive" onClick={handleArchive}>
+          </MenuItem>
+        ) : (
+          <MenuItem className="archive" onSelect={handleArchive}>
             <InlineIcon icon="archive" />
             {t('Archive Project')}
-          </button>
-        </li>
-      )}
-      <li>
-        <button className="context-item delete" onClick={handleDelete}>
+          </MenuItem>
+        )}
+        <MenuItem className="delete" onSelect={handleDelete}>
           <InlineIcon icon="trash" />
           {t('Delete Project')}
-        </button>
-      </li>
-    </ContextMenu>
+        </MenuItem>
+      </ContextMenu>
+    </div>
   );
 }

@@ -26,7 +26,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
             {project.name}
           </h1>
 
-          <ProjectMenu project={project} showAll alignMenu="right" />
+          <ProjectMenu project={project} showAll />
         </div>
 
         <div className="attributes">

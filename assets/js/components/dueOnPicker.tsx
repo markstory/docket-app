@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {MenuButton, MenuItem} from '@reach/menu-button';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 
@@ -15,21 +16,18 @@ type Props = {
   onChange: (value: Task['due_on']) => void;
 };
 
-export default function DueOnPicker({selected, onChange}: Props) {
+export default function DueOnPicker({selected, onChange}: Props): JSX.Element {
   const selectedDate = typeof selected === 'string' ? parseDate(selected) : undefined;
 
   // Accept a few different formats. Eg. Dec 25, Wednesday etc
   return (
     <div className="due-on-picker">
       <DropdownMenu
-        button={props => {
-          return (
-            <button {...props} className="button-secondary opener">
-              <DueOn value={selectedDate} showNull />
-            </button>
-          );
-        }}
-        alignMenu="left"
+        button={() => (
+          <MenuButton className="button-secondary opener">
+            <DueOn value={selectedDate} showNull />
+          </MenuButton>
+        )}
       >
         <MenuContents selected={selectedDate} onChange={onChange} />
       </DropdownMenu>
@@ -42,14 +40,14 @@ type ContentsProps = {
   onChange: Props['onChange'];
 };
 
-export function MenuContents({selected, onChange}: ContentsProps) {
+export function MenuContents({selected, onChange}: ContentsProps): JSX.Element {
   const today = toDateString(new Date());
   const tomorrow = toDateString(addDays(new Date(), 1));
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(
-    function() {
+    function () {
       if (inputRef.current) {
         inputRef.current.focus();
       }
@@ -98,29 +96,29 @@ export function MenuContents({selected, onChange}: ContentsProps) {
           placeholder="Type a due date"
         />
       </div>
-      <button
+      <MenuItem
         className="menu-option today"
         data-testid="today"
-        onClick={handleButtonClick(today)}
+        onSelect={handleButtonClick(today)}
       >
         <InlineIcon icon="clippy" /> {t('Today')}
-      </button>
-      <button
+      </MenuItem>
+      <MenuItem
         className="menu-option tomorrow"
         data-testid="tomorrow"
-        onClick={handleButtonClick(tomorrow)}
+        onSelect={handleButtonClick(tomorrow)}
       >
         <InlineIcon icon="sun" />
         {t('Tommorrow')}
-      </button>
-      <button
+      </MenuItem>
+      <MenuItem
         className="menu-option not-due"
         data-testid="not-due"
-        onClick={handleButtonClick(null)}
+        onSelect={handleButtonClick(null)}
       >
         <InlineIcon icon="trash" />
         {t('No Due Date')}
-      </button>
+      </MenuItem>
       <DayPicker
         disabledDays={{before: new Date()}}
         onDayClick={value => onChange(toDateString(value))}

@@ -1,34 +1,23 @@
 import React from 'react';
+import {MenuButton} from '@reach/menu-button';
+
 import {Icon} from './icon';
 import DropdownMenu from './dropdownMenu';
 
-type DropdownMenuProps = React.ComponentProps<typeof DropdownMenu>;
-
 type Props = {
   children: React.ReactNode;
-  alignMenu?: 'left' | 'right';
-  onOpen?: DropdownMenuProps['onOpen'];
-  onClose?: DropdownMenuProps['onClose'];
 };
 
-function ContextMenu({
-  children,
-  onOpen,
-  onClose,
-  alignMenu = 'left',
-}: Props): JSX.Element {
+function ContextMenu({children}: Props): JSX.Element {
   return (
     <DropdownMenu
-      onOpen={onOpen}
-      onClose={onClose}
-      alignMenu={alignMenu}
-      button={props => (
-        <button className="button-icon button-default" {...props}>
+      button={() => (
+        <MenuButton className="button-icon button-default">
           <Icon icon="kebab" />
-        </button>
+        </MenuButton>
       )}
     >
-      <ul>{children}</ul>
+      {children}
     </DropdownMenu>
   );
 }
