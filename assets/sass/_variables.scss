@@ -2,6 +2,7 @@
 $border-radius: 3px;
 $border-radius-large: 6px;
 
+$shadow-inset: inset 0 2px 0 rgba(18, 28, 45, 0.03);
 $shadow-button: 0 1px 2px 0 rgba(18, 28, 45, 0.1);
 $shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
 $shadow-med: 0 4px 16px 0 rgba(18, 28, 45, 0.2);
@@ -44,6 +45,7 @@ $z-flash: 700;
   --reach-dialog: 1;
   --reach-alert-dialog: 1;
   --reach-menu-button: 1;
+  --reach-combobox: 1;
 }
 
 html {
@@ -86,7 +88,7 @@ html {
   --color-purple-900: #381838;
 
   --color-blue-100: #dfeef9;
-  --color-blue-300: #77b9e3;
+  --color-blue-300: svg #77b9e3;
   --color-blue-500: #287bb2;
   --color-blue-700: #1d5a83;
   --color-blue-900: #052f4b;

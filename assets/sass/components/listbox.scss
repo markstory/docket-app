@@ -1,0 +1,46 @@
+[data-reach-combobox-input] {
+  @extend .form-input-like;
+
+  position: relative;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+[data-reach-combobox-popover] {
+  margin-top: $space / 2;
+  width: max-content;
+  z-index: $z-menu;
+
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+  outline: none;
+  overflow: hidden;
+  box-shadow: $shadow-med;
+}
+[data-reach-combobox-list] {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  list-style: none;
+}
+.combobox-empty,
+[data-reach-combobox-option] {
+  padding: $space;
+
+  &[data-current] {
+    background: var(--color-menu-selected);
+  }
+
+  &[data-highlighted] {
+    background: var(--color-menu-hover);
+  }
+
+  &[data-disabled] {
+    color: var(--color-muted);
+  }
+}
+.combobox-empty {
+  padding: var(--color-muted);
+}
