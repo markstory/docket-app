@@ -1,42 +1,15 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
-import classnames from 'classnames';
-import Select, {
-  OptionTypeBase,
-  ValueType,
-  OptionProps,
-  SingleValueProps,
-} from 'react-select';
+import React, {useState} from 'react';
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption,
+} from '@reach/combobox';
 
 import {PROJECT_COLORS} from 'app/constants';
+import {t} from 'app/locale';
 import {InlineIcon} from 'app/components/icon';
-
-function ColorOption(props: OptionProps<OptionTypeBase, false>) {
-  const {getStyles, innerRef, innerProps, data} = props;
-  const className = classnames({
-    'is-selected': props.isSelected,
-    'is-focused': props.isFocused,
-  });
-  return (
-    <div
-      css={getStyles('option', props)}
-      className={className}
-      ref={innerRef}
-      {...innerProps}
-    >
-      <Color color={data.color} name={data.label} />
-    </div>
-  );
-}
-
-function ColorValue(props: SingleValueProps<OptionTypeBase>) {
-  const {getStyles, innerProps, data} = props;
-  return (
-    <div css={getStyles('singleValue', props)} {...innerProps}>
-      <Color color={data.color} name={data.label} />
-    </div>
-  );
-}
 
 type ColorProps = {
   name: string;
@@ -52,35 +25,56 @@ function Color({name, color}: ColorProps) {
   );
 }
 
-type OptionType = ValueType<OptionTypeBase, false>;
-
 type Props = {
   value?: number;
-  onChange?: (value: OptionType) => void;
+  onChange?: (value: number) => void;
 };
 
-function ColorSelect({value, onChange}: Props) {
-  const options = PROJECT_COLORS.map(item => ({
-    value: item.id,
-    label: item.name,
-    color: item.code,
-  }));
-  const selected = value !== undefined ? value : options[0].value;
-  const valueOption = options.find(opt => opt.value === selected);
+function ColorSelect({value, onChange}: Props): JSX.Element {
+  let selected = '';
+  if (value) {
+    selected = PROJECT_COLORS.find(color => color.id === value)?.name ?? '';
+  } else {
+    selected = PROJECT_COLORS[0].name;
+  }
+  const [options, setOptions] = useState(PROJECT_COLORS);
+  const [term, setTerm] = useState(selected);
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const {value} = event.target;
+    setOptions(
+      value
+        ? PROJECT_COLORS.filter(color =>
+            color.name.toLowerCase().includes(value.toLowerCase())
+          )
+        : [...PROJECT_COLORS]
+    );
+    setTerm(value);
+  }
+
+  function handleSelect(value: string) {
+    const selected = PROJECT_COLORS.find(color => color.name === value);
+    if (!selected) {
+      return;
+    }
+    onChange?.(selected.id);
+  }
 
   return (
-    <Select
-      classNamePrefix="select"
-      defaultValue={valueOption}
-      menuPlacement="auto"
-      name="color"
-      options={options}
-      onChange={onChange}
-      components={{
-        Option: ColorOption,
-        SingleValue: ColorValue,
-      }}
-    />
+    <Combobox aria-label={t('Choose a color')} onSelect={handleSelect} openOnFocus>
+      <input type="hidden" value={value} name="color" />
+      <ComboboxInput defaultValue={term} onChange={handleChange} selectOnClick />
+      <ComboboxPopover>
+        <ComboboxList persistSelection>
+          {options.map(color => (
+            <ComboboxOption key={color.id} value={color.name}>
+              <Color name={color.name} color={color.code} />
+            </ComboboxOption>
+          ))}
+          {!options.length && <div className="combobox-empty">{t('No results')}</div>}
+        </ComboboxList>
+      </ComboboxPopover>
+    </Combobox>
   );
 }
 
