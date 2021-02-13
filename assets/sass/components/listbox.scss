@@ -27,12 +27,15 @@
 }
 .combobox-empty,
 [data-reach-combobox-option] {
+  cursor: pointer;
   padding: $space;
 
   &[data-current] {
     background: var(--color-menu-selected);
   }
 
+  &:hover,
+  &:focus,
   &[data-highlighted] {
     background: var(--color-menu-hover);
   }
@@ -42,5 +45,6 @@
   }
 }
 .combobox-empty {
-  padding: var(--color-muted);
+  cursor: default;
+  color: var(--color-muted);
 }

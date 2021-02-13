@@ -26,19 +26,27 @@ function Color({name, color}: ColorProps) {
 }
 
 type Props = {
+  /**
+   * Default value.
+   */
   value?: number;
   onChange?: (value: number) => void;
 };
 
 function ColorSelect({value, onChange}: Props): JSX.Element {
+  const [term, setTerm] = useState('');
+  const [current, setCurrent] = useState(value);
+  const [options, setOptions] = useState(PROJECT_COLORS);
+
   let selected = '';
-  if (value) {
+  if (term) {
+    selected = PROJECT_COLORS.find(color => color.name === term)?.name ?? '';
+  } else if (value) {
     selected = PROJECT_COLORS.find(color => color.id === value)?.name ?? '';
-  } else {
+  }
+  if (!selected) {
     selected = PROJECT_COLORS[0].name;
   }
-  const [options, setOptions] = useState(PROJECT_COLORS);
-  const [term, setTerm] = useState(selected);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const {value} = event.target;
@@ -57,13 +65,15 @@ function ColorSelect({value, onChange}: Props): JSX.Element {
     if (!selected) {
       return;
     }
+    setTerm(selected.name);
+    setCurrent(selected.id);
     onChange?.(selected.id);
   }
 
   return (
     <Combobox aria-label={t('Choose a color')} onSelect={handleSelect} openOnFocus>
-      <input type="hidden" value={value} name="color" />
-      <ComboboxInput defaultValue={term} onChange={handleChange} selectOnClick />
+      <input type="hidden" value={current} name="color" />
+      <ComboboxInput value={term || selected} onChange={handleChange} selectOnClick />
       <ComboboxPopover>
         <ComboboxList persistSelection>
           {options.map(color => (
