@@ -1,12 +1,21 @@
+.combobox-wrapper {
+  display: flex;
+}
 [data-reach-combobox-input] {
   @extend .form-input-like;
-
-  position: relative;
   min-width: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
+
+.combobox-arrow {
+  position: relative;
+  top: 9px;
+  left: -26px;
+  color: var(--color-muted);
+}
+[data-reach-combobox-input][aria-expanded="true"] + .combobox-arrow {
+  color: var(--color-input-focus-border);
+}
+
 [data-reach-combobox-popover] {
   margin-top: $space / 2;
   width: max-content;

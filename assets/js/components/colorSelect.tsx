@@ -1,15 +1,8 @@
-import React, {useState} from 'react';
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxPopover,
-  ComboboxList,
-  ComboboxOption,
-} from '@reach/combobox';
-
+import React from 'react';
+import Autocomplete, {Option} from 'app/components/autocomplete';
 import {PROJECT_COLORS} from 'app/constants';
-import {t} from 'app/locale';
 import {InlineIcon} from 'app/components/icon';
+import {t} from 'app/locale';
 
 type ColorProps = {
   name: string;
@@ -30,61 +23,23 @@ type Props = {
    * Default value.
    */
   value?: number;
-  onChange?: (value: number) => void;
+  onChange?: (value: number | string) => void;
 };
 
 function ColorSelect({value, onChange}: Props): JSX.Element {
-  const [term, setTerm] = useState('');
-  const [current, setCurrent] = useState(value);
-  const [options, setOptions] = useState(PROJECT_COLORS);
-
-  let selected = '';
-  if (term) {
-    selected = PROJECT_COLORS.find(color => color.name === term)?.name ?? '';
-  } else if (value) {
-    selected = PROJECT_COLORS.find(color => color.id === value)?.name ?? '';
-  }
-  if (!selected) {
-    selected = PROJECT_COLORS[0].name;
-  }
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const {value} = event.target;
-    setOptions(
-      value
-        ? PROJECT_COLORS.filter(color =>
-            color.name.toLowerCase().includes(value.toLowerCase())
-          )
-        : [...PROJECT_COLORS]
-    );
-    setTerm(value);
-  }
-
-  function handleSelect(value: string) {
-    const selected = PROJECT_COLORS.find(color => color.name === value);
-    if (!selected) {
-      return;
-    }
-    setTerm(selected.name);
-    setCurrent(selected.id);
-    onChange?.(selected.id);
-  }
-
+  const options: Option[] = PROJECT_COLORS.map(color => ({
+    value: color.id,
+    text: color.name,
+    label: <Color color={color.code} name={color.name} />,
+  }));
   return (
-    <Combobox aria-label={t('Choose a color')} onSelect={handleSelect} openOnFocus>
-      <input type="hidden" value={current} name="color" />
-      <ComboboxInput value={term || selected} onChange={handleChange} selectOnClick />
-      <ComboboxPopover>
-        <ComboboxList persistSelection>
-          {options.map(color => (
-            <ComboboxOption key={color.id} value={color.name}>
-              <Color name={color.name} color={color.code} />
-            </ComboboxOption>
-          ))}
-          {!options.length && <div className="combobox-empty">{t('No results')}</div>}
-        </ComboboxList>
-      </ComboboxPopover>
-    </Combobox>
+    <Autocomplete
+      label={t('Choose a color')}
+      name="color"
+      value={value}
+      options={options}
+      onChange={onChange}
+    />
   );
 }
 
