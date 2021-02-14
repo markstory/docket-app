@@ -1,18 +1,16 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
-import {MenuButton, MenuItem} from '@reach/menu-button';
+import {MenuItem} from '@reach/menu-button';
 import classnames from 'classnames';
 
 import {t} from 'app/locale';
 import {updateTaskField} from 'app/actions/tasks';
-import DropdownMenu from 'app/components/dropdownMenu';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
-import Tooltip from 'app/components/tooltip';
 import {Task} from 'app/types';
 import {parseDate} from 'app/utils/dates';
 
@@ -91,18 +89,10 @@ function TaskActions({task, setActive}: ActionsProps) {
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
     <div className="actions" onMouseEnter={() => setActive(true)}>
-      <DropdownMenu
-        button={() => (
-          <Tooltip label={t('Reschedule')}>
-            <MenuButton className="button-icon" data-testid="task-reschedule">
-              <InlineIcon icon="calendar" />
-            </MenuButton>
-          </Tooltip>
-        )}
-      >
+      <ContextMenu icon="calendar" tooltip={t('Reschedule')}>
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
-      </DropdownMenu>
-      <ContextMenu>
+      </ContextMenu>
+      <ContextMenu tooltip={t('Task actions')}>
         <MenuItem className="context-item delete" onSelect={handleDelete}>
           <InlineIcon icon="trash" />
           {t('Delete Task')}

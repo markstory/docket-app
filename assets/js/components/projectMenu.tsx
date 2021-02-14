@@ -36,7 +36,7 @@ export default function ProjectMenu({
   }
 
   return (
-    <ContextMenu onClick={onClick}>
+    <ContextMenu onClick={onClick} tooltip={t('Project Actions')}>
       {showAll && (
         <MenuLink
           as={InertiaLink}
