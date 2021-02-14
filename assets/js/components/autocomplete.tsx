@@ -68,8 +68,10 @@ function Autocomplete<OptionType extends Option = Option>({
   } else if (value) {
     selected = options.find(option => option.value === value)?.text ?? '';
   }
+  let defaultValue: OptionType['value'] = '';
   if (!selected && options.length > 0) {
     selected = options[0].text;
+    defaultValue = options[0].value;
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -96,7 +98,7 @@ function Autocomplete<OptionType extends Option = Option>({
 
   return (
     <Combobox aria-label={label} onSelect={handleSelect} openOnFocus>
-      <input type="hidden" value={current ?? undefined} name={name} />
+      <input type="hidden" value={current || defaultValue} name={name} />
       <div className="combobox-wrapper">
         <ComboboxInput value={term || selected} onChange={handleChange} selectOnClick />
         <Icon className="combobox-arrow" icon="chevrondown" />
