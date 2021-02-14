@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import {MenuButton, MenuItem} from '@reach/menu-button';
 import classnames from 'classnames';
 
 import {t} from 'app/locale';
@@ -21,7 +22,7 @@ type Props = {
   showProject?: boolean;
 };
 
-export default function TaskRow({task, showDueOn, showProject}: Props) {
+export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
   const [active, setActive] = useState(false);
 
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -34,7 +35,11 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
   });
 
   return (
-    <div className={className} data-active={active}>
+    <div
+      className={className}
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+    >
       <input
         type="checkbox"
         value="1"
@@ -49,7 +54,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
-      <TaskActions task={task} setActive={setActive} />
+      {active ? <TaskActions task={task} setActive={setActive} /> : null}
     </div>
   );
 }
@@ -74,43 +79,34 @@ type ActionsProps = Pick<Props, 'task'> & {
 function TaskActions({task, setActive}: ActionsProps) {
   async function handleDueOnChange(value: string | null) {
     updateTaskField(task, 'due_on', value).then(() => {
+      setActive(false);
       Inertia.reload();
     });
   }
 
-  function handleDelete(event: React.MouseEvent) {
-    event.preventDefault();
+  function handleDelete() {
     Inertia.post(`/tasks/${task.id}/delete`);
   }
 
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
-    <div className="actions">
+    <div className="actions" onMouseEnter={() => setActive(true)}>
       <DropdownMenu
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-        alignMenu="right"
-        button={props => (
+        button={() => (
           <Tooltip label={t('Reschedule')}>
-            <button className="button-icon" data-testid="task-reschedule" {...props}>
+            <MenuButton className="button-icon" data-testid="task-reschedule">
               <InlineIcon icon="calendar" />
-            </button>
+            </MenuButton>
           </Tooltip>
         )}
       >
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
       </DropdownMenu>
-      <ContextMenu
-        alignMenu="right"
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-      >
-        <li>
-          <button className="context-item delete" onClick={handleDelete}>
-            <InlineIcon icon="trash" />
-            {t('Delete Task')}
-          </button>
-        </li>
+      <ContextMenu>
+        <MenuItem className="context-item delete" onSelect={handleDelete}>
+          <InlineIcon icon="trash" />
+          {t('Delete Task')}
+        </MenuItem>
       </ContextMenu>
     </div>
   );

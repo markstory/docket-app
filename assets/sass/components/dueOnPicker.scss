@@ -1,31 +1,15 @@
 .due-on-menu {
-  .menu-option {
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-    background: none;
-    border: none;
-    border-radius: 0;
-    padding: $space $space * 1.5;
-
-    svg {
-      margin-right: $space / 2;
-    }
-    &:hover {
-      background: var(--color-menu-hover);
-      box-shadow: none;
-    }
-
-    &.today svg {
-      color: var(--color-due-today);
-    }
-    &.tomorrow svg {
-      color: var(--color-due-tomorrow);
-    }
-    &.not-due svg {
-      color: var(--color-muted);
-    }
+  svg {
+    margin-right: $space / 2;
+  }
+  .today svg {
+    color: var(--color-due-today);
+  }
+  .tomorrow svg {
+    color: var(--color-due-tomorrow);
+  }
+  .not-due svg {
+    color: var(--color-muted);
   }
 
   input[type="text"] {

@@ -46,14 +46,14 @@ export function MenuContents({selected, onChange}: ContentsProps): JSX.Element {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(
-    function () {
-      if (inputRef.current) {
-        inputRef.current.focus();
+  useEffect(() => {
+    setTimeout(() => {
+      if (!inputRef.current) {
+        return;
       }
-    },
-    [inputRef]
-  );
+      inputRef.current.focus();
+    }, 1);
+  }, [inputRef.current]);
 
   function handleButtonClick(value: Task['due_on']) {
     return function onClick() {
@@ -86,7 +86,7 @@ export function MenuContents({selected, onChange}: ContentsProps): JSX.Element {
 
   return (
     <div className="due-on-menu" onClick={clickSink}>
-      <div className="menu-option">
+      <div data-reach-menu-item>
         <input
           ref={inputRef}
           type="text"
@@ -96,15 +96,11 @@ export function MenuContents({selected, onChange}: ContentsProps): JSX.Element {
           placeholder="Type a due date"
         />
       </div>
-      <MenuItem
-        className="menu-option today"
-        data-testid="today"
-        onSelect={handleButtonClick(today)}
-      >
+      <MenuItem className="today" data-testid="today" onSelect={handleButtonClick(today)}>
         <InlineIcon icon="clippy" /> {t('Today')}
       </MenuItem>
       <MenuItem
-        className="menu-option tomorrow"
+        className="tomorrow"
         data-testid="tomorrow"
         onSelect={handleButtonClick(tomorrow)}
       >
@@ -112,7 +108,7 @@ export function MenuContents({selected, onChange}: ContentsProps): JSX.Element {
         {t('Tommorrow')}
       </MenuItem>
       <MenuItem
-        className="menu-option not-due"
+        className="not-due"
         data-testid="not-due"
         onSelect={handleButtonClick(null)}
       >
