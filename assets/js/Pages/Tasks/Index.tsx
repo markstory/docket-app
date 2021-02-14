@@ -1,8 +1,8 @@
 import React from 'react';
-import {sortBy} from 'lodash';
+import groupBy from 'lodash.groupby';
+import sortBy from 'lodash.sortby';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
-import {groupBy} from 'lodash';
 
 import {t} from 'app/locale';
 import {Task} from 'app/types';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {partition} from 'lodash';
+import partition from 'lodash.partition';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
