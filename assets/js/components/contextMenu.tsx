@@ -5,14 +5,21 @@ import {Icon} from './icon';
 import DropdownMenu from './dropdownMenu';
 
 type Props = {
+  /**
+   * Contents of the menu.
+   */
   children: React.ReactNode;
+  /**
+   * Attached to the dropdown menu button.
+   */
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
-function ContextMenu({children}: Props): JSX.Element {
+function ContextMenu({children, onClick}: Props): JSX.Element {
   return (
     <DropdownMenu
       button={() => (
-        <MenuButton className="button-icon button-default">
+        <MenuButton className="button-icon button-default" onClick={onClick}>
           <Icon icon="kebab" />
         </MenuButton>
       )}

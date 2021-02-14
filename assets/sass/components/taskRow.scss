@@ -41,7 +41,8 @@
   }
 
   .actions {
-    display: none;
+    display: flex;
+    align-items: center;
     position: absolute;
     top: $space * 0.75;
     right: 0;
@@ -51,11 +52,6 @@
   }
   .actions > * + * {
     margin-left: $space;
-  }
-  &[data-active=true] .actions,
-  &:hover .actions {
-    display: flex;
-    align-items: center;
   }
 }
 

@@ -36,42 +36,36 @@ export default function ProjectMenu({
   }
 
   return (
-    <div onClick={onClick}>
-      <ContextMenu>
-        {showAll && (
-          <MenuLink
-            as={InertiaLink}
-            className="complete"
-            href={`/projects/${project.slug}?completed=1`}
-          >
-            <InlineIcon icon="check" />
-            {t('View completed tasks')}
-          </MenuLink>
-        )}
+    <ContextMenu onClick={onClick}>
+      {showAll && (
         <MenuLink
           as={InertiaLink}
-          className="edit"
-          href={`/projects/${project.slug}/edit`}
+          className="complete"
+          href={`/projects/${project.slug}?completed=1`}
         >
-          <InlineIcon icon="pencil" />
-          {t('Edit Project')}
+          <InlineIcon icon="check" />
+          {t('View completed tasks')}
         </MenuLink>
-        {project.archived ? (
-          <MenuItem className="archive" onSelect={handleUnarchive}>
-            <InlineIcon icon="archive" />
-            {t('Unarchive Project')}
-          </MenuItem>
-        ) : (
-          <MenuItem className="archive" onSelect={handleArchive}>
-            <InlineIcon icon="archive" />
-            {t('Archive Project')}
-          </MenuItem>
-        )}
-        <MenuItem className="delete" onSelect={handleDelete}>
-          <InlineIcon icon="trash" />
-          {t('Delete Project')}
+      )}
+      <MenuLink as={InertiaLink} className="edit" href={`/projects/${project.slug}/edit`}>
+        <InlineIcon icon="pencil" />
+        {t('Edit Project')}
+      </MenuLink>
+      {project.archived ? (
+        <MenuItem className="archive" onSelect={handleUnarchive}>
+          <InlineIcon icon="archive" />
+          {t('Unarchive Project')}
         </MenuItem>
-      </ContextMenu>
-    </div>
+      ) : (
+        <MenuItem className="archive" onSelect={handleArchive}>
+          <InlineIcon icon="archive" />
+          {t('Archive Project')}
+        </MenuItem>
+      )}
+      <MenuItem className="delete" onSelect={handleDelete}>
+        <InlineIcon icon="trash" />
+        {t('Delete Project')}
+      </MenuItem>
+    </ContextMenu>
   );
 }
