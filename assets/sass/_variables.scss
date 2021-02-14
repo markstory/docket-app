@@ -69,9 +69,9 @@ html {
   --color-red-700: #8c2100;
   --color-red-900: #501300;
 
-  --color-ochre-100: #fcf5dc;
-  --color-ochre-300: #f0cd64;
-  --color-ochre-500: #e3b62d;
+  --color-ochre-100: #fcf1dc;
+  --color-ochre-300: #f0c064;
+  --color-ochre-500: #d9940f;
   --color-ochre-700: #8d6113;
   --color-ochre-900: #4b3105;
 
@@ -140,7 +140,7 @@ body {
 
   --color-due-overdue: var(--color-red-500);
   --color-due-today: var(--color-purple-500);
-  --color-due-tomorrow: var(--color-green-500);
+  --color-due-tomorrow: var(--color-ochre-500);
   --color-due-week: var(--color-blue-500);
   --color-due-fortnight: var(--color-gray-500);
 }
