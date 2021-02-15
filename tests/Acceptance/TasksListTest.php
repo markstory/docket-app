@@ -86,12 +86,17 @@ class TasksListTest extends AcceptanceTestCase
         // Trigger the hover.
         $client->getMouse()->mouseMoveTo('.task-row');
         $crawler = $client->getCrawler();
+        $client->waitFor('.task-row .actions');
 
+        // Hover over the due menu
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Reschedule"]');
+        $crawler = $client->getCrawler();
         // Open the due menu
-        $crawler->filter('.actions [data-testid="task-reschedule"]')->click();
+        $crawler->filter('.actions [aria-label="Reschedule"]')->click();
+        $client->waitFor('.due-on-menu');
+        // Click today
+        $this->clickWithMouse('.due-on-menu [data-testid="today"]');
 
-        // click today
-        $crawler->filter('.due-on-menu [data-testid="today"]')->click();
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);

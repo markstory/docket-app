@@ -24,7 +24,7 @@ export default function DueOnPicker({selected, onChange}: Props): JSX.Element {
     <div className="due-on-picker">
       <DropdownMenu
         button={() => (
-          <MenuButton className="button-secondary opener">
+          <MenuButton className="button-secondary" data-testid="due-on">
             <DueOn value={selectedDate} showNull />
           </MenuButton>
         )}

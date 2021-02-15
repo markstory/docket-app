@@ -93,7 +93,7 @@ function TaskActions({task, setActive}: ActionsProps) {
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
       </ContextMenu>
       <ContextMenu tooltip={t('Task actions')}>
-        <MenuItem className="context-item delete" onSelect={handleDelete}>
+        <MenuItem className="delete" onSelect={handleDelete}>
           <InlineIcon icon="trash" />
           {t('Delete Task')}
         </MenuItem>

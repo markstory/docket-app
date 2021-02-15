@@ -34,7 +34,11 @@ function ContextMenu({
     <DropdownMenu
       button={() => (
         <Tooltip label={tooltip}>
-          <MenuButton className="button-icon button-default" onClick={onClick}>
+          <MenuButton
+            className="button-icon button-default"
+            aria-label={tooltip}
+            onClick={onClick}
+          >
             <Icon icon={icon} />
           </MenuButton>
         </Tooltip>
