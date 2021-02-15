@@ -1,42 +1,8 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
-import classnames from 'classnames';
-import Select, {
-  OptionTypeBase,
-  ValueType,
-  OptionProps,
-  SingleValueProps,
-} from 'react-select';
-
+import React from 'react';
+import Autocomplete, {Option} from 'app/components/autocomplete';
 import {PROJECT_COLORS} from 'app/constants';
 import {InlineIcon} from 'app/components/icon';
-
-function ColorOption(props: OptionProps<OptionTypeBase, false>) {
-  const {getStyles, innerRef, innerProps, data} = props;
-  const className = classnames({
-    'is-selected': props.isSelected,
-    'is-focused': props.isFocused,
-  });
-  return (
-    <div
-      css={getStyles('option', props)}
-      className={className}
-      ref={innerRef}
-      {...innerProps}
-    >
-      <Color color={data.color} name={data.label} />
-    </div>
-  );
-}
-
-function ColorValue(props: SingleValueProps<OptionTypeBase>) {
-  const {getStyles, innerProps, data} = props;
-  return (
-    <div css={getStyles('singleValue', props)} {...innerProps}>
-      <Color color={data.color} name={data.label} />
-    </div>
-  );
-}
+import {t} from 'app/locale';
 
 type ColorProps = {
   name: string;
@@ -52,34 +18,27 @@ function Color({name, color}: ColorProps) {
   );
 }
 
-type OptionType = ValueType<OptionTypeBase, false>;
-
 type Props = {
+  /**
+   * Default value.
+   */
   value?: number;
-  onChange?: (value: OptionType) => void;
+  onChange?: (value: number | string) => void;
 };
 
-function ColorSelect({value, onChange}: Props) {
-  const options = PROJECT_COLORS.map(item => ({
-    value: item.id,
-    label: item.name,
-    color: item.code,
+function ColorSelect({value, onChange}: Props): JSX.Element {
+  const options: Option[] = PROJECT_COLORS.map(color => ({
+    value: color.id,
+    text: color.name,
+    label: <Color color={color.code} name={color.name} />,
   }));
-  const selected = value !== undefined ? value : options[0].value;
-  const valueOption = options.find(opt => opt.value === selected);
-
   return (
-    <Select
-      classNamePrefix="select"
-      defaultValue={valueOption}
-      menuPlacement="auto"
+    <Autocomplete
+      label={t('Choose a color')}
       name="color"
+      value={value}
       options={options}
       onChange={onChange}
-      components={{
-        Option: ColorOption,
-        SingleValue: ColorValue,
-      }}
     />
   );
 }

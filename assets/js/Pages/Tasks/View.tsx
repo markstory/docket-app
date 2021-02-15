@@ -48,10 +48,11 @@ export default function TasksView({referer, task}: Props) {
   function handleCancel() {
     setEditing(false);
   }
+  const title = t('View {task}', {task: task.title});
 
   return (
-    <LoggedIn title={t('View {task}', {task: task.title})}>
-      <Modal onClose={handleClose}>
+    <LoggedIn title={title}>
+      <Modal onClose={handleClose} label={title}>
         <div className="task-view">
           {editing ? (
             <TaskQuickForm

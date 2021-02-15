@@ -66,4 +66,11 @@ abstract class AcceptanceTestCase extends TestCase
 
         return $this->createClient();
     }
+
+    protected function clickWithMouse(string $selector)
+    {
+        $mouse = $this->client->getMouse();
+        $mouse->mouseDownTo($selector)
+            ->mouseUpTo($selector);
+    }
 }

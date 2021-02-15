@@ -86,12 +86,17 @@ class TasksListTest extends AcceptanceTestCase
         // Trigger the hover.
         $client->getMouse()->mouseMoveTo('.task-row');
         $crawler = $client->getCrawler();
+        $client->waitFor('.task-row .actions');
 
+        // Hover over the due menu
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Reschedule"]');
+        $crawler = $client->getCrawler();
         // Open the due menu
-        $crawler->filter('.actions [data-testid="task-reschedule"]')->click();
+        $crawler->filter('.actions [aria-label="Reschedule"]')->click();
+        $client->waitFor('.due-on-menu');
+        // Click today
+        $this->clickWithMouse('.due-on-menu [data-testid="today"]');
 
-        // click today
-        $crawler->filter('.due-on-menu [data-testid="today"]')->click();
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
@@ -112,13 +117,13 @@ class TasksListTest extends AcceptanceTestCase
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
 
-        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
+        $middle = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
 
-        // Do a drag from the top to the bottom
         $mouse = $client->getMouse();
+        // Do a drag from the top to the bottom
         $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
-            ->mouseMove($last->getCoordinates())
-            ->mouseUp($last->getCoordinates());
+            ->mouseMove($middle->getCoordinates(), 0, 20)
+            ->mouseUp($middle->getCoordinates(), 0, 20);
 
         $client->waitFor('.flash-message');
 

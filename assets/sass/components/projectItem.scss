@@ -1,21 +1,20 @@
 .project-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: max-content;
   padding-right: $space / 2;
 
-  .dropdown-menu {
+  [data-reach-menu-button] {
     visibility: hidden;
   }
-
-  &:hover,
-  &[data-active=true] {
-    background: var(--color-bg-low-hover);
+  &:hover [data-reach-menu-button],
+  [data-reach-menu-button][aria-expanded="true"] {
+    visibility: visible;
   }
 
-  &:hover .dropdown-menu,
-  &[data-active=true] .dropdown-menu {
-    visibility: visible;
+  &:hover {
+    background: var(--color-bg-low-hover);
   }
 
   .project-badge {

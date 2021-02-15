@@ -84,7 +84,7 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={subtaskIds} strategy={verticalListSortingStrategy}>
-        <ul className="dnd-dropper-left-offset">
+        <ul className="subtask-sorter">
           {subtasks.map((subtask, index) => (
             <SortableItem
               key={subtask.id}

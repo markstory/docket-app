@@ -9,19 +9,19 @@ type Props = {
   project: Project;
 };
 
-export default function ProjectItem({project}: Props) {
+export default function ProjectItem({project}: Props): JSX.Element {
   const [active, setActive] = useState(false);
   return (
-    <div className="project-item" data-active={active}>
+    <div
+      className="project-item"
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+    >
       <InertiaLink key={project.slug} href={`/projects/${project.slug}`}>
         <ProjectBadge project={project} />
         <span className="counter">{project.incomplete_task_count.toLocaleString()}</span>
       </InertiaLink>
-      <ProjectMenu
-        project={project}
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-      />
+      <ProjectMenu project={project} onClick={() => setActive(!active)} />
     </div>
   );
 }

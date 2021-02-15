@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import {MenuItem} from '@reach/menu-button';
 import classnames from 'classnames';
 
 import {t} from 'app/locale';
 import {updateTaskField} from 'app/actions/tasks';
-import DropdownMenu from 'app/components/dropdownMenu';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
 import {Task} from 'app/types';
-import {formatCompactDate, parseDate} from 'app/utils/dates';
+import {parseDate} from 'app/utils/dates';
 
 type Props = {
   task: Task;
@@ -20,7 +20,7 @@ type Props = {
   showProject?: boolean;
 };
 
-export default function TaskRow({task, showDueOn, showProject}: Props) {
+export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
   const [active, setActive] = useState(false);
 
   const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -33,7 +33,11 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
   });
 
   return (
-    <div className={className} data-active={active}>
+    <div
+      className={className}
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+    >
       <input
         type="checkbox"
         value="1"
@@ -48,7 +52,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props) {
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
-      <TaskActions task={task} setActive={setActive} />
+      {active ? <TaskActions task={task} setActive={setActive} /> : null}
     </div>
   );
 }
@@ -73,41 +77,26 @@ type ActionsProps = Pick<Props, 'task'> & {
 function TaskActions({task, setActive}: ActionsProps) {
   async function handleDueOnChange(value: string | null) {
     updateTaskField(task, 'due_on', value).then(() => {
+      setActive(false);
       Inertia.reload();
     });
   }
 
-  function handleDelete(event: React.MouseEvent) {
-    event.preventDefault();
+  function handleDelete() {
     Inertia.post(`/tasks/${task.id}/delete`);
   }
 
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
-    <div className="actions">
-      <DropdownMenu
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-        alignMenu="right"
-        button={props => (
-          <button className="button-icon" data-testid="task-reschedule" {...props}>
-            <InlineIcon icon="calendar" />
-          </button>
-        )}
-      >
+    <div className="actions" onMouseEnter={() => setActive(true)}>
+      <ContextMenu icon="calendar" tooltip={t('Reschedule')}>
         <MenuContents selected={dueOn} onChange={handleDueOnChange} />
-      </DropdownMenu>
-      <ContextMenu
-        alignMenu="right"
-        onOpen={() => setActive(true)}
-        onClose={() => setActive(false)}
-      >
-        <li>
-          <button className="context-item delete" onClick={handleDelete}>
-            <InlineIcon icon="trash" />
-            {t('Delete Task')}
-          </button>
-        </li>
+      </ContextMenu>
+      <ContextMenu tooltip={t('Task actions')}>
+        <MenuItem className="delete" onSelect={handleDelete}>
+          <InlineIcon icon="trash" />
+          {t('Delete Task')}
+        </MenuItem>
       </ContextMenu>
     </div>
   );

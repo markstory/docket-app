@@ -1,34 +1,50 @@
 import React from 'react';
+import {MenuButton} from '@reach/menu-button';
+
 import {Icon} from './icon';
 import DropdownMenu from './dropdownMenu';
-
-type DropdownMenuProps = React.ComponentProps<typeof DropdownMenu>;
+import Tooltip from 'app/components/tooltip';
 
 type Props = {
+  /**
+   * Contents of the menu.
+   */
   children: React.ReactNode;
-  alignMenu?: 'left' | 'right';
-  onOpen?: DropdownMenuProps['onOpen'];
-  onClose?: DropdownMenuProps['onClose'];
+  /**
+   * Custom icon name.
+   */
+  icon?: string;
+  /**
+   * Tooltip text.
+   */
+  tooltip?: string;
+  /**
+   * Attached to the dropdown menu button.
+   */
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 function ContextMenu({
   children,
-  onOpen,
-  onClose,
-  alignMenu = 'left',
+  onClick,
+  icon = 'kebab',
+  tooltip = '',
 }: Props): JSX.Element {
   return (
     <DropdownMenu
-      onOpen={onOpen}
-      onClose={onClose}
-      alignMenu={alignMenu}
-      button={props => (
-        <button className="button-icon button-default" {...props}>
-          <Icon icon="kebab" />
-        </button>
+      button={() => (
+        <Tooltip label={tooltip}>
+          <MenuButton
+            className="button-icon button-default"
+            aria-label={tooltip}
+            onClick={onClick}
+          >
+            <Icon icon={icon} />
+          </MenuButton>
+        </Tooltip>
       )}
     >
-      <ul>{children}</ul>
+      {children}
     </DropdownMenu>
   );
 }

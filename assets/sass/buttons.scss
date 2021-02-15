@@ -48,6 +48,7 @@ a > svg:not(:last-child) {
   margin-right: $space;
 }
 
+// Button Variants {{{
 // bright background with reverse text.
 .button-primary {
   @extend .button-bare;
@@ -89,6 +90,23 @@ a > svg:not(:last-child) {
   }
 }
 
+.button-danger {
+  @extend .button-bare;
+  background: var(--color-button-danger-bg);
+  color: var(--color-bg);
+
+  &:hover {
+    background: var(--color-button-danger-hover);
+  }
+}
+
+// Shorter button format
+.button-narrow {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  height: $button-narrow-height;
+}
+
 // Buttons that only have an icon inside.
 .button-icon {
   display: flex;
@@ -111,6 +129,7 @@ a > svg:not(:last-child) {
     margin: 0;
   }
 }
+// }}}
 
 .button-sidebar-action {
   @extend .button-bare;
@@ -145,6 +164,7 @@ a > svg:not(:last-child) {
   }
 }
 
+// Button Containers {{{
 .button-bar {
   display: flex;
   align-items: center;
@@ -183,10 +203,4 @@ a > svg:not(:last-child) {
     margin-top: $space;
   }
 }
-
-// Shorter button format
-.button-narrow {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  height: $button-narrow-height;
-}
+// }}}

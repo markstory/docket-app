@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import BaseModal from 'react-modal';
+import BaseModal from '@reach/dialog';
 
 type Props = {
   children: React.ReactNode;
   onClose: () => void;
+  label?: string;
   className?: string;
   canClose?: boolean;
   isOpen?: boolean;
@@ -13,26 +14,25 @@ type Props = {
 export default function Modal({
   children,
   onClose,
-  className = 'modal',
+  className,
+  label,
   isOpen = true,
   canClose = true,
-}: Props) {
+}: Props): JSX.Element {
+  const [showDialog, setShowDialog] = useState(isOpen);
+
   function handleClose(event: React.MouseEvent) {
     event.preventDefault();
-    onClose();
-  }
-
-  function handleRequestClose() {
+    setShowDialog(false);
     onClose();
   }
 
   return (
     <BaseModal
       className={className}
-      overlayClassName="modal-overlay"
-      isOpen={isOpen}
-      onRequestClose={handleRequestClose}
-      shouldReturnFocusAfterClose={true}
+      aria-label={label}
+      isOpen={showDialog}
+      onDismiss={onClose}
     >
       {canClose && (
         <button className="modal-close" onClick={handleClose}>

@@ -10,7 +10,7 @@ type Props = {
   showNull?: boolean;
 };
 
-function DueOn({value, showNull}: Props) {
+function DueOn({value, showNull}: Props): JSX.Element | null {
   if (!value) {
     return showNull ? <React.Fragment>{t('No Due Date')}</React.Fragment> : null;
   }

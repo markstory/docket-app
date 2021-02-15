@@ -10,6 +10,7 @@
 @import 'buttons';
 @import 'headings';
 @import 'forms';
+@import 'components/autocomplete';
 @import 'components/confirm';
 @import 'components/dropdownMenu';
 @import 'components/dnd';
@@ -23,12 +24,12 @@
 @import 'components/projectBadge';
 @import 'components/projectFilter';
 @import 'components/projectItem';
-@import 'components/reactSelect';
 @import 'components/taskGroup';
 @import 'components/taskQuickForm';
 @import 'components/taskNotes';
 @import 'components/taskRow';
 @import 'components/taskSubtasks';
+@import 'components/tooltip';
 
 @import 'pages/tasks/view.scss';
 @import 'pages/projects/view.scss';

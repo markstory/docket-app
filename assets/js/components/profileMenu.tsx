@@ -1,4 +1,5 @@
 import React from 'react';
+import {MenuLink, MenuButton} from '@reach/menu-button';
 import {usePage, InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
@@ -10,39 +11,30 @@ type SharedProps = {
   identity: User;
 };
 
-export default function ProfileMenu() {
+export default function ProfileMenu(): JSX.Element {
   const {identity} = usePage().props as SharedProps;
   const avatarUrl = `https://www.gravatar.com/avatar/${identity.avatar_hash}?s=50&default=retro`;
   return (
     <div className="profile-menu">
       <DropdownMenu
-        alignMenu="left"
-        button={props => (
-          <button className="avatar" {...props}>
+        button={() => (
+          <MenuButton className="avatar">
             <img src={avatarUrl} width="50" height="50" />
-          </button>
+          </MenuButton>
         )}
       >
-        <ul>
-          <li className="context-item-text separator">{identity.name}</li>
-          <li>
-            <InertiaLink className="context-item edit" href="/users/profile">
-              <InlineIcon icon="pencil" />
-              {t('Edit Profile')}
-            </InertiaLink>
-          </li>
-          <li>
-            <InertiaLink className="context-item lock" href="/users/updatePassword">
-              <InlineIcon icon="lock" />
-              {t('Update Password')}
-            </InertiaLink>
-          </li>
-          <li>
-            <InertiaLink className="context-item" href="/logout">
-              {t('Logout')}
-            </InertiaLink>
-          </li>
-        </ul>
+        <div className="dropdown-item-text separator">{identity.name}</div>
+        <MenuLink as={InertiaLink} className="edit" href="/users/profile">
+          <InlineIcon icon="pencil" />
+          {t('Edit Profile')}
+        </MenuLink>
+        <MenuLink as={InertiaLink} className="lock" href="/users/updatePassword">
+          <InlineIcon icon="lock" />
+          {t('Update Password')}
+        </MenuLink>
+        <MenuLink as={InertiaLink} href="/logout">
+          {t('Logout')}
+        </MenuLink>
       </DropdownMenu>
     </div>
   );

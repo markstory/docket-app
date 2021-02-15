@@ -24,10 +24,11 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
     const formData = new FormData(e.target as HTMLFormElement);
     Inertia.post(`/projects/${project.slug}/edit`, formData);
   }
+  const title = t('Edit {project} Project', {project: project.name});
 
   return (
-    <LoggedIn title={t('Edit {project} Project', {project: project.name})}>
-      <Modal onClose={handleClose}>
+    <LoggedIn title={title}>
+      <Modal onClose={handleClose} label={title}>
         <h2>{t('Edit Project')}</h2>
         <form className="form-vertical" method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />

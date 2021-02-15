@@ -1,7 +1,17 @@
-.modal.modal-confirm {
+[data-reach-dialog-content][data-reach-alert-dialog-content] {
   top: 80px;
   left: 25%;
   right: 25%;
   bottom: auto;
   border-radius: $border-radius-large;
+  padding-top: 20px;
 }
+[data-reach-alert-dialog-label] {
+  font-size: $font-size-large;
+  font-weight: bold;
+  margin-bottom: $space * 2;
+}
+[data-reach-alert-dialog-description] {
+  margin-bottom: $space;
+}
+

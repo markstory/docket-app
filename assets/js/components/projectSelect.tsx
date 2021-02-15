@@ -1,73 +1,28 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
-import classnames from 'classnames';
-
-import Select, {
-  OptionTypeBase,
-  ValueType,
-  OptionProps,
-  SingleValueProps,
-} from 'react-select';
-
+import React from 'react';
+import Autocomplete, {Option} from 'app/components/autocomplete';
 import ProjectBadge from 'app/components/projectBadge';
+import {t} from 'app/locale';
 import {useProjects} from 'app/providers/projects';
 
-function ProjectOption(props: OptionProps<OptionTypeBase, false>) {
-  const {getStyles, innerRef, innerProps, data} = props;
-  const className = classnames({
-    'is-selected': props.isSelected,
-    'is-focused': props.isFocused,
-  });
-  return (
-    <div
-      css={getStyles('option', props)}
-      className={className}
-      ref={innerRef}
-      {...innerProps}
-    >
-      <ProjectBadge project={data.project} />
-    </div>
-  );
-}
-
-function ProjectValue(props: SingleValueProps<OptionTypeBase>) {
-  const {getStyles, innerProps, data} = props;
-  return (
-    <div css={getStyles('singleValue', props)} {...innerProps}>
-      <ProjectBadge project={data.project} />
-    </div>
-  );
-}
-
-type OptionType = ValueType<OptionTypeBase, false>;
-
 type Props = {
-  value: number | string | undefined | null;
-  onChange?: (value: OptionType) => void;
+  value: number | undefined | null;
+  onChange?: (value: number | string) => void;
 };
 
-function ProjectSelect({value, onChange}: Props) {
+function ProjectSelect({value, onChange}: Props): JSX.Element {
   const [projects] = useProjects();
-  const options = projects.map(project => ({
+  const options: Option[] = projects.map(project => ({
     value: project.id,
-    label: project.name,
-    project,
+    text: project.name,
+    label: <ProjectBadge project={project} />,
   }));
-  const selected = value ? value : options?.[0]?.value;
-  const valueOption = options.find(opt => opt.value === selected);
-
   return (
-    <Select
-      classNamePrefix="select"
-      defaultValue={valueOption}
-      menuPlacement="auto"
+    <Autocomplete
+      label={t('Choose a project')}
       name="project_id"
+      value={value}
       options={options}
       onChange={onChange}
-      components={{
-        Option: ProjectOption,
-        SingleValue: ProjectValue,
-      }}
     />
   );
 }

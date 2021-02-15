@@ -62,9 +62,9 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('.task-quickform');
 
         // Open the date menu, clear the due date
-        $crawler->filter('.due-on .opener')->click();
+        $crawler->filter('[data-testid="due-on"]')->click();
         $client->waitFor('.due-on-menu');
-        $crawler->filter('.due-on-menu [data-testid="not-due"]')->click();
+        $this->clickWithMouse('.due-on-menu [data-testid="not-due"]');
 
         // Submit the form
         $crawler->filter('[data-testid="save-task"]')->click();

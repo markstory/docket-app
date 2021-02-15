@@ -17,7 +17,7 @@ class ProjectsTest extends AcceptanceTestCase
         $client->click($link);
 
         // Wait for page to load
-        $client->waitFor('.modal');
+        $client->waitFor('input[name="name"]');
         $client->submitForm('Save', [
             'name' => 'New project',
         ]);

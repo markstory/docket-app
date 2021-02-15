@@ -1,13 +1,14 @@
-.modal {
-  background: var(--color-bg);
+[data-reach-dialog-content] {
+  outline: none;
 
   position: absolute;
-  z-index: $z-modal;
-  top: 60px;
-  left: 60px;
-  right: 60px;
-  bottom: 0px;
+  top: 5vh;
+  left: 5vh;
+  right: 5vh;
+  bottom: 0;
+
   padding: 45px 20px 20px 20px;
+  background: var(--color-bg);
   border-radius: $border-radius-large $border-radius-large 0 0;
   box-shadow: $shadow-high;
 
@@ -28,24 +29,27 @@
   }
 }
 
+.modal-contents {
+  height: 100%;
+  overflow: auto;
+}
+
 @media (max-width: $breakpoint-narrow) {
-  .modal {
+  [data-reach-dialog-content] {
     top: $space * 2;
     left: 5px;
     right: 5px;
   }
 }
 
-.modal-confirm {
-  padding-top: 20px;
-}
-
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.15);
+[data-reach-dialog-overlay] {
+  background: hsla(0, 0%, 0%, 0.15);
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
+  left: 0;
+  overflow: auto;
   z-index: $z-modal;
 }
+

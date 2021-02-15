@@ -12,7 +12,7 @@
 
   img {
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: 2px solid var(--color-menu-selected);
   }
   .avatar:hover img {
     border-color: var(--color-secondary);
