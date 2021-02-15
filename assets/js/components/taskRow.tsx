@@ -50,6 +50,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
           {showProject && <ProjectBadge project={task.project} />}
           {showDueOn && <DueOn value={task.due_on} />}
           <SubtaskSummary task={task} />
+          {task.evening ? <InlineIcon className="icon-evening" icon="moon" /> : null}
         </div>
       </InertiaLink>
       {active ? <TaskActions task={task} setActive={setActive} /> : null}

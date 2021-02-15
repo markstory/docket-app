@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 
 import {t} from 'app/locale';
+import {InlineIcon} from 'app/components/icon';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
 import ProjectSelect from 'app/components/projectSelect';
+import Tooltip from 'app/components/tooltip';
 
 type Props = {
   task: Task;
@@ -14,7 +16,13 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: Props) {
+export default function TaskQuickForm({
+  errors,
+  task,
+  url,
+  onSubmit,
+  onCancel,
+}: Props): JSX.Element {
   const [dueOn, setDueOn] = useState(task.due_on);
 
   return (
@@ -42,6 +50,22 @@ export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: P
             onChange={(value: Task['due_on']) => setDueOn(value)}
           />
           <FormError errors={errors} field="due_on" />
+        </div>
+        <div className="evening">
+          <Tooltip label={t('Evening')}>
+            <label htmlFor="task-evening">
+              <InlineIcon icon="moon" className="icon-evening" />
+            </label>
+          </Tooltip>
+          <input type="hidden" name="evening" value="0" />
+          <input
+            id="task-evening"
+            type="checkbox"
+            name="evening"
+            value="1"
+            defaultChecked={task.evening}
+          />
+          <FormError errors={errors} field="evening" />
         </div>
       </div>
       <div className="button-bar">

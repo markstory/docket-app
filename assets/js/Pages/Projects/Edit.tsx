@@ -50,6 +50,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
           </div>
           <div className="form-input-checkbox">
             <label htmlFor="project-archived">{t('Archived')}</label>
+            <input type="hidden" name="archived" value="0" />
             <input
               type="checkbox"
               name="archived"

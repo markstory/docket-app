@@ -214,11 +214,13 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/edit", [
             'title' => 'updated',
+            'evening' => true,
         ]);
         $this->assertResponseCode(200);
 
         $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);
+        $this->assertTrue($todo->evening);
     }
 
     public function testEditPermissions(): void

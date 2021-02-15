@@ -39,6 +39,7 @@ type UpdateData = {
   child_order?: number;
   day_order?: number;
   due_on?: string;
+  evening?: boolean;
 };
 
 function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
@@ -119,10 +120,25 @@ export default function TaskGroupedSorter({
       sourceIndex,
       destinationIndex
     );
-
-    if (scope === 'day' && destinationGroup.key !== task.due_on) {
-      data.due_on = destinationGroup.key;
+    if (scope === 'day') {
+      let isEvening = false;
+      let newDate = destinationGroup.key;
+      if (newDate.includes('evening:')) {
+        isEvening = true;
+        newDate = newDate.substring(8);
+      }
+      // TODO: Right now the server is not persisting this
+      // Also if evening is a new section, how does sort order work?
+      // Should evening create a new 'day' scope when getting tasks
+      // from the server?
+      if (isEvening !== task.evening) {
+        data.evening = isEvening;
+      }
+      if (newDate !== task.due_on) {
+        data.due_on = destinationGroup.key;
+      }
     }
+
     setSorted(newItems);
 
     Inertia.post(`/tasks/${active.id}/move`, data, {

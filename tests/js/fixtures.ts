@@ -6,6 +6,7 @@ export function makeTask(props?: Partial<Task>): Task {
     title: '',
     body: '',
     completed: false,
+    evening: false,
     due_on: null,
     day_order: 0,
     child_order: 0,

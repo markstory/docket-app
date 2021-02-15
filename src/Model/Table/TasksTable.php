@@ -107,6 +107,10 @@ class TasksTable extends Table
             ->boolean('completed')
             ->notEmptyString('completed');
 
+        $validator
+            ->boolean('evening')
+            ->notEmptyString('evening');
+
         return $validator;
     }
 
