@@ -117,13 +117,13 @@ class TasksListTest extends AcceptanceTestCase
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
 
-        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
+        $middle = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
 
-        // Do a drag from the top to the bottom
         $mouse = $client->getMouse();
+        // Do a drag from the top to the bottom
         $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
-            ->mouseMove($last->getCoordinates())
-            ->mouseUp($last->getCoordinates());
+            ->mouseMove($middle->getCoordinates(), 0, 20)
+            ->mouseUp($middle->getCoordinates(), 0, 20);
 
         $client->waitFor('.flash-message');
 
