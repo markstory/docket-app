@@ -127,10 +127,6 @@ export default function TaskGroupedSorter({
         isEvening = true;
         newDate = newDate.substring(8);
       }
-      // TODO: Right now the server is not persisting this
-      // Also if evening is a new section, how does sort order work?
-      // Should evening create a new 'day' scope when getting tasks
-      // from the server?
       if (isEvening !== task.evening) {
         data.evening = isEvening;
       }

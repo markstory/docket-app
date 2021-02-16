@@ -6,7 +6,6 @@ import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
 import ProjectSelect from 'app/components/projectSelect';
-import Tooltip from 'app/components/tooltip';
 
 type Props = {
   task: Task;
@@ -52,11 +51,9 @@ export default function TaskQuickForm({
           <FormError errors={errors} field="due_on" />
         </div>
         <div className="evening">
-          <Tooltip label={t('Evening')}>
-            <label htmlFor="task-evening">
-              <InlineIcon icon="moon" className="icon-evening" />
-            </label>
-          </Tooltip>
+          <label htmlFor="task-evening">
+            <InlineIcon icon="moon" className="icon-evening" /> {t('Evening')}
+          </label>
           <input type="hidden" name="evening" value="0" />
           <input
             id="task-evening"

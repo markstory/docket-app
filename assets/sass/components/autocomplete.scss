@@ -1,15 +1,18 @@
-.combobox-wrapper {
+.autocomplete-wrapper {
   display: flex;
+  position: relative;
 }
 [data-reach-combobox-input] {
   @extend .form-input-like;
   min-width: 200px;
 }
 
-.combobox-arrow {
-  position: relative;
+.autocomplete-arrow {
+  pointer-events: none;
+
+  position: absolute;
   top: 9px;
-  left: -26px;
+  right: 16px;
   color: var(--color-muted);
 }
 [data-reach-combobox-input][aria-expanded="true"] + .combobox-arrow {
@@ -34,7 +37,7 @@
   outline: none;
   list-style: none;
 }
-.combobox-empty,
+.autocomplete-empty,
 [data-reach-combobox-option] {
   cursor: pointer;
   padding: $space;
@@ -53,7 +56,7 @@
     color: var(--color-muted);
   }
 }
-.combobox-empty {
+.autocomplete-empty {
   cursor: default;
   color: var(--color-muted);
 }
