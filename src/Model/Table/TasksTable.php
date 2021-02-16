@@ -158,6 +158,7 @@ class TasksTable extends Table
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on <=' => new FrozenDate('today', $timezone),
             ])
+            ->orderDesc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
     }
@@ -177,6 +178,7 @@ class TasksTable extends Table
                 'Tasks.due_on <' => $options['end'],
             ])
             ->orderAsc('Tasks.due_on')
+            ->orderDesc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
     }
@@ -190,6 +192,7 @@ class TasksTable extends Table
                 'Tasks.due_on >=' => $today,
             ])
             ->orderAsc('Tasks.due_on')
+            ->orderDesc('Tasks.evening')
             ->orderAsc('Tasks.day_order');
     }
 
@@ -237,9 +240,13 @@ class TasksTable extends Table
         $conditions = [
             'completed' => $item->completed,
         ];
-        if (isset($operation['day_order'])) {
+        if (isset($operation['day_order']) && !isset($operation['evening'])) {
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
+        } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
+            $property = 'day_order';
+            $conditions['due_on IS'] = $item->due_on;
+            $conditions['evening'] = $operation['evening'];
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
@@ -280,9 +287,12 @@ class TasksTable extends Table
 
         $current = $item->get($property);
         $item->set($property, $targetOffset);
+        if (isset($operation['evening'])) {
+            $item->set('evening', $operation['evening']);
+        }
         $difference = $current - $item->get($property);
 
-        if ($item->isDirty('due_on')) {
+        if ($item->isDirty('due_on') || $item->isDirty('evening')) {
             // Moving an item to a new list. Shift the remainder of
             // the new list down.
             $query
