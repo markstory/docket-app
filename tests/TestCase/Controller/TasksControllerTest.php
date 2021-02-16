@@ -547,6 +547,31 @@ class TasksControllerTest extends TestCase
         }
     }
 
+    public function testMoveIntoEveningSplitOrder()
+    {
+        $project = $this->makeProject('work', 1);
+
+        $first = $this->makeTask('first', $project->id, 2, ['evening' => false]);
+        $second = $this->makeTask('second', $project->id, 3, ['evening' => false]);
+        $third = $this->makeTask('third', $project->id, 4, ['evening' => false]);
+        $fourth = $this->makeTask('fourth', $project->id, 1, ['evening' => true]);
+        $fifth = $this->makeTask('fifth', $project->id, 5, ['evening' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$first->id, $third->id, $second->id, $fourth->id, $fifth->id];
+        $this->post("/tasks/{$third->id}/move", [
+            'day_order' => 1,
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $results = $this->dayOrderedTasks();
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+            $this->assertNull($results[$i]->due_on);
+        }
+    }
+
     public function testMoveOutOfEvening()
     {
         $project = $this->makeProject('work', 1);

@@ -158,7 +158,7 @@ class TasksTable extends Table
                 'Tasks.due_on IS NOT' => null,
                 'Tasks.due_on <=' => new FrozenDate('today', $timezone),
             ])
-            ->orderDesc('Tasks.evening')
+            ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
     }
@@ -178,7 +178,7 @@ class TasksTable extends Table
                 'Tasks.due_on <' => $options['end'],
             ])
             ->orderAsc('Tasks.due_on')
-            ->orderDesc('Tasks.evening')
+            ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
     }
@@ -192,7 +192,7 @@ class TasksTable extends Table
                 'Tasks.due_on >=' => $today,
             ])
             ->orderAsc('Tasks.due_on')
-            ->orderDesc('Tasks.evening')
+            ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order');
     }
 
@@ -243,6 +243,7 @@ class TasksTable extends Table
         if (isset($operation['day_order']) && !isset($operation['evening'])) {
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
+            $conditions['evening'] = false;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
