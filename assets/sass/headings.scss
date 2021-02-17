@@ -11,6 +11,18 @@
   }
 }
 
+.heading-icon {
+  &.today svg {
+    color: var(--color-due-today);
+  }
+  &.evening svg {
+    color: var(--color-due-evening);
+  }
+  &.overdue svg {
+    color: var(--color-due-overdue);
+  }
+}
+
 .heading-logo {
   display: flex;
   align-items: center;

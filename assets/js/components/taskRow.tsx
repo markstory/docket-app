@@ -8,6 +8,7 @@ import {t} from 'app/locale';
 import {updateTaskField} from 'app/actions/tasks';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
+import TaskEvening from 'app/components/taskEvening';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
@@ -49,8 +50,8 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
         <div className="attributes">
           {showProject && <ProjectBadge project={task.project} />}
           {showDueOn && <DueOn value={task.due_on} />}
+          <TaskEvening task={task} />
           <SubtaskSummary task={task} />
-          {task.evening ? <InlineIcon className="icon-evening" icon="moon" /> : null}
         </div>
       </InertiaLink>
       {active ? <TaskActions task={task} setActive={setActive} /> : null}

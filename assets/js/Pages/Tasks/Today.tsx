@@ -3,6 +3,7 @@ import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
 import {t} from 'app/locale';
+import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
@@ -71,7 +72,10 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                   items={overdue.ids}
                   strategy={verticalListSortingStrategy}
                 >
-                  <h2>{t('Overdue')}</h2>
+                  <h2 className="heading-icon overdue">
+                    <Icon icon="alert" />
+                    {t('Overdue')}
+                  </h2>
                   <TaskGroup
                     dropId={overdue.key}
                     tasks={overdue.items}
@@ -83,7 +87,10 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                 </SortableContext>
               )}
               <SortableContext items={today.ids} strategy={verticalListSortingStrategy}>
-                <h2>{t('Today')}</h2>
+                <h2 className="heading-icon today">
+                  <Icon icon="clippy" />
+                  {t('Today')}
+                </h2>
                 <TaskGroup
                   dropId={today.key}
                   tasks={today.items}
@@ -93,7 +100,10 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                 />
               </SortableContext>
               <SortableContext items={evening.ids} strategy={verticalListSortingStrategy}>
-                <h2>{t('This Evening')}</h2>
+                <h2 className="heading-icon evening">
+                  <Icon icon="moon" />
+                  {t('This Evening')}
+                </h2>
                 <TaskGroup
                   dropId={evening.key}
                   tasks={evening.items}

@@ -131,7 +131,7 @@ export default function TaskGroupedSorter({
         data.evening = isEvening;
       }
       if (newDate !== task.due_on) {
-        data.due_on = destinationGroup.key;
+        data.due_on = newDate;
       }
     }
 

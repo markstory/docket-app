@@ -106,7 +106,6 @@ body {
 
   --color-disabled: var(--color-gray-300);
   --color-muted: var(--color-gray-600);
-  --color-evening: var(--color-blue-300);
   --color-low-emphasis: var(--color-gray-700);
 
   --color-border: var(--color-gray-300);
@@ -140,6 +139,7 @@ body {
   --color-action-complete: var(--color-green-700);
 
   --color-due-overdue: var(--color-red-500);
+  --color-due-evening: var(--color-blue-300);
   --color-due-today: var(--color-purple-500);
   --color-due-tomorrow: var(--color-ochre-500);
   --color-due-week: var(--color-blue-500);

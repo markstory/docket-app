@@ -7,7 +7,7 @@ import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
 import DueOn from 'app/components/dueOn';
 import Modal from 'app/components/modal';
-import {InlineIcon} from 'app/components/icon';
+import TaskEvening from 'app/components/taskEvening';
 import TaskQuickForm from 'app/components/taskQuickForm';
 import TaskNotes from 'app/components/taskNotes';
 import TaskSubtasks from 'app/components/taskSubtasks';
@@ -18,7 +18,7 @@ type Props = {
   referer: string;
 };
 
-export default function TasksView({referer, task}: Props) {
+export default function TasksView({referer, task}: Props): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -104,9 +104,9 @@ function TaskSummary({task, onClick}: SummaryProps) {
         </a>
       </div>
       <a href="#" onClick={onClick} className="attributes">
-        {<ProjectBadge project={task.project} />}
+        <ProjectBadge project={task.project} />
         {task.due_on && <DueOn value={task.due_on} />}
-        {task.evening ? <InlineIcon className="icon-evening" icon="moon" /> : null}
+        <TaskEvening task={task} />
       </a>
     </div>
   );

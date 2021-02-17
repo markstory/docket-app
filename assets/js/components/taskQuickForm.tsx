@@ -51,9 +51,6 @@ export default function TaskQuickForm({
           <FormError errors={errors} field="due_on" />
         </div>
         <div className="evening">
-          <label htmlFor="task-evening">
-            <InlineIcon icon="moon" className="icon-evening" /> {t('Evening')}
-          </label>
           <input type="hidden" name="evening" value="0" />
           <input
             id="task-evening"
@@ -62,6 +59,9 @@ export default function TaskQuickForm({
             value="1"
             defaultChecked={task.evening}
           />
+          <label htmlFor="task-evening">
+            <InlineIcon icon="moon" className="icon-evening" /> {t('Evening')}
+          </label>
           <FormError errors={errors} field="evening" />
         </div>
       </div>
