@@ -12,6 +12,9 @@
   &.today {
     color: var(--color-due-today);
   }
+  &.evening {
+    color: var(--color-due-evening);
+  }
   &.tomorrow {
     color: var(--color-due-tomorrow);
   }

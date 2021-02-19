@@ -26,8 +26,8 @@ export default function TaskGroup({
   tasks,
   defaultDate,
   defaultProjectId,
-  showProject,
-  showDueOn,
+  showProject = false,
+  showDueOn = false,
   showAdd = true,
 }: Props): JSX.Element {
   const [showForm, setShowForm] = useState(false);

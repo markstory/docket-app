@@ -1,0 +1,94 @@
+// Toggle buttons convert a checkbox into
+// an on/off switch.
+$toggle-width: $button-med-height * 2;
+$toggle-border-width: 2px;
+
+
+.toggle-checkbox {
+  position: relative;
+  display: inline-block;
+  height: $button-med-height;
+  width: $toggle-width;
+
+  // Position out of the bounding box.
+  input {
+    position: absolute;
+    left: -99em;
+  }
+
+  .switch {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    height: $button-med-height;
+    width: 100%;
+    min-width: auto;
+
+    // default to off color
+    background: var(--color-bg-low);
+    border-radius: $border-radius;
+    transition: all 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    box-shadow: inset 0 2px 2px hsla(0, 0%, 0%, 0.2);
+  }
+
+  .on,
+  .off {
+    position: absolute;
+    line-height: $button-med-height;
+    font-size: 14px;
+    z-index: 2;
+    transition: all 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  .off {
+    left: 10px;
+    color: var(--color-foreground);
+  }
+  .on {
+    right: 8px;
+    color: var(--color-foreground);
+  }
+  .knob {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    background: var(--color-bg);
+    width: $toggle-width / 2;
+    height: $button-med-height - ($toggle-border-width * 2);
+    border-radius: $border-radius;
+    box-shadow: 0 2px 2px 1px hsla(0, 0%, 0%, 0.2);
+    top: $toggle-border-width;
+    left: $toggle-border-width;
+    transition: all 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    transform: translateX(0px);
+  }
+
+  // Define the positioning and colors for on state.
+  input:checked + .switch {
+    background: var(--color-toggle-checked);
+  }
+  input:checked + .switch .on {
+    color: var(--color-foreground);
+  }
+  input:checked + .switch .off {
+    color: var(--color-foreground);
+  }
+  input:checked + .switch .knob {
+    width: ($toggle-width / 2) - $toggle-border-width;
+    transform: translateX(($toggle-width / 2) - $toggle-border-width);
+    border-color: var(--color-bg);
+  }
+}
+
+
+// Disabled toggles
+.toggle-disabled {
+  cursor: not-allowed;
+
+  .toggle-switch {
+    cursor: not-allowed;
+    background: var(--color-muted);
+  }
+  .toggle-switch:before {
+    color: var(--color-muted);
+  }
+}

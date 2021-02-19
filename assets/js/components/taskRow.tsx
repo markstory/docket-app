@@ -8,12 +8,10 @@ import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
-import TaskEvening from 'app/components/taskEvening';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
 import {Task} from 'app/types';
-import {parseDate} from 'app/utils/dates';
 
 type Props = {
   task: Task;
@@ -49,8 +47,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
         <span className="title">{task.title}</span>
         <div className="attributes">
           {showProject && <ProjectBadge project={task.project} />}
-          {showDueOn && <DueOn value={task.due_on} />}
-          <TaskEvening task={task} />
+          <DueOn task={task} showDetailed={showDueOn} />
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>

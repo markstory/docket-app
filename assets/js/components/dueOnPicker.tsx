@@ -10,6 +10,7 @@ import {Task} from 'app/types';
 
 import DropdownMenu from './dropdownMenu';
 import {InlineIcon} from './icon';
+import ToggleCheckbox from './toggleCheckbox';
 
 type Props = {
   task: Task;
@@ -17,15 +18,13 @@ type Props = {
 };
 
 export default function DueOnPicker({task, onChange}: Props): JSX.Element {
-  const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
-
   // Accept a few different formats. Eg. Dec 25, Wednesday etc
   return (
     <div className="due-on-picker">
       <DropdownMenu
         button={() => (
           <MenuButton className="button-secondary" data-testid="due-on">
-            <DueOn value={dueOn} showNull />
+            <DueOn task={task} showNull />
           </MenuButton>
         )}
       >
@@ -65,6 +64,11 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
     setInputValue(value);
+  }
+
+  function handleEveningChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const checked = event.target.checked;
+    onChange(task.due_on, checked);
   }
 
   function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -144,6 +148,15 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         pagedNavigation
         fixedWeeks
       />
+      <div data-reach-menu-item>
+        <ToggleCheckbox
+          name="evening"
+          value={task.evening}
+          onChange={handleEveningChange}
+          onLabel={<InlineIcon icon="moon" />}
+          offLabel={<InlineIcon icon="sun" />}
+        />
+      </div>
     </div>
   );
 }

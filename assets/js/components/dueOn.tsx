@@ -3,30 +3,43 @@ import classnames from 'classnames';
 
 import {InlineIcon} from 'app/components/icon';
 import {t} from 'app/locale';
+import {Task} from 'app/types';
 import {formatCompactDate, getDiff} from 'app/utils/dates';
 
 type Props = {
-  value: null | undefined | string | Date;
+  task: Task;
+  /**
+   * Set to false to only show the evening indicator.
+   */
+  showDetailed?: boolean;
   showNull?: boolean;
 };
 
-function DueOn({value, showNull}: Props): JSX.Element | null {
+function DueOn({task, showNull = false, showDetailed = true}: Props): JSX.Element | null {
+  const value = task.due_on;
   if (!value) {
     return showNull ? <React.Fragment>{t('No Due Date')}</React.Fragment> : null;
   }
   const diff = getDiff(value);
-  const formatted = formatCompactDate(value);
+  const thisEvening = diff >= 0 && diff < 1 && task.evening;
+
   const className = classnames('due-on', {
     overdue: diff < 0,
-    today: diff >= 0 && diff < 1,
+    today: diff >= 0 && diff < 1 && task.evening === false,
+    evening: thisEvening,
     tomorrow: diff >= 1 && diff < 2,
     week: diff >= 2 && diff < 8,
   });
-  // TODO evening
+  const formatted = thisEvening ? t('This evening') : formatCompactDate(value);
+
   return (
     <time className={className} dateTime={formatted}>
-      <InlineIcon icon="calendar" width="xsmall" />
-      {formatted}
+      {task.evening ? (
+        <InlineIcon icon="moon" />
+      ) : (
+        <InlineIcon icon="calendar" width="xsmall" />
+      )}
+      {showDetailed && formatted}
     </time>
   );
 }

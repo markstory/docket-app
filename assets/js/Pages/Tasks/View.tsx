@@ -7,7 +7,6 @@ import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
 import DueOn from 'app/components/dueOn';
 import Modal from 'app/components/modal';
-import TaskEvening from 'app/components/taskEvening';
 import TaskQuickForm from 'app/components/taskQuickForm';
 import TaskNotes from 'app/components/taskNotes';
 import TaskSubtasks from 'app/components/taskSubtasks';
@@ -105,8 +104,7 @@ function TaskSummary({task, onClick}: SummaryProps) {
       </div>
       <a href="#" onClick={onClick} className="attributes">
         <ProjectBadge project={task.project} />
-        {task.due_on && <DueOn value={task.due_on} />}
-        <TaskEvening task={task} />
+        <DueOn task={task} />
       </a>
     </div>
   );
