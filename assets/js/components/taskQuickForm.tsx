@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 
 import {t} from 'app/locale';
-import {InlineIcon} from 'app/components/icon';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
@@ -23,6 +22,7 @@ export default function TaskQuickForm({
   onCancel,
 }: Props): JSX.Element {
   const [dueOn, setDueOn] = useState(task.due_on);
+  const [evening, setEvening] = useState(task.evening);
 
   return (
     <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
@@ -44,25 +44,15 @@ export default function TaskQuickForm({
         </div>
         <div className="due-on">
           <input type="hidden" name="due_on" value={dueOn ?? ''} />
+          <input type="hidden" name="evening" value={evening ? 1 : 0} />
           <DueOnPicker
-            selected={dueOn}
-            onChange={(value: Task['due_on']) => setDueOn(value)}
+            task={task}
+            onChange={(newDueOn, newEvening) => {
+              setDueOn(newDueOn);
+              setEvening(newEvening);
+            }}
           />
           <FormError errors={errors} field="due_on" />
-        </div>
-        <div className="evening">
-          <input type="hidden" name="evening" value="0" />
-          <input
-            id="task-evening"
-            type="checkbox"
-            name="evening"
-            value="1"
-            defaultChecked={task.evening}
-          />
-          <label htmlFor="task-evening">
-            <InlineIcon icon="moon" className="icon-evening" /> {t('Evening')}
-          </label>
-          <FormError errors={errors} field="evening" />
         </div>
       </div>
       <div className="button-bar">

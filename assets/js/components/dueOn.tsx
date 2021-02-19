@@ -22,9 +22,9 @@ function DueOn({value, showNull}: Props): JSX.Element | null {
     tomorrow: diff >= 1 && diff < 2,
     week: diff >= 2 && diff < 8,
   });
+  // TODO evening
   return (
     <time className={className} dateTime={formatted}>
-      {' '}
       <InlineIcon icon="calendar" width="xsmall" />
       {formatted}
     </time>

@@ -5,7 +5,7 @@ import {MenuItem} from '@reach/menu-button';
 import classnames from 'classnames';
 
 import {t} from 'app/locale';
-import {updateTaskField} from 'app/actions/tasks';
+import {updateTask} from 'app/actions/tasks';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import TaskEvening from 'app/components/taskEvening';
@@ -77,22 +77,21 @@ type ActionsProps = Pick<Props, 'task'> & {
 };
 
 function TaskActions({task, setActive}: ActionsProps) {
-  async function handleDueOnChange(value: string | null) {
-    updateTaskField(task, 'due_on', value).then(() => {
-      setActive(false);
-      Inertia.reload();
-    });
+  async function handleDueOnChange(dueOn: string | null, evening: boolean) {
+    const data = {due_on: dueOn, evening};
+    await updateTask(task, data);
+    setActive(false);
+    Inertia.reload();
   }
 
   function handleDelete() {
     Inertia.post(`/tasks/${task.id}/delete`);
   }
 
-  const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
     <div className="actions" onMouseEnter={() => setActive(true)}>
       <ContextMenu icon="calendar" tooltip={t('Reschedule')}>
-        <MenuContents selected={dueOn} onChange={handleDueOnChange} />
+        <MenuContents task={task} onChange={handleDueOnChange} />
       </ContextMenu>
       <ContextMenu tooltip={t('Task actions')}>
         <MenuItem className="delete" onSelect={handleDelete}>
