@@ -511,7 +511,7 @@ class TasksControllerTest extends TestCase
         $expected = [$second->id, $first->id, $third->id];
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 1,
-            'evening' => true
+            'evening' => true,
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
@@ -536,7 +536,7 @@ class TasksControllerTest extends TestCase
         $expected = [$third->id, $second->id, $first->id, $fourth->id];
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 1,
-            'evening' => true
+            'evening' => true,
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
@@ -584,7 +584,7 @@ class TasksControllerTest extends TestCase
         $expected = [$first->id, $third->id, $second->id];
         $this->post("/tasks/{$third->id}/move", [
             'day_order' => 1,
-            'evening' => false
+            'evening' => false,
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();

@@ -142,7 +142,7 @@ class TasksController extends AppController
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
             'due_on' => $this->request->getData('due_on'),
-            'evening' => $this->request->getData('evening') !== null ? $this->request->getData('evening') : null,
+            'evening' => $this->request->getData('evening') ?? null,
         ];
         try {
             $this->Tasks->move($task, $operation);
