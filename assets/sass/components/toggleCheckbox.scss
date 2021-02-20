@@ -3,17 +3,17 @@
 $toggle-width: $button-med-height * 2;
 $toggle-border-width: 2px;
 
-
 .toggle-checkbox {
   position: relative;
   display: inline-block;
   height: $button-med-height;
   width: $toggle-width;
+  overflow: hidden;
 
   // Position out of the bounding box.
   input {
+    z-index: -1;
     position: absolute;
-    left: -99em;
   }
 
   .switch {
@@ -40,7 +40,7 @@ $toggle-border-width: 2px;
     transition: all 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
   }
   .off {
-    left: 10px;
+    left: 12px;
     color: var(--color-foreground);
   }
   .on {
@@ -55,6 +55,7 @@ $toggle-border-width: 2px;
     width: $toggle-width / 2;
     height: $button-med-height - ($toggle-border-width * 2);
     border-radius: $border-radius;
+    border: 1px solid var(--color-bg);
     box-shadow: 0 2px 2px 1px hsla(0, 0%, 0%, 0.2);
     top: $toggle-border-width;
     left: $toggle-border-width;
@@ -62,20 +63,17 @@ $toggle-border-width: 2px;
     transform: translateX(0px);
   }
 
-  // Define the positioning and colors for on state.
-  input:checked + .switch {
-    background: var(--color-toggle-checked);
-  }
-  input:checked + .switch .on {
-    color: var(--color-foreground);
-  }
-  input:checked + .switch .off {
-    color: var(--color-foreground);
+  // Active state for the knob
+  input:focus + .switch .knob,
+  input:focus + .switch .knob {
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
   }
   input:checked + .switch .knob {
+    background: var(--color-toggle-checked);
     width: ($toggle-width / 2) - $toggle-border-width;
     transform: translateX(($toggle-width / 2) - $toggle-border-width);
-    border-color: var(--color-bg);
+    border-color: var(--color-toggle-checked);
   }
 }
 
