@@ -1,16 +1,16 @@
 import React from 'react';
 
 type Props = {
-  onLabel: React.ReactNode;
-  offLabel: React.ReactNode;
+  label: React.ReactNode;
   name: string;
   value?: boolean;
+  knobIcon?: React.ReactNode;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-function ToggleCheckbox({name, onLabel, offLabel, value, onChange}: Props): JSX.Element {
+function ToggleCheckbox({name, label, knobIcon, value, onChange}: Props): JSX.Element {
   return (
-    <span className="toggle-checkbox">
+    <label htmlFor={`toggle-${name}`} className="toggle-checkbox">
       <input
         id={`toggle-${name}`}
         type="checkbox"
@@ -18,12 +18,10 @@ function ToggleCheckbox({name, onLabel, offLabel, value, onChange}: Props): JSX.
         checked={value}
         onChange={onChange}
       />
-      <label htmlFor={`toggle-${name}`} className="switch">
-        <span className="on">{onLabel}</span>
-        <span className="knob"></span>
-        <span className="off">{offLabel}</span>
-      </label>
-    </span>
+      <span className="knob">{knobIcon}</span>
+      <span className="track"></span>
+      {label}
+    </label>
   );
 }
 

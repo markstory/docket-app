@@ -148,13 +148,13 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         pagedNavigation
         fixedWeeks
       />
-      <div data-reach-menu-item>
+      <div className="dropdown-item-text">
         <ToggleCheckbox
           name="evening"
           value={task.evening}
           onChange={handleEveningChange}
-          onLabel={<InlineIcon icon="moon" />}
-          offLabel={<InlineIcon icon="sun" />}
+          knobIcon={<InlineIcon icon="moon" />}
+          label={t('Evening')}
         />
       </div>
     </div>
