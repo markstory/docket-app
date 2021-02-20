@@ -103,6 +103,37 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
     }
 
+    public function testChangeDateAndEveningWithContextMenu()
+    {
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Trigger the hover.
+        $client->getMouse()->mouseMoveTo('.task-row');
+        $crawler = $client->getCrawler();
+        $client->waitFor('.task-row .actions');
+
+        // Hover over the due menu
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Reschedule"]');
+        $crawler = $client->getCrawler();
+        // Open the due menu
+        $crawler->filter('.actions [aria-label="Reschedule"]')->click();
+        $client->waitFor('.due-on-menu');
+        // Click 'this evening'
+        $this->clickWithMouse('.due-on-menu [data-testid="evening"]');
+
+        $client->waitFor('.flash-message');
+
+        $updated = $this->Tasks->get($task->id);
+        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertTrue($updated->evening);
+    }
+
     public function testReorderInToday()
     {
         $date = new FrozenDate('yesterday', 'UTC');
