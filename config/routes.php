@@ -24,23 +24,6 @@
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
-/*
- * The default class to use for all routes
- *
- * The following route classes are supplied with CakePHP and are appropriate
- * to set as the default:
- *
- * - Route
- * - InflectedRoute
- * - DashedRoute
- *
- * If no call is made to `Router::defaultRouteClass()`, the class used is
- * `Route` (`Cake\Routing\Route\Route`)
- *
- * Note that `Route` does not do any inflections on URLs which will result in
- * inconsistently cased URLs when used with `:plugin`, `:controller` and
- * `:action` markers.
- */
 /** @var \Cake\Routing\RouteBuilder $routes */
 $routes->setRouteClass(DashedRoute::class);
 
@@ -57,7 +40,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->connect('/login/', 'Users::login', ['_name' => 'users:login']);
     $builder->get('/logout/', 'Users::logout', 'users:logout');
 
-    $builder->scope('/tasks', ['controller' => 'Tasks'], function ($builder) {
+    $builder->scope('/tasks', ['controller' => 'Tasks'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'tasks:index');
         $builder->get('/today', ['action' => 'index', 'today'], 'tasks:today');
         $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'tasks:upcoming');
@@ -77,7 +60,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['id']);
     });
 
-    $builder->scope('/projects', ['controller' => 'Projects'], function ($builder) {
+    $builder->scope('/projects', ['controller' => 'Projects'], function (RouteBuilder $builder) {
         $builder->connect('/add', 'Projects::add', ['_name' => 'projects:add']);
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
         $builder->get('/{slug}', ['action' => 'view'], 'projects:view')
@@ -92,6 +75,19 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
         $builder->connect('/{slug}/edit', ['action' => 'edit'], ['_name' => 'projects:edit'])
             ->setPass(['slug']);
+    });
+
+    $builder->scope('/projects/{projectId}/sections', ['controller' => 'ProjectSections'], function (RouteBuilder $builder) {
+        $builder->post('/', ['action' => 'add'], 'projectsections:add')
+            ->setPass(['projectId']);
+        $builder->post('/{id}/edit', ['action' => 'edit'], 'projectsections:edit')
+            ->setPass(['projectId', 'id']);
+        $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
+            ->setPass(['projectId', 'id']);
+        $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
+            ->setPass(['projectId', 'id']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
+            ->setPass(['projectId', 'id']);
     });
 
     $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
