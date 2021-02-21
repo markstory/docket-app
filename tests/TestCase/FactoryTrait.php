@@ -31,12 +31,13 @@ trait FactoryTrait
     protected function makeProject($title, $userId, $ranking = 0, $props = [])
     {
         $projects = TableRegistry::get('Projects');
-        $project = $projects->newEntity(array_merge([
+        $props = array_merge([
             'user_id' => $userId,
             'name' => $title,
             'color' => 1,
             'ranking' => $ranking,
-        ], $props));
+        ], $props);
+        $project = $projects->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $projects->saveOrFail($project);
     }

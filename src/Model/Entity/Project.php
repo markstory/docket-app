@@ -41,7 +41,7 @@ class Project extends Entity
         'color' => true,
         'favorite' => true,
         'archived' => true,
-        'ranking' => true,
+        'ranking' => false,
         'created' => true,
         'modified' => true,
         'user' => true,
