@@ -37,7 +37,7 @@ function DueOn({task, showNull = false, showDetailed = true}: Props): JSX.Elemen
       {task.evening ? (
         <InlineIcon icon="moon" />
       ) : (
-        <InlineIcon icon="calendar" width="xsmall" />
+        showDetailed && <InlineIcon icon="calendar" width="xsmall" />
       )}
       {showDetailed && formatted}
     </time>

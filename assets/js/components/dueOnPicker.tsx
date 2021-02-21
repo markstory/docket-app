@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {MenuButton, MenuItem} from '@reach/menu-button';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
+import startOfWeek from 'date-fns/startOfWeek';
 
 import {t} from 'app/locale';
 import {parseDate, parseDateInput, toDateString} from 'app/utils/dates';
@@ -40,9 +41,10 @@ type ContentsProps = {
 };
 
 export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
-  const today = toDateString(new Date());
-  const tomorrow = toDateString(addDays(new Date(), 1));
-  const [inputValue, setInputValue] = useState('');
+  const todayDate = new Date();
+  const today = toDateString(todayDate);
+  const tomorrow = toDateString(addDays(todayDate, 1));
+  const [inputValue, setInputValue] = useState(task.due_on ?? '');
   const inputRef = useRef<HTMLInputElement>(null);
   const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
 
@@ -77,7 +79,7 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
       const target = event.target as HTMLInputElement;
       const parsed = parseDateInput(target.value);
       if (parsed) {
-        onChange(toDateString(parsed), false);
+        onChange(toDateString(parsed), task.evening);
       }
     }
   }
@@ -88,6 +90,11 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
       event.stopPropagation();
     }
   }
+  const daypickerModifiers = {
+    past: {
+      before: startOfWeek(todayDate),
+    },
+  };
   const isToday = task.due_on === today && task.evening === false;
   const isEvening = task.due_on === today && task.evening === true;
   const isTomorrow = task.due_on === tomorrow;
@@ -143,10 +150,12 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
       <DayPicker
         disabledDays={{before: new Date()}}
         onDayClick={value => onChange(toDateString(value), task.evening)}
+        modifiers={daypickerModifiers}
+        fromMonth={todayDate}
         selectedDays={dueOn}
         todayButton={t('Today')}
         pagedNavigation
-        fixedWeeks
+        numberOfMonths={2}
       />
       <div className="dropdown-item-text">
         <ToggleCheckbox
