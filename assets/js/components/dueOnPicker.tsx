@@ -144,7 +144,7 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         disabledDays={{before: new Date()}}
         onDayClick={value => onChange(toDateString(value), task.evening)}
         selectedDays={dueOn}
-        numberOfMonths={2}
+        todayButton={t('Today')}
         pagedNavigation
         fixedWeeks
       />

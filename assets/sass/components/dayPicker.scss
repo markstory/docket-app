@@ -113,10 +113,13 @@
 }
 
 .DayPicker-Footer {
+  display: flex;
+  justify-content: flex-end;
   padding-top: 0.5em;
 }
 
 .DayPicker-TodayButton {
+  height: $button-narrow-height;
   border: none;
   background-color: transparent;
   background-image: none;
