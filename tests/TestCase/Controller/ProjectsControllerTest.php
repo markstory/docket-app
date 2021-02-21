@@ -25,6 +25,7 @@ class ProjectsControllerTest extends TestCase
      */
     protected $fixtures = [
         'app.Projects',
+        'app.ProjectSections',
         'app.Users',
         'app.Tasks',
         'app.Labels',

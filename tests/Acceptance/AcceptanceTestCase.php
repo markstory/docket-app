@@ -18,6 +18,7 @@ abstract class AcceptanceTestCase extends TestCase
     protected $fixtures = [
         'app.Users',
         'app.Projects',
+        'app.ProjectSections',
         'app.Tasks',
         'app.Subtasks',
         'app.Labels',
