@@ -99,4 +99,14 @@ class ProjectSectionsTable extends Table
 
         return $rules;
     }
+
+    public function getNextRanking(int $projectId): int
+    {
+        $query = $this->find();
+        $query
+            ->select(['count' => $query->func()->count('*')])
+            ->where(['ProjectSections.project_id' => $projectId]);
+
+        return (int)$query->firstOrFail()->count;
+    }
 }
