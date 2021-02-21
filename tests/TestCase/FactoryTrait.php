@@ -44,12 +44,13 @@ trait FactoryTrait
     protected function makeTask($title, $projectId, $order, $props = [])
     {
         $tasks = TableRegistry::get('Tasks');
-        $task = $tasks->newEntity(array_merge([
+        $props = array_merge([
             'project_id' => $projectId,
             'title' => $title,
             'day_order' => $order,
             'child_order' => $order,
-        ], $props));
+        ], $props);
+        $task = $tasks->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $tasks->saveOrFail($task);
     }

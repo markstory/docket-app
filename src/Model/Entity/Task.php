@@ -42,13 +42,13 @@ class Task extends Entity
         'due_on' => true,
         'completed' => true,
         'evening' => true,
-        'child_order' => true,
-        'day_order' => true,
-        'created' => true,
-        'modified' => true,
-        'project' => true,
-        'subtasks' => true,
-        'labels' => true,
+        'child_order' => false,
+        'day_order' => false,
+        'created' => false,
+        'modified' => false,
+        'project' => false,
+        'subtasks' => false,
+        'labels' => false,
     ];
 
     public function complete(): void
