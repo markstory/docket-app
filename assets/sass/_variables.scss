@@ -133,14 +133,20 @@ body {
   --color-menu-hover: var(--color-ochre-100);
   --color-menu-selected: var(--color-ochre-300);
 
+  --color-toggle-bg: var(--color-gray-200);
+  --color-toggle-bg-checked: var(--color-ochre-100);
+  --color-toggle-checked: var(--color-ochre-300);
+
+
   --color-action-lock: var(--color-ochre-500);
   --color-action-edit: var(--color-ochre-700);
   --color-action-delete: var(--color-red-700);
   --color-action-complete: var(--color-green-700);
 
   --color-due-overdue: var(--color-red-500);
+  --color-due-evening: var(--color-blue-500);
   --color-due-today: var(--color-purple-500);
   --color-due-tomorrow: var(--color-ochre-500);
-  --color-due-week: var(--color-blue-500);
+  --color-due-week: var(--color-blue-700);
   --color-due-fortnight: var(--color-gray-500);
 }

@@ -41,6 +41,7 @@ class Task extends Entity
         'body' => true,
         'due_on' => true,
         'completed' => true,
+        'evening' => true,
         'child_order' => true,
         'day_order' => true,
         'created' => true,

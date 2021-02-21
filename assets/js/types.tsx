@@ -23,6 +23,7 @@ export type Task = {
   day_order: number;
   child_order: number;
   completed: boolean;
+  evening: boolean;
   subtask_count: number;
   complete_subtask_count: number;
   created: string;

@@ -5,14 +5,13 @@ import {MenuItem} from '@reach/menu-button';
 import classnames from 'classnames';
 
 import {t} from 'app/locale';
-import {updateTaskField} from 'app/actions/tasks';
+import {updateTask} from 'app/actions/tasks';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
 import {Task} from 'app/types';
-import {parseDate} from 'app/utils/dates';
 
 type Props = {
   task: Task;
@@ -48,7 +47,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
         <span className="title">{task.title}</span>
         <div className="attributes">
           {showProject && <ProjectBadge project={task.project} />}
-          {showDueOn && <DueOn value={task.due_on} />}
+          <DueOn task={task} showDetailed={showDueOn} />
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
@@ -75,22 +74,21 @@ type ActionsProps = Pick<Props, 'task'> & {
 };
 
 function TaskActions({task, setActive}: ActionsProps) {
-  async function handleDueOnChange(value: string | null) {
-    updateTaskField(task, 'due_on', value).then(() => {
-      setActive(false);
-      Inertia.reload();
-    });
+  async function handleDueOnChange(dueOn: string | null, evening: boolean) {
+    const data = {due_on: dueOn, evening};
+    await updateTask(task, data);
+    setActive(false);
+    Inertia.reload();
   }
 
   function handleDelete() {
     Inertia.post(`/tasks/${task.id}/delete`);
   }
 
-  const dueOn = typeof task.due_on === 'string' ? parseDate(task.due_on) : undefined;
   return (
     <div className="actions" onMouseEnter={() => setActive(true)}>
       <ContextMenu icon="calendar" tooltip={t('Reschedule')}>
-        <MenuContents selected={dueOn} onChange={handleDueOnChange} />
+        <MenuContents task={task} onChange={handleDueOnChange} />
       </ContextMenu>
       <ContextMenu tooltip={t('Task actions')}>
         <MenuItem className="delete" onSelect={handleDelete}>

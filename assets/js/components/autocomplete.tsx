@@ -99,9 +99,9 @@ function Autocomplete<OptionType extends Option = Option>({
   return (
     <Combobox aria-label={label} onSelect={handleSelect} openOnFocus>
       <input type="hidden" value={current || defaultValue} name={name} />
-      <div className="combobox-wrapper">
+      <div className="autocomplete-wrapper">
         <ComboboxInput value={term || selected} onChange={handleChange} selectOnClick />
-        <Icon className="combobox-arrow" icon="chevrondown" />
+        <Icon className="autocomplete-arrow" icon="chevrondown" />
       </div>
       <ComboboxPopover>
         <ComboboxList persistSelection>
@@ -111,7 +111,7 @@ function Autocomplete<OptionType extends Option = Option>({
             </ComboboxOption>
           ))}
           {!options.length && (
-            <div className="combobox-empty">{t('No options for that text')}</div>
+            <div className="autocomplete-empty">{t('No options for that text')}</div>
           )}
         </ComboboxList>
       </ComboboxPopover>

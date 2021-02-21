@@ -1,4 +1,6 @@
 .due-on-menu {
+  padding-bottom: $space;
+
   svg {
     margin-right: $space / 2;
   }
@@ -8,13 +10,15 @@
   .tomorrow svg {
     color: var(--color-due-tomorrow);
   }
+  .evening svg {
+    color: var(--color-due-evening);
+  }
   .not-due svg {
     color: var(--color-muted);
   }
 
   input[type="text"] {
     padding: $space;
-    border: none;
   }
 
   .DayPicker {

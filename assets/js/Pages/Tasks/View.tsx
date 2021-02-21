@@ -17,7 +17,7 @@ type Props = {
   referer: string;
 };
 
-export default function TasksView({referer, task}: Props) {
+export default function TasksView({referer, task}: Props): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -103,8 +103,8 @@ function TaskSummary({task, onClick}: SummaryProps) {
         </a>
       </div>
       <a href="#" onClick={onClick} className="attributes">
-        {<ProjectBadge project={task.project} />}
-        {task.due_on && <DueOn value={task.due_on} />}
+        <ProjectBadge project={task.project} />
+        <DueOn task={task} />
       </a>
     </div>
   );

@@ -1,9 +1,9 @@
 import React from 'react';
-import partition from 'lodash.partition';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
 import {t} from 'app/locale';
+import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
@@ -15,17 +15,36 @@ type Props = {
 
 function grouper(items: Task[]): GroupedItems {
   const today = toDateString(new Date());
-  const [overdueItems, todayItems] = partition(items, ({due_on}) => due_on !== today);
+  const groups = items.reduce<Record<string, Task[]>>(
+    (acc, item) => {
+      if (item.due_on !== today) {
+        acc.overdue.push(item);
+        return acc;
+      }
+      if (item.evening) {
+        acc.evening.push(item);
+        return acc;
+      }
+      acc.today.push(item);
+      return acc;
+    },
+    {today: [], overdue: [], evening: []}
+  );
   const output = [
     {
       key: 'overdue',
-      items: overdueItems,
-      ids: overdueItems.map(task => String(task.id)),
+      items: groups.overdue,
+      ids: groups.overdue.map(task => String(task.id)),
     },
     {
       key: today,
-      items: todayItems,
-      ids: todayItems.map(task => String(task.id)),
+      items: groups.today,
+      ids: groups.today.map(task => String(task.id)),
+    },
+    {
+      key: `evening:${today}`,
+      items: groups.evening,
+      ids: groups.evening.map(task => String(task.id)),
     },
   ];
   return output;
@@ -45,15 +64,18 @@ export default function TasksToday({tasks}: Props): JSX.Element {
         showDueOn
       >
         {({groupedItems, activeTask}) => {
-          const [overdue, today] = groupedItems;
+          const [overdue, today, evening] = groupedItems;
           return (
             <React.Fragment>
-              {overdue.ids && (
+              {overdue.ids.length > 0 && (
                 <SortableContext
                   items={overdue.ids}
                   strategy={verticalListSortingStrategy}
                 >
-                  <h2>{t('Overdue')}</h2>
+                  <h2 className="heading-icon overdue">
+                    <Icon icon="alert" />
+                    {t('Overdue')}
+                  </h2>
                   <TaskGroup
                     dropId={overdue.key}
                     tasks={overdue.items}
@@ -65,10 +87,26 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                 </SortableContext>
               )}
               <SortableContext items={today.ids} strategy={verticalListSortingStrategy}>
-                <h2>{t('Today')}</h2>
+                <h2 className="heading-icon today">
+                  <Icon icon="clippy" />
+                  {t('Today')}
+                </h2>
                 <TaskGroup
                   dropId={today.key}
                   tasks={today.items}
+                  activeTask={activeTask}
+                  defaultDate={defaultDate}
+                  showProject
+                />
+              </SortableContext>
+              <SortableContext items={evening.ids} strategy={verticalListSortingStrategy}>
+                <h2 className="heading-icon evening">
+                  <Icon icon="moon" />
+                  {t('This Evening')}
+                </h2>
+                <TaskGroup
+                  dropId={evening.key}
+                  tasks={evening.items}
                   activeTask={activeTask}
                   defaultDate={defaultDate}
                   showProject

@@ -14,8 +14,14 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: Props) {
-  const [dueOn, setDueOn] = useState(task.due_on);
+export default function TaskQuickForm({
+  errors,
+  task,
+  url,
+  onSubmit,
+  onCancel,
+}: Props): JSX.Element {
+  const [data, setData] = useState(task);
 
   return (
     <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
@@ -24,7 +30,7 @@ export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: P
           type="text"
           name="title"
           placeholder={t('Take out the trash')}
-          defaultValue={task.title}
+          defaultValue={data.title}
           autoFocus
           required
         />
@@ -32,14 +38,17 @@ export default function TaskQuickForm({errors, task, url, onSubmit, onCancel}: P
       </div>
       <div className="attributes">
         <div className="projectid">
-          <ProjectSelect value={task.project.id} />
+          <ProjectSelect value={data.project.id} />
           <FormError errors={errors} field="project_id" />
         </div>
         <div className="due-on">
-          <input type="hidden" name="due_on" value={dueOn ?? ''} />
+          <input type="hidden" name="due_on" value={data.due_on ?? ''} />
+          <input type="hidden" name="evening" value={data.evening ? 1 : 0} />
           <DueOnPicker
-            selected={dueOn}
-            onChange={(value: Task['due_on']) => setDueOn(value)}
+            task={data}
+            onChange={(newDueOn, newEvening) => {
+              setData({...data, due_on: newDueOn, evening: newEvening});
+            }}
           />
           <FormError errors={errors} field="due_on" />
         </div>

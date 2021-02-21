@@ -10,7 +10,7 @@ type Props = {
   defaultProjectId?: number;
 };
 
-function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
+function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props): JSX.Element {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.persist();
@@ -28,6 +28,7 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props) {
     body: '',
     due_on: defaultDate ?? null,
     completed: false,
+    evening: false,
     day_order: 0,
     child_order: 0,
     created: '',
