@@ -5,7 +5,6 @@ namespace App\Model\Table;
 
 use App\Model\Entity\ProjectSection;
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -16,7 +15,6 @@ use InvalidArgumentException;
  *
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\BelongsTo $Projects
  * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\HasMany $Tasks
- *
  * @method \App\Model\Entity\ProjectSection newEmptyEntity()
  * @method \App\Model\Entity\ProjectSection newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\ProjectSection[] newEntities(array $data, array $options = [])
@@ -30,7 +28,6 @@ use InvalidArgumentException;
  * @method \App\Model\Entity\ProjectSection[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\ProjectSection[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\ProjectSection[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ProjectSectionsTable extends Table

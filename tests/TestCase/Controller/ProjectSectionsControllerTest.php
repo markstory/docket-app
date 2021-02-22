@@ -181,7 +181,7 @@ class ProjectSectionsControllerTest extends TestCase
     {
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id, 0, [
-            'archived' => true
+            'archived' => true,
         ]);
 
         $this->login();

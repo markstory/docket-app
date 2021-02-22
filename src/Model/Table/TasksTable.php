@@ -135,6 +135,7 @@ class TasksTable extends Table
                 if (!$task->section_id) {
                     return true;
                 }
+
                 return $this->ProjectSections->exists([
                     'project_id' => $task->project_id,
                     'id' => $task->section_id,
@@ -144,7 +145,8 @@ class TasksTable extends Table
             [
                 'errorField' => 'section_id',
                 'message' => __('Section does not belong to the task project.'),
-            ]);
+            ]
+        );
 
         return $rules;
     }
