@@ -141,6 +141,6 @@ class SluggableBehavior extends Behavior
      */
     public function slug($string, $settings)
     {
-        return Text::slug($string);
+        return strtolower(Text::slug($string));
     }
 }
