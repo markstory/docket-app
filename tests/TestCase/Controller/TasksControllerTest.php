@@ -33,26 +33,37 @@ class TasksControllerTest extends TestCase
         'app.Users',
         'app.Tasks',
         'app.Projects',
+        'app.ProjectSections',
         'app.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
     ];
 
-    protected function dayOrderedTasks()
+    protected function dayOrderedTasks(array $conditions = [])
     {
         return $this->Tasks
             ->find()
+            ->where($conditions)
             ->orderAsc('evening')
             ->orderAsc('day_order')
             ->toArray();
     }
 
-    protected function childOrderedTasks()
+    protected function childOrderedTasks(array $conditions = [])
     {
         return $this->Tasks
             ->find()
+            ->where($conditions)
             ->orderAsc('child_order')
             ->toArray();
+    }
+
+    protected function assertOrder($expected, $results)
+    {
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 
     public function setUp(): void
@@ -209,6 +220,44 @@ class TasksControllerTest extends TestCase
         $this->assertSame(10, $todo->day_order);
     }
 
+    public function testAddToSection(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $section = $this->makeProjectSection('release', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/tasks/add', [
+            'title' => 'first todo',
+            'section_id' => $section->id,
+            'project_id' => $project->id,
+            'due_on' => '2020-12-17',
+        ]);
+        $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
+        $this->assertSame(1, $todo->child_order);
+        $this->assertSame(1, $todo->day_order);
+        $this->assertSame($section->id, $todo->section_id);
+    }
+
+    public function testAddToSectionInDifferentProject(): void
+    {
+        $home = $this->makeProject('home', 1);
+        $project = $this->makeProject('work', 1);
+        $section = $this->makeProjectSection('release', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/tasks/add', [
+            'title' => 'first todo',
+            'section_id' => $section->id,
+            'project_id' => $home->id,
+        ]);
+        $this->assertResponseCode(200);
+        $this->assertNotEmpty($this->viewVariable('errors'));
+    }
+
     public function testAddPermissions(): void
     {
         $project = $this->makeProject('work', 2);
@@ -358,9 +407,8 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertNull($results[$i]->due_on);
         }
     }
@@ -381,10 +429,7 @@ class TasksControllerTest extends TestCase
         $this->assertRedirect('/tasks/today');
 
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
+        $this->assertOrder($expected, $results);
     }
 
     public function testMoveDownDuplicateOrder()
@@ -404,10 +449,7 @@ class TasksControllerTest extends TestCase
         $this->assertRedirect('/tasks/today');
 
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
+        $this->assertOrder($expected, $results);
     }
 
     public function testMoveDifferentDay()
@@ -427,9 +469,8 @@ class TasksControllerTest extends TestCase
 
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $third->id, $second->id];
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
     }
@@ -453,9 +494,8 @@ class TasksControllerTest extends TestCase
 
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $new->id, $second->id, $third->id];
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id, "failed on {$i}");
             $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
     }
@@ -479,9 +519,8 @@ class TasksControllerTest extends TestCase
 
         $results = $this->dayOrderedTasks();
         $expected = [$new->id, $first->id, $second->id, $third->id];
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
 
@@ -510,9 +549,8 @@ class TasksControllerTest extends TestCase
 
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $third->id, $second->id];
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
         }
     }
@@ -533,9 +571,8 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertNull($results[$i]->due_on);
         }
     }
@@ -558,9 +595,8 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertNull($results[$i]->due_on);
         }
     }
@@ -583,9 +619,8 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertNull($results[$i]->due_on);
         }
     }
@@ -606,9 +641,8 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $results = $this->dayOrderedTasks();
-        $this->assertCount(count($expected), $results);
+        $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
             $this->assertFalse($results[$i]->evening);
         }
     }
@@ -630,10 +664,7 @@ class TasksControllerTest extends TestCase
 
         $results = $this->childOrderedTasks();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
+        $this->assertOrder($expected, $results);
     }
 
     public function testMoveProjectDown()
@@ -653,9 +684,96 @@ class TasksControllerTest extends TestCase
 
         $results = $this->childOrderedTasks();
         $expected = [$second->id, $third->id, $first->id, $fourth->id];
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
+        $this->assertOrder($expected, $results);
+    }
+
+    public function testMoveConflictingParameters()
+    {
+        $project = $this->makeProject('work', 1);
+        $this->makeProjectSection('first', $project->id);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        // Cant set day and child order.
+        $this->post("/tasks/{$first->id}/move", [
+            'child_order' => 1,
+            'day_order' => 1,
+        ]);
+        $this->assertResponseCode(302);
+        $this->assertFlashElement('flash/error');
+
+        // Cant set due_on with child_order
+        $this->post("/tasks/{$first->id}/move", [
+            'child_order' => 1,
+            'due_on' => '2020-03-10',
+        ]);
+        $this->assertResponseCode(302);
+        $this->assertFlashElement('flash/error');
+
+        // Cant set section with day_order
+        $this->post("/tasks/{$first->id}/move", [
+            'day_order' => 1,
+            'section_id' => 1,
+        ]);
+        $this->assertResponseCode(302);
+        $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveToNewSection()
+    {
+        $project = $this->makeProject('work', 1);
+        $design = $this->makeProjectSection('design', $project->id, 0);
+        $build = $this->makeProjectSection('build', $project->id, 1);
+
+        $first = $this->makeTask('first', $project->id, 0, ['section_id' => $design->id]);
+        $this->makeTask('second', $project->id, 1, ['section_id' => $design->id]);
+        $third = $this->makeTask('third', $project->id, 0, ['section_id' => $build->id]);
+        $fourth = $this->makeTask('fourth', $project->id, 1, ['section_id' => $build->id]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/move", [
+            'child_order' => 2,
+            'section_id' => $build->id,
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $count = $this->Tasks->find()->where(['section_id' => $design->id])->count();
+        $this->assertEquals(1, $count, 'Should be moved out.');
+
+        $results = $this->childOrderedTasks(['section_id' => $build->id]);
+        $expected = [$third->id, $fourth->id, $first->id];
+        $this->assertOrder($expected, $results);
+    }
+
+    public function testMoveInsideSection()
+    {
+        $project = $this->makeProject('work', 1);
+        $design = $this->makeProjectSection('design', $project->id, 0);
+        $build = $this->makeProjectSection('build', $project->id, 1);
+
+        $first = $this->makeTask('first', $project->id, 0, ['section_id' => $design->id]);
+        $second = $this->makeTask('second', $project->id, 1, ['section_id' => $design->id]);
+
+        $third = $this->makeTask('third', $project->id, 0, ['section_id' => $build->id]);
+        $fourth = $this->makeTask('fourth', $project->id, 1, ['section_id' => $build->id]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/move", [
+            'child_order' => 1,
+            'section_id' => $design->id,
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->childOrderedTasks(['section_id' => $design->id]);
+        $expected = [$second->id, $first->id];
+        $this->assertOrder($expected, $results);
+
+        $results = $this->childOrderedTasks(['section_id' => $build->id]);
+        $expected = [$third->id, $fourth->id];
+        $this->assertOrder($expected, $results);
     }
 }

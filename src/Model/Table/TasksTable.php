@@ -21,6 +21,7 @@ use RuntimeException;
  * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\BelongsTo $Projects
  * @property \App\Model\Table\SubtasksTable&\Cake\ORM\Association\HasMany $Subtasks
  * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\BelongsToMany $Labels
+ * @property \App\Model\Table\ProjectSectionsTable&\Cake\ORM\Association\BelongsTo $ProjectSections
  * @method \App\Model\Entity\Task newEmptyEntity()
  * @method \App\Model\Entity\Task newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Task[] newEntities(array $data, array $options = [])
@@ -55,6 +56,10 @@ class TasksTable extends Table
         $this->belongsTo('Projects', [
             'foreignKey' => 'project_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('ProjectSections', [
+            'foreignKey' => 'section_id',
+            'joinType' => 'LEFT',
         ]);
         $this->hasMany('Subtasks', [
             'foreignKey' => 'task_id',
@@ -124,6 +129,22 @@ class TasksTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['project_id'], 'Projects'), ['errorField' => 'project_id']);
+
+        $rules->add(
+            function (Task $task) {
+                if (!$task->section_id) {
+                    return true;
+                }
+                return $this->ProjectSections->exists([
+                    'project_id' => $task->project_id,
+                    'id' => $task->section_id,
+                ]);
+            },
+            'section',
+            [
+                'errorField' => 'section_id',
+                'message' => __('Section does not belong to the task project.'),
+            ]);
 
         return $rules;
     }
@@ -237,6 +258,21 @@ class TasksTable extends Table
             }
             $item->due_on = $operation['due_on'];
         }
+        if (isset($operation['day_order']) && isset($operation['child_order'])) {
+            throw new InvalidArgumentException('Cannot set day and child order at the same time');
+        }
+        if (isset($operation['child_order']) && isset($operation['due_on'])) {
+            throw new InvalidArgumentException('Cannot set child order and due_on at the same time');
+        }
+        if (isset($operation['day_order']) && isset($operation['section_id'])) {
+            throw new InvalidArgumentException('Cannot set day order and section at the same time');
+        }
+
+        // Constrain to projects owned by the same user.
+        $projectQuery = $this->Projects->find()
+            ->select(['Projects.id'])
+            ->where(['Projects.user_id' => $item->project->user_id]);
+
         $conditions = [
             'completed' => $item->completed,
         ];
@@ -244,10 +280,15 @@ class TasksTable extends Table
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
             $conditions['evening'] = false;
+            $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
             $conditions['due_on IS'] = $item->due_on;
             $conditions['evening'] = $operation['evening'];
+            $conditions['project_id IN'] = $projectQuery;
+        } elseif (isset($operation['section_id']) && isset($operation['child_order'])) {
+            $property = 'child_order';
+            $conditions['section_id'] = $item->section_id;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
@@ -275,21 +316,18 @@ class TasksTable extends Table
             $targetOffset = $currentItem->get($property);
         }
 
-        // Constrain to projects owned by the same user.
-        $projectQuery = $this->Projects->find()
-            ->select(['Projects.id'])
-            ->where(['Projects.user_id' => $item->project->user_id]);
-
         $query = $this->query()
             ->update()
             ->innerJoinWith('Projects')
-            ->where($conditions)
-            ->where(['project_id IN' => $projectQuery]);
+            ->where($conditions);
 
         $current = $item->get($property);
         $item->set($property, $targetOffset);
         if (isset($operation['evening'])) {
             $item->set('evening', $operation['evening']);
+        }
+        if (isset($operation['section_id'])) {
+            $item->set('section_id', $operation['section_id']);
         }
         $difference = $current - $item->get($property);
 

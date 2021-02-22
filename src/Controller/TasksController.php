@@ -79,9 +79,9 @@ class TasksController extends AppController
 
                 return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
-            // TODO this doesn't look like it will handle validation
-            // errors well.
+            // TODO the inline add form doesn't handle validation errors.
             $this->Flash->error(__('The task could not be saved. Please, try again.'));
+            $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
     }
 
@@ -143,6 +143,7 @@ class TasksController extends AppController
         $operation = [
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
+            'section_id' => $this->request->getData('section_id') ?? null,
             'due_on' => $this->request->getData('due_on'),
             'evening' => $this->request->getData('evening') ?? null,
         ];
