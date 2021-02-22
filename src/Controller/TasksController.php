@@ -67,8 +67,10 @@ class TasksController extends AppController
         if ($this->request->is('post')) {
             $task = $this->Tasks->patchEntity($task, $this->request->getData());
 
+            // Ensure the project belongs to the current user.
             $project = $this->Tasks->Projects->get($task->project_id);
             $this->Authorization->authorize($project, 'edit');
+
             $user = $this->request->getAttribute('identity');
             $this->Tasks->setNextOrderProperties($user, $task);
 
@@ -168,8 +170,15 @@ class TasksController extends AppController
             'contain' => ['Labels', 'Projects'],
         ]);
         $this->Authorization->authorize($task);
-
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
+
+        // If the project has changed ensure the new project belongs
+        // to the current user.
+        if ($task->isDirty('project_id')) {
+            $project = $this->Tasks->Projects->get($task->project_id);
+            $this->Authorization->authorize($project, 'edit');
+        }
+
         if ($this->Tasks->save($task)) {
             $this->Flash->success(__('Task updated.'));
 

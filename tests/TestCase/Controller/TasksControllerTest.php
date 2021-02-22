@@ -253,6 +253,24 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
+    public function testEditProjectPermission(): void
+    {
+        $other = $this->makeProject('work', 2);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'project_id' => $other->id,
+        ]);
+        $this->assertResponseCode(403);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertEquals($project->id, $todo->project_id);
+    }
+
     public function testDelete(): void
     {
         $project = $this->makeProject('work', 1);
