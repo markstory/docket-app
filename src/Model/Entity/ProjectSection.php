@@ -33,11 +33,21 @@ class ProjectSection extends Entity
     protected $_accessible = [
         'project_id' => true,
         'name' => true,
-        'ranking' => true,
         'archived' => true,
-        'created' => true,
-        'modified' => true,
-        'project' => true,
-        'tasks' => true,
+        'ranking' => false,
+        'created' => false,
+        'modified' => false,
+        'project' => false,
+        'tasks' => false,
     ];
+
+    public function archive()
+    {
+        $this->archived = true;
+    }
+
+    public function unarchive()
+    {
+        $this->archived = false;
+    }
 }

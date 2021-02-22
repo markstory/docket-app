@@ -46,48 +46,77 @@ class ProjectSectionsController extends AppController
             ->setOption('serialize', ['errors']);
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Project Section id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
+    public function edit(string $projectSlug, $id = null)
     {
-        $projectSection = $this->ProjectSections->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $projectSection = $this->ProjectSections->patchEntity($projectSection, $this->request->getData());
-            if ($this->ProjectSections->save($projectSection)) {
-                $this->Flash->success(__('The project section has been saved.'));
+        $referer = $this->getReferer();
+        $project = $this->getProject($projectSlug);
+        $this->Authorization->authorize($project, 'edit');
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The project section could not be saved. Please, try again.'));
+        $projectSection = $this->ProjectSections->patchEntity(
+            $this->ProjectSections->get($id),
+            $this->request->getData()
+        );
+
+        // If the project has changed ensure the new project belongs
+        // to the current user.
+        if ($projectSection->isDirty('project_id')) {
+            $project = $this->ProjectSections->Projects->get($projectSection->project_id);
+            $this->Authorization->authorize($project, 'edit');
         }
-        $projects = $this->ProjectSections->Projects->find('list', ['limit' => 200]);
-        $this->set(compact('projectSection', 'projects'));
+
+        if ($this->ProjectSections->save($projectSection)) {
+            $this->Flash->success(__('The project section has been saved.'));
+
+            return $this->redirect($referer);
+        }
+        $this->Flash->error(__('The project section could not be saved. Please, try again.'));
+        $this->set('errors', $this->flattenErrors($projectSection->getErrors()));
+        $this->viewBuilder()
+            ->setClassName(JsonView::class)
+            ->setOption('serialize', ['errors']);
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Project Section id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
+    public function archive(string $projectSlug, string $id)
     {
-        $this->request->allowMethod(['post', 'delete']);
+        $project = $this->getProject($projectSlug);
+        $this->Authorization->authorize($project, 'edit');
+
+        $section = $this->ProjectSections->get($id);
+        $section->archive();
+        $this->ProjectSections->save($section);
+
+        $this->Flash->success(__('Project Section archived'));
+
+        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
+    }
+
+    public function unarchive(string $projectSlug, string $id)
+    {
+        $project = $this->getProject($projectSlug);
+        $this->Authorization->authorize($project, 'edit');
+
+        $section = $this->ProjectSections->get($id);
+        $section->unarchive();
+        $this->ProjectSections->save($section);
+
+        $this->Flash->success(__('Project Section unarchived'));
+
+        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
+    }
+
+    public function delete(string $projectSlug, string $id)
+    {
+        $project = $this->getProject($projectSlug);
+        $this->Authorization->authorize($project, 'edit');
+
         $projectSection = $this->ProjectSections->get($id);
+
         if ($this->ProjectSections->delete($projectSection)) {
             $this->Flash->success(__('The project section has been deleted.'));
         } else {
             $this->Flash->error(__('The project section could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['_name' => 'projects:view', $projectSlug]);
     }
 }

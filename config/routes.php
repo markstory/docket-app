@@ -77,17 +77,17 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
     });
 
-    $builder->scope('/projects/{projectId}/sections', ['controller' => 'ProjectSections'], function (RouteBuilder $builder) {
+    $builder->scope('/projects/{projectSlug}/sections', ['controller' => 'ProjectSections'], function (RouteBuilder $builder) {
         $builder->post('/', ['action' => 'add'], 'projectsections:add')
-            ->setPass(['projectId']);
+            ->setPass(['projectSlug']);
         $builder->post('/{id}/edit', ['action' => 'edit'], 'projectsections:edit')
-            ->setPass(['projectId', 'id']);
+            ->setPass(['projectSlug', 'id']);
         $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
-            ->setPass(['projectId', 'id']);
+            ->setPass(['projectSlug', 'id']);
         $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
-            ->setPass(['projectId', 'id']);
+            ->setPass(['projectSlug', 'id']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
-            ->setPass(['projectId', 'id']);
+            ->setPass(['projectSlug', 'id']);
     });
 
     $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
