@@ -229,18 +229,73 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
+    public function testMovePermissions()
+    {
+        $project = $this->makeProject('Home', 2);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/projects/{$project->slug}/sections/{$section->id}/move", [
+            'ranking' => 0,
+        ]);
+        $this->assertResponseCode(403);
+    }
+
     public function testMoveNoData()
     {
-        $this->markTestIncomplete();
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$project->slug}/sections/{$section->id}/move");
+        $this->assertRedirect('/projects/home');
+        $this->assertFlashElement('flash/error');
     }
 
     public function testMoveDown()
     {
-        $this->markTestIncomplete();
+        $project = $this->makeProject('Home', 1);
+        $reading = $this->makeProjectSection('Reading', $project->id, 0);
+        $repairs = $this->makeProjectSection('Repairs', $project->id, 1);
+        $cleaning = $this->makeProjectSection('Cleaning', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$project->slug}/sections/{$reading->id}/move", [
+            'ranking' => 2,
+        ]);
+        $this->assertRedirect('/projects/home');
+
+        $results = $this->ProjectSections->find()->orderAsc('ranking')->toArray();
+        $expected = [$repairs->id, $cleaning->id, $reading->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 
     public function testMoveUp()
     {
-        $this->markTestIncomplete();
+        $project = $this->makeProject('Home', 1);
+        $reading = $this->makeProjectSection('Reading', $project->id, 0);
+        $repairs = $this->makeProjectSection('Repairs', $project->id, 1);
+        $cleaning = $this->makeProjectSection('Cleaning', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$project->slug}/sections/{$cleaning->id}/move", [
+            'ranking' => 0,
+        ]);
+        $this->assertRedirect('/projects/home');
+
+        $results = $this->ProjectSections->find()->orderAsc('ranking')->toArray();
+        $expected = [$cleaning->id, $reading->id, $repairs->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 }

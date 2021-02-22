@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Project;
 use InvalidArgumentException;
 
 /**
@@ -19,7 +20,7 @@ class ProjectsController extends AppController
         $this->loadModel('Tasks');
     }
 
-    protected function getProject($slug)
+    protected function getProject($slug): Project
     {
         return $this->Projects->findBySlug($slug)->firstOrFail();
     }

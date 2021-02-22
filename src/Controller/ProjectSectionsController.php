@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\View\JsonView;
+use InvalidArgumentException;
 
 /**
  * ProjectSections Controller
@@ -118,5 +119,24 @@ class ProjectSectionsController extends AppController
         }
 
         return $this->redirect(['_name' => 'projects:view', $projectSlug]);
+    }
+
+    public function move(string $projectSlug, string $id)
+    {
+        $project = $this->getProject($projectSlug);
+        $this->Authorization->authorize($project, 'edit');
+
+        $projectSection = $this->ProjectSections->get($id);
+        $operation = [
+            'ranking' => $this->request->getData('ranking'),
+        ];
+        try {
+            $this->ProjectSections->move($projectSection, $operation);
+            $this->Flash->success(__('Project section reordered.'));
+        } catch (InvalidArgumentException $e) {
+            $this->Flash->error($e->getMessage());
+        }
+
+        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
     }
 }

@@ -86,6 +86,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['projectSlug', 'id']);
         $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
             ->setPass(['projectSlug', 'id']);
+        $builder->post('/{id}/move', ['action' => 'move'], 'projectsections:move')
+            ->setPass(['projectSlug', 'id']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
             ->setPass(['projectSlug', 'id']);
     });

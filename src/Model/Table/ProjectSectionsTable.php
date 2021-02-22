@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\ProjectSection;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * ProjectSections Model
@@ -108,5 +111,63 @@ class ProjectSectionsTable extends Table
             ->where(['ProjectSections.project_id' => $projectId]);
 
         return (int)$query->firstOrFail()->count;
+    }
+
+    public function move(ProjectSection $projectSection, array $operation)
+    {
+        if (!isset($operation['ranking'])) {
+            throw new InvalidArgumentException('A ranking is required');
+        }
+        $conditions = [
+            'archived' => $projectSection->archived,
+            'project_id' => $projectSection->project_id,
+        ];
+
+        // We have to assume that all lists are not continuous ranges, and that the order
+        // fields have holes in them. The holes can be introduced when items are
+        // deleted/completed. Try to find the item at the target offset
+        $currentProjectSection = $this->find()
+            ->where($conditions)
+            ->orderAsc('ranking')
+            ->offset($operation['ranking'])
+            ->first();
+
+        // If we found a record at the current offset
+        // use its order property for our update
+        $targetOffset = $operation['ranking'];
+        if ($currentProjectSection instanceof EntityInterface) {
+            $targetOffset = $currentProjectSection->get('ranking');
+        }
+
+        $query = $this->query()
+            ->update()
+            ->where($conditions);
+
+        $current = $projectSection->get('ranking');
+        $projectSection->set('ranking', $targetOffset);
+        $difference = $current - $projectSection->get('ranking');
+
+        if ($difference > 0) {
+            // Move other items down, as the current item is going up
+            // or is being moved from another group.
+            $query
+                ->set(['ranking' => $query->newExpr('ranking + 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $targetOffset, $current);
+                });
+        } elseif ($difference < 0) {
+            // Move other items up, as current item is going down
+            $query
+                ->set(['ranking' => $query->newExpr('ranking - 1')])
+                ->where(function ($exp) use ($current, $targetOffset) {
+                    return $exp->between('ranking', $current, $targetOffset);
+                });
+        }
+        $this->getConnection()->transactional(function () use ($projectSection, $query) {
+            if ($query->clause('set')) {
+                $query->execute();
+            }
+            $this->saveOrFail($projectSection);
+        });
     }
 }
