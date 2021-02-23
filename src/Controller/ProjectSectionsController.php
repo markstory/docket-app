@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Project;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -10,12 +11,12 @@ use InvalidArgumentException;
  * ProjectSections Controller
  *
  * @property \App\Model\Table\ProjectSectionsTable $ProjectSections
- * @method \App\Model\Entity\ProjectSection[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class ProjectSectionsController extends AppController
 {
-    protected function getProject(string $slug)
+    protected function getProject(string $slug): Project
     {
+        /** @var \App\Model\Entity\Project */
         return $this->ProjectSections->Projects->findBySlug($slug)->firstOrFail();
     }
 

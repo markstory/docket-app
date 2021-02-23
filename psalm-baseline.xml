@@ -5,6 +5,11 @@
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
   </file>
+  <file src="src/Model/Table/ProjectSectionsTable.php">
+    <NoInterfaceProperties occurrences="1">
+      <code>$query-&gt;firstOrFail()-&gt;count</code>
+    </NoInterfaceProperties>
+  </file>
   <file src="src/Model/Table/SubtasksTable.php">
     <NoInterfaceProperties occurrences="1">
       <code>$result-&gt;max</code>

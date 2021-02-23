@@ -22,6 +22,7 @@ class ProjectsController extends AppController
 
     protected function getProject($slug): Project
     {
+        /** @var \App\Model\Entity\Project */
         return $this->Projects->findBySlug($slug)->firstOrFail();
     }
 
