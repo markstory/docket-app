@@ -11,6 +11,7 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $project_id
+ * @property int|null $section_id
  * @property string|null $title
  * @property string|null $body
  * @property \Cake\I18n\FrozenDate|null $due_on
@@ -37,18 +38,19 @@ class Task extends Entity
      */
     protected $_accessible = [
         'project_id' => true,
+        'section_id' => true,
         'title' => true,
         'body' => true,
         'due_on' => true,
         'completed' => true,
         'evening' => true,
-        'child_order' => true,
-        'day_order' => true,
-        'created' => true,
-        'modified' => true,
-        'project' => true,
-        'subtasks' => true,
-        'labels' => true,
+        'child_order' => false,
+        'day_order' => false,
+        'created' => false,
+        'modified' => false,
+        'project' => false,
+        'subtasks' => false,
+        'labels' => false,
     ];
 
     public function complete(): void

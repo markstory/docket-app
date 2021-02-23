@@ -28,28 +28,43 @@ trait FactoryTrait
         return $users->saveOrFail($user);
     }
 
-    protected function makeProject($title, $userId, $ranking = 0, $props = [])
+    protected function makeProject($name, $userId, $ranking = 0, $props = [])
     {
         $projects = TableRegistry::get('Projects');
-        $project = $projects->newEntity(array_merge([
+        $props = array_merge([
             'user_id' => $userId,
-            'name' => $title,
+            'name' => $name,
             'color' => 1,
             'ranking' => $ranking,
-        ], $props));
+        ], $props);
+        $project = $projects->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $projects->saveOrFail($project);
+    }
+
+    protected function makeProjectSection($name, $projectId, $ranking = 0, $props = [])
+    {
+        $sections = TableRegistry::get('ProjectSections');
+        $props = array_merge([
+            'project_id' => $projectId,
+            'name' => $name,
+            'ranking' => $ranking,
+        ], $props);
+        $section = $sections->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $sections->saveOrFail($section);
     }
 
     protected function makeTask($title, $projectId, $order, $props = [])
     {
         $tasks = TableRegistry::get('Tasks');
-        $task = $tasks->newEntity(array_merge([
+        $props = array_merge([
             'project_id' => $projectId,
             'title' => $title,
             'day_order' => $order,
             'child_order' => $order,
-        ], $props));
+        ], $props);
+        $task = $tasks->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $tasks->saveOrFail($task);
     }

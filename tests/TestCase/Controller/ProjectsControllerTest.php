@@ -25,6 +25,7 @@ class ProjectsControllerTest extends TestCase
      */
     protected $fixtures = [
         'app.Projects',
+        'app.ProjectSections',
         'app.Users',
         'app.Tasks',
         'app.Labels',
@@ -125,7 +126,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'Home too',
             'color' => '8',
         ]);
-        $this->assertRedirect('/projects/Home-too');
+        $this->assertRedirect('/projects/home-too');
 
         $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
         $this->assertEquals('Home too', $project->name);

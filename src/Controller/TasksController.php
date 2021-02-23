@@ -67,8 +67,10 @@ class TasksController extends AppController
         if ($this->request->is('post')) {
             $task = $this->Tasks->patchEntity($task, $this->request->getData());
 
+            // Ensure the project belongs to the current user.
             $project = $this->Tasks->Projects->get($task->project_id);
             $this->Authorization->authorize($project, 'edit');
+
             $user = $this->request->getAttribute('identity');
             $this->Tasks->setNextOrderProperties($user, $task);
 
@@ -77,9 +79,9 @@ class TasksController extends AppController
 
                 return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
-            // TODO this doesn't look like it will handle validation
-            // errors well.
+            // TODO the inline add form doesn't handle validation errors.
             $this->Flash->error(__('The task could not be saved. Please, try again.'));
+            $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
     }
 
@@ -141,6 +143,7 @@ class TasksController extends AppController
         $operation = [
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
+            'section_id' => $this->request->getData('section_id') ?? null,
             'due_on' => $this->request->getData('due_on'),
             'evening' => $this->request->getData('evening') ?? null,
         ];
@@ -168,8 +171,15 @@ class TasksController extends AppController
             'contain' => ['Labels', 'Projects'],
         ]);
         $this->Authorization->authorize($task);
-
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
+
+        // If the project has changed ensure the new project belongs
+        // to the current user.
+        if ($task->isDirty('project_id')) {
+            $project = $this->Tasks->Projects->get($task->project_id);
+            $this->Authorization->authorize($project, 'edit');
+        }
+
         if ($this->Tasks->save($task)) {
             $this->Flash->success(__('Task updated.'));
 

@@ -6,24 +6,20 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Project Entity
+ * ProjectSection Entity
  *
  * @property int $id
- * @property int $user_id
+ * @property int $project_id
  * @property string $name
- * @property string $slug
- * @property string $color
- * @property bool $favorite
- * @property bool $archived
  * @property int $ranking
+ * @property bool $archived
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
- * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Task[] $todo_items
- * @property \App\Model\Entity\TodoLabel[] $todo_labels
+ * @property \App\Model\Entity\Project $project
+ * @property \App\Model\Entity\Task[] $tasks
  */
-class Project extends Entity
+class ProjectSection extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -35,18 +31,14 @@ class Project extends Entity
      * @var array
      */
     protected $_accessible = [
-        'user_id' => true,
+        'project_id' => true,
         'name' => true,
-        'slug' => true,
-        'color' => true,
-        'favorite' => true,
         'archived' => true,
         'ranking' => false,
-        'created' => true,
-        'modified' => true,
-        'user' => true,
-        'todo_items' => true,
-        'todo_labels' => true,
+        'created' => false,
+        'modified' => false,
+        'project' => false,
+        'tasks' => false,
     ];
 
     public function archive()
