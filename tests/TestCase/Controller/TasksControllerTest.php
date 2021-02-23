@@ -60,9 +60,9 @@ class TasksControllerTest extends TestCase
 
     protected function assertOrder($expected, $results)
     {
-        $this->assertCount(count($expected), $results);
+        $this->assertCount(count($expected), $results, 'Number of tasks is wrong');
         foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
+            $this->assertEquals($id, $results[$i]->id, "Incorrect task as index={$i}");
         }
     }
 
@@ -442,13 +442,13 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$first->id, $fourth->id, $second->id, $third->id];
         $this->post("/tasks/{$fourth->id}/move", [
             'day_order' => 1,
         ]);
         $this->assertRedirect('/tasks/today');
 
         $results = $this->dayOrderedTasks();
+        $expected = [$first->id, $fourth->id, $second->id, $third->id];
         $this->assertOrder($expected, $results);
     }
 
@@ -687,7 +687,36 @@ class TasksControllerTest extends TestCase
         $this->assertOrder($expected, $results);
     }
 
-    public function testMoveConflictingParameters()
+    public static function invalidMoveProvider()
+    {
+        return [
+            // Can't set child and day
+            [[
+                'child_order' => 1,
+                'day_order' => 1,
+            ]],
+            // Can't use due_on with child.
+            [[
+                'child_order' => 1,
+                'due_on' => '2020-03-10',
+            ]],
+            // Can't use day with section
+            [[
+                'day_order' => 1,
+                'section_id' => 1,
+            ]],
+            // Can't have string section
+            [[
+                'child_order' => 1,
+                'section_id' => 'no',
+            ]]
+        ];
+    }
+
+    /**
+     * @dataProvider invalidMoveProvider
+     */
+    public function testMoveConflictingParameters($operation)
     {
         $project = $this->makeProject('work', 1);
         $this->makeProjectSection('first', $project->id);
@@ -696,27 +725,7 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
 
-        // Cant set day and child order.
-        $this->post("/tasks/{$first->id}/move", [
-            'child_order' => 1,
-            'day_order' => 1,
-        ]);
-        $this->assertResponseCode(302);
-        $this->assertFlashElement('flash/error');
-
-        // Cant set due_on with child_order
-        $this->post("/tasks/{$first->id}/move", [
-            'child_order' => 1,
-            'due_on' => '2020-03-10',
-        ]);
-        $this->assertResponseCode(302);
-        $this->assertFlashElement('flash/error');
-
-        // Cant set section with day_order
-        $this->post("/tasks/{$first->id}/move", [
-            'day_order' => 1,
-            'section_id' => 1,
-        ]);
+        $this->post("/tasks/{$first->id}/move", $operation);
         $this->assertResponseCode(302);
         $this->assertFlashElement('flash/error');
     }
@@ -774,6 +783,32 @@ class TasksControllerTest extends TestCase
 
         $results = $this->childOrderedTasks(['section_id' => $build->id]);
         $expected = [$third->id, $fourth->id];
+        $this->assertOrder($expected, $results);
+    }
+
+    public function testMoveOutOfSection()
+    {
+        $project = $this->makeProject('work', 1);
+        $design = $this->makeProjectSection('design', $project->id, 0);
+
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 0, ['section_id' => $design->id]);
+        $third = $this->makeTask('third', $project->id, 1, ['section_id' => $design->id]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$third->id}/move", [
+            'child_order' => 0,
+            'section_id' => '',
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->childOrderedTasks(['section_id IS' => null]);
+        $expected = [$third->id, $first->id];
+        $this->assertOrder($expected, $results);
+
+        $results = $this->childOrderedTasks(['section_id' => $design->id]);
+        $expected = [$second->id];
         $this->assertOrder($expected, $results);
     }
 }

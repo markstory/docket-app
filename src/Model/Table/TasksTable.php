@@ -254,21 +254,7 @@ class TasksTable extends Table
         if (!isset($item->project)) {
             throw new InvalidArgumentException('Task cannot be moved, it has no project data loaded.');
         }
-        if (isset($operation['due_on'])) {
-            if (!Validation::date($operation['due_on'], 'ymd')) {
-                throw new InvalidArgumentException('due_on must be a valid date');
-            }
-            $item->due_on = $operation['due_on'];
-        }
-        if (isset($operation['day_order']) && isset($operation['child_order'])) {
-            throw new InvalidArgumentException('Cannot set day and child order at the same time');
-        }
-        if (isset($operation['child_order']) && isset($operation['due_on'])) {
-            throw new InvalidArgumentException('Cannot set child order and due_on at the same time');
-        }
-        if (isset($operation['day_order']) && isset($operation['section_id'])) {
-            throw new InvalidArgumentException('Cannot set day order and section at the same time');
-        }
+        $this->validateMoveOperation($operation);
 
         // Constrain to projects owned by the same user.
         $projectQuery = $this->Projects->find()
@@ -278,19 +264,29 @@ class TasksTable extends Table
         $conditions = [
             'completed' => $item->completed,
         ];
+        $updateFields = [];
+
         if (isset($operation['day_order']) && !isset($operation['evening'])) {
             $property = 'day_order';
-            $conditions['due_on IS'] = $item->due_on;
+            $updateFields['due_on'] = $operation['due_on'];
+            $conditions['due_on IS'] = $operation['due_on'];
             $conditions['evening'] = false;
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
-            $conditions['due_on IS'] = $item->due_on;
+            $updateFields['evening'] = (bool)$operation['evening'];
+            $updateFields['due_on'] = $operation['due_on'];
+
             $conditions['evening'] = $operation['evening'];
+            $conditions['due_on IS'] = $operation['due_on'];
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['section_id']) && isset($operation['child_order'])) {
             $property = 'child_order';
-            $conditions['section_id'] = $item->section_id;
+            $sectionId = $operation['section_id'] === ''
+                ? null
+                : (int)$operation['section_id'];
+            $conditions['section_id IS'] = $sectionId;
+            $updateFields['section_id'] = $sectionId;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
@@ -324,16 +320,20 @@ class TasksTable extends Table
             ->where($conditions);
 
         $current = $item->get($property);
+
         $item->set($property, $targetOffset);
-        if (isset($operation['evening'])) {
-            $item->set('evening', $operation['evening']);
-        }
-        if (isset($operation['section_id'])) {
-            $item->set('section_id', $operation['section_id']);
+        foreach ($updateFields as $field => $value) {
+            if ($item->get($field) !== $value) {
+                $item->set($field, $value);
+            }
         }
         $difference = $current - $item->get($property);
 
-        if ($item->isDirty('due_on') || $item->isDirty('evening')) {
+        if (
+            $item->isDirty('due_on') ||
+            $item->isDirty('evening') ||
+            $item->isDirty('section_id')
+        ) {
             // Moving an item to a new list. Shift the remainder of
             // the new list down.
             $query
@@ -361,5 +361,29 @@ class TasksTable extends Table
             }
             $this->saveOrFail($item);
         });
+    }
+
+    protected function validateMoveOperation(array $operation)
+    {
+        if (isset($operation['due_on'])) {
+            if (!Validation::date($operation['due_on'], 'ymd')) {
+                throw new InvalidArgumentException('due_on must be a valid date');
+            }
+        }
+        if (isset($operation['day_order']) && isset($operation['child_order'])) {
+            throw new InvalidArgumentException('Cannot set day and child order at the same time');
+        }
+        if (isset($operation['child_order']) && isset($operation['due_on'])) {
+            throw new InvalidArgumentException('Cannot set child order and due_on at the same time');
+        }
+        if (isset($operation['day_order']) && isset($operation['section_id'])) {
+            throw new InvalidArgumentException('Cannot set day order and section at the same time');
+        }
+        if (
+            isset($operation['section_id']) &&
+            !($operation['section_id'] === '' || Validation::isInteger($operation['section_id']))
+        ) {
+            throw new InvalidArgumentException('section_id must be a number or ""');
+        }
     }
 }
