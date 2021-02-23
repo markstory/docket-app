@@ -709,7 +709,7 @@ class TasksControllerTest extends TestCase
             [[
                 'child_order' => 1,
                 'section_id' => 'no',
-            ]]
+            ]],
         ];
     }
 
