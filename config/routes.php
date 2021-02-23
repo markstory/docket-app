@@ -93,7 +93,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
                 ->setPass(['projectSlug', 'id']);
             $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
                 ->setPass(['projectSlug', 'id']);
-        });
+        }
+    );
 
     $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
         $builder->post('/', ['action' => 'add'], 'subtasks:add')
