@@ -77,20 +77,23 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
     });
 
-    $builder->scope('/projects/{projectSlug}/sections', ['controller' => 'ProjectSections'], function (RouteBuilder $builder) {
-        $builder->post('/', ['action' => 'add'], 'projectsections:add')
-            ->setPass(['projectSlug']);
-        $builder->post('/{id}/edit', ['action' => 'edit'], 'projectsections:edit')
-            ->setPass(['projectSlug', 'id']);
-        $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
-            ->setPass(['projectSlug', 'id']);
-        $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
-            ->setPass(['projectSlug', 'id']);
-        $builder->post('/{id}/move', ['action' => 'move'], 'projectsections:move')
-            ->setPass(['projectSlug', 'id']);
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
-            ->setPass(['projectSlug', 'id']);
-    });
+    $builder->scope(
+        '/projects/{projectSlug}/sections',
+        ['controller' => 'ProjectSections'],
+        function (RouteBuilder $builder) {
+            $builder->post('/', ['action' => 'add'], 'projectsections:add')
+                ->setPass(['projectSlug']);
+            $builder->post('/{id}/edit', ['action' => 'edit'], 'projectsections:edit')
+                ->setPass(['projectSlug', 'id']);
+            $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
+                ->setPass(['projectSlug', 'id']);
+            $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
+                ->setPass(['projectSlug', 'id']);
+            $builder->post('/{id}/move', ['action' => 'move'], 'projectsections:move')
+                ->setPass(['projectSlug', 'id']);
+            $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
+                ->setPass(['projectSlug', 'id']);
+        });
 
     $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
         $builder->post('/', ['action' => 'add'], 'subtasks:add')
@@ -118,19 +121,3 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['token']);
     });
 });
-
-/*
- * If you need a different set of middleware or none at all,
- * open new scope and define routes there.
- *
- * ```
- * $routes->scope('/api', function (RouteBuilder $builder) {
- *     // No $builder->applyMiddleware() here.
- *     
- *     // Parse specified extensions from URLs
- *     // $builder->setExtensions(['json', 'xml']);
- *     
- *     // Connect API actions here.
- * });
- * ```
- */
