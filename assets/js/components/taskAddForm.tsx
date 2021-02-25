@@ -24,6 +24,7 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props): JSX.Elem
   };
   const task: Task = {
     id: -1,
+    project_section_id: null,
     title: '',
     body: '',
     due_on: defaultDate ?? null,
@@ -40,9 +41,6 @@ function TaskAddForm({onCancel, defaultDate, defaultProjectId}: Props): JSX.Elem
       name: '',
       slug: '',
       color: 0,
-      favorite: false,
-      archived: false,
-      incomplete_task_count: 0,
     },
   };
 

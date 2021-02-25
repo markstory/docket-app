@@ -5,18 +5,34 @@ export type FlashMessage = {
   params: Record<string, any>;
 };
 
-export type Project = {
+export interface ProjectSection {
+  id: number;
+  name: string;
+}
+
+/**
+ * Project shape embedded on tasks.
+ */
+export interface TaskProject {
   id: number;
   name: string;
   slug: string;
   color: number;
+}
+
+/**
+ * Detailed project with all attributes.
+ */
+export interface Project extends TaskProject {
   favorite: boolean;
   archived: boolean;
   incomplete_task_count: number;
-};
+  sections: ProjectSection[];
+}
 
-export type Task = {
+export interface Task {
   id: number;
+  project_section_id: null | number;
   title: string;
   body: string;
   due_on: null | string;
@@ -28,8 +44,8 @@ export type Task = {
   complete_subtask_count: number;
   created: string;
   modified: string;
-  project: Project;
-};
+  project: TaskProject;
+}
 
 export type Subtask = {
   id: number;
@@ -38,9 +54,9 @@ export type Subtask = {
   completed: boolean;
 };
 
-export type TaskDetailed = Task & {
+export interface TaskDetailed extends Task {
   subtasks: Subtask[];
-};
+}
 
 export type User = {
   id: number;

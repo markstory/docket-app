@@ -20,10 +20,12 @@ class ProjectsController extends AppController
         $this->loadModel('Tasks');
     }
 
-    protected function getProject($slug): Project
+    protected function getProject($slug, array $contain = []): Project
     {
         /** @var \App\Model\Entity\Project */
-        return $this->Projects->findBySlug($slug)->firstOrFail();
+        return $this->Projects->findBySlug($slug)
+            ->contain($contain)
+            ->firstOrFail();
     }
 
     /**
@@ -33,7 +35,7 @@ class ProjectsController extends AppController
      */
     public function view(string $slug)
     {
-        $project = $this->getProject($slug);
+        $project = $this->getProject($slug, ['Sections']);
         $this->Authorization->authorize($project);
 
         $query = $this->Authorization

@@ -17,6 +17,7 @@ use InvalidArgumentException;
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\TasksTable&\Cake\ORM\Association\HasMany $Tasks
  * @property \App\Model\Table\LabelsTable&\Cake\ORM\Association\HasMany $Labels
+ * @property \App\Model\Table\ProjectSectionsTable&\Cake\ORM\Association\HasMany $Sections
  * @method \App\Model\Entity\Project newEmptyEntity()
  * @method \App\Model\Entity\Project newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Project[] newEntities(array $data, array $options = [])
@@ -60,6 +61,14 @@ class ProjectsTable extends Table
         ]);
         $this->hasMany('Labels', [
             'foreignKey' => 'project_id',
+        ]);
+        $this->hasMany('Sections', [
+            'className' => 'ProjectSections',
+            'foreignKey' => 'project_id',
+            'sort' => [
+                'Sections.ranking' => 'ASC',
+                'Sections.name' => 'ASC',
+            ]
         ]);
 
         $this->addBehavior('Timestamp');
