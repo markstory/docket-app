@@ -261,24 +261,25 @@ class TasksTable extends Table
             ->select(['Projects.id'])
             ->where(['Projects.user_id' => $item->project->user_id]);
 
+        $updateFields = [];
         $conditions = [
             'completed' => $item->completed,
         ];
-        $updateFields = [];
+        if (isset($operation['due_on'])) {
+            $item->due_on = $operation['due_on'];
+        }
 
         if (isset($operation['day_order']) && !isset($operation['evening'])) {
             $property = 'day_order';
-            $updateFields['due_on'] = $operation['due_on'];
-            $conditions['due_on IS'] = $operation['due_on'];
+            $conditions['due_on IS'] = $item->due_on;
             $conditions['evening'] = false;
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
             $updateFields['evening'] = (bool)$operation['evening'];
-            $updateFields['due_on'] = $operation['due_on'];
 
             $conditions['evening'] = $operation['evening'];
-            $conditions['due_on IS'] = $operation['due_on'];
+            $conditions['due_on IS'] = $item->due_on;
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['section_id']) && isset($operation['child_order'])) {
             $property = 'child_order';
