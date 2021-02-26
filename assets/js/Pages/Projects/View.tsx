@@ -152,7 +152,7 @@ type SectionProps = React.PropsWithChildren<{
 
 function SectionControls({children, section}: SectionProps) {
   return (
-    <div className="section-controls">
+    <div className="section-controls" data-testid="section">
       <h3>{section.name}</h3>
       {children}
     </div>
