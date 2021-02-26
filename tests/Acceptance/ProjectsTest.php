@@ -34,10 +34,10 @@ class ProjectsTest extends AcceptanceTestCase
         $movies = $this->makeProjectSection('movies', $project->id, 0);
         $books = $this->makeProjectSection('books', $project->id, 1);
         $this->makeTask('robocop', $project->id, 0, [
-            'section_id' => $movies->id
+            'section_id' => $movies->id,
         ]);
         $this->makeTask('matrix', $project->id, 0, [
-            'section_id' => $books->id
+            'section_id' => $books->id,
         ]);
 
         $client = $this->login();

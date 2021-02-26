@@ -68,7 +68,7 @@ class ProjectsTable extends Table
             'sort' => [
                 'Sections.ranking' => 'ASC',
                 'Sections.name' => 'ASC',
-            ]
+            ],
         ]);
 
         $this->addBehavior('Timestamp');
