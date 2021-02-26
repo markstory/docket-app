@@ -20,6 +20,9 @@ import TaskRow from 'app/components/taskRow';
 import {Task} from 'app/types';
 
 export type GroupedItems = {key: string; items: Task[]; ids: string[]}[];
+export interface UpdaterCallback {
+  (task: Task, newIndex: number, destinationKey: string): UpdateData;
+}
 
 type ChildRenderProps = {
   groupedItems: GroupedItems;
@@ -28,19 +31,19 @@ type ChildRenderProps = {
 
 type Props = {
   tasks: Task[];
-  scope: 'day';
   children: (props: ChildRenderProps) => JSX.Element;
   grouper: (tasks: Task[]) => GroupedItems;
+  updater: UpdaterCallback;
   showProject?: boolean;
   showDueOn?: boolean;
 };
 
-type UpdateData = {
+export interface UpdateData {
   child_order?: number;
   day_order?: number;
   due_on?: string;
   evening?: boolean;
-};
+}
 
 function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
   return [...items.slice(0, index), insert, ...items.slice(index, items.length)];
@@ -63,7 +66,7 @@ export default function TaskGroupedSorter({
   children,
   tasks,
   grouper,
-  scope,
+  updater,
   showProject,
   showDueOn,
 }: Props): JSX.Element {
@@ -107,11 +110,6 @@ export default function TaskGroupedSorter({
     if (destinationIndex === -1) {
       destinationIndex = 0;
     }
-
-    const property = scope === 'day' ? 'day_order' : 'child_order';
-    const data: UpdateData = {
-      [property]: destinationIndex,
-    };
     const task = items[sourceGroupIndex].items[sourceIndex];
 
     const newItems = [...items];
@@ -120,20 +118,7 @@ export default function TaskGroupedSorter({
       sourceIndex,
       destinationIndex
     );
-    if (scope === 'day') {
-      let isEvening = false;
-      let newDate = destinationGroup.key;
-      if (newDate.includes('evening:')) {
-        isEvening = true;
-        newDate = newDate.substring(8);
-      }
-      if (isEvening !== task.evening) {
-        data.evening = isEvening;
-      }
-      if (newDate !== task.due_on) {
-        data.due_on = newDate;
-      }
-    }
+    const data = updater(task, destinationIndex, destinationGroup.key);
 
     setSorted(newItems);
 

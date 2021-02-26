@@ -143,10 +143,12 @@ class TasksController extends AppController
         $operation = [
             'child_order' => $this->request->getData('child_order'),
             'day_order' => $this->request->getData('day_order'),
-            'section_id' => $this->request->getData('section_id') ?? null,
             'due_on' => $this->request->getData('due_on'),
             'evening' => $this->request->getData('evening') ?? null,
         ];
+        if (array_key_exists('section_id', $this->request->getData())) {
+            $operation['section_id'] = $this->request->getData('section_id');
+        }
         try {
             $this->Tasks->move($task, $operation);
             $this->Flash->success(__('Task reordered.'));

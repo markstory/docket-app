@@ -53,7 +53,7 @@ class ProjectSectionsTable extends Table
             'joinType' => 'INNER',
         ]);
         $this->hasMany('Tasks', [
-            'foreignKey' => 'project_section_id',
+            'foreignKey' => 'section_id',
         ]);
     }
 

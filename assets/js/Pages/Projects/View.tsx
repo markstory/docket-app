@@ -1,4 +1,5 @@
 import React from 'react';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
@@ -8,9 +9,47 @@ import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
-import TaskSorter from 'app/components/taskSorter';
+import TaskGroupedSorter, {
+  GroupedItems,
+  UpdaterCallback,
+} from 'app/components/taskGroupedSorter';
 
-type SectionTaskMap = Record<number, Task[]>;
+const ROOT = '_root_';
+
+function grouper(sections: ProjectSection[]) {
+  return function (items: Task[]): GroupedItems {
+    const sectionTable = items.reduce<Record<string, Task[]>>((acc, task) => {
+      const key = task.section_id === null ? ROOT : String(task.section_id);
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(task);
+      return acc;
+    }, {});
+
+    return [
+      {
+        key: ROOT,
+        items: sectionTable[ROOT] ?? [],
+        ids: (sectionTable[ROOT] ?? []).map(task => String(task.id)),
+      },
+      ...sections.map(section => {
+        return {
+          key: String(section.id),
+          items: sectionTable[section.id] ?? [],
+          ids: (sectionTable[section.id] ?? []).map(task => String(task.id)),
+        };
+      }),
+    ];
+  };
+}
+
+const updater: UpdaterCallback = (_task, newIndex, destinationKey) => {
+  return {
+    section_id: destinationKey === ROOT ? null : destinationKey,
+    child_order: newIndex,
+  };
+};
 
 type Props = {
   project: Project;
@@ -19,12 +58,13 @@ type Props = {
 };
 
 export default function ProjectsView({completed, project, tasks}: Props): JSX.Element {
-  const rootTasks = tasks.filter(task => task.project_section_id === null);
-  const sectionTasks = project.sections.reduce<SectionTaskMap>((acc, section) => {
-    acc[section.id] = tasks.filter(task => task.project_section_id === section.id);
-    return acc;
-  }, {});
-
+  const sectionMap = project.sections.reduce<Record<string, ProjectSection>>(
+    (acc, section) => {
+      acc[section.id] = section;
+      return acc;
+    },
+    {}
+  );
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
@@ -40,36 +80,54 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         <div className="attributes">
           {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
-        <TaskSorter tasks={rootTasks} scope="child" showDueOn>
-          {({items, activeTask}) => (
-            <TaskGroup
-              dropId="project"
-              activeTask={activeTask}
-              tasks={items}
-              defaultProjectId={project.id}
-              showAdd={!project.archived}
-              showDueOn
-            />
-          )}
-        </TaskSorter>
-        {project.sections.map(section => {
-          return (
-            <SectionControls key={section.id} section={section}>
-              <TaskSorter tasks={sectionTasks[section.id]} scope="child" showDueOn>
-                {({items, activeTask}) => (
-                  <TaskGroup
-                    dropId="project"
-                    activeTask={activeTask}
-                    tasks={items}
-                    defaultProjectId={project.id}
-                    showAdd={!project.archived}
-                    showDueOn
-                  />
-                )}
-              </TaskSorter>
-            </SectionControls>
-          );
-        })}
+        <TaskGroupedSorter
+          tasks={tasks}
+          grouper={grouper(project.sections)}
+          updater={updater}
+          showDueOn
+        >
+          {({groupedItems, activeTask}) => {
+            return (
+              <React.Fragment>
+                {groupedItems.map(({key, ids, items}) => {
+                  if (key === ROOT) {
+                    return (
+                      <SortableContext
+                        key={key}
+                        items={ids}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <TaskGroup
+                          dropId={ROOT}
+                          activeTask={activeTask}
+                          tasks={items}
+                          defaultProjectId={project.id}
+                          showAdd={!project.archived}
+                          showDueOn
+                        />
+                      </SortableContext>
+                    );
+                  }
+                  const section = sectionMap[key];
+                  return (
+                    <SectionControls key={key} section={section}>
+                      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+                        <TaskGroup
+                          dropId={key}
+                          activeTask={activeTask}
+                          tasks={items}
+                          defaultProjectId={project.id}
+                          showAdd={!project.archived}
+                          showDueOn
+                        />
+                      </SortableContext>
+                    </SectionControls>
+                  );
+                })}
+              </React.Fragment>
+            );
+          }}
+        </TaskGroupedSorter>
         {completed && (
           <React.Fragment>
             <TaskList title={t('Completed')} tasks={completed} showDueOn />

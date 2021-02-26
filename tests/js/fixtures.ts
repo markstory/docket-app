@@ -3,7 +3,7 @@ import {Task, Project} from 'app/types';
 export function makeTask(props?: Partial<Task>): Task {
   const defaults: Task = {
     id: 1,
-    project_section_id: null,
+    section_id: null,
     title: '',
     body: '',
     completed: false,

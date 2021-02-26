@@ -281,13 +281,11 @@ class TasksTable extends Table
             $conditions['evening'] = $operation['evening'];
             $conditions['due_on IS'] = $item->due_on;
             $conditions['project_id IN'] = $projectQuery;
-        } elseif (isset($operation['section_id']) && isset($operation['child_order'])) {
+        } elseif (array_key_exists('section_id', $operation) && isset($operation['child_order'])) {
             $property = 'child_order';
-            $sectionId = $operation['section_id'] === ''
-                ? null
-                : (int)$operation['section_id'];
-            $conditions['section_id IS'] = $sectionId;
-            $updateFields['section_id'] = $sectionId;
+            $conditions['section_id IS'] = $operation['section_id'];
+
+            $updateFields['section_id'] = $operation['section_id'];
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;

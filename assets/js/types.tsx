@@ -32,7 +32,7 @@ export interface Project extends TaskProject {
 
 export interface Task {
   id: number;
-  project_section_id: null | number;
+  section_id: null | number;
   title: string;
   body: string;
   due_on: null | string;
