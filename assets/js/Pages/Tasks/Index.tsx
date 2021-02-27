@@ -4,6 +4,7 @@ import sortBy from 'lodash.sortby';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
+import {daySortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -72,8 +73,8 @@ export default function TasksIndex({
       <TaskGroupedSorter
         key={generation}
         tasks={tasks}
-        scope="day"
         grouper={createGrouper(start, 28)}
+        updater={daySortUpdater}
         showProject
         showDueOn
       >

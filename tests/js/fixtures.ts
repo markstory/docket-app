@@ -3,6 +3,7 @@ import {Task, Project} from 'app/types';
 export function makeTask(props?: Partial<Task>): Task {
   const defaults: Task = {
     id: 1,
+    section_id: null,
     title: '',
     body: '',
     completed: false,
@@ -31,6 +32,7 @@ export function makeProject(props?: Partial<Project>): Project {
     favorite: false,
     archived: false,
     incomplete_task_count: 0,
+    sections: [],
   };
   return {
     ...defaults,

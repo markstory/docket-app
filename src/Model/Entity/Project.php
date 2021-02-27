@@ -20,8 +20,9 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Task[] $todo_items
- * @property \App\Model\Entity\TodoLabel[] $todo_labels
+ * @property \App\Model\Entity\Task[] $tasks
+ * @property \App\Model\Entity\Label[] $labels
+ * @property \App\Model\Entity\ProjectSection[] $sections
  */
 class Project extends Entity
 {
@@ -42,11 +43,12 @@ class Project extends Entity
         'favorite' => true,
         'archived' => true,
         'ranking' => false,
-        'created' => true,
-        'modified' => true,
-        'user' => true,
-        'todo_items' => true,
-        'todo_labels' => true,
+        'created' => false,
+        'modified' => false,
+        'user' => false,
+        'tasks' => false,
+        'labels' => false,
+        'sections' => false,
     ];
 
     public function archive()
