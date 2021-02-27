@@ -180,6 +180,7 @@ class TasksController extends AppController
         if ($task->isDirty('project_id')) {
             $project = $this->Tasks->Projects->get($task->project_id);
             $this->Authorization->authorize($project, 'edit');
+            $task->section_id = null;
         }
 
         if ($this->Tasks->save($task)) {

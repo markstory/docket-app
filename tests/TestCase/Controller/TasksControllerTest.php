@@ -320,6 +320,26 @@ class TasksControllerTest extends TestCase
         $this->assertEquals($project->id, $todo->project_id);
     }
 
+    public function testEditChangeProjectWithSection(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $other = $this->makeProject('home', 1);
+        $section = $this->makeProjectSection('design', $project->id);
+        $first = $this->makeTask('first', $project->id, 0, ['section_id' => $section->id]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'project_id' => $other->id,
+        ]);
+        $this->assertResponseCode(200);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertSame('updated', $todo->title);
+        $this->assertNull($todo->section_id, 'Should blank section because project is different.');
+    }
+
     public function testDelete(): void
     {
         $project = $this->makeProject('work', 1);

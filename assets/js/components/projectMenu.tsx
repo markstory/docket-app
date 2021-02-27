@@ -11,14 +11,16 @@ import {useProjects} from 'app/providers/projects';
 
 type Props = {
   project: Project;
-  showAll?: boolean;
+  showDetailed?: boolean;
+  onAddSection?: () => void;
   onClick?: (event: React.MouseEvent) => void;
 };
 
 export default function ProjectMenu({
   project,
   onClick,
-  showAll = false,
+  onAddSection,
+  showDetailed = false,
 }: Props): JSX.Element {
   const [_, setProjects] = useProjects();
 
@@ -37,7 +39,17 @@ export default function ProjectMenu({
 
   return (
     <ContextMenu onClick={onClick} tooltip={t('Project Actions')}>
-      {showAll && (
+      <MenuLink as={InertiaLink} className="edit" href={`/projects/${project.slug}/edit`}>
+        <InlineIcon icon="pencil" />
+        {t('Edit Project')}
+      </MenuLink>
+      {showDetailed && onAddSection && (
+        <MenuLink className="complete" onSelect={onAddSection} data-testid="add-section">
+          <InlineIcon icon="plus" />
+          {t('Add section')}
+        </MenuLink>
+      )}
+      {showDetailed && (
         <MenuLink
           as={InertiaLink}
           className="complete"
@@ -47,10 +59,7 @@ export default function ProjectMenu({
           {t('View completed tasks')}
         </MenuLink>
       )}
-      <MenuLink as={InertiaLink} className="edit" href={`/projects/${project.slug}/edit`}>
-        <InlineIcon icon="pencil" />
-        {t('Edit Project')}
-      </MenuLink>
+      <div className="separator" />
       {project.archived ? (
         <MenuItem className="archive" onSelect={handleUnarchive}>
           <InlineIcon icon="archive" />
