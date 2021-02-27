@@ -7,6 +7,12 @@ use Cake\ORM\TableRegistry;
 
 class ProjectsTest extends AcceptanceTestCase
 {
+    public function setUp(): void 
+    {
+        parent::setUp();
+        $this->Projects = TableRegistry::get('Projects');
+    }
+
     public function testCreate()
     {
         $client = $this->login();
@@ -22,8 +28,7 @@ class ProjectsTest extends AcceptanceTestCase
             'name' => 'New project',
         ]);
 
-        $projects = TableRegistry::get('Projects');
-        $project = $projects->find()->first();
+        $project = $this->Projects->find()->first();
         $this->assertNotEmpty($project, 'No project saved');
         $this->assertEquals('New project', $project->name);
     }
@@ -50,5 +55,30 @@ class ProjectsTest extends AcceptanceTestCase
 
         $tasks = $client->getCrawler()->filter('.task-group');
         $this->assertEquals(3, count($tasks));
+    }
+
+    public function testAddSection()
+    {
+        $project = $this->makeProject('Home', 1);
+
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        $headerMenu = $crawler->filter('.heading .button-icon')->first();
+        // Open the header menu
+        $headerMenu->click();
+        $client->waitFor('[data-reach-menu-item]');
+
+        $this->clickWithMouse('[data-testid="add-section"]');
+
+        $form = $crawler->filter('.section-quickform')->form();
+        $form->get('name')->setValue('books to read');
+        $crawler->filter('[data-testid="save-section"]')->click();
+
+        $section = $this->Projects->Sections->find()->firstOrFail();
+        $this->assertEquals('books to read', $section->name);
+        $this->assertSame($project->id, $section->project_id);
     }
 }

@@ -44,7 +44,7 @@ export default function ProjectMenu({
         {t('Edit Project')}
       </MenuLink>
       {showDetailed && onAddSection && (
-        <MenuLink className="complete" onSelect={onAddSection}>
+        <MenuLink className="complete" onSelect={onAddSection} data-testid="add-section">
           <InlineIcon icon="plus" />
           {t('Add section')}
         </MenuLink>

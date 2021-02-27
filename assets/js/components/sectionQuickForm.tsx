@@ -36,7 +36,7 @@ function SectionQuickForm({onCancel, project}: Props): JSX.Element {
         />
       </div>
       <div className="button-bar">
-        <button type="submit" className="button-primary" data-testid="save-task">
+        <button type="submit" className="button-primary" data-testid="save-section">
           {t('Save')}
         </button>
         <button className="button-muted" onClick={onCancel}>
