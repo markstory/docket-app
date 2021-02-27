@@ -97,7 +97,7 @@ class TasksController extends AppController
         $task = $this->Tasks->get($id, [
             'contain' => ['Projects'],
         ]);
-        $this->Authorization->can($task, 'edit');
+        $this->Authorization->authorize($task, 'edit');
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->complete();
@@ -123,7 +123,7 @@ class TasksController extends AppController
         $task = $this->Tasks->get($id, [
             'contain' => ['Projects'],
         ]);
-        $this->Authorization->can($task, 'edit');
+        $this->Authorization->authorize($task, 'edit');
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->incomplete();

@@ -365,6 +365,62 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
+    public function testCompletePermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/complete");
+        $this->assertResponseCode(403);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertFalse($todo->completed);
+    }
+
+    public function testComplete(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/complete");
+        $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertTrue($todo->completed);
+    }
+
+    public function testIncompletePermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/incomplete");
+        $this->assertResponseCode(403);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertTrue($todo->completed);
+    }
+
+    public function testIncomplete(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/incomplete");
+        $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertFalse($todo->completed);
+    }
+
     public function testMovePermissions()
     {
         $project = $this->makeProject('work', 2);
