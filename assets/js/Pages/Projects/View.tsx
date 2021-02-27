@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
@@ -9,6 +9,7 @@ import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
+import SectionQuickForm from 'app/components/sectionQuickForm';
 import TaskGroupedSorter, {
   GroupedItems,
   UpdaterCallback,
@@ -58,6 +59,11 @@ type Props = {
 };
 
 export default function ProjectsView({completed, project, tasks}: Props): JSX.Element {
+  const [showAddSection, setShowAddSection] = useState(false);
+  function handleCancelSection() {
+    setShowAddSection(false);
+  }
+
   const sectionMap = project.sections.reduce<Record<string, ProjectSection>>(
     (acc, section) => {
       acc[section.id] = section;
@@ -74,7 +80,11 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
             {project.name}
           </h1>
 
-          <ProjectMenu project={project} showAll />
+          <ProjectMenu
+            project={project}
+            onAddSection={() => setShowAddSection(true)}
+            showDetailed
+          />
         </div>
 
         <div className="attributes">
@@ -128,6 +138,9 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
             );
           }}
         </TaskGroupedSorter>
+        {showAddSection && (
+          <SectionQuickForm project={project} onCancel={handleCancelSection} />
+        )}
         {completed && (
           <React.Fragment>
             <TaskList title={t('Completed')} tasks={completed} showDueOn />
