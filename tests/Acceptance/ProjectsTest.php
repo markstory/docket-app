@@ -7,7 +7,7 @@ use Cake\ORM\TableRegistry;
 
 class ProjectsTest extends AcceptanceTestCase
 {
-    public function setUp(): void 
+    public function setUp(): void
     {
         parent::setUp();
         $this->Projects = TableRegistry::get('Projects');
