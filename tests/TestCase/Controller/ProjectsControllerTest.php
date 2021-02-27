@@ -38,11 +38,6 @@ class ProjectsControllerTest extends TestCase
         $this->Projects = TableRegistry::get('Projects');
     }
 
-    /**
-     * Test view method
-     *
-     * @return void
-     */
     public function testView(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
@@ -54,6 +49,21 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
         $this->assertCount(1, $this->viewVariable('tasks'));
+    }
+
+    public function testView(): void
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeTask('first post', $home->id, 0);
+        $this->makeTask('done', $home->id, 0, ['completed' => true]);
+
+        $this->login();
+        $this->get("/projects/{$home->slug}/?completed=1");
+
+        $this->assertResponseOk();
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(1, $this->viewVariable('tasks'));
+        $this->assertCount(1, $this->viewVariable('completed'));
     }
 
     /**

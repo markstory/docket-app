@@ -289,6 +289,21 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->evening);
     }
 
+    public function testEditValidation(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => '',
+            'evening' => true,
+        ]);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('errors');
+    }
+
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);

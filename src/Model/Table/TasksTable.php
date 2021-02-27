@@ -98,7 +98,7 @@ class TasksTable extends Table
 
         $validator
             ->scalar('title')
-            ->allowEmptyString('title');
+            ->minLength('title', 1);
 
         $validator
             ->scalar('body')
