@@ -773,7 +773,6 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/move", [
             'child_order' => 1,
-            'section_id' => $design->id,
         ]);
         $this->assertRedirect('/tasks/today');
 
@@ -799,7 +798,7 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$third->id}/move", [
             'child_order' => 0,
-            'section_id' => '',
+            'section_id' => null
         ]);
         $this->assertRedirect('/tasks/today');
 
