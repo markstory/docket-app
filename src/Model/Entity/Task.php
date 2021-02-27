@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenDate|null $due_on
  * @property int $child_order
  * @property int $day_order
+ * @property bool $evening
  * @property bool $completed
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
