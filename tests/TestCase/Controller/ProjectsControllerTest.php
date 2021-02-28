@@ -51,7 +51,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
-    public function testView(): void
+    public function testViewCompleted(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
         $this->makeTask('first post', $home->id, 0);
