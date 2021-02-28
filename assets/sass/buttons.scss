@@ -122,7 +122,8 @@ a > svg:not(:last-child) {
 
   &:hover {
     color: var(--color-primary);
-    background: var(--color-bg-low-hover);
+    background: var(--color-bg-low);
+    box-shadow: none;
   }
 
   svg {

@@ -27,6 +27,7 @@ class ProjectSectionsControllerTest extends TestCase
         'app.Users',
         'app.ProjectSections',
         'app.Projects',
+        'app.Tasks',
     ];
 
     /**
@@ -227,6 +228,26 @@ class ProjectSectionsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/projects/{$project->slug}/sections/{$section->id}/delete");
         $this->assertResponseCode(403);
+    }
+
+    public function testDeleteUpdateTasks()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+        $task = $this->makeTask('first', $project->id, 0, [
+            'section_id' => $section->id
+        ]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$project->slug}/sections/{$section->id}/delete");
+        $this->assertRedirect('/projects/home');
+
+        $count = $this->ProjectSections->find()->count();
+        $this->assertEquals($count, 0);
+
+        $updated = $this->ProjectSections->Tasks->get($task->id);
+        $this->assertNull($updated->section_id);
     }
 
     public function testMovePermissions()

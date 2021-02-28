@@ -5,6 +5,7 @@ import {MenuItem} from '@reach/menu-button';
 
 import {t} from 'app/locale';
 import {Project, ProjectSection, ValidationErrors} from 'app/types';
+import {deleteSection} from 'app/actions/projects';
 
 import ContextMenu from './contextMenu';
 import SectionQuickForm from './sectionQuickForm';
@@ -21,8 +22,8 @@ function SectionContainer({children, project, section}: SectionProps) {
 
   const editUrl = `/projects/${project.slug}/sections/${section.id}/edit`;
 
-  function handleDelete() {
-    // TODO finish.
+  async function handleDelete() {
+    await deleteSection(project, section);
   }
 
   function handleSubmit(formData: FormData) {
