@@ -81,4 +81,33 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals('books to read', $section->name);
         $this->assertSame($project->id, $section->project_id);
     }
+
+    public function testEditSection()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Books', $project->id);
+
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Open the header menu
+        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
+        $sectionMenu->click();
+        $client->waitFor('[data-reach-menu-item]');
+
+        // Click the edit action
+        $this->clickWithMouse('.edit[data-reach-menu-item]');
+
+        // Update the section name.
+        $client->waitFor('.section-quickform');
+        $form = $crawler->filter('.section-quickform')->form();
+        $form->get('name')->setValue('books to read');
+        $crawler->filter('[data-testid="save-section"]')->click();
+
+        $section = $this->Projects->Sections->find()->firstOrFail();
+        $this->assertEquals('books to read', $section->name);
+        $this->assertSame($project->id, $section->project_id);
+    }
 }
