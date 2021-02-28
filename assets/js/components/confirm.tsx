@@ -33,10 +33,19 @@ function Confirmation({
       {title && <AlertDialogLabel>{title}</AlertDialogLabel>}
       <AlertDialogDescription>{confirmation}</AlertDialogDescription>
       <div className="button-bar-right">
-        <button className="button-muted" ref={cancelRef} onClick={() => proceed(false)}>
+        <button
+          className="button-muted"
+          data-testid="confirm-cancel"
+          ref={cancelRef}
+          onClick={() => proceed(false)}
+        >
           {cancelLabel}
         </button>
-        <button className="button-danger" onClick={() => proceed(true)}>
+        <button
+          className="button-danger"
+          data-testid="confirm-proceed"
+          onClick={() => proceed(true)}
+        >
           {proceedLabel}
         </button>
       </div>

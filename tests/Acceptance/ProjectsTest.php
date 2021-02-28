@@ -33,7 +33,31 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals('New project', $project->name);
     }
 
-    public function testTasksInSections()
+    public function testDelete()
+    {
+        $this->makeProject('Home', 1);
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Open the header menu
+        $headerMenu = $crawler->filter('.heading .button-icon')->first();
+        $headerMenu->click();
+        $client->waitFor('[data-reach-menu-item]');
+
+        // Click delete
+        $this->clickWithMouse('.delete[data-reach-menu-item]');
+
+        // Click proceed in the modal.
+        $client->waitFor('[aria-modal="true"]');
+        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
+        $button->click();
+
+        $this->assertEquals(0, $this->Projects->find()->count());
+    }
+
+    public function testTasksRenderInSections()
     {
         $project = $this->makeProject('Home', 1);
         $movies = $this->makeProjectSection('movies', $project->id, 0);
@@ -109,5 +133,31 @@ class ProjectsTest extends AcceptanceTestCase
         $section = $this->Projects->Sections->find()->firstOrFail();
         $this->assertEquals('books to read', $section->name);
         $this->assertSame($project->id, $section->project_id);
+    }
+
+    public function testDeleteSection()
+    {
+        $project = $this->makeProject('Home', 1);
+        $this->makeProjectSection('Books', $project->id);
+
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Open the header menu
+        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
+        $sectionMenu->click();
+        $client->waitFor('[data-reach-menu-item]');
+
+        // Click the delete action
+        $this->clickWithMouse('.delete[data-reach-menu-item]');
+
+        // Click proceed in the modal.
+        $client->waitFor('[aria-modal="true"]');
+        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
+        $button->click();
+
+        $this->assertEquals(0, $this->Projects->Sections->find()->count());
     }
 }
