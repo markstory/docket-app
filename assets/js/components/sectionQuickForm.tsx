@@ -1,24 +1,31 @@
 import React from 'react';
-import {Inertia} from '@inertiajs/inertia';
 
+import {ProjectSection, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
-import {Project} from 'app/types';
+import FormError from './formError';
 
 type Props = {
-  project: Project;
+  url: string;
+  section?: ProjectSection;
+  errors?: ValidationErrors;
+  onSubmit: (data: FormData) => void;
   onCancel?: () => void;
 };
 
-function SectionQuickForm({onCancel, project}: Props): JSX.Element {
-  const url = `/projects/${project.slug}/sections`;
+function SectionQuickForm({
+  section,
+  errors,
+  onSubmit,
+  onCancel,
+  url,
+}: Props): JSX.Element {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    Inertia.post(url, formData, {
-      onSuccess: () => onCancel?.(),
-    });
+    onSubmit(formData);
   }
+
   return (
     <form
       className="section-quickform"
@@ -30,10 +37,12 @@ function SectionQuickForm({onCancel, project}: Props): JSX.Element {
         <input
           type="text"
           name="name"
+          defaultValue={section?.name}
           placeholder={t('Movies to watch')}
           autoFocus
           required
         />
+        <FormError errors={errors} field="name" />
       </div>
       <div className="button-bar">
         <button type="submit" className="button-primary" data-testid="save-section">
