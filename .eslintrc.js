@@ -13,13 +13,16 @@ module.exports = {
     },
   },
   extends: [
-    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'prettier/@typescript-eslint', // Disable conflicting rules with typescript-eslint
-    'plugin:prettier/recommended', // Needs to be last in the list
+    // Prettier rules need to be at the end as they tweak other plugins.
+    'prettier',
+    'plugin:prettier/recommended',
+    'prettier/@typescript-eslint',
+    'prettier/react',
   ],
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+    //
   },
 };
