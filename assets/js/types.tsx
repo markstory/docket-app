@@ -2,7 +2,7 @@ export type FlashMessage = {
   message: string;
   key: string;
   element: string;
-  params: Record<string, any>;
+  params: Record<string, string | number | null>;
 };
 
 export interface ProjectSection {
