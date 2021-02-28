@@ -235,7 +235,7 @@ class ProjectSectionsControllerTest extends TestCase
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id);
         $task = $this->makeTask('first', $project->id, 0, [
-            'section_id' => $section->id
+            'section_id' => $section->id,
         ]);
 
         $this->login();
