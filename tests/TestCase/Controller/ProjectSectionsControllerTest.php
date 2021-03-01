@@ -232,11 +232,15 @@ class ProjectSectionsControllerTest extends TestCase
 
     public function testDeleteUpdateTasks()
     {
+        // Account for SQLite being strange.
+        $this->ProjectSections->getConnection()->enableForeignKeys();
+
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id);
         $task = $this->makeTask('first', $project->id, 0, [
             'section_id' => $section->id,
         ]);
+
 
         $this->login();
         $this->enableCsrfToken();
