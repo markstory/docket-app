@@ -241,7 +241,6 @@ class ProjectSectionsControllerTest extends TestCase
             'section_id' => $section->id,
         ]);
 
-
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$project->slug}/sections/{$section->id}/delete");
