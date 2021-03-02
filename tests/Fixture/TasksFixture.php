@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Test\Fixture;
@@ -33,7 +34,20 @@ class TasksFixture extends TestFixture
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'todo_items_ibfk_1' => ['type' => 'foreign', 'columns' => ['project_id'], 'references' => ['projects', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
+            'tasks_project_id' => [
+                'type' => 'foreign',
+                'columns' => ['project_id'],
+                'references' => ['projects', 'id'],
+                'update' => 'restrict',
+                'delete' => 'cascade'
+            ],
+            'tasks_section_id' => [
+                'type' => 'foreign',
+                'columns' => ['section_id'],
+                'references' => ['project_sections', 'id'],
+                'update' => 'restrict',
+                'delete' => 'setNull'
+            ],
         ],
     ];
     // phpcs:enable

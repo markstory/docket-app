@@ -32,6 +32,7 @@ export default function ProfileMenu(): JSX.Element {
           <InlineIcon icon="lock" />
           {t('Update Password')}
         </MenuLink>
+        <div className="separator" />
         <MenuLink as={InertiaLink} href="/logout">
           {t('Logout')}
         </MenuLink>

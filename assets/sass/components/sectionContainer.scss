@@ -1,0 +1,18 @@
+.section-container {
+  .controls {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: $space * 2;
+
+    border-bottom: 1px solid var(--color-border-med);
+  }
+
+  .heading {
+    margin-bottom: 0;
+  }
+
+  .section-quickform {
+    margin-bottom: $space;
+  }
+}

@@ -9,7 +9,8 @@ import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
-import SectionQuickForm from 'app/components/sectionQuickForm';
+import SectionAddForm from 'app/components/sectionAddForm';
+import SectionContainer from 'app/components/sectionContainer';
 import TaskGroupedSorter, {
   GroupedItems,
   UpdaterCallback,
@@ -120,7 +121,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                   }
                   const section = sectionMap[key];
                   return (
-                    <SectionControls key={key} section={section}>
+                    <SectionContainer key={key} project={project} section={section}>
                       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                         <TaskGroup
                           dropId={key}
@@ -131,7 +132,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                           showDueOn
                         />
                       </SortableContext>
-                    </SectionControls>
+                    </SectionContainer>
                   );
                 })}
               </React.Fragment>
@@ -139,7 +140,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
           }}
         </TaskGroupedSorter>
         {showAddSection && (
-          <SectionQuickForm project={project} onCancel={handleCancelSection} />
+          <SectionAddForm project={project} onCancel={handleCancelSection} />
         )}
         {completed && (
           <React.Fragment>
@@ -156,18 +157,5 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         )}
       </div>
     </LoggedIn>
-  );
-}
-
-type SectionProps = React.PropsWithChildren<{
-  section: ProjectSection;
-}>;
-
-function SectionControls({children, section}: SectionProps) {
-  return (
-    <div className="section-controls" data-testid="section">
-      <h3>{section.name}</h3>
-      {children}
-    </div>
   );
 }
