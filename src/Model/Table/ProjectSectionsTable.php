@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Entity\ProjectSection;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -98,6 +99,11 @@ class ProjectSectionsTable extends Table
         $rules->add($rules->existsIn(['project_id'], 'Projects'), ['errorField' => 'project_id']);
 
         return $rules;
+    }
+
+    public function beforeDelete(EventInterface $event, ProjectSection $section)
+    {
+        $this->Tasks->updateAll(['section_id' => null], ['section_id' => $section->id]);
     }
 
     public function getNextRanking(int $projectId): int
