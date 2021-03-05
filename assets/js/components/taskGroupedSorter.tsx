@@ -88,7 +88,6 @@ export default function TaskGroupedSorter({
   }
 
   function handleDragEnd({active, over}: DragEndEvent) {
-    setActiveTask(null);
     // Dropped outside of a dropzone
     if (!over) {
       return;
@@ -111,23 +110,12 @@ export default function TaskGroupedSorter({
       destinationIndex = 0;
     }
     const task = items[sourceGroupIndex].items[sourceIndex];
-
-    // TODO find out if this resort and state update is required.
-    // It might not be as handleDragOver is doing most of the state
-    // updates.
-    const newItems = [...items];
-    newItems[sourceGroupIndex].items = arrayMove(
-      newItems[sourceGroupIndex].items,
-      sourceIndex,
-      destinationIndex
-    );
     const data = updater(task, destinationIndex, destinationGroup.key);
-
-    setSorted(newItems);
 
     Inertia.post(`/tasks/${active.id}/move`, data, {
       preserveScroll: true,
       onSuccess() {
+        setActiveTask(null);
         setSorted(undefined);
       },
     });
