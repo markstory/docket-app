@@ -528,8 +528,8 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $second = $this->makeTask('second', $project->id, 2);
-        $third = $this->makeTask('a third', $project->id, 2);
-        $fourth = $this->makeTask('fourth', $project->id, 2);
+        $third = $this->makeTask('third', $project->id, 2);
+        $fourth = $this->makeTask('z fourth', $project->id, 2);
 
         $this->login();
         $this->enableCsrfToken();
@@ -775,6 +775,26 @@ class TasksControllerTest extends TestCase
 
         $results = $this->childOrderedTasks();
         $expected = [$second->id, $third->id, $first->id, $fourth->id];
+        $this->assertOrder($expected, $results);
+    }
+
+    public function testMoveProjectBottom()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 7);
+        $second = $this->makeTask('second', $project->id, 9);
+        $third = $this->makeTask('third', $project->id, 10);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/move", [
+            'child_order' => 2,
+            'section_id' => null,
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->childOrderedTasks();
+        $expected = [$second->id, $third->id, $first->id];
         $this->assertOrder($expected, $results);
     }
 
