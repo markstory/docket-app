@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import classnames from 'classnames';
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
 import {Inertia} from '@inertiajs/inertia';
 import {MenuItem} from '@reach/menu-button';
 
@@ -8,20 +11,23 @@ import {Project, ProjectSection, ValidationErrors} from 'app/types';
 import {deleteSection} from 'app/actions/projects';
 
 import ContextMenu from './contextMenu';
+import DragHandle from './dragHandle';
 import SectionQuickForm from './sectionQuickForm';
 import {InlineIcon} from './icon';
-import SortableItem from './sortableItem';
 
 type SectionProps = React.PropsWithChildren<{
+  id: string;
+  active?: ProjectSection;
   section: ProjectSection;
   project: Project;
 }>;
 
-function SectionContainer({children, project, section}: SectionProps) {
+function SectionContainer({active, children, id, project, section}: SectionProps) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   const editUrl = `/projects/${project.slug}/sections/${section.id}/edit`;
+  const activeId = active ? String(active.id) : undefined;
 
   async function handleDelete() {
     await deleteSection(project, section);
@@ -42,38 +48,49 @@ function SectionContainer({children, project, section}: SectionProps) {
         }
       });
   }
+  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+    id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  const className = classnames('section-container', {
+    'dnd-ghost': id === activeId,
+  });
 
   return (
-    <SortableItem id={`s:${section.id}`} tag="div">
-      <div className="section-container" data-testid="section">
-        <div className="controls">
-          {editing ? (
-            <SectionQuickForm
-              url={editUrl}
-              section={section}
-              onSubmit={handleSubmit}
-              onCancel={() => setEditing(false)}
-              errors={errors}
-            />
-          ) : (
-            <React.Fragment>
-              <h3 className="heading">{section.name}</h3>
-              <ContextMenu tooltip={t('Section actions')}>
-                <MenuItem onSelect={() => setEditing(true)} className="edit">
-                  <InlineIcon icon="pencil" />
-                  {t('Edit Section')}
-                </MenuItem>
-                <MenuItem onSelect={handleDelete} className="delete">
-                  <InlineIcon icon="trash" />
-                  {t('Delete Section')}
-                </MenuItem>
-              </ContextMenu>
-            </React.Fragment>
-          )}
-        </div>
-        {children}
+    <div className={className} data-testid="section" ref={setNodeRef} style={style}>
+      <div className="controls">
+        {editing ? (
+          <SectionQuickForm
+            url={editUrl}
+            section={section}
+            onSubmit={handleSubmit}
+            onCancel={() => setEditing(false)}
+            errors={errors}
+          />
+        ) : (
+          <React.Fragment>
+            <h3 className="heading">
+              <DragHandle attributes={attributes} listeners={listeners} />
+              {section.name}
+            </h3>
+            <ContextMenu tooltip={t('Section actions')}>
+              <MenuItem onSelect={() => setEditing(true)} className="edit">
+                <InlineIcon icon="pencil" />
+                {t('Edit Section')}
+              </MenuItem>
+              <MenuItem onSelect={handleDelete} className="delete">
+                <InlineIcon icon="trash" />
+                {t('Delete Section')}
+              </MenuItem>
+            </ContextMenu>
+          </React.Fragment>
+        )}
       </div>
-    </SortableItem>
+      {children}
+    </div>
   );
 }
 

@@ -11,47 +11,7 @@ import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
 import SectionAddForm from 'app/components/sectionAddForm';
 import SectionContainer from 'app/components/sectionContainer';
-import TaskGroupedSorter, {
-  GroupedItems,
-  UpdaterCallback,
-} from 'app/components/taskGroupedSorter';
-
-const ROOT = '_root_';
-
-function grouper(sections: ProjectSection[]) {
-  return function (items: Task[]): GroupedItems {
-    const sectionTable = items.reduce<Record<string, Task[]>>((acc, task) => {
-      const key = task.section_id === null ? ROOT : String(task.section_id);
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(task);
-      return acc;
-    }, {});
-
-    return [
-      {
-        key: ROOT,
-        items: sectionTable[ROOT] ?? [],
-        ids: (sectionTable[ROOT] ?? []).map(task => String(task.id)),
-      },
-      ...sections.map(section => {
-        return {
-          key: String(section.id),
-          items: sectionTable[section.id] ?? [],
-          ids: (sectionTable[section.id] ?? []).map(task => String(task.id)),
-        };
-      }),
-    ];
-  };
-}
-
-const updater: UpdaterCallback = (_task, newIndex, destinationKey) => {
-  return {
-    section_id: destinationKey === ROOT ? null : destinationKey,
-    child_order: newIndex,
-  };
-};
+import ProjectSectionSorter from 'app/components/projectSectionSorter';
 
 type Props = {
   project: Project;
@@ -65,13 +25,6 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
     setShowAddSection(false);
   }
 
-  const sectionMap = project.sections.reduce<Record<string, ProjectSection>>(
-    (acc, section) => {
-      acc[section.id] = section;
-      return acc;
-    },
-    {}
-  );
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
@@ -91,54 +44,42 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         <div className="attributes">
           {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
-        <TaskGroupedSorter
-          tasks={tasks}
-          grouper={grouper(project.sections)}
-          updater={updater}
-          showDueOn
-        >
-          {({groupedItems, activeTask}) => {
-            return (
-              <SortableContext items={Object.keys(sectionMap)} strategy={verticalListSortingStrategy}>
-                {groupedItems.map(({key, ids, items}) => {
-                  if (key === ROOT) {
-                    return (
-                      <SortableContext
-                        key={key}
-                        items={ids}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <TaskGroup
-                          dropId={ROOT}
-                          activeTask={activeTask}
-                          tasks={items}
-                          defaultProjectId={project.id}
-                          showAdd={!project.archived}
-                          showDueOn
-                        />
-                      </SortableContext>
-                    );
-                  }
-                  const section = sectionMap[key];
-                  return (
-                    <SectionContainer key={key} project={project} section={section}>
-                      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-                        <TaskGroup
-                          dropId={key}
-                          activeTask={activeTask}
-                          tasks={items}
-                          defaultProjectId={project.id}
-                          showAdd={!project.archived}
-                          showDueOn
-                        />
-                      </SortableContext>
-                    </SectionContainer>
-                  );
-                })}
-              </React.Fragment>
-            );
+        <ProjectSectionSorter tasks={tasks} sections={project.sections}>
+          {({groups, activeTask, activeSection}) => {
+            return groups.map(({key, section, tasks}) => {
+              if (section === undefined) {
+                return (
+                  <TaskGroup
+                    dropId={key}
+                    activeTask={activeTask}
+                    tasks={tasks}
+                    defaultProjectId={project.id}
+                    showAdd={!project.archived}
+                    showDueOn
+                  />
+                );
+              }
+              return (
+                <SectionContainer
+                  key={key}
+                  id={key}
+                  active={activeSection}
+                  project={project}
+                  section={section}
+                >
+                  <TaskGroup
+                    dropId={key}
+                    activeTask={activeTask}
+                    tasks={tasks}
+                    defaultProjectId={project.id}
+                    showAdd={!project.archived}
+                    showDueOn
+                  />
+                </SectionContainer>
+              );
+            });
           }}
-        </TaskGroupedSorter>
+        </ProjectSectionSorter>
         {showAddSection && (
           <SectionAddForm project={project} onCancel={handleCancelSection} />
         )}

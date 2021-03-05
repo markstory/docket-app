@@ -72,7 +72,7 @@ export default function TaskGroupedSorter({
 }: Props): JSX.Element {
   const grouped = grouper(tasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [sorted, setSorted] = React.useState<GroupedItems | undefined>(undefined);
+  const [sorted, setSorted] = useState<GroupedItems | undefined>(undefined);
   const items = sorted || grouped;
 
   const sensors = useSensors(
@@ -88,6 +88,7 @@ export default function TaskGroupedSorter({
   }
 
   function handleDragEnd({active, over}: DragEndEvent) {
+    setActiveTask(null);
     // Dropped outside of a dropzone
     if (!over) {
       return;
@@ -110,12 +111,22 @@ export default function TaskGroupedSorter({
       destinationIndex = 0;
     }
     const task = items[sourceGroupIndex].items[sourceIndex];
+
+    // This looks like duplicate code, however it ensures
+    // that the active item doesn't animate back to an earlier position
+    const newItems = [...items];
+    newItems[sourceGroupIndex].items = arrayMove(
+      newItems[sourceGroupIndex].items,
+      sourceIndex,
+      destinationIndex
+    );
+    setSorted(newItems);
+
     const data = updater(task, destinationIndex, destinationGroup.key);
 
     Inertia.post(`/tasks/${active.id}/move`, data, {
       preserveScroll: true,
       onSuccess() {
-        setActiveTask(null);
         setSorted(undefined);
       },
     });
@@ -168,6 +179,8 @@ export default function TaskGroupedSorter({
     newItems[activeGroupIndex] = newActiveGroup;
     newItems[overGroupIndex] = newOverGroup;
 
+    // This state update allows the faded out task
+    // to be placed correctly
     setSorted(newItems);
   }
 
