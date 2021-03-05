@@ -112,6 +112,9 @@ export default function TaskGroupedSorter({
     }
     const task = items[sourceGroupIndex].items[sourceIndex];
 
+    // TODO find out if this resort and state update is required.
+    // It might not be as handleDragOver is doing most of the state
+    // updates.
     const newItems = [...items];
     newItems[sourceGroupIndex].items = arrayMove(
       newItems[sourceGroupIndex].items,

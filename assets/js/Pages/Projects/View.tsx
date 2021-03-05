@@ -99,7 +99,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         >
           {({groupedItems, activeTask}) => {
             return (
-              <React.Fragment>
+              <SortableContext items={Object.keys(sectionMap)} strategy={verticalListSortingStrategy}>
                 {groupedItems.map(({key, ids, items}) => {
                   if (key === ROOT) {
                     return (
