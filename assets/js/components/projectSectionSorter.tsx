@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {createPortal} from 'react-dom';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,
@@ -8,7 +7,6 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
@@ -81,6 +79,22 @@ function createGroups(sections: ProjectSection[], tasks: Task[]): GroupedItems {
   ];
 }
 
+/**
+ * Find a group by its group key or task id.
+ *
+ * Ids can be either section ids (prefixed with s:) or task ids.
+ */
+function findGroupIndex(groups: GroupedItems, id: string): number {
+  const sectionIndex = groups.findIndex(group => group.key === id);
+  if (sectionIndex !== -1) {
+    return sectionIndex;
+  }
+  const taskId = Number(id);
+  return groups.findIndex(
+    group => group.tasks.findIndex(task => task.id === taskId) !== -1
+  );
+}
+
 function ProjectSectionSorter({children, sections, tasks}: Props): JSX.Element {
   const [activeTask, setActiveTask] = useState<Task | undefined>(undefined);
   const [activeSection, setActiveSection] = useState<ProjectSection | undefined>(
@@ -91,11 +105,23 @@ function ProjectSectionSorter({children, sections, tasks}: Props): JSX.Element {
   const [sorted, setSorted] = useState<GroupedItems | undefined>(undefined);
   const items = sorted || grouped;
 
-  function handleDragStart({active}: DragStartEvent) {}
+  function handleDragStart({active}: DragStartEvent) {
+    console.log('drag start', active);
+    if (active.id[0] === 's') {
+      setActiveSection(items.find(item => item.key === active.id)?.section);
+      return;
+    }
+    const taskId = Number(active.id);
+    setActiveTask(tasks.find(task => task.id === taskId));
+  }
 
-  function handleDragEnd({active, over}: DragEndEvent) {}
+  function handleDragEnd({active, over}: DragEndEvent) {
+    console.log('drag end', active, over);
+  }
 
-  function handleDragOver({active, over, draggingRect}: DragOverEvent) {}
+  function handleDragOver({active, over, draggingRect}: DragOverEvent) {
+    console.log('drag over', active, over, draggingRect);
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor),

@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {createPortal} from 'react-dom';
+import {DragOverlay} from '@dnd-kit/core';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
@@ -7,8 +9,10 @@ import {Project, ProjectSection, Task} from 'app/types';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
+import DragHandle from 'app/components/dragHandle';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
+import TaskRow from 'app/components/taskRow';
 import SectionAddForm from 'app/components/sectionAddForm';
 import SectionContainer from 'app/components/sectionContainer';
 import ProjectSectionSorter from 'app/components/projectSectionSorter';
@@ -46,7 +50,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         </div>
         <ProjectSectionSorter tasks={tasks} sections={project.sections}>
           {({groups, activeTask, activeSection}) => {
-            return groups.map(({key, section, tasks}) => {
+            const elements = groups.map(({key, section, tasks}) => {
               if (section === undefined) {
                 return (
                   <TaskGroup
@@ -78,6 +82,28 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                 </SectionContainer>
               );
             });
+
+            return (
+              <React.Fragment>
+                {elements}
+                {createPortal(
+                  <DragOverlay>
+                    {activeTask ? (
+                      <div className="dnd-item dnd-item-dragging">
+                        <DragHandle />
+                        <TaskRow task={activeTask} showDueOn={true} />
+                      </div>
+                    ) : activeSection ? (
+                      <div className="dnd-item dnd-item-dragging">
+                        <DragHandle />
+                        <h3>{activeSection.name}</h3>
+                      </div>
+                    ) : null}
+                  </DragOverlay>,
+                  document.body
+                )}
+              </React.Fragment>
+            );
           }}
         </ProjectSectionSorter>
         {showAddSection && (
