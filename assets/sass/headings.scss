@@ -12,6 +12,12 @@
 }
 
 .heading-icon {
+  display: flex;
+  align-items: baseline;
+  > svg {
+    margin-right: $space / 2;
+  }
+
   &.today svg {
     color: var(--color-due-today);
   }

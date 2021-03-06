@@ -31,7 +31,6 @@ input[type=radio] {
 }
 
 label {
-  display: inline-block;
   margin-right: $space;
   min-width: 100px;
 }
@@ -41,33 +40,33 @@ label {
   margin-bottom: $space;
 }
 
+.form-input {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: $space * 2;
+
+  label {
+    margin-right: $space * 2;
+    width: 33%;
+  }
+}
+
+.form-input.narrow label {
+  width: 100px;
+}
+
 .form-help {
   font-size: $font-size-small;
   color: var(--color-muted);
   margin: $space / 2 0 0 0;
 }
 
-
-// Vertically stacked forms.
-.form-vertical {
-  label {
-    margin: 0 0 $space / 2 0;
-  }
-  .form-input {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.form-input {
-  margin-bottom: $space * 2;
-}
 .form-input-horizontal {
   margin-bottom: $space * 2;
 
   label {
     min-width: auto;
-    margin-right: $space;
   }
 }
 

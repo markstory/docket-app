@@ -30,30 +30,39 @@ export default function Add({errors}: Props) {
       <p>{t('Get started tracking tasks and subtasks in projects today.')}</p>
       <form method="post" onSubmit={onSubmit}>
         <div className="form-input">
-          <label htmlFor="name">{t('Name')}</label>
+          <label htmlFor="name">
+            {t('Name')}
+            <p className="form-help">
+              {t('Used when we contact you by email and in the site.')}
+            </p>
+          </label>
           <input id="name" name="name" type="text" required />
           <FormError errors={errors} field="text" />
-          <p className="form-help">
-            {t('Used when we contact you by email and in the site.')}
-          </p>
         </div>
         <div className="form-input">
-          <label htmlFor="email">{t('Email')}</label>
+          <label htmlFor="email">
+            {t('Email')}
+            <p className="form-help">{t('Used to email you and to login.')}</p>
+          </label>
           <input id="email" name="email" type="email" required />
-          <p className="form-help">{t('Used to email you and to login.')}</p>
           <FormError errors={errors} field="email" />
         </div>
         <div className="form-input">
-          <label htmlFor="password">{t('Password')}</label>
+          <label htmlFor="password">
+            {t('Password')}
+
+            <p className="form-help">{t('More than 10 characters long.')}</p>
+          </label>
           <input id="password" name="password" type="password" required />
           <FormError errors={errors} field="password" />
-          <p className="form-help">{t('More than 10 characters long.')}</p>
         </div>
         <div className="form-input">
-          <label htmlFor="confirm_password">{t('Confirm Password')}</label>
+          <label htmlFor="confirm_password">
+            {t('Confirm Password')}
+            <p className="form-help">{t('One more time please.')}</p>
+          </label>
           <input id="confirm_password" name="confirm_password" type="password" required />
           <FormError errors={errors} field="confirm_password" />
-          <p className="form-help">{t('One more time please.')}</p>
         </div>
         <div className="button-bar">
           <button className="button-primary" type="submit">

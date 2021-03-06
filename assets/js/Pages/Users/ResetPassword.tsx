@@ -17,7 +17,7 @@ export default function ResetPassword() {
       <h1>{t('Forgot your password')}</h1>
       <p>{t('We will send you an email with instructions to reset it.')}</p>
       <form method="post" onSubmit={onSubmit}>
-        <div className="form-input">
+        <div className="form-input narrow">
           <label htmlFor="email">{t('Email')}</label>
           <input id="email" name="email" type="email" required />
         </div>

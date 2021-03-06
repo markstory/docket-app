@@ -25,11 +25,11 @@ export default function Login() {
         {t('Login')}
       </h1>
       <form method="post" onSubmit={onSubmit}>
-        <div className="form-input">
+        <div className="form-input narrow">
           <label htmlFor="email">{t('Email')}</label>
           <input id="email" name="email" type="email" required />
         </div>
-        <div className="form-input">
+        <div className="form-input narrow">
           <label htmlFor="password">{t('Password')}</label>
           <input id="password" name="password" type="password" required />
         </div>
