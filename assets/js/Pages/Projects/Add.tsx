@@ -32,7 +32,7 @@ function ProjectsAdd({errors, referer}: Props) {
 
   return (
     <LoggedIn title={t('New Project')}>
-      <Modal onClose={handleClose}>
+      <Modal onClose={handleClose} label={t('New Project')}>
         <h2>{t('New Project')}</h2>
         <form method="POST" onSubmit={handleSubmit}>
           <input type="hidden" value={referer} name="referer" />
