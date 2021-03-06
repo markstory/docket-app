@@ -10,6 +10,9 @@
       visibility: visible;
     }
   }
+  &.dnd-ghost {
+    opacity: 0.5;
+  }
 
   .heading {
     display: flex;

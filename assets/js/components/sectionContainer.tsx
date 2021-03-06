@@ -27,7 +27,7 @@ function SectionContainer({active, children, id, project, section}: SectionProps
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   const editUrl = `/projects/${project.slug}/sections/${section.id}/edit`;
-  const activeId = active ? String(active.id) : undefined;
+  const activeId = active ? `s:${active.id}` : undefined;
 
   async function handleDelete() {
     await deleteSection(project, section);

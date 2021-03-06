@@ -18,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import {ProjectSection, Task} from 'app/types';
+import {Project, ProjectSection, Task} from 'app/types';
 
 const ROOT = '_root_';
 
@@ -48,7 +48,7 @@ type ChildProps = {
 };
 
 type Props = {
-  sections: ProjectSection[];
+  project: Project;
   tasks: Task[];
   children: (args: ChildProps) => React.ReactNode;
 };
@@ -95,7 +95,8 @@ function findGroupIndex(groups: GroupedItems, id: string): number {
   );
 }
 
-function ProjectSectionSorter({children, sections, tasks}: Props): JSX.Element {
+function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
+  const sections = project.sections;
   const [activeTask, setActiveTask] = useState<Task | undefined>(undefined);
   const [activeSection, setActiveSection] = useState<ProjectSection | undefined>(
     undefined
@@ -117,10 +118,45 @@ function ProjectSectionSorter({children, sections, tasks}: Props): JSX.Element {
 
   function handleDragEnd({active, over}: DragEndEvent) {
     console.log('drag end', active, over);
+    setActiveTask(undefined);
+    setActiveSection(undefined);
+
+    // Dropped on nothing, revert.
+    if (!over) {
+      return;
+    }
+
+    // Dragging a section.
+    if (active.id[0] === 's') {
+      const sectionId = active.id.slice(2);
+      const newIndex = items.findIndex(group => group.key === over.id);
+
+      // Index is -1 because the 0th group is the root one.
+      const data = {
+        ranking: newIndex - 1,
+      };
+      Inertia.post(`/projects/${project.slug}/sections/${sectionId}/move`, data, {
+        preserveScroll: true,
+        onSuccess() {
+          setSorted(undefined);
+        },
+      });
+    }
   }
 
   function handleDragOver({active, over, draggingRect}: DragOverEvent) {
     console.log('drag over', active, over, draggingRect);
+    if (!over) {
+      return;
+    }
+
+    // Dragging a section.
+    if (active.id[0] === 's') {
+      const oldIndex = items.findIndex(group => group.key === active.id);
+      const newIndex = items.findIndex(group => group.key === over.id);
+
+      setSorted(arrayMove(items, oldIndex, newIndex));
+    }
   }
 
   const sensors = useSensors(

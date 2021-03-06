@@ -48,7 +48,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
         <div className="attributes">
           {project.archived && <span className="archived">{t('Archived')}</span>}
         </div>
-        <ProjectSectionSorter tasks={tasks} sections={project.sections}>
+        <ProjectSectionSorter project={project} tasks={tasks}>
           {({groups, activeTask, activeSection}) => {
             const elements = groups.map(({key, section, tasks}) => {
               if (section === undefined) {
