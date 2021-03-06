@@ -33,7 +33,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
         <div className="heading" data-archived={project.archived}>
-          <h1>
+          <h1 className="heading-icon">
             {project.archived && <Icon icon="archive" />}
             {project.name}
           </h1>
@@ -45,9 +45,6 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
           />
         </div>
 
-        <div className="attributes">
-          {project.archived && <span className="archived">{t('Archived')}</span>}
-        </div>
         <ProjectSectionSorter project={project} tasks={tasks}>
           {({groups, activeTask, activeSection}) => {
             const elements = groups.map(({key, section, tasks}) => {

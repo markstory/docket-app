@@ -7,6 +7,7 @@ import {Project, ValidationErrors} from 'app/types';
 import ColorSelect from 'app/components/colorSelect';
 import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
+import ToggleCheckbox from 'app/components/toggleCheckbox';
 
 type Props = {
   project: Project;
@@ -32,7 +33,7 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
         <h2>{t('Edit Project')}</h2>
         <form className="form-vertical" method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
-          <div className="form-input">
+          <div className="form-input narrow">
             <label htmlFor="project-name">{t('Name')}</label>
             <input
               id="project-name"
@@ -43,20 +44,15 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
             />
             <FormError errors={errors} field="name" />
           </div>
-          <div className="form-input">
+          <div className="form-input narrow">
             <label htmlFor="project-color">{t('Color')}</label>
             <ColorSelect value={project.color} />
             <FormError errors={errors} field="color" />
           </div>
-          <div className="form-input-checkbox">
-            <label htmlFor="project-archived">{t('Archived')}</label>
+          <div className="form-input narrow">
+            <label htmlFor="toggle-archived">{t('Archived')}</label>
             <input type="hidden" name="archived" value="0" />
-            <input
-              type="checkbox"
-              name="archived"
-              id="project-archived"
-              defaultChecked={project.archived}
-            />
+            <ToggleCheckbox name="archived" checked={project.archived} />
           </div>
           <div className="button-bar">
             <button type="submit" className="button-primary">

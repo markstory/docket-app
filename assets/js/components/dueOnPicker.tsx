@@ -160,7 +160,7 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
       <div className="dropdown-item-text">
         <ToggleCheckbox
           name="evening"
-          value={task.evening}
+          checked={task.evening}
           onChange={handleEveningChange}
           knobIcon={<InlineIcon icon="moon" />}
           label={t('Evening')}
