@@ -53,6 +53,11 @@ type Props = {
   children: (args: ChildProps) => React.ReactNode;
 };
 
+type UpdateData = {
+  child_order: number;
+  section_id?: null | number;
+};
+
 function createGroups(sections: ProjectSection[], tasks: Task[]): GroupedItems {
   const sectionTable = tasks.reduce<Record<string, Task[]>>((acc, task) => {
     const sectionId = task.section_id === null ? ROOT : String(task.section_id);
@@ -95,6 +100,10 @@ function findGroupIndex(groups: GroupedItems, id: string): number {
   );
 }
 
+function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
+  return [...items.slice(0, index), insert, ...items.slice(index, items.length)];
+}
+
 function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
   const sections = project.sections;
   const [activeTask, setActiveTask] = useState<Task | undefined>(undefined);
@@ -107,7 +116,6 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
   const items = sorted || grouped;
 
   function handleDragStart({active}: DragStartEvent) {
-    console.log('drag start', active);
     if (active.id[0] === 's') {
       setActiveSection(items.find(item => item.key === active.id)?.section);
       return;
@@ -117,7 +125,6 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
   }
 
   function handleDragEnd({active, over}: DragEndEvent) {
-    console.log('drag end', active, over);
     setActiveTask(undefined);
     setActiveSection(undefined);
 
@@ -129,7 +136,11 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
     // Dragging a section.
     if (active.id[0] === 's') {
       const sectionId = active.id.slice(2);
-      const newIndex = items.findIndex(group => group.key === over.id);
+      let newIndex = items.findIndex(group => group.key === over.id);
+      // We don't want anything above the root section.
+      if (newIndex < 1) {
+        newIndex = 1;
+      }
 
       // Index is -1 because the 0th group is the root one.
       const data = {
@@ -141,11 +152,36 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
           setSorted(undefined);
         },
       });
+      return;
     }
+
+    // Dragging a task
+    const sourceGroupIndex = findGroupIndex(items, active.id);
+    const destinationGroupIndex = findGroupIndex(items, over.id);
+    if (sourceGroupIndex === -1 || destinationGroupIndex === -1) {
+      return;
+    }
+    const activeId = Number(active.id);
+
+    // Look for the task in the destination group as it should
+    // be put here by handleDragOver
+    const newIndex = items[destinationGroupIndex].tasks.findIndex(
+      task => task.id === activeId
+    );
+    const sectionId = items[sourceGroupIndex].section?.id;
+    const data: UpdateData = {
+      child_order: newIndex,
+      section_id: sectionId === undefined ? null : sectionId,
+    };
+    Inertia.post(`/tasks/${activeId}/move`, data, {
+      preserveScroll: true,
+      onSuccess() {
+        setSorted(undefined);
+      },
+    });
   }
 
   function handleDragOver({active, over, draggingRect}: DragOverEvent) {
-    console.log('drag over', active, over, draggingRect);
     if (!over) {
       return;
     }
@@ -156,7 +192,77 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
       const newIndex = items.findIndex(group => group.key === over.id);
 
       setSorted(arrayMove(items, oldIndex, newIndex));
+      return;
     }
+
+    // Dragging a task
+    const activeGroupIndex = findGroupIndex(items, active.id);
+    const overGroupIndex = findGroupIndex(items, over.id);
+    if (activeGroupIndex === -1 || overGroupIndex === -1) {
+      return;
+    }
+    const activeId = Number(active.id);
+    const overId = Number(over.id);
+
+    // Moving within the same group.
+    if (activeGroupIndex === overGroupIndex) {
+      const active = items[activeGroupIndex].tasks.find(task => task.id === activeId);
+      if (!active) {
+        return;
+      }
+      const section = {
+        ...items[activeGroupIndex],
+        tasks: items[activeGroupIndex].tasks.filter(task => task.id !== activeId),
+      };
+      const newTaskIndex = section.tasks.findIndex(task => task.id === overId);
+      const overTaskIndex = section.tasks.findIndex(task => task.id === overId);
+      section.tasks = insertAtIndex(section.tasks, overTaskIndex, active);
+
+      const newItems = [...items];
+      newItems[activeGroupIndex] = section;
+
+      setSorted(newItems);
+      return;
+    }
+
+    // Moving to a new group.
+    const activeGroup = items[activeGroupIndex];
+    const overGroup = items[overGroupIndex];
+
+    // Use the id lists to find offsets as using the
+    // tasks requires another extract.
+    const activeTaskIndex = activeGroup.tasks.findIndex(task => task.id === activeId);
+    const overTaskIndex = overGroup.tasks.findIndex(task => task.id === overId);
+
+    const isBelowLastItem =
+      over &&
+      overTaskIndex === overGroup.tasks.length - 1 &&
+      draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
+
+    const modifier = isBelowLastItem ? 1 : 0;
+    const newIndex =
+      overTaskIndex >= 0 ? overTaskIndex + modifier : overGroup.tasks.length + 1;
+
+    // Remove the active task from its current group.
+    const newActiveGroup = {
+      key: activeGroup.key,
+      section: activeGroup.section,
+      tasks: activeGroup.tasks.filter(task => task.id !== activeId),
+    };
+    // Splice it into the destination group.
+    const newOverGroup = {
+      key: overGroup.key,
+      section: overGroup.section,
+      tasks: insertAtIndex(overGroup.tasks, newIndex, activeGroup.tasks[activeTaskIndex]),
+    };
+
+    const newItems = [...items];
+    newItems[activeGroupIndex] = newActiveGroup;
+    newItems[overGroupIndex] = newOverGroup;
+
+    // This state update allows the faded out task
+    // to be placed correctly
+    setSorted(newItems);
   }
 
   const sensors = useSensors(
