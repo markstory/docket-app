@@ -160,4 +160,30 @@ class ProjectsTest extends AcceptanceTestCase
 
         $this->assertEquals(0, $this->Projects->Sections->find()->count());
     }
+
+    public function testDragTaskToSection()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Books', $project->id);
+        $one = $this->makeTask('First', $project->id, 0);
+        $this->makeTask('Two', $project->id, 0, ['section_id' => $section->id]);
+
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Get the last task
+        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
+        $mouse = $client->getMouse();
+
+        // Do a drag from the top to the bottom
+        $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
+            ->mouseMove($last->getCoordinates(), 0, 20)
+            ->mouseUp($last->getCoordinates(), 0, 20);
+        $client->waitFor('.flash-message');
+
+        $task = $this->Projects->Tasks->get($one->id);
+        $this->assertSame($section->id, $task->section_id);
+    }
 }

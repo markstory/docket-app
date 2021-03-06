@@ -16,9 +16,10 @@
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/TasksTable.php">
-    <NoInterfaceProperties occurrences="2">
+    <NoInterfaceProperties occurrences="3">
       <code>$result-&gt;max_child</code>
       <code>$result-&gt;max_day</code>
+      <code>$result-&gt;max</code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/UsersTable.php">

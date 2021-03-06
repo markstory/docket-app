@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {createPortal} from 'react-dom';
+import {DragOverlay} from '@dnd-kit/core';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
@@ -7,51 +9,13 @@ import {Project, ProjectSection, Task} from 'app/types';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
+import DragHandle from 'app/components/dragHandle';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
+import TaskRow from 'app/components/taskRow';
 import SectionAddForm from 'app/components/sectionAddForm';
 import SectionContainer from 'app/components/sectionContainer';
-import TaskGroupedSorter, {
-  GroupedItems,
-  UpdaterCallback,
-} from 'app/components/taskGroupedSorter';
-
-const ROOT = '_root_';
-
-function grouper(sections: ProjectSection[]) {
-  return function (items: Task[]): GroupedItems {
-    const sectionTable = items.reduce<Record<string, Task[]>>((acc, task) => {
-      const key = task.section_id === null ? ROOT : String(task.section_id);
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(task);
-      return acc;
-    }, {});
-
-    return [
-      {
-        key: ROOT,
-        items: sectionTable[ROOT] ?? [],
-        ids: (sectionTable[ROOT] ?? []).map(task => String(task.id)),
-      },
-      ...sections.map(section => {
-        return {
-          key: String(section.id),
-          items: sectionTable[section.id] ?? [],
-          ids: (sectionTable[section.id] ?? []).map(task => String(task.id)),
-        };
-      }),
-    ];
-  };
-}
-
-const updater: UpdaterCallback = (_task, newIndex, destinationKey) => {
-  return {
-    section_id: destinationKey === ROOT ? null : destinationKey,
-    child_order: newIndex,
-  };
-};
+import ProjectSectionSorter from 'app/components/projectSectionSorter';
 
 type Props = {
   project: Project;
@@ -65,18 +29,11 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
     setShowAddSection(false);
   }
 
-  const sectionMap = project.sections.reduce<Record<string, ProjectSection>>(
-    (acc, section) => {
-      acc[section.id] = section;
-      return acc;
-    },
-    {}
-  );
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
         <div className="heading" data-archived={project.archived}>
-          <h1>
+          <h1 className="heading-icon">
             {project.archived && <Icon icon="archive" />}
             {project.name}
           </h1>
@@ -88,57 +45,64 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
           />
         </div>
 
-        <div className="attributes">
-          {project.archived && <span className="archived">{t('Archived')}</span>}
-        </div>
-        <TaskGroupedSorter
-          tasks={tasks}
-          grouper={grouper(project.sections)}
-          updater={updater}
-          showDueOn
-        >
-          {({groupedItems, activeTask}) => {
+        <ProjectSectionSorter project={project} tasks={tasks}>
+          {({groups, activeTask, activeSection}) => {
+            const elements = groups.map(({key, section, tasks}) => {
+              if (section === undefined) {
+                return (
+                  <TaskGroup
+                    dropId={key}
+                    activeTask={activeTask}
+                    tasks={tasks}
+                    defaultProjectId={project.id}
+                    showAdd={!project.archived}
+                    showDueOn
+                  />
+                );
+              }
+              return (
+                <SectionContainer
+                  key={key}
+                  id={key}
+                  active={activeSection}
+                  project={project}
+                  section={section}
+                >
+                  <TaskGroup
+                    dropId={key}
+                    activeTask={activeTask}
+                    tasks={tasks}
+                    defaultProjectId={project.id}
+                    showAdd={!project.archived}
+                    showDueOn
+                  />
+                </SectionContainer>
+              );
+            });
+
             return (
               <React.Fragment>
-                {groupedItems.map(({key, ids, items}) => {
-                  if (key === ROOT) {
-                    return (
-                      <SortableContext
-                        key={key}
-                        items={ids}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <TaskGroup
-                          dropId={ROOT}
-                          activeTask={activeTask}
-                          tasks={items}
-                          defaultProjectId={project.id}
-                          showAdd={!project.archived}
-                          showDueOn
-                        />
-                      </SortableContext>
-                    );
-                  }
-                  const section = sectionMap[key];
-                  return (
-                    <SectionContainer key={key} project={project} section={section}>
-                      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-                        <TaskGroup
-                          dropId={key}
-                          activeTask={activeTask}
-                          tasks={items}
-                          defaultProjectId={project.id}
-                          showAdd={!project.archived}
-                          showDueOn
-                        />
-                      </SortableContext>
-                    </SectionContainer>
-                  );
-                })}
+                {elements}
+                {createPortal(
+                  <DragOverlay>
+                    {activeTask ? (
+                      <div className="dnd-item dnd-item-dragging">
+                        <DragHandle />
+                        <TaskRow task={activeTask} showDueOn={true} />
+                      </div>
+                    ) : activeSection ? (
+                      <div className="dnd-item dnd-item-dragging">
+                        <DragHandle />
+                        <h3>{activeSection.name}</h3>
+                      </div>
+                    ) : null}
+                  </DragOverlay>,
+                  document.body
+                )}
               </React.Fragment>
             );
           }}
-        </TaskGroupedSorter>
+        </ProjectSectionSorter>
         {showAddSection && (
           <SectionAddForm project={project} onCancel={handleCancelSection} />
         )}

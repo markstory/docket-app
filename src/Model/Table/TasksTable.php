@@ -178,9 +178,9 @@ class TasksTable extends Table
         $timezone = $options['timezone'] ?: 'UTC';
 
         return $query->where([
-                'Tasks.due_on IS NOT' => null,
-                'Tasks.due_on <=' => new FrozenDate('today', $timezone),
-            ])
+            'Tasks.due_on IS NOT' => null,
+            'Tasks.due_on <=' => new FrozenDate('today', $timezone),
+        ])
             ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
@@ -196,10 +196,10 @@ class TasksTable extends Table
         }
 
         return $query->where([
-                'Tasks.due_on IS NOT' => null,
-                'Tasks.due_on >=' => $options['start'],
-                'Tasks.due_on <' => $options['end'],
-            ])
+            'Tasks.due_on IS NOT' => null,
+            'Tasks.due_on >=' => $options['start'],
+            'Tasks.due_on <' => $options['end'],
+        ])
             ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
@@ -211,9 +211,9 @@ class TasksTable extends Table
         $today = new FrozenDate('today');
 
         return $query->where([
-                'Tasks.due_on IS NOT' => null,
-                'Tasks.due_on >=' => $today,
-            ])
+            'Tasks.due_on IS NOT' => null,
+            'Tasks.due_on >=' => $today,
+        ])
             ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order');
@@ -229,9 +229,9 @@ class TasksTable extends Table
         $result = $query->select([
             'max_child' => $query->func()->max('Tasks.child_order'),
         ])
-        ->where([
-            'Tasks.project_id' => $item->project_id,
-        ])->firstOrFail();
+            ->where([
+                'Tasks.project_id' => $item->project_id,
+            ])->firstOrFail();
         $item->child_order = $result->max_child + 1;
         if (!$item->due_on) {
             return;
@@ -241,11 +241,11 @@ class TasksTable extends Table
         $result = $query->select([
             'max_day' => $query->func()->max('Tasks.day_order'),
         ])
-        ->innerJoinWith('Projects')
-        ->where([
-            'Projects.user_id' => $user->id,
-            'Tasks.due_on' => $item->due_on,
-        ])->firstOrFail();
+            ->innerJoinWith('Projects')
+            ->where([
+                'Projects.user_id' => $user->id,
+                'Tasks.due_on' => $item->due_on,
+            ])->firstOrFail();
         $item->day_order = $result->max_day + 1;
     }
 
@@ -282,13 +282,13 @@ class TasksTable extends Table
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
-            $conditions['evening'] = $updateFields['evening'];
+            $conditions['evening'] = $updateFields['evening'] ?? false;
             $conditions['due_on IS'] = $updateFields['due_on'] ?? $item->due_on;
             $conditions['project_id IN'] = $projectQuery;
         } elseif (array_key_exists('section_id', $operation) && isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
-            $conditions['section_id IS'] = $updateFields['section_id'];
+            $conditions['section_id IS'] = $updateFields['section_id'] ?? null;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
@@ -310,11 +310,19 @@ class TasksTable extends Table
             ->offset($operation[$property])
             ->first();
 
+        $appendToBottom = false;
         // If we found a record at the current offset
         // use its order property for our update
-        $targetOffset = $operation[$property];
         if ($currentItem instanceof EntityInterface) {
             $targetOffset = $currentItem->get($property);
+        } else {
+            $appendToBottom = true;
+            $query = $this->find();
+            $result = $query
+                ->select(['max' => $query->func()->max($property)])
+                ->where($conditions)
+                ->firstOrFail();
+            $targetOffset = $result->max + 1;
         }
 
         $query = $this->query()
@@ -332,7 +340,9 @@ class TasksTable extends Table
         }
         $difference = $current - $item->get($property);
 
-        if (
+        if ($appendToBottom === true) {
+            // No records to update.
+        } elseif (
             $item->isDirty('due_on') ||
             $item->isDirty('evening') ||
             $item->isDirty('section_id')

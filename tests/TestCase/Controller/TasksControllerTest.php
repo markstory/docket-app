@@ -523,6 +523,25 @@ class TasksControllerTest extends TestCase
         $this->assertOrder($expected, $results);
     }
 
+    public function testMoveDownTooLarge()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $second = $this->makeTask('second', $project->id, 1);
+        $third = $this->makeTask('third', $project->id, 2);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $expected = [$second->id, $third->id, $first->id];
+        $this->post("/tasks/{$first->id}/move", [
+            'day_order' => 1000,
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->dayOrderedTasks();
+        $this->assertOrder($expected, $results);
+    }
+
     public function testMoveDownDuplicateOrder()
     {
         $project = $this->makeProject('work', 1);
@@ -621,6 +640,31 @@ class TasksControllerTest extends TestCase
         }
     }
 
+    public function testMoveDifferentDayBottom()
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 3, ['due_on' => '2020-12-13']);
+        $second = $this->makeTask('second', $project->id, 4, ['due_on' => '2020-12-13']);
+        $third = $this->makeTask('third', $project->id, 6, ['due_on' => '2020-12-13']);
+
+        $new = $this->makeTask('new', $project->id, 6, ['due_on' => '2020-12-20']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$new->id}/move", [
+            'day_order' => 3,
+            'due_on' => '2020-12-13',
+        ]);
+        $this->assertRedirect('/tasks/today');
+
+        $results = $this->dayOrderedTasks();
+        $expected = [$first->id, $second->id, $third->id, $new->id];
+        $this->assertOrder($expected, $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals('2020-12-13', $results[$i]->due_on->format('Y-m-d'));
+        }
+    }
+
     public function testMoveDifferentDaySameOrder()
     {
         $project = $this->makeProject('work', 1);
@@ -655,7 +699,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $expected = [$second->id, $first->id, $third->id];
+        $expected = [$second->id, $third->id, $first->id];
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 1,
             'evening' => true,

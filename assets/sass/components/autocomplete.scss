@@ -1,3 +1,8 @@
+// Autocomplete container
+[data-reach-combobox] {
+  display: flex;
+  width: min-content;
+}
 .autocomplete-wrapper {
   display: flex;
   position: relative;
@@ -7,6 +12,7 @@
   min-width: 200px;
 }
 
+// Arrow a
 .autocomplete-arrow {
   pointer-events: none;
 

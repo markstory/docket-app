@@ -59,6 +59,7 @@ a > svg:not(:last-child) {
   &:hover {
     color: var(--color-invert-foreground);
     background: var(--color-button-primary-hover);
+    box-shadow: $shadow-button;
   }
 }
 
