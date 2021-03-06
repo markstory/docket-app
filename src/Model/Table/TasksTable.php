@@ -282,13 +282,13 @@ class TasksTable extends Table
             $conditions['project_id IN'] = $projectQuery;
         } elseif (isset($operation['day_order']) && isset($operation['evening'])) {
             $property = 'day_order';
-            $conditions['evening'] = $updateFields['evening'];
+            $conditions['evening'] = $updateFields['evening'] ?? false;
             $conditions['due_on IS'] = $updateFields['due_on'] ?? $item->due_on;
             $conditions['project_id IN'] = $projectQuery;
         } elseif (array_key_exists('section_id', $operation) && isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
-            $conditions['section_id IS'] = $updateFields['section_id'];
+            $conditions['section_id IS'] = $updateFields['section_id'] ?? null;
         } elseif (isset($operation['child_order'])) {
             $property = 'child_order';
             $conditions['project_id'] = $item->project_id;
@@ -318,11 +318,11 @@ class TasksTable extends Table
         } else {
             $appendToBottom = true;
             $query = $this->find();
-            $targetOffset = $query
+            $result = $query
                 ->select(['max' => $query->func()->max($property)])
                 ->where($conditions)
-                ->firstOrFail()
-                ->max + 1;
+                ->firstOrFail();
+            $targetOffset = $result->max + 1;
         }
 
         $query = $this->query()
