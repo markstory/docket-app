@@ -2,7 +2,7 @@ import React from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Task} from 'app/types';
-import {daySortUpdater} from 'app/actions/tasks';
+import {todaySortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -60,7 +60,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
       <TaskGroupedSorter
         tasks={tasks}
         grouper={grouper}
-        updater={daySortUpdater}
+        updater={todaySortUpdater}
         showProject
         showDueOn
       >
