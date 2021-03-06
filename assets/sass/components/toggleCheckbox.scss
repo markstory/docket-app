@@ -1,7 +1,7 @@
 // Toggle buttons convert a checkbox into
 // an on/off switch.
-$toggle-width: $button-med-height * 1.5;
-$toggle-knob-diameter: 26px;
+$toggle-width: $button-narrow-height * 2;
+$toggle-knob-diameter: $button-narrow-height - 6;
 
 .toggle-checkbox {
   position: relative;
@@ -19,15 +19,16 @@ $toggle-knob-diameter: 26px;
     background: var(--color-toggle-bg);
     border: 1px solid var(--color-border);
     width: $toggle-width;
-    height: $button-med-height / 2;
-    border-radius: 10px;
+    height: $button-narrow-height;
+    border-radius: 16px;
     margin-right: $space;
     box-shadow: $shadow-inset;
   }
 
   .knob {
     position: absolute;
-    top: -4px;
+    top: 3px;
+    left: 3px;
 
     display: flex;
     align-items: center;
@@ -36,8 +37,7 @@ $toggle-knob-diameter: 26px;
     height: $toggle-knob-diameter;
     width: $toggle-knob-diameter;
     border-radius: 50%;
-    border: 1px solid var(--color-border);
-    box-shadow: $shadow-med;
+    box-shadow: $shadow-button;
     background: var(--color-bg);
 
     z-index: 1;
@@ -50,17 +50,14 @@ $toggle-knob-diameter: 26px;
   // Active state for the knob
   input:focus + .knob,
   input:focus + .knob {
-    border-color: var(--color-input-focus-border);
     box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
   }
   // Checked state for the knob
   input:checked + .knob + .track {
-    background: var(--color-toggle-bg-checked);
+    background: var(--color-toggle-checked);
   }
   input:checked + .knob {
-    background: var(--color-toggle-checked);
-    transform: translateX(($toggle-width / 2) + 3);
-    border-color: var(--color-toggle-checked);
+    transform: translateX(($toggle-width / 2) - 2);
   }
 }
 
