@@ -5,6 +5,7 @@ namespace App\Test\Acceptance;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\TestCase;
+use Facebook\WebDriver\WebDriverDimension;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 abstract class AcceptanceTestCase extends TestCase
@@ -47,6 +48,7 @@ abstract class AcceptanceTestCase extends TestCase
         ], [], [
             'cookieJar' => static::$cookieJar,
         ]);
+        $this->client->manage()->window()->setSize(new WebDriverDimension(1200, 1024));
 
         return $this->client;
     }
