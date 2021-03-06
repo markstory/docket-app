@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import {Project, ProjectSection, Task} from 'app/types';
+import {insertAtIndex} from 'app/utils/array';
 
 const ROOT = '_root_';
 
@@ -98,10 +99,6 @@ function findGroupIndex(groups: GroupedItems, id: string): number {
   return groups.findIndex(
     group => group.tasks.findIndex(task => task.id === taskId) !== -1
   );
-}
-
-function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
-  return [...items.slice(0, index), insert, ...items.slice(index, items.length)];
 }
 
 function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
@@ -210,12 +207,14 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
       if (!active) {
         return;
       }
+      // Get the current over index before moving the task.
+      const overTaskIndex = items[activeGroupIndex].tasks.findIndex(
+        task => task.id === overId
+      );
       const section = {
         ...items[activeGroupIndex],
         tasks: items[activeGroupIndex].tasks.filter(task => task.id !== activeId),
       };
-      const newTaskIndex = section.tasks.findIndex(task => task.id === overId);
-      const overTaskIndex = section.tasks.findIndex(task => task.id === overId);
       section.tasks = insertAtIndex(section.tasks, overTaskIndex, active);
 
       const newItems = [...items];

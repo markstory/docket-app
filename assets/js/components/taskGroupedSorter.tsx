@@ -18,6 +18,7 @@ import DragHandle from 'app/components/dragHandle';
 import TaskRow from 'app/components/taskRow';
 
 import {Task} from 'app/types';
+import {insertAtIndex} from 'app/utils/array';
 
 export type GroupedItems = {key: string; items: Task[]; ids: string[]}[];
 export interface UpdaterCallback {
@@ -43,10 +44,6 @@ export interface UpdateData {
   day_order?: number;
   due_on?: string;
   evening?: boolean;
-}
-
-function insertAtIndex<Item>(items: Item[], index: number, insert: Item): Item[] {
-  return [...items.slice(0, index), insert, ...items.slice(index, items.length)];
 }
 
 /**
