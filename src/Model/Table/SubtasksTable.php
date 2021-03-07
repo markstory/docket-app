@@ -122,61 +122,17 @@ class SubtasksTable extends Table
         return $query->where(['Subtasks.completed' => false]);
     }
 
-    public function move(Subtask $task, array $operation)
+    public function move(Subtask $subtask, array $operation)
     {
         if (!isset($operation['ranking'])) {
             throw new InvalidArgumentException('A ranking is required');
         }
+        $helper = new SimpleSortable($this, [
+            'orderBy' => ['ranking', 'title'],
+        ]);
         $conditions = [
-            'task_id' => $task->task_id,
+            'task_id' => $subtask->task_id,
         ];
-
-        // We have to assume that all lists are not continuous ranges, and that the order
-        // fields have holes in them. The holes can be introduced when items are
-        // deleted/completed. Try to find the item at the target offset
-        $currentTask = $this->find()
-            ->where($conditions)
-            ->orderAsc('ranking')
-            ->orderAsc('title')
-            ->offset($operation['ranking'])
-            ->first();
-
-        // If we found a record at the current offset
-        // use its order property for our update
-        $targetOffset = $operation['ranking'];
-        if ($currentTask instanceof EntityInterface) {
-            $targetOffset = $currentTask->get('ranking');
-        }
-
-        $query = $this->query()
-            ->update()
-            ->where($conditions);
-
-        $current = $task->get('ranking');
-        $task->set('ranking', $targetOffset);
-        $difference = $current - $task->get('ranking');
-
-        if ($difference >= 0) {
-            // Move other items down, as the current item is going up
-            // or is being moved from another group.
-            $query
-                ->set(['ranking' => $query->newExpr('ranking + 1')])
-                ->where(function ($exp) use ($current, $targetOffset) {
-                    return $exp->between('ranking', $targetOffset, $current);
-                });
-        } elseif ($difference < 0) {
-            // Move other items up, as current item is going down
-            $query
-                ->set(['ranking' => $query->newExpr('ranking - 1')])
-                ->where(function ($exp) use ($current, $targetOffset) {
-                    return $exp->between('ranking', $current, $targetOffset);
-                });
-        }
-        $this->getConnection()->transactional(function () use ($task, $query) {
-            if ($query->clause('set')) {
-                $query->execute();
-            }
-            $this->saveOrFail($task);
-        });
+        $helper->move($subtask, $operation['ranking'], $conditions);
     }
 }

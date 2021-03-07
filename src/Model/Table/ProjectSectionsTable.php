@@ -126,51 +126,10 @@ class ProjectSectionsTable extends Table
             'project_id' => $projectSection->project_id,
         ];
 
-        // We have to assume that all lists are not continuous ranges, and that the order
-        // fields have holes in them. The holes can be introduced when items are
-        // deleted/completed. Try to find the item at the target offset
-        $currentProjectSection = $this->find()
-            ->where($conditions)
-            ->orderAsc('ranking')
-            ->offset($operation['ranking'])
-            ->first();
-
-        // If we found a record at the current offset
-        // use its order property for our update
-        $targetOffset = $operation['ranking'];
-        if ($currentProjectSection instanceof EntityInterface) {
-            $targetOffset = $currentProjectSection->get('ranking');
-        }
-
-        $query = $this->query()
-            ->update()
-            ->where($conditions);
-
-        $current = $projectSection->get('ranking');
-        $projectSection->set('ranking', $targetOffset);
-        $difference = $current - $projectSection->get('ranking');
-
-        if ($difference > 0) {
-            // Move other items down, as the current item is going up
-            // or is being moved from another group.
-            $query
-                ->set(['ranking' => $query->newExpr('ranking + 1')])
-                ->where(function ($exp) use ($current, $targetOffset) {
-                    return $exp->between('ranking', $targetOffset, $current);
-                });
-        } elseif ($difference < 0) {
-            // Move other items up, as current item is going down
-            $query
-                ->set(['ranking' => $query->newExpr('ranking - 1')])
-                ->where(function ($exp) use ($current, $targetOffset) {
-                    return $exp->between('ranking', $current, $targetOffset);
-                });
-        }
-        $this->getConnection()->transactional(function () use ($projectSection, $query) {
-            if ($query->clause('set')) {
-                $query->execute();
-            }
-            $this->saveOrFail($projectSection);
-        });
+        $sorter = new SimpleSortable($this, [
+            'field' => 'ranking',
+            'orderBy' => ['ranking', 'name'],
+        ]);
+        $sorter->move($projectSection, $operation['ranking'], $conditions);
     }
 }
