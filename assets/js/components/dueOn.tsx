@@ -18,7 +18,7 @@ type Props = {
 function DueOn({task, showNull = false, showDetailed = true}: Props): JSX.Element | null {
   const value = task.due_on;
   if (!value) {
-    return showNull ? <React.Fragment>{t('No Due Date')}</React.Fragment> : null;
+    return showNull ? <span className="due-on none">{t('No Due Date')}</span> : null;
   }
   const diff = getDiff(value);
   const thisEvening = diff >= 0 && diff < 1 && task.evening;

@@ -34,11 +34,13 @@
   overflow: auto;
 }
 
-@media (max-width: $breakpoint-narrow) {
+@media (max-width: $breakpoint-phone) {
   [data-reach-dialog-content] {
     top: $space * 2;
     left: 5px;
     right: 5px;
+
+    padding: 45px $space $space $space;
   }
 }
 

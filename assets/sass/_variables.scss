@@ -17,7 +17,7 @@ $font-size-small: 12px;
 
 $space: 8px;
 
-$breakpoint-narrow: 800px;
+$breakpoint-phone: 800px;
 $breakpoint-laptop: 1200px;
 
 $button-med-height: 36px;
@@ -143,6 +143,7 @@ body {
   --color-action-delete: var(--color-red-700);
   --color-action-complete: var(--color-green-700);
 
+  --color-due-none: var(--color-gray-600);
   --color-due-overdue: var(--color-red-500);
   --color-due-evening: var(--color-blue-500);
   --color-due-today: var(--color-purple-500);

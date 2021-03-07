@@ -50,6 +50,12 @@
   visibility: visible;
 }
 
+@media (max-width: $breakpoint-phone) {
+  .dnd-handle {
+    visibility: visible;
+  }
+}
+
 .dnd-ghost {
   z-index: $z-bg;
   opacity: 0.4;

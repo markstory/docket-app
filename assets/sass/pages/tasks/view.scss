@@ -9,6 +9,12 @@
   }
 }
 
+@media (max-width: $breakpoint-phone) {
+  .task-view {
+    padding-left: $space;
+  }
+}
+
 .task-view-summary {
   display: flex;
   flex-direction: column;
@@ -44,7 +50,7 @@
   }
 }
 
-@media (max-width: $breakpoint-narrow) {
+@media (max-width: $breakpoint-phone) {
   .task-view .task-quickform {
     margin-right: 0;
     margin-bottom: $space * 3;

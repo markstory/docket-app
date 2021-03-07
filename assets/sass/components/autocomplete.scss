@@ -66,3 +66,21 @@
   cursor: default;
   color: var(--color-muted);
 }
+
+@media (max-width: $breakpoint-phone) {
+  [data-reach-combobox] {
+    width: auto;
+  }
+
+  // Specific autocomplete instances
+  .task-quickform .projectid {
+    width: 75%;
+  }
+  .task-quickform .autocomplete-wrapper {
+    width: 100%;
+  }
+  .task-quickform [data-reach-combobox-input] {
+    width: 100%;
+    min-width: auto;
+  }
+}

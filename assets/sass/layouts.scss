@@ -46,13 +46,17 @@ $sidebar-width: 250px;
   }
 }
 
-@media (max-width: $breakpoint-narrow) {
+@media (max-width: $breakpoint-phone) {
   .layout-three-quarter {
     padding-left: 10px;
 
     .sidebar,
     .content {
+      padding-top: $space * 3;
       padding-left: $space * 4;
+    }
+    .content {
+      padding-right: $space * 2;
     }
 
     .sidebar {
@@ -109,7 +113,7 @@ $sidebar-width: 250px;
   transform: translateX(-50%);
 }
 
-@media (max-width: $breakpoint-narrow) {
+@media (max-width: $breakpoint-phone) {
   .layout-card {
     margin: $space * 2 $space * 2 0;
     transform: none;

@@ -6,6 +6,9 @@
     margin-right: $space / 2;
   }
 
+  &.none {
+    color: var(--color-due-none);
+  }
   &.overdue {
     color: var(--color-due-overdue);
   }

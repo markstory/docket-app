@@ -1,6 +1,7 @@
 [data-reach-menu-button] {
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   &[aria-expanded="true"] {
     // Tweak the active button backdown.
