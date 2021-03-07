@@ -1,0 +1,5 @@
+codecov:
+  disable_default_path_fixes: no
+
+fixes:
+  - "/home/runner/work/docket-app/docket-app/::"
