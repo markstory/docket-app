@@ -32,9 +32,11 @@ use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
+use Cake\Http\Middleware\CspMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -106,8 +108,8 @@ class Application extends BaseApplication implements
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
-            ->add(new CsrfProtectionMiddleware([
-            ]))
+            ->add(new CsrfProtectionMiddleware())
+            ->add(new CspMiddleware($this->getCspPolicy()))
             ->add(new AuthenticationMiddleware($this))
             ->add(new AuthorizationMiddleware($this, [
                 'identityDecorator' => function ($auth, $user) {
@@ -136,6 +138,20 @@ class Application extends BaseApplication implements
         $this->addPlugin('Migrations');
 
         // Load more plugins here
+    }
+
+    protected function getCspPolicy()
+    {
+        $csp = new CSPBuilder([
+            'font-src' => ['self' => true],
+            'form-action' => ['self' => true],
+            'img-src' => ['self' => true, 'allow' => ['www.gravatar.com']],
+            'script-src' => ['self' => true, 'unsafe-inline' => true],
+            'style-src' => ['self' => true],
+            'object-src' => [],
+            'plugin-types' => [],
+        ]);
+        return $csp;
     }
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
