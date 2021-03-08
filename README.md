@@ -56,6 +56,11 @@ the `config/app_local.php` file is where you should make any changes specific to
 your setup. During application start, this file is loaded and merged onto the 
 defaults in `config/app.php`.
 
+## Local Development
+
+Using `node bin/server.js` you can run a PHP webserver and webpack in watch mode.
+This is the recommended development environment for docket.
+
 ## Testing
 
 Server tests can be run via `phpunit`. By default only the functional and
