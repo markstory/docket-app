@@ -1,7 +1,7 @@
 const mix = require('laravel-mix');
 
 mix
-  .disableSuccessNotifications()
+  .disableNotifications()
   .babelConfig({
     plugins: ['@babel/plugin-syntax-dynamic-import'],
   })
@@ -16,6 +16,7 @@ mix
         app: __dirname + '/assets/js',
       },
     },
+    stats: 'errors-only',
   })
   .setPublicPath('./webroot')
   .ts('assets/js/app.tsx', 'webroot/js')
