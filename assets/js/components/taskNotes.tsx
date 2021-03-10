@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
+import MarkdownText from 'app/components/markdownText';
 import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
 
@@ -34,9 +35,7 @@ export default function TaskNotes({task}: Props) {
           </button>
         </h4>
         <div onClick={() => setEditing(true)}>
-          {lines.map((text: string) => (
-            <p key={text}>{text}</p>
-          ))}
+          <MarkdownText text={task.body} />
           {lines.length == 0 && <p className="placeholder">{t('Click to Edit')}</p>}
         </div>
       </div>

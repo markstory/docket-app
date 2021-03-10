@@ -1,0 +1,9 @@
+.markdown-text {
+  h1, h2, h3 {
+    color: var(--color-low-emphasis);
+  }
+  ul, ol {
+    margin-left: 0;
+    padding-left: $space * 2;
+  }
+}

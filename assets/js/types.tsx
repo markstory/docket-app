@@ -34,7 +34,7 @@ export interface Task {
   id: number;
   section_id: null | number;
   title: string;
-  body: string;
+  body: null | string;
   due_on: null | string;
   day_order: number;
   child_order: number;
