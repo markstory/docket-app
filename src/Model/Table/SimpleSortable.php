@@ -12,7 +12,7 @@ use Cake\Datasource\EntityInterface;
 class SimpleSortable
 {
     /**
-     * @var \Cake\ORM\Table;
+     * @var \Cake\ORM\Table
      */
     protected $table;
 
