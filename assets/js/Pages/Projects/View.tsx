@@ -10,12 +10,13 @@ import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
 import DragHandle from 'app/components/dragHandle';
-import TaskGroup from 'app/components/taskGroup';
-import TaskList from 'app/components/taskList';
-import TaskRow from 'app/components/taskRow';
 import SectionAddForm from 'app/components/sectionAddForm';
 import SectionContainer from 'app/components/sectionContainer';
 import ProjectSectionSorter from 'app/components/projectSectionSorter';
+import ProjectRenameForm from 'app/components/projectRenameForm';
+import TaskGroup from 'app/components/taskGroup';
+import TaskList from 'app/components/taskList';
+import TaskRow from 'app/components/taskRow';
 
 type Props = {
   project: Project;
@@ -25,18 +26,28 @@ type Props = {
 
 export default function ProjectsView({completed, project, tasks}: Props): JSX.Element {
   const [showAddSection, setShowAddSection] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+
   function handleCancelSection() {
     setShowAddSection(false);
+  }
+
+  function handleCancelRename() {
+    setEditingName(false);
   }
 
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
         <div className="heading" data-archived={project.archived}>
-          <h1 className="heading-icon">
-            {project.archived && <Icon icon="archive" />}
-            {project.name}
-          </h1>
+          {editingName ? (
+            <ProjectRenameForm project={project} onCancel={handleCancelRename} />
+          ) : (
+            <h1 className="heading-icon editable" onClick={() => setEditingName(true)}>
+              {project.archived && <Icon icon="archive" />}
+              {project.name}
+            </h1>
+          )}
 
           <ProjectMenu
             project={project}

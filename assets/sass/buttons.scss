@@ -205,4 +205,13 @@ a > svg:not(:last-child) {
     margin-top: $space;
   }
 }
+
+// Inline button bars used in inline forms.
+.button-bar-inline {
+  @extend .button-bar;
+
+  display: flex;
+  margin: 0 0 0 $space * 2;
+  padding: 0;
+}
 // }}}

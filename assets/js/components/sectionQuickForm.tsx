@@ -28,7 +28,7 @@ function SectionQuickForm({
 
   return (
     <form
-      className="section-quickform"
+      className="section-quickform form-inline-rename"
       method="post"
       action={url}
       onSubmit={handleSubmit}
@@ -44,7 +44,7 @@ function SectionQuickForm({
         />
         <FormError errors={errors} field="name" />
       </div>
-      <div className="button-bar">
+      <div className="button-bar button-bar-inline">
         <button type="submit" className="button-primary" data-testid="save-section">
           {t('Save')}
         </button>

@@ -74,7 +74,9 @@ function SectionContainer({active, children, id, project, section}: SectionProps
           <React.Fragment>
             <h3 className="heading">
               <DragHandle attributes={attributes} listeners={listeners} />
-              {section.name}
+              <span className="editable" onClick={() => setEditing(true)}>
+                {section.name}
+              </span>
             </h3>
             <ContextMenu tooltip={t('Section actions')}>
               <MenuItem onSelect={() => setEditing(true)} className="edit">

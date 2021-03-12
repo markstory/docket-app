@@ -1,6 +1,20 @@
+// Used to give hover to editable regions.
+.editable {
+  border-radius: $border-radius;
+  padding: $space / 4 $space / 2;
+  margin-left: $space / 2 * -1;
+
+  &:hover {
+    background: var(--color-disabled);
+  }
+}
+
+// Placeholder text.
 .placeholder {
   color: var(--color-muted);
 }
+
+// Counters displayed beside other content.
 .counter {
   font-size: $font-size-normal;
   color: var(--color-muted);

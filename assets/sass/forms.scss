@@ -70,13 +70,8 @@ label {
   }
 }
 
-.form-input-checkbox {
+// Inline forms used to do renaming.
+// See buttons.scss for button bar styling.
+.form-inline-rename {
   display: flex;
-  align-items: center;
-  margin-bottom: $space * 2;
-
-  label {
-    margin: 0 $space 0 0;
-    min-width: auto;
-  }
 }
