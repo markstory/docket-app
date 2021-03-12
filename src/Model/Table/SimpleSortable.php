@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Table;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Table;
 
 /**
  * Implements single scope sorting
@@ -56,7 +56,6 @@ class SimpleSortable
         $query = $this->table->query()
             ->update()
             ->where($scopeConditions);
-
 
         $current = $record->get($field);
         $record->set($field, $targetOffset);

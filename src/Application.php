@@ -31,8 +31,8 @@ use Cake\Core\Exception\MissingPluginException;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\CspMiddleware;
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -145,12 +145,13 @@ class Application extends BaseApplication implements
         $csp = new CSPBuilder([
             'font-src' => ['self' => true],
             'form-action' => ['self' => true],
-            'img-src' => ['self' => true, 'allow' => ['data',  'www.gravatar.com']],
+            'img-src' => ['self' => true, 'allow' => ['data', 'www.gravatar.com']],
             'script-src' => ['self' => true, 'unsafe-inline' => true],
             'style-src' => ['self' => true],
             'object-src' => [],
             'plugin-types' => [],
         ]);
+
         return $csp;
     }
 
