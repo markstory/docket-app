@@ -5,6 +5,8 @@ import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
 import {Task, ValidationErrors} from 'app/types';
 import ProjectSelect from 'app/components/projectSelect';
+import SmartTaskInput from 'app/components/smartTaskInput';
+import {useProjects} from 'app/providers/projects';
 
 type Props = {
   task: Task;
@@ -22,17 +24,23 @@ export default function TaskQuickForm({
   onCancel,
 }: Props): JSX.Element {
   const [data, setData] = useState(task);
+  const [projects] = useProjects();
+
+  function handleChangeProject(projectId: number) {
+    setData({...data, project: {...data.project, id: projectId}});
+  }
+  function handleChangeDueOn(dueOn: string | null) {
+    setData({...data, due_on: dueOn});
+  }
 
   return (
     <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
       <div className="title">
-        <input
-          type="text"
-          name="title"
-          placeholder={t('Take out the trash')}
+        <SmartTaskInput
           defaultValue={data.title}
-          autoFocus
-          required
+          projects={projects}
+          onChangeProject={handleChangeProject}
+          onChangeDate={handleChangeDueOn}
         />
         <FormError errors={errors} field="title" />
       </div>

@@ -1,0 +1,20 @@
+.smart-task-input__highlighter {
+  line-height: 1.5; // TODO this might be wonky
+}
+.smart-task-input__suggestions {
+  @extend [data-reach-combobox-popover];
+}
+.smart-task-input__suggestions__item {
+  @extend [data-reach-combobox-option];
+}
+.smart-task-input__suggestions__item--focused {
+  background: var(--color-menu-hover);
+}
+.smart-task-input__control {
+  .project-mention {
+    background: var(--color-menu-selected);
+  }
+  .date-mention {
+    background: var(--color-menu-selected);
+  }
+}
