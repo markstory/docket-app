@@ -1,5 +1,21 @@
+.smart-task-input {
+  height: $button-med-height;
+}
+.smart-task-input__control {
+  .date-mention,
+  .project-mention {
+    position: relative;
+    left: $space / 4 * -1;
+    padding: $space / 2 $space / 4;
+
+    background: var(--color-menu-hover);
+  }
+}
+
 .smart-task-input__highlighter {
-  line-height: 1.5; // TODO this might be wonky
+  height: $button-med-height;
+  padding: $space / 4 $space;
+  line-height: 2;
 }
 .smart-task-input__suggestions {
   @extend [data-reach-combobox-popover];
@@ -10,11 +26,6 @@
 .smart-task-input__suggestions__item--focused {
   background: var(--color-menu-hover);
 }
-.smart-task-input__control {
-  .project-mention {
-    background: var(--color-menu-selected);
-  }
-  .date-mention {
-    background: var(--color-menu-selected);
-  }
+.smart-task-input__suggestions__item__highlight {
+  color: var(--color-button-primary-bg);
 }

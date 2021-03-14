@@ -75,7 +75,7 @@ function SmartTaskInput({
     <React.Fragment>
       <MentionsInput
         autoFocus
-        className="smart-task-input form-input-like"
+        className="smart-task-input"
         value={value}
         onChange={handleChange}
         singleLine
