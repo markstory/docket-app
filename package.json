@@ -26,6 +26,8 @@
         "@reach/dialog": "^0.13.0",
         "@reach/menu-button": "^0.13.0",
         "@reach/tooltip": "^0.13.0",
+        "@testing-library/dom": "^7.30.0",
+        "@testing-library/user-event": "^12.8.3",
         "@types/classnames": "^2.2.11",
         "@types/dompurify": "^2.2.1",
         "@types/lodash.groupby": "^4.0",
