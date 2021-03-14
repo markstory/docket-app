@@ -67,7 +67,7 @@ function SmartTaskInput({
 
   function handleChange(_: any, newValue: string) {
     setValue(newValue);
-    const newPlainText = newValue.replace(/#[^#]+#/, '').replace(/%[^%]%/, '');
+    const newPlainText = newValue.replace(/#[^#]+#/, '').replace(/%[^%]+%/, '');
     setTextValue(newPlainText);
   }
 
