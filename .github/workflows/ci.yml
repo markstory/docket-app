@@ -144,7 +144,7 @@ jobs:
       run: composer update --no-progress
 
     - name: Run PHP CodeSniffer
-      run: vendor/bin/phpcs src/ tests/
+      run: vendor/bin/phpcs --ignore=tests/js src/ tests/
 
     - name: Run psalm
       if: success() || failure()
