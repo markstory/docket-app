@@ -1,9 +1,9 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import {render, waitFor, screen} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 
 import SmartTaskInput from 'app/components/smartTaskInput';
-import {makeTask, makeProject} from '../../fixtures';
+import {makeProject} from '../../fixtures';
 
 describe('SmartTaskInput', function () {
   const projects = [
