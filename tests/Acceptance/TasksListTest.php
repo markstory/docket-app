@@ -30,14 +30,15 @@ class TasksListTest extends AcceptanceTestCase
         $client = $this->login();
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
 
         // Open the add form
-        $button = $client->getCrawler()->filter('.add-task button');
+        $button = $crawler->filter('.add-task button');
         $button->click();
         $client->waitFor('.task-quickform');
 
-        $form = $client->getCrawler()->filter('.task-quickform')->form();
-        $form->setValues(['title' => 'A new task']);
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys('A new task');
 
         // Use the default project value as it is hard to automate with webdriver.
         // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
