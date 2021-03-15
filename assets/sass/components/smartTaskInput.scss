@@ -1,0 +1,31 @@
+.smart-task-input {
+  height: $button-med-height;
+}
+.smart-task-input__control {
+  .date-mention,
+  .project-mention {
+    position: relative;
+    left: $space / 4 * -1;
+    padding: $space / 2 $space / 4;
+
+    background: var(--color-menu-hover);
+  }
+}
+
+.smart-task-input__highlighter {
+  height: $button-med-height;
+  padding: $space / 4 $space;
+  line-height: 2;
+}
+.smart-task-input__suggestions {
+  @extend [data-reach-combobox-popover];
+}
+.smart-task-input__suggestions__item {
+  @extend [data-reach-combobox-option];
+}
+.smart-task-input__suggestions__item--focused {
+  background: var(--color-menu-hover);
+}
+.smart-task-input__suggestions__item__highlight {
+  color: var(--color-button-primary-bg);
+}

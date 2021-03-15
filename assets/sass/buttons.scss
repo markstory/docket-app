@@ -11,7 +11,7 @@
   font-weight: normal;
   cursor: pointer;
 
-  border: none;
+  border: 1px solid transparent;
   margin-bottom: 0;
   padding: $space $space * 1.5;
   border-radius: $border-radius;
@@ -26,6 +26,7 @@
   &:active,
   &:focus {
     outline: none;
+    border: 1px solid var(--color-input-focus-border);
     box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
   }
 }

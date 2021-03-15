@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Combobox,
   ComboboxInput,
@@ -59,6 +59,10 @@ function Autocomplete<OptionType extends Option = Option>({
   onChange,
 }: Props<OptionType>): JSX.Element {
   const [current, setCurrent] = useState<Props<OptionType>['value']>(value ?? undefined);
+  // Sync state with prop when it changes as text input can change the
+  // selected project.
+  useEffect(() => setCurrent(value), [value]);
+
   const [term, setTerm] = useState<string>('');
   const [filtered, setFiltered] = useState(options);
 
@@ -95,6 +99,7 @@ function Autocomplete<OptionType extends Option = Option>({
     setCurrent(selected.value);
     onChange?.(selected.value);
   }
+
 
   return (
     <Combobox aria-label={label} onSelect={handleSelect} openOnFocus>

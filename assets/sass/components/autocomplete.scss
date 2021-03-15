@@ -30,6 +30,8 @@
   width: max-content;
   z-index: $z-menu;
 
+}
+[data-reach-combobox-popover] {
   background: var(--color-bg);
   border: 1px solid var(--color-border-med);
   border-radius: $border-radius;
@@ -37,12 +39,14 @@
   overflow: hidden;
   box-shadow: $shadow-med;
 }
+
 [data-reach-combobox-list] {
   margin: 0;
   padding: 0;
   outline: none;
   list-style: none;
 }
+
 .autocomplete-empty,
 [data-reach-combobox-option] {
   cursor: pointer;

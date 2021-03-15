@@ -12,6 +12,7 @@ module.exports = {
       version: 'detect', // Tells eslint-plugin-react to automatically detect the version of React to use
     },
   },
+  plugins: ['jest'],
   extends: [
     'plugin:react/recommended',
     // Prettier rules need to be at the end as they tweak other plugins.
