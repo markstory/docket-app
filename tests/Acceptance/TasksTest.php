@@ -5,6 +5,8 @@ namespace App\Test\Acceptance;
 
 use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
+use Composer\SelfUpdate\Keys;
+use Facebook\WebDriver\WebDriverKeys;
 
 class TasksTest extends AcceptanceTestCase
 {
@@ -28,7 +30,7 @@ class TasksTest extends AcceptanceTestCase
         return $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
     }
 
-    public function testCompleteOnView()
+    public function testViewMarkComplete()
     {
         $task = $this->setupTask();
 
@@ -47,7 +49,7 @@ class TasksTest extends AcceptanceTestCase
         $this->assertTrue($task->completed);
     }
 
-    public function testUpdateDateOnView()
+    public function testViewUpdateDueOn()
     {
         $task = $this->setupTask();
 
@@ -74,7 +76,7 @@ class TasksTest extends AcceptanceTestCase
         $this->assertNull($task->due_on);
     }
 
-    public function testRenameOnView()
+    public function testViewUpdateName()
     {
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
@@ -91,8 +93,10 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('.task-quickform');
 
         // Fill out the form and submit it.
-        $form = $crawler->filter('.task-quickform')->form();
-        $form->get('title')->setValue('Cut grass');
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys([WebDriverKeys::CONTROL, 'a']);
+        $title->sendKeys('Cut grass');
+
         $crawler->filter('[data-testid="save-task"]')->click();
 
         $task = $this->Tasks->get($task->id);
@@ -100,7 +104,38 @@ class TasksTest extends AcceptanceTestCase
         $this->assertEquals('Cut grass', $task->title);
     }
 
-    public function testCreateSubtaskOnView()
+    public function testViewProjectMention()
+    {
+        $project = $this->makeProject('Work', 1);
+        $home = $this->makeProject('Home', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0);
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Click the summary to get the form.
+        $summary = $crawler->filter('.task-view-summary h3')->first();
+        $summary->click();
+        $client->waitFor('.task-quickform');
+
+        // Fill out the form and submit it.
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys([WebDriverKeys::CONTROL, 'a']);
+        $title->sendKeys('Do dishes ');
+        $title->sendKeys('%Tomorrow');
+        $title->sendKeys(WebDriverKeys::ENTER);
+
+        $crawler->filter('[data-testid="save-task"]')->click();
+
+        $task = $this->Tasks->get($task->id);
+        $this->assertNotEmpty($task);
+        $this->assertEquals('Do dishes', $task->title);
+        $this->assertNotNull($task->due_on);
+    }
+
+    public function testViewCreateSubtask()
     {
         $task = $this->setupTask();
 
@@ -127,7 +162,7 @@ class TasksTest extends AcceptanceTestCase
         $this->assertEquals('Get soap', $subtask->title);
     }
 
-    public function testCompleteSubtaskOnView()
+    public function testViewMarkSubtaskComplete()
     {
         $task = $this->setupTask();
         $subtask = $this->makeSubtask('Get soap', $task->id, 0);
@@ -144,7 +179,7 @@ class TasksTest extends AcceptanceTestCase
         $this->assertTrue($subtask->completed);
     }
 
-    public function testReorderSubtasks()
+    public function testViewReorderSubtasks()
     {
         $task = $this->setupTask();
         $subtasks = [

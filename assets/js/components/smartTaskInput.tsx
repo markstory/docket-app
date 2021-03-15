@@ -67,7 +67,10 @@ function SmartTaskInput({
 
   function handleChange(_: any, newValue: string) {
     setValue(newValue);
-    const newPlainText = newValue.replace(/#[^#]+#/, '').replace(/%[^%]+%/, '');
+    const newPlainText = newValue
+      .replace(/#[^#]+#/, '')
+      .replace(/%[^%]+%/, '')
+      .trim();
     setTextValue(newPlainText);
   }
 
@@ -100,7 +103,12 @@ function SmartTaskInput({
           appendSpaceOnAdd
         />
       </MentionsInput>
-      <input data-testid="smart-task-value" type="hidden" name="title" value={textValue} />
+      <input
+        data-testid="smart-task-value"
+        type="hidden"
+        name="title"
+        value={textValue}
+      />
     </React.Fragment>
   );
 }
