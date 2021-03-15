@@ -33,7 +33,7 @@ describe('SmartTaskInput', function () {
     );
     const textbox = screen.getByRole('textbox');
     await userEvent.type(textbox, '{selectall}{del}#Work\tafter', {delay: 5});
-    expect(screen.getByTestId('smart-task-value').value).toEqual(' after');
+    expect(screen.getByTestId('smart-task-value').value).toEqual('after');
   });
 
   it('triggers change on project select', async function () {
