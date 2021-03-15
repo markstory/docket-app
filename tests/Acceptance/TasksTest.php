@@ -5,7 +5,6 @@ namespace App\Test\Acceptance;
 
 use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
-use Composer\SelfUpdate\Keys;
 use Facebook\WebDriver\WebDriverKeys;
 
 class TasksTest extends AcceptanceTestCase
