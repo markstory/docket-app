@@ -148,6 +148,7 @@ class SluggableBehavior extends Behavior
     public function slug($string)
     {
         $length = $this->getConfig('length');
+
         return substr(strtolower(Text::slug($string)), 0, $length);
     }
 }
