@@ -33,6 +33,7 @@ class ProjectsFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
+            'projects_unique_slug' => ['type' => 'unique', 'columns' => ['user_id', 'slug']],
             'projects_ibfk_1' => ['type' => 'foreign', 'columns' => ['user_id'], 'references' => ['users', 'id'], 'update' => 'restrict', 'delete' => 'cascade', 'length' => []],
         ],
     ];

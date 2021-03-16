@@ -19,6 +19,7 @@ use Cake\Event\Event;
 use Cake\Log\LogTrait;
 use Cake\ORM\Behavior;
 use Cake\Utility\Text;
+use RuntimeException;
 
 /**
  * Model behavior to support generation of slugs for models.
@@ -28,14 +29,14 @@ class SluggableBehavior extends Behavior
     use LogTrait;
 
     /**
-     * Initiate behavior for the model using specified settings. Available settings:
+     * Initial behavior for the model using specified settings. Available settings:
      *
      * - label: (array | string, optional) set to the field name that contains the
      * string from where to generate the slug, or a set of field names to
      * concatenate for generating the slug. DEFAULTS TO: title
      *
      * - slug: (string, optional) name of the field name that holds generated slugs.
-     * DEFAULTS TO: slug
+     * Defaults to: `slug`
      *
      * - separator: (string, optional) separator character / string to use for replacing
      * non alphabetic characters in generated slug. DEFAULTS TO: -
@@ -48,6 +49,9 @@ class SluggableBehavior extends Behavior
      *
      * - reserved: (string[]) A list of values that cannot be used as a slug.
      *
+     * - scopeFields: (string[]) A list of fields that create 'scopes' for slugs.
+     *   In your table's schema each scope + slug field should have a unique index.
+     *
      * @var array
      */
     protected $_defaultConfig = [
@@ -57,6 +61,7 @@ class SluggableBehavior extends Behavior
         'length' => 100,
         'overwrite' => true,
         'reserved' => [],
+        'scopeFields' => [],
         'implementedMethods' => [
             'slug' => 'slug',
         ],
@@ -69,11 +74,11 @@ class SluggableBehavior extends Behavior
     {
         // Make label fields an array
         if (!is_array($this->_config['label'])) {
-            $this->_config['label'] = [$this->_config['label']];
+            throw new RuntimeException('`label` option must be an array.');
         }
 
-        $alias = $this->_table->getAlias();
-        $pk = (array)$this->_table->getPrimaryKey();
+        $table = $this->table();
+        $pk = (array)$table->getPrimaryKey();
         $pk = $pk[0];
 
         // See if we should be generating a slug
@@ -92,33 +97,35 @@ class SluggableBehavior extends Behavior
             }
 
             // Get the slug
-            $slug = $this->slug($label, $this->getConfig());
+            $slug = $this->slug($label);
 
             // Look for slugs that start with the same slug we've just generated
-            $conditions = [$alias . '.' . $this->getConfig('slug') . ' LIKE' => $slug . '%'];
-
+            // Exclude the current record if we are doing an update and apply scope conditions.
+            $conditions = [$table->aliasField($this->getConfig('slug')) . ' LIKE' => $slug . '%'];
             if (!empty($entity[$pk])) {
-                $conditions[$alias . '.' . $pk . ' !='] = $entity[$pk];
+                $conditions[$table->aliasField($pk) . ' !='] = $entity->get($pk);
+            }
+            foreach ($this->getConfig('scopeFields') as $scope) {
+                $conditions[$table->aliasField($scope)] = $entity->get($scope);
             }
 
-            $result = $this->_table->find('all', [
-                'conditions' => $conditions,
-                'fields' => [$pk, $this->getConfig('slug')],
-            ]);
+            $result = $table->find()
+                ->select([$pk, $this->getConfig('slug')])
+                ->where($conditions);
             $sameUrls = $result->extract($this->getConfig('slug'))->toArray();
 
             $accepted = !empty($sameUrls) || !in_array($slug, $this->getConfig('reserved'));
 
             // If we have collisions
             if (!$accepted) {
-                $begginingSlug = $slug;
+                $beginningSlug = $slug;
                 $index = 1;
 
                 // Attach an ending incremental number until we find a free slug
 
                 while ($index > 0) {
-                    if (!in_array($begginingSlug . $this->getConfig('separator') . $index, $sameUrls)) {
-                        $slug = $begginingSlug . $this->getConfig('separator') . $index;
+                    if (!in_array($beginningSlug . $this->getConfig('separator') . $index, $sameUrls)) {
+                        $slug = $beginningSlug . $this->getConfig('separator') . $index;
                         $index = -1;
                     }
 
@@ -135,12 +142,13 @@ class SluggableBehavior extends Behavior
      * Generate a slug for the given string using specified settings.
      *
      * @param string $string String from where to generate slug
-     * @param array $settings Settings to use (looks for 'separator' and 'length')
      * @return string Slug for given string
      * @access private
      */
-    public function slug($string, $settings)
+    public function slug($string)
     {
-        return strtolower(Text::slug($string));
+        $length = $this->getConfig('length');
+
+        return substr(strtolower(Text::slug($string)), 0, $length);
     }
 }

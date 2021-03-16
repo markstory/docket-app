@@ -16,8 +16,11 @@ class ProjectSectionsController extends AppController
 {
     protected function getProject(string $slug): Project
     {
+        $query = $this->ProjectSections->Projects->findBySlug($slug);
+        $query = $this->Authorization->applyScope($query, 'index');
+
         /** @var \App\Model\Entity\Project */
-        return $this->ProjectSections->Projects->findBySlug($slug)->firstOrFail();
+        return $query->firstOrFail();
     }
 
     public function add(string $projectSlug)
