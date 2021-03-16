@@ -74,6 +74,7 @@ class ProjectsTable extends Table
         $this->addBehavior('Sluggable', [
             'label' => ['name'],
             'reserved' => ['archived', 'add'],
+            'scopeFields' => ['user_id'],
         ]);
     }
 

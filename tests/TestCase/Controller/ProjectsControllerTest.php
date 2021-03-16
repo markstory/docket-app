@@ -51,6 +51,23 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
+    public function testViewSlugScope(): void
+    {
+        $otherHome = $this->makeProject('Home', 2, 0);
+        $this->makeTask('first post', $otherHome->id, 0);
+
+        $home = $this->makeProject('Home', 1, 0);
+        $this->makeTask('first post', $home->id, 0);
+        $this->makeTask('second post', $home->id, 0);
+
+        $this->login();
+        $this->get("/projects/{$home->slug}");
+
+        $this->assertResponseOk();
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(2, $this->viewVariable('tasks'));
+    }
+
     public function testViewCompleted(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
@@ -66,11 +83,6 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $this->viewVariable('completed'));
     }
 
-    /**
-     * Test add GET
-     *
-     * @return void
-     */
     public function testAddGet(): void
     {
         $this->login();
@@ -84,11 +96,6 @@ class ProjectsControllerTest extends TestCase
         $this->assertSame('/tasks/today', $this->viewVariable('referer'));
     }
 
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
     public function testAddAppendRanking(): void
     {
         $this->makeProject('Home', 1, 0, ['archived' => true]);
@@ -106,12 +113,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals(1, $project->ranking);
     }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testAddReserved(): void
+    public function testAddReservedSlug(): void
     {
         $this->login();
         $this->enableCsrfToken();
@@ -124,6 +126,26 @@ class ProjectsControllerTest extends TestCase
         $project = $this->Projects->find()->first();
         $this->assertEquals('add', $project->name);
         $this->assertNotEquals('add', $project->slug);
+    }
+
+    public function testAddSlugScopedToUser()
+    {
+        $this->makeProject('Home', 2, 0);
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/projects/add', [
+            'name' => 'Home',
+            'color' => '8',
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $homeCount = $this->Projects->find()->where(['Projects.slug' => 'home'])->count();
+        $this->assertSame(2, $homeCount);
+
+        $new = $this->Projects->find()->where([
+            'Projects.slug' => 'home',
+            'Projects.user_id' => 1,
+        ])->first();
+        $this->assertNotEmpty($new);
     }
 
     public function testEdit(): void
@@ -171,7 +193,7 @@ class ProjectsControllerTest extends TestCase
             'name' => 'Home too',
             'color' => '999999',
         ]);
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     /**
@@ -202,7 +224,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/delete");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
         $this->assertTrue($this->Projects->exists(['slug' => $home->slug]));
     }
 
@@ -240,7 +262,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/archive");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testUnarchive()
@@ -263,7 +285,7 @@ class ProjectsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/unarchive");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testMovePermission()
@@ -276,7 +298,7 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$work->slug}/move", [
             'ranking' => 0,
         ]);
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testMoveNoData()

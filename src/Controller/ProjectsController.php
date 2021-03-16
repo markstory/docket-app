@@ -22,8 +22,11 @@ class ProjectsController extends AppController
 
     protected function getProject($slug, array $contain = []): Project
     {
+        $query = $this->Projects->findBySlug($slug);
+        $query = $this->Authorization->applyScope($query, 'index');
+
         /** @var \App\Model\Entity\Project */
-        return $this->Projects->findBySlug($slug)
+        return $query
             ->contain($contain)
             ->firstOrFail();
     }
@@ -36,7 +39,6 @@ class ProjectsController extends AppController
     public function view(string $slug)
     {
         $project = $this->getProject($slug, ['Sections']);
-        $this->Authorization->authorize($project);
 
         $query = $this->Authorization
             ->applyScope($this->Tasks->find(), 'index')

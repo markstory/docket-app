@@ -68,7 +68,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->post("/projects/{$project->slug}/sections", [
             'name' => 'Day Trips',
         ]);
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
 
         $count = $this->ProjectSections->find()->count();
         $this->assertEquals(0, $count);
@@ -119,7 +119,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->post("/projects/{$project->slug}/sections/{$section->id}/edit", [
             'name' => 'Reading list',
         ]);
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testEditValidationFailure()
@@ -175,7 +175,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$project->slug}/sections/{$section->id}/archive");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testUnarchive()
@@ -202,7 +202,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$project->slug}/sections/{$section->id}/unarchive");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testDelete()
@@ -227,7 +227,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/projects/{$project->slug}/sections/{$section->id}/delete");
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testDeleteUpdateTasks()
@@ -262,7 +262,7 @@ class ProjectSectionsControllerTest extends TestCase
         $this->post("/projects/{$project->slug}/sections/{$section->id}/move", [
             'ranking' => 0,
         ]);
-        $this->assertResponseCode(403);
+        $this->assertResponseCode(404);
     }
 
     public function testMoveNoData()
