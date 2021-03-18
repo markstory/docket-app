@@ -15,17 +15,15 @@ import {
   SortableContext,
   verticalListSortingStrategy,
   sortableKeyboardCoordinates,
-  useSortable,
 } from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
 import {Inertia} from '@inertiajs/inertia';
-import classnames from 'classnames';
 
 import {Project} from 'app/types';
 import {useProjects} from 'app/providers/projects';
-import SortableItem from 'app/components/sortableItem';
-import DragHandle from 'app/components/dragHandle';
-import ProjectItem from 'app/components/projectItem';
+
+import SortableItem from './sortableItem';
+import DragHandle from './dragHandle';
+import ProjectItem from './projectItem';
 
 export default function ProjectSorter(): JSX.Element {
   const [projects, setProjects] = useProjects();

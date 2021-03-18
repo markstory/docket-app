@@ -134,38 +134,6 @@ a > svg:not(:last-child) {
 }
 // }}}
 
-.button-sidebar-action {
-  @extend .button-bare;
-
-  display: flex;
-  align-items: center;
-
-  background: transparent;
-  padding: $space 0;
-  text-decoration: none;
-  color: var(--color-low-emphasis);
-  border: none;
-
-  &:hover {
-    background: transparent;
-    color: var(--color-primary);
-    box-shadow: none;
-  }
-
-  svg {
-    margin-right: $space;
-  }
-}
-
-.button-sidebar-action-primary {
-  @extend .button-sidebar-action;
-
-  color: var(--color-button-primary-bg);
-
-  &:hover {
-    color: var(--color-button-primary-hover);
-  }
-}
 
 // Button Containers {{{
 .button-bar {

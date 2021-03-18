@@ -52,7 +52,6 @@ html {
   --color-white: #fff;
 
   // Color numbers (don't use in components)
-  --color-gray-050: #fcfcf8;
   --color-gray-100: #f8f8f6;
   --color-gray-200: #f0f0ea;
   --color-gray-300: #ebebe1;
@@ -112,7 +111,7 @@ body {
   --color-border-med: var(--color-gray-400);
 
   --color-bg-low: var(--color-gray-100);
-  --color-bg-low-hover: var(--color-gray-050);
+  --color-bg-low-active: var(--color-gray-200);
   --color-bg: var(--color-white);
 
   --color-error-fg: var(--color-red-500);

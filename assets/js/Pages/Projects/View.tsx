@@ -62,6 +62,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
               if (section === undefined) {
                 return (
                   <TaskGroup
+                    key={key}
                     dropId={key}
                     activeTask={activeTask}
                     tasks={tasks}

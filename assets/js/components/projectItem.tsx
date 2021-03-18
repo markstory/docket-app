@@ -1,23 +1,30 @@
 import React, {useState} from 'react';
-import {InertiaLink} from '@inertiajs/inertia-react';
+import {InertiaLink, usePage} from '@inertiajs/inertia-react';
+import classnames from 'classnames';
 
 import {Project} from 'app/types';
-import ProjectBadge from 'app/components/projectBadge';
-import ProjectMenu from 'app/components/projectMenu';
+import ProjectBadge from './projectBadge';
+import ProjectMenu from './projectMenu';
 
 type Props = {
   project: Project;
 };
 
 export default function ProjectItem({project}: Props): JSX.Element {
+  const path = `/projects/${project.slug}`;
   const [active, setActive] = useState(false);
+  const page = usePage();
+  const className = classnames('project-item', {
+    active: page.url.indexOf(path) > 0,
+  });
+
   return (
     <div
-      className="project-item"
+      className={className}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
-      <InertiaLink key={project.slug} href={`/projects/${project.slug}`}>
+      <InertiaLink key={project.slug} href={path}>
         <ProjectBadge project={project} />
         <span className="counter">{project.incomplete_task_count.toLocaleString()}</span>
       </InertiaLink>

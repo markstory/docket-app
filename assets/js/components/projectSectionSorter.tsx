@@ -285,8 +285,16 @@ function ProjectSectionSorter({children, project, tasks}: Props): JSX.Element {
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
     >
-      <SortableContext items={sectionids} strategy={verticalListSortingStrategy}>
-        <SortableContext items={taskids} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        key="sections"
+        items={sectionids}
+        strategy={verticalListSortingStrategy}
+      >
+        <SortableContext
+          key="items"
+          items={taskids}
+          strategy={verticalListSortingStrategy}
+        >
           {children({
             groups: items,
             activeTask,

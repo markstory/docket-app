@@ -1,4 +1,6 @@
 .project-filter {
+  $item-height: 40px;
+
   h3 {
     color: var(--color-low-emphasis);
   }
@@ -10,16 +12,20 @@
     margin-bottom: $space * 2;
   }
 
+  // Should be similar to .project-item as well.
   .links a {
-    height: 40px;
+    height: $item-height;
     display: flex;
     align-items: center;
     padding: $space 0 $space $space / 2;
-    margin-right: $space * 2;
+    margin: 0 $space * 2 1px 0;
     text-decoration: none;
+    border-radius: $border-radius;
     color: var(--color-foreground);
+
+    &.active,
     &:hover {
-      background: var(--color-bg-low-hover);
+      background: var(--color-bg-low-active);
     }
     svg {
       margin-right: $space;
@@ -40,8 +46,46 @@
   .dnd-dropper-left-offset {
     margin-right: $space * 2;
   }
+
+  .project-item {
+    flex-grow: 1;
+  }
+
+  .secondary-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-primary {
+    display: flex;
+    align-items: center;
+
+    height: $item-height;
+    width: 100%;
+    padding: $space 4px;
+    text-decoration: none;
+    margin-bottom: 1px;
+    color: var(--color-button-primary-bg);
+
+    &:hover {
+      color: var(--color-button-primary-hover);
+    }
+
+    svg {
+      margin-right: $space;
+    }
+  }
+
+  .action-secondary {
+    @extend .action-primary;
+
+    color: var(--color-muted);
+    padding-left: 28px;
+
+    &:hover {
+      color: var(--color-low-emphasis);
+    }
+  }
 }
 
-.project-filter .project-item {
-  flex-grow: 1;
-}
