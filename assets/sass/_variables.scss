@@ -149,3 +149,59 @@ body {
   --color-due-week: var(--color-blue-700);
   --color-due-fortnight: var(--color-gray-500);
 }
+body.theme-dark {
+  // Semantic color names for dark mode
+  --color-primary: var(--color-purple-500);
+  --color-secondary: var(--color-ochre-500);
+
+  --color-foreground: var(--color-white);
+
+  --color-invert-bg: var(--color-gray-200);
+  --color-invert-foreground: var(--color-gray-900);
+
+  --color-disabled: var(--color-gray-700);
+  --color-muted: var(--color-gray-500);
+  --color-low-emphasis: var(--color-gray-600);
+
+  --color-border: var(--color-gray-800);
+  --color-border-med: var(--color-gray-700);
+
+  --color-bg-low: var(--color-gray-800);
+  --color-bg-low-active: var(--color-gray-700);
+  --color-bg: var(--color-gray-900);
+
+  --color-error-fg: var(--color-red-100);
+  --color-success-fg: var(--color-green-100);
+
+  --color-button-default-bg: var(--color-gray-800);
+  --color-button-default-hover: var(--color-gray-700);
+
+  --color-button-danger-bg: var(--color-red-500);
+  --color-button-danger-hover: var(--color-red-300);
+
+  --color-button-primary-bg: var(--color-purple-500);
+  --color-button-primary-hover: var(--color-purple-300);
+  --color-button-muted-hover: var(--color-gray-800);
+
+  --color-input-focus-shadow: var(--color-blue-700);
+  --color-input-focus-border: var(--color-blue-500);
+  --color-menu-hover: var(--color-ochre-500);
+  --color-menu-selected: var(--color-ochre-700);
+
+  --color-toggle-bg: var(--color-gray-800);
+  --color-toggle-bg-checked: var(--color-ochre-700);
+  --color-toggle-checked: var(--color-ochre-500);
+
+  --color-action-lock: var(--color-ochre-500);
+  --color-action-edit: var(--color-ochre-100);
+  --color-action-delete: var(--color-red-100);
+  --color-action-complete: var(--color-green-100);
+
+  --color-due-none: var(--color-gray-300);
+  --color-due-overdue: var(--color-red-500);
+  --color-due-evening: var(--color-blue-500);
+  --color-due-today: var(--color-purple-500);
+  --color-due-tomorrow: var(--color-ochre-500);
+  --color-due-week: var(--color-blue-100);
+  --color-due-fortnight: var(--color-gray-500);
+}

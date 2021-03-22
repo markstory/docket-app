@@ -7,6 +7,8 @@ input[type=password],
 input[type=email] {
   height: $button-med-height;
   padding: $space / 2 $space;
+  color: var(--color-foreground);
+  background: var(--color-bg);
   border-radius: $border-radius;
   border: 1px solid var(--color-border-med);
   outline: none;
