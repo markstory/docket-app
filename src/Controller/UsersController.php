@@ -68,11 +68,16 @@ class UsersController extends AppController
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
 
-        $allowedFields = ['unverified_email', 'name', 'timezone', 'theme'];
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $allowedFields = ['name', 'timezone', 'theme'];
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
                 'fields' => $allowedFields,
             ]);
+            $email = $this->request->getData('unverified_email');
+            if ($email) {
+                $user->unverified_email = $email;
+            }
+
             $emailChanged = $user->isDirty('unverified_email');
             if ($this->Users->save($user)) {
                 if ($emailChanged) {

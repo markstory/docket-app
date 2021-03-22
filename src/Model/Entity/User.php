@@ -21,6 +21,8 @@ use RuntimeException;
  * @property string $email
  * @property string $password
  * @property string $unverified_email
+ * @property string $theme
+ * @property string $timezone
  * @property bool $email_verified
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -44,6 +46,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         'name' => true,
         'unverified_email' => true,
         'modified' => true,
+        'theme' => true,
         'timezone' => true,
     ];
 
