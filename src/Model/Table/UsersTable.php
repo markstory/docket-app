@@ -32,6 +32,8 @@ use Exception;
  */
 class UsersTable extends Table
 {
+    public const VALID_THEMES = ['light', 'dark', 'system'];
+
     /**
      * Initialize method
      *
@@ -71,6 +73,7 @@ class UsersTable extends Table
             ->notEmptyString('email');
 
         $validator
+            ->allowEmptyString('unverified_email')
             ->email('unverified_email');
 
         $validator = $this->validationPassword($validator);
@@ -80,18 +83,21 @@ class UsersTable extends Table
             ->notEmptyString('password');
 
         $validator->scalar('timezone')
-                  ->add('timezone', 'validtimezone', [
-                      'rule' => function ($value) {
-                        try {
-                            $tz = new DateTimeZone($value);
+          ->add('timezone', 'validtimezone', [
+              'rule' => function ($value) {
+                try {
+                    $tz = new DateTimeZone($value);
 
-                            return true;
-                        } catch (Exception $e) {
-                            return false;
-                        }
-                      },
-                      'message' => 'Timezone is not valid.',
-                  ]);
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+              },
+              'message' => 'Timezone is not valid.',
+          ]);
+
+        $validator->scalar('theme')
+            ->inList('theme', static::VALID_THEMES);
 
         return $validator;
     }

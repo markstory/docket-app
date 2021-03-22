@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
-import {FlashMessage, Project} from 'app/types';
+import {FlashMessage, Project, User} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import {Icon} from 'app/components/icon';
@@ -13,6 +13,7 @@ import {ProjectsProvider} from 'app/providers/projects';
 type SharedPageProps = {
   flash: null | FlashMessage;
   projects: Project[];
+  identity: User;
 };
 
 type Props = {
@@ -21,12 +22,17 @@ type Props = {
 };
 
 function LoggedIn({children, title}: Props) {
-  const {projects} = usePage().props as SharedPageProps;
+  const {projects, identity} = usePage().props as SharedPageProps;
   useEffect(() => {
     if (title) {
       document.title = title;
     }
-  }, [title]);
+    if (identity.theme !== 'system') {
+      document.body.classList.add(`theme-${identity.theme}`);
+    } else if (window.matchMedia('(prefers-color-scheme)').media === 'dark') {
+      document.body.classList.add('theme-dark');
+    }
+  }, [title, identity]);
 
   return (
     <ProjectsProvider projects={projects}>

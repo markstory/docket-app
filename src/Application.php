@@ -147,7 +147,7 @@ class Application extends BaseApplication implements
             'form-action' => ['self' => true],
             'img-src' => ['self' => true, 'allow' => ['data', 'www.gravatar.com']],
             'script-src' => ['self' => true, 'unsafe-inline' => true],
-            'style-src' => ['self' => true],
+            'style-src' => ['self' => true, 'unsafe-inline' => true],
             'object-src' => [],
             'plugin-types' => [],
         ]);

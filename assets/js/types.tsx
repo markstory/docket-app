@@ -65,6 +65,7 @@ export type User = {
   unverified_email: string;
   avatar_hash: string;
   timezone: string;
+  theme: string;
   created: string;
   modified: string;
 };

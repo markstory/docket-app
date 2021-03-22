@@ -135,6 +135,7 @@ class UsersControllerTest extends TestCase
             'email' => 'badthings@example.com',
             'unverified_email' => 'example@example.com',
             'timezone' => 'America/New_York',
+            'theme' => 'dark',
             'referer' => '/tasks/today',
         ]);
         $this->assertRedirect('/tasks/today');
@@ -143,9 +144,27 @@ class UsersControllerTest extends TestCase
         $this->assertNotEquals('badthings@example.com', $user->email);
         $this->assertTrue($user->email_verified);
         $this->assertEquals('example@example.com', $user->unverified_email);
+        $this->assertEquals('dark', $user->theme);
 
         $this->assertMailCount(1);
         $this->assertMailSubjectContains('Verify your email');
+    }
+
+    public function testEditNoEmailChange(): void
+    {
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/users/profile', [
+            'unverified_email' => '',
+            'theme' => 'dark',
+            'referer' => '/tasks/today',
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $this->assertFlashElement('flash/success');
+        $user = $this->Users->get(1);
+        $this->assertTrue($user->email_verified);
+
+        $this->assertMailCount(0);
     }
 
     public function testUpdatePasswordRequiresLogin()

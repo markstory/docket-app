@@ -25,6 +25,7 @@ class UsersFixture extends TestFixture
         'email_verified' => ['type' => 'boolean', 'null' => false, 'default' => false],
         'unverified_email' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => '', 'comment' => '', 'precision' => null],
         'timezone' => ['type' => 'string', 'default' => 'UTC'],
+        'theme' => ['type' => 'string', 'default' => 'light'],
         'created' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [

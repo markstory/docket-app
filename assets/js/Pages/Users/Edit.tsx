@@ -1,11 +1,13 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
+import {VALID_THEMES} from 'app/constants';
 import Modal from 'app/components/modal';
 import {User, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import LoggedIn from 'app/layouts/loggedIn';
+import Autocomplete from 'app/components/autocomplete';
 
 type Props = {
   identity: User;
@@ -23,10 +25,11 @@ export default function Edit({identity, referer, errors}: Props) {
     const formData = new FormData(event.target as HTMLFormElement);
     Inertia.post('/users/profile', formData);
   }
+  const title = t('Edit Profile');
 
   return (
-    <LoggedIn title={t('Edit Profile')}>
-      <Modal onClose={handleClose}>
+    <LoggedIn title={title}>
+      <Modal onClose={handleClose} label={title}>
         <h1>{t('Edit Profile')}</h1>
         <form method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
@@ -57,7 +60,7 @@ export default function Edit({identity, referer, errors}: Props) {
               id="unverified_email"
               name="unverified_email"
               type="email"
-              defaultValue={identity.email}
+              placeholder={identity.email}
             />
             <FormError errors={errors} field="unverified_email" />
           </div>
@@ -79,6 +82,22 @@ export default function Edit({identity, referer, errors}: Props) {
               defaultValue={identity.timezone}
             />
             <FormError errors={errors} field="timezone" />
+          </div>
+
+          <div className="form-input">
+            <label htmlFor="theme">
+              {t('Theme')}
+              <p className="form-help">
+                {t('The "system" theme inherits light/dark from your operating system.')}
+              </p>
+            </label>
+            <Autocomplete
+              name="theme"
+              label={t('Choose a theme')}
+              value={identity.theme}
+              options={VALID_THEMES}
+            />
+            <FormError errors={errors} field="theme" />
           </div>
 
           <div className="button-bar">
