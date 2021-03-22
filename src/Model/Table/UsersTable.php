@@ -32,6 +32,8 @@ use Exception;
  */
 class UsersTable extends Table
 {
+    public const VALID_THEMES = ['light', 'dark', 'system'];
+
     /**
      * Initialize method
      *
@@ -92,6 +94,9 @@ class UsersTable extends Table
                       },
                       'message' => 'Timezone is not valid.',
                   ]);
+
+        $validator->scalar('theme')
+            ->inList('theme', static::VALID_THEMES);
 
         return $validator;
     }

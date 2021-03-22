@@ -18,3 +18,9 @@ export const PROJECT_COLORS = [
   {id: 16, name: 'brick', code: '#b60909'},
   {id: 17, name: 'flame', code: '#f14949'},
 ];
+
+export const VALID_THEMES = [
+  {value: 'light', text: 'Light'},
+  {value: 'dark', text: 'Dark'},
+  {value: 'system', text: 'System'},
+];

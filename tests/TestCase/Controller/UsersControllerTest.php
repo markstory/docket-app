@@ -131,10 +131,12 @@ class UsersControllerTest extends TestCase
     {
         $this->login();
         $this->enableCsrfToken();
+        $this->disableErrorHandlerMiddleware();
         $this->post('/users/profile', [
             'email' => 'badthings@example.com',
             'unverified_email' => 'example@example.com',
             'timezone' => 'America/New_York',
+            'theme' => 'dark',
             'referer' => '/tasks/today',
         ]);
         $this->assertRedirect('/tasks/today');
