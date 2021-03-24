@@ -28,6 +28,9 @@ function LoggedIn({children, title}: Props) {
       document.title = title;
     }
     if (identity.theme !== 'system') {
+      document.body.classList.remove(
+        ...[...document.body.classList].filter(item => item.startsWith('theme-'))
+      );
       document.body.classList.add(`theme-${identity.theme}`);
     } else if (window.matchMedia('(prefers-color-scheme)').media === 'dark') {
       document.body.classList.add('theme-dark');
