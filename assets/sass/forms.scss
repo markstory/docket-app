@@ -24,6 +24,7 @@ input[type=email] {
 input[type=checkbox],
 input[type=radio] {
   outline: none;
+  border-color: var(--color-foreground);
 
   &:active,
   &:focus {

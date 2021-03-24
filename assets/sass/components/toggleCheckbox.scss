@@ -57,7 +57,7 @@ $toggle-knob-diameter: $button-narrow-height - 6;
     background: var(--color-toggle-checked);
   }
   input:checked + .knob {
-    transform: translateX(($toggle-width / 2) - 2);
+    transform: translateX(($toggle-width / 2) - 1);
   }
 }
 
