@@ -2,6 +2,7 @@
 $border-radius: 3px;
 $border-radius-large: 6px;
 
+// TODO make these props so they can be defined in theme.
 $shadow-inset: inset 0 2px 0 rgba(18, 28, 45, 0.03);
 $shadow-button: 0 1px 2px 0 rgba(18, 28, 45, 0.12);
 $shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
@@ -167,7 +168,7 @@ body.theme-dark {
   --color-border-med: var(--color-gray-600);
 
   --color-bg-low: var(--color-gray-900);
-  --color-bg-low-active: var(--color-gray-700);
+  --color-bg-low-active: rgba(91, 91, 69, 0.3);
   --color-bg: var(--color-gray-800);
 
   --color-error-fg: var(--color-red-300);
