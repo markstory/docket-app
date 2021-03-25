@@ -107,10 +107,10 @@ button,
 .button-primary,
 .button-secondary,
 .button-danger {
-  box-shadow: $shadow-button;
+  box-shadow: var(--shadow-button);
 
   &:hover {
-    box-shadow: $shadow-button-hover;
+    box-shadow: var(--shadow-button-hover);
   }
 }
 

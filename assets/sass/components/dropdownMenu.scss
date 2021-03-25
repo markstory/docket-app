@@ -16,7 +16,7 @@
   background: var(--color-bg);
   border: 1px solid var(--color-border-med);
   border-radius: $border-radius;
-  box-shadow: $shadow-med;
+  box-shadow: var(--shadow-med);
 
 
   .separator {

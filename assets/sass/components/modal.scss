@@ -10,7 +10,7 @@
   padding: 45px 20px 20px 20px;
   background: var(--color-bg);
   border-radius: $border-radius-large $border-radius-large 0 0;
-  box-shadow: $shadow-high;
+  box-shadow: var(--shadow-high);
 
   .modal-close {
     @extend .button-bare;

@@ -2,15 +2,6 @@
 $border-radius: 3px;
 $border-radius-large: 6px;
 
-// TODO make these props so they can be defined in theme.
-$shadow-inset: inset 0 2px 0 rgba(18, 28, 45, 0.03);
-$shadow-button: 0 1px 2px 0 rgba(18, 28, 45, 0.12);
-$shadow-button-hover: 0 1px 2px 0 rgba(18, 28, 45, 0.22);
-$shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
-$shadow-med: 0 4px 16px 0 rgba(18, 28, 45, 0.2);
-$shadow-high: 0 16px 24px 0 rgba(18, 28, 45, 0.2);
-$shadow-drag: 0 0 0 1px rgba(63, 63, 68, 0.05), 0px 15px 15px 0 rgba(34, 33, 81, 0.25);
-
 $font-size-xlarge: 20px;
 $font-size-large: 18px;
 $font-size-med: 16px;
@@ -153,8 +144,17 @@ body {
   --color-due-week: var(--color-blue-700);
   --color-due-fortnight: var(--color-gray-500);
 
-  --color-modal-overlay: hsla(0, 0%, 0%, 0.15)
+  --color-modal-overlay: hsla(0, 0%, 0%, 0.15);
+
+  --shadow-inset: inset 0 2px 0 rgba(18, 28, 45, 0.03);
+  --shadow-button: 0 1px 2px 0 rgba(18, 28, 45, 0.12);
+  --shadow-button-hover: 0 1px 2px 0 rgba(18, 28, 45, 0.22);
+  --shadow-low: 0 2px 8px 0 rgba(18, 28, 45, 0.1);
+  --shadow-med: 0 4px 16px 0 rgba(18, 28, 45, 0.2);
+  --shadow-high: 0 16px 24px 0 rgba(18, 28, 45, 0.2);
+  --shadow-drag: 0 0 0 1px rgba(63, 63, 68, 0.05), 0px 15px 15px 0 rgba(34, 33, 81, 0.25);
 }
+
 body.theme-dark {
   --color-fg: var(--color-white);
 
@@ -176,8 +176,8 @@ body.theme-dark {
   --color-success-fg: var(--color-green-300);
 
   --color-button-fg: var(--color-gray-300);
-  --color-button-default-bg: var(--color-gray-800);
-  --color-button-default-hover: var(--color-gray-700);
+  --color-button-default-bg: var(--color-gray-700);
+  --color-button-default-hover: var(--color-gray-600);
 
   --color-button-danger-bg: var(--color-red-500);
   --color-button-danger-hover: var(--color-red-300);
@@ -202,5 +202,13 @@ body.theme-dark {
   --color-due-none: var(--color-gray-300);
   --color-due-week: var(--color-blue-300);
 
-  --color-modal-overlay: hsla(0, 0%, 30%, 0.5)
+  --color-modal-overlay: hsla(13, 38%, 12%, 0.5);
+
+  --shadow-inset: inset 0 2px 0 hsla(13, 38%, 5%, 0.25);
+  --shadow-button: 0 1px 2px 0 hsla(13, 38%, 5%, 0.5);
+  --shadow-button-hover: 0 1px 2px 0 hsla(13, 38%, 5%, 0.5);
+  --shadow-low: 0 2px 8px 0 hsla(13, 38%, 5%, 0.5);
+  --shadow-med: 0 4px 16px 0 hsla(13, 38%, 5%, 0.6);
+  --shadow-high: 0 16px 24px 0 hsla(13, 38%, 5%, 0.8);
+  --shadow-drag: 0 0 0 1px hsla(13, 38%, 5%, 0.2), 0px 15px 15px 0 hsla(13, 38%, 5%, 0.55);
 }

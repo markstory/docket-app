@@ -22,7 +22,7 @@ $toggle-knob-diameter: $button-narrow-height - 8;
     height: $button-narrow-height;
     border-radius: 16px;
     margin-right: $space;
-    box-shadow: $shadow-inset;
+    box-shadow: var(--shadow-inset);
   }
 
   .knob {
@@ -37,7 +37,7 @@ $toggle-knob-diameter: $button-narrow-height - 8;
     height: $toggle-knob-diameter;
     width: $toggle-knob-diameter;
     border-radius: 50%;
-    box-shadow: $shadow-button;
+    box-shadow: var(--shadow-button);
     background: var(--color-border-med);
 
     z-index: 1;

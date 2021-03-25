@@ -37,7 +37,7 @@
   border-radius: $border-radius;
   outline: none;
   overflow: hidden;
-  box-shadow: $shadow-med;
+  box-shadow: var(--shadow-med);
 }
 
 [data-reach-combobox-list] {

@@ -12,7 +12,7 @@ input[type=email] {
   border-radius: $border-radius;
   border: 1px solid var(--color-border-med);
   outline: none;
-  box-shadow: $shadow-inset;
+  box-shadow: var(--shadow-inset);
 
   &:active,
   &:focus {

@@ -6,7 +6,7 @@
 
   padding: $space * 2;
   background: var(--color-bg);
-  box-shadow: $shadow-med;
+  box-shadow: var(--shadow-med);
   border-radius: $border-radius;
   z-index: $z-flash;
 

@@ -27,7 +27,7 @@
 }
 
 .dnd-item-dragging {
-  box-shadow: $shadow-drag;
+  box-shadow: var(--shadow-drag);
   background: var(--color-bg);
   position: relative;
   z-index: $z-active-ui;

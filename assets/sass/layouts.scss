@@ -105,7 +105,7 @@ $sidebar-width: 250px;
   background: var(--color-bg);
   border-radius: $border-radius-large;
   border: 1px solid var(--color-border);
-  box-shadow: $shadow-low;
+  box-shadow: var(--shadow-low);
   padding: $space * 3;
   width: 75%;
   margin-top: $space * 6;
