@@ -21,7 +21,7 @@
     margin: 0 $space * 2 1px 0;
     text-decoration: none;
     border-radius: $border-radius;
-    color: var(--color-foreground);
+    color: var(--color-fg);
 
     &.active,
     &:hover {

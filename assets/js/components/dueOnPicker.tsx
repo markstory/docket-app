@@ -162,8 +162,12 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
           name="evening"
           checked={task.evening}
           onChange={handleEveningChange}
-          knobIcon={<InlineIcon icon="moon" />}
-          label={t('Evening')}
+          label={
+            <React.Fragment>
+              <InlineIcon icon="moon" />
+              {t('Evening')}
+            </React.Fragment>
+          }
         />
       </div>
     </div>

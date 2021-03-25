@@ -15,6 +15,8 @@
   .modal-close {
     @extend .button-bare;
 
+    display: flex;
+    justify-content: center;
     border: none;
     border-radius: 50%;
     font-size: $font-size-large;
@@ -24,8 +26,9 @@
     right: 10px;
     height: 30px;
     width: 30px;
-    padding: 5px 7px;
+    padding: 5px;
     margin: 0;
+    box-shadow: none;
   }
 }
 
@@ -45,7 +48,7 @@
 }
 
 [data-reach-dialog-overlay] {
-  background: hsla(0, 0%, 0%, 0.15);
+  background: var(--color-modal-overlay);
   position: fixed;
   top: 0;
   right: 0;

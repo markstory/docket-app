@@ -31,15 +31,14 @@
   }
 }
 
-// Add borders, background, boxshadow
+// Add borders, background
 button {
   @extend .button-bare;
-  color: var(--color-foreground);
+  color: var(--color-button-fg);
   background: var(--color-button-default-bg);
   border: 1px solid var(--color-border-med);
 
   &:hover {
-    box-shadow: $shadow-button;
     background: var(--color-button-default-hover);
   }
 }
@@ -49,18 +48,18 @@ a > svg:not(:last-child) {
   margin-right: $space;
 }
 
+
 // Button Variants {{{
 // bright background with reverse text.
 .button-primary {
   @extend .button-bare;
 
-  color: var(--color-invert-foreground);
+  color: var(--color-button-primary-fg);
   background: var(--color-button-primary-bg);
 
   &:hover {
-    color: var(--color-invert-foreground);
+    color: var(--color-button-primary-fg);
     background: var(--color-button-primary-hover);
-    box-shadow: $shadow-button;
   }
 }
 
@@ -68,7 +67,7 @@ a > svg:not(:last-child) {
 .button-secondary {
   @extend .button-bare;
 
-  color: var(--color-foreground);
+  color: var(--color-button-fg);
   background: var(--color-bg);
   border: 1px solid var(--color-border-med);
 
@@ -84,9 +83,10 @@ a > svg:not(:last-child) {
 
   background: none;
   color: var(--color-low-emphasis);
+  box-shadow: none;
 
   &:hover {
-    color: var(--color-foreground);
+    color: var(--color-fg);
     background: var(--color-button-muted-hover);
     box-shadow: none;
   }
@@ -99,6 +99,18 @@ a > svg:not(:last-child) {
 
   &:hover {
     background: var(--color-button-danger-hover);
+  }
+}
+
+// Button types with shadows
+button,
+.button-primary,
+.button-secondary,
+.button-danger {
+  box-shadow: $shadow-button;
+
+  &:hover {
+    box-shadow: $shadow-button-hover;
   }
 }
 

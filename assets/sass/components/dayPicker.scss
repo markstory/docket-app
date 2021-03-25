@@ -153,11 +153,11 @@
   position: relative;
 
   background-color: var(--color-menu-selected);
-  color: var(--color-foreground);
+  color: var(--color-fg);
 }
 
 .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover {
-  color: var(--color-foreground);
+  color: var(--color-fg);
 }
 
 .DayPicker-Day--past {

@@ -7,7 +7,7 @@ input[type=password],
 input[type=email] {
   height: $button-med-height;
   padding: $space / 2 $space;
-  color: var(--color-foreground);
+  color: var(--color-fg);
   background: var(--color-bg);
   border-radius: $border-radius;
   border: 1px solid var(--color-border-med);
@@ -24,7 +24,7 @@ input[type=email] {
 input[type=checkbox],
 input[type=radio] {
   outline: none;
-  border-color: var(--color-foreground);
+  border-color: var(--color-fg);
 
   &:active,
   &:focus {
