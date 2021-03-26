@@ -33,7 +33,7 @@ class TasksListTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Open the add form
-        $button = $crawler->filter('.add-task button');
+        $button = $crawler->filter('[data-testid="add-task"]');
         $button->click();
         $client->waitFor('.task-quickform');
 
@@ -50,6 +50,32 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertNotEmpty($task, 'No task saved');
         $this->assertEquals('A new task', $task->title);
         $this->assertEquals($project->id, $task->project_id);
+    }
+
+    public function testCreateInEvening()
+    {
+        $project = $this->makeProject('Work', 1);
+
+        $client = $this->login();
+        $client->get('/tasks/today');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Open the add form in the evening section.
+        $button = $crawler->filter('[data-testid="evening-group"] [data-testid="add-task"]');
+        $button->click();
+        $client->waitFor('.task-quickform');
+
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys('evening task');
+
+        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
+        $button->click();
+
+        $task = $this->Tasks->find()->firstOrFail();
+        $this->assertEquals('evening task', $task->title);
+        $this->assertEquals($project->id, $task->project_id);
+        $this->assertTrue($task->evening);
     }
 
     public function testCompleteOnUpcomingList()

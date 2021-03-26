@@ -186,4 +186,31 @@ class ProjectsTest extends AcceptanceTestCase
         $task = $this->Projects->Tasks->get($one->id);
         $this->assertSame($section->id, $task->section_id);
     }
+
+    public function testAddTaskToSection()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Books', $project->id);
+
+        $client = $this->login();
+        $client->get('/projects/home');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Click add task in the section.
+        $addTask = $crawler->filter('.section-container [data-testid="add-task"]')->first();
+        $addTask->click();
+        $client->waitFor('.task-quickform');
+
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys('A new task');
+
+        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
+        $button->click();
+
+        $task = $this->Projects->Tasks->find()->firstOrFail();
+        $this->assertEquals('A new task', $task->title);
+        $this->assertEquals($project->id, $task->project_id);
+        $this->assertEquals($section->id, $task->section_id);
+    }
 }

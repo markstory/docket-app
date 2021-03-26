@@ -78,6 +78,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                     {t('Overdue')}
                   </h2>
                   <TaskGroup
+                    dataTestId="overdue-group"
                     dropId={overdue.key}
                     tasks={overdue.items}
                     activeTask={activeTask}
@@ -93,6 +94,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                   {t('Today')}
                 </h2>
                 <TaskGroup
+                  dataTestId="today-group"
                   dropId={today.key}
                   tasks={today.items}
                   activeTask={activeTask}
@@ -106,6 +108,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                   {t('This Evening')}
                 </h2>
                 <TaskGroup
+                  dataTestId="evening-group"
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}

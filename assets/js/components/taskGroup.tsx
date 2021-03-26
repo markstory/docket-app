@@ -12,6 +12,7 @@ import {InlineIcon} from './icon';
 type Props = {
   dropId: string;
   tasks: Task[];
+  dataTestId?: string;
   activeTask?: Task | null;
   defaultTaskValues?: DefaultTaskValues;
   showProject?: boolean;
@@ -21,6 +22,7 @@ type Props = {
 
 export default function TaskGroup({
   dropId,
+  dataTestId,
   activeTask,
   tasks,
   defaultTaskValues,
@@ -39,7 +41,7 @@ export default function TaskGroup({
   const activeId = activeTask ? String(activeTask.id) : undefined;
 
   return (
-    <div className="task-group">
+    <div className="task-group" data-testid={dataTestId}>
       <div className={className} ref={setNodeRef}>
         {tasks.map(item => (
           <SortableItem key={item.id} id={String(item.id)} active={activeId} tag="div">
