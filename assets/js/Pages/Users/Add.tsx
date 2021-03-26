@@ -68,6 +68,9 @@ export default function Add({errors}: Props) {
           <button className="button-primary" type="submit">
             {t('Sign Up')}
           </button>
+          <InertiaLink className="button-muted" href="/login">
+            {t('Log in')}
+          </InertiaLink>
         </div>
       </form>
     </Card>
