@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
 import {DragOverlay} from '@dnd-kit/core';
-import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
-import {Project, ProjectSection, Task} from 'app/types';
+import {Project, Task} from 'app/types';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
@@ -66,7 +65,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                     dropId={key}
                     activeTask={activeTask}
                     tasks={tasks}
-                    defaultProjectId={project.id}
+                    defaultTaskValues={{project_id: project.id}}
                     showAdd={!project.archived}
                     showDueOn
                   />
@@ -84,7 +83,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                     dropId={key}
                     activeTask={activeTask}
                     tasks={tasks}
-                    defaultProjectId={project.id}
+                    defaultTaskValues={{section_id: section.id, project_id: project.id}}
                     showAdd={!project.archived}
                     showDueOn
                   />

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import classnames from 'classnames';
 import {useDroppable} from '@dnd-kit/core';
 
-import {Task} from 'app/types';
+import {DefaultTaskValues, Task} from 'app/types';
 import {t} from 'app/locale';
 import TaskRow from 'app/components/taskRow';
 import TaskAddForm from 'app/components/taskAddForm';
@@ -13,8 +13,7 @@ type Props = {
   dropId: string;
   tasks: Task[];
   activeTask?: Task | null;
-  defaultDate?: string;
-  defaultProjectId?: number;
+  defaultTaskValues?: DefaultTaskValues;
   showProject?: boolean;
   showDueOn?: boolean;
   showAdd?: boolean;
@@ -24,8 +23,7 @@ export default function TaskGroup({
   dropId,
   activeTask,
   tasks,
-  defaultDate,
-  defaultProjectId,
+  defaultTaskValues,
   showProject = false,
   showDueOn = false,
   showAdd = true,
@@ -63,8 +61,7 @@ export default function TaskGroup({
           )}
           {showForm && (
             <TaskAddForm
-              defaultDate={defaultDate}
-              defaultProjectId={defaultProjectId}
+              defaultValues={defaultTaskValues}
               onCancel={() => setShowForm(false)}
             />
           )}

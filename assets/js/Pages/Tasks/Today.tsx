@@ -96,7 +96,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                   dropId={today.key}
                   tasks={today.items}
                   activeTask={activeTask}
-                  defaultDate={defaultDate}
+                  defaultTaskValues={{due_on: defaultDate}}
                   showProject
                 />
               </SortableContext>
@@ -109,7 +109,7 @@ export default function TasksToday({tasks}: Props): JSX.Element {
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}
-                  defaultDate={defaultDate}
+                  defaultTaskValues={{evening: true, due_on: defaultDate}}
                   showProject
                 />
               </SortableContext>

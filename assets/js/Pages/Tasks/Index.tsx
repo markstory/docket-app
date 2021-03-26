@@ -94,7 +94,7 @@ export default function TasksIndex({
                         dropId={key}
                         tasks={items}
                         activeTask={activeTask}
-                        defaultDate={key}
+                        defaultTaskValues={{due_on: key}}
                         showProject
                       />
                     </SortableContext>

@@ -35,6 +35,9 @@ export default function TaskQuickForm({
 
   return (
     <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
+      {data.section_id && (
+        <input type="hidden" name="section_id" value={data.section_id} />
+      )}
       <div className="title">
         <SmartTaskInput
           defaultValue={data.title}

@@ -47,6 +47,14 @@ export interface Task {
   project: TaskProject;
 }
 
+export interface DefaultTaskValues {
+  section_id?: null | number;
+  title?: string;
+  evening?: boolean;
+  due_on?: null | string;
+  project_id?: number;
+}
+
 export type Subtask = {
   id: number;
   title: string;
