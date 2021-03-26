@@ -29,6 +29,11 @@
   color: var(--color-low-emphasis);
   cursor: pointer;
 }
+.DayPicker-NavButton--interactionDisabled {
+  cursor: normal;
+  pointer-events: none;
+  opacity: 0.5;
+}
 
 .DayPicker-NavButton:hover {
   opacity: 0.8;
