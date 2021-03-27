@@ -11,6 +11,7 @@ echo json_encode([
             'src' => $this->Url->assetUrl('img/docket-logo.png'),
             'sizes' => '192x192',
             'type' => 'image/png',
+            'purpose' => 'maskable any',
         ],
     ],
     'name' => 'Docket',
