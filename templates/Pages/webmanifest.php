@@ -8,10 +8,10 @@ echo json_encode([
     'display' => 'standalone',
     'icons' => [
         [
-            'src' => $this->Url->assetUrl('img/docket-logo.svg'),
+            'src' => $this->Url->assetUrl('img/docket-logo.png'),
             'sizes' => '192x192',
-            'type' => 'image/svg',
-        ]
+            'type' => 'image/png',
+        ],
     ],
     'name' => 'Docket',
     'description' => 'Your personal todo list',
