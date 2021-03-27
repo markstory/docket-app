@@ -91,7 +91,7 @@ class TasksListTest extends AcceptanceTestCase
 
         $title = $crawler->filter('.task-row .title')->first();
         $this->assertEquals($task->title, $title->getText());
-        $checkbox = $crawler->filter('.task-row input[type="checkbox"]')->first();
+        $checkbox = $crawler->filter('.task-row .checkbox')->first();
         $checkbox->click();
         $client->waitFor('.flash-message');
 

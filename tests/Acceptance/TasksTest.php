@@ -40,7 +40,7 @@ class TasksTest extends AcceptanceTestCase
 
         $title = $crawler->filter('.task-view-summary h3')->first();
         $this->assertEquals($task->title, $title->getText());
-        $checkbox = $crawler->filter('.task-view-summary input[type="checkbox"]')->first();
+        $checkbox = $crawler->filter('.task-view-summary .checkbox')->first();
         $checkbox->click();
 
         $task = $this->Tasks->get($task->id);
@@ -172,7 +172,7 @@ class TasksTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Complete the subtask
-        $crawler->filter('.subtask-row input[type="checkbox"]')->click();
+        $crawler->filter('.subtask-row .checkbox')->click();
 
         $subtask = $this->Tasks->Subtasks->get($subtask->id);
         $this->assertTrue($subtask->completed);

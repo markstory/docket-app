@@ -38,12 +38,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
-      <Checkbox
-        id={task.id}
-        name="complete"
-        checked={task.completed}
-        onChange={handleComplete}
-      />
+      <Checkbox name="complete" checked={task.completed} onChange={handleComplete} />
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
         <div className="attributes">

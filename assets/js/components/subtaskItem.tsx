@@ -30,12 +30,7 @@ function SubtaskItem({index, subtask, taskId}: RowProps): JSX.Element {
 
   return (
     <div className={className}>
-      <Checkbox
-        id={subtask.id}
-        name="complete"
-        onChange={handleComplete}
-        checked={subtask.completed}
-      />
+      <Checkbox name="complete" onChange={handleComplete} checked={subtask.completed} />
       {editing ? (
         <SubtaskEditForm
           index={index}

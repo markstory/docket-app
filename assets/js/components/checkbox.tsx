@@ -2,15 +2,15 @@ import React from 'react';
 import {InlineIcon} from './icon';
 
 type Props = {
-  id: string | number;
   name: string;
   checked?: boolean;
   value?: string | number;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-function Checkbox({id, name, checked, onChange, value = '1'}: Props): JSX.Element {
-  const fullId = `checkbox-${id}-${name}`;
+function Checkbox({name, checked, onChange, value = '1'}: Props): JSX.Element {
+  const uniqId = Math.round(Math.random() * 500);
+  const fullId = `checkbox-${uniqId}-${name}`;
   return (
     <label htmlFor={fullId} className="checkbox">
       <input

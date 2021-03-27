@@ -92,12 +92,7 @@ function TaskSummary({task, onClick}: SummaryProps) {
   return (
     <div className="task-view-summary">
       <div className="title">
-        <Checkbox
-          id={task.id}
-          name="complete"
-          checked={task.completed}
-          onChange={handleComplete}
-        />
+        <Checkbox name="complete" checked={task.completed} onChange={handleComplete} />
         <a href="#" role="button" onClick={onClick}>
           <h3>{task.title}</h3>
         </a>
