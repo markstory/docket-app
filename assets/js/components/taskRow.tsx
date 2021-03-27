@@ -23,7 +23,7 @@ type Props = {
 export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
   const [active, setActive] = useState(false);
 
-  const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const action = task.completed ? 'incomplete' : 'complete';
     Inertia.post(`/tasks/${task.id}/${action}`);
