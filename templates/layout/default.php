@@ -33,7 +33,6 @@
     <?= $this->AssetMix->script('app') ?>
 </head>
 <body>
-fuck
     <main class="main">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
