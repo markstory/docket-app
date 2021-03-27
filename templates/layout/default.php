@@ -23,7 +23,7 @@
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
-    <?= $this->Html->meta('manifest', 'manifest.webmanifest') ?>
+    <link rel="manifest" href="<?= $this->Url->build('/manifest.json') ?>" />
 
     <?= $this->AssetMix->css('app') ?>
 
@@ -33,6 +33,7 @@
     <?= $this->AssetMix->script('app') ?>
 </head>
 <body>
+fuck
     <main class="main">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
