@@ -5,6 +5,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {TaskDetailed, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
+import Checkbox from 'app/components/checkbox';
 import DueOn from 'app/components/dueOn';
 import Modal from 'app/components/modal';
 import TaskQuickForm from 'app/components/taskQuickForm';
@@ -79,7 +80,7 @@ type SummaryProps = {
 };
 
 function TaskSummary({task, onClick}: SummaryProps) {
-  const handleComplete = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     Inertia.post(
       `/tasks/${task.id}/${task.completed ? 'incomplete' : 'complete'}`,
@@ -91,12 +92,11 @@ function TaskSummary({task, onClick}: SummaryProps) {
   return (
     <div className="task-view-summary">
       <div className="title">
-        <input
-          className="checkbox"
-          type="checkbox"
-          value="1"
-          onClick={handleComplete}
-          defaultChecked={task.completed}
+        <Checkbox
+          id={task.id}
+          name="complete"
+          checked={task.completed}
+          onChange={handleComplete}
         />
         <a href="#" role="button" onClick={onClick}>
           <h3>{task.title}</h3>

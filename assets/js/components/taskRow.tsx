@@ -6,6 +6,7 @@ import classnames from 'classnames';
 
 import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
+import Checkbox from 'app/components/checkbox';
 import DueOn from 'app/components/dueOn';
 import ContextMenu from 'app/components/contextMenu';
 import {InlineIcon} from 'app/components/icon';
@@ -37,11 +38,11 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
-      <input
-        type="checkbox"
-        value="1"
-        onClick={handleComplete}
-        defaultChecked={task.completed}
+      <Checkbox
+        id={task.id}
+        name="complete"
+        checked={task.completed}
+        onChange={handleComplete}
       />
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>

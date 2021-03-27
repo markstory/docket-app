@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import {Inertia} from '@inertiajs/inertia';
 
 import SubtaskEditForm from 'app/components/subtaskEditForm';
+import Checkbox from 'app/components/checkbox';
 import {Subtask} from 'app/types';
 
 type RowProps = {
@@ -13,9 +14,15 @@ type RowProps = {
 
 function SubtaskItem({index, subtask, taskId}: RowProps): JSX.Element {
   const [editing, setEditing] = useState(false);
-  function handleComplete(event: React.MouseEvent<HTMLInputElement>) {
+  function handleComplete(event: React.ChangeEvent<HTMLInputElement>) {
     event.stopPropagation();
-    Inertia.post(`/tasks/${taskId}/subtasks/${subtask.id}/toggle`);
+    Inertia.post(
+      `/tasks/${taskId}/subtasks/${subtask.id}/toggle`,
+      {},
+      {
+        only: ['task'],
+      }
+    );
   }
   const className = classnames('subtask-row', {
     'is-completed': subtask.completed,
@@ -23,11 +30,11 @@ function SubtaskItem({index, subtask, taskId}: RowProps): JSX.Element {
 
   return (
     <div className={className}>
-      <input
-        type="checkbox"
-        onClick={handleComplete}
-        value="1"
-        defaultChecked={subtask.completed}
+      <Checkbox
+        id={subtask.id}
+        name="complete"
+        onChange={handleComplete}
+        checked={subtask.completed}
       />
       {editing ? (
         <SubtaskEditForm

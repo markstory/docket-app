@@ -17,9 +17,9 @@ type ProviderProps = {
 };
 
 function SubtasksProvider({subtasks, children}: ProviderProps): JSX.Element {
-  // TODO when props change the context data isn't changing.
-  // Perhaps this shouldn't be using state?
-  const [state, setState] = useState<null | Subtask[]>(subtasks);
+  // Default state to null as we only need it to hold state
+  // while a sorting request is being made.
+  const [state, setState] = useState<null | Subtask[]>(null);
   const contextValue = {
     state: state || subtasks,
     setSubtasks: setState,
