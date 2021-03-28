@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App\Test\TestCase\Controller;
 
+use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +27,11 @@ use Cake\TestSuite\TestCase;
  */
 class PagesControllerTest extends TestCase
 {
+    use FactoryTrait;
     use IntegrationTestTrait;
+
+    public $fixtures = ['app.Users'];
+
 
     /**
      * testMultipleGet method
@@ -48,9 +53,23 @@ class PagesControllerTest extends TestCase
      */
     public function testDisplay()
     {
+        $this->disableErrorHandlerMiddleware();
         $this->get('/pages/home');
         $this->assertResponseOk();
         $this->assertResponseContains('<html>');
+    }
+
+    /**
+     * testDisplay method
+     *
+     * @return void
+     */
+    public function testRedirectRootWhenLoggedIn()
+    {
+        $this->login();
+
+        $this->get('/');
+        $this->assertRedirect('/tasks/today');
     }
 
     /**
