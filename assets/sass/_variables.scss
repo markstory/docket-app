@@ -103,6 +103,7 @@ body {
   --color-low-emphasis: var(--color-gray-700);
 
   --color-border: var(--color-gray-300);
+  --color-border-low: var(--color-gray-100);
   --color-border-med: var(--color-gray-400);
 
   --color-bg-low: var(--color-gray-100);
@@ -165,8 +166,9 @@ body.theme-dark {
   --color-muted: var(--color-gray-500);
   --color-low-emphasis: var(--color-gray-600);
 
-  --color-border: var(--color-gray-700);
-  --color-border-med: var(--color-gray-600);
+  --color-border: var(--color-gray-600);
+  --color-border-low: var(--color-gray-700);
+  --color-border-med: var(--color-gray-500);
 
   --color-bg-low: var(--color-gray-900);
   --color-bg-low-active: rgba(91, 91, 69, 0.3);

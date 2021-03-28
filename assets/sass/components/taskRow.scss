@@ -6,7 +6,7 @@
   align-items: flex-start;
   padding-top: $space;
   padding-bottom: $space;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-low);
   background: var(--color-bg);
 
   > input[type="checkbox"] {
