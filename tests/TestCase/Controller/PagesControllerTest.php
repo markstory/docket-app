@@ -32,7 +32,6 @@ class PagesControllerTest extends TestCase
 
     public $fixtures = ['app.Users'];
 
-
     /**
      * testMultipleGet method
      *
