@@ -11,9 +11,9 @@ import {useProjects} from 'app/providers/projects';
 type Props = {
   task: Task;
   url: string;
-  errors?: null | ValidationErrors;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent, clearTitle: () => void) => void;
   onCancel: () => void;
+  errors?: null | ValidationErrors;
 };
 
 export default function TaskQuickForm({
@@ -23,29 +23,52 @@ export default function TaskQuickForm({
   onSubmit,
   onCancel,
 }: Props): JSX.Element {
+  const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
   const [projects] = useProjects();
 
+  // Be careful to use setState() with an updater callback.
+  // Failing to do so results in stale data.
   function handleChangeProject(projectId: number) {
-    setData({...data, project: {...data.project, id: projectId}});
+    setData(prevState => ({
+      ...prevState,
+      project: {...prevState.project, id: projectId},
+    }));
   }
+
   function handleChangeDueOn(dueOn: string | null) {
-    setData({...data, due_on: dueOn});
+    setData(prevState => ({...prevState, due_on: dueOn}));
+  }
+
+  function handleChangeTitle(title: string, textTitle: string) {
+    setTextTitle(textTitle);
+    setData(prevState => ({...prevState, title}));
+  }
+
+  function clearTitle() {
+    setTextTitle('');
+    setData(prevState => ({...prevState, title: ''}));
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    onSubmit(e, clearTitle);
   }
 
   return (
-    <form className="task-quickform" method="post" onSubmit={onSubmit} action={url}>
+    <form className="task-quickform" method="post" onSubmit={handleSubmit} action={url}>
       {data.section_id && (
         <input type="hidden" name="section_id" value={data.section_id} />
       )}
       <div className="title">
         <SmartTaskInput
-          defaultValue={data.title}
+          value={data.title}
           projects={projects}
           onChangeProject={handleChangeProject}
           onChangeDate={handleChangeDueOn}
+          onChangeTitle={handleChangeTitle}
         />
         <FormError errors={errors} field="title" />
+        <input data-testid="task-title" type="hidden" name="title" value={textTitle} />
       </div>
       <div className="attributes">
         <div className="projectid">

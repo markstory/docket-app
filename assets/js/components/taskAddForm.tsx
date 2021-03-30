@@ -10,7 +10,7 @@ type Props = {
 };
 
 function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
-  const onSubmit = (e: React.FormEvent) => {
+  function onSubmit(e: React.FormEvent, clearTitle: () => void): void {
     e.preventDefault();
     e.persist();
 
@@ -18,9 +18,12 @@ function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
     const formData = new FormData(form);
 
     Inertia.post('/tasks/add', formData, {
-      onSuccess: () => onCancel(),
+      onSuccess: () => {
+        // clear the title to start over.
+        clearTitle();
+      },
     });
-  };
+  }
   const task: Task = {
     id: -1,
     section_id: null,
