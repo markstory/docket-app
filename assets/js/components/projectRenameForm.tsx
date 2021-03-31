@@ -21,6 +21,16 @@ function ProjectRenameForm({onCancel, project}: Props): JSX.Element {
     });
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    switch (e.key) {
+      case 'Esc':
+      case 'Escape':
+        onCancel();
+        e.stopPropagation();
+        break;
+    }
+  }
+
   return (
     <form
       className="project-rename form-inline-rename"
@@ -28,7 +38,7 @@ function ProjectRenameForm({onCancel, project}: Props): JSX.Element {
       action={url}
       onSubmit={handleSubmit}
     >
-      <div className="title">
+      <div className="title" onKeyDown={handleKeyDown}>
         <input type="text" name="name" defaultValue={project.name} autoFocus required />
       </div>
       <div className="button-bar-inline">

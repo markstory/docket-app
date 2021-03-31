@@ -26,6 +26,16 @@ function SectionQuickForm({
     onSubmit(formData);
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    switch (e.key) {
+      case 'Esc':
+      case 'Escape':
+        onCancel?.();
+        e.stopPropagation();
+        break;
+    }
+  }
+
   return (
     <form
       className="section-quickform form-inline-rename"
@@ -33,7 +43,7 @@ function SectionQuickForm({
       action={url}
       onSubmit={handleSubmit}
     >
-      <div className="title">
+      <div className="title" onKeyDown={handleKeyDown}>
         <input
           type="text"
           name="name"
