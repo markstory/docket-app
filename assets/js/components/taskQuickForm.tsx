@@ -54,12 +54,22 @@ export default function TaskQuickForm({
     onSubmit(e, clearTitle);
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    switch (e.key) {
+      case 'Esc':
+      case 'Escape':
+        onCancel();
+        e.stopPropagation();
+        break;
+    }
+  }
+
   return (
     <form className="task-quickform" method="post" onSubmit={handleSubmit} action={url}>
       {data.section_id && (
         <input type="hidden" name="section_id" value={data.section_id} />
       )}
-      <div className="title">
+      <div className="title" onKeyDown={handleKeyDown}>
         <SmartTaskInput
           value={data.title}
           projects={projects}
