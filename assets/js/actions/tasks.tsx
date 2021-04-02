@@ -25,7 +25,7 @@ export const todaySortUpdater: UpdaterCallback = (
     isEvening = true;
     newDate = newDate.substring(8);
   }
-  if (isEvening !== task.evening) {
+  if (isEvening !== task.evening || isEvening) {
     data.evening = isEvening;
   }
   if (newDate !== task.due_on) {
