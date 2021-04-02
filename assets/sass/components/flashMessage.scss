@@ -15,13 +15,13 @@
   }
 
   // TODO consider using react-spring if more animation comes up.
-  transition: bottom 0.3s, opacity 0.3s;
+  transition: top 0.3s, opacity 0.3s;
 
   &[data-state="visible"] {
-    bottom: 16px;
+    top: 16px;
   }
   &[data-state="hidden"] {
-    bottom: -60px;
+    top: -60px;
     opacity: 0;
   }
 }
