@@ -16,7 +16,7 @@ function SortableItem({id, active, children, tag}: Props): JSX.Element {
   });
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition ?? undefined,
+    transition,
   };
   const className = classnames('dnd-item', {
     'dnd-ghost': id === active,

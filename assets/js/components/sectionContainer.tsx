@@ -53,7 +53,7 @@ function SectionContainer({active, children, id, project, section}: SectionProps
   });
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition ?? undefined,
+    transition,
   };
   const className = classnames('section-container', {
     'dnd-ghost': id === activeId,
