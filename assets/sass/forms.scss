@@ -41,7 +41,7 @@ label {
 
 .form-error {
   color: var(--color-error-fg);
-  margin-bottom: $space;
+  margin: $space 0;
 }
 
 .form-input {
@@ -53,6 +53,10 @@ label {
   label {
     margin-right: $space * 2;
     width: 33%;
+  }
+
+  &.is-error input {
+    border-color: var(--color-error-fg);
   }
 }
 

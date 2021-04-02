@@ -3,7 +3,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import Card from 'app/layouts/card';
-import FormError from 'app/components/formError';
+import FormControl from 'app/components/formControl';
 import {t} from 'app/locale';
 import {ValidationErrors} from 'app/types';
 
@@ -29,41 +29,42 @@ export default function Add({errors}: Props) {
       <h1>{t('Register')}</h1>
       <p>{t('Get started tracking tasks and subtasks in projects today.')}</p>
       <form method="post" onSubmit={onSubmit}>
-        <div className="form-input">
-          <label htmlFor="name">
-            {t('Name')}
-            <p className="form-help">
-              {t('Used when we contact you by email and in the site.')}
-            </p>
-          </label>
-          <input id="name" name="name" type="text" required />
-          <FormError errors={errors} field="text" />
-        </div>
-        <div className="form-input">
-          <label htmlFor="email">
-            {t('Email')}
-            <p className="form-help">{t('Used to email you and to login.')}</p>
-          </label>
-          <input id="email" name="email" type="email" required />
-          <FormError errors={errors} field="email" />
-        </div>
-        <div className="form-input">
-          <label htmlFor="password">
-            {t('Password')}
-
-            <p className="form-help">{t('More than 10 characters long.')}</p>
-          </label>
-          <input id="password" name="password" type="password" required />
-          <FormError errors={errors} field="password" />
-        </div>
-        <div className="form-input">
-          <label htmlFor="confirm_password">
-            {t('Confirm Password')}
-            <p className="form-help">{t('One more time please.')}</p>
-          </label>
-          <input id="confirm_password" name="confirm_password" type="password" required />
-          <FormError errors={errors} field="confirm_password" />
-        </div>
+        <FormControl
+          key="name"
+          name="name"
+          type="text"
+          label={t('Name')}
+          help={t('Used when we contact you by email and in the site.')}
+          errors={errors}
+          required
+        />
+        <FormControl
+          key="email"
+          name="email"
+          type="email"
+          label={t('Email')}
+          help={t('Used to email you and to login.')}
+          errors={errors}
+          required
+        />
+        <FormControl
+          key="password"
+          name="password"
+          type="password"
+          label={t('Password')}
+          help={t('More than 10 characters long.')}
+          errors={errors}
+          required
+        />
+        <FormControl
+          key="confirm"
+          name="confirm_password"
+          type="password"
+          label={t('Confirm Password')}
+          help={t('One more time please.')}
+          errors={errors}
+          required
+        />
         <div className="button-bar">
           <button className="button-primary" type="submit">
             {t('Sign Up')}
