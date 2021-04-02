@@ -2,7 +2,7 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import Modal from 'app/components/modal';
-import FormError from 'app/components/formError';
+import FormControl from 'app/components/formControl';
 import {ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -29,24 +29,24 @@ export default function UpdatePassword({errors, referer}: Props) {
         <h1>{t('Update Password')}</h1>
         <form method="post" className="form-vertical" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
-          <div className="form-input">
-            <label htmlFor="current_password">{t('Current password')}</label>
-            <input name="current_password" type="password" autoFocus />
-            <FormError errors={errors} field="current_password" />
-          </div>
-
-          <div className="form-input">
-            <label htmlFor="password">{t('New password')}</label>
-            <input name="password" type="password" />
-            <FormError errors={errors} field="password" />
-          </div>
-
-          <div className="form-input">
-            <label htmlFor="confirm_password">{t('Confirm new password')}</label>
-            <input name="confirm_password" type="password" />
-            <FormError errors={errors} field="confirm_password" />
-          </div>
-
+          <FormControl
+            name="current_password"
+            label={t('Current password')}
+            type="password"
+            errors={errors}
+          />
+          <FormControl
+            name="password"
+            label={t('New password')}
+            type="password"
+            errors={errors}
+          />
+          <FormControl
+            name="confirm_password"
+            label={t('Confirm new password')}
+            type="password"
+            errors={errors}
+          />
           <div className="button-bar">
             <button type="submit" className="button-primary">
               {t('Save')}

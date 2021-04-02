@@ -5,14 +5,14 @@ import {t} from 'app/locale';
 import Modal from 'app/components/modal';
 import {Project, ValidationErrors} from 'app/types';
 import ColorSelect from 'app/components/colorSelect';
-import FormError from 'app/components/formError';
+import FormControl from 'app/components/formControl';
 import LoggedIn from 'app/layouts/loggedIn';
 import ToggleCheckbox from 'app/components/toggleCheckbox';
 
 type Props = {
   project: Project;
-  errors: ValidationErrors | null;
   referer: string;
+  errors?: ValidationErrors;
 };
 
 export default function ProjectsEdit({project, errors, referer}: Props) {
@@ -33,27 +33,35 @@ export default function ProjectsEdit({project, errors, referer}: Props) {
         <h2>{t('Edit Project')}</h2>
         <form className="form-vertical" method="post" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
-          <div className="form-input narrow">
-            <label htmlFor="project-name">{t('Name')}</label>
-            <input
-              id="project-name"
-              type="text"
-              name="name"
-              required
-              defaultValue={project.name}
-            />
-            <FormError errors={errors} field="name" />
-          </div>
-          <div className="form-input narrow">
-            <label htmlFor="project-color">{t('Color')}</label>
-            <ColorSelect value={project.color} />
-            <FormError errors={errors} field="color" />
-          </div>
-          <div className="form-input narrow">
-            <label htmlFor="toggle-archived">{t('Archived')}</label>
-            <input type="hidden" name="archived" value="0" />
-            <ToggleCheckbox name="archived" checked={project.archived} />
-          </div>
+          <FormControl
+            className="narrow"
+            name="name"
+            label={t('Name')}
+            type="text"
+            value={project.name}
+            errors={errors}
+            required
+          />
+          <FormControl
+            className="narrow"
+            name="color"
+            label={t('Color')}
+            type={() => <ColorSelect value={project.color} />}
+            errors={errors}
+          />
+          <FormControl
+            className="narrow"
+            name="archived"
+            label={t('Archived')}
+            type={() => (
+              <React.Fragment>
+                <input type="hidden" name="archived" value="0" />
+                <ToggleCheckbox name="archived" checked={project.archived} />
+              </React.Fragment>
+            )}
+            errors={errors}
+            required
+          />
           <div className="button-bar">
             <button type="submit" className="button-primary">
               {t('Save')}

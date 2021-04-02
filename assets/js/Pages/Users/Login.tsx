@@ -2,6 +2,7 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
+import FormControl from 'app/components/formControl';
 import Card from 'app/layouts/card';
 import {t} from 'app/locale';
 
@@ -25,14 +26,20 @@ export default function Login() {
         {t('Login')}
       </h1>
       <form method="post" onSubmit={onSubmit}>
-        <div className="form-input narrow">
-          <label htmlFor="email">{t('Email')}</label>
-          <input id="email" name="email" type="email" required />
-        </div>
-        <div className="form-input narrow">
-          <label htmlFor="password">{t('Password')}</label>
-          <input id="password" name="password" type="password" required />
-        </div>
+        <FormControl
+          className="narrow"
+          name="email"
+          label={t('Email')}
+          type="email"
+          required
+        />
+        <FormControl
+          className="narrow"
+          name="password"
+          label={t('Password')}
+          type="password"
+          required
+        />
         <div className="button-bar">
           <button className="button-primary" type="submit">
             {t('Login')}

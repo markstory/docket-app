@@ -2,7 +2,7 @@ import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
-import FormError from 'app/components/formError';
+import FormControl from 'app/components/formControl';
 import LoggedIn from 'app/layouts/loggedIn';
 import ColorSelect from 'app/components/colorSelect';
 import Modal from 'app/components/modal';
@@ -36,16 +36,22 @@ function ProjectsAdd({errors, referer}: Props) {
         <h2>{t('New Project')}</h2>
         <form method="POST" onSubmit={handleSubmit}>
           <input type="hidden" value={referer} name="referer" />
-          <div className="form-input narrow">
-            <label htmlFor="project-name">{t('Name')}</label>
-            <input id="project-name" type="text" name="name" required autoFocus />
-            <FormError errors={errors} field="name" />
-          </div>
-          <div className="form-input narrow">
-            <label htmlFor="project-color">{t('Color')}</label>
-            <ColorSelect />
-            <FormError errors={errors} field="color" />
-          </div>
+          <FormControl
+            className="narrow"
+            name="name"
+            label={t('Name')}
+            type="text"
+            errors={errors}
+            required
+          />
+          <FormControl
+            className="narrow"
+            name="color"
+            label={t('Color')}
+            type={() => <ColorSelect />}
+            errors={errors}
+            required
+          />
           <div className="button-bar">
             <button className="button-primary" type="submit">
               {t('Save')}

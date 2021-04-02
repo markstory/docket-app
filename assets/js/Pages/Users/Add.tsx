@@ -30,7 +30,6 @@ export default function Add({errors}: Props) {
       <p>{t('Get started tracking tasks and subtasks in projects today.')}</p>
       <form method="post" onSubmit={onSubmit}>
         <FormControl
-          key="name"
           name="name"
           type="text"
           label={t('Name')}
@@ -39,7 +38,6 @@ export default function Add({errors}: Props) {
           required
         />
         <FormControl
-          key="email"
           name="email"
           type="email"
           label={t('Email')}
@@ -48,7 +46,6 @@ export default function Add({errors}: Props) {
           required
         />
         <FormControl
-          key="password"
           name="password"
           type="password"
           label={t('Password')}
@@ -57,7 +54,6 @@ export default function Add({errors}: Props) {
           required
         />
         <FormControl
-          key="confirm"
           name="confirm_password"
           type="password"
           label={t('Confirm Password')}

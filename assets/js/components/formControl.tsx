@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import {ValidationErrors} from 'app/types';
 import FormError from 'app/components/formError';
 
-type InputAttrs = Pick<Props, 'name' | 'id' | 'required'>;
+type InputAttrs = Pick<Props, 'name' | 'id' | 'required' | 'value'>;
 
 type InputType = 'text' | 'email' | 'password' | ((attrs: InputAttrs) => React.ReactNode);
 
@@ -12,6 +12,9 @@ type Props = {
   name: string;
   label: React.ReactNode;
   type: InputType;
+  className?: string;
+  placeholder?: string;
+  value?: string | number;
   id?: string;
   required?: boolean;
   help?: React.ReactNode;
@@ -19,24 +22,36 @@ type Props = {
 };
 
 function FormControl({
-  name,
+  className,
+  errors,
+  help,
   id,
   label,
-  help,
-  errors,
+  name,
+  placeholder,
   required,
   type,
+  value,
 }: Props): JSX.Element {
   id = id ?? name;
 
   let input: React.ReactNode;
   if (typeof type === 'string') {
-    input = <input id={id} name={name} type={type} required={required} />;
+    input = (
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        defaultValue={value}
+        placeholder={placeholder}
+      />
+    );
   } else if (typeof type === 'function') {
     const inputAttrs = {name, id, required};
     input = type(inputAttrs);
   }
-  const className = classnames('form-input', {
+  className = classnames('form-input', className, {
     'is-error': errors && errors[name] !== undefined,
   });
 
