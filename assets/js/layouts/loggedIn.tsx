@@ -32,7 +32,7 @@ function LoggedIn({children, title}: Props) {
         ...[...document.body.classList].filter(item => item.startsWith('theme-'))
       );
       document.body.classList.add(`theme-${identity.theme}`);
-    } else if (window.matchMedia('(prefers-color-scheme)').media === 'dark') {
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').media) {
       document.body.classList.add('theme-dark');
     }
   }, [title, identity]);
