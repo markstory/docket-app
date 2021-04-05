@@ -8,7 +8,7 @@
     left: $space / 4 * -1;
     padding: $space / 2 $space / 4;
 
-    background: var(--color-menu-hover);
+    background: var(--color-menu-selected);
   }
 }
 
@@ -19,6 +19,9 @@
 }
 .smart-task-input__suggestions {
   @extend [data-reach-combobox-popover];
+}
+.smart-task-input__suggestions__list {
+  background: var(--color-bg);
 }
 .smart-task-input__suggestions__item {
   @extend [data-reach-combobox-option];
