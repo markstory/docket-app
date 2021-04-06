@@ -6,14 +6,16 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {daySortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
-import {Task} from 'app/types';
+import {Project, Task} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';
+import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/utils/dates';
 
 type Props = {
   tasks: Task[];
+  projects: Project[];
   start: string;
   nextStart: string;
   generation: string;
@@ -63,12 +65,23 @@ function createGrouper(start: string, numDays: number) {
 export default function TasksIndex({
   generation,
   tasks,
+  projects,
   start,
   nextStart,
 }: Props): JSX.Element {
   const nextPage = nextStart ? `/tasks/upcoming?start=${nextStart}` : null;
+  const title = t('Upcoming Tasks');
+
+  if (!projects.length) {
+    return (
+      <LoggedIn title={title}>
+        <NoProjects />
+      </LoggedIn>
+    );
+  }
+
   return (
-    <LoggedIn title={t('Upcoming Tasks')}>
+    <LoggedIn title={title}>
       <h1>Upcoming</h1>
       <TaskGroupedSorter
         key={generation}
