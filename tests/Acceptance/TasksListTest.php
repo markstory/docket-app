@@ -23,6 +23,20 @@ class TasksListTest extends AcceptanceTestCase
         $this->Tasks = TableRegistry::get('Tasks');
     }
 
+    public function testTodayOnboarding()
+    {
+        $client = $this->login();
+        $client->get('/tasks/today');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        $crawler = $client->getCrawler();
+
+        $button = $crawler->filter('.no-projects a')->first();
+        $button->click();
+        $client->waitFor('[data-testid="loggedin"]');
+        $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
+    }
+
     public function testCreateFromToday()
     {
         $project = $this->makeProject('Work', 1);
@@ -76,6 +90,20 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertEquals('evening task', $task->title);
         $this->assertEquals($project->id, $task->project_id);
         $this->assertTrue($task->evening);
+    }
+
+    public function testUpcomingOnboarding()
+    {
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        $crawler = $client->getCrawler();
+
+        $button = $crawler->filter('.no-projects a')->first();
+        $button->click();
+        $client->waitFor('[data-testid="loggedin"]');
+        $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
     }
 
     public function testCompleteOnUpcomingList()

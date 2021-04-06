@@ -1,17 +1,19 @@
 import React from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
-import {Task} from 'app/types';
+import {Project, Task} from 'app/types';
 import {todaySortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
+import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString} from 'app/utils/dates';
 
 type Props = {
   tasks: Task[];
+  projects: Project[];
 };
 
 function grouper(items: Task[]): GroupedItems {
@@ -51,12 +53,20 @@ function grouper(items: Task[]): GroupedItems {
   return output;
 }
 
-export default function TasksToday({tasks}: Props): JSX.Element {
+export default function TasksToday({tasks, projects}: Props): JSX.Element {
   const today = new Date();
   const defaultDate = toDateString(today);
+  const title = t("Today's Tasks");
+  if (!projects.length) {
+    return (
+      <LoggedIn title={title}>
+        <NoProjects />
+      </LoggedIn>
+    );
+  }
 
   return (
-    <LoggedIn title={t("Today's Tasks")}>
+    <LoggedIn title={title}>
       <TaskGroupedSorter
         tasks={tasks}
         grouper={grouper}

@@ -45,6 +45,7 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 $this->getMailer('Users')->send('verifyEmail', [$user]);
                 $this->Authentication->setIdentity($user);
+                $this->Users->Projects->createDefaultProject($user);
                 $this->Flash->success(__('Your account has been created. We have sent an email to verify it.'));
 
                 return $this->redirect(['_name' => 'tasks:today']);

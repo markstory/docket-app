@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\Project;
+use App\Model\Entity\User;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -156,6 +157,13 @@ class ProjectsTable extends Table
             ->where(['Projects.user_id' => $userId]);
 
         return (int)$query->firstOrFail()->count;
+    }
+
+    public function createDefaultProject(User $user)
+    {
+        $project = $this->newEntity(['name' => 'Tasks', 'color' => 10]);
+        $project->user_id = $user->id;
+        $this->saveOrFail($project);
     }
 
     public function move(Project $project, array $operation)

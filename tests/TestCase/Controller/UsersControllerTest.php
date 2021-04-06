@@ -106,6 +106,10 @@ class UsersControllerTest extends TestCase
 
         $this->assertMailCount(1);
         $this->assertMailSubjectContains('Verify your email');
+
+        $user = $this->Users->findByEmail('wally@example.com')->firstOrFail();
+        $project = $this->Users->Projects->findByUserId($user->id)->firstOrFail();
+        $this->assertNotEmpty($project->name);
     }
 
     /**
