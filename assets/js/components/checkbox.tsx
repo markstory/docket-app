@@ -21,6 +21,7 @@ function Checkbox({name, checked, onChange, value = '1'}: Props): JSX.Element {
         value={value}
         onChange={onChange}
       />
+      <span className="box" />
       <InlineIcon icon="check" className="check" width="small" />
     </label>
   );

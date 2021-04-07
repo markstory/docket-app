@@ -1,14 +1,21 @@
 .checkbox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
+  position: relative;
   min-width: 20px;
   width: 20px;
-  height: 20px;
-  border: 1px solid var(--color-border-med);
-  border-radius: 6px;
+
+  .box {
+    display: block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--color-border-med);
+    border-radius: 6px;
+  }
+  input:active + .box,
+  input:focus + .box {
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
 
   // Hide the input without removing tabindex.
   input {
@@ -22,6 +29,9 @@
 
   .check {
     visibility: hidden;
+    position: absolute;
+    top: 3px;
+    left: 3px;
   }
   input:checked + .check {
     visibility: visible;
