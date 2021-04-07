@@ -22,14 +22,17 @@ type Props = {
 
 export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
   const [active, setActive] = useState(false);
+  const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
+    setCompleted(!task.completed);
     const action = task.completed ? 'incomplete' : 'complete';
     Inertia.post(`/tasks/${task.id}/${action}`);
   };
+
   const className = classnames('task-row', {
-    'is-completed': task.completed,
+    'is-completed': completed,
   });
 
   return (
@@ -38,7 +41,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
-      <Checkbox name="complete" checked={task.completed} onChange={handleComplete} />
+      <Checkbox name="complete" checked={completed} onChange={handleComplete} />
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
         <div className="attributes">
