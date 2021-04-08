@@ -53,7 +53,8 @@ class ProjectsController extends AppController
                ->applyScope($this->Tasks->find(), 'index')
                ->contain('Projects')
                ->find('complete')
-               ->find('forProject', ['slug' => $slug]);
+               ->find('forProject', ['slug' => $slug])
+               ->orderDesc('Tasks.due_on');
             $completed = $this->paginate($completedQuery, ['scope' => 'completed']);
         }
 
