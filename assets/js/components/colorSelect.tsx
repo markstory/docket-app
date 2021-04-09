@@ -74,7 +74,11 @@ function ColorSelect({value, onChange}: Props): JSX.Element {
       options={PROJECT_COLORS}
       onChange={handleChange}
       getOptionValue={option => String(option.id)}
-      components={{Option: ColorOption, SingleValue: ColorValue}}
+      components={{
+        Option: ColorOption,
+        SingleValue: ColorValue,
+        IndicatorSeparator: null,
+      }}
       menuPlacement="auto"
     />
   );

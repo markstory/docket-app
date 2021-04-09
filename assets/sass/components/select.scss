@@ -18,8 +18,13 @@
   align-items: center;
 }
 
-// Option elements
+div.select__menu {
+  border: 1px solid var(--color-border-med);
+  box-shadow: var(--shadow-med);
+}
+
 .select__menu-list {
+  // Option elements
   & > div {
     height: 30px;
     display: flex;
