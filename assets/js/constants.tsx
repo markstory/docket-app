@@ -20,7 +20,7 @@ export const PROJECT_COLORS = [
 ];
 
 export const VALID_THEMES = [
-  {value: 'light', text: 'Light'},
-  {value: 'dark', text: 'Dark'},
-  {value: 'system', text: 'System'},
+  {value: 'light', label: 'Light'},
+  {value: 'dark', label: 'Dark'},
+  {value: 'system', label: 'System'},
 ];
