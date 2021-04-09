@@ -1,6 +1,16 @@
-.select__control {
+div.select__control {
+  min-width: 200px;
+  background: var(--color-bg);
+  border-color: var(--color-border-med);
+
+  &:hover {
+    border-color:var(--color-border-med);
+  }
+
   .select__input input {
     height: auto;
+    width: auto;
+    min-width: auto;
     border: none;
     box-shadow: none;
 
@@ -16,24 +26,31 @@
 .select__value-container > div {
   display: flex;
   align-items: center;
+  line-height: 1.3;
+  color: var(--color-fg);
 }
 
 div.select__menu {
   border: 1px solid var(--color-border-med);
   box-shadow: var(--shadow-med);
+  background: var(--color-bg);
 }
 
 .select__menu-list {
   // Option elements
   & > div {
-    height: 30px;
+    height: 34px;
     display: flex;
     align-items: center;
-    padding: $space / 2;
+    padding: $space;
   }
+
+  .select__option--is-focused,
   .is-focused {
     background: var(--color-menu-hover);
   }
+
+  .select__option--is-selected,
   .is-selected {
     background: var(--color-menu-selected);
   }

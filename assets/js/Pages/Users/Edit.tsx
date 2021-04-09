@@ -1,5 +1,6 @@
 import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
+import Select from 'react-select';
 
 import {VALID_THEMES} from 'app/constants';
 import Modal from 'app/components/modal';
@@ -7,7 +8,6 @@ import {User, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';
 import FormControl from 'app/components/formControl';
 import LoggedIn from 'app/layouts/loggedIn';
-import Autocomplete from 'app/components/autocomplete';
 
 type Props = {
   identity: User;
@@ -72,10 +72,13 @@ export default function Edit({identity, referer, errors}: Props) {
             name="theme"
             label={t('Theme')}
             type={() => (
-              <Autocomplete
+              <Select
+                classNamePrefix="select"
                 name="theme"
                 label={t('Choose a theme')}
-                value={identity.theme}
+                defaultValue={VALID_THEMES.find(opt => opt.value === identity.theme)}
+                getOptionValue={option => option.value}
+                components={{IndicatorSeparator: null}}
                 options={VALID_THEMES}
               />
             )}
