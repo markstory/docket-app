@@ -18,13 +18,15 @@
   line-height: 2;
 }
 .smart-task-input__suggestions {
-  @extend [data-reach-combobox-popover];
+  border: 1px solid var(--color-border-med);
+  box-shadow: var(--shadow-med);
 }
 .smart-task-input__suggestions__list {
   background: var(--color-bg);
 }
 .smart-task-input__suggestions__item {
-  @extend [data-reach-combobox-option];
+    height: 34px;
+    padding: $space;
 }
 .smart-task-input__suggestions__item--focused {
   background: var(--color-menu-hover);
