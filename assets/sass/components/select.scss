@@ -1,0 +1,35 @@
+.select__control {
+  .select__input input {
+    height: auto;
+    border: none;
+    box-shadow: none;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  &.select__control--is-focused {
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
+}
+.select__value-container > div {
+  display: flex;
+  align-items: center;
+}
+
+// Option elements
+.select__menu-list {
+  & > div {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: $space / 2;
+  }
+  .is-focused {
+    background: var(--color-menu-hover);
+  }
+  .is-selected {
+    background: var(--color-menu-selected);
+  }
+}

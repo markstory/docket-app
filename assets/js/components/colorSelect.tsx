@@ -1,8 +1,37 @@
 import React from 'react';
-import Autocomplete, {Option} from 'app/components/autocomplete';
+import classnames from 'classnames';
+import Select, {ValueType, OptionProps, SingleValueProps} from 'react-select';
 import {PROJECT_COLORS} from 'app/constants';
 import {InlineIcon} from 'app/components/icon';
 import {t} from 'app/locale';
+
+type ColorItem = {
+  id: number;
+  name: string;
+  code: string;
+};
+
+function ColorOption(props: OptionProps<ColorItem, false>) {
+  const {innerRef, innerProps, data} = props;
+  const className = classnames({
+    'is-selected': props.isSelected,
+    'is-focused': props.isFocused,
+  });
+  return (
+    <div className={className} ref={innerRef} {...innerProps}>
+      <Color color={data.code} name={data.name} />
+    </div>
+  );
+}
+
+function ColorValue(props: SingleValueProps<ColorItem>) {
+  const {innerProps, data} = props;
+  return (
+    <div {...innerProps}>
+      <Color color={data.code} name={data.name} />
+    </div>
+  );
+}
 
 type ColorProps = {
   name: string;
@@ -11,10 +40,10 @@ type ColorProps = {
 
 function Color({name, color}: ColorProps) {
   return (
-    <span className="color">
+    <React.Fragment>
       <InlineIcon icon="dot" color={color} width="medium" />
       <span>{name}</span>
-    </span>
+    </React.Fragment>
   );
 }
 
@@ -27,18 +56,26 @@ type Props = {
 };
 
 function ColorSelect({value, onChange}: Props): JSX.Element {
-  const options: Option[] = PROJECT_COLORS.map(color => ({
-    value: color.id,
-    text: color.name,
-    label: <Color color={color.code} name={color.name} />,
-  }));
+  const selected = value !== undefined ? value : PROJECT_COLORS[0].id;
+  const valueOption = PROJECT_COLORS.find(opt => opt.id === selected);
+
+  function handleChange(selected: ValueType<ColorItem, false>) {
+    if (selected && onChange) {
+      onChange(selected.id);
+    }
+  }
+
   return (
-    <Autocomplete
-      label={t('Choose a color')}
+    <Select
+      classNamePrefix="select"
+      placeholder={t('Choose a color')}
       name="color"
-      value={value}
-      options={options}
-      onChange={onChange}
+      defaultValue={valueOption}
+      options={PROJECT_COLORS}
+      onChange={handleChange}
+      getOptionValue={option => String(option.id)}
+      components={{Option: ColorOption, SingleValue: ColorValue}}
+      menuPlacement="auto"
     />
   );
 }
