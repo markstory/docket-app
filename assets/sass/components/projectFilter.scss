@@ -1,5 +1,6 @@
 .project-filter {
   $item-height: 40px;
+  $icon-gap: $space * 0.75;
 
   h3 {
     color: var(--color-low-emphasis);
@@ -28,7 +29,7 @@
       background: var(--color-bg-low-active);
     }
     svg {
-      margin-right: $space;
+      margin-right: $icon-gap;
     }
   }
 
@@ -73,7 +74,7 @@
     }
 
     svg {
-      margin-right: 6px;
+      margin-right: $icon-gap;
     }
   }
 
