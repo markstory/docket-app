@@ -17,7 +17,8 @@
   border-radius: $border-radius;
   height: $button-med-height;
 
-  & > svg:not(:last-child) {
+  // Space icons away from button text.
+  & > svg:first-child {
     margin-right: $space / 2;
   }
 
@@ -41,11 +42,6 @@ button {
   &:hover {
     background: var(--color-button-default-hover);
   }
-}
-
-// Space icons away from button text.
-a > svg:not(:last-child) {
-  margin-right: $space;
 }
 
 
