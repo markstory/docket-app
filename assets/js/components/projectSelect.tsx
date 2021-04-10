@@ -15,7 +15,7 @@ type ProjectItem = {
 
 type Props = {
   value: number | undefined | null;
-  onChange?: (value: number | string) => void;
+  onChange?: (value: number) => void;
 };
 
 function ProjectOption(props: OptionProps<ProjectItem, false>) {
@@ -51,7 +51,7 @@ function ProjectSelect({value, onChange}: Props): JSX.Element {
 
   function handleChange(selected: ValueType<ProjectItem, false>) {
     if (selected && onChange) {
-      onChange(selected.value);
+      onChange(selected.project.id);
     }
   }
 
