@@ -8,7 +8,8 @@ import {t} from 'app/locale';
 import {useProjects} from 'app/providers/projects';
 
 type ProjectItem = {
-  id: number;
+  value: number;
+  label: string;
   project: Project;
 };
 
@@ -42,14 +43,15 @@ function ProjectValue(props: SingleValueProps<ProjectItem>) {
 function ProjectSelect({value, onChange}: Props): JSX.Element {
   const [projects] = useProjects();
   const options: ProjectItem[] = projects.map(project => ({
-    id: project.id,
+    value: project.id,
+    label: project.name,
     project: project,
   }));
-  const valueOption = options.find(opt => opt.id === value) || options[0];
+  const valueOption = options.find(opt => opt.value === value) || options[0];
 
   function handleChange(selected: ValueType<ProjectItem, false>) {
     if (selected && onChange) {
-      onChange(selected.id);
+      onChange(selected.value);
     }
   }
 
@@ -61,7 +63,7 @@ function ProjectSelect({value, onChange}: Props): JSX.Element {
       defaultValue={valueOption}
       options={options}
       onChange={handleChange}
-      getOptionValue={option => String(option.id)}
+      getOptionValue={option => String(option.value)}
       components={{
         Option: ProjectOption,
         SingleValue: ProjectValue,
