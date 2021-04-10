@@ -82,7 +82,7 @@ export default function TaskQuickForm({
       </div>
       <div className="attributes">
         <div className="projectid">
-          <ProjectSelect value={data.project.id} />
+          <ProjectSelect value={data.project.id} onChange={handleChangeProject} />
           <FormError errors={errors} field="project_id" />
         </div>
         <div className="due-on">

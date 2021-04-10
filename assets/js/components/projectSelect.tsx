@@ -60,7 +60,7 @@ function ProjectSelect({value, onChange}: Props): JSX.Element {
       classNamePrefix="select"
       placeholder={t('Choose a project')}
       name="project_id"
-      defaultValue={valueOption}
+      value={valueOption}
       options={options}
       onChange={handleChange}
       getOptionValue={option => String(option.value)}
