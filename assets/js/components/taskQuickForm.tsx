@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
@@ -54,7 +54,7 @@ export default function TaskQuickForm({
     onSubmit(e, clearTitle);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
+  function handleKeyDown(e: KeyboardEvent) {
     switch (e.key) {
       case 'Esc':
       case 'Escape':
@@ -64,12 +64,19 @@ export default function TaskQuickForm({
     }
   }
 
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [url]);
+
   return (
     <form className="task-quickform" method="post" onSubmit={handleSubmit} action={url}>
       {data.section_id && (
         <input type="hidden" name="section_id" value={data.section_id} />
       )}
-      <div className="title" onKeyDown={handleKeyDown}>
+      <div className="title">
         <SmartTaskInput
           value={data.title}
           projects={projects}
