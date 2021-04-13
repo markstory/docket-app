@@ -22,7 +22,7 @@ export function parseDateInput(input: string): Date | undefined {
   if (input.toLowerCase() === 'tomorrow') {
     return addDays(today, 1);
   }
-  const formats = ['MMM d', 'MMM dd', 'MMMM d', 'EEEE'];
+  const formats = ['MMM d', 'MMM dd', 'MMMM d', 'EEEE', 'yyyy-MM-dd'];
   for (let i = 0; i < formats.length; i++) {
     try {
       let result = parse(input, formats[i], today);

@@ -70,6 +70,14 @@ describe('utils/dates', function () {
       expect(result.getDate()).toEqual(10);
       expect(result.getFullYear()).toBeGreaterThan(inPast.getFullYear());
     });
+
+    it('handles sql formatted dates', function () {
+      const result = parseDateInput('2021-10-31');
+      assertDefined(result);
+      expect(result.getFullYear()).toEqual(2021);
+      expect(result.getMonth()).toEqual(9);
+      expect(result.getDate()).toEqual(31);
+    });
   });
 
   describe('formatCompactDate()', function () {
