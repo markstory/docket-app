@@ -103,10 +103,9 @@ class TasksTest extends AcceptanceTestCase
         $this->assertEquals('Cut grass', $task->title);
     }
 
-    public function testViewProjectMention()
+    public function testViewUpdateDueOnMention()
     {
         $project = $this->makeProject('Work', 1);
-        $home = $this->makeProject('Home', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0);
 
         $client = $this->login();
@@ -132,6 +131,37 @@ class TasksTest extends AcceptanceTestCase
         $this->assertNotEmpty($task);
         $this->assertEquals('Do dishes', $task->title);
         $this->assertNotNull($task->due_on);
+    }
+
+    public function testViewUpdateProjectMention()
+    {
+        $project = $this->makeProject('Home', 1);
+        $work = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0);
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Click the summary to get the form.
+        $summary = $crawler->filter('.task-view-summary h3')->first();
+        $summary->click();
+        $client->waitFor('.task-quickform');
+
+        // Fill out the form and submit it.
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys([WebDriverKeys::CONTROL, 'a']);
+        $title->sendKeys('Do dishes ');
+        $title->sendKeys('#Work');
+        $title->sendKeys(WebDriverKeys::ENTER);
+
+        $crawler->filter('[data-testid="save-task"]')->click();
+
+        $task = $this->Tasks->get($task->id);
+        $this->assertNotEmpty($task);
+        $this->assertEquals('Do dishes', $task->title);
+        $this->assertSame($work->id, $task->project_id);
     }
 
     public function testViewCreateSubtask()
