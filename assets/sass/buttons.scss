@@ -136,7 +136,7 @@ button,
     box-shadow: none;
   }
 
-  svg {
+  > svg:first-child {
     margin: 0;
   }
 }
