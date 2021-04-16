@@ -5,7 +5,7 @@ import {UpdaterCallback, UpdateData} from 'app/components/taskGroupedSorter';
 
 export function updateTask(
   task: Task,
-  data: FormData | Partial<Record<keyof Task, string | number | null | boolean>>
+  data: FormData | Partial<Record<string, string | number | null | boolean>>
 ): Promise<AxiosResponse<undefined>> {
   return axios.post(`/tasks/${task.id}/edit`, data);
 }

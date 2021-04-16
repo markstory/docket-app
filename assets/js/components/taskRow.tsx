@@ -13,6 +13,7 @@ import {InlineIcon} from 'app/components/icon';
 import {MenuContents} from 'app/components/dueOnPicker';
 import ProjectBadge from 'app/components/projectBadge';
 import {Task} from 'app/types';
+import ProjectSelect from './projectSelect';
 
 type Props = {
   task: Task;
@@ -21,7 +22,7 @@ type Props = {
 };
 
 export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +73,11 @@ type ActionsProps = Pick<Props, 'task'> & {
   setActive: (val: boolean) => void;
 };
 
+type InnerMenuState = 'project' | 'dueOn' | null;
+
 function TaskActions({task, setActive}: ActionsProps) {
+  const [innerMenu, setInnerMenu] = useState<InnerMenuState>(null);
+
   async function handleDueOnChange(dueOn: string | null, evening: boolean) {
     const data = {due_on: dueOn, evening};
     await updateTask(task, data);
@@ -84,17 +89,81 @@ function TaskActions({task, setActive}: ActionsProps) {
     Inertia.post(`/tasks/${task.id}/delete`);
   }
 
+  function handleItemMouseUp(menu: InnerMenuState) {
+    return function (event: React.MouseEvent) {
+      event.preventDefault();
+      event.stopPropagation();
+      setInnerMenu(menu);
+    };
+  }
+
+  function handleItemKeyDown(menu: InnerMenuState) {
+    return function (event: React.KeyboardEvent) {
+      const key = event.key;
+      if (!(key === 'Enter' || key === 'Space')) {
+        return;
+      }
+      event.preventDefault();
+      setInnerMenu(menu);
+    };
+  }
+
   return (
     <div className="actions" onMouseEnter={() => setActive(true)}>
-      <ContextMenu icon="calendar" tooltip={t('Reschedule')}>
-        <MenuContents task={task} onChange={handleDueOnChange} />
-      </ContextMenu>
       <ContextMenu tooltip={t('Task actions')}>
-        <MenuItem className="delete" onSelect={handleDelete}>
-          <InlineIcon icon="trash" />
-          {t('Delete Task')}
-        </MenuItem>
+        {!innerMenu && (
+          <React.Fragment>
+            <MenuItem
+              data-testid="move"
+              className="edit"
+              onMouseUp={handleItemMouseUp('project')}
+              onKeyDown={handleItemKeyDown('project')}
+              onSelect={() => setInnerMenu('project')}
+            >
+              <InlineIcon icon="pencil" />
+              {t('Move to')}
+            </MenuItem>
+            <MenuItem
+              data-testid="reschedule"
+              className="calendar"
+              onMouseUp={handleItemMouseUp('dueOn')}
+              onKeyDown={handleItemKeyDown('dueOn')}
+              onSelect={() => setInnerMenu('dueOn')}
+            >
+              <InlineIcon icon="calendar" />
+              {t('Reschedule')}
+            </MenuItem>
+            <MenuItem data-testid="delete" className="delete" onSelect={handleDelete}>
+              <InlineIcon icon="trash" />
+              {t('Delete Task')}
+            </MenuItem>
+          </React.Fragment>
+        )}
+        {innerMenu === 'project' && <ProjectAction task={task} />}
+        {innerMenu === 'dueOn' && (
+          <MenuContents task={task} onChange={handleDueOnChange} />
+        )}
       </ContextMenu>
+    </div>
+  );
+}
+
+type ProjectProps = {
+  task: Task;
+};
+function ProjectAction({task}: ProjectProps) {
+  async function handleProjectChange(value: number) {
+    const data = {project_id: value};
+    await updateTask(task, data);
+    Inertia.reload();
+  }
+
+  return (
+    <div>
+      <h4 className="dropdown-item-header">{t('Move to project')}</h4>
+      <div data-reach-menu-item>
+        <ProjectSelect value={task.project.id} onChange={handleProjectChange} />
+      </div>
     </div>
   );
 }

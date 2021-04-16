@@ -46,6 +46,13 @@
   text-decoration: none;
 }
 
+.dropdown-item-header {
+  line-height: 1.2;
+
+  padding: $space $space * 1.5;
+  margin: 0;
+}
+
 [data-reach-menu-item] {
   &[data-selected],
   &:hover {
@@ -64,6 +71,9 @@
   }
   &.archive svg {
     color: var(--color-low-emphasis);
+  }
+  &.calendar svg {
+    color: var(--color-due-today);
   }
   &.edit svg {
     color: var(--color-action-edit);
