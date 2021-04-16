@@ -65,7 +65,6 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
-    console.log(`handle change ${value}`)
     setInputValue(value);
   }
 
@@ -99,7 +98,6 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
   const isToday = task.due_on === today && task.evening === false;
   const isEvening = task.due_on === today && task.evening === true;
   const isTomorrow = task.due_on === tomorrow;
-  console.log(`render ${inputValue}`);
 
   return (
     <div className="due-on-menu" onClick={clickSink}>
