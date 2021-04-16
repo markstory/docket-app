@@ -22,7 +22,7 @@ type Props = {
 };
 
 export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(false);
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
