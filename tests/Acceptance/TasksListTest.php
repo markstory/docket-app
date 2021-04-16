@@ -144,10 +144,12 @@ class TasksListTest extends AcceptanceTestCase
         $client->waitFor('.task-row .actions');
 
         // Hover over the due menu
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Reschedule"]');
         $crawler = $client->getCrawler();
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
+        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+
         // Open the due menu
-        $crawler->filter('.actions [aria-label="Reschedule"]')->click();
+        $crawler->filter('[data-testid="reschedule"]')->click();
         $client->waitFor('.due-on-menu');
         // Click today
         $this->clickWithMouse('.due-on-menu [data-testid="today"]');
@@ -173,12 +175,15 @@ class TasksListTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
         $client->waitFor('.task-row .actions');
 
-        // Hover over the due menu
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Reschedule"]');
+        // Hover over the actions menu and click
         $crawler = $client->getCrawler();
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
+        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+
         // Open the due menu
-        $crawler->filter('.actions [aria-label="Reschedule"]')->click();
+        $crawler->filter('[data-testid="reschedule"]')->click();
         $client->waitFor('.due-on-menu');
+
         // Click 'this evening'
         $this->clickWithMouse('.due-on-menu [data-testid="evening"]');
 
@@ -187,6 +192,42 @@ class TasksListTest extends AcceptanceTestCase
         $updated = $this->Tasks->get($task->id);
         $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
         $this->assertTrue($updated->evening);
+    }
+
+    public function testChangeProjectWithContextMenuOnUpcomingList()
+    {
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $home = $this->makeProject('Home', 1);
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Trigger the hover.
+        $client->getMouse()->mouseMoveTo('.task-row');
+        $crawler = $client->getCrawler();
+        $client->waitFor('.task-row .actions');
+
+        // Hover over the actions menu
+        $crawler = $client->getCrawler();
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
+        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+
+        // Open the project menu
+        $crawler->filter('[data-testid="move"]')->click();
+        $client->waitFor('.select__control');
+
+        // Choose a new project.
+        $this->clickWithMouse('.select__control');
+        // TODO Using first-of-type is a hack. Revisit this and make better selectors.
+        $this->clickWithMouse('.select__menu-list > div:first-of-type');
+
+        $client->waitFor('.flash-message');
+
+        $updated = $this->Tasks->get($task->id);
+        $this->assertEquals($home->id, $updated->project_id);
     }
 
     public function testReorderInToday()
