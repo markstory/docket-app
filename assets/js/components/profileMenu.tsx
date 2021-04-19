@@ -23,7 +23,8 @@ export default function ProfileMenu(): JSX.Element {
           </MenuButton>
         )}
       >
-        <div className="dropdown-item-text separator">{identity.name}</div>
+        <div className="dropdown-item-text">{identity.name}</div>
+        <div className="separator" />
         <MenuLink as={InertiaLink} className="edit" href="/users/profile">
           <InlineIcon icon="pencil" />
           {t('Edit Profile')}
