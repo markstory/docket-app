@@ -17,10 +17,10 @@
   border: 1px solid var(--color-border-med);
   border-radius: $border-radius;
   box-shadow: var(--shadow-med);
-
+  overflow: hidden;
 
   .separator {
-    margin: $space / 2;
+    margin: 0;
     border-bottom: 1px solid var(--color-border);
   }
 }
