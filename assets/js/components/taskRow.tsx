@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import {MenuItem} from '@reach/menu-button';
@@ -6,14 +6,15 @@ import classnames from 'classnames';
 
 import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
-import Checkbox from 'app/components/checkbox';
-import DueOn from 'app/components/dueOn';
-import ContextMenu from 'app/components/contextMenu';
-import {InlineIcon} from 'app/components/icon';
-import {MenuContents} from 'app/components/dueOnPicker';
-import ProjectBadge from 'app/components/projectBadge';
 import {Task} from 'app/types';
+import useOnClickOutside from 'app/utils/useClickOutside';
 import ProjectSelect from './projectSelect';
+import Checkbox from './checkbox';
+import DueOn from './dueOn';
+import ContextMenu from './contextMenu';
+import {InlineIcon} from './icon';
+import {MenuContents} from './dueOnPicker';
+import ProjectBadge from './projectBadge';
 
 type Props = {
   task: Task;
@@ -22,7 +23,6 @@ type Props = {
 };
 
 export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
-  const [active, setActive] = useState(false);
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,11 +37,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
   });
 
   return (
-    <div
-      className={className}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
-    >
+    <div className={className}>
       <Checkbox name="complete" checked={completed} onChange={handleComplete} />
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
@@ -51,7 +47,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
           <SubtaskSummary task={task} />
         </div>
       </InertiaLink>
-      {active ? <TaskActions task={task} setActive={setActive} /> : null}
+      <TaskActions task={task} />
     </div>
   );
 }
@@ -69,19 +65,16 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
   );
 }
 
-type ActionsProps = Pick<Props, 'task'> & {
-  setActive: (val: boolean) => void;
-};
+type ActionsProps = Pick<Props, 'task'>;
 
 type InnerMenuState = 'project' | 'dueOn' | null;
 
-function TaskActions({task, setActive}: ActionsProps) {
+function TaskActions({task}: ActionsProps) {
   const [innerMenu, setInnerMenu] = useState<InnerMenuState>(null);
 
   async function handleDueOnChange(dueOn: string | null, evening: boolean) {
     const data = {due_on: dueOn, evening};
     await updateTask(task, data);
-    setActive(false);
     Inertia.reload();
   }
 
@@ -107,9 +100,14 @@ function TaskActions({task, setActive}: ActionsProps) {
       setInnerMenu(menu);
     };
   }
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(menuRef, function () {
+    setInnerMenu(null);
+  });
 
   return (
-    <div className="actions" onMouseEnter={() => setActive(true)}>
+    <div className="actions" ref={menuRef}>
       <ContextMenu tooltip={t('Task actions')}>
         {!innerMenu && (
           <React.Fragment>

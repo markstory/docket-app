@@ -41,6 +41,7 @@
     text-decoration: line-through;
   }
 
+  // Context menu for tasks that shows on hover.
   .actions {
     display: flex;
     align-items: center;
@@ -50,9 +51,15 @@
 
     background: var(--color-bg);
     border-radius: $border-radius;
+
+    visibility: hidden;
   }
   .actions > * + * {
     margin-left: $space;
+  }
+
+  &:hover .actions {
+    visibility: visible;
   }
 }
 
