@@ -197,7 +197,7 @@ class TasksListTest extends AcceptanceTestCase
     public function testChangeProjectWithContextMenuOnUpcomingList()
     {
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
-        $home = $this->makeProject('Home', 1);
+        $zoo = $this->makeProject('Zoo', 1);
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -221,13 +221,13 @@ class TasksListTest extends AcceptanceTestCase
 
         // Choose a new project.
         $this->clickWithMouse('.select__control');
-        // TODO Using first-of-type is a hack. Revisit this and make better selectors.
-        $this->clickWithMouse('.select__menu-list > div:first-of-type');
+        // TODO Using last-child is a hack. Revisit this and make better selectors.
+        $this->clickWithMouse('.select__menu-list > div:last-child');
 
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertEquals($home->id, $updated->project_id);
+        $this->assertEquals($zoo->id, $updated->project_id);
     }
 
     public function testReorderInToday()
