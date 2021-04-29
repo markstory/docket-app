@@ -40,14 +40,13 @@ class ProjectsController extends AppController
     {
         $project = $this->getProject($slug, ['Sections']);
 
-        $query = $this->Authorization
+        $tasks = $this->Authorization
             ->applyScope($this->Tasks->find(), 'index')
             ->contain('Projects')
             ->find('incomplete')
             ->find('forProject', ['slug' => $slug])
             ->limit(250);
 
-        $tasks = $this->paginate($query);
         $completed = null;
         if ($this->request->getQuery('completed')) {
             $completedQuery = $this->Authorization
