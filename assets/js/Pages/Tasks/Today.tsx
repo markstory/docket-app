@@ -2,7 +2,7 @@ import React from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Project, Task} from 'app/types';
-import {todaySortUpdater} from 'app/actions/tasks';
+import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -38,16 +38,19 @@ function grouper(items: Task[]): GroupedItems {
       key: 'overdue',
       items: groups.overdue,
       ids: groups.overdue.map(task => String(task.id)),
+      hasAdd: false,
     },
     {
       key: today,
       items: groups.today,
       ids: groups.today.map(task => String(task.id)),
+      hasAdd: true,
     },
     {
       key: `evening:${today}`,
       items: groups.evening,
       ids: groups.evening.map(task => String(task.id)),
+      hasAdd: true,
     },
   ];
   return output;
@@ -70,7 +73,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
       <TaskGroupedSorter
         tasks={tasks}
         grouper={grouper}
-        updater={todaySortUpdater}
+        updater={sortUpdater}
         showProject
         showDueOn
       >
@@ -94,7 +97,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
                     activeTask={activeTask}
                     showProject
                     showDueOn
-                    showAdd={false}
+                    showAdd={overdue.hasAdd}
                   />
                 </SortableContext>
               )}
@@ -109,6 +112,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
                   tasks={today.items}
                   activeTask={activeTask}
                   defaultTaskValues={{due_on: defaultDate}}
+                  showAdd={today.hasAdd}
                   showProject
                 />
               </SortableContext>
@@ -123,6 +127,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
                   tasks={evening.items}
                   activeTask={activeTask}
                   defaultTaskValues={{evening: true, due_on: defaultDate}}
+                  showAdd={evening.hasAdd}
                   showProject
                 />
               </SortableContext>

@@ -10,7 +10,7 @@ export function updateTask(
   return axios.post(`/tasks/${task.id}/edit`, data);
 }
 
-export const todaySortUpdater: UpdaterCallback = (
+export const sortUpdater: UpdaterCallback = (
   task: Task,
   newIndex: number,
   destinationKey: string
@@ -28,22 +28,6 @@ export const todaySortUpdater: UpdaterCallback = (
   if (isEvening !== task.evening || isEvening) {
     data.evening = isEvening;
   }
-  if (newDate !== task.due_on) {
-    data.due_on = newDate;
-  }
-  return data;
-};
-
-export const daySortUpdater: UpdaterCallback = (
-  task: Task,
-  newIndex: number,
-  destinationKey: string
-): UpdateData => {
-  const data: UpdateData = {
-    day_order: newIndex,
-  };
-
-  let newDate = destinationKey;
   if (newDate !== task.due_on) {
     data.due_on = newDate;
   }

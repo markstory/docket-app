@@ -1,12 +1,12 @@
 import React from 'react';
 import groupBy from 'lodash.groupby';
-import sortBy from 'lodash.sortby';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
-import {daySortUpdater} from 'app/actions/tasks';
+import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {Project, Task} from 'app/types';
+import {InlineIcon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
@@ -29,8 +29,6 @@ function zeroFillItems(
   numDays: number,
   groups: GroupedItems
 ): GroupedItems {
-  const sorted = sortBy(groups, group => group.key);
-
   const first = parseDate(start).getTime();
   const end = first + numDays * ONE_DAY_IN_MS;
 
@@ -38,25 +36,44 @@ function zeroFillItems(
   for (let i = first; i < end; i += ONE_DAY_IN_MS) {
     const date = new Date(i);
     const dateKey = toDateString(date);
-    if (sorted.length && sorted[0].key === dateKey) {
-      const values = sorted.shift();
+
+    if (groups.length && groups[0].key === dateKey) {
+      const values = groups.shift();
       if (values) {
         complete.push(values);
       }
     } else {
-      complete.push({key: dateKey, items: [], ids: []});
+      complete.push({key: dateKey, items: [], ids: [], hasAdd: false});
     }
+
+    if (groups.length && groups[0].key === `evening:${dateKey}`) {
+      const values = groups.shift();
+      if (values) {
+        complete.push(values);
+      }
+    }
+    // The last group in a day should have an add button.
+    complete[complete.length - 1].hasAdd = true;
   }
   return complete;
 }
 
 function createGrouper(start: string, numDays: number) {
   return function taskGrouper(items: Task[]): GroupedItems {
-    const byDate: Record<string, Task[]> = groupBy(items, item =>
-      item.due_on ? item.due_on : t('No Due Date')
-    );
+    const byDate: Record<string, Task[]> = groupBy(items, item => {
+      if (item.evening) {
+        return `evening:${item.due_on}`;
+      }
+      return item.due_on ? item.due_on : t('No Due Date');
+    });
+
     const grouped = Object.entries(byDate).map(([key, value]) => {
-      return {key, items: value, ids: value.map(task => String(task.id))};
+      return {
+        key,
+        items: value,
+        ids: value.map(task => String(task.id)),
+        hasAdd: false,
+      };
     });
     return zeroFillItems(start, numDays, grouped);
   };
@@ -87,27 +104,34 @@ export default function TasksIndex({
         key={generation}
         tasks={tasks}
         grouper={createGrouper(start, 28)}
-        updater={daySortUpdater}
+        updater={sortUpdater}
         showProject
         showDueOn
       >
         {({groupedItems, activeTask}) => {
           return (
             <React.Fragment>
-              {groupedItems.map(({key, ids, items}) => {
+              {groupedItems.map(({key, ids, items, hasAdd}) => {
                 const [heading, subheading] = formatDateHeading(key);
                 return (
                   <React.Fragment key={key}>
-                    <h3>
-                      {heading}
-                      {subheading && <span className="minor">{subheading}</span>}
-                    </h3>
+                    {key.includes('evening') ? (
+                      <h5 className="heading-evening-group">
+                        <InlineIcon icon="moon" /> {t('Evening')}
+                      </h5>
+                    ) : (
+                      <h3 className="heading-task-group">
+                        {heading}
+                        {subheading && <span className="minor">{subheading}</span>}
+                      </h3>
+                    )}
                     <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                       <TaskGroup
                         dropId={key}
                         tasks={items}
                         activeTask={activeTask}
                         defaultTaskValues={{due_on: key}}
+                        showAdd={hasAdd}
                         showProject
                       />
                     </SortableContext>

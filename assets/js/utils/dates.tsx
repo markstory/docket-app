@@ -87,6 +87,9 @@ export function formatDateHeading(
   date: Date | string
 ): [heading: string, subheading: string] {
   const input = parseDate(date);
+  if (isNaN(input.valueOf())) {
+    return ['', ''];
+  }
   const delta = differenceInDays(input, getToday());
 
   const shortDate = format(input, 'MMM d');

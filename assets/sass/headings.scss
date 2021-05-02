@@ -36,3 +36,12 @@
     margin-right: $space;
   }
 }
+
+.heading-evening-group {
+  margin: $space 0;
+  line-height: 2;
+  color: var(--color-low-emphasis);
+  font-size: $font-size-normal;
+  font-weight: normal;
+  border-bottom: 1px solid var(--color-border-low);
+}
