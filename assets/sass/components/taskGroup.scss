@@ -1,7 +1,11 @@
-.task-group {
-  margin-bottom: $space * 5;
+.task-group .add-task {
+  margin-top: $space;
+}
+.task-group .dnd-item:last-child .task-row {
+  border-bottom: 0;
+}
 
-  .add-task {
-    margin-top: $space;
-  }
+.task-group + .heading-icon,
+.task-group + .heading-task-group {
+  margin-top: $space * 5;
 }

@@ -20,7 +20,12 @@ import TaskRow from 'app/components/taskRow';
 import {Task} from 'app/types';
 import {insertAtIndex} from 'app/utils/array';
 
-export type GroupedItems = {key: string; items: Task[]; ids: string[]}[];
+export type GroupedItems = {
+  key: string;
+  items: Task[];
+  ids: string[];
+  hasAdd?: boolean;
+}[];
 export interface UpdaterCallback {
   (task: Task, newIndex: number, destinationKey: string): UpdateData;
 }
