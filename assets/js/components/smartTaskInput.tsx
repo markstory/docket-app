@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import { useMemo } from 'react';
 import {MentionsInput, Mention} from 'react-mentions';
 import {addDays, isLeapYear} from 'date-fns';
 

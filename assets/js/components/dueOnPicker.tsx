@@ -1,4 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import {MenuButton, MenuItem} from '@reach/menu-button';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';

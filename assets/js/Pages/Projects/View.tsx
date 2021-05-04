@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { Fragment, useState } from 'react';
 import {createPortal} from 'react-dom';
 import {DragOverlay} from '@dnd-kit/core';
 import {InertiaLink} from '@inertiajs/inertia-react';
@@ -92,7 +92,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
             });
 
             return (
-              <React.Fragment>
+              <Fragment>
                 {elements}
                 {createPortal(
                   <DragOverlay>
@@ -110,7 +110,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                   </DragOverlay>,
                   document.body
                 )}
-              </React.Fragment>
+              </Fragment>
             );
           }}
         </ProjectSectionSorter>
@@ -118,7 +118,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
           <SectionAddForm project={project} onCancel={handleCancelSection} />
         )}
         {completed && (
-          <React.Fragment>
+          <Fragment>
             <TaskList title={t('Completed')} tasks={completed} showDueOn />
             <div className="button-bar">
               <InertiaLink
@@ -128,7 +128,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                 {t('Hide completed tasks')}
               </InertiaLink>
             </div>
-          </React.Fragment>
+          </Fragment>
         )}
       </div>
     </LoggedIn>

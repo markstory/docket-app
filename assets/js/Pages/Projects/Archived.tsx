@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {t} from 'app/locale';
 import {Project} from 'app/types';
 import LoggedIn from 'app/layouts/loggedIn';

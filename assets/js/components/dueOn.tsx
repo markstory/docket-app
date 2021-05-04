@@ -1,4 +1,3 @@
-import React from 'react';
 import classnames from 'classnames';
 
 import {InlineIcon} from 'app/components/icon';

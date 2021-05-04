@@ -1,4 +1,5 @@
-import React, {useState, createContext, useContext} from 'react';
+import { useState, createContext, useContext } from 'react';
+import * as React from 'react';
 
 import {Project} from 'app/types';
 

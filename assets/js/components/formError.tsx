@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {ValidationErrors} from 'app/types';
 
 type Props = {

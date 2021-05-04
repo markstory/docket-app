@@ -1,4 +1,3 @@
-import React from 'react';
 import {Icon, InlineIcon, IconProps, addIcon} from '@iconify/react';
 
 // Pull in the icons that are being used to help

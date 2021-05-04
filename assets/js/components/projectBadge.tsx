@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {InlineIcon} from 'app/components/icon';
 import {TaskProject} from 'app/types';
 import {PROJECT_COLORS} from 'app/constants';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import Modal from 'app/components/modal';

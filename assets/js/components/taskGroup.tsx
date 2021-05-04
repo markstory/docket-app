@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import classnames from 'classnames';
 import {useDroppable} from '@dnd-kit/core';
 

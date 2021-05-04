@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import classnames from 'classnames';
 import Select, {ValueType, OptionProps, SingleValueProps} from 'react-select';
 import {PROJECT_COLORS} from 'app/constants';
@@ -40,10 +40,10 @@ type ColorProps = {
 
 function Color({name, color}: ColorProps) {
   return (
-    <React.Fragment>
+    <Fragment>
       <InlineIcon icon="dot" color={color} width="medium" />
       <span>{name}</span>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
