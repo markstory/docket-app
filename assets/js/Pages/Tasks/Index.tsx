@@ -113,6 +113,7 @@ export default function TasksIndex({
             <React.Fragment>
               {groupedItems.map(({key, ids, items, hasAdd}) => {
                 const [heading, subheading] = formatDateHeading(key);
+                const dateValue = key.includes('evening:') ? key.split(':')[1] : key;
                 return (
                   <React.Fragment key={key}>
                     {key.includes('evening') ? (
@@ -130,7 +131,7 @@ export default function TasksIndex({
                         dropId={key}
                         tasks={items}
                         activeTask={activeTask}
-                        defaultTaskValues={{due_on: key}}
+                        defaultTaskValues={{due_on: dateValue}}
                         showAdd={hasAdd}
                         showProject
                       />

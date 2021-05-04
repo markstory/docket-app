@@ -7,9 +7,9 @@ use Cake\I18n\FrozenDate;
 use Cake\ORM\TableRegistry;
 
 /**
- * Tests for the today and upcoming lists.
+ * Tests for the upcoming list view.
  */
-class TasksListTest extends AcceptanceTestCase
+class UpcomingTest extends AcceptanceTestCase
 {
     /**
      * @var \App\Model\Table\TasksTable
@@ -23,76 +23,7 @@ class TasksListTest extends AcceptanceTestCase
         $this->Tasks = TableRegistry::get('Tasks');
     }
 
-    public function testTodayOnboarding()
-    {
-        $client = $this->login();
-        $client->get('/tasks/today');
-        $client->waitFor('[data-testid="loggedin"]');
-
-        $crawler = $client->getCrawler();
-
-        $button = $crawler->filter('.no-projects a')->first();
-        $button->click();
-        $client->waitFor('[data-testid="loggedin"]');
-        $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
-    }
-
-    public function testCreateFromToday()
-    {
-        $project = $this->makeProject('Work', 1);
-
-        $client = $this->login();
-        $client->get('/tasks/today');
-        $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
-
-        // Open the add form
-        $button = $crawler->filter('[data-testid="add-task"]');
-        $button->click();
-        $client->waitFor('.task-quickform');
-
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('A new task');
-
-        // Use the default project value as it is hard to automate with webdriver.
-        // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
-        // when needing to automate that component comes up again.
-        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
-        $button->click();
-
-        $task = $this->Tasks->find()->first();
-        $this->assertNotEmpty($task, 'No task saved');
-        $this->assertEquals('A new task', $task->title);
-        $this->assertEquals($project->id, $task->project_id);
-    }
-
-    public function testCreateInEvening()
-    {
-        $project = $this->makeProject('Work', 1);
-
-        $client = $this->login();
-        $client->get('/tasks/today');
-        $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
-
-        // Open the add form in the evening section.
-        $button = $crawler->filter('[data-testid="evening-group"] [data-testid="add-task"]');
-        $button->click();
-        $client->waitFor('.task-quickform');
-
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('evening task');
-
-        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
-        $button->click();
-
-        $task = $this->Tasks->find()->firstOrFail();
-        $this->assertEquals('evening task', $task->title);
-        $this->assertEquals($project->id, $task->project_id);
-        $this->assertTrue($task->evening);
-    }
-
-    public function testUpcomingOnboarding()
+    public function testOnboarding()
     {
         $client = $this->login();
         $client->get('/tasks/upcoming');
@@ -106,7 +37,7 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
     }
 
-    public function testCompleteOnUpcomingList()
+    public function testCompleteTask()
     {
         $today = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
@@ -128,7 +59,34 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertTrue($task->completed);
     }
 
-    public function testChangeDateWithContextMenuOnUpcomingList()
+    public function testCreate()
+    {
+        $project = $this->makeProject('Work', 1);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        $crawler = $client->getCrawler();
+
+        // Open the add form.
+        $addButton = $crawler->filter('[data-testid="add-task"]')->first();
+        $addButton->click();
+        $client->waitFor('.task-quickform');
+
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys('upcoming task');
+
+        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
+        $button->click();
+
+        $task = $this->Tasks->find()->firstOrFail();
+        $this->assertEquals('upcoming task', $task->title);
+        $this->assertEquals($project->id, $task->project_id);
+        $this->assertFalse($task->evening);
+    }
+
+    public function testChangeDateWithContextMenu()
     {
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
@@ -194,7 +152,7 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertTrue($updated->evening);
     }
 
-    public function testChangeProjectWithContextMenuOnUpcomingList()
+    public function testChangeProjectWithContextMenu()
     {
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $zoo = $this->makeProject('Zoo', 1);
@@ -230,37 +188,7 @@ class TasksListTest extends AcceptanceTestCase
         $this->assertEquals($zoo->id, $updated->project_id);
     }
 
-    public function testReorderInToday()
-    {
-        $this->markTestSkipped('This fails in github actions, but passes locally.');
-
-        $date = new FrozenDate('yesterday', 'UTC');
-        $project = $this->makeProject('Work', 1);
-
-        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $date]);
-        $this->makeTask('Vacuum', $project->id, 1, ['due_on' => $date]);
-        $this->makeTask('Take out trash', $project->id, 2, ['due_on' => $date]);
-        $this->makeTask('Clean Bathtub', $project->id, 3, ['due_on' => $date]);
-
-        $client = $this->login();
-        $client->get('/tasks/today');
-        $client->waitFor('[data-testid="loggedin"]');
-
-        $middle = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(2);
-
-        $mouse = $client->getMouse();
-        // Do a drag from the top to the bottom
-        $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
-            ->mouseMove($middle->getCoordinates(), 0, 20)
-            ->mouseUp($middle->getCoordinates(), 0, 20);
-
-        $client->waitFor('.flash-message');
-
-        $task = $this->Tasks->get($task->id);
-        $this->assertGreaterThan(0, $task->day_order);
-    }
-
-    public function testDragToNewDateOnUpcomingList()
+    public function testDragToNewDate()
     {
         $project = $this->makeProject('Work', 1);
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
