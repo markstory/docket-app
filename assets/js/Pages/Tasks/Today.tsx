@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Project, Task} from 'app/types';
@@ -80,7 +80,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
         {({groupedItems, activeTask}) => {
           const [overdue, today, evening] = groupedItems;
           return (
-            <React.Fragment>
+            <Fragment>
               {overdue.ids.length > 0 && (
                 <SortableContext
                   items={overdue.ids}
@@ -131,7 +131,7 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
                   showProject
                 />
               </SortableContext>
-            </React.Fragment>
+            </Fragment>
           );
         }}
       </TaskGroupedSorter>

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {ProjectSection, ValidationErrors} from 'app/types';
 import {t} from 'app/locale';

@@ -1,4 +1,3 @@
-import React from 'react';
 import {Icon} from './icon';
 import {useSortable} from '@dnd-kit/sortable';
 

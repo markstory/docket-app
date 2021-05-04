@@ -1,4 +1,3 @@
-import React from 'react';
 import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';

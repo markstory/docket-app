@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import groupBy from 'lodash.groupby';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
@@ -110,12 +110,12 @@ export default function TasksIndex({
       >
         {({groupedItems, activeTask}) => {
           return (
-            <React.Fragment>
+            <Fragment>
               {groupedItems.map(({key, ids, items, hasAdd}) => {
                 const [heading, subheading] = formatDateHeading(key);
                 const dateValue = key.includes('evening:') ? key.split(':')[1] : key;
                 return (
-                  <React.Fragment key={key}>
+                  <Fragment key={key}>
                     {key.includes('evening') ? (
                       <h5 className="heading-evening-group">
                         <InlineIcon icon="moon" /> {t('Evening')}
@@ -136,10 +136,10 @@ export default function TasksIndex({
                         showProject
                       />
                     </SortableContext>
-                  </React.Fragment>
+                  </Fragment>
                 );
               })}
-            </React.Fragment>
+            </Fragment>
           );
         }}
       </TaskGroupedSorter>

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import React from 'react';
 import {InertiaApp} from '@inertiajs/inertia-react';
 import {render} from 'react-dom';
 

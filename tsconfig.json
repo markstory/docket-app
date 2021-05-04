@@ -3,7 +3,7 @@
     "allowJs": true,
     "module": "esnext",
     "target": "es6",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "importHelpers": true,
     "moduleResolution": "node",
     "typeRoots": ["./node_modules/@types"],

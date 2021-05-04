@@ -1,4 +1,3 @@
-import React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {Project} from 'app/types';

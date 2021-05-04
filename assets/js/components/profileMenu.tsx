@@ -1,4 +1,3 @@
-import React from 'react';
 import {MenuLink, MenuButton} from '@reach/menu-button';
 import {usePage, InertiaLink} from '@inertiajs/inertia-react';
 

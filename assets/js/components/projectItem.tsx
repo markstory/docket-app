@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {InertiaLink, usePage} from '@inertiajs/inertia-react';
 import classnames from 'classnames';
 

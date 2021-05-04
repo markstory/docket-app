@@ -1,4 +1,3 @@
-import React from 'react';
 import DOMpurify from 'dompurify';
 import marked from 'marked';
 
