@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
@@ -23,9 +23,12 @@ export default function TaskQuickForm({
   onSubmit,
   onCancel,
 }: Props): JSX.Element {
+  const mounted = useRef(true);
   const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
   const [projects] = useProjects();
+
+  mounted.current = true;
 
   // Be careful to use setState() with an updater callback.
   // Failing to do so results in stale data.
@@ -46,6 +49,10 @@ export default function TaskQuickForm({
   }
 
   function clearTitle() {
+    // This can happen after saving is complete and the form has been removed from the DOM.
+    if (!mounted.current) {
+      return;
+    }
     setTextTitle('');
     setData(prevState => ({...prevState, title: ''}));
   }
@@ -67,6 +74,7 @@ export default function TaskQuickForm({
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return function cleanup() {
+      mounted.current = false;
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [url]);
