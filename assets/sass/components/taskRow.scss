@@ -63,6 +63,12 @@
   }
 }
 
+@media(max-width: $breakpoint-phone) {
+  .task-row .actions {
+    visibility: visible;
+  }
+}
+
 .dnd-item-dragging .task-row {
   padding-left: 4px;
   border-bottom: 0;
