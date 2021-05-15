@@ -22,6 +22,7 @@ function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
         // clear the title to start over.
         clearTitle();
       },
+      preserveScroll: true,
     });
   }
   const task: Task = {
