@@ -142,12 +142,16 @@ class Application extends BaseApplication implements
 
     protected function getCspPolicy()
     {
+        $allow = [];
+        if (Configure::read('debug')) {
+            $allow = ['localhost:3000'];
+        }
         $csp = new CSPBuilder([
             'font-src' => ['self' => true],
             'form-action' => ['self' => true],
-            'img-src' => ['self' => true, 'data' => true, 'allow' => ['www.gravatar.com']],
-            'script-src' => ['self' => true, 'unsafe-inline' => true],
-            'style-src' => ['self' => true, 'unsafe-inline' => true],
+            'img-src' => ['self' => true, 'data' => true, 'allow' => $allow],
+            'script-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
+            'style-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
             'object-src' => [],
             'plugin-types' => [],
         ]);
