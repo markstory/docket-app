@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {Menu, MenuList, MenuButton} from '@reach/menu-button';
 
 import {t} from 'app/locale';

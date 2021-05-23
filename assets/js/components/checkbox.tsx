@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {InlineIcon} from './icon';
 
 type Props = {

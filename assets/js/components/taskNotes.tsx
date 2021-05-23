@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';

@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import * as React from 'react';
 
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
