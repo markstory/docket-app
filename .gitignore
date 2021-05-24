@@ -14,6 +14,8 @@
 /webroot/js/*.js
 /webroot/css/app.css
 /webroot/mix-manifest.json
+/webroot/manifest.json
+/webroot/assets/
 /docket.sqlite
 
 # OS generated files #
