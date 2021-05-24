@@ -15,9 +15,10 @@ if (!el) {
 render(
   <InertiaApp
     initialPage={JSON.parse(el.dataset.page || '')}
-    resolveComponent={(name: string) =>
-      import(`./Pages/${name}.tsx`).then(module => module.default)
-    }
+    resolveComponent={(name: string) => {
+      const pages = import.meta.globEager(`./Pages/*/*.tsx`);
+      return pages[`./Pages/${name}.tsx`].default;
+    }}
   />,
   el
 );
