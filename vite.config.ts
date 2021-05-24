@@ -30,4 +30,7 @@ export default defineConfig({
     // Simulate react17 style jsx usage.
     jsxInject: `import React from 'react';`,
   },
+  optimizeDeps: {
+    include: ['react', 'axios', '@inertiajs/inertia', '@inertiajs/inertia-react'],
+  },
 });
