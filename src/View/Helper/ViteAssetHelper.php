@@ -13,6 +13,11 @@ class ViteAssetHelper extends Helper
      */
     protected $helpers = ['Html'];
 
+    /**
+     * @var \Cake\View\Helper\HtmlHelper
+     */
+    public $Html;
+
     protected $_defaultConfig = [
         'manifestFile' => WWW_ROOT . 'manifest.json',
     ];
@@ -48,7 +53,7 @@ class ViteAssetHelper extends Helper
             throw new RuntimeException("The `{$name}` asset has no file attribute in the manifest.");
         }
 
-        return $this->Html->script('/' . $asset['file'], ['type' => 'module']);
+        return (string)$this->Html->script('/' . $asset['file'], ['type' => 'module']);
     }
 
     public function css(string $name): string

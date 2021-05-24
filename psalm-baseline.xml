@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.18.2@19aa905f7c3c7350569999a93c40ae91ae4e1626">
-  <file src="src/Model/Table/ProjectsTable.php">
+  <file src="src/Model/Table/ProjectSectionsTable.php">
     <NoInterfaceProperties occurrences="1">
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
   </file>
-  <file src="src/Model/Table/ProjectSectionsTable.php">
+  <file src="src/Model/Table/ProjectsTable.php">
     <NoInterfaceProperties occurrences="1">
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
@@ -17,14 +17,19 @@
   </file>
   <file src="src/Model/Table/TasksTable.php">
     <NoInterfaceProperties occurrences="3">
+      <code>$result-&gt;max</code>
       <code>$result-&gt;max_child</code>
       <code>$result-&gt;max_day</code>
-      <code>$result-&gt;max</code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/UsersTable.php">
     <UndefinedMagicPropertyFetch occurrences="1">
       <code>$entity-&gt;current_password</code>
     </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="src/View/Helper/ViteAssetHelper.php">
+    <UndefinedConstant occurrences="1">
+      <code>WWW_ROOT</code>
+    </UndefinedConstant>
   </file>
 </files>
