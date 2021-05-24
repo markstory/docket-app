@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import {Fragment} from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 import {Project, Task} from 'app/types';

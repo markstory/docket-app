@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import {Fragment, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {DragOverlay} from '@dnd-kit/core';
 import {InertiaLink} from '@inertiajs/inertia-react';

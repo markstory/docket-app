@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import axios from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
 import {TaskDetailed, ValidationErrors} from 'app/types';
-import {t} from 'app/locale';
 import LoggedIn from 'app/layouts/loggedIn';
 import Checkbox from 'app/components/checkbox';
 import DueOn from 'app/components/dueOn';
