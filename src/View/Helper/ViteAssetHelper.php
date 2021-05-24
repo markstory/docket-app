@@ -6,17 +6,15 @@ namespace App\View\Helper;
 use Cake\View\Helper;
 use RuntimeException;
 
+/**
+ * @property \Cake\View\Helper\HtmlHelper $Html
+ */
 class ViteAssetHelper extends Helper
 {
     /**
      * @var string[]
      */
     protected $helpers = ['Html'];
-
-    /**
-     * @var \Cake\View\Helper\HtmlHelper
-     */
-    public $Html;
 
     protected $_defaultConfig = [
         'manifestFile' => WWW_ROOT . 'manifest.json',

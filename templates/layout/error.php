@@ -7,11 +7,11 @@
   </title>
   <?= $this->Html->meta('icon') ?>
 
-  <?= $this->AssetMix->css('app') ?>
-
   <?= $this->fetch('meta') ?>
   <?= $this->fetch('css') ?>
   <?= $this->fetch('script') ?>
+
+  <?= $this->element('frontend_assets') ?>
 </head>
 <body>
   <div class="layout-card-bg">
