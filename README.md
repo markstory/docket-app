@@ -28,7 +28,7 @@ data.
 You're now ready to build the assets:
 
 ```
-yarn dev
+yarn build
 ```
 
 Next setup your database configuration in `config/app_local.php`. Docket is tested against
