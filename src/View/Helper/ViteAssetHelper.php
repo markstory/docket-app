@@ -14,7 +14,7 @@ class ViteAssetHelper extends Helper
     protected $helpers = ['Html'];
 
     protected $_defaultConfig = [
-        'manifestFile' => WWW_ROOT . 'assets/manifest.json',
+        'manifestFile' => WWW_ROOT . 'manifest.json',
     ];
 
     /**
@@ -48,7 +48,7 @@ class ViteAssetHelper extends Helper
             throw new RuntimeException("The `{$name}` asset has no file attribute in the manifest.");
         }
 
-        return $this->Html->script($asset['file'], ['type' => 'module']);
+        return $this->Html->script('/' . $asset['file'], ['type' => 'module']);
     }
 
     public function css(string $name): string
@@ -61,6 +61,11 @@ class ViteAssetHelper extends Helper
             throw new RuntimeException("The `{$name}` asset has no css attribute in the manifest.");
         }
 
-        return $this->Html->css($asset['css']);
+        $css = [];
+        foreach ($asset['css'] as $file) {
+            $css[] = $this->Html->css('/' . $file);
+        }
+
+        return implode("\n", $css);
     }
 }
