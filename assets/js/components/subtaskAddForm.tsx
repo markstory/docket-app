@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 

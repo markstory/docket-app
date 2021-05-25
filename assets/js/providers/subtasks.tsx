@@ -1,5 +1,4 @@
-import { useState, createContext, useContext } from 'react';
-import * as React from 'react';
+import {useState, createContext, useContext} from 'react';
 
 import {Subtask} from 'app/types';
 

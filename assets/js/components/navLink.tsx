@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {InertiaLink, usePage} from '@inertiajs/inertia-react';
 import classnames from 'classnames';
 

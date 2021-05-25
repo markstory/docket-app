@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import * as React from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project, User} from 'app/types';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {DefaultTaskValues, Task} from 'app/types';

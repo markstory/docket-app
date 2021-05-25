@@ -28,7 +28,7 @@ data.
 You're now ready to build the assets:
 
 ```
-yarn dev
+yarn build
 ```
 
 Next setup your database configuration in `config/app_local.php`. Docket is tested against
@@ -58,7 +58,7 @@ defaults in `config/app.php`.
 
 ## Local Development
 
-Using `node bin/server.js` you can run a PHP webserver and webpack in watch mode.
+Using `node bin/server.js` you can run a PHP webserver and vite in watch mode.
 This is the recommended development environment for docket.
 
 ## Testing

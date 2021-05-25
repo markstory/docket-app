@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as React from 'react';
 import classnames from 'classnames';
 
 import {Task} from 'app/types';

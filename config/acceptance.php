@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Configuration file loaded for acceptance tests.
  */
@@ -12,7 +14,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
-    'debug' => true,
+    'debug' => false,
 
     'App' => [
         'inTest' => true,
@@ -65,5 +67,5 @@ return [
 
     'DebugKit' => [
         'ignoreAuthorization' => true,
-    ]
+    ],
 ];

@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import * as React from 'react';
 import classnames from 'classnames';
 
 import {FlashMessage} from 'app/types';

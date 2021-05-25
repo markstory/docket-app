@@ -2,7 +2,7 @@ const {spawn} = require('child_process');
 
 const servers = [
   {prefix: 'php', command: 'bin/cake', args: ['server']},
-  {prefix: 'webpack', command: 'npm', args: ['run', 'development', '--', '--watch']},
+  {prefix: 'react', command: 'npm', args: ['run', 'dev']},
 ];
 
 const processes = servers.map(command => {

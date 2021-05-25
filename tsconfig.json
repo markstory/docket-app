@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": true,
-    "module": "esnext",
-    "target": "es6",
     "jsx": "react-jsx",
     "importHelpers": true,
-    "moduleResolution": "node",
+    "isolatedModules": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "typeRoots": ["./node_modules/@types"],
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,
@@ -17,9 +19,12 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "esModuleInterop": true,
     "outDir": "webroot/js",
+    "types": [
+        "vite/client"
+    ],
     "baseUrl": ".",
     "paths": {
         "app/*": ["assets/js/*"],

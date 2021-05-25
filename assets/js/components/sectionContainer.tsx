@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as React from 'react';
 import axios from 'axios';
 import classnames from 'classnames';
 import {useSortable} from '@dnd-kit/sortable';

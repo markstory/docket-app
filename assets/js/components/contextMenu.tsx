@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {MenuButton} from '@reach/menu-button';
 
 import {Icon} from './icon';

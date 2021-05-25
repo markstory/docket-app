@@ -13,6 +13,10 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  * @var \App\View\AppView $this
  */
+
+use Cake\Core\Configure;
+
+$debug = Configure::read('debug');
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,12 +29,12 @@
     <?= $this->Html->meta('icon') ?>
     <link rel="manifest" href="<?= $this->Url->build('/manifest.json') ?>" />
 
-    <?= $this->AssetMix->css('app') ?>
-
     <?= $this->fetch('meta') ?>
-    <?= $this->fetch('css') ?>
+
     <?= $this->fetch('script') ?>
-    <?= $this->AssetMix->script('app') ?>
+    <?= $this->fetch('css') ?>
+
+    <?= $this->element('frontend_assets') ?>
 </head>
 <body>
     <main class="main">

@@ -61,8 +61,7 @@ class AppController extends Controller
     {
         parent::beforeRender($event);
 
-        $this->viewBuilder()
-            ->addHelper('AssetMix.AssetMix');
+        $this->viewBuilder()->addHelper('ViteAsset');
 
         // Load common data.
         $identity = $this->request->getAttribute('identity');
