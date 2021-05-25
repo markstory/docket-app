@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Configuration file loaded for acceptance tests.
  */
