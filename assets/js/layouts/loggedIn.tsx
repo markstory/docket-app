@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project, User} from 'app/types';
@@ -37,8 +37,13 @@ function LoggedIn({children, title}: Props) {
     }
   }, [title, identity]);
 
+  const generationId = projects.reduce((acc, project) => {
+    const currentId = [project.name, project.color, project.incomplete_task_count];
+    return currentId.join(':') + ':' + acc;
+  }, '');
+
   return (
-    <ProjectsProvider projects={projects}>
+    <ProjectsProvider generationId={generationId} projects={projects}>
       <Contents>{children}</Contents>
     </ProjectsProvider>
   );

@@ -1,4 +1,4 @@
-import {useState, createContext, useContext} from 'react';
+import {useEffect, useState, createContext, useContext} from 'react';
 
 import {Project} from 'app/types';
 
@@ -14,14 +14,21 @@ const ProjectsContext = createContext<ContextData>({
 type ProviderProps = {
   children: React.ReactNode;
   projects: Project[];
+  generationId: string;
 };
 
-function ProjectsProvider({projects, children}: ProviderProps) {
+function ProjectsProvider({generationId, children, projects}: ProviderProps) {
   const [state, setState] = useState<null | Project[]>(projects);
   const contextValue = {
     state: state || projects,
     setProjects: setState,
   };
+
+  // As the project list identity changes update state.
+  // this ensures that task counts are accurate.
+  useEffect(() => {
+    setState(projects);
+  }, [generationId]);
 
   return (
     <ProjectsContext.Provider value={contextValue}>{children}</ProjectsContext.Provider>
