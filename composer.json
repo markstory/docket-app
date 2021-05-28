@@ -1,7 +1,7 @@
 {
-    "name": "cakephp/app",
-    "description": "An Open Source task management application inspired by Todoist intended for self-hosting.",
-    "homepage": "https://cakephp.org",
+    "name": "markstory/docket-app",
+    "description": "An Open Source task management application inspired by Todoist and Things intended for self-hosting.",
+    "homepage": "https://mark-story.com",
     "type": "project",
     "license": "MIT",
     "require": {
