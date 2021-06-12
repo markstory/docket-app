@@ -25,6 +25,7 @@
 
   .title {
     display: flex;
+    flex-direction: column;
   }
   .title input {
     flex-grow: 1;
