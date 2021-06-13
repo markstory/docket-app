@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef} from 'react';
 
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
@@ -11,7 +11,7 @@ import {useProjects} from 'app/providers/projects';
 type Props = {
   task: Task;
   url: string;
-  onSubmit: (e: React.FormEvent, clearTitle: () => void) => void;
+  onSubmit: (e: React.FormEvent) => Promise<boolean>;
   onCancel: () => void;
   errors?: null | ValidationErrors;
 };
@@ -26,6 +26,7 @@ export default function TaskQuickForm({
   const mounted = useRef(true);
   const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
+  const [busy, setBusy] = useState(false);
   const [projects] = useProjects();
 
   mounted.current = true;
@@ -48,17 +49,21 @@ export default function TaskQuickForm({
     setData(prevState => ({...prevState, title}));
   }
 
-  function clearTitle() {
-    // This can happen after saving is complete and the form has been removed from the DOM.
-    if (!mounted.current) {
-      return;
-    }
-    setTextTitle('');
-    setData(prevState => ({...prevState, title: ''}));
-  }
-
   function handleSubmit(e: React.FormEvent) {
-    onSubmit(e, clearTitle);
+    setBusy(true);
+    onSubmit(e)
+      .then(() => {
+        // This can happen after saving is complete and the form has been removed from the DOM.
+        if (!mounted.current) {
+          return;
+        }
+        setBusy(false);
+        setTextTitle('');
+        setData(prevState => ({...prevState, title: ''}));
+      })
+      .catch(() => {
+        setBusy(false);
+      });
   }
 
   function handleKeyDown(e: KeyboardEvent) {
@@ -113,7 +118,13 @@ export default function TaskQuickForm({
         </div>
       </div>
       <div className="button-bar">
-        <button type="submit" className="button-primary" data-testid="save-task">
+        <button
+          type="submit"
+          className="button-primary"
+          data-testid="save-task"
+          aria-disabled={busy}
+          disabled={busy}
+        >
           {t('Save')}
         </button>
         <button className="button-muted" onClick={onCancel}>

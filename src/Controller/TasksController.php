@@ -53,6 +53,12 @@ class TasksController extends AppController
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
         $this->set('generation', uniqid());
+
+        // Work around for errors from inline add.
+        $session = $this->request->getSession();
+        if ($session->check('errors')) {
+            $this->set('errors', $session->consume('errors'));
+        }
     }
 
     /**
@@ -79,9 +85,10 @@ class TasksController extends AppController
 
                 return $this->redirect($this->referer(['_name' => 'tasks:today']));
             }
-            // TODO the inline add form doesn't handle validation errors.
             $this->Flash->error(__('The task could not be saved. Please, try again.'));
-            $this->set('errors', $this->flattenErrors($task->getErrors()));
+            $this->request->getSession()->write('errors', $this->flattenErrors($task->getErrors()));
+
+            return $this->redirect($this->referer(['_name' => 'tasks:today']));
         }
     }
 

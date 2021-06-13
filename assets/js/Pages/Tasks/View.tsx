@@ -29,20 +29,26 @@ export default function TasksView({referer, task}: Props): JSX.Element {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
+    const promise = new Promise((resolve, reject) => {
+      // Do an XHR request so we can handle validation errors
+      // inside the modal.
+      axios
+        .post(`/tasks/${task.id}/edit`, formData)
+        .then(() => {
+          setEditing(false);
+          resolve(true);
+          Inertia.reload({only: ['task']});
+        })
+        .catch(error => {
+          const errors: ValidationErrors = {};
+          if (error.response) {
+            setErrors(error.response.data.errors);
+          }
+          reject(errors);
+        });
+    });
 
-    // Do an XHR request so we can handle validation errors
-    // inside the modal.
-    axios
-      .post(`/tasks/${task.id}/edit`, formData)
-      .then(() => {
-        setEditing(false);
-        Inertia.reload({only: ['task']});
-      })
-      .catch(error => {
-        if (error.response) {
-          setErrors(error.response.data.errors);
-        }
-      });
+    return promise;
   }
 
   function handleCancel() {

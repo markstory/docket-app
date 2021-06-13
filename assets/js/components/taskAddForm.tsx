@@ -1,6 +1,7 @@
+import {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
-import {DefaultTaskValues, Task} from 'app/types';
+import {DefaultTaskValues, Task, ValidationErrors} from 'app/types';
 import TaskQuickForm from 'app/components/taskQuickForm';
 
 type Props = {
@@ -9,21 +10,32 @@ type Props = {
 };
 
 function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
-  function onSubmit(e: React.FormEvent, clearTitle: () => void): void {
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     e.persist();
 
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    Inertia.post('/tasks/add', formData, {
-      onSuccess: () => {
-        // clear the title to start over.
-        clearTitle();
-      },
-      preserveScroll: true,
+    const promise = new Promise<boolean>((resolve, reject) => {
+      Inertia.post('/tasks/add', formData, {
+        onSuccess: () => {
+          resolve(true);
+        },
+        onError: errors => {
+          console.log('errors', errors);
+          setErrors(errors);
+          reject(errors);
+        },
+        preserveScroll: true,
+      });
     });
+
+    return promise;
   }
+
   const task: Task = {
     id: -1,
     section_id: null,
@@ -48,7 +60,13 @@ function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
   };
 
   return (
-    <TaskQuickForm url="/tasks/add" task={task} onSubmit={onSubmit} onCancel={onCancel} />
+    <TaskQuickForm
+      url="/tasks/add"
+      errors={errors}
+      task={task}
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+    />
   );
 }
 export default TaskAddForm;

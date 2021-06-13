@@ -103,6 +103,24 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
+    public function testIndexSetErrorsFromSession(): void
+    {
+        $this->session([
+            'errors' => ['title' => 'Not valid'],
+        ]);
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get('/tasks');
+
+        $this->assertResponseOk();
+        $errors = $this->viewVariable('errors');
+        $this->assertNotEmpty($errors);
+        $this->assertArrayHasKey('title', $errors);
+    }
+
     public function testIndexToday()
     {
         $today = new FrozenDate('today');
@@ -189,7 +207,7 @@ class TasksControllerTest extends TestCase
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
-        $this->assertResponseCode(302);
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $todo = $this->Tasks->find()->firstOrFail();
         $this->assertSame('first todo', $todo->title);
@@ -213,7 +231,7 @@ class TasksControllerTest extends TestCase
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
         ]);
-        $this->assertResponseCode(302);
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
         $this->assertSame(4, $todo->child_order);
@@ -233,7 +251,7 @@ class TasksControllerTest extends TestCase
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
         ]);
-        $this->assertResponseCode(302);
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
         $this->assertSame(1, $todo->child_order);
@@ -254,8 +272,8 @@ class TasksControllerTest extends TestCase
             'section_id' => $section->id,
             'project_id' => $home->id,
         ]);
-        $this->assertResponseCode(200);
-        $this->assertNotEmpty($this->viewVariable('errors'));
+        $this->assertRedirect(['_name' => 'tasks:today']);
+        $this->assertSessionHasKey('errors');
     }
 
     public function testAddPermissions(): void
@@ -364,7 +382,7 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/delete");
 
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
         $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
@@ -463,7 +481,7 @@ class TasksControllerTest extends TestCase
             'due_on' => 'not a date',
         ]);
 
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
         $this->assertFlashElement('flash/error');
     }
 
@@ -479,7 +497,7 @@ class TasksControllerTest extends TestCase
             'day_order' => -1,
         ]);
 
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
         $this->assertFlashElement('flash/error');
     }
 
@@ -496,7 +514,7 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$third->id}/move", [
             'day_order' => 0,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -517,7 +535,7 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 2,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
@@ -536,7 +554,7 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 1000,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
@@ -555,7 +573,7 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$fourth->id}/move", [
             'day_order' => 1,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
