@@ -103,6 +103,24 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
+    public function testIndexSetErrorsFromSession(): void
+    {
+        $this->session([
+            'errors' => ['title' => 'Not valid'],
+        ]);
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get('/tasks');
+
+        $this->assertResponseOk();
+        $errors = $this->viewVariable('errors');
+        $this->assertNotEmpty($errors);
+        $this->assertArrayHasKey('title', $errors);
+    }
+
     public function testIndexToday()
     {
         $today = new FrozenDate('today');
