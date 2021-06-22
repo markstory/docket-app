@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import {useRef, useState, Fragment} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import {MenuItem} from '@reach/menu-button';
@@ -110,7 +110,7 @@ function TaskActions({task}: ActionsProps) {
     <div className="actions" ref={menuRef}>
       <ContextMenu tooltip={t('Task actions')}>
         {!innerMenu && (
-          <React.Fragment>
+          <Fragment>
             <MenuItem
               data-testid="move"
               className="edit"
@@ -135,7 +135,7 @@ function TaskActions({task}: ActionsProps) {
               <InlineIcon icon="trash" />
               {t('Delete Task')}
             </MenuItem>
-          </React.Fragment>
+          </Fragment>
         )}
         {innerMenu === 'project' && <ProjectAction task={task} />}
         {innerMenu === 'dueOn' && (

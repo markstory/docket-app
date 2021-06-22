@@ -152,6 +152,40 @@ class UpcomingTest extends AcceptanceTestCase
         $this->assertTrue($updated->evening);
     }
 
+    public function testChangeAddEveningWithContextMenu()
+    {
+        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $project = $this->makeProject('Work', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Trigger the hover.
+        $client->getMouse()->mouseMoveTo('.task-row');
+        $crawler = $client->getCrawler();
+        $client->waitFor('.task-row .actions');
+
+        // Hover over the actions menu and click
+        $crawler = $client->getCrawler();
+        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
+        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+
+        // Open the due menu
+        $crawler->filter('[data-testid="reschedule"]')->click();
+        $client->waitFor('.due-on-menu');
+
+        // Click 'this evening'
+        $this->clickWithMouse('.due-on-menu [data-testid="add-evening"]');
+
+        $client->waitFor('.flash-message');
+
+        $updated = $this->Tasks->get($task->id);
+        $this->assertSame($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertTrue($updated->evening);
+    }
+
     public function testChangeProjectWithContextMenu()
     {
         $tomorrow = new FrozenDate('tomorrow', 'UTC');

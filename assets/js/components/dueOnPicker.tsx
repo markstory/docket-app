@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {MenuButton, MenuItem} from '@reach/menu-button';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
 import startOfWeek from 'date-fns/startOfWeek';
 
 import {t} from 'app/locale';
-import {parseDate, parseDateInput, toDateString} from 'app/utils/dates';
+import {
+  parseDate,
+  parseDateInput,
+  toDateString,
+  formatCompactDate,
+} from 'app/utils/dates';
 import DueOn from 'app/components/dueOn';
 import {Task} from 'app/types';
 
@@ -96,8 +101,10 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
     },
   };
   const isToday = task.due_on === today && task.evening === false;
-  const isEvening = task.due_on === today && task.evening === true;
+  const isThisEvening = task.due_on === today && task.evening === true;
   const isTomorrow = task.due_on === tomorrow;
+  const isEvening = task.evening;
+  const futureDue = task.due_on !== null && task.due_on !== today;
 
   return (
     <div className="due-on-menu" onClick={clickSink}>
@@ -120,7 +127,7 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
           <InlineIcon icon="clippy" /> {t('Today')}
         </MenuItem>
       )}
-      {!isEvening && (
+      {!isThisEvening && (
         <MenuItem
           className="evening"
           data-testid="evening"
@@ -137,6 +144,26 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         >
           <InlineIcon icon="sun" />
           {t('Tommorrow')}
+        </MenuItem>
+      )}
+      {futureDue && isEvening && (
+        <MenuItem
+          className="tomorrow"
+          data-testid="remove-evening"
+          onSelect={handleButtonClick(task.due_on, false)}
+        >
+          <InlineIcon icon="calendar" />
+          {t('{date} day', {date: formatCompactDate(task.due_on ?? '')})}
+        </MenuItem>
+      )}
+      {futureDue && !isEvening && (
+        <MenuItem
+          className="evening"
+          data-testid="add-evening"
+          onSelect={handleButtonClick(task.due_on, true)}
+        >
+          <InlineIcon icon="calendar" />
+          {t('{date} evening', {date: formatCompactDate(task.due_on ?? '')})}
         </MenuItem>
       )}
       <MenuItem
