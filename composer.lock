@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cad8fab08b50d35a048f96b82245ff95",
+    "content-hash": "92e235aefeb791962b4b6a8ff0feb89d",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -142,20 +142,20 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "4.2.7",
+            "version": "dev-4.next",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "bd2d476e0b14b21c6103eca789667a016ec14458"
+                "reference": "5540770ecef506fb34993bd607fae415f2084763"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/bd2d476e0b14b21c6103eca789667a016ec14458",
-                "reference": "bd2d476e0b14b21c6103eca789667a016ec14458",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/5540770ecef506fb34993bd607fae415f2084763",
+                "reference": "5540770ecef506fb34993bd607fae415f2084763",
                 "shasum": ""
             },
             "require": {
-                "cakephp/chronos": "^2.0",
+                "cakephp/chronos": "^2.2",
                 "composer/ca-bundle": "^1.2",
                 "ext-intl": "*",
                 "ext-json": "*",
@@ -188,7 +188,7 @@
                 "cakephp/validation": "self.version"
             },
             "require-dev": {
-                "cakephp/cakephp-codesniffer": "^4.0",
+                "cakephp/cakephp-codesniffer": "^4.5",
                 "mikey179/vfsstream": "^1.6",
                 "paragonie/csp-builder": "^2.3",
                 "phpunit/phpunit": "^8.5 || ^9.3"
@@ -241,7 +241,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2021-06-16T21:23:42+00:00"
+            "time": "2021-07-05T01:39:56+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -304,16 +304,15 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "d22737c31243db89774abfe6a077d254c0eae75a"
+                "reference": "94933c359c5d2f170a4f1130006e680efd62a8a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/d22737c31243db89774abfe6a077d254c0eae75a",
-                "reference": "d22737c31243db89774abfe6a077d254c0eae75a",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/94933c359c5d2f170a4f1130006e680efd62a8a7",
+                "reference": "94933c359c5d2f170a4f1130006e680efd62a8a7",
                 "shasum": ""
             },
             "require": {
@@ -324,8 +323,8 @@
             },
             "require-dev": {
                 "cakephp/bake": "^2.1.0",
-                "cakephp/cakephp": "^4.0.5",
-                "cakephp/cakephp-codesniffer": "~4.1.0",
+                "cakephp/cakephp": "dev-4.next as 4.3.0",
+                "cakephp/cakephp-codesniffer": "~4.1",
                 "phpunit/phpunit": "~8.5.0"
             },
             "suggest": {
@@ -360,7 +359,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2021-05-20T13:57:37+00:00"
+            "time": "2021-07-05T01:59:48+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -486,6 +485,7 @@
                 }
             ],
             "time": "2021-06-07T13:58:28+00:00"
+<<<<<<< HEAD
         },
         {
             "name": "firebase/php-jwt",
@@ -946,6 +946,8 @@
                 "source": "https://github.com/guzzle/psr7/tree/1.8.2"
             },
             "time": "2021-04-26T09:17:50+00:00"
+=======
+>>>>>>> 90e8380 (Update tests for 4.3)
         },
         {
             "name": "ishanvyas22/asset-mix",
@@ -2962,7 +2964,11 @@
                 "shim"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.23.0"
+=======
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.23.0"
+>>>>>>> 90e8380 (Update tests for 4.3)
             },
             "funding": [
                 {
@@ -2978,6 +2984,7 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2021-05-27T09:27:20+00:00"
         },
         {
@@ -2992,6 +2999,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/fba8933c384d6476ab14fb7b8526e5287ca7e010",
                 "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010",
+=======
+            "time": "2021-02-19T12:13:01+00:00"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "2df51500adbaebdc4c38dea4c89a2e131c45c8a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/2df51500adbaebdc4c38dea4c89a2e131c45c8a1",
+                "reference": "2df51500adbaebdc4c38dea4c89a2e131c45c8a1",
+>>>>>>> 90e8380 (Update tests for 4.3)
                 "shasum": ""
             },
             "require": {
@@ -3041,7 +3064,11 @@
                 "shim"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/polyfill-php73/tree/v1.23.0"
+=======
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.23.0"
+>>>>>>> 90e8380 (Update tests for 4.3)
             },
             "funding": [
                 {
@@ -3057,6 +3084,7 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -3071,6 +3099,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/eca0bf41ed421bed1b57c4958bab16aa86b757d0",
                 "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+=======
+            "time": "2021-05-27T09:27:20+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php73",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php73.git",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010",
+>>>>>>> 90e8380 (Update tests for 4.3)
                 "shasum": ""
             },
             "require": {
@@ -3124,7 +3168,11 @@
                 "shim"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/polyfill-php80/tree/v1.23.0"
+=======
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.23.0"
+>>>>>>> 90e8380 (Update tests for 4.3)
             },
             "funding": [
                 {
@@ -3140,6 +3188,105 @@
                     "type": "tidelift"
                 }
             ],
+            "time": "2021-02-19T12:13:01+00:00"
+        },
+        {
+<<<<<<< HEAD
+            "name": "symfony/polyfill-php81",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php81.git",
+                "reference": "e66119f3de95efc359483f810c4c3e6436279436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/e66119f3de95efc359483f810c4c3e6436279436",
+                "reference": "e66119f3de95efc359483f810c4c3e6436279436",
+=======
+            "name": "symfony/polyfill-php80",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php80.git",
+                "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+                "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+>>>>>>> 90e8380 (Update tests for 4.3)
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php81\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+<<<<<<< HEAD
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.23.0"
+=======
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.23.0"
+>>>>>>> 90e8380 (Update tests for 4.3)
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+<<<<<<< HEAD
+=======
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -3219,6 +3366,7 @@
                     "type": "tidelift"
                 }
             ],
+>>>>>>> 90e8380 (Update tests for 4.3)
             "time": "2021-05-21T13:25:03+00:00"
         },
         {
@@ -6806,6 +6954,7 @@
             "homepage": "https://symfony.com",
             "support": {
                 "source": "https://github.com/symfony/dom-crawler/tree/v5.3.0"
+<<<<<<< HEAD
             },
             "funding": [
                 {
@@ -6970,6 +7119,8 @@
             ],
             "support": {
                 "source": "https://github.com/symfony/event-dispatcher-contracts/tree/v2.4.0"
+=======
+>>>>>>> 90e8380 (Update tests for 4.3)
             },
             "funding": [
                 {
@@ -6985,7 +7136,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2021-03-23T23:28:01+00:00"
+=======
+            "time": "2021-05-26T17:43:10+00:00"
+>>>>>>> 90e8380 (Update tests for 4.3)
         },
         {
             "name": "symfony/finder",
@@ -7501,6 +7656,7 @@
             ],
             "support": {
                 "source": "https://github.com/symfony/var-dumper/tree/v5.3.3"
+<<<<<<< HEAD
             },
             "funding": [
                 {
@@ -7576,6 +7732,8 @@
             "homepage": "https://symfony.com",
             "support": {
                 "source": "https://github.com/symfony/yaml/tree/v5.3.3"
+=======
+>>>>>>> 90e8380 (Update tests for 4.3)
             },
             "funding": [
                 {
@@ -7851,9 +8009,24 @@
             "time": "2021-03-09T10:59:23+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "cakephp/cakephp",
+            "version": "dev-4.next",
+            "alias": "4.3.0",
+            "alias_normalized": "4.3.0.0"
+        },
+        {
+            "package": "cakephp/migrations",
+            "version": "dev-3.next",
+            "alias": "3.2.0",
+            "alias_normalized": "3.2.0.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "cakephp/cakephp": 20,
+        "cakephp/migrations": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,
