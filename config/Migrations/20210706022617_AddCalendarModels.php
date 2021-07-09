@@ -13,7 +13,7 @@ class AddCalendarModels extends AbstractMigration
         // Table for Oauth tokens to read-only calendar data.
         // Starting with google, but more oauth based providers
         // could be added later.
-        $this->table('calendar_provider')
+        $this->table('calendar_providers')
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'null' => false,
@@ -42,7 +42,7 @@ class AddCalendarModels extends AbstractMigration
             ->create();
 
         // A calendar in the provider.
-        $this->table('calendar_source')
+        $this->table('calendar_sources')
             ->addColumn('name', 'string', [
                 'default' => null,
                 'null' => false,
@@ -79,11 +79,11 @@ class AddCalendarModels extends AbstractMigration
                 'null' => false,
             ])
             ->addIndex(['calendar_provider_id', 'provider_id'], ['unique' => true])
-            ->addForeignKey(['calendar_provider_id'], 'calendar_provider')
+            ->addForeignKey(['calendar_provider_id'], 'calendar_providers')
             ->create();
 
         // Individual calendar events from a source.
-        $this->table('calendar_item')
+        $this->table('calendar_items')
             ->addColumn('calendar_source_id', 'integer', [
                 'null' => false,
             ])
@@ -94,12 +94,8 @@ class AddCalendarModels extends AbstractMigration
             ->addColumn('title', 'string', [
                 'null' => false,
             ])
-            ->addColumn('start_time', 'datetime', [
-                'null' => false,
-            ])
-            ->addColumn('end_time', 'datetime', [
-                'null' => false,
-            ])
+            ->addColumn('start_time', 'datetime')
+            ->addColumn('end_time', 'datetime')
             ->addColumn('html_link', 'string', [
                 'null' => true,
             ])
@@ -114,7 +110,7 @@ class AddCalendarModels extends AbstractMigration
                 'null' => false,
             ])
             ->addIndex(['calendar_source_id', 'provider_id'], ['unique' => true])
-            ->addForeignKey(['calendar_source_id'], 'calendar_source')
+            ->addForeignKey(['calendar_source_id'], 'calendar_sources')
             ->create();
     }
 }
