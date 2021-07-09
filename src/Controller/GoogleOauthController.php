@@ -47,6 +47,6 @@ class GoogleOauthController extends AppController
             throw new BadRequestException('No access token found in session.');
         }
         $service->setAccessToken($token);
-        $service->syncEvents($this->request->getAttribute('identity'));
+        $service->syncEvents($this->request->getAttribute('identity'), 1);
     }
 }

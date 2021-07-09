@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\Entity\CalendarSource;
 use App\Model\Entity\User;
+use Cake\Datasource\ModelAwareTrait;
 use DateTime;
+use DateTimeZone;
 use Google\Client as GoogleClient;
 use Google\Service\Calendar;
+use Google\Service\Calendar\Event as GoogleEvent;
 
 /**
  * Provides Calendar syncing.
@@ -18,10 +22,22 @@ use Google\Service\Calendar;
  */
 class CalendarService
 {
+    use ModelAwareTrait;
+
     /**
      * @var \Google\Client $client
      */
     private $client;
+
+    /**
+     * @var \App\Model\Table\CalendarSourcesTable
+     */
+    private $CalendarSources;
+
+    /**
+     * @var \App\Model\Table\CalendarItemsTable
+     */
+    private $CalendarItems;
 
     public function __construct(GoogleClient $client)
     {
@@ -46,33 +62,68 @@ class CalendarService
         return [];
     }
 
-    public function syncEvents(User $user, $calendarId = 'primary')
+    public function syncEvents(User $user, $calendarSourceId)
     {
+        $this->loadModel('CalendarSources');
+        $this->loadModel('CalendarItems');
+        $source = $this->CalendarSources->get($calendarSourceId);
+
         $calendar = new Calendar($this->client);
 
-        $time = new DateTime('-3 months');
-        // Check if the user has a sync token for this source.
-        // If so use it to continue syncing.
+        $time = new DateTime('-1 month');
+
         $options = [
             'timeMin' => $time->format(DateTime::RFC3339),
         ];
+        // Check if the user has a sync token for this source.
+        // If so use it to continue syncing.
+        if ($source->sync_token) {
+            $options['syncToken'] = $source->sync_token;
+        }
 
         do {
             // Fetch events one page at a time.
             // A 410 means we need to start over again.
-            $results = $calendar->events->listEvents($calendarId, $options);
+            try {
+                $results = $calendar->events->listEvents($source->provider_id, $options);
+            } catch (\Exception $e) {
+                unset($options['syncToken']);
+            }
             foreach ($results as $event) {
-                $this->syncEvent($user, $calendarId, $event);
+                $this->syncEvent($source, $event);
             }
             $pageToken = $results->getNextPageToken();
         } while ($pageToken !== null);
 
-        // Save the nextSyncToken for our next sync
-        $syncToken = $results->getNextSyncToken();
+        // Save the nextSyncToken for our next sync.
+        $source->sync_token = $results->getNextSyncToken();
+        $this->CalendarSources->saveOrFail($source);
     }
 
-    public function syncEvent(User $user, string $calendarId, $event)
+    private function syncEvent(CalendarSource $source, GoogleEvent $event)
     {
-        debug($event);
+        $tz = new DateTimeZone(date_default_timezone_get());
+        $start = $event->getStart()->getDateTime();
+        if ($start) {
+            $start = new DateTime($start, $tz);
+        }
+        $end = $event->getEnd()->getDateTime();
+        if ($end) {
+            $end = new DateTime($end, $tz);
+        }
+
+        if ($start === null && $end === null) {
+            return;
+        }
+
+        $item = $this->CalendarItems->newEntity([
+            'calendar_source_id' => $source->id,
+            'provider_id' => $event->id,
+            'title' => $event->summary,
+            'start_time' => $start,
+            'end_time' => $end,
+            'html_link' => $event->htmlLink,
+        ]);
+        $this->CalendarItems->saveOrFail($item);
     }
 }
