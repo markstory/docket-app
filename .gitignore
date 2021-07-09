@@ -3,6 +3,7 @@
 /config/Migrations/*.lock
 /config/app_local.php
 /config/.env
+/config/google-auth.json
 /logs/*
 /tmp/*
 /vendor/*
