@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Service\CalendarServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -27,6 +28,7 @@ use Authorization\AuthorizationServiceProviderInterface;
 use Authorization\Middleware\AuthorizationMiddleware;
 use Authorization\Policy\OrmResolver;
 use Cake\Core\Configure;
+use Cake\Core\ContainerInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
@@ -109,7 +111,7 @@ class Application extends BaseApplication implements
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware())
-            ->add(new CspMiddleware($this->getCspPolicy()))
+            ->add(new CspMiddleware($this->getContainer()->get(CspBuilder::class)))
             ->add(new AuthenticationMiddleware($this))
             ->add(new AuthorizationMiddleware($this, [
                 'identityDecorator' => function ($auth, $user) {
@@ -140,23 +142,27 @@ class Application extends BaseApplication implements
         // Load more plugins here
     }
 
-    protected function getCspPolicy()
+    public function services(ContainerInterface $container): void
     {
-        $allow = [];
-        if (Configure::read('debug')) {
-            $allow = ['localhost:3000'];
-        }
-        $csp = new CSPBuilder([
-            'font-src' => ['self' => true],
-            'form-action' => ['self' => true],
-            'img-src' => ['self' => true, 'data' => true, 'allow' => ['www.gravatar.com']],
-            'script-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
-            'style-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
-            'object-src' => [],
-            'plugin-types' => [],
-        ]);
+        $container->add(CSPBuilder::class, function () {
+            $allow = [];
+            if (Configure::read('debug')) {
+                $allow = ['localhost:3000'];
+            }
+            $csp = new CSPBuilder([
+                'font-src' => ['self' => true],
+                'form-action' => ['self' => true],
+                'img-src' => ['self' => true, 'data' => true, 'allow' => ['www.gravatar.com']],
+                'script-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
+                'style-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
+                'object-src' => [],
+                'plugin-types' => [],
+            ]);
 
-        return $csp;
+            return $csp;
+        });
+
+        $container->addServiceProvider(new CalendarServiceProvider());
     }
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
