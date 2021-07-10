@@ -26,11 +26,11 @@ class AddCalendarModels extends AbstractMigration
                 'default' => null,
                 'null' => false,
             ])
-            ->addColumn('access_token', 'string', [
+            ->addColumn('access_token', 'text', [
                 'default' => null,
                 'null' => false,
             ])
-            ->addColumn('refresh_token', 'string', [
+            ->addColumn('refresh_token', 'text', [
                 'default' => null,
                 'null' => false,
             ])
@@ -62,7 +62,7 @@ class AddCalendarModels extends AbstractMigration
             ])
             ->addColumn('last_sync', 'datetime', [
                 'default' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('sync_token', 'string', [
                 'default' => null,
