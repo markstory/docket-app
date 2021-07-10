@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use Cake\ORM\TableRegistry;
+use DateTime;
 
 trait FactoryTrait
 {
@@ -79,5 +80,33 @@ trait FactoryTrait
         ], $props));
 
         return $subtasks->saveOrFail($subtask);
+    }
+
+    protected function makeCalendarProvider($userId, $identifier, $props = [])
+    {
+        $providers = TableRegistry::get('CalendarProviders');
+        $provider = $providers->newEntity(array_merge([
+            'user_id' => $userId,
+            'kind' => 'google',
+            'identifier' => $identifier,
+            'access_token' => 'calendar-access-token',
+            'refresh_token' => 'calendar-refresh-token',
+            'token_expiry' => new DateTime('+1 day'),
+        ], $props));
+
+        return $providers->saveOrFail($provider);
+    }
+
+    protected function makeCalendarSource($providerId, $name = 'primary', $props = [])
+    {
+        $sources = TableRegistry::get('CalendarSources');
+        $source = $sources->newEntity(array_merge([
+            'calendar_provider_id' => $providerId,
+            'provider_id' => $name,
+            'name' => $name,
+            'color' => 1,
+        ], $props));
+
+        return $sources->saveOrFail($source);
     }
 }

@@ -4,36 +4,51 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\CalendarSourcesController;
+use App\Test\TestCase\FactoryTrait;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\CalendarSourcesController Test Case
- *
- * @uses \App\Controller\CalendarSourcesController
  */
 class CalendarSourcesControllerTest extends TestCase
 {
+    use FactoryTrait;
     use IntegrationTestTrait;
 
     /**
-     * Fixtures
-     *
-     * @var array
+     * @var string[]
      */
     protected $fixtures = [
+        'app.Users',
         'app.CalendarSources',
         'app.CalendarProviders',
-        'app.Providers',
-        'app.CalendarItems',
     ];
 
     /**
-     * Test index method
+     * @var \App\Model\Table\CalendarSourcesTable
+     */
+    protected $Sources;
+
+    /**
+     * @var \App\Model\Table\UsersTable
+     */
+    protected $Users;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->Users = TableRegistry::get('Users');
+        $this->Sources = TableRegistry::get('CalendarSources');
+    }
+
+    /**
+     * Test view method
      *
      * @return void
      */
-    public function testIndex(): void
+    public function testViewNoPermission(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
@@ -49,12 +64,55 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
+     * Test delete method
+     *
+     * @return void
+     */
+    public function testDelete(): void
+    {
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
+        $this->assertRedirect(['_name' => 'calendarsources:add', 'providerId' => $provider->id]);
+        $this->assertFalse($this->Sources->exists(['CalendarSources.id' => $source->id]));
+    }
+
+    /**
+     * Test delete method
+     *
+     * @return void
+     */
+    public function testDeleteNoPermission(): void
+    {
+        $user = $this->Users->get(2);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
+        $this->assertResponseCode(403);
+    }
+
+    /**
      * Test add method
      *
      * @return void
      */
-    public function testAdd(): void
+    public function testAddInvalidProvider(): void
     {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    public function testAddIncludeLinkedAndUnlinked(): void
+    {
+        // TODO this requires http mocking for google!
         $this->markTestIncomplete('Not implemented yet.');
     }
 
@@ -64,16 +122,6 @@ class CalendarSourcesControllerTest extends TestCase
      * @return void
      */
     public function testEdit(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
-    public function testDelete(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

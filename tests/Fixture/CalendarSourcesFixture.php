@@ -11,25 +11,30 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CalendarSourcesFixture extends TestFixture
 {
     /**
-     * Init method
+     * Fields
      *
-     * @return void
+     * @var array
      */
-    public function init(): void
-    {
-        $this->records = [
-            [
-                'id' => 1,
-                'name' => 'Lorem ipsum dolor sit amet',
-                'calendar_provider_id' => 1,
-                'provider_id' => 'Lorem ipsum dolor sit amet',
-                'color' => '',
-                'last_sync' => '2021-07-09 03:06:12',
-                'sync_token' => 'Lorem ipsum dolor sit amet',
-                'created' => 1625799972,
-                'modified' => 1625799972,
-            ],
-        ];
-        parent::init();
-    }
+    // phpcs:disable
+    public $fields = [
+        'id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
+        'name' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'utf8mb4_0900_ai_ci', 'comment' => '', 'precision' => null],
+        'calendar_provider_id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
+        'provider_id' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'utf8mb4_0900_ai_ci', 'comment' => '', 'precision' => null],
+        'color' => ['type' => 'char', 'length' => 6, 'null' => false, 'default' => null, 'collate' => 'utf8mb4_0900_ai_ci', 'comment' => '', 'precision' => null],
+        'last_sync' => ['type' => 'datetime', 'length' => null, 'precision' => null, 'null' => true, 'default' => null, 'comment' => ''],
+        'sync_token' => ['type' => 'string', 'length' => 255, 'null' => true, 'default' => null, 'collate' => 'utf8mb4_0900_ai_ci', 'comment' => '', 'precision' => null],
+        'created' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
+        'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
+        '_constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
+            'calendar_provider_id' => ['type' => 'unique', 'columns' => ['calendar_provider_id', 'provider_id'], 'length' => []],
+            'calendar_sources_ibfk_1' => ['type' => 'foreign', 'columns' => ['calendar_provider_id'], 'references' => ['calendar_providers', 'id'], 'update' => 'noAction', 'delete' => 'noAction', 'length' => []],
+        ],
+        '_options' => [
+            'engine' => 'InnoDB',
+            'collation' => 'utf8mb4_0900_ai_ci'
+        ],
+    ];
+    // phpcs:enable
 }

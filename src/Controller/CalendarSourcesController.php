@@ -94,6 +94,7 @@ class CalendarSourcesController extends AppController
      */
     public function edit()
     {
+        // This might only need to update the color?
         $calendarSource = $this->getSource();
 
         if ($this->request->is(['patch', 'post', 'put'])) {
