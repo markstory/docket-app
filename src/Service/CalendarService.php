@@ -62,16 +62,14 @@ class CalendarService
         return [];
     }
 
-    public function syncEvents(User $user, $calendarSourceId)
+    public function syncEvents(User $user, CalendarSource $source)
     {
         $this->loadModel('CalendarSources');
         $this->loadModel('CalendarItems');
-        $source = $this->CalendarSources->get($calendarSourceId);
 
         $calendar = new Calendar($this->client);
 
         $time = new DateTime('-1 month');
-
         $options = [
             'timeMin' => $time->format(DateTime::RFC3339),
         ];
@@ -87,6 +85,7 @@ class CalendarService
             try {
                 $results = $calendar->events->listEvents($source->provider_id, $options);
             } catch (\Exception $e) {
+                debug($results);
                 unset($options['syncToken']);
             }
             foreach ($results as $event) {

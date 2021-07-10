@@ -7,10 +7,21 @@ use App\Service\CalendarService;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use Cake\I18n\FrozenTime;
 use Google\Client as GoogleClient;
 
 class GoogleOauthController extends AppController
 {
+    /**
+     * @var \App\Model\Table\CalendarProvidersTable
+     */
+    protected $CalendarProviders;
+
+    /**
+     * @var \App\Model\Table\CalendarSourcesTable
+     */
+    protected $CalendarSources;
+
     public function beforeFilter(EventInterface $event): ?Response
     {
         parent::beforeFilter($event);
@@ -28,25 +39,51 @@ class GoogleOauthController extends AppController
 
     public function callback(GoogleClient $client)
     {
+        $this->loadModel('CalendarProviders');
+
         $code = $this->request->getQuery('code');
         $data = $client->fetchAccessTokenWithAuthCode($code);
         if (!$data || !isset($data['access_token'])) {
             throw new BadRequestException('Could not fetch OAuth Access token');
         }
-        $token = $data['access_token'];
-        $refresh = $data['refresh_token'];
-        $this->request->getSession()->write('CalendarSync', compact('token', 'refresh'));
+
+        $user = $this->request->getAttribute('identity');
+
+        $provider = $this->CalendarProviders->findOrCreate([
+            'user_id' => $user->id,
+            'kind' => 'google',
+            // TODO need to get the current google user instead of the user. 
+            // one user could have multiple google accounts.
+            'identifier' => $user->email,
+        ], function ($entity) use ($data) {
+            $entity->access_token = $data['access_token'];
+            $entity->refresh_token = $data['refresh_token'];
+            $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} minutes");
+        });
+        $this->CalendarProviders->saveOrFail($provider);
 
         $this->redirect(['_name' => 'googleauth:sync']);
     }
 
-    public function sync(CalendarService $service)
+    public function sync(CalendarService $service, $sourceId)
     {
-        $token = $this->request->getSession()->read('CalendarSync.token');
-        if (!$token) {
-            throw new BadRequestException('No access token found in session.');
-        }
-        $service->setAccessToken($token);
-        $service->syncEvents($this->request->getAttribute('identity'), 1);
+        $this->loadModel('CalendarProviders');
+        $this->loadModel('CalendarSources');
+
+        $user = $this->request->getAttribute('identity');
+
+        $provider = $this->CalendarProviders
+            ->find('all')
+            ->where([
+                'CalendarProviders.kind' => 'google',
+                'CalendarProviders.user_id' => $user->id,
+            ])
+            ->firstOrFail();
+        $service->setAccessToken($provider->access_token);
+
+        // TODO add policy check.
+        $source = $this->CalendarSources->get($sourceId);
+
+        $service->syncEvents($user, $source);
     }
 }

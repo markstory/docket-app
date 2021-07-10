@@ -124,6 +124,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
         $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
-        $builder->connect('/sync', ['action' => 'sync'], ['_name' => 'googleauth:sync']);
+        $builder->connect('/sync/{id}', ['action' => 'sync'], ['_name' => 'googleauth:sync'])
+            ->setPass(['id']);
     });
 });
