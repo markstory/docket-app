@@ -121,10 +121,25 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
             ->setPass(['token']);
     });
+
+    $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
+        $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
+        $builder->connect('/{id}/view', ['action' => 'view'], ['_name' => 'calendarproviders:view'])
+            ->setPass(['id']);
+        $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
+            ->setPass(['id']);
+    });
+    $builder->scope('/calendars/{id}/sources', ['controller' => 'CalendarSources'], function ($builder) {
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete')
+            ->setPass(['id']);
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync')
+            ->setPass(['id']);
+        $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view')
+            ->setPass(['id']);
+    });
+
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
         $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
-        $builder->connect('/sync/{id}', ['action' => 'sync'], ['_name' => 'googleauth:sync'])
-            ->setPass(['id']);
     });
 });

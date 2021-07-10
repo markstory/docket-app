@@ -10,6 +10,12 @@ export interface ProjectSection {
   name: string;
 }
 
+export interface CalendarProvider {
+  id: number;
+  kind: string;
+  identifier: string;
+}
+
 /**
  * Project shape embedded on tasks.
  */

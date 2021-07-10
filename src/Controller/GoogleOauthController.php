@@ -62,28 +62,6 @@ class GoogleOauthController extends AppController
         });
         $this->CalendarProviders->saveOrFail($provider);
 
-        $this->redirect(['_name' => 'googleauth:sync']);
-    }
-
-    public function sync(CalendarService $service, $sourceId)
-    {
-        $this->loadModel('CalendarProviders');
-        $this->loadModel('CalendarSources');
-
-        $user = $this->request->getAttribute('identity');
-
-        $provider = $this->CalendarProviders
-            ->find('all')
-            ->where([
-                'CalendarProviders.kind' => 'google',
-                'CalendarProviders.user_id' => $user->id,
-            ])
-            ->firstOrFail();
-        $service->setAccessToken($provider->access_token);
-
-        // TODO add policy check.
-        $source = $this->CalendarSources->get($sourceId);
-
-        $service->syncEvents($user, $source);
+        $this->redirect(['_name' => 'calendarproviders:index']);
     }
 }

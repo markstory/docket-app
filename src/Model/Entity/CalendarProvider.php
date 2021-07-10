@@ -40,4 +40,11 @@ class CalendarProvider extends Entity
         'user' => true,
         'calendar_sources' => true,
     ];
+
+    protected $_hidden = [
+        'user_id',
+        'access_token',
+        'refresh_token',
+        'token_expiry',
+    ];
 }
