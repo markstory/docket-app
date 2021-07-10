@@ -19,7 +19,6 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\CalendarProvider $calendar_provider
- * @property \App\Model\Entity\Provider $provider
  * @property \App\Model\Entity\CalendarItem[] $calendar_items
  */
 class CalendarSource extends Entity
@@ -43,7 +42,6 @@ class CalendarSource extends Entity
         'created' => true,
         'modified' => true,
         'calendar_provider' => true,
-        'provider' => true,
         'calendar_items' => true,
     ];
 }

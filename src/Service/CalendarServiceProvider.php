@@ -27,6 +27,7 @@ class CalendarServiceProvider extends ServiceProvider
             $client->setAuthConfig($config);
             $client->setApplicationName('Docket Calendar Sync');
             $client->addScope(Calendar::CALENDAR_EVENTS_READONLY);
+            $client->addScope(Calendar::CALENDAR_READONLY);
             $client->setRedirectUri(Router::url(
                 ['_name' => 'googleauth:callback', '_full' => true]
             ));

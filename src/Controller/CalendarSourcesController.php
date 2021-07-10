@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\CalendarSource;
 use App\Service\CalendarService;
 
 /**
@@ -13,23 +15,56 @@ use App\Service\CalendarService;
  */
 class CalendarSourcesController extends AppController
 {
-    public function sync(CalendarService $service, $sourceId)
+    protected function getSource(): CalendarSource
     {
-        $this->loadModel('CalendarProviders');
-        $this->loadModel('CalendarSources');
-
-        $user = $this->request->getAttribute('identity');
-        $source = $this->CalendarSources->get($sourceId, ['contain' => ['CalendarProviders']]);
-        $this->Authorization->authorize($source->calendar_provider, 'sync')
-
-        $provider = $this->CalendarProviders
-            ->find('all')
+        $query = $this->CalendarSources
+            ->find()
+            ->contain('CalendarProviders')
             ->where([
-                'CalendarProviders.kind' => 'google',
-                'CalendarProviders.user_id' => $user->id,
-            ])
-            ->firstOrFail();
+                // 'CalendarSources.provider_id' => $this->request->getParam('providerId'),
+                'CalendarSources.id' => $this->request->getParam('id'),
+                // 'CalendarProviders.user_id' => $this->request->getAttribute('identity')->id,
+            ]);
+
+        return $query->firstOrFail();
+    }
+
+    /**
+     * Add method
+     *
+     * @param string|null $providerId Calendar Provider id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function add(CalendarService $service, $providerId = null)
+    {
+        $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
+            'contain' => ['CalendarSources'],
+        ]);
+        $this->Authorization->authorize($provider, 'edit');
+        if ($this->request->is('post')) {
+            $source = $this->CalendarSources->newEntity($this->request->getData());
+            if ($this->CalendarSources->save($source)) {
+                $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
+            } else {
+                $this->Flash->error('Could not add that calendar.');
+            }
+        }
         $service->setAccessToken($provider->access_token);
+        $calendars = $service->listCalendars();
+
+        $this->set('calendarProvider', $provider);
+        $this->set('unlinked', $calendars);
+        $this->set('referer', $this->referer(['_name' => 'tasks:today']));
+    }
+
+    public function sync(CalendarService $service)
+    {
+        $user = $this->request->getAttribute('identity');
+        $source = $this->getSource();
+        $this->Authorization->authorize($source->calendar_provider, 'sync');
+
+        $service->setAccessToken($source->calendar_provider->access_token);
 
         // TODO add policy check.
         $service->syncEvents($user, $source);
@@ -42,11 +77,9 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view()
     {
-        $calendarSource = $this->CalendarSources->get($id, [
-            'contain' => ['CalendarProviders'],
-        ]);
+        $source = $this->getSource();
         $this->Authorization->authorize($calendarSource);
 
         $this->set(compact('calendarSource'));
@@ -59,11 +92,10 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit()
     {
-        $calendarSource = $this->CalendarSources->get($id, [
-            'contain' => [],
-        ]);
+        $calendarSource = $this->getSource();
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData());
             if ($this->CalendarSources->save($calendarSource)) {
@@ -81,20 +113,24 @@ class CalendarSourcesController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id Calendar Source id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
-        $calendarSource = $this->CalendarSources->get($id);
+        $calendarSource = $this->getSource();
+        $this->Authorization->authorize($calendarSource->calendar_provider);
+
         if ($this->CalendarSources->delete($calendarSource)) {
             $this->Flash->success(__('The calendar source has been deleted.'));
         } else {
             $this->Flash->error(__('The calendar source could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect([
+            'action' => 'add',
+            'providerId' => $this->request->getParam('providerId')
+        ]);
     }
 }

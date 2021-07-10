@@ -16,6 +16,22 @@ export interface CalendarProvider {
   identifier: string;
 }
 
+export interface CalendarProviderDetailed extends CalendarProvider {
+  calendar_sources: CalendarSource[];
+}
+
+export interface CalendarSource {
+  id: number;
+  name: string;
+  color: string;
+  last_sync: string;
+  sync_token: string;
+}
+
+export interface CalendarSourceDetailed extends CalendarSource {
+  calendar_provider: CalendarProvider;
+}
+
 /**
  * Project shape embedded on tasks.
  */

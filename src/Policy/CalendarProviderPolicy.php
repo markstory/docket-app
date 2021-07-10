@@ -36,6 +36,18 @@ class CalendarProviderPolicy
     }
 
     /**
+     * Check if $user can edit CalendarProvider
+     *
+     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\CalendarProvider $calendarProvider
+     * @return bool
+     */
+    public function canEdit(User $user, CalendarProvider $calendarProvider)
+    {
+        return $user->id == $calendarProvider->user_id;
+    }
+
+    /**
      * Check if $user can view CalendarProvider
      *
      * @param \Authorization\IdentityInterface $user The user.

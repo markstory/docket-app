@@ -129,13 +129,12 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
             ->setPass(['id']);
     });
-    $builder->scope('/calendars/{id}/sources', ['controller' => 'CalendarSources'], function ($builder) {
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete')
-            ->setPass(['id']);
-        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync')
-            ->setPass(['id']);
-        $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view')
-            ->setPass(['id']);
+    $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function ($builder) {
+        $builder->connect('/add', ['action' => 'add'], ['_name' => 'calendarsources:add'])
+            ->setPass(['providerId']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete');
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync');
+        $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
     });
 
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {

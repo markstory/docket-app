@@ -88,7 +88,6 @@ class CalendarSourcesTable extends Table
 
         $validator
             ->dateTime('last_sync')
-            ->requirePresence('last_sync', 'create')
             ->notEmptyDateTime('last_sync');
 
         $validator

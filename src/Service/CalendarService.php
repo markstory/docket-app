@@ -59,7 +59,18 @@ class CalendarService
      */
     public function listCalendars()
     {
-        return [];
+        $calendar = new Calendar($this->client);
+        // TODO add error handling
+        $results = $calendar->calendarList->listCalendarList();
+        $out = [];
+        foreach ($results as $record) {
+            $out[] = new CalendarSource([
+                'name' => $record->summary,
+                'provider_id' => $record->id,
+                'color' => 1,
+            ]);
+        }
+        return $out;
     }
 
     public function syncEvents(User $user, CalendarSource $source)

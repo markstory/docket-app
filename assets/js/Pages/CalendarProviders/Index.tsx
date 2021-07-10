@@ -29,7 +29,10 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
         <ul>
           {calendarProviders.map(calendarProvider => {
             return (
-              <CalendarProviderItem key={calendarProvider.id} provider={calendarProvider} />
+              <CalendarProviderItem
+                key={calendarProvider.id}
+                provider={calendarProvider}
+              />
             );
           })}
         </ul>
@@ -52,6 +55,11 @@ function CalendarProviderItem({provider}: ProviderProps) {
   return (
     <li>
       {provider.kind} - {provider.identifier}
+      <div className="button-bar">
+        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
+          {t('Manage Calendars')}
+        </a>
+      </div>
     </li>
   );
 }
