@@ -133,6 +133,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'calendarsources:add'])
             ->setPass(['providerId']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete');
+        $builder->post('/{id}/edit', ['action' => 'edit'], 'calendarsources:edit');
         $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync');
         $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
     });

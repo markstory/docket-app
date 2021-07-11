@@ -123,6 +123,39 @@ class CalendarSourcesControllerTest extends TestCase
      */
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'color' => 3,
+            'name' => 'new values',
+        ]);
+        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertFlashElement('flash/success');
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
+    public function testEditPermissions(): void
+    {
+        $user = $this->Users->get(2);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'color' => 3,
+            'name' => 'new values',
+        ]);
+        $this->assertResponseCode(403);
     }
 }

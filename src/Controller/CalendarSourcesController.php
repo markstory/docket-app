@@ -71,21 +71,6 @@ class CalendarSourcesController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Calendar Source id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view()
-    {
-        $source = $this->getSource();
-        $this->Authorization->authorize($calendarSource);
-
-        $this->set(compact('calendarSource'));
-    }
-
-    /**
      * Edit method
      *
      * @param string|null $id Calendar Source id.
@@ -96,19 +81,20 @@ class CalendarSourcesController extends AppController
     {
         // This might only need to update the color?
         $calendarSource = $this->getSource();
+        $this->Authorization->authorize($calendarSource->calendar_provider);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData());
+            $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
+                'fields' => ['color', 'name'],
+            ]);
             if ($this->CalendarSources->save($calendarSource)) {
-                $this->Flash->success(__('The calendar source has been saved.'));
+                $this->Flash->success(__('The calendar will now display in your time views.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'add', 'providerId' => $this->request->getParam('providerId')]);
             }
-            $this->Flash->error(__('The calendar source could not be saved. Please, try again.'));
+            $this->Flash->error(__('The calendar could not be added. Please, try again.'));
         }
-        $calendarProviders = $this->CalendarSources->CalendarProviders->find('list', ['limit' => 200]);
-        $providers = $this->CalendarSources->Providers->find('list', ['limit' => 200]);
-        $this->set(compact('calendarSource', 'calendarProviders', 'providers'));
+        $this->set(compact('calendarSource'));
     }
 
     /**

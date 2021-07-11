@@ -81,10 +81,10 @@ class CalendarSourcesTable extends Table
             ->notEmptyString('name');
 
         $validator
-            ->scalar('color')
-            ->maxLength('color', 6)
+            ->integer('color')
             ->requirePresence('color', 'create')
-            ->notEmptyString('color');
+            ->greaterThanOrEqual('color', 0)
+            ->lessThanOrEqual('color', 17);
 
         $validator
             ->dateTime('last_sync')
