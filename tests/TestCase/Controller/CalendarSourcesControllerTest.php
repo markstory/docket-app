@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\CalendarSourcesController;
 use App\Test\TestCase\FactoryTrait;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -22,15 +22,21 @@ class CalendarSourcesControllerTest extends TestCase
      */
     protected $fixtures = [
         'app.Users',
-        'app.CalendarSources',
         'app.CalendarProviders',
+        'app.CalendarSources',
+        'app.CalendarItems',
         'app.Projects',
     ];
 
     /**
+     * @var \App\Model\Table\CalendarItemsTable
+     */
+    protected $CalendarItems;
+
+    /**
      * @var \App\Model\Table\CalendarSourcesTable
      */
-    protected $Sources;
+    protected $CalendarSources;
 
     /**
      * @var \App\Model\Table\UsersTable
@@ -41,12 +47,47 @@ class CalendarSourcesControllerTest extends TestCase
     {
         parent::setUp();
         $this->Users = TableRegistry::get('Users');
-        $this->Sources = TableRegistry::get('CalendarSources');
+        $this->CalendarSources = TableRegistry::get('CalendarSources');
+        $this->CalendarItems = TableRegistry::get('CalendarItems');
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        FrozenTime::setTestNow(null);
+    }
+
+    /**
+     * @vcr controller_calendarsources_sync.yml
+     */
     public function testSync(): void
     {
-        $this->markTestIncomplete();
+        FrozenTime::setTestNow('2021-07-11 12:13:14');
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
+        $this->assertResponseOk();
+
+        $result = $this->CalendarItems->find()->where([
+            'CalendarItems.calendar_source_id' => $source->id
+        ])->toArray();
+        $this->assertCount(3, $result);
+        foreach ($result as $event) {
+            $this->assertNotEmpty($event->title);
+            $this->assertNotEmpty($event->html_link);
+            $this->assertNotEmpty($event->start_time);
+            $this->assertNotEmpty($event->end_time);
+        }
+
+        $source = $this->CalendarSources->get($source->id);
+        $this->assertSame('next-sync-token', $source->sync_token);
     }
 
     /**
@@ -65,7 +106,7 @@ class CalendarSourcesControllerTest extends TestCase
 
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
         $this->assertRedirect(['_name' => 'calendarsources:add', 'providerId' => $provider->id]);
-        $this->assertFalse($this->Sources->exists(['CalendarSources.id' => $source->id]));
+        $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
     /**

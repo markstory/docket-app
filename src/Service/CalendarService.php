@@ -133,8 +133,12 @@ class CalendarService
             try {
                 $results = $calendar->events->listEvents($source->provider_id, $options);
             } catch (\Exception $e) {
-                debug($results);
-                unset($options['syncToken']);
+                if ($e->getCode() == 410) {
+                    unset($options['syncToken']);
+                    continue;
+                } else {
+                    throw $e;
+                }
             }
             foreach ($results as $event) {
                 $this->syncEvent($source, $event);
@@ -149,26 +153,34 @@ class CalendarService
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
     {
-        $tz = new DateTimeZone(date_default_timezone_get());
-        $start = $event->getStart()->getDateTime();
-        if ($start) {
-            $start = new FrozenTime($start, $tz);
-        }
-        $end = $event->getEnd()->getDateTime();
-        if ($end) {
-            $end = new FrozenTime($end, $tz);
-        }
-
-        if ($start === null && $end === null) {
+        // TODO remove existing local records.
+        if ($event->status === 'cancelled') {
             return;
         }
 
+        $tz = new DateTimeZone(date_default_timezone_get());
+        $start = $event->getStart();
+        $startTime = $start->getDate() ?? $start->getDateTime();
+        if ($startTime) {
+            $startTime = new FrozenTime($startTime, $tz);
+        }
+        $end = $event->getEnd();
+        $endTime = $end->getDate() ?? $end->getDateTime();
+        if ($endTime) {
+            $endTime = new FrozenTime($endTime, $tz);
+        }
+
+        if ($startTime === null && $endTime === null) {
+            return;
+        }
+
+        // TODO update existing records.
         $item = $this->CalendarItems->newEntity([
             'calendar_source_id' => $source->id,
             'provider_id' => $event->id,
             'title' => $event->summary,
-            'start_time' => $start,
-            'end_time' => $end,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
             'html_link' => $event->htmlLink,
         ]);
         $this->CalendarItems->saveOrFail($item);

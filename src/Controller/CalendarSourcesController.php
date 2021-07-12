@@ -65,8 +65,6 @@ class CalendarSourcesController extends AppController
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
         $service->setAccessToken($source->calendar_provider);
-
-        // TODO add policy check.
         $service->syncEvents($user, $source);
     }
 

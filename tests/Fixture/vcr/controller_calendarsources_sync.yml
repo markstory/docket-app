@@ -1,0 +1,100 @@
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00'
+        headers:
+            Host: www.googleapis.com
+            Accept-Encoding: ''
+            content-type: application/json
+            User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
+            authorization: 'Bearer calendar-access-token'
+            Accept: ''
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 03:30:58 GMT'
+        body: >
+          {
+            "kind": "calendar#events",
+            "etag": "etag-value",
+            "summary": "primary",
+            "description": "",
+            "timeZone": "UTC",
+            "nextPageToken": null,
+            "nextSyncToken": "next-sync-token",
+            "items": [
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-1",
+                "summary": "Dentist Appointment",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/1",
+                "start": {
+                  "date": null,
+                  "dateTime": "2021-07-22T12:13:14"
+                },
+                "end": {
+                  "date": null,
+                  "dateTime": "2021-07-22T13:13:14"
+                },
+                "status": "confirmed"
+              },
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-2",
+                "summary": "Moving Day",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/2",
+                "start": {
+                  "date": "2021-07-28",
+                  "dateTime": null
+                },
+                "end": {
+                  "date": "2021-07-28",
+                  "dateTime": null
+                },
+                "status": "confirmed"
+              },
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-3",
+                "summary": "Go camping",
+                "description": "multi day event",
+                "htmlLink": "https://calendar.example.com/events/3",
+                "start": {
+                  "date": "2021-07-15",
+                  "dateTime": null
+                },
+                "end": {
+                  "date": "2021-07-17",
+                  "dateTime": null
+                },
+                "status": "confirmed"
+              },
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-4",
+                "summary": "Cancelled",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/4",
+                "start": {
+                  "date": "2021-07-28",
+                  "dateTime": null
+                },
+                "end": {
+                  "date": "2021-07-28",
+                  "dateTime": null
+                },
+                "status": "cancelled"
+              }
+            ]
+          }
