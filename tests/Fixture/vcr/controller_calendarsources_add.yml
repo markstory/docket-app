@@ -1,0 +1,44 @@
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        headers:
+            Host: www.googleapis.com
+            Accept-Encoding: ''
+            content-type: application/json
+            User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
+            authorization: 'Bearer calendar-access-token'
+            Accept: ''
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Vary: [Origin, X-Origin, Referer]
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 02:54:22 GMT'
+        body: >
+          {
+            "kind": "calendar#calendarList",
+            "etag": "etag-value",
+            "nextPageToken": "",
+            "nextSyncToken": "",
+            "items": [
+              {
+                "kind": "calendar#calendarListEntry",
+                "etag": "etag-value",
+                "id": "calendar-1",
+                "summary": "Primary Calendar",
+                "description": ""
+              },
+              {
+                "kind": "calendar#calendarListEntry",
+                "etag": "etag-value",
+                "id": "calendar-2",
+                "summary": "Birthdays Calendar",
+                "description": ""
+              }
+            ]
+          }

@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
 use App\Model\Entity\User;
 use Cake\Datasource\ModelAwareTrait;
-use DateTime;
+use Cake\Http\Exception\BadRequestException;
+use Cake\I18n\FrozenTime;
 use DateTimeZone;
 use Google\Client as GoogleClient;
+use Google\Exception as GoogleException;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event as GoogleEvent;
 
@@ -35,6 +38,11 @@ class CalendarService
     private $CalendarSources;
 
     /**
+     * @var \App\Model\Table\CalendarProvidersTable
+     */
+    private $CalendarProviders;
+
+    /**
      * @var \App\Model\Table\CalendarItemsTable
      */
     private $CalendarItems;
@@ -44,9 +52,27 @@ class CalendarService
         $this->client = $client;
     }
 
-    public function setAccessToken(string $token): void
+    /**
+     * Set the access token from a provider.
+     *
+     * This method will also check the token expiry and if the token
+     * is close to being expired, a refresh token request will be made
+     *
+     * @param \App\Model\Entity\CalendarProvider $provider
+     */
+    public function setAccessToken(CalendarProvider $provider): void
     {
-        $this->client->setAccessToken($token);
+        $this->loadModel('CalendarProviders');
+        $this->client->setAccessToken($provider->access_token);
+
+        // If the token would expire soon, update it.
+        if (time() > $provider->token_expiry->getTimestamp() - 120) {
+            $this->client->fetchAccessTokenWithRefreshToken($provider->refresh_token);
+            $token = $this->client->getAccessToken();
+            $provider->access_token = $token['access_token'];
+            $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
+            $this->CalendarProviders->save($provider);
+        }
     }
 
     /**
@@ -55,15 +81,26 @@ class CalendarService
      * This is used to build the list of calendars that the user can
      * add to their task views.
      *
+     * @param \App\Model\Entity\CalendarSource[] $linked Existing calendar links for a provider.
      * @return \App\Model\Entity\CalendarSource[]
      */
-    public function listCalendars()
+    public function listUnlinkedCalendars(array $linked)
     {
         $calendar = new Calendar($this->client);
-        // TODO add error handling
-        $results = $calendar->calendarList->listCalendarList();
+        try {
+            $results = $calendar->calendarList->listCalendarList();
+        } catch (GoogleException $e) {
+            throw new BadRequestException('Could not fetch calendars.', $e);
+        }
+        $linkedIds = array_map(function ($item) {
+            return $item->provider_id;
+        }, $linked);
+
         $out = [];
         foreach ($results as $record) {
+            if (in_array($record->id, $linkedIds, true)) {
+                continue;
+            }
             $out[] = new CalendarSource([
                 'name' => $record->summary,
                 'provider_id' => $record->id,
@@ -80,9 +117,9 @@ class CalendarService
 
         $calendar = new Calendar($this->client);
 
-        $time = new DateTime('-1 month');
+        $time = new FrozenTime('-1 month');
         $options = [
-            'timeMin' => $time->format(DateTime::RFC3339),
+            'timeMin' => $time->format(FrozenTime::RFC3339),
         ];
         // Check if the user has a sync token for this source.
         // If so use it to continue syncing.
@@ -115,11 +152,11 @@ class CalendarService
         $tz = new DateTimeZone(date_default_timezone_get());
         $start = $event->getStart()->getDateTime();
         if ($start) {
-            $start = new DateTime($start, $tz);
+            $start = new FrozenTime($start, $tz);
         }
         $end = $event->getEnd()->getDateTime();
         if ($end) {
-            $end = new DateTime($end, $tz);
+            $end = new FrozenTime($end, $tz);
         }
 
         if ($start === null && $end === null) {

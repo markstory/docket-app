@@ -24,6 +24,7 @@ class CalendarSourcesControllerTest extends TestCase
         'app.Users',
         'app.CalendarSources',
         'app.CalendarProviders',
+        'app.Projects',
     ];
 
     /**
@@ -43,24 +44,9 @@ class CalendarSourcesControllerTest extends TestCase
         $this->Sources = TableRegistry::get('CalendarSources');
     }
 
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testViewNoPermission(): void
+    public function testSync(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->markTestIncomplete();
     }
 
     /**
@@ -100,20 +86,36 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
     public function testAddInvalidProvider(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->login();
+        $this->get('/calendars/99/sources/add');
+        $this->assertResponseCode(404);
     }
 
+    /**
+     * @vcr controller_calendarsources_add.yml
+     */
     public function testAddIncludeLinkedAndUnlinked(): void
     {
-        // TODO this requires http mocking for google!
-        $this->markTestIncomplete('Not implemented yet.');
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+
+        $this->login();
+        $this->get("/calendars/{$provider->id}/sources/add");
+        $this->assertResponseOk();
+
+        $this->assertNotEmpty($this->viewVariable('referer'));
+        $resultProvider = $this->viewVariable('calendarProvider');
+        $this->assertSame($provider->identifier, $resultProvider->identifier);
+        $this->assertCount(1, $resultProvider->calendar_sources);
+        $this->assertEquals($source->id, $resultProvider->calendar_sources[0]->id);
+
+        $unlinked = $this->viewVariable('unlinked');
+        $this->assertCount(1, $unlinked);
+        $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
     }
 
     /**

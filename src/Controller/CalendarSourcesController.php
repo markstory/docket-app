@@ -50,8 +50,8 @@ class CalendarSourcesController extends AppController
                 $this->Flash->error('Could not add that calendar.');
             }
         }
-        $service->setAccessToken($provider->access_token);
-        $calendars = $service->listCalendars();
+        $service->setAccessToken($provider);
+        $calendars = $service->listUnlinkedCalendars($provider->calendar_sources);
 
         $this->set('calendarProvider', $provider);
         $this->set('unlinked', $calendars);
@@ -64,7 +64,7 @@ class CalendarSourcesController extends AppController
         $source = $this->getSource();
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
-        $service->setAccessToken($source->calendar_provider->access_token);
+        $service->setAccessToken($source->calendar_provider);
 
         // TODO add policy check.
         $service->syncEvents($user, $source);
