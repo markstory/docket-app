@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\CalendarService;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
@@ -52,13 +51,13 @@ class GoogleOauthController extends AppController
         $provider = $this->CalendarProviders->findOrCreate([
             'user_id' => $user->id,
             'kind' => 'google',
-            // TODO need to get the current google user instead of the user. 
+            // TODO need to get the current google user instead of the user.
             // one user could have multiple google accounts.
             'identifier' => $user->email,
         ], function ($entity) use ($data) {
             $entity->access_token = $data['access_token'];
             $entity->refresh_token = $data['refresh_token'];
-            $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} minutes");
+            $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
         });
         $this->CalendarProviders->saveOrFail($provider);
 

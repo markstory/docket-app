@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use VCR\VCR;
 
 /**
  * Test runner bootstrap.
@@ -60,6 +61,23 @@ ConnectionManager::alias('test_debug_kit', 'debug_kit');
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
+
+// Configure PHP-VCR
+VCR::configure()
+    ->setCassettePath(__DIR__ . '/Fixture/vcr')
+    ->setStorage('yaml')
+    ->setWhitelist(['vendor/guzzlehttp', 'vendor/cakephp/cakephp/src/Http/Client'])
+    ->enableRequestMatchers([
+        'body',
+        'post_fields',
+        'method',
+        'url',
+        'host',
+        'query_string',
+    ])
+    ->enableLibraryHooks(['curl'])
+    ->setMode('once');
+VCR::turnOn();
 
 // Setup server for panther tests.
 // Panther doesn't make the router script absolute.

@@ -34,6 +34,7 @@
                 <object class="Cake\TestSuite\Fixture\FixtureManager"/>
             </arguments>
         </listener>
+        <listener class="VCR\PHPUnit\TestListener\VCRTestListener" file="vendor/php-vcr/phpunit-testlistener-vcr/src/VCRTestListener.php" />
     </listeners>
 
     <extensions>
