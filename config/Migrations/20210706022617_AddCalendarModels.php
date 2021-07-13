@@ -94,7 +94,9 @@ class AddCalendarModels extends AbstractMigration
             ->addColumn('title', 'string', [
                 'null' => false,
             ])
+            ->addColumn('start_date', 'date')
             ->addColumn('start_time', 'datetime')
+            ->addColumn('end_date', 'date')
             ->addColumn('end_time', 'datetime')
             ->addColumn('html_link', 'string', [
                 'null' => true,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use DateTimeInterface;
 
 /**
  * CalendarItem Entity
@@ -36,7 +37,9 @@ class CalendarItem extends Entity
         'calendar_source_id' => true,
         'provider_id' => true,
         'title' => true,
+        'start_date' => true,
         'start_time' => true,
+        'end_date' => true,
         'end_time' => true,
         'html_link' => true,
         'created' => true,
@@ -44,4 +47,20 @@ class CalendarItem extends Entity
         'calendar_source' => true,
         'provider' => true,
     ];
+
+    public function getStart(): ?DateTimeInterface
+    {
+        if ($this->start_date) {
+            return $this->start_date;
+        }
+        return $this->start_time;
+    }
+
+    public function getEnd(): ?DateTimeInterface
+    {
+        if ($this->end_date) {
+            return $this->end_date;
+        }
+        return $this->end_time;
+    }
 }
