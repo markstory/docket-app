@@ -1,4 +1,8 @@
 .project-badge {
   display: flex;
   align-items: center;
+
+  // Nudge icon to the left so that it lines up with
+  // any text above it.
+  margin-left: $space / 2 * -1;
 }
