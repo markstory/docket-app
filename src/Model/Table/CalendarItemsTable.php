@@ -77,7 +77,7 @@ class CalendarItemsTable extends Table
             ->notEmptyString('title');
 
         $validator
-            ->dateTime('start_time')
+            ->dateTime('start_time', ['iso8601'])
             ->allowEmptyDateTime('start_time');
 
         $validator
@@ -85,7 +85,7 @@ class CalendarItemsTable extends Table
             ->allowEmptyDate('start_date');
 
         $validator
-            ->dateTime('end_time')
+            ->dateTime('end_time', ['iso8601'])
             ->allowEmptyDateTime('end_time');
 
         $validator

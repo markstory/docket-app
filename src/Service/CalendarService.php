@@ -118,23 +118,22 @@ class CalendarService
         $calendar = new Calendar($this->client);
 
         $time = new FrozenTime('-1 month');
-        $options = [
+        $options = $defaults = [
             'timeMin' => $time->format(FrozenTime::RFC3339),
         ];
         // Check if the user has a sync token for this source.
         // If so use it to continue syncing.
         if ($source->sync_token) {
-            $options['syncToken'] = $source->sync_token;
+            $options = ['syncToken' => $source->sync_token];
         }
 
         do {
-            // Fetch events one page at a time.
-            // A 410 means we need to start over again.
             try {
                 $results = $calendar->events->listEvents($source->provider_id, $options);
             } catch (\Exception $e) {
                 if ($e->getCode() == 410) {
-                    unset($options['syncToken']);
+                    // Start a full sync as our sync token was not good
+                    $options = $defaults;
                     continue;
                 } else {
                     throw $e;
@@ -166,6 +165,7 @@ class CalendarService
         $start = $event->getStart();
         $end = $event->getEnd();
 
+        // TODO handle timezones
         $startDate = $start->getDate();
         $startTime = $start->getDateTime();
         $endDate = $end->getDate();
