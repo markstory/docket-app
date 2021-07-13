@@ -73,7 +73,8 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertResponseOk();
+        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertFlashElement('flash/success');
 
         $result = $this->CalendarItems->find()->where([
             'CalendarItems.calendar_source_id' => $source->id
@@ -113,7 +114,8 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertResponseOk();
+        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertFlashElement('flash/success');
 
         $this->assertFalse($this->CalendarItems->exists(['id' => $remove->id]));
 

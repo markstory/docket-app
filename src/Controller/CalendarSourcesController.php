@@ -47,7 +47,7 @@ class CalendarSourcesController extends AppController
             if ($this->CalendarSources->save($source)) {
                 $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
             } else {
-                $this->Flash->error('Could not add that calendar.');
+                $this->Flash->error(__('Could not add that calendar.'));
             }
         }
         $service->setAccessToken($provider);
@@ -65,7 +65,17 @@ class CalendarSourcesController extends AppController
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
         $service->setAccessToken($source->calendar_provider);
-        $service->syncEvents($user, $source);
+        try {
+            $service->syncEvents($user, $source);
+            $this->Flash->success(__('Calendar updated'));
+        } catch (\Exception $e) {
+            $this->Flash->error(__('Calendar could not be updated'));
+        }
+
+        return $this->redirect([
+            'action' => 'add',
+            'providerId' => $this->request->getParam('providerId'),
+        ]);
     }
 
     /**
@@ -88,7 +98,10 @@ class CalendarSourcesController extends AppController
             if ($this->CalendarSources->save($calendarSource)) {
                 $this->Flash->success(__('The calendar will now display in your time views.'));
 
-                return $this->redirect(['action' => 'add', 'providerId' => $this->request->getParam('providerId')]);
+                return $this->redirect([
+                    'action' => 'add',
+                    'providerId' => $this->request->getParam('providerId'),
+                ]);
             }
             $this->Flash->error(__('The calendar could not be added. Please, try again.'));
         }
