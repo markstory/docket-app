@@ -82,12 +82,43 @@ class CalendarSourcesControllerTest extends TestCase
         foreach ($result as $event) {
             $this->assertNotEmpty($event->title);
             $this->assertNotEmpty($event->html_link);
-            $this->assertNotEmpty($event->start_time);
-            $this->assertNotEmpty($event->end_time);
+            $this->assertNotEmpty($event->getStart());
+            $this->assertNotEmpty($event->getEnd());
         }
 
         $source = $this->CalendarSources->get($source->id);
         $this->assertSame('next-sync-token', $source->sync_token);
+    }
+
+    /**
+     * @vcr controller_calendarsources_sync.yml
+     */
+    public function testSyncUpdateExistingRemoveDeleted(): void
+    {
+        FrozenTime::setTestNow('2021-07-11 12:13:14');
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $update = $this->makeCalendarItem($source->id, [
+            'title' => 'old title',
+            'provider_id' => 'calendar-event-1',
+        ]);
+        $remove = $this->makeCalendarItem($source->id, [
+            'title' => 'remove',
+            'provider_id' => 'calendar-event-4',
+        ]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
+        $this->assertResponseOk();
+
+        $this->assertFalse($this->CalendarItems->exists(['id' => $remove->id]));
+
+        $updated = $this->CalendarItems->get($update->id);
+        $this->assertSame('Dentist Appointment', $updated->title);
     }
 
     /**

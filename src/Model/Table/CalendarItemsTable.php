@@ -78,13 +78,19 @@ class CalendarItemsTable extends Table
 
         $validator
             ->dateTime('start_time')
-            ->requirePresence('start_time', 'create')
-            ->notEmptyDateTime('start_time');
+            ->allowEmptyDateTime('start_time');
+
+        $validator
+            ->date('start_date')
+            ->allowEmptyDate('start_date');
 
         $validator
             ->dateTime('end_time')
-            ->requirePresence('end_time', 'create')
-            ->notEmptyDateTime('end_time');
+            ->allowEmptyDateTime('end_time');
+
+        $validator
+            ->date('end_date')
+            ->allowEmptyDate('end_date');
 
         $validator
             ->scalar('html_link')

@@ -153,36 +153,43 @@ class CalendarService
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
     {
-        // TODO remove existing local records.
         if ($event->status === 'cancelled') {
+            // Remove existing local records for cancelled events.
+            $this->CalendarItems->deleteAll([
+                'calendar_source_id' => $source->id,
+                'provider_id' => $event->id,
+            ]);
             return;
         }
 
         $tz = new DateTimeZone(date_default_timezone_get());
         $start = $event->getStart();
-        $startTime = $start->getDate() ?? $start->getDateTime();
-        if ($startTime) {
-            $startTime = new FrozenTime($startTime, $tz);
-        }
         $end = $event->getEnd();
-        $endTime = $end->getDate() ?? $end->getDateTime();
-        if ($endTime) {
-            $endTime = new FrozenTime($endTime, $tz);
-        }
 
-        if ($startTime === null && $endTime === null) {
-            return;
-        }
+        $startDate = $start->getDate();
+        $startTime = $start->getDateTime();
+        $endDate = $end->getDate();
+        $endTime = $end->getDateTime();
 
-        // TODO update existing records.
-        $item = $this->CalendarItems->newEntity([
+        $record = $this->CalendarItems->find()
+            ->where([
+                'calendar_source_id' => $source->id,
+                'provider_id' => $event->id,
+            ])->first();
+
+        if (!$record) {
+            $record = $this->CalendarItems->newEmptyEntity();
+        }
+        $record = $this->CalendarItems->patchEntity($record, [
             'calendar_source_id' => $source->id,
             'provider_id' => $event->id,
             'title' => $event->summary,
+            'start_date' => $startDate,
             'start_time' => $startTime,
+            'end_date' => $endDate,
             'end_time' => $endTime,
             'html_link' => $event->htmlLink,
         ]);
-        $this->CalendarItems->saveOrFail($item);
+        $this->CalendarItems->saveOrFail($record);
     }
 }

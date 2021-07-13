@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use DateTime;
 
@@ -91,7 +92,7 @@ trait FactoryTrait
             'identifier' => $identifier,
             'access_token' => 'calendar-access-token',
             'refresh_token' => 'calendar-refresh-token',
-            'token_expiry' => new DateTime('+1 day'),
+            'token_expiry' => new Datetime('+1 hour'),
         ], $props));
 
         return $providers->saveOrFail($provider);
@@ -108,5 +109,17 @@ trait FactoryTrait
         ], $props));
 
         return $sources->saveOrFail($source);
+    }
+
+    protected function makeCalendarItem($sourceId, $props = [])
+    {
+        $items = TableRegistry::get('CalendarItems');
+        $item = $items->newEntity(array_merge([
+            'calendar_source_id' => $sourceId,
+            'start_time' => FrozenTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
+            'end_time' => FrozenTime::parse('-1 day')->format('Y-m-d H:i:s'),
+        ], $props));
+
+        return $items->saveOrFail($item);
     }
 }
