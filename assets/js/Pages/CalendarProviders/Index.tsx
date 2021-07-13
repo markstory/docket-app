@@ -26,7 +26,7 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
             'Events from linked calendars will be displayed in "today" and "upcoming" views.'
           )}
         </p>
-        <ul>
+        <ul className="list-items">
           {calendarProviders.map(calendarProvider => {
             return (
               <CalendarProviderItem
@@ -55,8 +55,8 @@ function CalendarProviderItem({provider}: ProviderProps) {
   return (
     <li>
       {provider.kind} - {provider.identifier}
-      <div className="button-bar">
-        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
+      <div className="button-bar-inline">
+        <a href={`/calendars/${provider.id}/sources/add`} className="button-bare">
           {t('Manage Calendars')}
         </a>
       </div>

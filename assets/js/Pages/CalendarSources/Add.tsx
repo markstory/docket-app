@@ -1,11 +1,13 @@
+import {Fragment} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
-import LoggedIn from 'app/layouts/loggedIn';
+import {confirm} from 'app/components/confirm';
+import {InlineIcon} from 'app/components/icon';
 import Modal from 'app/components/modal';
 import {PROJECT_COLORS} from 'app/constants';
+import LoggedIn from 'app/layouts/loggedIn';
 import {CalendarProviderDetailed, CalendarSource} from 'app/types';
-import {InlineIcon} from '@iconify/react';
 
 type Props = {
   calendarProvider: CalendarProviderDetailed;
@@ -30,7 +32,7 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
           )}
         </p>
         <h2>{t('Synced Calendars')}</h2>
-        <ul>
+        <ul className="list-items">
           {calendarProvider.calendar_sources.map(source => {
             return (
               <CalendarSourceItem
@@ -43,7 +45,7 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
           })}
         </ul>
         <h2>{t('Unwatched Calendars')}</h2>
-        <ul>
+        <ul className="list-items">
           {unlinked.map(source => {
             return (
               <CalendarSourceItem
@@ -70,9 +72,21 @@ type ItemProps = {
 function CalendarSourceItem({source, mode, providerId}: ItemProps) {
   const color = PROJECT_COLORS[source.color].code ?? PROJECT_COLORS[0].code;
 
-  function handleDelete(event: React.MouseEvent) {
+  function handleSync(event: React.MouseEvent) {
     event.stopPropagation();
-    Inertia.post(`/calendars/${providerId}/sources/${source.id}/delete`);
+    Inertia.post(`/calendars/${providerId}/sources/${source.id}/sync`);
+  }
+
+  async function handleDelete(event: React.MouseEvent) {
+    event.stopPropagation();
+    if (
+      await confirm(
+        'Are you sure?',
+        'This will stop automatic updates for this calendar.'
+      )
+    ) {
+      return Inertia.post(`/calendars/${providerId}/sources/${source.id}/delete`);
+    }
   }
 
   function handleCreate(event: React.MouseEvent) {
@@ -87,15 +101,23 @@ function CalendarSourceItem({source, mode, providerId}: ItemProps) {
   }
 
   return (
-    <li style={{height: '40px'}}>
-      <InlineIcon icon="dot" color={color} />
-      {source.name}
-      <div className="button-bar">
+    <li>
+      <span>
+        <InlineIcon icon="dot" color={color} width="medium" />
+        {source.name}
+      </span>
+      <div className="button-bar-inline">
         {mode === 'edit' && (
-          <button className="button-danger" onClick={handleDelete}>
-            <InlineIcon icon="trash" />
-            {t('Unlink')}
-          </button>
+          <Fragment>
+            <button className="button-secondary" onClick={handleSync}>
+              <InlineIcon icon="sync" />
+              {t('Refresh')}
+            </button>
+            <button className="button-danger" onClick={handleDelete}>
+              <InlineIcon icon="trash" />
+              {t('Unlink')}
+            </button>
+          </Fragment>
         )}
         {mode === 'create' && (
           <button className="button-primary" onClick={handleCreate}>
