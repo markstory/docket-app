@@ -7,6 +7,10 @@ export function toDateString(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
+export function toTimeString(date: Date): string {
+  return format(date, 'ii:ss');
+}
+
 export function parseDate(input: string | Date): Date {
   if (input instanceof Date) {
     return input;

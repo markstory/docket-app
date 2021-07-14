@@ -5,7 +5,8 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
-import {Project, Task} from 'app/types';
+import {CalendarItem, Project, Task} from 'app/types';
+import CalendarItemList from 'app/components/calendarItemList';
 import {InlineIcon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
@@ -16,6 +17,7 @@ import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/uti
 type Props = {
   tasks: Task[];
   projects: Project[];
+  calendarItems: CalendarItem[];
   start: string;
   nextStart: string;
   generation: string;
@@ -79,7 +81,29 @@ function createGrouper(start: string, numDays: number) {
   };
 }
 
+type GroupedCalendarItems = Record<string, CalendarItem[]>;
+
+function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
+  console.log(items);
+  return items.reduce<GroupedCalendarItems>((acc, item) => {
+    let key;
+    if (item.all_day) {
+      key = item.start_date;
+    } else {
+      const startDate = new Date(item.start_time);
+      key = toDateString(startDate);
+    }
+    if (typeof acc[key] === 'undefined') {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+
+    return acc;
+  }, {});
+}
+
 export default function TasksIndex({
+  calendarItems,
   generation,
   tasks,
   projects,
@@ -96,6 +120,8 @@ export default function TasksIndex({
       </LoggedIn>
     );
   }
+
+  const groupedCalendarItems = groupCalendarItems(calendarItems);
 
   return (
     <LoggedIn title={title}>
@@ -125,6 +151,12 @@ export default function TasksIndex({
                         {heading}
                         {subheading && <span className="minor">{subheading}</span>}
                       </h3>
+                    )}
+                    {groupedCalendarItems[key] && (
+                      <CalendarItemList
+                        key={`cak:${key}`}
+                        items={groupedCalendarItems[key]}
+                      />
                     )}
                     <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                       <TaskGroup

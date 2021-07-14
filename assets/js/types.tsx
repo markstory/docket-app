@@ -32,6 +32,24 @@ export interface CalendarSourceDetailed extends CalendarSource {
   calendar_provider: CalendarProvider;
 }
 
+export type CalendarItem =
+  | {
+      id: number;
+      title: string;
+      html_link: string;
+      all_day: false;
+      start_time: string;
+      end_time: string;
+    }
+  | {
+      id: number;
+      title: string;
+      html_link: string;
+      all_day: true;
+      end_date: string;
+      start_date: string;
+    };
+
 /**
  * Project shape embedded on tasks.
  */
