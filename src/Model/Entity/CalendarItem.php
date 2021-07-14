@@ -15,6 +15,7 @@ use DateTimeInterface;
  * @property string $title
  * @property \Cake\I18n\FrozenTime $start_time
  * @property \Cake\I18n\FrozenTime $end_time
+ * @property bool $all_day
  * @property string|null $html_link
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -41,6 +42,7 @@ class CalendarItem extends Entity
         'start_time' => true,
         'end_date' => true,
         'end_time' => true,
+        'all_day' => true,
         'html_link' => true,
         'created' => true,
         'modified' => true,

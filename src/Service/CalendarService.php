@@ -188,6 +188,7 @@ class CalendarService
             'start_time' => $startTime,
             'end_date' => $endDate,
             'end_time' => $endTime,
+            'all_day' => $startTime === null,
             'html_link' => $event->htmlLink,
         ]);
         $this->CalendarItems->saveOrFail($record);

@@ -98,6 +98,10 @@ class AddCalendarModels extends AbstractMigration
             ->addColumn('start_time', 'datetime')
             ->addColumn('end_date', 'date')
             ->addColumn('end_time', 'datetime')
+            ->addColumn('all_day', 'boolean', [
+                'default' => false,
+                'null' => false,
+            ])
             ->addColumn('html_link', 'string', [
                 'null' => true,
             ])

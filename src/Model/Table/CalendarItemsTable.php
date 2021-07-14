@@ -135,6 +135,7 @@ class CalendarItemsTable extends Table
             ]);
             return $exp->or([$date, $dateTime]);
         })
+            ->orderDesc('CalendarItems.all_day')
             ->orderAsc('CalendarItems.start_date')
             ->orderAsc('CalendarItems.start_time')
             ->orderAsc('CalendarItems.title');
