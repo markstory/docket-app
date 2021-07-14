@@ -21,9 +21,9 @@ class CalendarSourcesController extends AppController
             ->find()
             ->contain('CalendarProviders')
             ->where([
-                // 'CalendarSources.provider_id' => $this->request->getParam('providerId'),
+                // User id condition is applied with an authorization check.
+                'CalendarSources.calendar_provider_id' => $this->request->getParam('providerId'),
                 'CalendarSources.id' => $this->request->getParam('id'),
-                // 'CalendarProviders.user_id' => $this->request->getAttribute('identity')->id,
             ]);
 
         return $query->firstOrFail();
