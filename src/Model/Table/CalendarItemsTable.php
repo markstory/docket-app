@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use RuntimeException;
 
 /**
  * CalendarItems Model
@@ -112,5 +113,30 @@ class CalendarItemsTable extends Table
         $rules->add($rules->existsIn(['calendar_source_id'], 'CalendarSources'), ['errorField' => 'calendar_source_id']);
 
         return $rules;
+    }
+
+    public function findUpcoming(Query $query, array $options): Query
+    {
+        if (empty($options['start'])) {
+            throw new RuntimeException('Missing required `start` option.');
+        }
+        if (empty($options['end'])) {
+            $options['end'] = $options['start']->modify('+28 days');
+        }
+
+        return $query->where(function ($exp) use ($options) {
+            $date = $exp->and([
+                'CalendarItems.start_date >=' => $options['start'],
+                'CalendarItems.end_date <' => $options['end'],
+            ]);
+            $dateTime = $exp->and([
+                'CalendarItems.start_time >=' => $options['start'],
+                'CalendarItems.end_time <' => $options['end'],
+            ]);
+            return $exp->or([$date, $dateTime]);
+        })
+            ->orderAsc('CalendarItems.start_date')
+            ->orderAsc('CalendarItems.start_time')
+            ->orderAsc('CalendarItems.title');
     }
 }
