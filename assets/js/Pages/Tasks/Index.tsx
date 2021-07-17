@@ -84,7 +84,6 @@ function createGrouper(start: string, numDays: number) {
 type GroupedCalendarItems = Record<string, CalendarItem[]>;
 
 function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
-  console.log(items);
   return items.reduce<GroupedCalendarItems>((acc, item) => {
     let key;
     if (item.all_day) {

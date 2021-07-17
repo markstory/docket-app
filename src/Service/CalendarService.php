@@ -162,7 +162,6 @@ class CalendarService
             return;
         }
 
-        debug($event);
         $tz = new DateTimeZone(date_default_timezone_get());
         $start = $event->getStart();
         $end = $event->getEnd();
