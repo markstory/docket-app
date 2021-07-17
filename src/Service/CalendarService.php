@@ -91,7 +91,7 @@ class CalendarService
         try {
             $results = $calendar->calendarList->listCalendarList();
         } catch (GoogleException $e) {
-            throw new BadRequestException('Could not fetch calendars.', $e);
+            throw new BadRequestException('Could not fetch calendars.', null, $e);
         }
         $linkedIds = array_map(function ($item) {
             return $item->provider_id;
@@ -108,6 +108,7 @@ class CalendarService
                 'color' => 1,
             ]);
         }
+
         return $out;
     }
 
@@ -159,6 +160,7 @@ class CalendarService
                 'calendar_source_id' => $source->id,
                 'provider_id' => $event->id,
             ]);
+
             return;
         }
 
@@ -180,6 +182,7 @@ class CalendarService
             }
         }
 
+        /** @var \Cake\Datasource\EntityInterface $record */
         $record = $this->CalendarItems->find()
             ->where([
                 'calendar_source_id' => $source->id,
