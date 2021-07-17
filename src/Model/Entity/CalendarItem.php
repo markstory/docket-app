@@ -50,6 +50,10 @@ class CalendarItem extends Entity
         'provider' => true,
     ];
 
+    protected $_hidden = ['calendar_source'];
+
+    protected $_virtual = ['color'];
+
     public function getStart(): ?DateTimeInterface
     {
         if ($this->start_date) {
@@ -64,5 +68,14 @@ class CalendarItem extends Entity
             return $this->end_date;
         }
         return $this->end_time;
+    }
+
+    protected function _getColor()
+    {
+        if (isset($this->calendar_source)) {
+            return $this->calendar_source->color;
+        }
+
+        return 1;
     }
 }

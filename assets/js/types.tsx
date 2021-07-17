@@ -37,6 +37,7 @@ export type CalendarItem =
   | {
       id: number;
       title: string;
+      color: number;
       html_link: string;
       all_day: false;
       start_time: string;
@@ -45,6 +46,7 @@ export type CalendarItem =
   | {
       id: number;
       title: string;
+      color: number;
       html_link: string;
       all_day: true;
       end_date: string;

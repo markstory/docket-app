@@ -108,6 +108,7 @@ body {
 
   --color-bg-low: var(--color-gray-100);
   --color-bg-low-active: var(--color-gray-200);
+  --color-bg-level1: var(--color-gray-000);
   --color-bg: var(--color-white);
 
   --color-error-fg: var(--color-red-500);
@@ -171,6 +172,7 @@ body.theme-dark {
   --color-border-low: var(--color-gray-700);
   --color-border-med: var(--color-gray-500);
 
+  --color-bg-level1: var(--color-gray-900);
   --color-bg-low: var(--color-gray-900);
   --color-bg-low-active: rgba(91, 91, 69, 0.3);
   --color-bg: var(--color-gray-800);

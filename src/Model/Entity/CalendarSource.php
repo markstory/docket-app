@@ -44,4 +44,6 @@ class CalendarSource extends Entity
         'calendar_provider' => true,
         'calendar_items' => true,
     ];
+
+    protected $_hidden = ['sync_token'];
 }

@@ -1,6 +1,6 @@
 .calendar-item-list {
   padding: $space;
-  background: var(--color-bg-low);
+  background: var(--color-bg-level1);
   border-radius: $border-radius;
   margin-bottom: $space * 1.5;
 }
@@ -13,13 +13,13 @@
   }
 
   &.all-day {
-    // TODO this should use the calendar color.
-    border-left: 4px solid var(--color-primary);
+    border-left: 4px solid var(--calendar-color);
     padding-left: $space / 2;
   }
 
   time{
-    color: var(--color-primary);
+    color: var(--calendar-color);
+    font-weight: 500;
     margin-right: $space / 2;
   }
 }
