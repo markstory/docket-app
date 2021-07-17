@@ -8,7 +8,7 @@ export function toDateString(date: Date): string {
 }
 
 export function toTimeString(date: Date): string {
-  return format(date, 'ii:ss');
+  return format(date, 'kk:mm');
 }
 
 export function parseDate(input: string | Date): Date {

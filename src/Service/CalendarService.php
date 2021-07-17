@@ -8,6 +8,7 @@ use App\Model\Entity\CalendarSource;
 use App\Model\Entity\User;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Exception\BadRequestException;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use DateTimeZone;
 use Google\Client as GoogleClient;
@@ -161,15 +162,24 @@ class CalendarService
             return;
         }
 
+        debug($event);
         $tz = new DateTimeZone(date_default_timezone_get());
         $start = $event->getStart();
         $end = $event->getEnd();
 
-        // TODO handle timezones
-        $startDate = $start->getDate();
-        $startTime = $start->getDateTime();
-        $endDate = $end->getDate();
-        $endTime = $end->getDateTime();
+        $eventTz = $start->getTimeZone();
+        $datetimes = [$start->getDate, $end->getDate(), $start->getDateTime(), $end->getDateTime()];
+        foreach ($datetimes as $i => $value) {
+            if ($value && $i < 2) {
+                $date = FrozenDate::parse($value, $eventTz ?? $tz);
+                $date = $date->setTimezone($tz);
+                $datetimes[$i] = $date;
+            } elseif ($value) {
+                $time = FrozenTime::parse($value, $eventTz ?? $tz);
+                $time = $time->setTimezone($tz);
+                $datetimes[$i] = $time;
+            }
+        }
 
         $record = $this->CalendarItems->find()
             ->where([
@@ -184,11 +194,11 @@ class CalendarService
             'calendar_source_id' => $source->id,
             'provider_id' => $event->id,
             'title' => $event->summary,
-            'start_date' => $startDate,
-            'start_time' => $startTime,
-            'end_date' => $endDate,
-            'end_time' => $endTime,
-            'all_day' => $startTime === null,
+            'start_date' => $datetimes[0],
+            'end_date' => $datetimes[1],
+            'start_time' => $datetimes[2],
+            'end_time' => $datetimes[3],
+            'all_day' => $datetimes[0] !== null,
             'html_link' => $event->htmlLink,
         ]);
         $this->CalendarItems->saveOrFail($record);
