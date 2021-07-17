@@ -96,16 +96,16 @@ class CalendarSourcesController extends AppController
                 'fields' => ['color', 'name'],
             ]);
             if ($this->CalendarSources->save($calendarSource)) {
-                $this->Flash->success(__('The calendar will now display in your time views.'));
-
-                return $this->redirect([
-                    'action' => 'add',
-                    'providerId' => $this->request->getParam('providerId'),
-                ]);
+                $this->Flash->success(__('The calendar has been updated.'));
+            } else {
+                $this->Flash->error(__('The calendar could not be modified. Please, try again.'));
             }
-            $this->Flash->error(__('The calendar could not be added. Please, try again.'));
         }
-        $this->set(compact('calendarSource'));
+
+        return $this->redirect([
+            'action' => 'add',
+            'providerId' => $this->request->getParam('providerId'),
+        ]);
     }
 
     /**

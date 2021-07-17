@@ -56,7 +56,7 @@ function CalendarProviderItem({provider}: ProviderProps) {
     <li>
       {provider.kind} - {provider.identifier}
       <div className="button-bar-inline">
-        <a href={`/calendars/${provider.id}/sources/add`} className="button-bare">
+        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
           {t('Manage Calendars')}
         </a>
       </div>

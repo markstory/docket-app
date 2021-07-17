@@ -4,6 +4,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {t} from 'app/locale';
 import {confirm} from 'app/components/confirm';
 import {InlineIcon} from 'app/components/icon';
+import ColorSelect from 'app/components/colorSelect';
 import Modal from 'app/components/modal';
 import {PROJECT_COLORS} from 'app/constants';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -24,25 +25,30 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
   return (
     <LoggedIn title={title}>
       <Modal onClose={handleClose} label={title}>
-        <h2>{t('{name} Calendars', {name: calendarProvider.identifier})}</h2>
+        <h2>{t('{name} Synced Calendars', {name: calendarProvider.identifier})}</h2>
         <p>
           {t(
             `The following calendars are synced into docket periodically.
              You should see calendar events in your 'today' and 'upcoming' views.`
           )}
         </p>
-        <h2>{t('Synced Calendars')}</h2>
         <ul className="list-items">
           {calendarProvider.calendar_sources.map(source => {
             return (
               <CalendarSourceItem
-                key={source.id}
+                key={`u:${source.name}`}
                 source={source}
                 providerId={calendarProvider.id}
                 mode="edit"
               />
             );
           })}
+          {calendarProvider.calendar_sources.length == 0 && (
+            <li className="list-item-empty">
+              <InlineIcon icon="alert" width="large" />
+              {t('You have no synchronized calendars in this provider. Add one below.')}
+            </li>
+          )}
         </ul>
         <h2>{t('Unwatched Calendars')}</h2>
         <ul className="list-items">
@@ -100,10 +106,21 @@ function CalendarSourceItem({source, mode, providerId}: ItemProps) {
     Inertia.post(`/calendars/${providerId}/sources/add`, data);
   }
 
+  function handleChange(color: number | string) {
+    const data = {
+      color,
+    };
+    Inertia.post(`/calendars/${providerId}/sources/${source.id}/edit`, data);
+  }
+
   return (
     <li>
-      <span>
-        <InlineIcon icon="dot" color={color} width="medium" />
+      <span className="list-item-block">
+        {source.id ? (
+          <ColorSelect value={source.color} onChange={handleChange} hideLabel />
+        ) : (
+          <InlineIcon icon="dot" color={PROJECT_COLORS[15].code} />
+        )}
         {source.name}
       </span>
       <div className="button-bar-inline">

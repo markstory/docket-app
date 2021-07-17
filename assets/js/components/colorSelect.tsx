@@ -11,28 +11,6 @@ type ColorItem = {
   code: string;
 };
 
-function ColorOption(props: OptionProps<ColorItem, false>) {
-  const {innerRef, innerProps, data} = props;
-  const className = classnames({
-    'is-selected': props.isSelected,
-    'is-focused': props.isFocused,
-  });
-  return (
-    <div className={className} ref={innerRef} {...innerProps}>
-      <Color color={data.code} name={data.name} />
-    </div>
-  );
-}
-
-function ColorValue(props: SingleValueProps<ColorItem>) {
-  const {innerProps, data} = props;
-  return (
-    <div {...innerProps}>
-      <Color color={data.code} name={data.name} />
-    </div>
-  );
-}
-
 type ColorProps = {
   name: string;
   color: string;
@@ -52,10 +30,17 @@ type Props = {
    * Default value.
    */
   value?: number;
+  /**
+   * Display labels or not
+   */
+  hideLabel?: boolean;
+  /**
+   * Respond to values changing.
+   */
   onChange?: (value: number | string) => void;
 };
 
-function ColorSelect({value, onChange}: Props): JSX.Element {
+function ColorSelect({hideLabel, value, onChange}: Props): JSX.Element {
   const selected = value !== undefined ? value : PROJECT_COLORS[0].id;
   const valueOption = PROJECT_COLORS.find(opt => opt.id === selected);
 
@@ -65,9 +50,33 @@ function ColorSelect({value, onChange}: Props): JSX.Element {
     }
   }
 
+  function ColorOption(props: OptionProps<ColorItem, false>) {
+    const {innerRef, innerProps, data} = props;
+    const name = hideLabel ? '' : data.name;
+    const className = classnames({
+      'is-selected': props.isSelected,
+      'is-focused': props.isFocused,
+    });
+    return (
+      <div className={className} ref={innerRef} {...innerProps}>
+        <Color color={data.code} name={name} />
+      </div>
+    );
+  }
+
+  function ColorValue(props: SingleValueProps<ColorItem>) {
+    const {innerProps, data} = props;
+    const name = hideLabel ? '' : data.name;
+    return (
+      <div {...innerProps}>
+        <Color color={data.code} name={name} />
+      </div>
+    );
+  }
+  const classPrefix = hideLabel ? 'select-narrow' : 'select';
   return (
     <Select
-      classNamePrefix="select"
+      classNamePrefix={classPrefix}
       placeholder={t('Choose a color')}
       name="color"
       defaultValue={valueOption}

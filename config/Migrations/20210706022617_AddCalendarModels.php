@@ -38,7 +38,9 @@ class AddCalendarModels extends AbstractMigration
                 'default' => null,
                 'null' => false,
             ])
-            ->addForeignKey(['user_id'], 'users')
+            ->addForeignKey(['user_id'], 'users', ['id'], [
+                'on_delete' => 'CASCADE',
+            ])
             ->create();
 
         // A calendar in the provider.
@@ -55,9 +57,8 @@ class AddCalendarModels extends AbstractMigration
                 'default' => null,
                 'null' => false,
             ])
-            ->addColumn('color', 'char', [
-                'default' => null,
-                'limit' => 6,
+            ->addColumn('color', 'integer', [
+                'default' => 1,
                 'null' => false,
             ])
             ->addColumn('last_sync', 'datetime', [
@@ -79,7 +80,9 @@ class AddCalendarModels extends AbstractMigration
                 'null' => false,
             ])
             ->addIndex(['calendar_provider_id', 'provider_id'], ['unique' => true])
-            ->addForeignKey(['calendar_provider_id'], 'calendar_providers')
+            ->addForeignKey(['calendar_provider_id'], 'calendar_providers', ['id'], [
+                'on_delete' => 'CASCADE',
+            ])
             ->create();
 
         // Individual calendar events from a source.
@@ -116,7 +119,9 @@ class AddCalendarModels extends AbstractMigration
                 'null' => false,
             ])
             ->addIndex(['calendar_source_id', 'provider_id'], ['unique' => true])
-            ->addForeignKey(['calendar_source_id'], 'calendar_sources')
+            ->addForeignKey(['calendar_source_id'], 'calendar_sources', ['id'], [
+                'on_delete' => 'CASCADE',
+            ])
             ->create();
     }
 }

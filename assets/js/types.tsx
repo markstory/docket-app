@@ -23,7 +23,8 @@ export interface CalendarProviderDetailed extends CalendarProvider {
 export interface CalendarSource {
   id: number;
   name: string;
-  color: string;
+  color: number;
+  provider_id: string;
   last_sync: string;
   sync_token: string;
 }
