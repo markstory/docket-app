@@ -21,8 +21,8 @@
             "summary": "primary",
             "description": "",
             "timeZone": "UTC",
-            "nextPageToken": null,
-            "nextSyncToken": "next-sync-token",
+            "nextPageToken": "next-page-token",
+            "nextSyncToken": null,
             "items": [
               {
                 "kind": "calendar#event",
@@ -42,7 +42,36 @@
                   "timeZone": "America/New_York"
                 },
                 "status": "confirmed"
-              },
+              }
+            ]
+          }
+
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?pageToken=next-page-token'
+        headers:
+            content-type: application/json
+            authorization: 'Bearer calendar-access-token'
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 03:30:58 GMT'
+        body: >
+          {
+            "kind": "calendar#events",
+            "etag": "etag-value",
+            "summary": "primary",
+            "description": "",
+            "timeZone": "UTC",
+            "nextPageToken": null,
+            "nextSyncToken": "final-sync-token",
+            "items": [
               {
                 "kind": "calendar#event",
                 "etag": "etag-value",
@@ -56,23 +85,6 @@
                 },
                 "end": {
                   "date": "2021-07-28",
-                  "dateTime": null
-                },
-                "status": "confirmed"
-              },
-              {
-                "kind": "calendar#event",
-                "etag": "etag-value",
-                "id": "calendar-event-3",
-                "summary": "Go camping",
-                "description": "multi day event",
-                "htmlLink": "https://calendar.example.com/events/3",
-                "start": {
-                  "date": "2021-07-15",
-                  "dateTime": null
-                },
-                "end": {
-                  "date": "2021-07-17",
                   "dateTime": null
                 },
                 "status": "confirmed"

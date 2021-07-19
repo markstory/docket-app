@@ -60,16 +60,15 @@ class CalendarSourcesController extends AppController
 
     public function sync(CalendarService $service)
     {
-        $user = $this->request->getAttribute('identity');
         $source = $this->getSource();
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
         $service->setAccessToken($source->calendar_provider);
         try {
-            $service->syncEvents($user, $source);
-            $this->Flash->success(__('Calendar updated'));
+            $service->syncEvents($source);
+            $this->Flash->success(__('Calendar events refreshed'));
         } catch (\Exception $e) {
-            $this->Flash->error(__('Calendar could not be updated'));
+            $this->Flash->error(__('Calendar could not be refreshed.'));
         }
 
         return $this->redirect([

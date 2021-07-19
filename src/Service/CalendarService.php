@@ -112,7 +112,7 @@ class CalendarService
         return $out;
     }
 
-    public function syncEvents(User $user, CalendarSource $source)
+    public function syncEvents(CalendarSource $source)
     {
         $this->loadModel('CalendarSources');
         $this->loadModel('CalendarItems');
@@ -129,27 +129,36 @@ class CalendarService
             $options = ['syncToken' => $source->sync_token];
         }
 
-        do {
-            try {
-                $results = $calendar->events->listEvents($source->provider_id, $options);
-            } catch (\Exception $e) {
-                if ($e->getCode() == 410) {
-                    // Start a full sync as our sync token was not good
-                    $options = $defaults;
-                    continue;
-                } else {
-                    throw $e;
-                }
-            }
-            foreach ($results as $event) {
-                $this->syncEvent($source, $event);
-            }
-            $pageToken = $results->getNextPageToken();
-        } while ($pageToken !== null);
+        $this->CalendarItems->getConnection()->transactional(function () use ($calendar, $defaults, $options, $source) {
+            $pageToken = null;
 
-        // Save the nextSyncToken for our next sync.
-        $source->sync_token = $results->getNextSyncToken();
-        $this->CalendarSources->saveOrFail($source);
+            do {
+                if ($pageToken !== null) {
+                    $options['pageToken'] = $pageToken;
+                    unset($options['timeMin']);
+                }
+
+                try {
+                    $results = $calendar->events->listEvents($source->provider_id, $options);
+                } catch (\Exception $e) {
+                    if ($e->getCode() == 410) {
+                        // Start a full sync as our sync token was not good
+                        $options = $defaults;
+                        continue;
+                    } else {
+                        throw $e;
+                    }
+                }
+                foreach ($results as $event) {
+                    $this->syncEvent($source, $event);
+                }
+                $pageToken = $results->getNextPageToken();
+            } while ($pageToken !== null);
+
+            // Save the nextSyncToken for our next sync.
+            $source->sync_token = $results->getNextSyncToken();
+            $this->CalendarSources->saveOrFail($source);
+        });
     }
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
@@ -169,7 +178,7 @@ class CalendarService
         $end = $event->getEnd();
 
         $eventTz = $start->getTimeZone();
-        $datetimes = [$start->getDate, $end->getDate(), $start->getDateTime(), $end->getDateTime()];
+        $datetimes = [$start->getDate(), $end->getDate(), $start->getDateTime(), $end->getDateTime()];
         foreach ($datetimes as $i => $value) {
             if ($value && $i < 2) {
                 $date = FrozenDate::parse($value, $eventTz ?? $tz);
