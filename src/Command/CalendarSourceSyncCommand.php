@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Command;
@@ -49,6 +50,9 @@ class CalendarSourceSyncCommand extends Command
             'required' => true,
             'help' => __('The id of the calendar source to refresh.'),
         ]);
+        $parser->addOption('erase-local', [
+            'help' => __('Enable to erase all local data for the source, and start a fresh sync.'),
+        ]);
 
         return $parser;
     }
@@ -63,15 +67,23 @@ class CalendarSourceSyncCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $this->loadModel('CalendarSources');
-        $this->loadModel('Users');
 
         $sourceId = $args->getArgument('calendarSourceId');
         $source = $this->CalendarSources->get($sourceId, ['contain' => ['CalendarProviders']]);
-        $user = $this->Users->get($source->calendar_provider->user_id);
+        if ($args->getOption('erase-local')) {
+            $io->out('<info>Clearing sync token, and removing all events</info>');
+            $source->sync_token = null;
+            $this->CalendarSources->CalendarItems->deleteAll(['calendar_source_id' => $source->id]);
+        }
 
         $this->service->setAccessToken($source->calendar_provider);
         $io->out('Starting sync');
-        $this->service->syncEvents($user, $source);
+        $this->service->syncEvents($source);
+        $count = $this->CalendarSources->CalendarItems
+            ->find()
+            ->where(['calendar_source_id' => $source->id])
+            ->count();
         $io->out('<success>Sync complete</success>');
+        $io->out("{$count} events in local database");
     }
 }
