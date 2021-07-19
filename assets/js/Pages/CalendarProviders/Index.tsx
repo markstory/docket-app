@@ -32,6 +32,7 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
               <CalendarProviderItem
                 key={calendarProvider.id}
                 provider={calendarProvider}
+                referer={referer}
               />
             );
           })}
@@ -50,13 +51,17 @@ export default CalendarProvidersIndex;
 
 type ProviderProps = {
   provider: CalendarProvider;
+  referer: string;
 };
-function CalendarProviderItem({provider}: ProviderProps) {
+function CalendarProviderItem({provider, referer}: ProviderProps) {
   return (
     <li>
       {provider.kind} - {provider.identifier}
       <div className="button-bar-inline">
-        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
+        <a
+          href={`/calendars/${provider.id}/sources/add?referer=${referer}`}
+          className="button-secondary"
+        >
           {t('Manage Calendars')}
         </a>
       </div>
