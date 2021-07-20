@@ -12,7 +12,13 @@ import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
-import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/utils/dates';
+import {
+  toDateString,
+  formatDateHeading,
+  getRangeInDays,
+  parseDate,
+  ONE_DAY_IN_MS,
+} from 'app/utils/dates';
 
 type Props = {
   tasks: Task[];
@@ -85,17 +91,19 @@ type GroupedCalendarItems = Record<string, CalendarItem[]>;
 
 function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
   return items.reduce<GroupedCalendarItems>((acc, item) => {
-    let key;
+    let keys = [];
     if (item.all_day) {
-      key = item.start_date;
+      keys = getRangeInDays(new Date(item.start_date), new Date(item.end_date));
     } else {
-      const startDate = new Date(item.start_time);
-      key = toDateString(startDate);
+      keys = getRangeInDays(new Date(item.start_time), new Date(item.end_time));
     }
-    if (typeof acc[key] === 'undefined') {
-      acc[key] = [];
-    }
-    acc[key].push(item);
+
+    keys.forEach(key => {
+      if (typeof acc[key] === 'undefined') {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+    });
 
     return acc;
   }, {});
@@ -154,6 +162,7 @@ export default function TasksIndex({
                     {groupedCalendarItems[key] && (
                       <CalendarItemList
                         key={`cak:${key}`}
+                        date={key}
                         items={groupedCalendarItems[key]}
                       />
                     )}
