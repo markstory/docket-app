@@ -54,8 +54,8 @@ class TasksController extends AppController
             $end = $start->modify('+28 days');
             $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $start, 
-                'end' => $end
+                'start' => $start,
+                'end' => $end,
             ]);
         }
         $tasks = $query->all();

@@ -76,7 +76,7 @@ class CalendarSourcesController extends AppController
             'providerId' => $this->request->getParam('providerId'),
             '?' => [
                 'referer' => $this->request->getData('referer'),
-            ]
+            ],
         ]);
     }
 
