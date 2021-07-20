@@ -65,6 +65,17 @@ export function getDiff(date: Date | string, compare?: Date) {
   return differenceInDays(input, compare);
 }
 
+export function getRangeInDays(start: Date, end: Date) {
+  const diff = differenceInDays(end, start);
+  const dates = [toDateString(start)];
+  let move = start;
+  while (dates.length < diff) {
+    move = addDays(move, 1);
+    dates.push(toDateString(move));
+  }
+  return dates;
+}
+
 export function formatCompactDate(date: Date | string): string {
   const input = parseDate(date);
   const delta = differenceInDays(input, getToday());

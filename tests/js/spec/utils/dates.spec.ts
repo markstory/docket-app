@@ -3,6 +3,7 @@ import {
   formatDateHeading,
   formatCompactDate,
   getToday,
+  getRangeInDays,
   parseDate,
   parseDateInput,
   toDateString,
@@ -122,6 +123,22 @@ describe('utils/dates', function () {
       const result = formatDateHeading(weekday);
       expect(result[0]).toMatch(/^\w+ \d{1,2}$/);
       expect(result[1]).toEqual('');
+    });
+  });
+
+  describe('getRangeInDays()', function () {
+    const start = new Date(2021, 1, 1);
+
+    it('handles whole days', function () {
+      const end = new Date(2021, 1, 5);
+      const result = getRangeInDays(start, end);
+      expect(result).toEqual(['2021-02-01', '2021-02-02', '2021-02-03', '2021-02-04']);
+    });
+
+    it('handles partial days', function () {
+      const end = new Date(2021, 1, 5, 12, 13, 14);
+      const result = getRangeInDays(start, end);
+      expect(result).toEqual(['2021-02-01', '2021-02-02', '2021-02-03', '2021-02-04']);
     });
   });
 });
