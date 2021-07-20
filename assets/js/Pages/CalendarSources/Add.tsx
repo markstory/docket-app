@@ -40,6 +40,7 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
                 source={source}
                 providerId={calendarProvider.id}
                 mode="edit"
+                referer={referer}
               />
             );
           })}
@@ -59,6 +60,7 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
                 source={source}
                 providerId={calendarProvider.id}
                 mode="create"
+                referer={referer}
               />
             );
           })}
@@ -73,14 +75,15 @@ type ItemProps = {
   source: CalendarSource;
   providerId: number;
   mode: 'create' | 'edit';
+  referer: string;
 };
 
-function CalendarSourceItem({source, mode, providerId}: ItemProps) {
-  const color = PROJECT_COLORS[source.color].code ?? PROJECT_COLORS[0].code;
-
+function CalendarSourceItem({source, mode, providerId, referer}: ItemProps) {
   function handleSync(event: React.MouseEvent) {
     event.stopPropagation();
-    Inertia.post(`/calendars/${providerId}/sources/${source.id}/sync`);
+    Inertia.post(`/calendars/${providerId}/sources/${source.id}/sync`, {
+      referer: referer,
+    });
   }
 
   async function handleDelete(event: React.MouseEvent) {

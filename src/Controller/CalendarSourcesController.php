@@ -74,6 +74,9 @@ class CalendarSourcesController extends AppController
         return $this->redirect([
             'action' => 'add',
             'providerId' => $this->request->getParam('providerId'),
+            '?' => [
+                'referer' => $this->request->getData('referer'),
+            ]
         ]);
     }
 
