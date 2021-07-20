@@ -55,7 +55,7 @@ class CalendarSourcesController extends AppController
 
         $this->set('calendarProvider', $provider);
         $this->set('unlinked', $calendars);
-        $this->set('referer', $this->getReferer('tasks:today');
+        $this->set('referer', $this->getReferer('tasks:today'));
     }
 
     public function sync(CalendarService $service)
