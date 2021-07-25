@@ -14,6 +14,7 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\CalendarProvidersTable&\Cake\ORM\Association\BelongsTo $CalendarProviders
  * @property \App\Model\Table\ProvidersTable&\Cake\ORM\Association\BelongsTo $Providers
  * @property \App\Model\Table\CalendarItemsTable&\Cake\ORM\Association\HasMany $CalendarItems
+ * @property \App\Model\Table\CalendarItemsTable&\Cake\ORM\Association\HasMany $CalendarSubscriptions
  *
  * @method \App\Model\Entity\CalendarSource newEmptyEntity()
  * @method \App\Model\Entity\CalendarSource newEntity(array $data, array $options = [])
@@ -58,6 +59,9 @@ class CalendarSourcesTable extends Table
             'joinType' => 'INNER',
         ]);
         $this->hasMany('CalendarItems', [
+            'foreignKey' => 'calendar_source_id',
+        ]);
+        $this->hasMany('CalendarSubscriptions', [
             'foreignKey' => 'calendar_source_id',
         ]);
     }

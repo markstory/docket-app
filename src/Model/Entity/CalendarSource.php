@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
  *
  * @property \App\Model\Entity\CalendarProvider $calendar_provider
  * @property \App\Model\Entity\CalendarItem[] $calendar_items
+ * @property \App\Model\Entity\CalendarSubscription[] $calendar_subscriptions
  */
 class CalendarSource extends Entity
 {
@@ -41,8 +42,9 @@ class CalendarSource extends Entity
         'sync_token' => true,
         'created' => true,
         'modified' => true,
-        'calendar_provider' => true,
-        'calendar_items' => true,
+        'calendar_provider' => false,
+        'calendar_items' => false,
+        'calendar_subscriptions' => false,
     ];
 
     protected $_hidden = ['sync_token'];
