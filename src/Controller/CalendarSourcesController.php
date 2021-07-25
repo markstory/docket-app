@@ -43,9 +43,15 @@ class CalendarSourcesController extends AppController
         ]);
         $this->Authorization->authorize($provider, 'edit');
         if ($this->request->is('post')) {
-            $source = $this->CalendarSources->newEntity($this->request->getData());
+            $data = $this->request->getData();
+            $data['calendar_provider_id'] = $providerId;
+
+            $source = $this->CalendarSources->newEntity($data);
             if ($this->CalendarSources->save($source)) {
-                $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
+                $service->createSubscription($source);
+
+                $this->Flash->success(__('Your calendar will now be automatically synced.'));
+                return $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
             } else {
                 $this->Flash->error(__('Could not add that calendar.'));
             }

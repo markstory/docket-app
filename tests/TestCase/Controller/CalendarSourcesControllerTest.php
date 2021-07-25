@@ -24,6 +24,7 @@ class CalendarSourcesControllerTest extends TestCase
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
+        'app.CalendarSubscriptions',
         'app.CalendarItems',
         'app.Projects',
     ];
@@ -190,6 +191,32 @@ class CalendarSourcesControllerTest extends TestCase
         $unlinked = $this->viewVariable('unlinked');
         $this->assertCount(1, $unlinked);
         $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
+    }
+
+    /**
+     * @vcr calendarservice_createsubscription_success.yml
+     */
+    public function testAddPost()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/add", [
+            'provider_id' => 'calendar-1',
+            'color' => 1,
+            'name' => 'Work Calendar',
+        ]);
+        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertFlashElement('flash/success');
+
+        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
+        $this->assertSame('calendar-1', $source->provider_id);
+
+        $subs = TableRegistry::get('CalendarSubscriptions');
+        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
+        $this->assertNotEmpty($sub->identifier,);
     }
 
     /**
