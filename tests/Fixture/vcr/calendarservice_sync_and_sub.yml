@@ -1,0 +1,79 @@
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00'
+        headers:
+            content-type: application/json
+            authorization: 'Bearer calendar-access-token'
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 03:30:58 GMT'
+        body: >
+          {
+            "kind": "calendar#events",
+            "etag": "etag-value",
+            "summary": "primary",
+            "description": "",
+            "timeZone": "UTC",
+            "nextPageToken": null,
+            "nextSyncToken": "next-sync-token",
+            "items": [
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-3",
+                "summary": "Go camping",
+                "description": "multi day event",
+                "htmlLink": "https://calendar.example.com/events/3",
+                "start": {
+                  "date": "2021-07-15",
+                  "dateTime": null
+                },
+                "end": {
+                  "date": "2021-07-17",
+                  "dateTime": null
+                },
+                "status": "confirmed"
+              }
+            ]
+          }
+
+-
+    request:
+        method: POST
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch'
+        headers:
+            Host: www.googleapis.com
+            Expect: ''
+            Accept-Encoding: ''
+            content-type: application/json
+        body: >
+          {
+            "address": "\/google\/calendar\/notifications",
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
+            "type": "web_hook"
+          }
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Sun, 25 Jul 2021 02:56:56 GMT'
+        body: >
+          {
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "kind": "api#channel",
+            "resourceId": "calendar-1",
+            "resourceUrl": "",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9"
+            "expiration": 1426325213000
+          }

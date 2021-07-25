@@ -21,13 +21,19 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
 /** @var \Cake\Routing\RouteBuilder $routes */
 $routes->setRouteClass(DashedRoute::class);
 
+// Cross Site Request Forgery (CSRF) Protection Middleware
+// https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
+$routes->registerMiddleware('csrf', new CsrfProtectionMiddleware());
+
 $routes->scope('/', function (RouteBuilder $builder) {
+    $builder->applyMiddleware('csrf');
     /*
      * Here, we are connecting '/' (base path) to a controller called 'Pages',
      * its action called 'display', and we pass a param to select the view file
@@ -139,10 +145,14 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
     });
 
-    $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
 
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
         $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
     });
+});
+
+// Routes in this scope don't have CSRF protection.
+$routes->scope('/', function (RouteBuilder $builder) {
+    $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
 });

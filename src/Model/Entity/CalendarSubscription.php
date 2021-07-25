@@ -36,4 +36,9 @@ class CalendarSubscription extends Entity
         'modified' => true,
         'calendar_source' => true,
     ];
+
+    protected function _getChannelToken()
+    {
+        return http_build_query(['verifier' => $this->verifier]);
+    }
 }
