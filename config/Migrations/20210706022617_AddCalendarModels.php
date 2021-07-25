@@ -85,6 +85,30 @@ class AddCalendarModels extends AbstractMigration
             ])
             ->create();
 
+        // Push notification subscriptions for a calendar.
+        // This is a 1:N relation as we could have multiple subscriptions
+        // active for the same source. Google's docs mention that channels
+        // can expire and we'll want to make a new channel before the old
+        // expires.
+        $this->table('calendar_subscriptions')
+             ->addColumn('calendar_source_id', 'integer', [
+                'default' => null,
+                'null' => false,
+             ])
+             ->addColumn('identifier', 'string', [
+                 'default' => null,
+                 'null' => false,
+             ])
+             ->addColumn('verifier', 'string', [
+                 'default' => null,
+                 'null' => false,
+             ])
+            ->addIndex(['identifier'], ['unique' => true])
+            ->addForeignKey(['calendar_source_id'], 'calendar_sources', ['id'], [
+                'on_delete' => 'CASCADE',
+            ])
+            ->create();
+
         // Individual calendar events from a source.
         $this->table('calendar_items')
             ->addColumn('calendar_source_id', 'integer', [
