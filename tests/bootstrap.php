@@ -67,13 +67,41 @@ VCR::configure()
     ->setCassettePath(__DIR__ . '/Fixture/vcr')
     ->setStorage('yaml')
     ->setWhitelist(['vendor/guzzlehttp', 'vendor/cakephp/cakephp/src/Http/Client'])
+    ->addRequestMatcher('sloppy_body', function (\VCR\Request $first, \VCR\Request $second) {
+        $bodies = [$first->getBody(), $second->getBody()];
+        foreach ($bodies as $i => $body) {
+            if ($body === null) {
+                unset($bodies[$i]);
+                continue;
+            }
+            $bodies[$i] = json_decode($body, true);
+        }
+        // Only be sloppy with json requests.
+        if (count($bodies) !== 2) {
+            return $first->getBody() == $second->getBody();
+        }
+
+        $special = [
+            '/calendar/v3/calendars/calendar-1/events/watch' => ['id', 'token'],
+        ];
+        foreach ($special as $url => $fields) {
+            if (strpos($first->getUrl(), $url) !== false) {
+                foreach ($fields as $field) {
+                    unset($bodies[0][$field]);
+                    unset($bodies[1][$field]);
+                }
+            }
+        }
+
+        return json_encode($bodies[0]) == json_encode($bodies[1]);
+    })
     ->enableRequestMatchers([
-        'body',
         'post_fields',
         'method',
         'url',
         'host',
         'query_string',
+        'sloppy_body',
     ])
     ->enableLibraryHooks(['curl'])
     ->setMode('once');
