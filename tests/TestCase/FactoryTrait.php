@@ -5,6 +5,7 @@ namespace App\Test\TestCase;
 
 use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Text;
 use DateTime;
 
 trait FactoryTrait
@@ -121,5 +122,17 @@ trait FactoryTrait
         ], $props));
 
         return $items->saveOrFail($item);
+    }
+
+    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null)
+    {
+        $subs = TableRegistry::get('CalendarSubscriptions');
+        $sub = $subs->newEntity([
+            'calendar_source_id' => $sourceId,
+            'identifier' => $identifier ?? Text::uuid(),
+            'verifier' => $verifier ?? Text::uuid(),
+        ]);
+
+        return $subs->saveOrFail($sub);
     }
 }

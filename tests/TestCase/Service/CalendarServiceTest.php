@@ -11,6 +11,8 @@ use Cake\Core\Container;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use RuntimeException;
 
 class CalendarServiceTest extends TestCase
 {
@@ -20,6 +22,7 @@ class CalendarServiceTest extends TestCase
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
+        'app.CalendarSubscriptions',
         'app.CalendarItems',
     ];
 
@@ -228,5 +231,74 @@ class CalendarServiceTest extends TestCase
         $this->assertNull($new->id, 'should be a new record.');
         $this->assertNotNull($new->provider_id);
         $this->assertNotNull($new->name);
+    }
+
+    public function testGetSourceForSubscription()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $sub = $this->makeCalendarSubscription($source->id);
+        $found = $this->calendar->getSourceForSubscription($sub->identifier, $sub->verifier);
+
+        $this->assertNotEmpty($found);
+        $this->assertEquals($source->id, $found->id);
+        $this->assertEquals($source->provider_id, $found->provider_id);
+
+        // Has the provider loaded.
+        $this->assertNotEmpty($found->calendar_provider);
+        $this->assertEquals($provider->id, $found->calendar_provider->id);
+        $this->assertEquals($provider->identifier, $found->calendar_provider->identifier);
+    }
+
+    public function testGetSourceForSubscriptionInvalid()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $this->expectException(RecordNotFoundException::class);
+        $this->calendar->getSourceForSubscription('nope', 'also nope');
+    }
+
+    public function testGetSourceForSubscriptionInvalidVerifier()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $sub = $this->makeCalendarSubscription($source->id);
+        $this->expectException(RecordNotFoundException::class);
+        $this->calendar->getSourceForSubscription($sub->identifier, 'nope');
+    }
+
+    /**
+     * @vcr calendarservice_createsubscription_success.yml
+     */
+    public function testCreateSubscriptionSuccess()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $sub = $this->calendar->createSubscription($source, 'random-string', 'verifier-string');
+        $this->assertNotEmpty($sub);
+        $this->assertSame($source->id, $sub->calendar_source_id);
+        $this->assertNotEmpty($sub->identifier);
+        $this->assertNotEmpty($sub->verifier);
+    }
+
+    /**
+     * @vcr calendarservice_createsubscription_failure.yml
+     */
+    public function testCreateSubscriptionFailure()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $this->expectException(RuntimeException::class);
+        $this->calendar->createSubscription($source, 'random-string', 'verifier-string');
     }
 }

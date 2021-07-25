@@ -15,7 +15,6 @@ class CalendarSubscriptionsFixture extends TestFixture
      *
      * @var array
      */
-    // phpcs:disable
     public $fields = [
         'id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'calendar_source_id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
@@ -36,24 +35,4 @@ class CalendarSubscriptionsFixture extends TestFixture
             'collation' => 'utf8mb4_0900_ai_ci'
         ],
     ];
-    // phpcs:enable
-    /**
-     * Init method
-     *
-     * @return void
-     */
-    public function init(): void
-    {
-        $this->records = [
-            [
-                'id' => 1,
-                'calendar_source_id' => 1,
-                'identifier' => 'Lorem ipsum dolor sit amet',
-                'verifier' => 'Lorem ipsum dolor sit amet',
-                'created' => '2021-07-25 01:32:01',
-                'modified' => '2021-07-25 01:32:01',
-            ],
-        ];
-        parent::init();
-    }
 }

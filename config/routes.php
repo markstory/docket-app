@@ -129,6 +129,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
             ->setPass(['id']);
     });
+
     $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function ($builder) {
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'calendarsources:add'])
             ->setPass(['providerId']);
@@ -137,6 +138,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync');
         $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
     });
+
+    $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
 
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);

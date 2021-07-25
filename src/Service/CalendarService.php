@@ -5,16 +5,19 @@ namespace App\Service;
 
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
-use App\Model\Entity\User;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
+use Cake\Routing\Router;
+use Cake\Utility\Text;
 use DateTimeZone;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
 use Google\Service\Calendar;
+use Google\Service\Calendar\Channel as GoogleChannel;
 use Google\Service\Calendar\Event as GoogleEvent;
+use RuntimeException;
 
 /**
  * Provides Calendar syncing.
@@ -37,6 +40,11 @@ class CalendarService
      * @var \App\Model\Table\CalendarSourcesTable
      */
     private $CalendarSources;
+
+    /**
+     * @var \App\Model\Table\CalendarSubscriptionsTable
+     */
+    private $CalendarSubscriptions;
 
     /**
      * @var \App\Model\Table\CalendarProvidersTable
@@ -112,6 +120,59 @@ class CalendarService
         return $out;
     }
 
+    public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource
+    {
+        $this->loadModel('CalendarSources');
+        $source = $this->CalendarSources->find()
+            ->innerJoinWith('CalendarSubscriptions')
+            ->contain('CalendarProviders')
+            ->where([
+                'CalendarSubscriptions.identifier' => $identifier,
+                'CalendarSubscriptions.verifier' => $verifier,
+            ])
+            ->firstOrFail();
+
+        /** @var \App\Model\Entity\CalendarSource */
+        return $source;
+    }
+
+    /**
+     * Create a watch subscription in google for a calendar.
+     *
+     * @see https://developers.google.com/calendar/api/guides/push
+     */
+    public function createSubscription(CalendarSource $source)
+    {
+        $this->loadModel('CalendarSubscriptions');
+        $sub = $this->CalendarSubscriptions->newEmptyEntity();
+        $sub->identifier = Text::uuid();
+        $sub->verifier = Text::uuid();
+        $sub->calendar_source_id = $source->id;
+        // Save to the local database first, as we can get a notification from
+        // google before the watch request completes.
+        $this->CalendarSubscriptions->saveOrFail($sub);
+
+        $calendar = new Calendar($this->client);
+        $channel = new GoogleChannel();
+        $channel->setId($sub->identifier);
+        $channel->setAddress(Router::url(['_name' => 'googlenotification:update']));
+        $channel->setToken(http_build_query(['verifier' => $sub->verifier]));
+        $channel->setType('web_hook');
+
+        try {
+            $calendar->events->watch($source->provider_id, $channel);
+        } catch (GoogleException $e) {
+            throw new RuntimeException('Could not create subscription', 0, $e);
+        }
+
+        return $sub;
+    }
+
+    /**
+     * Sync events from google.
+     *
+     * @see https://developers.google.com/calendar/api/guides/sync
+     */
     public function syncEvents(CalendarSource $source)
     {
         $this->loadModel('CalendarSources');
@@ -140,7 +201,7 @@ class CalendarService
 
                 try {
                     $results = $calendar->events->listEvents($source->provider_id, $options);
-                } catch (\Exception $e) {
+                } catch (GoogleException $e) {
                     if ($e->getCode() == 410) {
                         // Start a full sync as our sync token was not good
                         $options = $defaults;
