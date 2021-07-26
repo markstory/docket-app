@@ -2,7 +2,7 @@ import {Fragment} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
-import {confirm} from 'app/components/confirm';
+import {deleteSource} from 'app/actions/calendars';
 import {InlineIcon} from 'app/components/icon';
 import ColorSelect from 'app/components/colorSelect';
 import Modal from 'app/components/modal';
@@ -28,7 +28,7 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
         <h2>{t('{name} Synced Calendars', {name: calendarProvider.identifier})}</h2>
         <p>
           {t(
-            `The following calendars are synced into docket periodically.
+            `The following calendars are synced into Docket.
              You should see calendar events in your 'today' and 'upcoming' views.`
           )}
         </p>
@@ -36,9 +36,9 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
           {calendarProvider.calendar_sources.map(source => {
             return (
               <CalendarSourceItem
-                key={`u:${source.name}`}
+                key={`l:${source.provider_id}`}
                 source={source}
-                providerId={calendarProvider.id}
+                provider={calendarProvider}
                 mode="edit"
                 referer={referer}
               />
@@ -56,9 +56,9 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
           {unlinked.map(source => {
             return (
               <CalendarSourceItem
-                key={source.id}
+                key={source.provider_id}
                 source={source}
-                providerId={calendarProvider.id}
+                provider={calendarProvider}
                 mode="create"
                 referer={referer}
               />
@@ -73,29 +73,22 @@ export default CalendarSourcesAdd;
 
 type ItemProps = {
   source: CalendarSource;
-  providerId: number;
+  provider: CalendarProvider;
   mode: 'create' | 'edit';
   referer: string;
 };
 
-function CalendarSourceItem({source, mode, providerId, referer}: ItemProps) {
+function CalendarSourceItem({source, mode, provider, referer}: ItemProps) {
   function handleSync(event: React.MouseEvent) {
     event.stopPropagation();
-    Inertia.post(`/calendars/${providerId}/sources/${source.id}/sync`, {
+    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`, {
       referer: referer,
     });
   }
 
   async function handleDelete(event: React.MouseEvent) {
     event.stopPropagation();
-    if (
-      await confirm(
-        'Are you sure?',
-        'This will stop automatic updates for this calendar.'
-      )
-    ) {
-      return Inertia.post(`/calendars/${providerId}/sources/${source.id}/delete`);
-    }
+    return deleteSource(provider, source);
   }
 
   function handleCreate(event: React.MouseEvent) {
@@ -106,14 +99,14 @@ function CalendarSourceItem({source, mode, providerId, referer}: ItemProps) {
       name: source.name,
       color: source.color,
     };
-    Inertia.post(`/calendars/${providerId}/sources/add`, data);
+    Inertia.post(`/calendars/${provider.id}/sources/add`, data);
   }
 
   function handleChange(color: number | string) {
     const data = {
       color,
     };
-    Inertia.post(`/calendars/${providerId}/sources/${source.id}/edit`, data);
+    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/edit`, data);
   }
 
   return (

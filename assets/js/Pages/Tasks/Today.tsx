@@ -108,7 +108,9 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                   <Icon icon="clippy" />
                   {t('Today')}
                 </h2>
-                <CalendarItemList date={defaultDate} items={calendarItems} />
+                {calendarItems.length > 0 && (
+                  <CalendarItemList date={defaultDate} items={calendarItems} />
+                )}
                 <TaskGroup
                   dataTestId="today-group"
                   dropId={today.key}

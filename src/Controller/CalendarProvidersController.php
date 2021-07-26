@@ -21,26 +21,9 @@ class CalendarProvidersController extends AppController
         $query = $this->CalendarProviders->find();
         $query = $this->Authorization->applyScope($query);
         $calendarProviders = $this->paginate($query);
-        $referer = $this->referer(['_name' => 'tasks:today']);
+        $referer = $this->getReferer('tasks:today');
 
         $this->set(compact('calendarProviders', 'referer'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Calendar Provider id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $calendarProvider = $this->CalendarProviders->get($id, [
-            'contain' => ['CalendarSources'],
-        ]);
-        $this->Authorization->authorize($calendarProvider);
-
-        $this->set(compact('calendarProvider'));
     }
 
     /**
@@ -57,9 +40,9 @@ class CalendarProvidersController extends AppController
         $this->Authorization->authorize($calendarProvider);
 
         if ($this->CalendarProviders->delete($calendarProvider)) {
-            $this->Flash->success(__('The calendar provider has been deleted.'));
+            $this->Flash->success(__('The calendar account has been deleted.'));
         } else {
-            $this->Flash->error(__('The calendar provider could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The calendar account could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);

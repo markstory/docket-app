@@ -15,6 +15,10 @@
     border-bottom: 1px solid var(--color-border-low);
   }
 
+  li:last-child {
+    border-bottom: none;
+  }
+
   li.list-item-empty {
     border-bottom: 0;
     padding: $space * 2;

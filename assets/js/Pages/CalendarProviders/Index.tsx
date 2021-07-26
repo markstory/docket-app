@@ -1,10 +1,11 @@
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
+import {deleteProvider} from 'app/actions/calendars';
 import LoggedIn from 'app/layouts/loggedIn';
 import Modal from 'app/components/modal';
 import {CalendarProvider} from 'app/types';
-import {InlineIcon} from '@iconify/react';
+import {InlineIcon} from 'app/components/icon';
 
 type Props = {
   calendarProviders: CalendarProvider[];
@@ -40,7 +41,7 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
         <div className="button-bar">
           <a className="button-primary" href="/auth/google/authorize">
             <InlineIcon icon="plus" />
-            {t('Add account')}
+            {t('Add Google Account')}
           </a>
         </div>
       </Modal>
@@ -49,14 +50,18 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
 }
 export default CalendarProvidersIndex;
 
-type ProviderProps = {
-  provider: CalendarProvider;
-  referer: string;
-};
+type ProviderProps = {provider: CalendarProvider; referer: string};
 function CalendarProviderItem({provider, referer}: ProviderProps) {
+  async function handleDelete(event: React.MouseEvent) {
+    event.stopPropagation();
+    await deleteProvider(provider);
+  }
+
   return (
     <li>
-      {provider.kind} - {provider.identifier}
+      <span className="list-item-block">
+        <ProviderIcon provider={provider} /> {provider.identifier}
+      </span>
       <div className="button-bar-inline">
         <a
           href={`/calendars/${provider.id}/sources/add?referer=${referer}`}
@@ -64,7 +69,28 @@ function CalendarProviderItem({provider, referer}: ProviderProps) {
         >
           {t('Manage Calendars')}
         </a>
+        <button onClick={handleDelete} className="button-danger">
+          <InlineIcon icon="trash" />
+          {t('Unlink')}
+        </button>
       </div>
     </li>
   );
+}
+
+type ProviderIconProps = {
+  provider: CalendarProvider;
+};
+function ProviderIcon({provider}: ProviderIconProps) {
+  if (provider.kind === 'google') {
+    return (
+      <img
+        src="/img/google-calendar-logo.svg"
+        alt="Google Calendar logo"
+        width="30"
+        height="30"
+      />
+    );
+  }
+  return <InlineIcon icon="calendar" />;
 }
