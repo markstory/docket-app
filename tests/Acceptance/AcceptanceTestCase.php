@@ -22,8 +22,9 @@ abstract class AcceptanceTestCase extends TestCase
         'app.ProjectSections',
         'app.Tasks',
         'app.Subtasks',
-        'app.Labels',
-        'app.LabelsTasks',
+        'app.CalendarProviders',
+        'app.CalendarSources',
+        'app.CalendarItems',
     ];
 
     /**
@@ -65,6 +66,10 @@ abstract class AcceptanceTestCase extends TestCase
                 'password' => 'password123',
             ]);
             static::$cookieJar = $this->client->getCookieJar();
+
+            // Coerce timezone back to UTC as login updates the timezone
+            $users = $this->getTableLocator()->get('Users');
+            $users->updateAll(['timezone' => 'UTC'], '1=1');
         }
 
         return $this->createClient();

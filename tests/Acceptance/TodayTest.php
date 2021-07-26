@@ -37,6 +37,31 @@ class TodayTest extends AcceptanceTestCase
         $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
     }
 
+    public function testTodayDisplaysCalendarEvents()
+    {
+        $today = new FrozenDate('today', 'UTC');
+        $project = $this->makeProject('Work', 1);
+        $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+        $event = $this->makeCalendarItem($source->id, [
+            'title' => 'First Day of School',
+            'provider_id' => 'event-1',
+            'start_time' => $today->format('Y-m-d H:i:s'),
+            'end_time' => $today->format('Y-m-d H:i:s'),
+        ]);
+
+        $client = $this->login();
+        $client->get('/tasks/today');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Has an event list and the event text present.
+        $events = $crawler->filter('.calendar-item-list')->first();
+        $this->assertStringContainsString($event->title, $events->getText());
+    }
+
     public function testCreateInToday()
     {
         $project = $this->makeProject('Work', 1);
