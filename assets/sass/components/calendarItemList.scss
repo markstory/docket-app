@@ -6,6 +6,7 @@
 }
 
 .calendar-item {
+  // Expects a `--calendar-color` CSS property to be set.
   margin-bottom: $space;
 
   &:last-child {
@@ -17,9 +18,19 @@
     padding-left: $space / 2;
   }
 
-  time{
+  time {
     color: var(--calendar-color);
     font-weight: 500;
     margin-right: $space / 2;
+  }
+
+  a {
+    color: var(--color-fg);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
   }
 }

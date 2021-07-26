@@ -44,7 +44,9 @@ function CalendarListItem({date, item}: ItemProps) {
   return (
     <div className={classname} style={style}>
       {start}
-      {item.title}
+      <a href={item.html_link} target="_blank" rel="noreferrer">
+        {item.title}
+      </a>
     </div>
   );
 }
