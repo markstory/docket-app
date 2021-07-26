@@ -216,7 +216,7 @@ class CalendarSourcesControllerTest extends TestCase
 
         $subs = TableRegistry::get('CalendarSubscriptions');
         $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
-        $this->assertNotEmpty($sub->identifier,);
+        $this->assertNotEmpty($sub->identifier);
     }
 
     /**
