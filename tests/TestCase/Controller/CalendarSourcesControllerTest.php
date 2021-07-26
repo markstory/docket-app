@@ -78,7 +78,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertFlashElement('flash/success');
 
         $result = $this->CalendarItems->find()->where([
-            'CalendarItems.calendar_source_id' => $source->id
+            'CalendarItems.calendar_source_id' => $source->id,
         ])->toArray();
         $this->assertCount(3, $result);
         foreach ($result as $event) {
