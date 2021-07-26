@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -15,7 +14,6 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\ProvidersTable&\Cake\ORM\Association\BelongsTo $Providers
  * @property \App\Model\Table\CalendarItemsTable&\Cake\ORM\Association\HasMany $CalendarItems
  * @property \App\Model\Table\CalendarItemsTable&\Cake\ORM\Association\HasMany $CalendarSubscriptions
- *
  * @method \App\Model\Entity\CalendarSource newEmptyEntity()
  * @method \App\Model\Entity\CalendarSource newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\CalendarSource[] newEntities(array $data, array $options = [])
@@ -29,7 +27,6 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class CalendarSourcesTable extends Table

@@ -59,6 +59,7 @@ class CalendarItem extends Entity
         if ($this->start_date) {
             return $this->start_date;
         }
+
         return $this->start_time;
     }
 
@@ -67,6 +68,7 @@ class CalendarItem extends Entity
         if ($this->end_date) {
             return $this->end_date;
         }
+
         return $this->end_time;
     }
 

@@ -14,7 +14,6 @@ use RuntimeException;
  *
  * @property \App\Model\Table\CalendarSourcesTable&\Cake\ORM\Association\BelongsTo $CalendarSources
  * @property \App\Model\Table\ProvidersTable&\Cake\ORM\Association\BelongsTo $Providers
- *
  * @method \App\Model\Entity\CalendarItem newEmptyEntity()
  * @method \App\Model\Entity\CalendarItem newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\CalendarItem[] newEntities(array $data, array $options = [])
@@ -28,7 +27,6 @@ use RuntimeException;
  * @method \App\Model\Entity\CalendarItem[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\CalendarItem[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\CalendarItem[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class CalendarItemsTable extends Table
@@ -133,6 +131,7 @@ class CalendarItemsTable extends Table
                 'CalendarItems.start_time >=' => $options['start'],
                 'CalendarItems.end_time <' => $options['end'],
             ]);
+
             return $exp->or([$date, $dateTime]);
         })
             ->contain('CalendarSources')

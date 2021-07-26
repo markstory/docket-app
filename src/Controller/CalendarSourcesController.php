@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -32,7 +31,7 @@ class CalendarSourcesController extends AppController
     /**
      * Add method
      *
-     * @param string|null $providerId Calendar Provider id.
+     * @param null $service Calendar Provider id.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -51,6 +50,7 @@ class CalendarSourcesController extends AppController
                 $service->createSubscription($source);
 
                 $this->Flash->success(__('Your calendar will now be automatically synced.'));
+
                 return $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
             } else {
                 $this->Flash->error(__('Could not add that calendar.'));
@@ -136,7 +136,7 @@ class CalendarSourcesController extends AppController
 
         return $this->redirect([
             'action' => 'add',
-            'providerId' => $this->request->getParam('providerId')
+            'providerId' => $this->request->getParam('providerId'),
         ]);
     }
 }

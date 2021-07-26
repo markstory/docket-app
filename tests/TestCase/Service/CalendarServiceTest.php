@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Test\TestCase\Service;
@@ -8,10 +7,10 @@ use App\Service\CalendarService;
 use App\Service\CalendarServiceProvider;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Core\Container;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use RuntimeException;
 
 class CalendarServiceTest extends TestCase

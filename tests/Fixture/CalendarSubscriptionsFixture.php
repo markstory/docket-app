@@ -32,7 +32,7 @@ class CalendarSubscriptionsFixture extends TestFixture
         ],
         '_options' => [
             'engine' => 'InnoDB',
-            'collation' => 'utf8mb4_0900_ai_ci'
+            'collation' => 'utf8mb4_0900_ai_ci',
         ],
     ];
 }
