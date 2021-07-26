@@ -63,35 +63,6 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView(): void
-    {
-        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
-
-        $this->login();
-        $this->get("/calendars/{$provider->id}/view");
-        $this->assertResponseOk();
-        $this->assertNotNull($this->viewVariable('calendarProvider'));
-    }
-
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testViewPermissions(): void
-    {
-        $provider = $this->makeCalendarProvider(2, 'other@example.com');
-
-        $this->login();
-        $this->get("/calendars/{$provider->id}/view");
-        $this->assertResponseCode(403);
-    }
-
-    /**
      * Test delete method
      *
      * @return void
