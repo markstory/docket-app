@@ -2,6 +2,8 @@
 <ruleset name="App">
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer"/>
 
+    <exclude-pattern>*tests/js/*</exclude-pattern>
+
     <rule ref="CakePHP"/>
     <rule ref="CakePHP.Commenting.FunctionComment.Missing">
         <severity>0</severity>

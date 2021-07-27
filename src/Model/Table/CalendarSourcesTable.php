@@ -108,7 +108,10 @@ class CalendarSourcesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['calendar_provider_id'], 'CalendarProviders'), ['errorField' => 'calendar_provider_id']);
+        $rules->add(
+            $rules->existsIn(['calendar_provider_id'], 'CalendarProviders'),
+            ['errorField' => 'calendar_provider_id']
+        );
 
         return $rules;
     }

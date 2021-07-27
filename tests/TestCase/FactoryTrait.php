@@ -93,7 +93,7 @@ trait FactoryTrait
             'identifier' => $identifier,
             'access_token' => 'calendar-access-token',
             'refresh_token' => 'calendar-refresh-token',
-            'token_expiry' => new Datetime('+1 hour'),
+            'token_expiry' => new DateTime('+1 hour'),
         ], $props));
 
         return $providers->saveOrFail($provider);

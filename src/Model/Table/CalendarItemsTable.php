@@ -108,7 +108,10 @@ class CalendarItemsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['calendar_source_id'], 'CalendarSources'), ['errorField' => 'calendar_source_id']);
+        $rules->add(
+            $rules->existsIn(['calendar_source_id'], 'CalendarSources'),
+            ['errorField' => 'calendar_source_id']
+        );
 
         return $rules;
     }

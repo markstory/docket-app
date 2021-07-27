@@ -89,7 +89,6 @@ class CalendarSourcesController extends AppController
     /**
      * Edit method
      *
-     * @param string|null $id Calendar Source id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */

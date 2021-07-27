@@ -107,7 +107,7 @@ class Application extends BaseApplication implements
             // https://book.cakephp.org/4/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
 
-            ->add(new CspMiddleware($this->getContainer()->get(CspBuilder::class)))
+            ->add(new CspMiddleware($this->getContainer()->get(CSPBuilder::class)))
             ->add(new AuthenticationMiddleware($this))
             ->add(new AuthorizationMiddleware($this, [
                 'identityDecorator' => function ($auth, $user) {
