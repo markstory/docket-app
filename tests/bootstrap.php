@@ -66,7 +66,7 @@ session_id('cli');
 VCR::configure()
     ->setCassettePath(__DIR__ . '/Fixture/vcr')
     ->setStorage('yaml')
-    ->setWhitelist(['vendor/guzzlehttp', 'vendor/cakephp/cakephp/src/Http/Client'])
+    ->setWhitelist(['vendor/guzzlehttp', 'vendor/google', 'vendor/cakephp/cakephp/src/Http/Client'])
     ->addRequestMatcher('sloppy_body', function (\VCR\Request $first, \VCR\Request $second) {
         $bodies = [$first->getBody(), $second->getBody()];
         foreach ($bodies as $i => $body) {
