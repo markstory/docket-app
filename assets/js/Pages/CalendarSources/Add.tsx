@@ -94,7 +94,7 @@ function CalendarSourceItem({source, mode, provider, referer}: ItemProps) {
   function handleCreate(event: React.MouseEvent) {
     event.stopPropagation();
     const data = {
-      calendar_provider_id: providerId,
+      calendar_provider_id: provider.id,
       provider_id: source.provider_id,
       name: source.name,
       color: source.color,
