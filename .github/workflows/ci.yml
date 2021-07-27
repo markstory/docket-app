@@ -49,7 +49,7 @@ jobs:
         else
           composer update --no-progress
         fi
-        cp tests/Fixture/google-auth.json config/google-auth.json
+        cp ./tests/Fixture/google-auth.json ./config/google-auth.json
 
     - name: yarn install & build
       run: |
