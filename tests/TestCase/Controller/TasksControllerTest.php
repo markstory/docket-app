@@ -129,6 +129,7 @@ class TasksControllerTest extends TestCase
             'provider_id' => 'event-2',
             'start_time' => $tomorrow->setTime(12, 0),
             'end_time' => $tomorrow->setTime(13, 0),
+            'all_day' => false,
         ]);
 
         $this->login();
