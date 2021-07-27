@@ -89,10 +89,12 @@ Docket offers a google calendar integration that will automatically sync calenda
 The google calendar integration has a fairly involved setup, as you will need to create a google OAuth consumer.
 
 1. Ensure your Docket install is running under an HTTPs connection.
-2. Create an [API Application in Google](https://cloud.google.com/docs/authentication/end-user). Your OAuth Client application and its accompanying 'Consent Screen' will need to:
+2. Get your site 'verified' in google search console.
+3. Create an [API Application in Google](https://cloud.google.com/docs/authentication/end-user). Your OAuth Client application and its accompanying 'Consent Screen' will need to:
     1. Use the `$your_domain/auth/google/callback` as its redirect URI.
     2. Request the `calendar.readonly` and `calendar.events.readonly` scopes.
-3. Next, download the credentials file for your application and save it into `config/google-auth.json`. You should take care to make sure this file is encrypted if it is added to any repositories.
+    3. Add your verified site to your API application.
+4. Next, download the credentials file for your application and save it into `config/google-auth.json`. You should take care to make sure this file is encrypted if it is added to any repositories.
 
 If you've managed to do all of that you *should* have a working google calendar integration, and you should be able to go to *Profile Menu > Calendars* and add your google account.
 
