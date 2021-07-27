@@ -46,6 +46,7 @@ class CalendarSourcesController extends AppController
 
             $source = $this->CalendarSources->newEntity($data);
             if ($this->CalendarSources->save($source)) {
+                $service->setAccessToken($provider);
                 $service->createSubscription($source);
 
                 $this->Flash->success(__('Your calendar will now be automatically synced.'));
