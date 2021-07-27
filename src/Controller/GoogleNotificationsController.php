@@ -36,6 +36,7 @@ class GoogleNotificationsController extends AppController
             throw new BadRequestException('Missing channel-id');
         }
         $source = $service->getSourceForSubscription($subscriptionId, $tokenData['verifier']);
+        $service->setAccessToken($source->calendar_provider);
         $service->syncEvents($source);
 
         $expires = FrozenTime::parse($expiration);
