@@ -10,7 +10,7 @@
             User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
         body: >
           {
-            "address": "\/google\/calendar\/notifications",
+            "address": "http:\/\/localhost\/google\/calendar\/notifications",
             "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
             "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
             "type": "web_hook"

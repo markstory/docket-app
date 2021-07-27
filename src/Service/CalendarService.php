@@ -155,7 +155,7 @@ class CalendarService
         $calendar = new Calendar($this->client);
         $channel = new GoogleChannel();
         $channel->setId($sub->identifier);
-        $channel->setAddress(Router::url(['_name' => 'googlenotification:update']));
+        $channel->setAddress(Router::url(['_name' => 'googlenotification:update', '_full' => true]));
         $channel->setToken($sub->channel_token);
         $channel->setType('web_hook');
 
