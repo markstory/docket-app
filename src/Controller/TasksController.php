@@ -192,7 +192,7 @@ class TasksController extends AppController
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->Tasks->get($id, [
-            'contain' => ['Labels', 'Projects'],
+            'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task);
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
@@ -224,7 +224,7 @@ class TasksController extends AppController
     public function view($id = null)
     {
         $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Labels', 'Subtasks'],
+            'contain' => ['Projects', 'Subtasks'],
         ]);
         $this->Authorization->authorize($task);
 
