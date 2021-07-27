@@ -163,7 +163,7 @@ ConnectionManager::setConfig(Configure::consume('Datasources'));
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
-Security::setSalt(Configure::consume('Security.salt'));
+Security::setSalt((string)Configure::consume('Security.salt'));
 
 /*
  * You can set whether the ORM uses immutable or mutable Time types.
