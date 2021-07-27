@@ -27,7 +27,7 @@ class CalendarSubscriptionsFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'identifier' => ['type' => 'unique', 'columns' => ['identifier'], 'length' => []],
+            'identifier_uniq' => ['type' => 'unique', 'columns' => ['identifier'], 'length' => []],
             'calendar_subscriptions_ibfk_1' => ['type' => 'foreign', 'columns' => ['calendar_source_id'], 'references' => ['calendar_sources', 'id'], 'update' => 'noAction', 'delete' => 'cascade', 'length' => []],
         ],
         '_options' => [

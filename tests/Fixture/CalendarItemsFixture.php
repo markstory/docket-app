@@ -31,7 +31,7 @@ class CalendarItemsFixture extends TestFixture
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'calendar_source_id' => ['type' => 'unique', 'columns' => ['calendar_source_id', 'provider_id'], 'length' => []],
+            'uniq_calendar_source_id' => ['type' => 'unique', 'columns' => ['calendar_source_id', 'provider_id'], 'length' => []],
             'calendar_items_ibfk_1' => ['type' => 'foreign', 'columns' => ['calendar_source_id'], 'references' => ['calendar_sources', 'id'], 'update' => 'noAction', 'delete' => 'noAction', 'length' => []],
         ],
         '_options' => [

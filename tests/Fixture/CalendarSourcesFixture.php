@@ -28,7 +28,7 @@ class CalendarSourcesFixture extends TestFixture
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'calendar_provider_id' => ['type' => 'unique', 'columns' => ['calendar_provider_id', 'provider_id'], 'length' => []],
+            'calendar_provider_uniq' => ['type' => 'unique', 'columns' => ['calendar_provider_id', 'provider_id'], 'length' => []],
             'calendar_sources_ibfk_1' => ['type' => 'foreign', 'columns' => ['calendar_provider_id'], 'references' => ['calendar_providers', 'id'], 'update' => 'noAction', 'delete' => 'noAction', 'length' => []],
         ],
         '_options' => [
