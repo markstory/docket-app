@@ -120,6 +120,7 @@ class TasksControllerTest extends TestCase
             'end_date' => $tomorrow,
             'start_time' => null,
             'end_time' => null,
+            'all_day' => true,
         ]);
 
         $tomorrow = new FrozenTime('tomorrow');
@@ -139,8 +140,8 @@ class TasksControllerTest extends TestCase
 
         $items = $this->viewVariable('calendarItems')->toArray();
         $this->assertCount(2, $items);
-        $this->assertEquals($lunch->id, $items[0]->id);
-        $this->assertEquals($allDay->id, $items[1]->id);
+        $this->assertEquals($allDay->id, $items[0]->id);
+        $this->assertEquals($lunch->id, $items[1]->id);
     }
 
     public function testIndexSetErrorsFromSession(): void
