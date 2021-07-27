@@ -39,7 +39,7 @@ class AddCalendarModels extends AbstractMigration
                 'null' => false,
             ])
             ->addForeignKey(['user_id'], 'users', ['id'], [
-                'on_delete' => 'CASCADE',
+                'delete' => 'CASCADE',
             ])
             ->create();
 
@@ -81,7 +81,7 @@ class AddCalendarModels extends AbstractMigration
             ])
             ->addIndex(['calendar_provider_id', 'provider_id'], ['unique' => true])
             ->addForeignKey(['calendar_provider_id'], 'calendar_providers', ['id'], [
-                'on_delete' => 'CASCADE',
+                'delete' => 'CASCADE',
             ])
             ->create();
 
@@ -105,7 +105,7 @@ class AddCalendarModels extends AbstractMigration
              ])
             ->addIndex(['identifier'], ['unique' => true])
             ->addForeignKey(['calendar_source_id'], 'calendar_sources', ['id'], [
-                'on_delete' => 'CASCADE',
+                'delete' => 'CASCADE',
             ])
             ->create();
 
@@ -144,7 +144,7 @@ class AddCalendarModels extends AbstractMigration
             ])
             ->addIndex(['calendar_source_id', 'provider_id'], ['unique' => true])
             ->addForeignKey(['calendar_source_id'], 'calendar_sources', ['id'], [
-                'on_delete' => 'CASCADE',
+                'delete' => 'CASCADE',
             ])
             ->create();
     }
