@@ -10,7 +10,6 @@ use App\Service\CalendarService;
  * CalendarSources Controller
  *
  * @property \App\Model\Table\CalendarSourcesTable $CalendarSources
- * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class CalendarSourcesController extends AppController
 {
@@ -25,13 +24,13 @@ class CalendarSourcesController extends AppController
                 'CalendarSources.id' => $this->request->getParam('id'),
             ]);
 
+        /** @var \App\Model\Entity\CalendarSource */
         return $query->firstOrFail();
     }
 
     /**
      * Add method
      *
-     * @param null $service Calendar Provider id.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */

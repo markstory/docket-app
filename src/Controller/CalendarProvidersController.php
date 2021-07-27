@@ -7,7 +7,6 @@ namespace App\Controller;
  * CalendarProviders Controller
  *
  * @property \App\Model\Table\CalendarProvidersTable $CalendarProviders
- * @method \App\Model\Entity\CalendarProvider[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class CalendarProvidersController extends AppController
 {

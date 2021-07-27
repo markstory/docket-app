@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property int $calendar_source_id
  * @property string $identifier
  * @property string $verifier
+ * @property string $channel_token
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime|null $modified
  *
@@ -37,7 +38,7 @@ class CalendarSubscription extends Entity
         'calendar_source' => true,
     ];
 
-    protected function _getChannelToken()
+    protected function _getChannelToken(): string
     {
         return http_build_query(['verifier' => $this->verifier]);
     }
