@@ -37,6 +37,31 @@ class UpcomingTest extends AcceptanceTestCase
         $this->assertStringContainsString('/projects/add', $client->getCurrentURL());
     }
 
+    public function testUpcomingDisplaysCalendarEvents()
+    {
+        $twodays = FrozenDate::parse('+2 days', 'UTC');
+        $project = $this->makeProject('Work', 1);
+        $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $twodays]);
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+        $event = $this->makeCalendarItem($source->id, [
+            'title' => 'First Day of School',
+            'provider_id' => 'event-1',
+            'start_time' => $twodays->format('Y-m-d H:i:s'),
+            'end_time' => $twodays->format('Y-m-d H:i:s'),
+        ]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Has an event list and the event text present.
+        $events = $crawler->filter('.calendar-item-list')->first();
+        $this->assertStringContainsString($event->title, $events->getText());
+    }
+
     public function testCompleteTask()
     {
         $today = new FrozenDate('tomorrow', 'UTC');

@@ -5,17 +5,25 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
-import {Project, Task} from 'app/types';
+import {CalendarItem, Project, Task} from 'app/types';
+import CalendarItemList from 'app/components/calendarItemList';
 import {InlineIcon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
-import {toDateString, formatDateHeading, parseDate, ONE_DAY_IN_MS} from 'app/utils/dates';
+import {
+  toDateString,
+  formatDateHeading,
+  getRangeInDays,
+  parseDate,
+  ONE_DAY_IN_MS,
+} from 'app/utils/dates';
 
 type Props = {
   tasks: Task[];
   projects: Project[];
+  calendarItems: CalendarItem[];
   start: string;
   nextStart: string;
   generation: string;
@@ -79,7 +87,30 @@ function createGrouper(start: string, numDays: number) {
   };
 }
 
+type GroupedCalendarItems = Record<string, CalendarItem[]>;
+
+function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
+  return items.reduce<GroupedCalendarItems>((acc, item) => {
+    let keys = [];
+    if (item.all_day) {
+      keys = getRangeInDays(new Date(item.start_date), new Date(item.end_date));
+    } else {
+      keys = getRangeInDays(new Date(item.start_time), new Date(item.end_time));
+    }
+
+    keys.forEach(key => {
+      if (typeof acc[key] === 'undefined') {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+    });
+
+    return acc;
+  }, {});
+}
+
 export default function TasksIndex({
+  calendarItems,
   generation,
   tasks,
   projects,
@@ -96,6 +127,8 @@ export default function TasksIndex({
       </LoggedIn>
     );
   }
+
+  const groupedCalendarItems = groupCalendarItems(calendarItems);
 
   return (
     <LoggedIn title={title}>
@@ -125,6 +158,13 @@ export default function TasksIndex({
                         {heading}
                         {subheading && <span className="minor">{subheading}</span>}
                       </h3>
+                    )}
+                    {groupedCalendarItems[key] && (
+                      <CalendarItemList
+                        key={`cak:${key}`}
+                        date={key}
+                        items={groupedCalendarItems[key]}
+                      />
                     )}
                     <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                       <TaskGroup

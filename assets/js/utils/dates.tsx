@@ -7,6 +7,10 @@ export function toDateString(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
+export function toTimeString(date: Date): string {
+  return format(date, 'kk:mm');
+}
+
 export function parseDate(input: string | Date): Date {
   if (input instanceof Date) {
     return input;
@@ -59,6 +63,17 @@ export function getDiff(date: Date | string, compare?: Date) {
   compare = compare || getToday();
   const input = parseDate(date);
   return differenceInDays(input, compare);
+}
+
+export function getRangeInDays(start: Date, end: Date) {
+  const diff = differenceInDays(end, start);
+  const dates = [toDateString(start)];
+  let move = start;
+  while (dates.length < diff) {
+    move = addDays(move, 1);
+    dates.push(toDateString(move));
+  }
+  return dates;
 }
 
 export function formatCompactDate(date: Date | string): string {

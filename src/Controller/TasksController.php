@@ -13,6 +13,7 @@ use InvalidArgumentException;
  *
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
  * @property \App\Model\Table\TasksTable $Tasks
+ * @property \App\Model\Table\CalendarItemsTable $CalendarItems
  */
 class TasksController extends AppController
 {
@@ -23,6 +24,8 @@ class TasksController extends AppController
      */
     public function index(string $view = 'upcoming')
     {
+        $this->loadModel('CalendarItems');
+
         $identity = $this->request->getAttribute('identity');
         try {
             $startVal = $this->request->getQuery('start', 'today');
@@ -40,16 +43,28 @@ class TasksController extends AppController
 
         $query = $this->Authorization->applyScope($query);
         if ($view === 'today') {
-            $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
-            // Set view component to use.
             $this->set('component', 'Tasks/Today');
+
+            $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
+            $eventsQuery = $this->CalendarItems->find('upcoming', [
+                'start' => FrozenDate::parse('today', $identity->timezone),
+                'end' => FrozenDate::parse('tomorrow', $identity->timezone),
+            ]);
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
             $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
+            $eventsQuery = $this->CalendarItems->find('upcoming', [
+                'start' => $start,
+                'end' => $end,
+            ]);
         }
         $tasks = $query->all();
+        $calendarItems = [];
+        if (isset($eventsQuery)) {
+            $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
+        }
 
-        $this->set(compact('tasks', 'view'));
+        $this->set(compact('tasks', 'view', 'calendarItems'));
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
         $this->set('generation', uniqid());
@@ -177,7 +192,7 @@ class TasksController extends AppController
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->Tasks->get($id, [
-            'contain' => ['Labels', 'Projects'],
+            'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task);
         $task = $this->Tasks->patchEntity($task, $this->request->getData());
@@ -209,7 +224,7 @@ class TasksController extends AppController
     public function view($id = null)
     {
         $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Labels', 'Subtasks'],
+            'contain' => ['Projects', 'Subtasks'],
         ]);
         $this->Authorization->authorize($task);
 

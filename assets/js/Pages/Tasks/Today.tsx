@@ -1,9 +1,10 @@
 import {Fragment} from 'react';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
-import {Project, Task} from 'app/types';
+import {CalendarItem, Project, Task} from 'app/types';
 import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
+import CalendarItemList from 'app/components/calendarItemList';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
@@ -14,6 +15,7 @@ import {toDateString} from 'app/utils/dates';
 type Props = {
   tasks: Task[];
   projects: Project[];
+  calendarItems: CalendarItem[];
 };
 
 function grouper(items: Task[]): GroupedItems {
@@ -56,7 +58,7 @@ function grouper(items: Task[]): GroupedItems {
   return output;
 }
 
-export default function TasksToday({tasks, projects}: Props): JSX.Element {
+export default function TasksToday({calendarItems, tasks, projects}: Props): JSX.Element {
   const today = new Date();
   const defaultDate = toDateString(today);
   const title = t("Today's Tasks");
@@ -106,6 +108,9 @@ export default function TasksToday({tasks, projects}: Props): JSX.Element {
                   <Icon icon="clippy" />
                   {t('Today')}
                 </h2>
+                {calendarItems.length > 0 && (
+                  <CalendarItemList date={defaultDate} items={calendarItems} />
+                )}
                 <TaskGroup
                   dataTestId="today-group"
                   dropId={today.key}

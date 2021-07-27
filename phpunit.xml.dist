@@ -15,6 +15,11 @@
         <env name="DATABASE_TEST_URL" value="mysql://lists:password@localhost/cake_test" />
         -->
         <env name="SECURITY_SALT" value="a-random-value-that-you-cannot-guess" />
+
+        <!-- no persistent cache in tests -->
+        <env name="CACHE_DEFAULT_URL" value="array://" />
+        <env name="CACHE_CAKECORE_URL" value="array://" />
+        <env name="CACHE_CAKEMODEL_URL" value="array://" />
     </php>
 
     <!-- Add any additional test suites you want to run here -->
@@ -34,6 +39,7 @@
                 <object class="Cake\TestSuite\Fixture\FixtureManager"/>
             </arguments>
         </listener>
+        <listener class="VCR\PHPUnit\TestListener\VCRTestListener" file="vendor/php-vcr/phpunit-testlistener-vcr/src/VCRTestListener.php" />
     </listeners>
 
     <extensions>

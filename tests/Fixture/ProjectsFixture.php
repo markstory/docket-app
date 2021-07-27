@@ -28,9 +28,6 @@ class ProjectsFixture extends TestFixture
         'incomplete_task_count' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => '0', 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
-        '_indexes' => [
-            'user_id' => ['type' => 'index', 'columns' => ['user_id'], 'length' => []],
-        ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
             'projects_unique_slug' => ['type' => 'unique', 'columns' => ['user_id', 'slug']],

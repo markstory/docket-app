@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -37,6 +38,9 @@ class TasksControllerTest extends TestCase
         'app.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
+        'app.CalendarProviders',
+        'app.CalendarSources',
+        'app.CalendarItems',
     ];
 
     protected function dayOrderedTasks(array $conditions = [])
@@ -101,6 +105,44 @@ class TasksControllerTest extends TestCase
             return $i->id;
         }, $items);
         $this->assertEquals([$first->id, $second->id], $ids);
+    }
+
+    public function testIndexCalendarItems(): void
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary');
+        $allDay = $this->makeCalendarItem($source->id, [
+            'title' => 'Bob birthday',
+            'provider_id' => 'event-1',
+            'start_date' => $tomorrow,
+            'end_date' => $tomorrow,
+            'start_time' => null,
+            'end_time' => null,
+            'all_day' => true,
+        ]);
+
+        $tomorrow = new FrozenTime('tomorrow');
+        $lunch = $this->makeCalendarItem($source->id, [
+            'title' => 'Lunch',
+            'provider_id' => 'event-2',
+            'start_time' => $tomorrow->setTime(12, 0),
+            'end_time' => $tomorrow->setTime(13, 0),
+            'all_day' => false,
+        ]);
+
+        $this->login();
+        $this->disableErrorHandlerMiddleware();
+        $this->get('/tasks');
+
+        $this->assertResponseOk();
+        $this->assertSame('upcoming', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('calendarItems')->toArray();
+        $this->assertCount(2, $items);
+        $this->assertEquals($allDay->id, $items[0]->id);
+        $this->assertEquals($lunch->id, $items[1]->id);
     }
 
     public function testIndexSetErrorsFromSession(): void

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use VCR\VCR;
 
 /**
  * Test runner bootstrap.
@@ -25,7 +26,6 @@ use Cake\Datasource\ConnectionManager;
  * unit tests in this file.
  */
 require dirname(__DIR__) . '/vendor/autoload.php';
-
 require dirname(__DIR__) . '/config/bootstrap.php';
 
 $_SERVER['PHP_SELF'] = '/';
@@ -60,6 +60,51 @@ ConnectionManager::alias('test_debug_kit', 'debug_kit');
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
+
+// Configure PHP-VCR
+VCR::configure()
+    ->setCassettePath(__DIR__ . '/Fixture/vcr')
+    ->setStorage('yaml')
+    ->setWhitelist(['vendor/guzzlehttp', 'vendor/google', 'vendor/cakephp/cakephp/src/Http/Client'])
+    ->addRequestMatcher('sloppy_body', function (\VCR\Request $first, \VCR\Request $second) {
+        $bodies = [$first->getBody(), $second->getBody()];
+        foreach ($bodies as $i => $body) {
+            if ($body === null) {
+                unset($bodies[$i]);
+                continue;
+            }
+            $bodies[$i] = json_decode($body, true);
+        }
+        // Only be sloppy with json requests.
+        if (count($bodies) !== 2) {
+            return $first->getBody() == $second->getBody();
+        }
+
+        $special = [
+            '/calendar/v3/calendars/calendar-1/events/watch' => ['id', 'token'],
+        ];
+        foreach ($special as $url => $fields) {
+            if (strpos($first->getUrl(), $url) !== false) {
+                foreach ($fields as $field) {
+                    unset($bodies[0][$field]);
+                    unset($bodies[1][$field]);
+                }
+            }
+        }
+
+        return json_encode($bodies[0]) == json_encode($bodies[1]);
+    })
+    ->enableRequestMatchers([
+        'post_fields',
+        'method',
+        'url',
+        'host',
+        'query_string',
+        'sloppy_body',
+    ])
+    ->enableLibraryHooks(['curl'])
+    ->setMode('once');
+VCR::turnOn();
 
 // Setup server for panther tests.
 // Panther doesn't make the router script absolute.

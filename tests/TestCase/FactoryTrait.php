@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Text;
+use DateTime;
 
 trait FactoryTrait
 {
@@ -79,5 +82,57 @@ trait FactoryTrait
         ], $props));
 
         return $subtasks->saveOrFail($subtask);
+    }
+
+    protected function makeCalendarProvider($userId, $identifier, $props = [])
+    {
+        $providers = TableRegistry::get('CalendarProviders');
+        $provider = $providers->newEntity(array_merge([
+            'user_id' => $userId,
+            'kind' => 'google',
+            'identifier' => $identifier,
+            'access_token' => 'calendar-access-token',
+            'refresh_token' => 'calendar-refresh-token',
+            'token_expiry' => new DateTime('+1 hour'),
+        ], $props));
+
+        return $providers->saveOrFail($provider);
+    }
+
+    protected function makeCalendarSource($providerId, $name = 'primary', $props = [])
+    {
+        $sources = TableRegistry::get('CalendarSources');
+        $source = $sources->newEntity(array_merge([
+            'calendar_provider_id' => $providerId,
+            'provider_id' => $name,
+            'name' => $name,
+            'color' => 1,
+        ], $props));
+
+        return $sources->saveOrFail($source);
+    }
+
+    protected function makeCalendarItem($sourceId, $props = [])
+    {
+        $items = TableRegistry::get('CalendarItems');
+        $item = $items->newEntity(array_merge([
+            'calendar_source_id' => $sourceId,
+            'start_time' => FrozenTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
+            'end_time' => FrozenTime::parse('-1 day')->format('Y-m-d H:i:s'),
+        ], $props));
+
+        return $items->saveOrFail($item);
+    }
+
+    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null)
+    {
+        $subs = TableRegistry::get('CalendarSubscriptions');
+        $sub = $subs->newEntity([
+            'calendar_source_id' => $sourceId,
+            'identifier' => $identifier ?? Text::uuid(),
+            'verifier' => $verifier ?? Text::uuid(),
+        ]);
+
+        return $subs->saveOrFail($sub);
     }
 }

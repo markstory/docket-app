@@ -1,0 +1,36 @@
+.calendar-item-list {
+  padding: $space;
+  background: var(--color-bg-level1);
+  border-radius: $border-radius;
+  margin-bottom: $space * 1.5;
+}
+
+.calendar-item {
+  // Expects a `--calendar-color` CSS property to be set.
+  margin-bottom: $space;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.all-day {
+    border-left: 4px solid var(--calendar-color);
+    padding-left: $space / 2;
+  }
+
+  time {
+    color: var(--calendar-color);
+    font-weight: 500;
+    margin-right: $space / 2;
+  }
+
+  a {
+    color: var(--color-fg);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+}

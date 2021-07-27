@@ -39,7 +39,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl,  pdo_${{ matrix.db-type }}
+        extensions: curl, mbstring, intl, pdo_${{ matrix.db-type }}
         coverage: pcov
 
     - name: composer install
@@ -49,6 +49,7 @@ jobs:
         else
           composer update --no-progress
         fi
+        cp ./tests/Fixture/google-auth.json ./config/google-auth.json
 
     - name: yarn install & build
       run: |

@@ -1,3 +1,8 @@
+// Two kinds of selects.
+//
+// One flexes out to the container, and has a min-width of 200px (.select__control )
+// The other is 90px wide and is meant for colour values (.select-narrow__control)
+div.select-narrow__control,
 div.select__control {
   min-width: 200px;
   background: var(--color-bg);
@@ -7,6 +12,7 @@ div.select__control {
     border-color:var(--color-border-med);
   }
 
+  .select-narrow__input input,
   .select__input input {
     height: auto;
     width: auto;
@@ -18,11 +24,22 @@ div.select__control {
       box-shadow: none;
     }
   }
+  &.select-narrow__control--is-focused,
   &.select__control--is-focused {
     border-color: var(--color-input-focus-border);
     box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
   }
 }
+div.select-narrow__control {
+  min-width: auto;
+  width: 80px;
+}
+div.select-narrow__value-container,
+div.select__value-container {
+  padding: $space / 4 $space / 4 $space / 4 $space;
+}
+
+.select-narrow__value-container > div,
 .select__value-container > div {
   display: flex;
   align-items: center;
@@ -30,17 +47,20 @@ div.select__control {
   color: var(--color-fg);
 }
 @media (max-width: $breakpoint-phone) {
+  div.select-narrow__control,
   div.select__control {
     min-width: 125px;
   }
 }
 
+div.select-narrow__menu,
 div.select__menu {
   border: 1px solid var(--color-border-med);
   box-shadow: var(--shadow-med);
   background: var(--color-bg);
 }
 
+.select-narrow__menu-list,
 .select__menu-list {
   // Option elements
   & > div {
@@ -50,11 +70,13 @@ div.select__menu {
     padding: $space;
   }
 
+  .select-narrow__option--is-focused,
   .select__option--is-focused,
   .is-focused {
     background: var(--color-menu-hover);
   }
 
+  .select-narrow__option--is-selected,
   .select__option--is-selected,
   .is-selected {
     background: var(--color-menu-selected);

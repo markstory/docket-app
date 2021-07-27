@@ -28,6 +28,10 @@ export default function ProfileMenu(): JSX.Element {
           <InlineIcon icon="pencil" />
           {t('Edit Profile')}
         </MenuLink>
+        <MenuLink as={InertiaLink} className="calendar" href="/calendars">
+          <InlineIcon icon="calendar" />
+          {t('Calendars')}
+        </MenuLink>
         <MenuLink as={InertiaLink} className="lock" href="/users/updatePassword">
           <InlineIcon icon="lock" />
           {t('Update Password')}
