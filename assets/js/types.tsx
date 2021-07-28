@@ -14,6 +14,7 @@ export interface CalendarProvider {
   id: number;
   kind: string;
   identifier: string;
+  display_name: string;
 }
 
 export interface CalendarProviderDetailed extends CalendarProvider {

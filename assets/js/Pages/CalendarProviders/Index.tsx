@@ -51,7 +51,7 @@ export default CalendarProvidersIndex;
 
 type ProviderProps = {provider: CalendarProvider};
 
-function CalendarProviderItem({provider, referer}: ProviderProps) {
+function CalendarProviderItem({provider}: ProviderProps) {
   async function handleDelete(event: React.MouseEvent) {
     event.stopPropagation();
     await deleteProvider(provider);
@@ -60,7 +60,7 @@ function CalendarProviderItem({provider, referer}: ProviderProps) {
   return (
     <li>
       <span className="list-item-block">
-        <ProviderIcon provider={provider} /> {provider.identifier}
+        <ProviderIcon provider={provider} /> {provider.display_name}
       </span>
       <div className="button-bar-inline">
         <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">

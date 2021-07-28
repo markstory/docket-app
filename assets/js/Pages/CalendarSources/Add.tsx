@@ -24,7 +24,7 @@ function CalendarSourcesAdd({calendarProvider, unlinked}: Props) {
   return (
     <LoggedIn title={title}>
       <Modal onClose={handleClose} label={title}>
-        <h2>{t('{name} Synced Calendars', {name: calendarProvider.identifier})}</h2>
+        <h2>{t('Synced Calendars for {name}', {name: calendarProvider.display_name})}</h2>
         <p>
           {t(
             `The following calendars are synced into Docket.
