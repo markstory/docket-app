@@ -91,6 +91,7 @@ trait FactoryTrait
             'user_id' => $userId,
             'kind' => 'google',
             'identifier' => $identifier,
+            'display_name' => $identifier,
             'access_token' => 'calendar-access-token',
             'refresh_token' => 'calendar-refresh-token',
             'token_expiry' => new DateTime('+1 hour'),

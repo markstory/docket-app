@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property int $user_id
  * @property string $kind
  * @property string $identifier
+ * @property string $display_name
  * @property string $access_token
  * @property string $refresh_token
  * @property \Cake\I18n\FrozenTime $token_expiry
@@ -34,6 +35,7 @@ class CalendarProvider extends Entity
         'user_id' => true,
         'kind' => true,
         'identifier' => true,
+        'display_name' => true,
         'access_token' => true,
         'refresh_token' => true,
         'token_expiry' => true,
