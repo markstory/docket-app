@@ -13,12 +13,11 @@ import {CalendarProviderDetailed, CalendarSource} from 'app/types';
 type Props = {
   calendarProvider: CalendarProviderDetailed;
   unlinked: CalendarSource[];
-  referer: string;
 };
 
-function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
+function CalendarSourcesAdd({calendarProvider, unlinked}: Props) {
   function handleClose() {
-    Inertia.visit(referer);
+    history.back();
   }
 
   const title = t('Linked Calendars');
@@ -40,7 +39,6 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
                 source={source}
                 provider={calendarProvider}
                 mode="edit"
-                referer={referer}
               />
             );
           })}
@@ -60,7 +58,6 @@ function CalendarSourcesAdd({calendarProvider, referer, unlinked}: Props) {
                 source={source}
                 provider={calendarProvider}
                 mode="create"
-                referer={referer}
               />
             );
           })}
@@ -75,15 +72,12 @@ type ItemProps = {
   source: CalendarSource;
   provider: CalendarProvider;
   mode: 'create' | 'edit';
-  referer: string;
 };
 
-function CalendarSourceItem({source, mode, provider, referer}: ItemProps) {
+function CalendarSourceItem({source, mode, provider}: ItemProps) {
   function handleSync(event: React.MouseEvent) {
     event.stopPropagation();
-    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`, {
-      referer: referer,
-    });
+    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`);
   }
 
   async function handleDelete(event: React.MouseEvent) {

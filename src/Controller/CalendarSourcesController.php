@@ -50,8 +50,6 @@ class CalendarSourcesController extends AppController
                 $service->createSubscription($source);
 
                 $this->Flash->success(__('Your calendar will now be automatically synced.'));
-
-                return $this->redirect(['_name' => 'calendarsources:add', 'providerId' => $providerId]);
             } else {
                 $this->Flash->error(__('Could not add that calendar.'));
             }
@@ -80,9 +78,6 @@ class CalendarSourcesController extends AppController
         return $this->redirect([
             'action' => 'add',
             'providerId' => $this->request->getParam('providerId'),
-            '?' => [
-                'referer' => $this->request->getData('referer'),
-            ],
         ]);
     }
 
@@ -128,6 +123,8 @@ class CalendarSourcesController extends AppController
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
         if ($this->CalendarSources->delete($calendarSource)) {
+            // TODO remove all subscriptions.
+            // https://developers.google.com/calendar/v3/reference/channels/stop
             $this->Flash->success(__('The calendar source has been deleted.'));
         } else {
             $this->Flash->error(__('The calendar source could not be deleted. Please, try again.'));

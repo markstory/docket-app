@@ -33,7 +33,6 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
               <CalendarProviderItem
                 key={calendarProvider.id}
                 provider={calendarProvider}
-                referer={referer}
               />
             );
           })}
@@ -50,7 +49,8 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
 }
 export default CalendarProvidersIndex;
 
-type ProviderProps = {provider: CalendarProvider; referer: string};
+type ProviderProps = {provider: CalendarProvider};
+
 function CalendarProviderItem({provider, referer}: ProviderProps) {
   async function handleDelete(event: React.MouseEvent) {
     event.stopPropagation();
@@ -63,10 +63,7 @@ function CalendarProviderItem({provider, referer}: ProviderProps) {
         <ProviderIcon provider={provider} /> {provider.identifier}
       </span>
       <div className="button-bar-inline">
-        <a
-          href={`/calendars/${provider.id}/sources/add?referer=${referer}`}
-          className="button-secondary"
-        >
+        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
           {t('Manage Calendars')}
         </a>
         <button onClick={handleDelete} className="button-danger">

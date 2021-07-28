@@ -1,0 +1,77 @@
+-
+    request:
+        method: POST
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch'
+        headers:
+            Host: www.googleapis.com
+            Expect: ''
+            Accept-Encoding: ''
+            content-type: application/json
+        body: >
+          {
+            "address": "http:\/\/localhost\/google\/calendar\/notifications",
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
+            "type": "web_hook"
+          }
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Sun, 25 Jul 2021 02:56:56 GMT'
+        body: >
+          {
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "kind": "api#channel",
+            "resourceId": "calendar-1",
+            "resourceUrl": "",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9"
+            "expiration": 1426325213000
+          }
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        headers:
+            Host: www.googleapis.com
+            Accept-Encoding: ''
+            content-type: application/json
+            User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
+            authorization: 'Bearer calendar-access-token'
+            Accept: ''
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Vary: [Origin, X-Origin, Referer]
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 02:54:22 GMT'
+        body: >
+          {
+            "kind": "calendar#calendarList",
+            "etag": "etag-value",
+            "nextPageToken": "",
+            "nextSyncToken": "",
+            "items": [
+              {
+                "kind": "calendar#calendarListEntry",
+                "etag": "etag-value",
+                "id": "calendar-1",
+                "summary": "Primary Calendar",
+                "description": ""
+              },
+              {
+                "kind": "calendar#calendarListEntry",
+                "etag": "etag-value",
+                "id": "calendar-2",
+                "summary": "Birthdays Calendar",
+                "description": ""
+              }
+            ]
+          }

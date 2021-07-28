@@ -194,13 +194,14 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
-     * @vcr calendarservice_createsubscription_success.yml
+     * @vcr controller_calendarsources_add_post.yml
      */
     public function testAddPost()
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
         $this->login();
+        $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
 
         $this->post("/calendars/{$provider->id}/sources/add", [
@@ -208,7 +209,7 @@ class CalendarSourcesControllerTest extends TestCase
             'color' => 1,
             'name' => 'Work Calendar',
         ]);
-        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertResponseOk();
         $this->assertFlashElement('flash/success');
 
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
