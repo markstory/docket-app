@@ -9,6 +9,7 @@ use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
+use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\Utility\Text;
 use DateTimeZone;
@@ -99,6 +100,7 @@ class CalendarService
         try {
             $results = $calendar->calendarList->listCalendarList();
         } catch (GoogleException $e) {
+            Log::warning("Calendar list failed. error={$e->getMessage()}");
             throw new BadRequestException('Could not fetch calendars.', null, $e);
         }
         $linkedIds = array_map(function ($item) {
@@ -144,6 +146,7 @@ class CalendarService
     public function createSubscription(CalendarSource $source)
     {
         $this->loadModel('CalendarSubscriptions');
+
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
         $sub->identifier = Text::uuid();
         $sub->verifier = Text::uuid();
@@ -161,11 +164,37 @@ class CalendarService
 
         try {
             $calendar->events->watch($source->provider_id, $channel);
+            Log::info("Calendar subscription created. source={$source->id}");
         } catch (GoogleException $e) {
+            Log::warning("Calendar subscription failed. error={$e->getMessage()}");
             throw new RuntimeException('Could not create subscription', 0, $e);
         }
 
         return $sub;
+    }
+
+    /**
+     * @see https://developers.google.com/calendar/v3/reference/channels/stop
+     */
+    public function cancelSubscriptions(CalendarSource $source)
+    {
+        $this->loadModel('CalendarSubscriptions');
+
+        $subs = $this->CalendarSubscriptions
+            ->find()
+            ->where(['CalendarSubscriptions.calendar_source_id' => $source->id])
+            ->all();
+        $calendar = new Calendar($this->client);
+        foreach ($subs as $sub) {
+            $channel = new GoogleChannel();
+            $channel->setId($sub->identifier);
+            try {
+                $calendar->channels->stop($channel);
+                $this->CalendarSubscriptions->delete($sub);
+            } catch (GoogleException $e) {
+                Log::warning("Could not stop calendar subscription error={$e->getMessage()}");
+            }
+        }
     }
 
     /**
@@ -219,6 +248,8 @@ class CalendarService
             // Save the nextSyncToken for our next sync.
             $source->sync_token = $results->getNextSyncToken();
             $this->CalendarSources->saveOrFail($source);
+
+            Log::info("Calendar sync complete. source={$source->id}");
         });
     }
 

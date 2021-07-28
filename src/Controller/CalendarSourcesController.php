@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Model\Entity\CalendarSource;
 use App\Service\CalendarService;
+use RuntimeException;
 
 /**
  * CalendarSources Controller
@@ -47,12 +48,20 @@ class CalendarSourcesController extends AppController
             $source = $this->CalendarSources->newEntity($data);
             if ($this->CalendarSources->save($source)) {
                 $service->setAccessToken($provider);
-                $service->createSubscription($source);
-
-                $this->Flash->success(__('Your calendar will now be automatically synced.'));
+                try {
+                    $service->createSubscription($source);
+                    $msg = __('Your calendar was added and will be automatically synced.');
+                } catch (RuntimeException $e) {
+                    $msg = __('Your calendar was added but will not automatically synchronize.');
+                }
+                $this->Flash->success($msg);
             } else {
                 $this->Flash->error(__('Could not add that calendar.'));
             }
+            // Reload data to show new sources.
+            $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
+                'contain' => ['CalendarSources'],
+            ]);
         }
         $service->setAccessToken($provider);
         $calendars = $service->listUnlinkedCalendars($provider->calendar_sources);
@@ -116,15 +125,16 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete()
+    public function delete(CalendarService $service)
     {
         $this->request->allowMethod(['post', 'delete']);
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
+        $service->setAccessToken($calendarSource->calendar_provider);
+        $service->cancelSubscriptions($calendarSource);
+
         if ($this->CalendarSources->delete($calendarSource)) {
-            // TODO remove all subscriptions.
-            // https://developers.google.com/calendar/v3/reference/channels/stop
             $this->Flash->success(__('The calendar source has been deleted.'));
         } else {
             $this->Flash->error(__('The calendar source could not be deleted. Please, try again.'));

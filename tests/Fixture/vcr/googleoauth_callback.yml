@@ -38,6 +38,7 @@
             Expect: ''
             Accept-Encoding: ''
             Accept: ''
+            Authorization: 'Bearer goog-access-token'
     response:
         status:
             http_version: '1.1'

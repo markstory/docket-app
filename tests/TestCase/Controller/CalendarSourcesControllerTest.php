@@ -144,6 +144,28 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
+     * Test delete cancel subscription
+     *
+     * @vcr controller_calendarsources_delete.yml
+     * @return void
+     */
+    public function testDeleteCancelSubscription(): void
+    {
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+        $sub = $this->makeCalendarSubscription($source->id, 'subscription-id');
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
+        $this->assertRedirect(['_name' => 'calendarsources:add', 'providerId' => $provider->id]);
+        $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
+    }
+
+
+    /**
      * Test delete method
      *
      * @return void
@@ -197,6 +219,33 @@ class CalendarSourcesControllerTest extends TestCase
      * @vcr controller_calendarsources_add_post.yml
      */
     public function testAddPost()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+
+        $this->login();
+        $this->enableRetainFlashMessages();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/add", [
+            'provider_id' => 'calendar-1',
+            'color' => 1,
+            'name' => 'Work Calendar',
+        ]);
+        $this->assertResponseOk();
+        $this->assertFlashElement('flash/success');
+
+        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
+        $this->assertSame('calendar-1', $source->provider_id);
+
+        $subs = TableRegistry::get('CalendarSubscriptions');
+        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
+        $this->assertNotEmpty($sub->identifier);
+    }
+
+    /**
+     * @vcr controller_calendarsources_add_post_fail.yml
+     */
+    public function testAddPostSubscriptionFail()
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
