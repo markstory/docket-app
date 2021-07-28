@@ -164,7 +164,6 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
-
     /**
      * Test delete method
      *
