@@ -4,12 +4,7 @@
         url: 'https://oauth2.googleapis.com/token'
         headers:
             Host: oauth2.googleapis.com
-            Expect: ''
-            Accept-Encoding: ''
-            User-Agent: GuzzleHttp/7
-            Cache-Control: no-store
             Content-Type: application/x-www-form-urlencoded
-            Accept: ''
         body: 'grant_type=authorization_code&code=auth-code&redirect_uri=http%3A%2F%2Flocalhost%2Fauth%2Fgoogle%2Fcallback&client_id=430352593320-v29mg03j79rc4gl8ugfuv70q41e5hsli.apps.googleusercontent.com&client_secret=DO4xNdnxrxy1TBpdg343tmJr'
     response:
         status:
@@ -32,12 +27,9 @@
 -
     request:
         method: GET
-        url: 'https://www.googleapis.com/oauth/v2/userinfo'
+        url: 'https://www.googleapis.com/oauth2/v2/userinfo'
         headers:
-            Host: www.googleapis.con
-            Expect: ''
-            Accept-Encoding: ''
-            Accept: ''
+            Content-Type: application/json
             Authorization: 'Bearer goog-access-token'
     response:
         status:
@@ -45,10 +37,7 @@
             code: '200'
             message: 'Ok'
         headers:
-            Expires: 'Mon, 01 Jan 1990 00:00:00 GMT'
             Cache-Control: 'no-cache, no-store, max-age=0, must-revalidate'
-            Date: 'Mon, 12 Jul 2021 02:42:43 GMT'
-            Pragma: no-cache
             Content-Type: 'application/json; charset=utf-8'
         body: >
           {

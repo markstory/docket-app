@@ -4,10 +4,8 @@
         method: POST
         url: 'https://www.googleapis.com/calendar/v3/channels/stop'
         headers:
-            Host: www.googleapis.com
             content-type: application/json
             authorization: 'Bearer calendar-access-token'
-            Accept: ''
         body: '{"id":"subscription-id"}'
     response:
         status:

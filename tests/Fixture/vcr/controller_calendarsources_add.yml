@@ -5,11 +5,9 @@
         url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
         headers:
             Host: www.googleapis.com
-            Accept-Encoding: ''
-            content-type: application/json
+            Content-Type: application/json
             User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
-            authorization: 'Bearer calendar-access-token'
-            Accept: ''
+            Authorization: 'Bearer calendar-access-token'
     response:
         status:
             http_version: '1.1'
