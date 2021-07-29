@@ -76,6 +76,10 @@ class CalendarProvidersTable extends Table
             ->notEmptyString('identifier');
 
         $validator
+            ->scalar('display_name')
+            ->maxLength('display_name', 255);
+
+        $validator
             ->scalar('access_token')
             ->maxLength('access_token', 255)
             ->requirePresence('access_token', 'create')

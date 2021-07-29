@@ -50,8 +50,6 @@
         url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch'
         headers:
             Host: www.googleapis.com
-            Expect: ''
-            Accept-Encoding: ''
             content-type: application/json
         body: >
           {

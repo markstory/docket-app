@@ -1,3 +1,35 @@
+-
+    request:
+        method: POST
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch'
+        headers:
+            Host: www.googleapis.com
+            content-type: application/json
+        body: >
+          {
+            "address": "http:\/\/localhost\/google\/calendar\/notifications",
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
+            "type": "web_hook"
+          }
+    response:
+        status:
+            http_version: '1.1'
+            code: '400'
+            message: Bad Request
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Sun, 25 Jul 2021 02:56:56 GMT'
+        body: >
+          {
+            "error": {
+              "code": 400,
+              "message": "The calendar is invalid",
+              "errors": [
+                {"domain": "calendar", "reason": "invalid", "message": "Not good"}
+              ]
+            }
+          }
 
 -
     request:
@@ -5,9 +37,8 @@
         url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
         headers:
             Host: www.googleapis.com
-            Content-Type: application/json
-            User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
-            Authorization: 'Bearer calendar-access-token'
+            content-type: application/json
+            authorization: 'Bearer calendar-access-token'
     response:
         status:
             http_version: '1.1'

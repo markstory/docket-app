@@ -55,7 +55,6 @@ class GoogleOauthControllerTest extends TestCase
      * Test callback method
      *
      * @vcr googleoauth_callback.yml
-     * @return void
      */
     public function testCallbackSuccess(): void
     {
@@ -67,6 +66,8 @@ class GoogleOauthControllerTest extends TestCase
             ->find()
             ->where(['CalendarProviders.user_id' => 1])
             ->firstOrFail();
+        $this->assertSame('George Goggles (goog@example.com)', $provider->display_name);
+        $this->assertNotEmpty($provider->identifier);
         $this->assertNotEmpty($provider->access_token);
         $this->assertNotEmpty($provider->refresh_token);
         $this->assertNotEmpty($provider->token_expiry);

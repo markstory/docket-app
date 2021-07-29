@@ -9,6 +9,7 @@ use Cake\Core\ServiceProvider;
 use Cake\Routing\Router;
 use Google\Client as GoogleClient;
 use Google\Service\Calendar;
+use Google\Service\Oauth2;
 
 class CalendarServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class CalendarServiceProvider extends ServiceProvider
             $client->setApplicationName('Docket Calendar Sync');
             $client->addScope(Calendar::CALENDAR_EVENTS_READONLY);
             $client->addScope(Calendar::CALENDAR_READONLY);
+            $client->addScope(Oauth2::USERINFO_EMAIL);
             $client->setRedirectUri(Router::url(
                 ['_name' => 'googleauth:callback', '_full' => true]
             ));
