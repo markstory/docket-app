@@ -13,10 +13,10 @@ use DateTimeInterface;
  * @property int $calendar_source_id
  * @property string $provider_id
  * @property string $title
- * @property \Cake\I18n\FrozenTime|null $start_time
- * @property \Cake\I18n\FrozenTime|null $end_time
- * @property \Cake\I18n\FrozenDate|null $start_date
- * @property \Cake\I18n\FrozenDate|null $end_date
+ * @property \Cake\I18n\FrozenTime|null $start_time Stored in UTC
+ * @property \Cake\I18n\FrozenTime|null $end_time Stored in UTC
+ * @property \Cake\I18n\FrozenDate|null $start_date Stored in UTC
+ * @property \Cake\I18n\FrozenDate|null $end_date Stored in UTC
  * @property bool $all_day
  * @property string|null $html_link
  * @property \Cake\I18n\FrozenTime $created

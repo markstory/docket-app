@@ -14,7 +14,7 @@ use Cake\ORM\Entity;
  * @property int|null $section_id
  * @property string|null $title
  * @property string|null $body
- * @property \Cake\I18n\FrozenDate|null $due_on
+ * @property \Cake\I18n\FrozenDate|null $due_on This date is in the user's timezone.
  * @property int $child_order
  * @property int $day_order
  * @property bool $evening

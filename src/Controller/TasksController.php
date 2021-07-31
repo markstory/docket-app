@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenDate;
@@ -41,21 +42,26 @@ class TasksController extends AppController
             ->find('incomplete')
             ->contain('Projects');
 
+        $tz = Configure::read('App.defaultTimezone');
         $query = $this->Authorization->applyScope($query);
         if ($view === 'today') {
             $this->set('component', 'Tasks/Today');
 
             $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => FrozenDate::parse('today', $identity->timezone),
-                'end' => FrozenDate::parse('tomorrow', $identity->timezone),
+                'start' => FrozenDate::parse('today', $tz),
+                'end' => FrozenDate::parse('tomorrow', $tz),
             ]);
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
+
+            $utcStart = $start->setTimezone($tz);
+            $utcEnd = $start->modify('+28 days');
+
             $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $start,
-                'end' => $end,
+                'start' => $utcStart,
+                'end' => $utcEnd,
             ]);
         }
         $tasks = $query->all();
