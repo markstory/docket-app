@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\Core\Configure;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -116,6 +117,10 @@ class CalendarItemsTable extends Table
         return $rules;
     }
 
+    /**
+     * The `start` and `end` options are expected to be in
+     * user timezone.
+     */
     public function findUpcoming(Query $query, array $options): Query
     {
         if (empty($options['start'])) {
@@ -126,13 +131,17 @@ class CalendarItemsTable extends Table
         }
 
         return $query->where(function ($exp) use ($options) {
+            $tz = Configure::read('App.defaultTimezone');
+
+            // Dates are in without timezones so we use user timezone.
             $date = $exp->and([
                 'CalendarItems.start_date >=' => $options['start'],
-                'CalendarItems.end_date <' => $options['end'],
+                'CalendarItems.end_date <=' => $options['end'],
             ]);
+            // datetimes are stored in utc.
             $dateTime = $exp->and([
-                'CalendarItems.start_time >=' => $options['start'],
-                'CalendarItems.end_time <' => $options['end'],
+                'CalendarItems.start_time >=' => $options['start']->setTimezone($tz),
+                'CalendarItems.end_time <' => $options['end']->setTimezone($tz),
             ]);
 
             return $exp->or([$date, $dateTime]);

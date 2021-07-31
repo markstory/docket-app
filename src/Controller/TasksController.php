@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use InvalidArgumentException;
 
 /**
@@ -33,7 +32,7 @@ class TasksController extends AppController
             if (!is_string($startVal)) {
                 throw new BadRequestException(__('Invalid start value provided.'));
             }
-            $start = new FrozenDate($startVal, $identity->timezone);
+            $start = new FrozenTime($startVal, $identity->timezone);
         } catch (\Exception $e) {
             throw new NotFoundException();
         }
@@ -42,26 +41,23 @@ class TasksController extends AppController
             ->find('incomplete')
             ->contain('Projects');
 
-        $tz = Configure::read('App.defaultTimezone');
         $query = $this->Authorization->applyScope($query);
         if ($view === 'today') {
             $this->set('component', 'Tasks/Today');
+            $start = new FrozenTime('today', $identity->timezone);
 
             $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => FrozenDate::parse('today', $tz),
-                'end' => FrozenDate::parse('tomorrow', $tz),
+                'start' => $start,
+                'end' => $start->modify('+1 days'),
             ]);
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
 
-            $utcStart = $start->setTimezone($tz);
-            $utcEnd = $start->modify('+28 days');
-
             $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $utcStart,
-                'end' => $utcEnd,
+                'start' => $start,
+                'end' => $end,
             ]);
         }
         $tasks = $query->all();

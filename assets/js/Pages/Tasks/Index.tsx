@@ -93,7 +93,7 @@ function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
   return items.reduce<GroupedCalendarItems>((acc, item) => {
     let keys = [];
     if (item.all_day) {
-      keys = getRangeInDays(new Date(item.start_date), new Date(item.end_date));
+      keys = getRangeInDays(parseDate(item.start_date), parseDate(item.end_date));
     } else {
       keys = getRangeInDays(new Date(item.start_time), new Date(item.end_time));
     }

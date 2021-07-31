@@ -273,8 +273,8 @@ class CalendarService
         $datetimes = [$start->getDate(), $end->getDate(), $start->getDateTime(), $end->getDateTime()];
         foreach ($datetimes as $i => $value) {
             if ($value && $i < 2) {
-                $date = FrozenDate::parse($value, $eventTz ?? $tz);
-                $date = $date->setTimezone($tz);
+                // Dates don't have a timezone
+                $date = FrozenDate::parse($value);
                 $datetimes[$i] = $date;
             } elseif ($value) {
                 $time = FrozenTime::parse($value, $eventTz ?? $tz);

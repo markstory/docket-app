@@ -15,8 +15,8 @@ use DateTimeInterface;
  * @property string $title
  * @property \Cake\I18n\FrozenTime|null $start_time Stored in UTC
  * @property \Cake\I18n\FrozenTime|null $end_time Stored in UTC
- * @property \Cake\I18n\FrozenDate|null $start_date Stored in UTC
- * @property \Cake\I18n\FrozenDate|null $end_date Stored in UTC
+ * @property \Cake\I18n\FrozenDate|null $start_date Stored as user timezone.
+ * @property \Cake\I18n\FrozenDate|null $end_date Stored as user timezone.
  * @property bool $all_day
  * @property string|null $html_link
  * @property \Cake\I18n\FrozenTime $created
