@@ -1,4 +1,5 @@
 import {Inertia} from '@inertiajs/inertia';
+import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
 import {deleteProvider} from 'app/actions/calendars';
@@ -38,10 +39,10 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
           })}
         </ul>
         <div className="button-bar">
-          <a className="button-primary" href="/auth/google/authorize">
+          <InertiaLink className="button-primary" href="/auth/google/authorize">
             <InlineIcon icon="plus" />
             {t('Add Google Account')}
-          </a>
+          </InertiaLink>
         </div>
       </Modal>
     </LoggedIn>
@@ -63,9 +64,12 @@ function CalendarProviderItem({provider}: ProviderProps) {
         <ProviderIcon provider={provider} /> {provider.display_name}
       </span>
       <div className="button-bar-inline">
-        <a href={`/calendars/${provider.id}/sources/add`} className="button-secondary">
+        <InertiaLink
+          href={`/calendars/${provider.id}/sources/add`}
+          className="button-secondary"
+        >
           {t('Manage Calendars')}
-        </a>
+        </InertiaLink>
         <button onClick={handleDelete} className="button-danger">
           <InlineIcon icon="trash" />
           {t('Unlink')}

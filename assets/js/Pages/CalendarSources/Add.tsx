@@ -70,7 +70,7 @@ export default CalendarSourcesAdd;
 
 type ItemProps = {
   source: CalendarSource;
-  provider: CalendarProvider;
+  provider: CalendarProviderDetailed;
   mode: 'create' | 'edit';
 };
 
