@@ -67,6 +67,11 @@
   .task-row .actions {
     visibility: visible;
   }
+
+  // Pad in so that task actions don't overlap with text.
+  .task-row > a {
+    padding-right: $space * 3;
+  }
 }
 
 .dnd-item-dragging .task-row {
