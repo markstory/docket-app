@@ -7,15 +7,22 @@
 
 .calendar-item {
   // Expects a `--calendar-color` CSS property to be set.
+  display: flex;
+  align-items: center;
   margin-bottom: $space;
 
   &:last-child {
     margin-bottom: 0;
   }
 
-  &.all-day {
-    border-left: 4px solid var(--calendar-color);
-    padding-left: $space / 2;
+  &.all-day:before {
+    display: inline-block;
+    content: '';
+    border-radius: $border-radius;
+    background: var(--calendar-color);
+    width: 4px;
+    height: 1.2em;
+    margin-right: $space / 2;
   }
 
   time {
