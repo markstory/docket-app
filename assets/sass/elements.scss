@@ -48,3 +48,14 @@ h5:first-child {
 p {
   margin: 0 0 $space * 2 0;
 }
+
+a {
+  color: var(--color-link);
+  &:visited {
+    color: var(--color-visited);
+  }
+  &:focus,
+  &:hover {
+    color: var(--color-active);
+  }
+}

@@ -35,6 +35,7 @@
   border: none;
   color: var(--color-fg);
 
+  color: var(--color-foreground);
   border-radius: 0;
   box-shadow: none;
   padding: $space $space * 1.5;
@@ -43,6 +44,13 @@
 
   line-height: 1.3;
   text-decoration: none;
+
+
+  &:visited,
+  &:focus,
+  &:hover {
+    color: var(--color-fg);
+  }
 }
 
 .dropdown-item-header {

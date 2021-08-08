@@ -126,6 +126,10 @@ body {
   --color-button-primary-hover: var(--color-purple-700);
   --color-button-muted-hover: var(--color-gray-100);
 
+  --color-link: var(--color-blue-500);
+  --color-active: var(--color-blue-700);
+  --color-visited: var(--color-purple-700);
+
   --color-input-focus-shadow: var(--color-blue-100);
   --color-input-focus-border: var(--color-blue-300);
   --color-menu-hover: var(--color-ochre-100);
@@ -190,6 +194,10 @@ body.theme-dark {
   --color-button-primary-bg: var(--color-purple-500);
   --color-button-primary-hover: var(--color-purple-700);
   --color-button-muted-hover: var(--color-gray-700);
+
+  --color-link: var(--color-blue-300);
+  --color-active: var(--color-blue-500);
+  --color-visited: var(--color-purple-300);
 
   --color-input-focus-shadow: var(--color-blue-700);
   --color-input-focus-border: var(--color-blue-500);
