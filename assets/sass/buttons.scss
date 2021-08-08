@@ -65,6 +65,9 @@ button {
     color: var(--color-button-primary-fg);
     background: var(--color-button-primary-hover);
   }
+  &:visited {
+    color: var(--color-button-primary-fg);
+  }
 }
 
 // background blend, bordered with accent color on hover
@@ -78,6 +81,9 @@ button {
   &:hover {
     color: var(--color-primary);
     background: var(--color-bg);
+  }
+  &:visited {
+    color: var(--color-button-fg);
   }
 }
 
