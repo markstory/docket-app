@@ -31,8 +31,10 @@ You're now ready to build the assets:
 yarn build
 ```
 
-Next setup your database configuration in `config/app_local.php`. Docket is tested against
-MySQL, Postgres and SQLite. Then run migrations:
+Docket is tested against MySQL, Postgres and SQLite, and will work equally well
+on all of them.  Create your database, and ensure your database is encoded as
+`UTF8` or `utf8mb4` if you are using MySQL. Next setup your database
+configuration in `config/app_local.php`; then run migrations:
 
 ```php
 bin/cake migrations migrate
