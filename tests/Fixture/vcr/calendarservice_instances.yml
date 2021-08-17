@@ -1,0 +1,107 @@
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00'
+        headers:
+            content-type: application/json
+            authorization: 'Bearer calendar-access-token'
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 03:30:58 GMT'
+        body: >
+          {
+            "kind": "calendar#events",
+            "etag": "etag-value",
+            "summary": "primary",
+            "description": "",
+            "timeZone": "UTC",
+            "nextPageToken": null,
+            "nextSyncToken": "next-sync-token",
+            "items": [
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-3",
+                "summary": "1:1 meeting",
+                "recurrence": ["RRULE:FREQ=DAILY;UNTIL=20150628;INTERVAL=3"],
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/3",
+                "start": {
+                  "date": "2021-07-15",
+                  "dateTime": null
+                },
+                "end": {
+                  "date": "2021-07-17",
+                  "dateTime": null
+                },
+                "status": "confirmed"
+              }
+            ]
+          }
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/calendar-event-3/instances?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00&timeMax=2021-09-11T12%3A13%3A14%2B00%3A00'
+        headers:
+            content-type: application/json
+            authorization: 'Bearer calendar-access-token'
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: Ok
+        headers:
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 03:30:58 GMT'
+        body: >
+          {
+            "kind": "calendar#events",
+            "etag": "etag-value",
+            "summary": "primary",
+            "description": "",
+            "timeZone": "UTC",
+            "nextPageToken": null,
+            "nextSyncToken": "next-sync-token",
+            "items": [
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-3",
+                "summary": "1:1 meeting",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/3",
+                "start": {
+                  "date": null,
+                  "dateTime": "2021-06-15T12:13:14"
+                },
+                "end": {
+                  "date": null,
+                  "dateTime": "2021-06-15T13:13:14"
+                },
+                "status": "confirmed"
+              },
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-4",
+                "summary": "1:1 meeting",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/4",
+                "start": {
+                  "date": null,
+                  "dateTime": "2021-06-16T12:13:14"
+                },
+                "end": {
+                  "date": null,
+                  "dateTime": "2021-06-16T13:13:14"
+                },
+                "status": "confirmed"
+              }
+            ]
+          }

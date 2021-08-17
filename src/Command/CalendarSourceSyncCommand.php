@@ -50,6 +50,7 @@ class CalendarSourceSyncCommand extends Command
             'help' => __('The id of the calendar source to refresh.'),
         ]);
         $parser->addOption('erase-local', [
+            'boolean' => true,
             'help' => __('Enable to erase all local data for the source, and start a fresh sync.'),
         ]);
 

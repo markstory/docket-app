@@ -219,7 +219,7 @@ class CalendarService
             $options = ['syncToken' => $source->sync_token];
         }
 
-        $this->CalendarItems->getConnection()->transactional(function () use ($calendar, $defaults, $options, $source) {
+        $this->CalendarItems->getConnection()->transactional(function () use ($calendar, $defaults, $options, $source, $time) {
             $pageToken = null;
 
             do {
@@ -239,8 +239,18 @@ class CalendarService
                         throw $e;
                     }
                 }
+                $instanceOpts = [
+                    'timeMin' => $time,
+                    'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                ];
                 foreach ($results as $event) {
-                    $this->syncEvent($source, $event);
+                    $instances = [$event];
+                    if (!empty($event->getRecurrence())) {
+                        $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
+                    }
+                    foreach ($instances as $instance) {
+                        $this->syncEvent($source, $instance);
+                    }
                 }
                 $pageToken = $results->getNextPageToken();
             } while ($pageToken !== null);

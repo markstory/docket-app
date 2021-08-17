@@ -216,6 +216,20 @@ class CalendarServiceTest extends TestCase
     }
 
     /**
+     * @vcr calendarservice_instances.yml
+     */
+    public function testSyncUpdateRecurringInstances()
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+        $this->calendar->syncEvents($source);
+        $query = $this->calendarItems->find()->where(['CalendarItems.calendar_source_id' => $source->id]);
+        $this->assertCount(2, $query);
+    }
+
+    /**
      * @vcr controller_calendarsources_add.yml
      */
     public function testListUnsyncedCalendars()
