@@ -219,48 +219,50 @@ class CalendarService
             $options = ['syncToken' => $source->sync_token];
         }
 
-        $this->CalendarItems->getConnection()->transactional(function () use ($calendar, $defaults, $options, $source, $time) {
-            $pageToken = null;
+        $this->CalendarItems->getConnection()->transactional(
+            function () use ($calendar, $defaults, $options, $source, $time) {
+                $pageToken = null;
 
-            do {
-                if ($pageToken !== null) {
-                    $options['pageToken'] = $pageToken;
-                    unset($options['timeMin']);
-                }
-
-                try {
-                    $results = $calendar->events->listEvents($source->provider_id, $options);
-                } catch (GoogleException $e) {
-                    if ($e->getCode() == 410) {
-                        // Start a full sync as our sync token was not good
-                        $options = $defaults;
-                        continue;
-                    } else {
-                        throw $e;
+                do {
+                    if ($pageToken !== null) {
+                        $options['pageToken'] = $pageToken;
+                        unset($options['timeMin']);
                     }
-                }
-                $instanceOpts = [
-                    'timeMin' => $time,
-                    'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
-                ];
-                foreach ($results as $event) {
-                    $instances = [$event];
-                    if (!empty($event->getRecurrence())) {
-                        $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
-                    }
-                    foreach ($instances as $instance) {
-                        $this->syncEvent($source, $instance);
-                    }
-                }
-                $pageToken = $results->getNextPageToken();
-            } while ($pageToken !== null);
 
-            // Save the nextSyncToken for our next sync.
-            $source->sync_token = $results->getNextSyncToken();
-            $this->CalendarSources->saveOrFail($source);
+                    try {
+                        $results = $calendar->events->listEvents($source->provider_id, $options);
+                    } catch (GoogleException $e) {
+                        if ($e->getCode() == 410) {
+                            // Start a full sync as our sync token was not good
+                            $options = $defaults;
+                            continue;
+                        } else {
+                            throw $e;
+                        }
+                    }
+                    $instanceOpts = [
+                        'timeMin' => $time,
+                        'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                    ];
+                    foreach ($results as $event) {
+                        $instances = [$event];
+                        if (!empty($event->getRecurrence())) {
+                            $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
+                        }
+                        foreach ($instances as $instance) {
+                            $this->syncEvent($source, $instance);
+                        }
+                    }
+                    $pageToken = $results->getNextPageToken();
+                } while ($pageToken !== null);
 
-            Log::info("Calendar sync complete. source={$source->id}");
-        });
+                // Save the nextSyncToken for our next sync.
+                $source->sync_token = $results->getNextSyncToken();
+                $this->CalendarSources->saveOrFail($source);
+
+                Log::info("Calendar sync complete. source={$source->id}");
+            }
+        );
     }
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
