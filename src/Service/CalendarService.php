@@ -252,7 +252,11 @@ class CalendarService
                         foreach ($results as $event) {
                             $instances = [$event];
                             if (!empty($event->getRecurrence())) {
-                                $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
+                                $instances = $calendar->events->instances(
+                                    $source->provider_id,
+                                    $event->id,
+                                    $instanceOpts
+                                );
                             }
                             foreach ($instances as $instance) {
                                 $this->syncEvent($source, $instance);
