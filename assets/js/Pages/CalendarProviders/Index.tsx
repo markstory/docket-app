@@ -39,10 +39,10 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
           })}
         </ul>
         <div className="button-bar">
-          <InertiaLink className="button-primary" href="/auth/google/authorize">
+          <a className="button-primary" href="/auth/google/authorize">
             <InlineIcon icon="plus" />
             {t('Add Google Account')}
-          </InertiaLink>
+          </a>
         </div>
       </Modal>
     </LoggedIn>
