@@ -241,7 +241,7 @@ class CalendarService
                         }
                     }
                     $instanceOpts = [
-                        'timeMin' => $time,
+                        'timeMin' => $time->format(FrozenTime::RFC3339),
                         'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
                     ];
                     foreach ($results as $event) {
@@ -249,8 +249,18 @@ class CalendarService
                         if (!empty($event->getRecurrence())) {
                             $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
                         }
-                        foreach ($instances as $instance) {
-                            $this->syncEvent($source, $instance);
+                        $instanceOpts = [
+                            'timeMin' => $time,
+                            'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                        ];
+                        foreach ($results as $event) {
+                            $instances = [$event];
+                            if (!empty($event->getRecurrence())) {
+                                $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
+                            }
+                            foreach ($instances as $instance) {
+                                $this->syncEvent($source, $instance);
+                            }
                         }
                     }
                     $pageToken = $results->getNextPageToken();
