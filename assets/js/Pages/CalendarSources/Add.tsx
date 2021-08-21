@@ -6,6 +6,7 @@ import {deleteSource} from 'app/actions/calendars';
 import {InlineIcon} from 'app/components/icon';
 import ColorSelect from 'app/components/colorSelect';
 import Modal from 'app/components/modal';
+import OverflowActionBar from 'app/components/overflowActionBar';
 import {PROJECT_COLORS} from 'app/constants';
 import LoggedIn from 'app/layouts/loggedIn';
 import {CalendarProviderDetailed, CalendarSource} from 'app/types';
@@ -31,7 +32,7 @@ function CalendarSourcesAdd({calendarProvider, unlinked}: Props) {
              You should see calendar events in your 'today' and 'upcoming' views.`
           )}
         </p>
-        <ul className="list-items list-items--small-vertical">
+        <ul className="list-items">
           {calendarProvider.calendar_sources.map(source => {
             return (
               <CalendarSourceItem
@@ -75,13 +76,11 @@ type ItemProps = {
 };
 
 function CalendarSourceItem({source, mode, provider}: ItemProps) {
-  function handleSync(event: React.MouseEvent) {
-    event.stopPropagation();
+  function handleSync() {
     Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`);
   }
 
-  async function handleDelete(event: React.MouseEvent) {
-    event.stopPropagation();
+  async function handleDelete() {
     return deleteSource(provider, source);
   }
 
@@ -115,16 +114,26 @@ function CalendarSourceItem({source, mode, provider}: ItemProps) {
       </span>
       <div className="list-item-block">
         {mode === 'edit' && (
-          <Fragment>
-            <button className="button-secondary" onClick={handleSync}>
-              <InlineIcon icon="sync" />
-              {t('Refresh')}
-            </button>
-            <button className="button-danger" onClick={handleDelete}>
-              <InlineIcon icon="trash" />
-              {t('Unlink')}
-            </button>
-          </Fragment>
+          <OverflowActionBar
+            label={t('Calendar actions')}
+            foldWidth={700}
+            items={[
+              {
+                buttonClass: 'button-secondary',
+                onSelect: handleSync,
+                menuItemClass: 'complete',
+                icon: <InlineIcon icon="sync" />,
+                label: t('Refresh'),
+              },
+              {
+                buttonClass: 'button-danger',
+                menuItemClass: 'delete',
+                onSelect: handleDelete,
+                icon: <InlineIcon icon="trash" />,
+                label: t('Unlink'),
+              },
+            ]}
+          />
         )}
         {mode === 'create' && (
           <button className="button-primary" onClick={handleCreate}>
