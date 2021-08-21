@@ -4,6 +4,7 @@
 
   li {
     display: flex;
+    gap: $space;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -31,10 +32,17 @@
   }
 }
 
+@media (max-width: $breakpoint-phone) {
+  .list-items--small-vertical li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .list-item-block {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: $space;
 }
 

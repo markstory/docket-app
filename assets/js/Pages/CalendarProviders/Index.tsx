@@ -28,7 +28,7 @@ function CalendarProvidersIndex({referer, calendarProviders}: Props) {
             'Events from linked calendars will be displayed in "today" and "upcoming" views.'
           )}
         </p>
-        <ul className="list-items">
+        <ul className="list-items list-items--small-vertical">
           {calendarProviders.map(calendarProvider => {
             return (
               <CalendarProviderItem
@@ -63,7 +63,7 @@ function CalendarProviderItem({provider}: ProviderProps) {
       <span className="list-item-block">
         <ProviderIcon provider={provider} /> {provider.display_name}
       </span>
-      <div className="button-bar-inline">
+      <div className="list-item-block">
         <InertiaLink
           href={`/calendars/${provider.id}/sources/add`}
           className="button-secondary"

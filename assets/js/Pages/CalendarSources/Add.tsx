@@ -31,7 +31,7 @@ function CalendarSourcesAdd({calendarProvider, unlinked}: Props) {
              You should see calendar events in your 'today' and 'upcoming' views.`
           )}
         </p>
-        <ul className="list-items">
+        <ul className="list-items list-items--small-vertical">
           {calendarProvider.calendar_sources.map(source => {
             return (
               <CalendarSourceItem
@@ -113,7 +113,7 @@ function CalendarSourceItem({source, mode, provider}: ItemProps) {
         )}
         {source.name}
       </span>
-      <div className="button-bar-inline">
+      <div className="list-item-block">
         {mode === 'edit' && (
           <Fragment>
             <button className="button-secondary" onClick={handleSync}>

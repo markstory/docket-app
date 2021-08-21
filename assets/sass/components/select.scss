@@ -47,9 +47,11 @@ div.select__value-container {
   color: var(--color-fg);
 }
 @media (max-width: $breakpoint-phone) {
-  div.select-narrow__control,
+  div.select-narrow__control {
+    min-width: 75px;
+  }
   div.select__control {
-    min-width: 125px;
+    min-width: 150px;
   }
 }
 
