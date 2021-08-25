@@ -12,7 +12,7 @@ use Cake\ORM\Entity;
  * @property int $calendar_source_id
  * @property string $identifier
  * @property string $verifier
- * @property string $channel_token
+ * @property \Cake\I18n\FrozenTime|null $expires_at
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime|null $modified
  *
@@ -33,6 +33,7 @@ class CalendarSubscription extends Entity
         'calendar_source_id' => true,
         'identifier' => true,
         'verifier' => true,
+        'expires_at' => true,
         'created' => true,
         'modified' => true,
         'calendar_source' => true,

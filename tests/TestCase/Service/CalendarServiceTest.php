@@ -300,6 +300,7 @@ class CalendarServiceTest extends TestCase
         $this->assertSame($source->id, $sub->calendar_source_id);
         $this->assertNotEmpty($sub->identifier);
         $this->assertNotEmpty($sub->verifier);
+        $this->assertNotEmpty($sub->expires_at);
     }
 
     /**

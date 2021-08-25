@@ -163,7 +163,10 @@ class CalendarService
         $channel->setType('web_hook');
 
         try {
-            $calendar->events->watch($source->provider_id, $channel);
+            $result = $calendar->events->watch($source->provider_id, $channel);
+            $sub->expires_at = $result->getExpiration() / 1000;
+            $this->CalendarSubscriptions->saveOrFail($sub);
+
             Log::info("Calendar subscription created. source={$source->id}");
         } catch (GoogleException $e) {
             Log::warning("Calendar subscription failed. error={$e->getMessage()}");
