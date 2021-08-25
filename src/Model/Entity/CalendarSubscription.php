@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property int $calendar_source_id
  * @property string $identifier
  * @property string $verifier
+ * @property string $channel_token
  * @property \Cake\I18n\FrozenTime|null $expires_at
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime|null $modified
