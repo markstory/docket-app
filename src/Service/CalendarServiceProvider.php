@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Command\CalendarSubscriptionRenewCommand;
 use App\Command\CalendarSourceSyncCommand;
 use Cake\Core\ContainerInterface;
 use Cake\Core\ServiceProvider;
@@ -15,6 +16,7 @@ class CalendarServiceProvider extends ServiceProvider
 {
     protected $provides = [
         CalendarSourceSyncCommand::class,
+        CalendarSubscriptionRenewCommand::class,
         CalendarService::class,
         GoogleClient::class,
     ];
@@ -43,6 +45,9 @@ class CalendarServiceProvider extends ServiceProvider
             ->addArgument(GoogleClient::class);
 
         $container->add(CalendarSourceSyncCommand::class)
+            ->addArgument(CalendarService::class);
+
+        $container->add(CalendarSubscriptionRenewCommand::class)
             ->addArgument(CalendarService::class);
     }
 }

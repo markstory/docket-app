@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\FrozenTime;
+use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -94,5 +96,14 @@ class CalendarSubscriptionsTable extends Table
         );
 
         return $rules;
+    }
+
+    public function findExpiring(Query $query, array $options): Query
+    {
+        $tomorrow = new FrozenTime('tomorrow');
+
+        return $query->where([
+            'CalendarSubscriptions.expires_at <=' => $tomorrow,
+        ]);
     }
 }

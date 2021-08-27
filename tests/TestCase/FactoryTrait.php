@@ -125,13 +125,14 @@ trait FactoryTrait
         return $items->saveOrFail($item);
     }
 
-    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null)
+    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null, $expires = null)
     {
         $subs = TableRegistry::get('CalendarSubscriptions');
         $sub = $subs->newEntity([
             'calendar_source_id' => $sourceId,
             'identifier' => $identifier ?? Text::uuid(),
             'verifier' => $verifier ?? Text::uuid(),
+            'expires_at' => $expires ?? strtotime('+1 week'),
         ]);
 
         return $subs->saveOrFail($sub);
