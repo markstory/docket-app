@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Command;
 
-use App\Command\CalendarSubscriptionRenewCommand;
 use App\Test\TestCase\FactoryTrait;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
