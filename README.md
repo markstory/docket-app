@@ -6,7 +6,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/markstory/docket-app/CI)](https://github.com/markstory/docket-app/actions)
 
-A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/)(along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
+A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/) (along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
 Heavily inspired in functionality and design by [Todoist](http://todoist.com)
 and [Things](http://culturedcode.com/things).
 
@@ -101,3 +101,13 @@ The google calendar integration has a fairly involved setup, as you will need to
 If you've managed to do all of that you *should* have a working google calendar integration, and you should be able to go to *Profile Menu > Calendars* and add your google account.
 
 If not, I'm sorry but google has made this really hard and you'll have to keep trying until you get it working. There isn't much I can do to help either.
+
+## Automatic Syncing
+
+Adding a calendar to docket will also create a 'watch' subscription that will receive updates from google. Subscriptions only last around a week after which they need to be renewed. You can add the following command to run as a daily cron job:
+
+```bash
+bin/cake calendar_subscription_renew
+```
+
+This command will iterate all the subscriptions that will expire in the next day and create a new subscription for those calendar sources.
