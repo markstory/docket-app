@@ -72,6 +72,6 @@
             "kind": "api#channel",
             "resourceId": "calendar-1",
             "resourceUrl": "",
-            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9"
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
             "expiration": 1426325213000
           }
