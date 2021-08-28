@@ -72,6 +72,6 @@ class CalendarSubscriptionRenewCommand extends Command
             $this->calendarService->createSubscription($row->calendar_source);
             $io->out('New subscription created.');
         }
-        $io->verbose('All done. Updated {count($results)} records.');
+        $io->verbose("All done. Updated {count($results)} records.");
     }
 }
