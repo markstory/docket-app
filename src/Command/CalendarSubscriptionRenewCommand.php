@@ -66,7 +66,7 @@ class CalendarSubscriptionRenewCommand extends Command
                 $io->error("Could not find related calendar source for id={$row->id}");
                 continue;
             }
-            $io->out('Renewing subscription for source id={$row->calendar_source->id}');
+            $io->out("Renewing subscription for source id={$row->calendar_source->id}");
             $provider = $row->calendar_source->calendar_provider;
             $this->calendarService->setAccessToken($provider);
             $this->calendarService->createSubscription($row->calendar_source);
