@@ -170,7 +170,7 @@ class CalendarService
             Log::info("Calendar subscription created. source={$source->id}");
         } catch (GoogleException $e) {
             Log::warning("Calendar subscription failed. error={$e->getMessage()}");
-            throw new RuntimeException('Could not create subscription', 0, $e);
+            throw new RuntimeException("Could not create subscription for source id={$source->id}", 0, $e);
         }
 
         return $sub;
