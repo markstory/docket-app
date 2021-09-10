@@ -71,6 +71,9 @@ class CalendarSubscriptionRenewCommand extends Command
             $this->calendarService->setAccessToken($provider);
             $this->calendarService->createSubscription($row->calendar_source);
             $io->out('New subscription created.');
+
+            $this->CalendarSubscriptions->delete($row);
+            $io->out('Previous subscription deleted.');
         }
         $io->verbose("All done. Updated {count($results)} records.");
     }
