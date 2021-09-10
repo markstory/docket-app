@@ -8,6 +8,7 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use RuntimeException;
 
 /**
  * CalendarSubscriptionRenew command.
@@ -69,12 +70,37 @@ class CalendarSubscriptionRenewCommand extends Command
             $io->out("Renewing subscription for source id={$row->calendar_source->id}");
             $provider = $row->calendar_source->calendar_provider;
             $this->calendarService->setAccessToken($provider);
-            $this->calendarService->createSubscription($row->calendar_source);
-            $io->out('New subscription created.');
+            try {
+                $this->calendarService->createSubscription($row->calendar_source);
+                $io->verbose('New subscription created.');
+            } catch (RuntimeException $e) {
+                $io->out('<error>Could not create subscription</error>');
+                $io->out('Error was:');
+                $io->out($e->getMessage());
+            }
 
             $this->CalendarSubscriptions->delete($row);
             $io->out('Previous subscription deleted.');
         }
-        $io->verbose("All done. Updated {count($results)} records.");
+
+        $results = $this->CalendarSubscriptions->CalendarSources->find('missingSubscription')
+            ->contain('CalendarProviders')
+            ->all();
+
+        $io->verbose('Creating missing subscriptions');
+        foreach ($results as $row) {
+            $io->out("Creating new subscription for source id={$row->id}");
+            $provider = $row->calendar_provider;
+            $this->calendarService->setAccessToken($provider);
+            try {
+                $this->calendarService->createSubscription($row);
+                $io->verbose('New subscription created.');
+            } catch (RuntimeException $e) {
+                $io->out('<error>Could not create subscription</error>');
+                $io->out('Error was:');
+                $io->out($e->getMessage());
+            }
+        }
+        $io->verbose('All Done.');
     }
 }
