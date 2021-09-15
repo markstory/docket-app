@@ -94,7 +94,6 @@ class CalendarItemsTable extends Table
 
         $validator
             ->scalar('html_link')
-            ->maxLength('html_link', 255)
             ->allowEmptyString('html_link');
 
         return $validator;

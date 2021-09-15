@@ -26,7 +26,7 @@ class CalendarItemsFixture extends TestFixture
         'end_date' => ['type' => 'date', 'length' => null, 'precision' => null, 'null' => true, 'default' => null, 'comment' => ''],
         'end_time' => ['type' => 'datetime', 'length' => null, 'precision' => null, 'null' => true, 'default' => null, 'comment' => ''],
         'all_day' => ['type' => 'boolean', 'default' => false, 'null' => false],
-        'html_link' => ['type' => 'string', 'length' => 255, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
+        'html_link' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'created' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         'modified' => ['type' => 'timestamp', 'length' => null, 'precision' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => ''],
         '_constraints' => [
