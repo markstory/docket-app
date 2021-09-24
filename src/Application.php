@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Error\SentryErrorHandler;
 use App\Service\CalendarServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -84,10 +85,12 @@ class Application extends BaseApplication implements
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
+        $errorhandler = new SentryErrorHandler(Configure::read('Error'));
+
         $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response
-            ->add(new ErrorHandlerMiddleware(Configure::read('Error')))
+            ->add(new ErrorHandlerMiddleware($errorhandler))
 
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([

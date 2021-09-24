@@ -196,6 +196,15 @@ return [
         'editor' => 'phpstorm',
     ],
 
+    /**
+     * Configuration for sentry error handling
+     */
+    'Sentry' => [
+      'dsn' => '',
+      'environment' => 'dev',
+      'release' => 'unknown',
+    ],
+
     /*
      * Email configuration.
      *

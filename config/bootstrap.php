@@ -163,3 +163,5 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
 Security::setSalt((string)Configure::consume('Security.salt'));
+
+\Sentry\init(Configure::consume('Sentry'));
