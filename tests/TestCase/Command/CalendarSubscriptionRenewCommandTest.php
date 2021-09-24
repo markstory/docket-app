@@ -86,4 +86,26 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
         $subs = $this->CalendarSubscriptions->find()->all();
         $this->assertCount(1, $subs, 'Should create a new subscription.');
     }
+
+    /**
+     * Test execute method
+     *
+     * @vcr calendarservice_createsubscription_success.yml
+     * @return void
+     */
+    public function testExecuteNoDuplicates(): void
+    {
+        $provider = $this->makeCalendarProvider(1, 'me@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'calendar-1');
+        $this->makeCalendarSubscription($source->id, 'abc123', 'verifier-val');
+
+        $this->exec('calendar_subscription_renew');
+
+        $this->assertExitSuccess();
+        $this->assertErrorEmpty();
+        $this->assertOutputNotContains('Calendar subscription created.');
+
+        $subs = $this->CalendarSubscriptions->find()->all();
+        $this->assertCount(1, $subs, 'Should create a new subscription.');
+    }
 }
