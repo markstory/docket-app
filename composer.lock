@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "82bdfa9855de9dd2966a2fb0816930e3",
+    "content-hash": "fa2ff6b8d4b509938a768b56ce094642",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -142,20 +142,20 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "dev-4.next",
+            "version": "4.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "acd8af5f9b51534d5e2eaf597ffa57b630a3e128"
+                "reference": "6cb068fd328219d79a02ef6df439b73459071368"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/acd8af5f9b51534d5e2eaf597ffa57b630a3e128",
-                "reference": "acd8af5f9b51534d5e2eaf597ffa57b630a3e128",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/6cb068fd328219d79a02ef6df439b73459071368",
+                "reference": "6cb068fd328219d79a02ef6df439b73459071368",
                 "shasum": ""
             },
             "require": {
-                "cakephp/chronos": "^2.2",
+                "cakephp/chronos": "^2.0",
                 "composer/ca-bundle": "^1.2",
                 "ext-intl": "*",
                 "ext-json": "*",
@@ -188,7 +188,7 @@
                 "cakephp/validation": "self.version"
             },
             "require-dev": {
-                "cakephp/cakephp-codesniffer": "^4.5",
+                "cakephp/cakephp-codesniffer": "^4.0",
                 "mikey179/vfsstream": "^1.6",
                 "paragonie/csp-builder": "^2.3",
                 "phpunit/phpunit": "^8.5 || ^9.3"
@@ -241,7 +241,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2021-09-19T02:49:38+00:00"
+            "time": "2021-09-11T00:24:13+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -304,16 +304,16 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "dev-3.next",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "4d2cd3a20b350bf2b029360b8f66d33507f6f3cc"
+                "reference": "d22737c31243db89774abfe6a077d254c0eae75a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/4d2cd3a20b350bf2b029360b8f66d33507f6f3cc",
-                "reference": "4d2cd3a20b350bf2b029360b8f66d33507f6f3cc",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/d22737c31243db89774abfe6a077d254c0eae75a",
+                "reference": "d22737c31243db89774abfe6a077d254c0eae75a",
                 "shasum": ""
             },
             "require": {
@@ -323,9 +323,9 @@
                 "robmorgan/phinx": "^0.12"
             },
             "require-dev": {
-                "cakephp/bake": "dev-2.next as 2.2.0",
-                "cakephp/cakephp": "dev-4.next as 4.3.0",
-                "cakephp/cakephp-codesniffer": "~4.1",
+                "cakephp/bake": "^2.1.0",
+                "cakephp/cakephp": "^4.0.5",
+                "cakephp/cakephp-codesniffer": "~4.1.0",
                 "phpunit/phpunit": "~8.5.0"
             },
             "suggest": {
@@ -360,7 +360,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2021-09-19T18:47:48+00:00"
+            "time": "2021-05-20T13:57:37+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -612,16 +612,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.10.1",
+            "version": "v2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "11871e94006ce7a419bb6124d51b6f9ace3f679b"
+                "reference": "7db9eb40c8ba887e81c0fe84f2888a967396cdfb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/11871e94006ce7a419bb6124d51b6f9ace3f679b",
-                "reference": "11871e94006ce7a419bb6124d51b6f9ace3f679b",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/7db9eb40c8ba887e81c0fe84f2888a967396cdfb",
+                "reference": "7db9eb40c8ba887e81c0fe84f2888a967396cdfb",
                 "shasum": ""
             },
             "require": {
@@ -629,8 +629,8 @@
                 "google/apiclient-services": "~0.200",
                 "google/auth": "^1.10",
                 "guzzlehttp/guzzle": "~5.3.3||~6.0||~7.0",
-                "guzzlehttp/psr7": "^1.2",
-                "monolog/monolog": "^1.17|^2.0",
+                "guzzlehttp/psr7": "^1.7||^2.0.0",
+                "monolog/monolog": "^1.17||^2.0",
                 "php": "^5.6|^7.0|^8.0",
                 "phpseclib/phpseclib": "~2.0||^3.0.2"
             },
@@ -639,10 +639,12 @@
                 "composer/composer": "^1.10.22",
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
                 "phpcompatibility/php-compatibility": "^9.2",
-                "phpunit/phpunit": "^5.7||^8.5.13",
+                "phpspec/prophecy-phpunit": "^1.1||^2.0",
+                "phpunit/phpunit": "^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
                 "squizlabs/php_codesniffer": "~2.3",
                 "symfony/css-selector": "~2.1",
-                "symfony/dom-crawler": "~2.1"
+                "symfony/dom-crawler": "~2.1",
+                "yoast/phpunit-polyfills": "^1.0"
             },
             "suggest": {
                 "cache/filesystem-adapter": "For caching certs and tokens (using Google\\Client::setCache)"
@@ -675,22 +677,22 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.10.1"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.11.0"
             },
-            "time": "2021-06-25T14:25:44+00:00"
+            "time": "2021-09-20T21:15:55+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.212.0",
+            "version": "v0.213.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "2c4bd512502ad9cdfec8ea711ea1592c79d345e5"
+                "reference": "260311821505438eb9208b068da0d849b8ea9baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/2c4bd512502ad9cdfec8ea711ea1592c79d345e5",
-                "reference": "2c4bd512502ad9cdfec8ea711ea1592c79d345e5",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/260311821505438eb9208b068da0d849b8ea9baa",
+                "reference": "260311821505438eb9208b068da0d849b8ea9baa",
                 "shasum": ""
             },
             "require": {
@@ -719,9 +721,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.212.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.213.0"
             },
-            "time": "2021-09-12T11:18:27+00:00"
+            "time": "2021-09-19T11:18:26+00:00"
         },
         {
             "name": "google/auth",
@@ -939,29 +941,32 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.8.2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "dc960a912984efb74d0a90222870c72c87f10c91"
+                "reference": "1dc8d9cba3897165e16d12bb13d813afb1eb3fe7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/dc960a912984efb74d0a90222870c72c87f10c91",
-                "reference": "dc960a912984efb74d0a90222870c72c87f10c91",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/1dc8d9cba3897165e16d12bb13d813afb1eb3fe7",
+                "reference": "1dc8d9cba3897165e16d12bb13d813afb1eb3fe7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "psr/http-message": "~1.0",
-                "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
+                "php": "^7.2.5 || ^8.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "ralouphie/getallheaders": "^3.0"
             },
             "provide": {
+                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "ext-zlib": "*",
-                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.10"
+                "bamarni/composer-bin-plugin": "^1.4.1",
+                "http-interop/http-factory-tests": "^0.9",
+                "phpunit/phpunit": "^8.5.8 || ^9.3.10"
             },
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
@@ -969,16 +974,13 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "GuzzleHttp\\Psr7\\": "src/"
-                },
-                "files": [
-                    "src/functions_include.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -993,6 +995,11 @@
                 {
                     "name": "Tobias Schultze",
                     "homepage": "https://github.com/Tobion"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://sagikazarmark.hu"
                 }
             ],
             "description": "PSR-7 message implementation that also provides common utility methods",
@@ -1008,9 +1015,9 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/1.8.2"
+                "source": "https://github.com/guzzle/psr7/tree/2.0.0"
             },
-            "time": "2021-04-26T09:17:50+00:00"
+            "time": "2021-06-30T20:03:07+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -1233,16 +1240,16 @@
         },
         {
             "name": "laminas/laminas-diactoros",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-diactoros.git",
-                "reference": "8b5792b7c81465efb14780c2d4787f158bd96183"
+                "reference": "0c26ef1d95b6d7e6e3943a243ba3dc0797227199"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/8b5792b7c81465efb14780c2d4787f158bd96183",
-                "reference": "8b5792b7c81465efb14780c2d4787f158bd96183",
+                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/0c26ef1d95b6d7e6e3943a243ba3dc0797227199",
+                "reference": "0c26ef1d95b6d7e6e3943a243ba3dc0797227199",
                 "shasum": ""
             },
             "require": {
@@ -1328,25 +1335,25 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-09-15T08:41:12+00:00"
+            "time": "2021-09-22T03:54:36+00:00"
         },
         {
             "name": "laminas/laminas-httphandlerrunner",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-httphandlerrunner.git",
-                "reference": "6a2dd33e4166469ade07ad1283b45924383b224b"
+                "reference": "5f94e55d93f756e8ad07b9049aeb3d6d84582d0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-httphandlerrunner/zipball/6a2dd33e4166469ade07ad1283b45924383b224b",
-                "reference": "6a2dd33e4166469ade07ad1283b45924383b224b",
+                "url": "https://api.github.com/repos/laminas/laminas-httphandlerrunner/zipball/5f94e55d93f756e8ad07b9049aeb3d6d84582d0e",
+                "reference": "5f94e55d93f756e8ad07b9049aeb3d6d84582d0e",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^7.3 || ~8.0.0",
+                "php": "^7.3 || ~8.0.0 || ~8.1.0",
                 "psr/http-message": "^1.0",
                 "psr/http-message-implementation": "^1.0",
                 "psr/http-server-handler": "^1.0"
@@ -1356,10 +1363,10 @@
             },
             "require-dev": {
                 "laminas/laminas-coding-standard": "~1.0.0",
-                "laminas/laminas-diactoros": "^2.1.1",
-                "phpunit/phpunit": "^9.3",
-                "psalm/plugin-phpunit": "^0.15.1",
-                "vimeo/psalm": "^4.6"
+                "laminas/laminas-diactoros": "^2.8.0",
+                "phpunit/phpunit": "^9.5.9",
+                "psalm/plugin-phpunit": "^0.16.1",
+                "vimeo/psalm": "^4.10.0"
             },
             "type": "library",
             "extra": {
@@ -1399,7 +1406,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-04-08T13:52:56+00:00"
+            "time": "2021-09-22T09:17:54+00:00"
         },
         {
             "name": "laminas/laminas-zendframework-bridge",
@@ -4715,16 +4722,16 @@
         },
         {
             "name": "cakephp/twig-view",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/twig-view.git",
-                "reference": "668dd6aee43dd616b1e83cb9ba166f094c10fbce"
+                "reference": "14df50360b809a171d0688020fbdfe513763f89b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/twig-view/zipball/668dd6aee43dd616b1e83cb9ba166f094c10fbce",
-                "reference": "668dd6aee43dd616b1e83cb9ba166f094c10fbce",
+                "url": "https://api.github.com/repos/cakephp/twig-view/zipball/14df50360b809a171d0688020fbdfe513763f89b",
+                "reference": "14df50360b809a171d0688020fbdfe513763f89b",
                 "shasum": ""
             },
             "require": {
@@ -4774,7 +4781,7 @@
                 "issues": "https://github.com/cakephp/twig-view/issues",
                 "source": "https://github.com/cakephp/twig-view"
             },
-            "time": "2020-12-13T19:57:31+00:00"
+            "time": "2021-09-17T14:07:52+00:00"
         },
         {
             "name": "composer/composer",
@@ -5554,16 +5561,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.12.0",
+            "version": "v4.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "6608f01670c3cc5079e18c1dab1104e002579143"
+                "reference": "50953a2691a922aa1769461637869a0a2faa3f53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/6608f01670c3cc5079e18c1dab1104e002579143",
-                "reference": "6608f01670c3cc5079e18c1dab1104e002579143",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/50953a2691a922aa1769461637869a0a2faa3f53",
+                "reference": "50953a2691a922aa1769461637869a0a2faa3f53",
                 "shasum": ""
             },
             "require": {
@@ -5604,9 +5611,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.12.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.13.0"
             },
-            "time": "2021-07-21T10:44:31+00:00"
+            "time": "2021-09-20T12:20:58+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -8733,24 +8740,9 @@
             "time": "2021-03-09T10:59:23+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "cakephp/cakephp",
-            "version": "dev-4.next",
-            "alias": "4.3.0",
-            "alias_normalized": "4.3.0.0"
-        },
-        {
-            "package": "cakephp/migrations",
-            "version": "dev-3.next",
-            "alias": "3.2.0",
-            "alias_normalized": "3.2.0.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cakephp/cakephp": 20,
-        "cakephp/migrations": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,
