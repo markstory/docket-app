@@ -172,6 +172,10 @@ return [
             'Cake\Http\Exception\InvalidCsrfTokenException',
             'Cake\Http\Exception\NotFoundException',
         ],
+        'ignoredDeprecationPaths' => [
+            'vendor/ishanvyas22/asset-mix/config/routes.php',
+            'vendor/cakephp/cakephp/src/Routing/Router.php',
+        ],
         'log' => true,
         'trace' => true,
     ],

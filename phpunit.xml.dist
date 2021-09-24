@@ -32,18 +32,13 @@
         </testsuite>
     </testsuites>
 
-    <!-- Setup a listener for fixtures -->
     <listeners>
-        <listener class="Cake\TestSuite\Fixture\FixtureInjector">
-            <arguments>
-                <object class="Cake\TestSuite\Fixture\FixtureManager"/>
-            </arguments>
-        </listener>
         <listener class="VCR\PHPUnit\TestListener\VCRTestListener" file="vendor/php-vcr/phpunit-testlistener-vcr/src/VCRTestListener.php" />
     </listeners>
 
     <extensions>
         <extension class="Symfony\Component\Panther\ServerExtension" />
+        <extension class="Cake\TestSuite\Fixture\PHPUnitExtension" />
     </extensions>
 
     <!-- Ignore vendor tests in code coverage reports -->

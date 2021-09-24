@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Migrations\TestSuite\Migrator;
 use VCR\VCR;
 
 /**
@@ -55,6 +56,9 @@ ConnectionManager::setConfig('test_debug_kit', [
 ]);
 
 ConnectionManager::alias('test_debug_kit', 'debug_kit');
+
+// Simple setup for with no plugins
+(new Migrator())->run();
 
 // Fixate sessionid early on, as php7.2+
 // does not allow the sessionid to be set after stdout

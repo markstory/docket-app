@@ -112,7 +112,7 @@ class SluggableBehavior extends Behavior
             $result = $table->find()
                 ->select([$pk, $this->getConfig('slug')])
                 ->where($conditions);
-            $sameUrls = $result->extract($this->getConfig('slug'))->toArray();
+            $sameUrls = $result->all()->extract($this->getConfig('slug'))->toArray();
 
             $accepted = !empty($sameUrls) || !in_array($slug, $this->getConfig('reserved'));
 
