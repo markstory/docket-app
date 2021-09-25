@@ -83,7 +83,7 @@ export default function ProjectSorter(): JSX.Element {
             <SortableItem
               key={project.slug}
               id={project.slug}
-              active={activeProject?.slug}
+              dragActive={activeProject?.slug}
             >
               <ProjectItem key={project.slug} project={project} />
             </SortableItem>

@@ -1,4 +1,4 @@
-import {Fragment} from 'react';
+import {Fragment, useState} from 'react';
 import groupBy from 'lodash.groupby';
 import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {InertiaLink} from '@inertiajs/inertia-react';
@@ -19,6 +19,7 @@ import {
   parseDate,
   ONE_DAY_IN_MS,
 } from 'app/utils/dates';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   tasks: Task[];
@@ -119,6 +120,19 @@ export default function TasksIndex({
 }: Props): JSX.Element {
   const nextPage = nextStart ? `/tasks/upcoming?start=${nextStart}` : null;
   const title = t('Upcoming Tasks');
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
+  useKeyboardShortcut(['j'], () => {
+    setFocusedIndex(focusedIndex + 1);
+  });
+  useKeyboardShortcut(['k'], () => {
+    setFocusedIndex(focusedIndex - 1);
+  });
+
+  let focused: null | Task = null;
+  if (focusedIndex >= 0 && tasks[focusedIndex] !== undefined) {
+    focused = tasks[focusedIndex];
+  }
 
   if (!projects.length) {
     return (
@@ -171,6 +185,7 @@ export default function TasksIndex({
                         dropId={key}
                         tasks={items}
                         activeTask={activeTask}
+                        focusedTask={focused}
                         defaultTaskValues={{due_on: dateValue}}
                         showAdd={hasAdd}
                         showProject

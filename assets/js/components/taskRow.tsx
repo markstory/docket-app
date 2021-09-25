@@ -18,11 +18,12 @@ import ProjectBadge from './projectBadge';
 
 type Props = {
   task: Task;
+  focused?: boolean;
   showDueOn?: boolean;
   showProject?: boolean;
 };
 
-export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Element {
+export default function TaskRow({focused, task, showDueOn, showProject}: Props): JSX.Element {
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +35,7 @@ export default function TaskRow({task, showDueOn, showProject}: Props): JSX.Elem
 
   const className = classnames('task-row', {
     'is-completed': completed,
+    'is-focused': focused,
   });
 
   return (

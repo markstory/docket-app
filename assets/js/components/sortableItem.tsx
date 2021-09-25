@@ -6,10 +6,10 @@ import DragHandle from 'app/components/dragHandle';
 
 type Props = React.PropsWithChildren<{
   id: string;
-  active?: string;
+  dragActive?: string;
   tag?: 'li' | 'div';
 }>;
-function SortableItem({id, active, children, tag}: Props): JSX.Element {
+function SortableItem({children, dragActive, focused, id, tag}: Props): JSX.Element {
   const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
     id,
   });
@@ -18,7 +18,7 @@ function SortableItem({id, active, children, tag}: Props): JSX.Element {
     transition: transition ?? undefined,
   };
   const className = classnames('dnd-item', {
-    'dnd-ghost': id === active,
+    'dnd-ghost': id === dragActive,
   });
 
   // Can't be bothered to figure out 'union too complex' error

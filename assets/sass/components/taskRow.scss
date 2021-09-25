@@ -9,6 +9,10 @@
   border-bottom: 1px solid var(--color-border-low);
   background: var(--color-bg);
 
+  &.is-focused {
+    background: var(--color-menu-hover);
+  }
+
   > input[type="checkbox"] {
     margin: 1px $space 0 0;
   }

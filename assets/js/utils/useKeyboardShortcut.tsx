@@ -68,14 +68,14 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
 
   // Attach listeners
   useEffect(() => {
-    window.addEventListener('keydown', keydownListener, true);
+    window.addEventListener('keydown', keydownListener);
     return function cleanup() {
       window.removeEventListener('keydown', keydownListener);
     };
   }, []);
 
   useEffect(() => {
-    window.addEventListener('keyup', keyupListener, true);
+    window.addEventListener('keyup', keyupListener);
     return function cleanup() {
       window.removeEventListener('keyup', keyupListener);
     };
