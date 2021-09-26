@@ -46,6 +46,21 @@ function HelpModal({onClose}: Props) {
         </dt>
         <dd>View task details</dd>
       </dl>
+      <p>Task Details</p>
+      <dl className="shortcut-list">
+        <dt>
+          <kbd>e</kbd>
+        </dt>
+        <dd>Edit task details</dd>
+        <dt>
+          <kbd>n</kbd>
+        </dt>
+        <dd>Edit task notes</dd>
+        <dt>
+          <kbd>a</kbd>
+        </dt>
+        <dd>Add a subtask</dd>
+      </dl>
     </Modal>
   );
 }

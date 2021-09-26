@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
 import MarkdownText from 'app/components/markdownText';
 import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   task: Task;
@@ -12,6 +13,9 @@ type Props = {
 
 export default function TaskNotes({task}: Props) {
   const [editing, setEditing] = useState(false);
+  useKeyboardShortcut(['n'], () => {
+    setEditing(true);
+  });
 
   function handleSave(event: React.FormEvent) {
     event.preventDefault();
