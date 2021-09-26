@@ -8,6 +8,7 @@ import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
 import useOnClickOutside from 'app/utils/useClickOutside';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 import ProjectSelect from './projectSelect';
 import Checkbox from './checkbox';
 import DueOn from './dueOn';
@@ -23,7 +24,14 @@ type Props = {
   showProject?: boolean;
 };
 
-export default function TaskRow({focused, task, showDueOn, showProject}: Props): JSX.Element {
+type InnerMenuState = 'project' | 'dueOn' | null;
+
+export default function TaskRow({
+  focused,
+  task,
+  showDueOn,
+  showProject,
+}: Props): JSX.Element {
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +40,21 @@ export default function TaskRow({focused, task, showDueOn, showProject}: Props):
     const action = task.completed ? 'incomplete' : 'complete';
     Inertia.post(`/tasks/${task.id}/${action}`);
   };
+
+  // TODO These bindings might need to be higher in the tree as
+  // in each row will bind a pile of listeners.
+  useKeyboardShortcut(['o'], () => {
+    if (focused) {
+      Inertia.visit(`/tasks/${task.id}/view/`);
+    }
+  });
+  useKeyboardShortcut(['d'], () => {
+    if (focused) {
+      setCompleted(!task.completed);
+      const action = task.completed ? 'incomplete' : 'complete';
+      Inertia.post(`/tasks/${task.id}/${action}`);
+    }
+  });
 
   const className = classnames('task-row', {
     'is-completed': completed,
@@ -68,8 +91,6 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
 }
 
 type ActionsProps = Pick<Props, 'task'>;
-
-type InnerMenuState = 'project' | 'dueOn' | null;
 
 function TaskActions({task}: ActionsProps) {
   const [innerMenu, setInnerMenu] = useState<InnerMenuState>(null);
