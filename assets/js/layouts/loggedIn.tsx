@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Inertia} from '@inertiajs/inertia';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project, User} from 'app/types';
@@ -9,6 +10,7 @@ import ProjectFilter from 'app/components/projectFilter';
 import ProfileMenu from 'app/components/profileMenu';
 import {t} from 'app/locale';
 import {ProjectsProvider} from 'app/providers/projects';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type SharedPageProps = {
   flash: null | FlashMessage;
@@ -36,6 +38,14 @@ function LoggedIn({children, title}: Props) {
       document.body.classList.add('theme-dark');
     }
   }, [title, identity]);
+
+  // Keyboard shortcuts.
+  useKeyboardShortcut(['t'], () => {
+    Inertia.visit('/tasks/today');
+  });
+  useKeyboardShortcut(['u'], () => {
+    Inertia.visit('/tasks/upcoming');
+  });
 
   const generationId = projects.reduce((acc, project) => {
     const currentId = [project.name, project.color, project.incomplete_task_count];
