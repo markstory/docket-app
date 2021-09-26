@@ -11,6 +11,7 @@ import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString} from 'app/utils/dates';
+import useKeyboardListNav from 'app/utils/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];
@@ -70,6 +71,12 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
     );
   }
 
+  const [focusedIndex] = useKeyboardListNav(tasks.length);
+  let focused: null | Task = null;
+  if (focusedIndex >= 0 && tasks[focusedIndex] !== undefined) {
+    focused = tasks[focusedIndex];
+  }
+
   return (
     <LoggedIn title={title}>
       <TaskGroupedSorter
@@ -99,6 +106,7 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                     activeTask={activeTask}
                     showProject
                     showDueOn
+                    focusedTask={focused}
                     showAdd={overdue.hasAdd}
                   />
                 </SortableContext>
@@ -117,6 +125,7 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                   tasks={today.items}
                   activeTask={activeTask}
                   defaultTaskValues={{due_on: defaultDate}}
+                  focusedTask={focused}
                   showAdd={today.hasAdd}
                   showProject
                 />
@@ -132,6 +141,7 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                   tasks={evening.items}
                   activeTask={activeTask}
                   defaultTaskValues={{evening: true, due_on: defaultDate}}
+                  focusedTask={focused}
                   showAdd={evening.hasAdd}
                   showProject
                 />

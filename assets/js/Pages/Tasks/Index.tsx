@@ -19,7 +19,7 @@ import {
   parseDate,
   ONE_DAY_IN_MS,
 } from 'app/utils/dates';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
+import useKeyboardListNav from 'app/utils/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];
@@ -120,15 +120,8 @@ export default function TasksIndex({
 }: Props): JSX.Element {
   const nextPage = nextStart ? `/tasks/upcoming?start=${nextStart}` : null;
   const title = t('Upcoming Tasks');
-  const [focusedIndex, setFocusedIndex] = useState(-1);
 
-  useKeyboardShortcut(['j'], () => {
-    setFocusedIndex(focusedIndex + 1);
-  });
-  useKeyboardShortcut(['k'], () => {
-    setFocusedIndex(focusedIndex - 1);
-  });
-
+  const [focusedIndex] = useKeyboardListNav(tasks.length);
   let focused: null | Task = null;
   if (focusedIndex >= 0 && tasks[focusedIndex] !== undefined) {
     focused = tasks[focusedIndex];
