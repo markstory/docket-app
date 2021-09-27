@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
 import {t} from 'app/locale';
 import {TaskDetailed} from 'app/types';
@@ -6,6 +6,7 @@ import SubtaskSorter from 'app/components/subtaskSorter';
 import SubtaskAddForm from 'app/components/subtaskAddForm';
 import {SubtasksProvider} from 'app/providers/subtasks';
 import {InlineIcon} from './icon';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   task: TaskDetailed;
@@ -13,6 +14,9 @@ type Props = {
 
 export default function TaskSubtasks({task}: Props): JSX.Element {
   const [showForm, setShowForm] = useState(false);
+  useKeyboardShortcut(['a'], () => {
+    setShowForm(true);
+  });
 
   return (
     <SubtasksProvider subtasks={task.subtasks}>

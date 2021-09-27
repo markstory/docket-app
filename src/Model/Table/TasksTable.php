@@ -151,16 +151,23 @@ class TasksTable extends Table
         return $rules;
     }
 
-    public function findForProject(Query $query, array $options): Query
+    /**
+     * Finder to fetch tasks in section order.
+     */
+    public function findForProjectDetails(Query $query, array $options): Query
     {
         if (empty($options['slug'])) {
             throw new RuntimeException('Missing required slug option');
         }
-
-        return $query
+        $query = $query
+            ->leftJoinWith('ProjectSections')
             ->where(['Projects.slug' => $options['slug']])
+            ->orderAsc('ProjectSections.ranking')
+            ->orderAsc('ProjectSections.name')
             ->orderAsc('Tasks.child_order')
             ->orderAsc('Tasks.title');
+
+        return $query;
     }
 
     public function findComplete(Query $query): Query
@@ -181,6 +188,7 @@ class TasksTable extends Table
             'Tasks.due_on IS NOT' => null,
             'Tasks.due_on <=' => new FrozenDate('today', $timezone),
         ])
+            ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');

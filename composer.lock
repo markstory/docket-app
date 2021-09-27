@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa2ff6b8d4b509938a768b56ce094642",
+    "content-hash": "7fe5863088fac0e33f16f8a87011200c",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -142,20 +142,20 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "4.2.9",
+            "version": "dev-4.next",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "6cb068fd328219d79a02ef6df439b73459071368"
+                "reference": "219de3bab07ff983662b9f75d9d32fdafaa6d9aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/6cb068fd328219d79a02ef6df439b73459071368",
-                "reference": "6cb068fd328219d79a02ef6df439b73459071368",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/219de3bab07ff983662b9f75d9d32fdafaa6d9aa",
+                "reference": "219de3bab07ff983662b9f75d9d32fdafaa6d9aa",
                 "shasum": ""
             },
             "require": {
-                "cakephp/chronos": "^2.0",
+                "cakephp/chronos": "^2.2",
                 "composer/ca-bundle": "^1.2",
                 "ext-intl": "*",
                 "ext-json": "*",
@@ -188,8 +188,8 @@
                 "cakephp/validation": "self.version"
             },
             "require-dev": {
-                "cakephp/cakephp-codesniffer": "^4.0",
-                "mikey179/vfsstream": "^1.6",
+                "cakephp/cakephp-codesniffer": "^4.5",
+                "mikey179/vfsstream": "^1.6.10",
                 "paragonie/csp-builder": "^2.3",
                 "phpunit/phpunit": "^8.5 || ^9.3"
             },
@@ -241,7 +241,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2021-09-11T00:24:13+00:00"
+            "time": "2021-09-26T19:13:12+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -304,16 +304,16 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "3.1.0",
+            "version": "dev-3.next",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "d22737c31243db89774abfe6a077d254c0eae75a"
+                "reference": "4d2cd3a20b350bf2b029360b8f66d33507f6f3cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/d22737c31243db89774abfe6a077d254c0eae75a",
-                "reference": "d22737c31243db89774abfe6a077d254c0eae75a",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/4d2cd3a20b350bf2b029360b8f66d33507f6f3cc",
+                "reference": "4d2cd3a20b350bf2b029360b8f66d33507f6f3cc",
                 "shasum": ""
             },
             "require": {
@@ -323,9 +323,9 @@
                 "robmorgan/phinx": "^0.12"
             },
             "require-dev": {
-                "cakephp/bake": "^2.1.0",
-                "cakephp/cakephp": "^4.0.5",
-                "cakephp/cakephp-codesniffer": "~4.1.0",
+                "cakephp/bake": "dev-2.next as 2.2.0",
+                "cakephp/cakephp": "dev-4.next as 4.3.0",
+                "cakephp/cakephp-codesniffer": "~4.1",
                 "phpunit/phpunit": "~8.5.0"
             },
             "suggest": {
@@ -360,7 +360,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2021-05-20T13:57:37+00:00"
+            "time": "2021-09-19T18:47:48+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -4548,21 +4548,21 @@
         },
         {
             "name": "cakephp/bake",
-            "version": "2.5.2",
+            "version": "dev-2.next",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/bake.git",
-                "reference": "bfb856afcfbc70c5cf5341669c3036a45ca15d94"
+                "reference": "d078ea595a2f02509a8fae3d71d28a35467f00eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/bake/zipball/bfb856afcfbc70c5cf5341669c3036a45ca15d94",
-                "reference": "bfb856afcfbc70c5cf5341669c3036a45ca15d94",
+                "url": "https://api.github.com/repos/cakephp/bake/zipball/d078ea595a2f02509a8fae3d71d28a35467f00eb",
+                "reference": "d078ea595a2f02509a8fae3d71d28a35467f00eb",
                 "shasum": ""
             },
             "require": {
                 "brick/varexporter": "^0.3.5",
-                "cakephp/cakephp": "^4.1",
+                "cakephp/cakephp": "dev-4.next as 4.3.0",
                 "cakephp/twig-view": "^1.0.2",
                 "php": ">=7.2"
             },
@@ -4600,7 +4600,7 @@
                 "issues": "https://github.com/cakephp/bake/issues",
                 "source": "https://github.com/cakephp/bake"
             },
-            "time": "2021-07-26T14:56:18+00:00"
+            "time": "2021-09-20T12:13:58+00:00"
         },
         {
             "name": "cakephp/cakephp-codesniffer",
@@ -4656,20 +4656,20 @@
         },
         {
             "name": "cakephp/debug_kit",
-            "version": "4.4.4",
+            "version": "dev-4.next",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/debug_kit.git",
-                "reference": "10d7d9ba36945844211f1d8763e59618917e1784"
+                "reference": "dddf4de2c9cc1bcae7695a55b6fb60a86db7104e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/10d7d9ba36945844211f1d8763e59618917e1784",
-                "reference": "10d7d9ba36945844211f1d8763e59618917e1784",
+                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/dddf4de2c9cc1bcae7695a55b6fb60a86db7104e",
+                "reference": "dddf4de2c9cc1bcae7695a55b6fb60a86db7104e",
                 "shasum": ""
             },
             "require": {
-                "cakephp/cakephp": "^4.2.0",
+                "cakephp/cakephp": "dev-4.next as 4.3",
                 "cakephp/chronos": "^2.0",
                 "composer/composer": "^1.3 | ^2.0",
                 "jdorn/sql-formatter": "^1.2",
@@ -4718,7 +4718,7 @@
                 "issues": "https://github.com/cakephp/debug_kit/issues",
                 "source": "https://github.com/cakephp/debug_kit"
             },
-            "time": "2021-09-12T20:06:14+00:00"
+            "time": "2021-09-21T12:33:04+00:00"
         },
         {
             "name": "cakephp/twig-view",
@@ -6467,16 +6467,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.20",
+            "version": "8.5.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9deefba183198398a09b927a6ac6bc1feb0b7b70"
+                "reference": "50a58a60b85947b0bee4c8ecfe0f4bbdcf20e984"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9deefba183198398a09b927a6ac6bc1feb0b7b70",
-                "reference": "9deefba183198398a09b927a6ac6bc1feb0b7b70",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/50a58a60b85947b0bee4c8ecfe0f4bbdcf20e984",
+                "reference": "50a58a60b85947b0bee4c8ecfe0f4bbdcf20e984",
                 "shasum": ""
             },
             "require": {
@@ -6548,7 +6548,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.20"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.21"
             },
             "funding": [
                 {
@@ -6560,7 +6560,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-08-31T06:44:38+00:00"
+            "time": "2021-09-25T07:37:20+00:00"
         },
         {
             "name": "psalm/phar",
@@ -8740,9 +8740,38 @@
             "time": "2021-03-09T10:59:23+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "cakephp/bake",
+            "version": "dev-2.next",
+            "alias": "2.3.0",
+            "alias_normalized": "2.3.0.0"
+        },
+        {
+            "package": "cakephp/cakephp",
+            "version": "dev-4.next",
+            "alias": "4.3.0",
+            "alias_normalized": "4.3.0.0"
+        },
+        {
+            "package": "cakephp/debug_kit",
+            "version": "dev-4.next",
+            "alias": "4.4.0",
+            "alias_normalized": "4.4.0.0"
+        },
+        {
+            "package": "cakephp/migrations",
+            "version": "dev-3.next",
+            "alias": "3.2.0",
+            "alias_normalized": "3.2.0.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "cakephp/cakephp": 20,
+        "cakephp/migrations": 20,
+        "cakephp/bake": 20,
+        "cakephp/debug_kit": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,

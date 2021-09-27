@@ -11,6 +11,7 @@ import TaskQuickForm from 'app/components/taskQuickForm';
 import TaskNotes from 'app/components/taskNotes';
 import TaskSubtasks from 'app/components/taskSubtasks';
 import ProjectBadge from 'app/components/projectBadge';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   task: TaskDetailed;
@@ -21,6 +22,10 @@ export default function TasksView({referer, task}: Props): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
+  useKeyboardShortcut(['e'], () => {
+    setEditing(true);
+  });
+
   function handleClose() {
     const target = referer === window.location.pathname ? '/tasks/upcoming' : referer;
     Inertia.visit(target);
@@ -29,7 +34,7 @@ export default function TasksView({referer, task}: Props): JSX.Element {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<boolean>((resolve, reject) => {
       // Do an XHR request so we can handle validation errors
       // inside the modal.
       axios

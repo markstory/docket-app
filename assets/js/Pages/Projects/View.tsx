@@ -16,6 +16,7 @@ import ProjectRenameForm from 'app/components/projectRenameForm';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
 import TaskRow from 'app/components/taskRow';
+import useKeyboardListNav from 'app/utils/useKeyboardListNav';
 
 type Props = {
   project: Project;
@@ -33,6 +34,11 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
 
   function handleCancelRename() {
     setEditingName(false);
+  }
+  const [focusedIndex] = useKeyboardListNav(tasks.length);
+  let focused: null | Task = null;
+  if (focusedIndex >= 0 && tasks[focusedIndex] !== undefined) {
+    focused = tasks[focusedIndex];
   }
 
   return (
@@ -65,6 +71,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                     dropId={key}
                     activeTask={activeTask}
                     tasks={tasks}
+                    focusedTask={focused}
                     defaultTaskValues={{project_id: project.id}}
                     showAdd={!project.archived}
                     showDueOn
@@ -85,6 +92,7 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                     tasks={tasks}
                     defaultTaskValues={{section_id: section.id, project_id: project.id}}
                     showAdd={!project.archived}
+                    focusedTask={focused}
                     showDueOn
                   />
                 </SectionContainer>

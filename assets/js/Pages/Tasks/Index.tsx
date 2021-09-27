@@ -19,6 +19,7 @@ import {
   parseDate,
   ONE_DAY_IN_MS,
 } from 'app/utils/dates';
+import useKeyboardListNav from 'app/utils/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];
@@ -120,6 +121,12 @@ export default function TasksIndex({
   const nextPage = nextStart ? `/tasks/upcoming?start=${nextStart}` : null;
   const title = t('Upcoming Tasks');
 
+  const [focusedIndex] = useKeyboardListNav(tasks.length);
+  let focused: null | Task = null;
+  if (focusedIndex >= 0 && tasks[focusedIndex] !== undefined) {
+    focused = tasks[focusedIndex];
+  }
+
   if (!projects.length) {
     return (
       <LoggedIn title={title}>
@@ -171,6 +178,7 @@ export default function TasksIndex({
                         dropId={key}
                         tasks={items}
                         activeTask={activeTask}
+                        focusedTask={focused}
                         defaultTaskValues={{due_on: dateValue}}
                         showAdd={hasAdd}
                         showProject

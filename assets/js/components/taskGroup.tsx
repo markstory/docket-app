@@ -14,6 +14,7 @@ type Props = {
   tasks: Task[];
   dataTestId?: string;
   activeTask?: Task | null;
+  focusedTask?: Task | null;
   defaultTaskValues?: DefaultTaskValues;
   showProject?: boolean;
   showDueOn?: boolean;
@@ -24,6 +25,7 @@ export default function TaskGroup({
   dropId,
   dataTestId,
   activeTask,
+  focusedTask,
   tasks,
   defaultTaskValues,
   showProject = false,
@@ -43,11 +45,24 @@ export default function TaskGroup({
   return (
     <div className="task-group" data-testid={dataTestId}>
       <div className={className} ref={setNodeRef}>
-        {tasks.map(item => (
-          <SortableItem key={item.id} id={String(item.id)} active={activeId} tag="div">
-            <TaskRow task={item} showProject={showProject} showDueOn={showDueOn} />
-          </SortableItem>
-        ))}
+        {tasks.map(item => {
+          const focused = focusedTask?.id === item.id;
+          return (
+            <SortableItem
+              key={item.id}
+              id={String(item.id)}
+              dragActive={activeId}
+              tag="div"
+            >
+              <TaskRow
+                task={item}
+                focused={focused}
+                showProject={showProject}
+                showDueOn={showDueOn}
+              />
+            </SortableItem>
+          );
+        })}
       </div>
       {showAdd && (
         <div className="add-task">

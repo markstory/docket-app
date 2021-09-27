@@ -1,14 +1,17 @@
 import {useEffect, useState} from 'react';
+import {Inertia} from '@inertiajs/inertia';
 import {usePage} from '@inertiajs/inertia-react';
 
 import {FlashMessage, Project, User} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import {Icon} from 'app/components/icon';
+import HelpModal from 'app/components/helpModal';
 import ProjectFilter from 'app/components/projectFilter';
 import ProfileMenu from 'app/components/profileMenu';
 import {t} from 'app/locale';
 import {ProjectsProvider} from 'app/providers/projects';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type SharedPageProps = {
   flash: null | FlashMessage;
@@ -23,6 +26,7 @@ type Props = {
 
 function LoggedIn({children, title}: Props) {
   const {projects, identity} = usePage().props as SharedPageProps;
+
   useEffect(() => {
     if (title) {
       document.title = title;
@@ -59,6 +63,18 @@ function LoggedIn({children, title}: Props) {
 function Contents({children}: Props) {
   const {flash} = usePage().props as SharedPageProps;
   const [expanded, setExpanded] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+
+  // Keyboard shortcuts.
+  useKeyboardShortcut(['t'], () => {
+    Inertia.visit('/tasks/today');
+  });
+  useKeyboardShortcut(['u'], () => {
+    Inertia.visit('/tasks/upcoming');
+  });
+  useKeyboardShortcut(['?'], () => {
+    setShowHelp(true);
+  });
 
   return (
     <React.Fragment>
@@ -86,6 +102,7 @@ function Contents({children}: Props) {
         <section className="content">
           {children}
           <FlashMessages flash={flash} />
+          {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
         </section>
       </main>
     </React.Fragment>
