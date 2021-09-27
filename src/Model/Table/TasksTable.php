@@ -188,6 +188,7 @@ class TasksTable extends Table
             'Tasks.due_on IS NOT' => null,
             'Tasks.due_on <=' => new FrozenDate('today', $timezone),
         ])
+            ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.evening')
             ->orderAsc('Tasks.day_order')
             ->orderAsc('Tasks.title');
