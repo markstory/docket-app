@@ -19,6 +19,10 @@ function useKeyboardListNav(itemCount: number): [number, React.Dispatch<React.Se
     setFocusedIndex(newValue);
   });
 
+  useKeyboardShortcut(['Escape'], () => {
+    setFocusedIndex(-1);
+  });
+
   return [focusedIndex, setFocusedIndex];
 }
 

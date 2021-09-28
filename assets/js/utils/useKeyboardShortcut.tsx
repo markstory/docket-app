@@ -44,6 +44,7 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
       if (!shortcutKeys.includes(key)) {
         return;
       }
+      event.preventDefault();
       setKeys({type: 'keydown', key});
     },
     [shortcutKeys]
@@ -61,6 +62,8 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
       if (!shortcutKeys.includes(key)) {
         return;
       }
+
+      event.preventDefault();
       setKeys({type: 'keyup', key});
     },
     [shortcutKeys]

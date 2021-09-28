@@ -27,6 +27,7 @@ function HelpModal({onClose}: Props) {
         </dt>
         <dd>This help screen</dd>
       </dl>
+
       <p>Views with Task Lists</p>
       <dl className="shortcut-list">
         <dt>
@@ -37,6 +38,10 @@ function HelpModal({onClose}: Props) {
           <kbd>k</kbd>
         </dt>
         <dd>Move task selection up</dd>
+      </dl>
+
+      <p>With a task selected in a Task List</p>
+      <dl className="shortcut-list">
         <dt>
           <kbd>d</kbd>
         </dt>
@@ -45,7 +50,12 @@ function HelpModal({onClose}: Props) {
           <kbd>o</kbd>
         </dt>
         <dd>View task details</dd>
+        <dt>
+          <kbd>a</kbd>
+        </dt>
+        <dd>Add a task to the same group as the selected task.</dd>
       </dl>
+
       <p>Task Details</p>
       <dl className="shortcut-list">
         <dt>

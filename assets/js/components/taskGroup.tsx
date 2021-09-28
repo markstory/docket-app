@@ -8,6 +8,7 @@ import TaskRow from 'app/components/taskRow';
 import TaskAddForm from 'app/components/taskAddForm';
 import SortableItem from 'app/components/sortableItem';
 import {InlineIcon} from './icon';
+import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   dropId: string;
@@ -35,6 +36,13 @@ export default function TaskGroup({
   const [showForm, setShowForm] = useState(false);
   const {over, isOver, setNodeRef} = useDroppable({id: dropId});
   const taskIds = tasks.map(t => t.id);
+
+  const hasFocus = focusedTask && taskIds.includes(focusedTask.id);
+  useKeyboardShortcut(['a'], () => {
+    if (hasFocus) {
+      setShowForm(true);
+    }
+  });
 
   const className = classnames('dnd-dropper-left-offset', {
     'dnd-dropper-active':
