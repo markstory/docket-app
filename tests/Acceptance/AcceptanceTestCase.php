@@ -44,11 +44,15 @@ abstract class AcceptanceTestCase extends TestCase
 
     protected function createClient()
     {
-        $this->client = static::createPantherClient([
-            'browser' => static::FIREFOX,
-        ], [], [
-            'cookieJar' => static::$cookieJar,
-        ]);
+        $this->client = static::createPantherClient(
+            [
+                'browser' => static::FIREFOX,
+            ],
+            [],
+            [
+                'cookieJar' => static::$cookieJar,
+            ]
+        );
         $this->client->manage()->window()->setSize(new WebDriverDimension(1200, 1024));
 
         return $this->client;
