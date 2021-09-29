@@ -89,4 +89,40 @@ class KeyboardNavigationTest extends AcceptanceTestCase
         $task = $this->getTableLocator()->get('Tasks')->get($task->id);
         $this->assertTrue($task->completed);
     }
+
+    public function testTaskListAddTask()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('Home', 1);
+        $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Move focus
+        $client->getKeyboard()->sendKeys('j');
+        $client->waitFor('.is-focused');
+        // Open task form
+        $client->getKeyboard()->sendKeys('a');
+
+        $client->waitFor('.task-quickform');
+        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
+    }
+
+    public function testTaskViewEdit()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('Home', 1);
+        $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get("/tasks/{$task->id}/view");
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Open edit form
+        $client->getKeyboard()->sendKeys('e');
+        $client->waitFor('.task-quickform');
+        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
+    }
 }
