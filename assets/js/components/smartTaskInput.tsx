@@ -75,6 +75,7 @@ function SmartTaskInput({
     const newPlainText = newValue
       .replace(/#[^#]+#/, '')
       .replace(/%[^%]+%/, '')
+      .replace(/&[^&]+&/, '')
       .trim();
     onChangeTitle(newValue, newPlainText);
   }
@@ -113,7 +114,7 @@ function SmartTaskInput({
         className="date-mention"
         trigger="&"
         displayTransform={(_id, display) => `&${display}`}
-        markup="&__display__:__id__%"
+        markup="&__display__:__id__&"
         onAdd={id => {
           onChangeDate(String(id).replace(/[sr]:/, ''));
           onChangeEvening(true);
