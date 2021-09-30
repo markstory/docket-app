@@ -71,6 +71,22 @@ function HelpModal({onClose}: Props) {
         </dt>
         <dd>Add a subtask</dd>
       </dl>
+
+      <p>Task Name Input</p>
+      <dl className="shortcut-list">
+        <dt>
+          <kbd>#</kbd>
+        </dt>
+        <dd>Autocomplete to select project.</dd>
+        <dt>
+          <kbd>%</kbd>
+        </dt>
+        <dd>Autocomplete to select date.</dd>
+        <dt>
+          <kbd>&</kbd>
+        </dt>
+        <dd>Autocomplete to select date with evening.</dd>
+      </dl>
     </Modal>
   );
 }
