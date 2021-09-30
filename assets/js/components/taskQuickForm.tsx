@@ -44,6 +44,10 @@ export default function TaskQuickForm({
     setData(prevState => ({...prevState, due_on: dueOn}));
   }
 
+  function handleChangeEvening(evening: boolean) {
+    setData(prevState => ({...prevState, evening: evening}));
+  }
+
   function handleChangeTitle(title: string, textTitle: string) {
     setTextTitle(textTitle);
     setData(prevState => ({...prevState, title}));
@@ -95,6 +99,7 @@ export default function TaskQuickForm({
           projects={projects}
           onChangeProject={handleChangeProject}
           onChangeDate={handleChangeDueOn}
+          onChangeEvening={handleChangeEvening}
           onChangeTitle={handleChangeTitle}
         />
         <FormError errors={errors} field="title" />

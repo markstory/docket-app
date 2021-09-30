@@ -11,6 +11,7 @@ type Props = {
   onChangeDate: (value: string) => void;
   onChangeProject: (value: number) => void;
   onChangeTitle: (title: string, textTitle: string) => void;
+  onChangeEvening: (evening: boolean) => void;
   value?: string;
 };
 
@@ -54,12 +55,18 @@ function generateDateOptions(today: string): MentionOption[] {
   ];
 }
 
+const EVENING_OPTIONS = [
+  {id: 1, display: 'Evening'},
+  {id: 0, display: 'Day'},
+];
+
 function SmartTaskInput({
   value,
   projects,
   onChangeDate,
   onChangeProject,
   onChangeTitle,
+  onChangeEvening,
 }: Props): JSX.Element {
   const today = toDateString(getToday());
   const dateOptions = useMemo(() => generateDateOptions(today), [today]);
@@ -95,7 +102,22 @@ function SmartTaskInput({
         trigger="%"
         displayTransform={(_id, display) => `%${display}`}
         markup="%__display__:__id__%"
-        onAdd={id => onChangeDate(String(id).replace(/[sr]:/, ''))}
+        onAdd={id => {
+          onChangeDate(String(id).replace(/[sr]:/, ''));
+          onChangeEvening(false);
+        }}
+        data={dateOptions}
+        appendSpaceOnAdd
+      />
+      <Mention
+        className="date-mention"
+        trigger="&"
+        displayTransform={(_id, display) => `&${display}`}
+        markup="&__display__:__id__%"
+        onAdd={id => {
+          onChangeDate(String(id).replace(/[sr]:/, ''));
+          onChangeEvening(true);
+        }}
         data={dateOptions}
         appendSpaceOnAdd
       />
