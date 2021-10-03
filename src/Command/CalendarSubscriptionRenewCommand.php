@@ -57,7 +57,7 @@ class CalendarSubscriptionRenewCommand extends Command
         $this->loadModel('CalendarSubscriptions');
 
         $expiring = $this->CalendarSubscriptions->find('expiring')
-            ->select(['CalendarSubscriptions.id']);
+            ->select(['CalendarSubscriptions.calendar_source_id']);
 
         $results = $this->CalendarSubscriptions->CalendarSources
             ->find()
@@ -80,7 +80,7 @@ class CalendarSubscriptionRenewCommand extends Command
             }
 
             $this->CalendarSubscriptions->delete($row);
-            $io->out('Previous subscription deleted.');
+            $io->out("Previous subscription deleted. id={$row->id}");
         }
 
         $results = $this->CalendarSubscriptions->CalendarSources->find('missingSubscription')

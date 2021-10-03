@@ -169,6 +169,7 @@ class CalendarService
 
             Log::info("Calendar subscription created. source={$source->id}");
         } catch (GoogleException $e) {
+            $this->CalendarSubscriptions->delete($sub);
             Log::warning("Calendar subscription failed. error={$e->getMessage()}");
             throw new RuntimeException("Could not create subscription for source id={$source->id}", 0, $e);
         }
