@@ -330,12 +330,6 @@ return [
             'scopes' => false,
             'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         ],
-        // To enable this dedicated query log, you need set your datasource's log flag to true
-        'queries' => [
-            'className' => Console::class,
-            'stream' => 'php://stderr',
-            'scopes' => ['queriesLog'],
-        ],
     ],
 
     /*
