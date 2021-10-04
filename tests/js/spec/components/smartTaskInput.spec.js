@@ -28,6 +28,7 @@ describe('SmartTaskInput', function () {
         projects={projects}
         onChangeDate={jest.fn()}
         onChangeProject={jest.fn()}
+        onChangeEvening={jest.fn()}
       />
     );
     expect(screen.getByRole('textbox').value).toBe('Initial value');
@@ -41,6 +42,7 @@ describe('SmartTaskInput', function () {
         projects={projects}
         onChangeDate={jest.fn()}
         onChangeProject={jest.fn()}
+        onChangeEvening={jest.fn()}
         onChangeTitle={titleChange}
       />
     );
@@ -57,6 +59,7 @@ describe('SmartTaskInput', function () {
         defaultValuevalue="Initial value"
         projects={projects}
         onChangeDate={jest.fn()}
+        onChangeEvening={jest.fn()}
         onChangeProject={onChange}
         onChangeTitle={titleChange}
       />
@@ -76,12 +79,34 @@ describe('SmartTaskInput', function () {
         projects={projects}
         onChangeProject={jest.fn()}
         onChangeDate={onChange}
+        onChangeEvening={jest.fn()}
         onChangeTitle={titleChange}
       />
     );
     const textbox = screen.getByRole('textbox');
     await userEvent.type(textbox, '{selectall}{del}%Tomorrow\tafter', {delay: 5});
     expect(onChange).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+    expect(titleChange).toHaveBeenLastCalledWith(expect.anything(), 'after');
+  });
+
+  it('triggers change on date select for evening', async function () {
+    const onChange = jest.fn();
+    const eveningChange = jest.fn();
+    const titleChange = jest.fn();
+    render(
+      <SmartTaskInputWrapper
+        defaultValue="Initial value"
+        projects={projects}
+        onChangeProject={jest.fn()}
+        onChangeDate={onChange}
+        onChangeEvening={eveningChange}
+        onChangeTitle={titleChange}
+      />
+    );
+    const textbox = screen.getByRole('textbox');
+    await userEvent.type(textbox, '{selectall}{del}&Tomorrow\tafter', {delay: 5});
+    expect(onChange).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+    expect(eveningChange).toHaveBeenCalledWith(true);
     expect(titleChange).toHaveBeenLastCalledWith(expect.anything(), 'after');
   });
 });
