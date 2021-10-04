@@ -15,20 +15,19 @@
     response:
         status:
             http_version: '1.1'
-            code: '400'
-            message: Bad Request
+            code: '200'
+            message: Ok
         headers:
             Content-Type: 'application/json; charset=UTF-8'
             Date: 'Sun, 25 Jul 2021 02:56:56 GMT'
         body: >
           {
-            "error": {
-              "code": 400,
-              "message": "The calendar is invalid",
-              "errors": [
-                {"domain": "calendar", "reason": "invalid", "message": "Not good"}
-              ]
-            }
+            "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
+            "kind": "api#channel",
+            "resourceId": "calendar-1",
+            "resourceUrl": "https://googleapis.com/calendar/v3/calendars/calendar-1/events",
+            "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
+            "expiration": 1426325213000
           }
 
 -
