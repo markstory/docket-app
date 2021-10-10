@@ -3,24 +3,35 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use App\Model\Entity\CalendarItem;
+use App\Model\Entity\CalendarProvider;
+use App\Model\Entity\CalendarSource;
+use App\Model\Entity\CalendarSubscription;
+use App\Model\Entity\Project;
+use App\Model\Entity\ProjectSection;
+use App\Model\Entity\Subtask;
+use App\Model\Entity\Task;
+use App\Model\Entity\User;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use DateTime;
 
 trait FactoryTrait
 {
+    use LocatorAwareTrait;
+
     protected function login($userId = 1)
     {
-        $user = TableRegistry::get('Users')->get($userId);
+        $user = $this->fetchTable('Users')->get($userId);
         $this->session([
             'Auth' => $user,
         ]);
     }
 
-    protected function makeUser($email, $props = [])
+    protected function makeUser($email, $props = []): User
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->fetchTable('Users');
         $user = $users->newEntity(array_merge([
             'name' => 'Unknown',
             'email' => $email,
@@ -31,9 +42,9 @@ trait FactoryTrait
         return $users->saveOrFail($user);
     }
 
-    protected function makeProject($name, $userId, $ranking = 0, $props = [])
+    protected function makeProject($name, $userId, $ranking = 0, $props = []): Project
     {
-        $projects = TableRegistry::get('Projects');
+        $projects = $this->fetchTable('Projects');
         $props = array_merge([
             'user_id' => $userId,
             'name' => $name,
@@ -45,9 +56,9 @@ trait FactoryTrait
         return $projects->saveOrFail($project);
     }
 
-    protected function makeProjectSection($name, $projectId, $ranking = 0, $props = [])
+    protected function makeProjectSection($name, $projectId, $ranking = 0, $props = []): ProjectSection
     {
-        $sections = TableRegistry::get('ProjectSections');
+        $sections = $this->fetchTable('ProjectSections');
         $props = array_merge([
             'project_id' => $projectId,
             'name' => $name,
@@ -58,9 +69,9 @@ trait FactoryTrait
         return $sections->saveOrFail($section);
     }
 
-    protected function makeTask($title, $projectId, $order, $props = [])
+    protected function makeTask($title, $projectId, $order, $props = []): Task
     {
-        $tasks = TableRegistry::get('Tasks');
+        $tasks = $this->fetchTable('Tasks');
         $props = array_merge([
             'project_id' => $projectId,
             'title' => $title,
@@ -72,9 +83,9 @@ trait FactoryTrait
         return $tasks->saveOrFail($task);
     }
 
-    protected function makeSubtask($title, $taskId, $ranking, $props = [])
+    protected function makeSubtask($title, $taskId, $ranking, $props = []): Subtask
     {
-        $subtasks = TableRegistry::get('Subtasks');
+        $subtasks = $this->fetchTable('Subtasks');
         $subtask = $subtasks->newEntity(array_merge([
             'task_id' => $taskId,
             'title' => $title,
@@ -84,9 +95,9 @@ trait FactoryTrait
         return $subtasks->saveOrFail($subtask);
     }
 
-    protected function makeCalendarProvider($userId, $identifier, $props = [])
+    protected function makeCalendarProvider($userId, $identifier, $props = []): CalendarProvider
     {
-        $providers = TableRegistry::get('CalendarProviders');
+        $providers = $this->fetchTable('CalendarProviders');
         $provider = $providers->newEntity(array_merge([
             'user_id' => $userId,
             'kind' => 'google',
@@ -100,9 +111,9 @@ trait FactoryTrait
         return $providers->saveOrFail($provider);
     }
 
-    protected function makeCalendarSource($providerId, $name = 'primary', $props = [])
+    protected function makeCalendarSource($providerId, $name = 'primary', $props = []): CalendarSource
     {
-        $sources = TableRegistry::get('CalendarSources');
+        $sources = $this->fetchTable('CalendarSources');
         $source = $sources->newEntity(array_merge([
             'calendar_provider_id' => $providerId,
             'provider_id' => $name,
@@ -113,9 +124,9 @@ trait FactoryTrait
         return $sources->saveOrFail($source);
     }
 
-    protected function makeCalendarItem($sourceId, $props = [])
+    protected function makeCalendarItem($sourceId, $props = []): CalendarItem
     {
-        $items = TableRegistry::get('CalendarItems');
+        $items = $this->fetchTable('CalendarItems');
         $item = $items->newEntity(array_merge([
             'calendar_source_id' => $sourceId,
             'start_time' => FrozenTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
@@ -125,9 +136,9 @@ trait FactoryTrait
         return $items->saveOrFail($item);
     }
 
-    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null, $expires = null)
+    protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null, $expires = null): CalendarSubscription
     {
-        $subs = TableRegistry::get('CalendarSubscriptions');
+        $subs = $this->fetchTable('CalendarSubscriptions');
         $sub = $subs->newEntity([
             'calendar_source_id' => $sourceId,
             'identifier' => $identifier ?? Text::uuid(),
