@@ -220,7 +220,7 @@ class TasksTable extends Table
 
         return $query->where([
             'Tasks.due_on IS NOT' => null,
-            'Tasks.due_on >=' => $today,
+            'Tasks.due_on <' => $today,
         ])
             ->orderAsc('Tasks.due_on')
             ->orderAsc('Tasks.evening')
