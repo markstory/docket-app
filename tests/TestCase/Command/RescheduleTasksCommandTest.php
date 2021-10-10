@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Command;
 
-use App\Command\RescheduleTasksCommand;
+use App\Test\TestCase\FactoryTrait;
+use Cake\I18n\FrozenDate;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -15,6 +16,13 @@ use Cake\TestSuite\TestCase;
 class RescheduleTasksCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
+    use FactoryTrait;
+
+    public $fixtures = [
+        'app.Users',
+        'app.Projects',
+        'app.Tasks',
+    ];
 
     /**
      * setUp method
@@ -26,16 +34,6 @@ class RescheduleTasksCommandTest extends TestCase
         parent::setUp();
         $this->useCommandRunner();
     }
-    /**
-     * Test buildOptionParser method
-     *
-     * @return void
-     * @uses \App\Command\RescheduleTasksCommand::buildOptionParser()
-     */
-    public function testBuildOptionParser(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
 
     /**
      * Test execute method
@@ -45,6 +43,14 @@ class RescheduleTasksCommandTest extends TestCase
      */
     public function testExecute(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $project = $this->makeProject('Home', 1);
+        $task = $this->makeTask('Do dishes', $project->id, 1, ['due_on' => new FrozenDate('-1 day')]);
+
+        $this->exec('reschedule_tasks');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Updated 1 tasks');
+
+        $updated = $this->fetchTable('Tasks')->get($task->id);
+        $this->assertTrue($task->due_on->lessThan($updated->due_on));
     }
 }
