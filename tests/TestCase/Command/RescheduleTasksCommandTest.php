@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
+use Cake\Core\Configure;
 use Cake\I18n\FrozenDate;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -39,10 +40,22 @@ class RescheduleTasksCommandTest extends TestCase
      * Test execute method
      *
      * @return void
-     * @uses \App\Command\RescheduleTasksCommand::execute()
+     */
+    public function testExecuteNoDebug(): void
+    {
+        Configure::write('debug', false);
+        $this->exec('reschedule_tasks');
+        $this->assertExitError();
+    }
+
+    /**
+     * Test execute method
+     *
+     * @return void
      */
     public function testExecute(): void
     {
+        Configure::write('debug', true);
         $project = $this->makeProject('Home', 1);
         $task = $this->makeTask('Do dishes', $project->id, 1, ['due_on' => new FrozenDate('-1 day')]);
 

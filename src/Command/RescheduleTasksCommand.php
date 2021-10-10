@@ -7,10 +7,10 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use RuntimeException;
 
 /**
  * RescheduleTasks command.
@@ -47,7 +47,7 @@ class RescheduleTasksCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         if (Configure::read('debug') !== true) {
-            throw new RuntimeException('Cannot rescheule tasks in non-dev environment.');
+            throw new StopException('Cannot rescheule tasks in non-dev environment.');
         }
         $tasks = $this->fetchTable('Tasks');
         $query = $tasks->find('overdue');
