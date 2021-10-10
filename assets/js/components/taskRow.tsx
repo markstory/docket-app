@@ -57,7 +57,7 @@ export default function TaskRow({
     }
   });
   useEffect(() => {
-    if (!focused) {
+    if (focused) {
       element.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
