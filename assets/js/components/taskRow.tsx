@@ -1,4 +1,4 @@
-import {useRef, useState, Fragment} from 'react';
+import {useRef, useState, Fragment, useEffect} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
 import {MenuItem} from '@reach/menu-button';
@@ -32,6 +32,7 @@ export default function TaskRow({
   showDueOn,
   showProject,
 }: Props): JSX.Element {
+  const element = useRef<HTMLDivElement>(null);
   const [completed, setCompleted] = useState(task.completed);
 
   const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +56,14 @@ export default function TaskRow({
       Inertia.post(`/tasks/${task.id}/${action}`);
     }
   });
+  useEffect(() => {
+    if (!focused) {
+      element.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [focused, element]);
 
   const className = classnames('task-row', {
     'is-completed': completed,
@@ -62,7 +71,7 @@ export default function TaskRow({
   });
 
   return (
-    <div className={className}>
+    <div className={className} ref={element}>
       <Checkbox name="complete" checked={completed} onChange={handleComplete} />
       <InertiaLink href={`/tasks/${task.id}/view`}>
         <span className="title">{task.title}</span>
