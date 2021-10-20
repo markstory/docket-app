@@ -117,3 +117,5 @@ export function formatDateHeading(
   }
   return [shortDate, ''];
 }
+
+export {addDays};
