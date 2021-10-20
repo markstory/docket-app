@@ -13,6 +13,7 @@ import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {
+  addDays,
   toDateString,
   formatDateHeading,
   getRangeInDays,
@@ -38,14 +39,18 @@ function zeroFillItems(
   numDays: number,
   groups: GroupedItems
 ): GroupedItems {
-  const first = parseDate(start).getTime();
-  const end = first + numDays * ONE_DAY_IN_MS;
+  const firstDate = parseDate(start);
+  const endDate = addDays(firstDate, numDays);
+  // const first = parseDate(start).getTime();
+  // const end = first + numDays * ONE_DAY_IN_MS;
 
   const complete: GroupedItems = [];
-  for (let i = first; i < end; i += ONE_DAY_IN_MS) {
-    const date = new Date(i);
+  let date = new Date(firstDate);
+  while (true) {
+    if (date && date > endDate) {
+      break;
+    }
     const dateKey = toDateString(date);
-
     if (groups.length && groups[0].key === dateKey) {
       const values = groups.shift();
       if (values) {
@@ -63,6 +68,10 @@ function zeroFillItems(
     }
     // The last group in a day should have an add button.
     complete[complete.length - 1].hasAdd = true;
+
+    // Increment for next loop. We are using a while/break
+    // because incrementing timestamps fails when DST happens.
+    date = addDays(date, 1);
   }
   return complete;
 }
