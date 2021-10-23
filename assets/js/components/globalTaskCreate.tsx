@@ -49,9 +49,9 @@ function GlobalTaskCreate(_props: Props) {
     });
   }
 
-  // TODO fix modal styling so it looks better.
   return (
-    <Modal onClose={handleCancel} label={t('Create a task')}>
+    <Modal className="modal-float" onClose={handleCancel} label={t('Create a task')}>
+      <h2>{t('Create a new Task')}</h2>
       <TaskQuickForm
         url="/tasks/add"
         errors={errors}

@@ -58,3 +58,11 @@
   z-index: $z-modal;
 }
 
+.modal-float {
+  top: 5vh;
+  left: 5vh;
+  right: 5vh;
+  bottom: auto;
+  border-radius: $border-radius-large;
+  padding: 20px 20px 20px 20px;
+}
