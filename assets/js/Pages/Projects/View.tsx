@@ -16,7 +16,7 @@ import ProjectRenameForm from 'app/components/projectRenameForm';
 import TaskGroup from 'app/components/taskGroup';
 import TaskList from 'app/components/taskList';
 import TaskRow from 'app/components/taskRow';
-import useKeyboardListNav from 'app/utils/useKeyboardListNav';
+import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
 
 type Props = {
   project: Project;

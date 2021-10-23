@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
-import {t} from 'app/locale';
-import MarkdownText from 'app/components/markdownText';
 import {updateTask} from 'app/actions/tasks';
+import MarkdownText from 'app/components/markdownText';
+import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
+import {t} from 'app/locale';
 import {Task} from 'app/types';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   task: Task;

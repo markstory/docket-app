@@ -11,7 +11,7 @@ import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString} from 'app/utils/dates';
-import useKeyboardListNav from 'app/utils/useKeyboardListNav';
+import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];

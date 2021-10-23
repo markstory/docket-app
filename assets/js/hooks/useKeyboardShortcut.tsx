@@ -3,10 +3,19 @@ import {useReducer, useEffect, useCallback} from 'react';
 type ShortcutKeyMap = Record<string, boolean>;
 
 type ShortcutCallback = (keymap: ShortcutKeyMap) => void;
+type KeysAction =
+  | {
+      type: 'keydown' | 'keyup';
+      key: string;
+    }
+  | {
+      type: 'reset';
+      data: Record<string, string>;
+    };
 
 const ignoreTargets = ['INPUT', 'TEXTAREA'];
 
-function keysReducer(state: ShortcutKeyMap, action) {
+function keysReducer(state: ShortcutKeyMap, action: KeysAction) {
   switch (action.type) {
     case 'keydown':
       return {...state, [action.key]: true};
@@ -27,6 +36,7 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
     currentKeys[key] = false;
     return currentKeys;
   }, {});
+  // TODO figure out typing here.
   const [keys, setKeys] = useReducer(keysReducer, initialMap);
 
   const keydownListener = useCallback(

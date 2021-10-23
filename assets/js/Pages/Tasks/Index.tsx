@@ -12,15 +12,15 @@ import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
+import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
+
 import {
   addDays,
   toDateString,
   formatDateHeading,
   getRangeInDays,
   parseDate,
-  ONE_DAY_IN_MS,
 } from 'app/utils/dates';
-import useKeyboardListNav from 'app/utils/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];
@@ -41,8 +41,6 @@ function zeroFillItems(
 ): GroupedItems {
   const firstDate = parseDate(start);
   const endDate = addDays(firstDate, numDays);
-  // const first = parseDate(start).getTime();
-  // const end = first + numDays * ONE_DAY_IN_MS;
 
   const complete: GroupedItems = [];
   let date = new Date(firstDate);

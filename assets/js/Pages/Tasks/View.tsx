@@ -11,7 +11,7 @@ import TaskQuickForm from 'app/components/taskQuickForm';
 import TaskNotes from 'app/components/taskNotes';
 import TaskSubtasks from 'app/components/taskSubtasks';
 import ProjectBadge from 'app/components/projectBadge';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
+import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
 
 type Props = {
   task: TaskDetailed;
