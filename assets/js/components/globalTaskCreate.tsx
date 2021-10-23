@@ -8,6 +8,7 @@ import {ValidationErrors} from 'app/types';
 
 import Modal from './modal';
 import TaskQuickForm from './taskQuickForm';
+import {Icon} from './icon';
 
 type Props = {};
 
@@ -15,13 +16,20 @@ function GlobalTaskCreate(_props: Props) {
   const [defaultTaskValues, _] = useContext(DefaultTaskValuesContext);
   const [visible, setVisible] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const showForm = () => setVisible(true);
 
-  useKeyboardShortcut(['c'], () => {
-    setVisible(true);
-  });
+  useKeyboardShortcut(['c'], showForm);
 
   if (!visible) {
-    return null;
+    return (
+      <button
+        className="button-primary button-global-add"
+        data-testid="global-task-add"
+        onClick={showForm}
+      >
+        <Icon icon="plus" width="64" />
+      </button>
+    );
   }
   const task = makeTaskFromDefaults(defaultTaskValues);
   const handleCancel = () => setVisible(false);
