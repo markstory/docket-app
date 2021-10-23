@@ -1,7 +1,51 @@
 import axios, {AxiosResponse} from 'axios';
+import {Inertia} from '@inertiajs/inertia';
 
-import {Task} from 'app/types';
+import {DefaultTaskValues, Task} from 'app/types';
 import {UpdaterCallback, UpdateData} from 'app/components/taskGroupedSorter';
+
+export function createTask(data: FormData | Task): Promise<boolean> {
+  const promise = new Promise<boolean>((resolve, reject) => {
+    Inertia.post('/tasks/add', data, {
+      onSuccess: () => {
+        resolve(true);
+      },
+      onError: errors => {
+        reject(errors);
+      },
+      preserveScroll: true,
+    });
+  });
+
+  return promise;
+}
+
+export function makeTaskFromDefaults(defaults: DefaultTaskValues | undefined): Task {
+  const task: Task = {
+    id: -1,
+    section_id: null,
+    title: '',
+    body: '',
+    due_on: null,
+    completed: false,
+    evening: false,
+    day_order: 0,
+    child_order: 0,
+    created: '',
+    modified: '',
+    complete_subtask_count: 0,
+    subtask_count: 0,
+    project: {
+      id: defaults?.project_id ? Number(defaults.project_id) : 0,
+      name: '',
+      slug: '',
+      color: 0,
+    },
+    ...defaults,
+  };
+
+  return task;
+}
 
 export function updateTask(
   task: Task,
