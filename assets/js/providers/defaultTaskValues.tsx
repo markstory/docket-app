@@ -41,11 +41,21 @@ function distillState(items: State['items']) {
         dateMatch = true;
       }
 
-      if (item.project_id) {
-        acc.project_id = item.project_id;
-      }
+      // If the date was updated or is the current winner
+      // copy the evening value in from the last element as
+      // the visual order is day, night.
       if (dateMatch) {
         acc.evening = item.evening;
+      }
+
+      // If there is a project it should always be the same.
+      if (item.project_id && acc.project_id === undefined) {
+        acc.project_id = item.project_id;
+      }
+
+      // Take the first section as it is likely the one at the top of
+      // the view port.
+      if (item.section_id && acc.section_id === undefined) {
         acc.section_id = item.section_id;
       }
 

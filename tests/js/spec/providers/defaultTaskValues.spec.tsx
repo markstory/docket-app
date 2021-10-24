@@ -17,7 +17,7 @@ test('should set project_id', () => {
   });
 
   state = result.current[0];
-  expect(state.distilled.project_id).toEqual(2);
+  expect(state.distilled.project_id).toEqual(1);
   expect(state.items).toHaveLength(2);
 });
 
@@ -135,10 +135,10 @@ test('item add sets section', () => {
   });
 
   const state = result.current[0];
-  expect(state.distilled.section_id).toBe(2);
+  expect(state.distilled.section_id).toBe(1);
 });
 
-test('item remove sets section', () => {
+test('item remove retains section', () => {
   const {result} = renderHook(() => useDefaultTaskValues());
 
   act(() => {
@@ -153,4 +153,24 @@ test('item remove sets section', () => {
 
   const state = result.current[0];
   expect(state.distilled.section_id).toBe(1);
+});
+
+test('item remove updates section', () => {
+  const {result} = renderHook(() => useDefaultTaskValues());
+
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01', section_id: 1}});
+  });
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01', section_id: 9}});
+  });
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01', section_id: 3}});
+  });
+  act(() => {
+    result.current[1]({type: 'remove', data: {due_on: '2021-09-01', section_id: 1}});
+  });
+
+  const state = result.current[0];
+  expect(state.distilled.section_id).toBe(9);
 });
