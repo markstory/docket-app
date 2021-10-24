@@ -28,12 +28,25 @@ const initialState: State = {
 function distillState(items: State['items']) {
   return items.reduce(
     (acc: any, item: any) => {
+      let dateMatch = false;
       // Keep the lowest date as it is at the top of the
       // viewport which is where we want to add.
       if (acc.due_on === null) {
         acc.due_on = item.due_on;
+        dateMatch = true;
       } else if (item.due_on < acc.due_on) {
         acc.due_on = item.due_on;
+        dateMatch = true;
+      } else if (item.due_on == acc.due_on) {
+        dateMatch = true;
+      }
+
+      if (item.project_id) {
+        acc.project_id = item.project_id;
+      }
+      if (dateMatch) {
+        acc.evening = item.evening;
+        acc.section_id = item.section_id;
       }
 
       return acc;
@@ -52,12 +65,33 @@ function defaultTaskValuesReducer(state: State, action: Action) {
         distilled: distillState(items),
       };
     case 'remove':
-      items = state.items.filter(item => item !== action.data);
+      items = state.items.filter(item => !roughlyEqual(item, action.data));
       return {
         items,
         distilled: distillState(items),
       };
   }
+}
+
+/**
+ * Rough equivalence. When comparing default task values
+ * we want rougher equivalence than javascript provides.
+ */
+function roughlyEqual(first, second): bool {
+  const firstKeys = Object.keys(first);
+  const secondKeys = Object.keys(second);
+
+  if (firstKeys.length !== secondKeys.length) {
+    return false;
+  }
+
+  for (let i = 0; i <= firstKeys.length; i++) {
+    const key = firstKeys[i];
+    if (first[key] != second[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -70,13 +104,23 @@ export const DefaultTaskValuesContext = createContext<ContextData>([
   () => {},
 ]);
 
+/**
+ * Hook for DefaultValues reducer.
+ *
+ * Primarily intended for testing and possibly future use for nested state?
+ */
+export function useDefaultTaskValues(): [State, React.Dispatch<Action>] {
+  const [state, dispatch] = useReducer(defaultTaskValuesReducer, initialState);
+  return [state, dispatch];
+}
+
 type StoreProps = React.PropsWithChildren<{}>;
 
 /**
  * Context Provider for Default Task context data.
  */
 function DefaultTaskValuesStore({children}: StoreProps) {
-  const [state, dispatch] = useReducer(defaultTaskValuesReducer, initialState);
+  const [state, dispatch] = useDefaultTaskValues();
 
   return (
     <DefaultTaskValuesContext.Provider value={[state.distilled, dispatch]}>
