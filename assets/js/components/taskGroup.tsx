@@ -3,13 +3,10 @@ import classnames from 'classnames';
 import {useDroppable} from '@dnd-kit/core';
 
 import {DefaultTaskValues, Task} from 'app/types';
-import {t} from 'app/locale';
 import {DefaultTaskValuesContext} from 'app/providers/defaultTaskValues';
 
-import {InlineIcon} from './icon';
 import SortableItem from './sortableItem';
 import TaskRow from './taskRow';
-import TaskAddForm from './taskAddForm';
 
 type Props = {
   dropId: string;
@@ -32,10 +29,8 @@ export default function TaskGroup({
   defaultTaskValues,
   showProject = false,
   showDueOn = false,
-  showAdd = true,
 }: Props): JSX.Element {
   const element = useRef<HTMLDivElement>(null);
-  const [showForm, setShowForm] = useState(false);
   const {over, isOver, setNodeRef} = useDroppable({id: dropId});
   const [_, updateDefaultTaskValues] = useContext(DefaultTaskValuesContext);
 
@@ -106,26 +101,6 @@ export default function TaskGroup({
           );
         })}
       </div>
-      {showAdd && (
-        <div className="add-task">
-          {!showForm && (
-            <button
-              data-testid="add-task"
-              className="button-secondary"
-              onClick={() => setShowForm(true)}
-            >
-              <InlineIcon icon="plus" />
-              {t('Add Task')}
-            </button>
-          )}
-          {showForm && (
-            <TaskAddForm
-              defaultValues={defaultTaskValues}
-              onCancel={() => setShowForm(false)}
-            />
-          )}
-        </div>
-      )}
     </div>
   );
 }

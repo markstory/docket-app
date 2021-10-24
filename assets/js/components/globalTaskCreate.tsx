@@ -1,4 +1,5 @@
-import {useContext, useState} from 'react';
+import classnames from 'classnames';
+import {Fragment, useContext, useState} from 'react';
 
 import {createTask, makeTaskFromDefaults} from 'app/actions/tasks';
 import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
@@ -19,17 +20,19 @@ function GlobalTaskCreate(_props: Props) {
   const showForm = () => setVisible(true);
 
   useKeyboardShortcut(['c'], showForm);
+  const classname = classnames('button-global-add', {
+    'button-primary': !visible,
+    'button-secondary': visible,
+  });
+
+  const button = (
+    <button className={classname} data-testid="global-task-add" onClick={showForm}>
+      <Icon icon="plus" width="64" />
+    </button>
+  );
 
   if (!visible) {
-    return (
-      <button
-        className="button-primary button-global-add"
-        data-testid="global-task-add"
-        onClick={showForm}
-      >
-        <Icon icon="plus" width="64" />
-      </button>
-    );
+    return button;
   }
   const task = makeTaskFromDefaults(defaultTaskValues);
   const handleCancel = () => setVisible(false);
@@ -50,16 +53,19 @@ function GlobalTaskCreate(_props: Props) {
   }
 
   return (
-    <Modal className="modal-float" onClose={handleCancel} label={t('Create a task')}>
-      <h2>{t('Create a new Task')}</h2>
-      <TaskQuickForm
-        url="/tasks/add"
-        errors={errors}
-        task={task}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-      />
-    </Modal>
+    <Fragment>
+      {button}
+      <Modal className="modal-float" onClose={handleCancel} label={t('Create a task')}>
+        <h2>{t('Create a new Task')}</h2>
+        <TaskQuickForm
+          url="/tasks/add"
+          errors={errors}
+          task={task}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+    </Fragment>
   );
 }
 
