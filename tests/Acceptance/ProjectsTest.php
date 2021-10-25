@@ -42,7 +42,7 @@ class ProjectsTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Open the header menu
-        $headerMenu = $crawler->filter('.heading .button-icon')->first();
+        $headerMenu = $crawler->filter('.heading-actions .button-icon')->first();
         $headerMenu->click();
         $client->waitFor('[data-reach-menu-item]');
 
@@ -90,7 +90,7 @@ class ProjectsTest extends AcceptanceTestCase
         $client->waitFor('[data-testid="loggedin"]');
         $crawler = $client->getCrawler();
 
-        $headerMenu = $crawler->filter('.heading .button-icon')->first();
+        $headerMenu = $crawler->filter('.heading-actions .button-icon')->first();
         // Open the header menu
         $headerMenu->click();
         $client->waitFor('[data-reach-menu-item]');

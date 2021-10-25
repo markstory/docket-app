@@ -128,13 +128,12 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                 />
               </SortableContext>
               <SortableContext items={evening.ids} strategy={verticalListSortingStrategy}>
-                <h2 className="heading-icon evening">
+                <h2 className="heading-icon evening" data-testid="evening-group">
                   <Icon icon="moon" />
                   {t('This Evening')}
                   <AddTaskButton defaultValues={{evening: true, due_on: defaultDate}} />
                 </h2>
                 <TaskGroup
-                  dataTestId="evening-group"
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}

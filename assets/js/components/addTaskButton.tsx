@@ -38,7 +38,7 @@ function AddTaskButton({defaultValues}: Props) {
     <Tooltip label={t('Add task')}>
       <button
         className="button-icon-primary"
-        data-test-id="add-task"
+        data-testid="add-task"
         onClick={handleClick}
         ref={ref}
       >

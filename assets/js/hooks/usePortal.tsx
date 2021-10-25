@@ -14,6 +14,7 @@ function usePortal(id?: string) {
   useEffect(() => {
     let app = document.getElementById('app');
     if (!app) {
+      // For test suites.
       app = document.body;
     }
     app.appendChild(portal.current);
