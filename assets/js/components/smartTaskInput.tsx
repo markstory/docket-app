@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import {useMemo} from 'react';
 import {MentionsInput, Mention} from 'react-mentions';
 import {addDays, isLeapYear} from 'date-fns';
 
+import usePortal from 'app/hooks/usePortal';
 import {t} from 'app/locale';
 import {Project} from 'app/types';
 import {getToday, parseDateInput, parseDate, toDateString} from 'app/utils/dates';
@@ -70,6 +71,7 @@ function SmartTaskInput({
 }: Props): JSX.Element {
   const today = toDateString(getToday());
   const dateOptions = useMemo(() => generateDateOptions(today), [today]);
+  const portal = usePortal('smart-task-input');
 
   function handleChange(_: any, newValue: string) {
     const newPlainText = newValue
@@ -88,6 +90,7 @@ function SmartTaskInput({
       onChange={handleChange}
       singleLine
       allowSpaceInQuery
+      suggestionsPortalHost={portal}
     >
       <Mention
         className="project-mention"

@@ -1,11 +1,11 @@
 import classnames from 'classnames';
-import {useEffect} from 'react';
 import Select, {ValueType, OptionProps, SingleValueProps} from 'react-select';
 
 import {Project} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
 import {t} from 'app/locale';
 import {useProjects} from 'app/providers/projects';
+import usePortal from 'app/hooks/usePortal';
 
 type ProjectItem = {
   value: number;
@@ -41,22 +41,7 @@ function ProjectValue(props: SingleValueProps<ProjectItem>) {
 }
 
 function ProjectSelect({value, onChange}: Props): JSX.Element {
-  const portal = document.createElement('div');
-  portal.setAttribute('id', 'project-select-portal');
-
-  useEffect(() => {
-    const app = document.getElementById('app');
-    if (!app) {
-      throw new Error('Could not find app element to mount portal');
-    }
-    app.appendChild(portal);
-
-    return function cleanup() {
-      if (portal) {
-        app.removeChild(portal);
-      }
-    };
-  }, []);
+  const portal = usePortal('project-select-portal');
 
   const [projects] = useProjects();
   const options: ProjectItem[] = projects.map(project => ({
@@ -76,7 +61,6 @@ function ProjectSelect({value, onChange}: Props): JSX.Element {
     <Select
       classNamePrefix="select"
       placeholder={t('Choose a project')}
-      menuIsOpen={true}
       name="project_id"
       value={valueOption}
       options={options}
