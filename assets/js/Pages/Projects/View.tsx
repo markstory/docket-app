@@ -5,10 +5,11 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
 import {Project, Task} from 'app/types';
+import AddTaskButton from 'app/components/addTaskButton';
+import DragHandle from 'app/components/dragHandle';
 import {Icon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
 import ProjectMenu from 'app/components/projectMenu';
-import DragHandle from 'app/components/dragHandle';
 import SectionAddForm from 'app/components/sectionAddForm';
 import SectionContainer from 'app/components/sectionContainer';
 import ProjectSectionSorter from 'app/components/projectSectionSorter';
@@ -44,15 +45,20 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
   return (
     <LoggedIn title={t('{project} Project', {project: project.name})}>
       <div className="project-view">
-        <div className="heading" data-archived={project.archived}>
-          {editingName ? (
-            <ProjectRenameForm project={project} onCancel={handleCancelRename} />
-          ) : (
-            <h1 className="heading-icon editable" onClick={() => setEditingName(true)}>
-              {project.archived && <Icon icon="archive" />}
-              {project.name}
-            </h1>
-          )}
+        <div className="heading-actions" data-archived={project.archived}>
+          <div className="heading-actions-item">
+            {editingName ? (
+              <ProjectRenameForm project={project} onCancel={handleCancelRename} />
+            ) : (
+              <h1 className="heading-icon editable" onClick={() => setEditingName(true)}>
+                {project.archived && <Icon icon="archive" />}
+                {project.name}
+              </h1>
+            )}
+            {!project.archived && !editingName && (
+              <AddTaskButton defaultValues={{project_id: project.id}} />
+            )}
+          </div>
 
           <ProjectMenu
             project={project}
@@ -73,7 +79,6 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                     tasks={tasks}
                     focusedTask={focused}
                     defaultTaskValues={{project_id: project.id}}
-                    showAdd={!project.archived}
                     showDueOn
                   />
                 );
@@ -85,13 +90,13 @@ export default function ProjectsView({completed, project, tasks}: Props): JSX.El
                   active={activeSection}
                   project={project}
                   section={section}
+                  showAdd={!project.archived}
                 >
                   <TaskGroup
                     dropId={key}
                     activeTask={activeTask}
                     tasks={tasks}
                     defaultTaskValues={{section_id: section.id, project_id: project.id}}
-                    showAdd={!project.archived}
                     focusedTask={focused}
                     showDueOn
                   />

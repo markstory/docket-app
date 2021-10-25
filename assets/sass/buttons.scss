@@ -132,6 +132,7 @@ button,
 }
 
 // Buttons that only have an icon inside.
+.button-icon-primary,
 .button-icon {
   display: flex;
   align-items: center;
@@ -153,6 +154,9 @@ button,
   > svg:first-child {
     margin: 0;
   }
+}
+.button-icon-primary {
+  color: var(--color-primary);
 }
 
 .button-global-add {

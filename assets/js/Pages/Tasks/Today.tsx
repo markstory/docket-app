@@ -4,14 +4,15 @@ import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {CalendarItem, Project, Task} from 'app/types';
 import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
+import AddTaskButton from 'app/components/addTaskButton';
 import CalendarItemList from 'app/components/calendarItemList';
 import {Icon} from 'app/components/icon';
-import LoggedIn from 'app/layouts/loggedIn';
 import NoProjects from 'app/components/noProjects';
 import TaskGroup from 'app/components/taskGroup';
+import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
+import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
 import {toDateString} from 'app/utils/dates';
-import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
 
 type Props = {
   tasks: Task[];
@@ -41,19 +42,16 @@ function grouper(items: Task[]): GroupedItems {
       key: 'overdue',
       items: groups.overdue,
       ids: groups.overdue.map(task => String(task.id)),
-      hasAdd: false,
     },
     {
       key: today,
       items: groups.today,
       ids: groups.today.map(task => String(task.id)),
-      hasAdd: true,
     },
     {
       key: `evening:${today}`,
       items: groups.evening,
       ids: groups.evening.map(task => String(task.id)),
-      hasAdd: true,
     },
   ];
   return output;
@@ -107,7 +105,6 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                     showProject
                     showDueOn
                     focusedTask={focused}
-                    showAdd={overdue.hasAdd}
                   />
                 </SortableContext>
               )}
@@ -115,6 +112,7 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                 <h2 className="heading-icon today">
                   <Icon icon="clippy" />
                   {t('Today')}
+                  <AddTaskButton defaultValues={{due_on: defaultDate}} />
                 </h2>
                 {calendarItems.length > 0 && (
                   <CalendarItemList date={defaultDate} items={calendarItems} />
@@ -126,7 +124,6 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                   activeTask={activeTask}
                   defaultTaskValues={{due_on: defaultDate}}
                   focusedTask={focused}
-                  showAdd={today.hasAdd}
                   showProject
                 />
               </SortableContext>
@@ -134,6 +131,7 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                 <h2 className="heading-icon evening">
                   <Icon icon="moon" />
                   {t('This Evening')}
+                  <AddTaskButton defaultValues={{evening: true, due_on: defaultDate}} />
                 </h2>
                 <TaskGroup
                   dataTestId="evening-group"
@@ -142,7 +140,6 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                   activeTask={activeTask}
                   defaultTaskValues={{evening: true, due_on: defaultDate}}
                   focusedTask={focused}
-                  showAdd={evening.hasAdd}
                   showProject
                 />
               </SortableContext>

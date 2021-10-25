@@ -17,7 +17,6 @@ type Props = {
   defaultTaskValues?: DefaultTaskValues;
   showProject?: boolean;
   showDueOn?: boolean;
-  showAdd?: boolean;
 };
 
 export default function TaskGroup({

@@ -6,6 +6,7 @@ import {InertiaLink} from '@inertiajs/inertia-react';
 import {sortUpdater} from 'app/actions/tasks';
 import {t} from 'app/locale';
 import {CalendarItem, Project, Task} from 'app/types';
+import AddTaskButton from 'app/components/addTaskButton';
 import CalendarItemList from 'app/components/calendarItemList';
 import {InlineIcon} from 'app/components/icon';
 import LoggedIn from 'app/layouts/loggedIn';
@@ -55,7 +56,7 @@ function zeroFillItems(
         complete.push(values);
       }
     } else {
-      complete.push({key: dateKey, items: [], ids: [], hasAdd: false});
+      complete.push({key: dateKey, items: [], ids: []});
     }
 
     if (groups.length && groups[0].key === `evening:${dateKey}`) {
@@ -64,8 +65,6 @@ function zeroFillItems(
         complete.push(values);
       }
     }
-    // The last group in a day should have an add button.
-    complete[complete.length - 1].hasAdd = true;
 
     // Increment for next loop. We are using a while/break
     // because incrementing timestamps fails when DST happens.
@@ -88,7 +87,6 @@ function createGrouper(start: string, numDays: number) {
         key,
         items: value,
         ids: value.map(task => String(task.id)),
-        hasAdd: false,
       };
     });
     return zeroFillItems(start, numDays, grouped);
@@ -158,10 +156,12 @@ export default function TasksIndex({
         {({groupedItems, activeTask}) => {
           return (
             <Fragment>
-              {groupedItems.map(({key, ids, items, hasAdd}) => {
+              {groupedItems.map(({key, ids, items}) => {
                 const [heading, subheading] = formatDateHeading(key);
+
                 const eveningValue = key.includes('evening:');
                 const dateValue = eveningValue ? key.split(':')[1] : key;
+                const defaultValues = {due_on: dateValue, evening: eveningValue};
                 return (
                   <Fragment key={key}>
                     {key.includes('evening') ? (
@@ -172,6 +172,7 @@ export default function TasksIndex({
                       <h3 className="heading-task-group">
                         {heading}
                         {subheading && <span className="minor">{subheading}</span>}
+                        <AddTaskButton defaultValues={defaultValues} />
                       </h3>
                     )}
                     {groupedCalendarItems[key] && (
@@ -187,8 +188,7 @@ export default function TasksIndex({
                         tasks={items}
                         activeTask={activeTask}
                         focusedTask={focused}
-                        defaultTaskValues={{due_on: dateValue, evening: eveningValue}}
-                        showAdd={hasAdd}
+                        defaultTaskValues={defaultValues}
                         showProject
                       />
                     </SortableContext>

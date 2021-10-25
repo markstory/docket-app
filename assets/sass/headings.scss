@@ -45,3 +45,24 @@
   font-weight: normal;
   border-bottom: 1px solid var(--color-border-low);
 }
+
+.heading-task-group {
+  display: flex;
+  align-items: center;
+  gap: $space / 2;
+
+  .minor {
+    font-weight: normal;
+    color: var(--color-low-emphasis);
+  }
+}
+
+.heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.heading-actions-item {
+  display: flex;
+}
+
