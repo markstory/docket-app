@@ -16,7 +16,7 @@ type State = {
  * Actions that can be dispatched
  */
 type Action = {
-  type: 'add' | 'remove';
+  type: 'add' | 'reset' | 'remove';
   data: DefaultTaskValues;
 };
 
@@ -76,6 +76,12 @@ function defaultTaskValuesReducer(state: State, action: Action) {
       };
     case 'remove':
       items = state.items.filter(item => !roughlyEqual(item, action.data));
+      return {
+        items,
+        distilled: distillState(items),
+      };
+    case 'reset':
+      items = [action.data];
       return {
         items,
         distilled: distillState(items),

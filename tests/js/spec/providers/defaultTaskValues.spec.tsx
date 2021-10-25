@@ -1,7 +1,26 @@
 import {renderHook, act} from '@testing-library/react-hooks';
 import {useDefaultTaskValues} from 'app/providers/defaultTaskValues';
 
-test('should set project_id', () => {
+test('item reset overwrite all data', () => {
+  const {result} = renderHook(() => useDefaultTaskValues());
+
+  act(() => {
+    result.current[1]({type: 'add', data: {project_id: 1, due_on: '2021-10-01'}});
+  });
+  act(() => {
+    result.current[1]({
+      type: 'reset',
+      data: {project_id: 2, due_on: '2021-10-24', evening: true},
+    });
+  });
+
+  let state = result.current[0];
+  expect(state.distilled.project_id).toEqual(2);
+  expect(state.distilled.due_on).toEqual('2021-10-24');
+  expect(state.items).toHaveLength(1);
+});
+
+test('item add should set project_id', () => {
   const {result} = renderHook(() => useDefaultTaskValues());
 
   act(() => {
