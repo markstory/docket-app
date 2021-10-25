@@ -15,7 +15,7 @@ function HelpModal({onClose}: Props) {
       <p>Anywhere</p>
       <dl className="shortcut-list">
         <dt>
-          <kbd>n</kbd>
+          <kbd>c</kbd>
         </dt>
         <dd>
           Create a new task. The task will use the current page state for default values.
