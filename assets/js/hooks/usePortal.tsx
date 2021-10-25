@@ -12,9 +12,9 @@ function usePortal(id?: string) {
   }
 
   useEffect(() => {
-    const app = document.getElementById('app');
+    let app = document.getElementById('app');
     if (!app) {
-      throw new Error('Could not find app element to mount portal');
+      app = document.body;
     }
     app.appendChild(portal.current);
 
