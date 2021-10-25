@@ -22,7 +22,7 @@ function GlobalTaskCreate(_props: Props) {
   useKeyboardShortcut(['c'], showForm);
   const classname = classnames('button-global-add', {
     'button-primary': !visible,
-    'button-secondary': visible,
+    'button-muted': visible,
   });
 
   const button = (
