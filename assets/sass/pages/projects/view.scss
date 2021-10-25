@@ -1,11 +1,4 @@
-// TODO has this split style heading become used
-// enough to be its own component?
-.project-view > .heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: $space * 2;
-
+.project-view .heading-actions {
   &[data-archived="true"] {
     color: var(--color-muted);
   }
@@ -16,8 +9,8 @@
 
     margin-bottom: 0;
   }
-
 }
+
 // Completed task list
 .project-view .task-list {
   margin-top: $space * 5;

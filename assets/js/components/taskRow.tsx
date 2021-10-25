@@ -7,8 +7,9 @@ import classnames from 'classnames';
 import {t} from 'app/locale';
 import {updateTask} from 'app/actions/tasks';
 import {Task} from 'app/types';
-import useOnClickOutside from 'app/utils/useClickOutside';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
+import useOnClickOutside from 'app/hooks/useClickOutside';
+import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
+
 import ProjectSelect from './projectSelect';
 import Checkbox from './checkbox';
 import DueOn from './dueOn';

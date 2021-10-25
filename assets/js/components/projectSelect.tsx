@@ -5,6 +5,7 @@ import {Project} from 'app/types';
 import ProjectBadge from 'app/components/projectBadge';
 import {t} from 'app/locale';
 import {useProjects} from 'app/providers/projects';
+import usePortal from 'app/hooks/usePortal';
 
 type ProjectItem = {
   value: number;
@@ -40,6 +41,8 @@ function ProjectValue(props: SingleValueProps<ProjectItem>) {
 }
 
 function ProjectSelect({value, onChange}: Props): JSX.Element {
+  const portal = usePortal('project-select-portal');
+
   const [projects] = useProjects();
   const options: ProjectItem[] = projects.map(project => ({
     value: project.id,
@@ -68,6 +71,7 @@ function ProjectSelect({value, onChange}: Props): JSX.Element {
         SingleValue: ProjectValue,
         IndicatorSeparator: null,
       }}
+      menuPortalTarget={portal}
       menuPlacement="auto"
     />
   );

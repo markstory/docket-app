@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import {useRef} from 'react';
 import {AlertDialog, AlertDialogLabel, AlertDialogDescription} from '@reach/alert-dialog';
 
 import {t} from 'app/locale';

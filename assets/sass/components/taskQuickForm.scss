@@ -48,3 +48,10 @@
     margin-top: $space;
   }
 }
+
+// Global task create.
+.modal-float .task-quickform {
+  border: none;
+  border-radius: 0;
+  padding: $space 0;
+}

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {usePage} from '@inertiajs/inertia-react';
 
@@ -6,12 +6,14 @@ import {FlashMessage, Project, User} from 'app/types';
 
 import FlashMessages from 'app/components/flashMessages';
 import {Icon} from 'app/components/icon';
+import GlobalTaskCreate from 'app/components/globalTaskCreate';
 import HelpModal from 'app/components/helpModal';
 import ProjectFilter from 'app/components/projectFilter';
 import ProfileMenu from 'app/components/profileMenu';
+import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
 import {t} from 'app/locale';
 import {ProjectsProvider} from 'app/providers/projects';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
+import DefaultTaskValuesStore from 'app/providers/defaultTaskValues';
 
 type SharedPageProps = {
   flash: null | FlashMessage;
@@ -20,8 +22,8 @@ type SharedPageProps = {
 };
 
 type Props = {
-  title?: string;
   children: React.ReactNode;
+  title?: string;
 };
 
 function LoggedIn({children, title}: Props) {
@@ -47,9 +49,11 @@ function LoggedIn({children, title}: Props) {
   }, '');
 
   return (
-    <ProjectsProvider generationId={generationId} projects={projects}>
-      <Contents>{children}</Contents>
-    </ProjectsProvider>
+    <DefaultTaskValuesStore>
+      <ProjectsProvider generationId={generationId} projects={projects}>
+        <Contents>{children}</Contents>
+      </ProjectsProvider>
+    </DefaultTaskValuesStore>
   );
 }
 
@@ -77,7 +81,7 @@ function Contents({children}: Props) {
   });
 
   return (
-    <React.Fragment>
+    <Fragment>
       <main
         className="layout-three-quarter"
         data-expanded={expanded}
@@ -105,7 +109,8 @@ function Contents({children}: Props) {
           {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
         </section>
       </main>
-    </React.Fragment>
+      <GlobalTaskCreate />
+    </Fragment>
   );
 }
 

@@ -4,9 +4,9 @@ import {t} from 'app/locale';
 import {TaskDetailed} from 'app/types';
 import SubtaskSorter from 'app/components/subtaskSorter';
 import SubtaskAddForm from 'app/components/subtaskAddForm';
+import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
 import {SubtasksProvider} from 'app/providers/subtasks';
 import {InlineIcon} from './icon';
-import useKeyboardShortcut from 'app/utils/useKeyboardShortcut';
 
 type Props = {
   task: TaskDetailed;

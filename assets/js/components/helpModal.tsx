@@ -15,6 +15,12 @@ function HelpModal({onClose}: Props) {
       <p>Anywhere</p>
       <dl className="shortcut-list">
         <dt>
+          <kbd>c</kbd>
+        </dt>
+        <dd>
+          Create a new task. The task will use the current page state for default values.
+        </dd>
+        <dt>
           <kbd>t</kbd>
         </dt>
         <dd>Go to &quot;Today&quot;</dd>
@@ -50,10 +56,6 @@ function HelpModal({onClose}: Props) {
           <kbd>o</kbd>
         </dt>
         <dd>View task details</dd>
-        <dt>
-          <kbd>a</kbd>
-        </dt>
-        <dd>Add a task to the same group as the selected task.</dd>
       </dl>
 
       <p>Task Details</p>

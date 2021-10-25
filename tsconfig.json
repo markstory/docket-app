@@ -23,7 +23,8 @@
     "esModuleInterop": true,
     "outDir": "webroot/js",
     "types": [
-        "vite/client"
+        "vite/client",
+        "jest",
     ],
     "baseUrl": ".",
     "paths": {

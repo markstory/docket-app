@@ -90,26 +90,6 @@ class KeyboardNavigationTest extends AcceptanceTestCase
         $this->assertTrue($task->completed);
     }
 
-    public function testTaskListAddTask()
-    {
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('Home', 1);
-        $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
-
-        $client = $this->login();
-        $client->get('/tasks/upcoming');
-        $client->waitFor('[data-testid="loggedin"]');
-
-        // Move focus
-        $client->getKeyboard()->sendKeys('j');
-        $client->waitFor('.is-focused');
-        // Open task form
-        $client->getKeyboard()->sendKeys('a');
-
-        $client->waitFor('.task-quickform');
-        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
-    }
-
     public function testTaskViewEdit()
     {
         $tomorrow = new FrozenDate('tomorrow');
@@ -123,6 +103,23 @@ class KeyboardNavigationTest extends AcceptanceTestCase
         // Open edit form
         $client->getKeyboard()->sendKeys('e');
         $client->waitFor('.task-quickform');
+        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
+    }
+
+    public function testGlobalCreate()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('Home', 1);
+        $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $client = $this->login();
+        $client->get('/tasks/upcoming');
+        $client->waitFor('[data-testid="loggedin"]');
+
+        // Open modal, wait for modal.
+        $client->getKeyboard()->sendKeys('c');
+        $client->waitFor('[aria-modal="true"]');
+
         $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
     }
 }

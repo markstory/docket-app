@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import axios from 'axios';
 import classnames from 'classnames';
 import {useSortable} from '@dnd-kit/sortable';
@@ -10,6 +10,7 @@ import {t} from 'app/locale';
 import {Project, ProjectSection, ValidationErrors} from 'app/types';
 import {deleteSection} from 'app/actions/projects';
 
+import AddTaskButton from './addTaskButton';
 import ContextMenu from './contextMenu';
 import DragHandle from './dragHandle';
 import SectionQuickForm from './sectionQuickForm';
@@ -17,12 +18,13 @@ import {InlineIcon} from './icon';
 
 type SectionProps = React.PropsWithChildren<{
   id: string;
-  active?: ProjectSection;
   section: ProjectSection;
   project: Project;
+  active?: ProjectSection;
+  showAdd?: boolean;
 }>;
 
-function SectionContainer({active, children, id, project, section}: SectionProps) {
+function SectionContainer({active, children, showAdd, id, project, section}: SectionProps) {
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -77,6 +79,7 @@ function SectionContainer({active, children, id, project, section}: SectionProps
               <span className="editable" onClick={() => setEditing(true)}>
                 {section.name}
               </span>
+              {showAdd && <AddTaskButton defaultValues={{project_id: section.project_id, section_id: section.id}} />}
             </h3>
             <ContextMenu tooltip={t('Section actions')}>
               <MenuItem onSelect={() => setEditing(true)} className="edit">

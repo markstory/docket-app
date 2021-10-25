@@ -61,6 +61,9 @@ div.select__menu {
   box-shadow: var(--shadow-med);
   background: var(--color-bg);
 }
+div.select__menu-portal {
+  z-index: $z-menu;
+}
 
 .select-narrow__menu-list,
 .select__menu-list {

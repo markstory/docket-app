@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import {Inertia} from '@inertiajs/inertia';
 
-import {DefaultTaskValues, Task, ValidationErrors} from 'app/types';
+import {createTask, makeTaskFromDefaults} from 'app/actions/tasks';
+import {DefaultTaskValues, ValidationErrors} from 'app/types';
 import TaskQuickForm from 'app/components/taskQuickForm';
 
 type Props = {
@@ -12,52 +12,21 @@ type Props = {
 function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     e.persist();
 
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
+    const promise = createTask(formData);
 
-    const promise = new Promise<boolean>((resolve, reject) => {
-      Inertia.post('/tasks/add', formData, {
-        onSuccess: () => {
-          resolve(true);
-        },
-        onError: errors => {
-          console.log('errors', errors);
-          setErrors(errors);
-          reject(errors);
-        },
-        preserveScroll: true,
-      });
+    return promise.catch((errors: ValidationErrors) => {
+      setErrors(errors);
+
+      return promise;
     });
-
-    return promise;
   }
-
-  const task: Task = {
-    id: -1,
-    section_id: null,
-    title: '',
-    body: '',
-    due_on: null,
-    completed: false,
-    evening: false,
-    day_order: 0,
-    child_order: 0,
-    created: '',
-    modified: '',
-    complete_subtask_count: 0,
-    subtask_count: 0,
-    project: {
-      id: defaultValues?.project_id ? Number(defaultValues.project_id) : 0,
-      name: '',
-      slug: '',
-      color: 0,
-    },
-    ...defaultValues,
-  };
+  const task = makeTaskFromDefaults(defaultValues);
 
   return (
     <TaskQuickForm
