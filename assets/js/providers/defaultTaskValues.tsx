@@ -41,10 +41,11 @@ function distillState(items: State['items']) {
         dateMatch = true;
       }
 
-      // If the date was updated or is the current winner
-      // copy the evening value in from the last element as
-      // the visual order is day, night.
-      if (dateMatch) {
+      // If the date was updated or is the current lowest value
+      // copy the evening value in from the first visible item.
+      // the visual order is day, night, so we should end up with day
+      // if both day and night are visible.
+      if (dateMatch && acc.evening === undefined) {
         acc.evening = item.evening;
       }
 

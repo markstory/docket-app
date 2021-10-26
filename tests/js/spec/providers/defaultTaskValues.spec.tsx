@@ -123,6 +123,20 @@ test('item add sets evening', () => {
   });
 
   const state = result.current[0];
+  expect(state.distilled.evening).toBe(false);
+});
+
+test('item add sets evening, when only one value is present', () => {
+  const {result} = renderHook(() => useDefaultTaskValues());
+
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01', evening: true}});
+  });
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-02', evening: false}});
+  });
+
+  const state = result.current[0];
   expect(state.distilled.evening).toBe(true);
 });
 
@@ -136,11 +150,11 @@ test('item remove sets evening', () => {
     result.current[1]({type: 'add', data: {due_on: '2021-09-01', evening: true}});
   });
   act(() => {
-    result.current[1]({type: 'remove', data: {due_on: '2021-09-01', evening: true}});
+    result.current[1]({type: 'remove', data: {due_on: '2021-09-01', evening: false}});
   });
 
   const state = result.current[0];
-  expect(state.distilled.evening).toBe(false);
+  expect(state.distilled.evening).toBe(true);
 });
 
 test('item add sets section', () => {
