@@ -29,7 +29,7 @@ export default function TaskNotes({task}: Props) {
   if (!editing) {
     return (
       <div className="task-notes">
-        <h4 className="heading-actions">
+        <h4 className="heading-button">
           {t('Notes')}
           <button
             className="button-secondary button-narrow"
@@ -48,7 +48,7 @@ export default function TaskNotes({task}: Props) {
 
   return (
     <form className="task-notes" onSubmit={handleSave}>
-      <h4 className="heading-actions">{t('Notes')}</h4>
+      <h4 className="heading-button">{t('Notes')}</h4>
       <textarea
         name="body"
         rows={lines.length + 2}

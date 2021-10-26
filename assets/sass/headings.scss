@@ -1,4 +1,4 @@
-.heading-actions {
+.heading-button {
   display: flex;
   align-items: center;
   margin-bottom: $space;
@@ -14,9 +14,7 @@
 .heading-icon {
   display: flex;
   align-items: baseline;
-  > svg {
-    margin-right: $space / 2;
-  }
+  gap: $space / 2;
 
   &.today svg {
     color: var(--color-due-today);
