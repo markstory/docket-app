@@ -7,20 +7,32 @@ type KeysAction =
   | {
       type: 'keydown' | 'keyup';
       key: string;
+      ctrlKey: boolean;
+      altKey: boolean;
     }
   | {
       type: 'reset';
-      data: Record<string, string>;
+      data: Record<string, boolean>;
     };
 
 const ignoreTargets = ['INPUT', 'TEXTAREA'];
 
-function keysReducer(state: ShortcutKeyMap, action: KeysAction) {
+function keysReducer(state: ShortcutKeyMap, action: KeysAction): ShortcutKeyMap {
   switch (action.type) {
     case 'keydown':
-      return {...state, [action.key]: true};
+      return {
+        ...state,
+        [action.key]: true,
+        ctrlKey: action.ctrlKey,
+        altKey: action.ctrlKey,
+      };
     case 'keyup':
-      return {...state, [action.key]: false};
+      return {
+        ...state,
+        [action.key]: false,
+        ctrlKey: action.ctrlKey,
+        altKey: action.altKey,
+      };
     case 'reset':
       return {...action.data};
     default:
@@ -32,16 +44,21 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
   if (!shortcutKeys.length) {
     throw new Error('At least one shortcut key is required');
   }
-  const initialMap = shortcutKeys.reduce<ShortcutKeyMap>((currentKeys, key) => {
-    currentKeys[key] = false;
-    return currentKeys;
-  }, {});
-  // TODO figure out typing here.
+  const initialMap = shortcutKeys.reduce<ShortcutKeyMap>(
+    (currentKeys, key) => {
+      currentKeys[key] = false;
+      return currentKeys;
+    },
+    {
+      ctrlKey: false,
+      altKey: false,
+    }
+  );
   const [keys, setKeys] = useReducer(keysReducer, initialMap);
 
   const keydownListener = useCallback(
     (event: KeyboardEvent) => {
-      const {key, target, repeat} = event;
+      const {key, target, repeat, ctrlKey, altKey, shiftKey} = event;
       if (repeat) {
         return;
       }
@@ -56,14 +73,19 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
       }
 
       event.preventDefault();
-      setKeys({type: 'keydown', key});
+      setKeys({
+        type: 'keydown',
+        key: shiftKey ? key.toUpperCase() : key,
+        ctrlKey,
+        altKey,
+      });
     },
     [shortcutKeys]
   );
 
   const keyupListener = useCallback(
     (event: KeyboardEvent) => {
-      const {key, target} = event;
+      const {key, target, ctrlKey, altKey, shiftKey} = event;
       if (!(target instanceof HTMLElement)) {
         return;
       }
@@ -74,7 +96,12 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
         return;
       }
       event.preventDefault();
-      setKeys({type: 'keyup', key});
+      setKeys({
+        type: 'keyup', 
+        key: shiftKey ? key.toUpperCase() : key,
+        ctrlKey,
+        altKey,
+      });
     },
     [shortcutKeys]
   );
@@ -96,8 +123,24 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
 
   // Fire the callback if all keys are active.
   useEffect(() => {
-    const allActive = Object.values(keys).filter(value => value === false).length === 0;
-    if (allActive) {
+    let valid = true;
+    // Compare the keys defined in the caller. This could include
+    // ctrl/alt but might not.
+    for (let i = 0; i < shortcutKeys.length; i++) {
+      const key = shortcutKeys[i];
+      if (keys[key] === false) {
+        valid = false;
+        break;
+      }
+    }
+    if (!valid) {
+      return;
+    }
+    // Ensure that we don't have extra ctrl/alt
+    if (keys.ctrlKey !== initialMap.ctrlKey || keys.altKey !== initialMap.altKey) {
+      return;
+    }
+    if (valid) {
       callback(keys);
       setKeys({type: 'reset', data: initialMap});
     }
