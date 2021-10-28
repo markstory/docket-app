@@ -46,7 +46,7 @@ function distillState(items: State['items']) {
       // the visual order is day, night, so we should end up with day
       // if both day and night are visible.
       if (dateMatch && acc.evening === undefined) {
-        acc.evening = item.evening;
+        acc.evening = item.evening ?? false;
       }
 
       // If there is a project it should always be the same.

@@ -126,6 +126,20 @@ test('item add sets evening', () => {
   expect(state.distilled.evening).toBe(false);
 });
 
+test('item add sets evening when evening is undefined', () => {
+  const {result} = renderHook(() => useDefaultTaskValues());
+
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01'}});
+  });
+  act(() => {
+    result.current[1]({type: 'add', data: {due_on: '2021-09-01', evening: true}});
+  });
+
+  const state = result.current[0];
+  expect(state.distilled.evening).toBe(false);
+});
+
 test('item add sets evening, when only one value is present', () => {
   const {result} = renderHook(() => useDefaultTaskValues());
 
