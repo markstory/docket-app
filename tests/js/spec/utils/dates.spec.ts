@@ -73,9 +73,11 @@ describe('utils/dates', function () {
     });
 
     it('handles sql formatted dates', function () {
-      const result = parseDateInput('2021-10-31');
+      const today = getToday();
+      const year = today.getFullYear() + 1;
+      const result = parseDateInput(`${year}-10-31`);
       assertDefined(result);
-      expect(result.getFullYear()).toEqual(2021);
+      expect(result.getFullYear()).toEqual(year);
       expect(result.getMonth()).toEqual(9);
       expect(result.getDate()).toEqual(31);
     });
