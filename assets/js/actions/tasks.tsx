@@ -43,6 +43,9 @@ export function makeTaskFromDefaults(defaults: DefaultTaskValues | undefined): T
     },
     ...defaults,
   };
+  if (task.due_on === undefined) {
+    task.due_on = null;
+  }
 
   return task;
 }
