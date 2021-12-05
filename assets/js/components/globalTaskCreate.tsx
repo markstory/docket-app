@@ -36,9 +36,8 @@ function GlobalTaskCreate(_props: Props) {
   }
   const task = makeTaskFromDefaults(defaultTaskValues);
 
-  function handleClose(event: React.SyntheticEvent<Element, Event>) {
-    console.log(event, event.isDefaultPrevented());
-    if (event.isDefaultPrevented()) {
+  function handleClose(event: MouseEvent | React.MouseEvent) {
+    if (event.defaultPrevented) {
       return;
     }
     setVisible(false);

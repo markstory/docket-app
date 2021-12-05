@@ -4,14 +4,14 @@ import BaseModal from '@reach/dialog';
 
 type Props = {
   children: React.ReactNode;
-  onClose: () => void;
+  onClose: (event: React.MouseEvent | MouseEvent) => void;
   label?: string;
   className?: string;
   canClose?: boolean;
   isOpen?: boolean;
 };
 
-export default function Modal({
+function Modal({
   children,
   onClose,
   className,
@@ -22,7 +22,7 @@ export default function Modal({
   const [showDialog, setShowDialog] = useState(isOpen);
 
   function handleClose(event: React.MouseEvent) {
-    onClose();
+    onClose(event);
     if (event.isDefaultPrevented()) {
       return;
     }
@@ -30,12 +30,22 @@ export default function Modal({
     setShowDialog(false);
   }
 
+  function handleDismiss() {
+    const event = new MouseEvent('keyDown', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+      buttons: 1,
+    });
+    onClose(event);
+  }
+
   return (
     <BaseModal
       className={className}
       aria-label={label}
       isOpen={showDialog}
-      onDismiss={onClose}
+      onDismiss={handleDismiss}
     >
       {canClose && (
         <button className="modal-close" onClick={handleClose}>
@@ -46,3 +56,5 @@ export default function Modal({
     </BaseModal>
   );
 }
+
+export default Modal;
