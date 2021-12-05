@@ -4,7 +4,7 @@ import BaseModal from '@reach/dialog';
 
 type Props = {
   children: React.ReactNode;
-  onClose: (event: React.SyntheticEvent<Element, Event>) => void;
+  onClose: () => void;
   label?: string;
   className?: string;
   canClose?: boolean;
@@ -22,7 +22,7 @@ export default function Modal({
   const [showDialog, setShowDialog] = useState(isOpen);
 
   function handleClose(event: React.MouseEvent) {
-    onClose(event);
+    onClose();
     if (event.isDefaultPrevented()) {
       return;
     }
