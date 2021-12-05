@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import {Menu, MenuList, MenuButton} from '@reach/menu-button';
 
 import {t} from 'app/locale';
@@ -20,10 +21,10 @@ function DropdownMenu({button, children}: Props): JSX.Element {
   return (
     <Menu>
       {({isExpanded}) => (
-        <React.Fragment>
+        <Fragment>
           {button ? button() : defaultButton()}
           {isExpanded && <MenuList>{children}</MenuList>}
-        </React.Fragment>
+        </Fragment>
       )}
     </Menu>
   );
