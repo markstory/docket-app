@@ -70,26 +70,24 @@ export default function TaskQuickForm({
       });
   }
 
-  function handleKeyDown(e: KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     switch (e.key) {
       case 'Esc':
       case 'Escape':
-        onCancel();
+        e.preventDefault();
         e.stopPropagation();
         break;
     }
   }
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return function cleanup() {
-      mounted.current = false;
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [url]);
-
   return (
-    <form className="task-quickform" method="post" onSubmit={handleSubmit} action={url}>
+    <form
+      className="task-quickform"
+      method="post"
+      onSubmit={handleSubmit}
+      action={url}
+      onKeyDown={handleKeyDown}
+    >
       {data.section_id && (
         <input type="hidden" name="section_id" value={data.section_id} />
       )}

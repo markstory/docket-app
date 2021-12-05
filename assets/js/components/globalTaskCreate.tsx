@@ -35,7 +35,18 @@ function GlobalTaskCreate(_props: Props) {
     return button;
   }
   const task = makeTaskFromDefaults(defaultTaskValues);
-  const handleCancel = () => setVisible(false);
+
+  function handleClose(event: React.SyntheticEvent<Element, Event>) {
+    console.log(event, event.isDefaultPrevented());
+    if (event.isDefaultPrevented()) {
+      return;
+    }
+    setVisible(false);
+  }
+
+  function handleCancel() {
+    setVisible(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,7 +66,7 @@ function GlobalTaskCreate(_props: Props) {
   return (
     <Fragment>
       {button}
-      <Modal className="modal-float" onClose={handleCancel} label={t('Create a task')}>
+      <Modal className="modal-float" onClose={handleClose} label={t('Create a task')}>
         <h2>{t('Create a new Task')}</h2>
         <TaskQuickForm
           url="/tasks/add"
