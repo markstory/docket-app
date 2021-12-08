@@ -17,12 +17,19 @@ export default function TaskNotes({task}: Props) {
     setEditing(true);
   });
 
-  function handleSave(event: React.FormEvent) {
+  function handleSave(event: React.FormEvent): void {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     updateTask(task, formData).then(() => {
       Inertia.get(`/tasks/${task.id}/view`, {}, {only: ['task'], replace: true});
     });
+  }
+
+  function handleClick(event: React.MouseEvent): void {
+    if (event.target instanceof HTMLElement && event.target.nodeName === 'A') {
+      return;
+    }
+    setEditing(true);
   }
 
   const lines = task.body ? task.body.split('\n') : [];
@@ -38,7 +45,7 @@ export default function TaskNotes({task}: Props) {
             {t('Edit')}
           </button>
         </h4>
-        <div onClick={() => setEditing(true)}>
+        <div onClick={handleClick}>
           <MarkdownText text={task.body} />
           {lines.length == 0 && <p className="placeholder">{t('Click to Edit')}</p>}
         </div>
