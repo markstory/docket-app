@@ -46,6 +46,14 @@
   > * + * {
     margin-top: $space;
   }
+
+  .task-body {
+    margin-top: $space;
+  }
+  .task-body textarea {
+    margin-top: $space / 2;
+    width: 100%;
+  }
 }
 
 // Global task create.

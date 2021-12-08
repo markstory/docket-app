@@ -39,6 +39,12 @@ label {
   min-width: 100px;
 }
 
+textarea {
+  line-height: 1.5;
+  height: max-content;
+  flex-grow: 1;
+}
+
 .form-error {
   color: var(--color-error-fg);
   margin: $space 0;

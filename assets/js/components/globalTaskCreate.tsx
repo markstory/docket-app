@@ -73,6 +73,7 @@ function GlobalTaskCreate(_props: Props) {
           task={task}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
+          showNotes
         />
       </Modal>
     </Fragment>

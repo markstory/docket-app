@@ -14,6 +14,7 @@ type Props = {
   onSubmit: (e: React.FormEvent) => Promise<boolean>;
   onCancel: () => void;
   errors?: null | ValidationErrors;
+  showNotes?: boolean;
 };
 
 export default function TaskQuickForm({
@@ -22,11 +23,13 @@ export default function TaskQuickForm({
   url,
   onSubmit,
   onCancel,
+  showNotes = false,
 }: Props): JSX.Element {
   const mounted = useRef(true);
   const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
   const [busy, setBusy] = useState(false);
+  const [showNotesInput, setShowNotesInput] = useState(false);
   const [projects] = useProjects();
 
   mounted.current = true;
@@ -80,6 +83,11 @@ export default function TaskQuickForm({
     }
   }
 
+  function handleToggleNotes(event: React.MouseEvent) {
+    event.preventDefault();
+    setShowNotesInput(true);
+  }
+
   return (
     <form
       className="task-quickform"
@@ -119,7 +127,20 @@ export default function TaskQuickForm({
           />
           <FormError errors={errors} field="due_on" />
         </div>
+        {showNotes && !showNotesInput && (
+          <div>
+            <button onClick={handleToggleNotes} className="button-muted">
+              {t('Add Notes')}
+            </button>
+          </div>
+        )}
       </div>
+      {showNotesInput && (
+        <div className="task-body">
+          <label htmlFor="task-body">{t('Notes')}</label>
+          <textarea id="task-body" name="body" rows={3} defaultValue={data.body ?? ''} />
+        </div>
+      )}
       <div className="button-bar">
         <button
           type="submit"
