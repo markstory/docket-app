@@ -108,9 +108,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testGlobalCreate()
     {
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('Home', 1);
-        $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->makeProject('Home', 1);
 
         $client = $this->login();
         $client->get('/tasks/upcoming');
