@@ -129,7 +129,12 @@ export default function TaskQuickForm({
         </div>
         {showNotes && !showNotesInput && (
           <div>
-            <button onClick={handleToggleNotes} className="button-muted" data-testid="add-notes">
+            <button
+              type="button"
+              onClick={handleToggleNotes}
+              className="button-muted"
+              data-testid="add-notes"
+            >
               {t('Add Notes')}
             </button>
           </div>
