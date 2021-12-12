@@ -15,10 +15,14 @@
   }
 
   .attributes {
-    display: flex;
+    display: grid;
+    gap: $space;
+    grid-template-columns: min-content min-content auto;
+  }
 
-    > * + * {
-      margin-left: $space;
+  @media (max-width: $breakpoint-phone) {
+    .attributes {
+      grid-template-columns: 1fr 1fr;
     }
   }
 
