@@ -26,6 +26,7 @@ export default function TaskQuickForm({
   showNotes = false,
 }: Props): JSX.Element {
   const mounted = useRef(true);
+  const notesRef = useRef<HTMLTextAreaElement>();
   const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
   const [busy, setBusy] = useState(false);
@@ -87,6 +88,11 @@ export default function TaskQuickForm({
     event.preventDefault();
     setShowNotesInput(true);
   }
+  useEffect(() => {
+    if (showNotesInput && notesRef.current) {
+      notesRef.current.focus();
+    }
+  }, [showNotesInput]);
 
   return (
     <form
@@ -143,7 +149,7 @@ export default function TaskQuickForm({
       {showNotesInput && (
         <div className="task-body">
           <label htmlFor="task-body">{t('Notes')}</label>
-          <textarea id="task-body" name="body" rows={3} defaultValue={data.body ?? ''} />
+          <textarea ref={notesRef} id="task-body" name="body" rows={3} defaultValue={data.body ?? ''} />
         </div>
       )}
       <div className="button-bar">
