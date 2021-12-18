@@ -14,6 +14,7 @@ type Props = {
   onChangeTitle: (title: string, textTitle: string) => void;
   onChangeEvening: (evening: boolean) => void;
   value?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 };
 
 type MentionOption = {id: string; display: string};
@@ -64,6 +65,7 @@ const EVENING_OPTIONS = [
 function SmartTaskInput({
   value,
   projects,
+  inputRef,
   onChangeDate,
   onChangeProject,
   onChangeTitle,
@@ -91,6 +93,7 @@ function SmartTaskInput({
       singleLine
       allowSpaceInQuery
       suggestionsPortalHost={portal}
+      inputRef={inputRef}
     >
       <Mention
         className="project-mention"

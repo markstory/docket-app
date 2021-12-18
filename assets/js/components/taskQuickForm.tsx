@@ -26,7 +26,8 @@ export default function TaskQuickForm({
   showNotes = false,
 }: Props): JSX.Element {
   const mounted = useRef(true);
-  const notesRef = useRef<HTMLTextAreaElement>();
+  const notesRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const [textTitle, setTextTitle] = useState(task.title);
   const [data, setData] = useState(task);
   const [busy, setBusy] = useState(false);
@@ -67,7 +68,8 @@ export default function TaskQuickForm({
         }
         setBusy(false);
         setTextTitle('');
-        setData(prevState => ({...prevState, title: ''}));
+        setShowNotesInput(false);
+        setData(prevState => ({...prevState, title: '', body: ''}));
       })
       .catch(() => {
         setBusy(false);
@@ -93,6 +95,11 @@ export default function TaskQuickForm({
       notesRef.current.focus();
     }
   }, [showNotesInput]);
+  useEffect(() => {
+    if (titleRef.current && textTitle == '') {
+      titleRef.current.focus();
+    }
+  }, [textTitle]);
 
   return (
     <form
@@ -107,6 +114,7 @@ export default function TaskQuickForm({
       )}
       <div className="title">
         <SmartTaskInput
+          inputRef={titleRef}
           value={data.title}
           projects={projects}
           onChangeProject={handleChangeProject}
@@ -149,7 +157,13 @@ export default function TaskQuickForm({
       {showNotesInput && (
         <div className="task-body">
           <label htmlFor="task-body">{t('Notes')}</label>
-          <textarea ref={notesRef} id="task-body" name="body" rows={3} defaultValue={data.body ?? ''} />
+          <textarea
+            ref={notesRef}
+            id="task-body"
+            name="body"
+            rows={3}
+            defaultValue={data.body ?? ''}
+          />
         </div>
       )}
       <div className="button-bar">
