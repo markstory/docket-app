@@ -1,5 +1,6 @@
 <?php
 
+use App\Error\SentryErrorLogger;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -166,6 +167,7 @@ return [
     'Error' => [
         'errorLevel' => E_ALL,
         'exceptionRenderer' => ExceptionRenderer::class,
+        'errorLogger' => SentryErrorLogger::class,
         'skipLog' => [
             'Authorization\Exception\ForbiddenException',
             'Cake\Http\Exception\ForbiddenException',

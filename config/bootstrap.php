@@ -31,12 +31,12 @@ require __DIR__ . '/paths.php';
  */
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
-use App\Error\SentryConsoleErrorHandler;
-use App\Error\SentryErrorHandler;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\ConsoleErrorHandler;
+use Cake\Error\ErrorHandler;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
@@ -123,9 +123,9 @@ ini_set('intl.default_locale', Configure::read('App.defaultLocale'));
  */
 $isCli = PHP_SAPI === 'cli';
 if ($isCli) {
-    (new SentryConsoleErrorHandler(Configure::read('Error')))->register();
+    (new ConsoleErrorHandler(Configure::read('Error')))->register();
 } else {
-    (new SentryErrorHandler(Configure::read('Error')))->register();
+    (new ErrorHandler(Configure::read('Error')))->register();
 }
 
 /*
