@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Error;
 
-use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
