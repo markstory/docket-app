@@ -199,7 +199,7 @@ return [
     ],
 
     /**
-     * Configuration for sentry error handling
+     * Configuration for Sentry error handling
      */
     'Sentry' => [
       'dsn' => '',

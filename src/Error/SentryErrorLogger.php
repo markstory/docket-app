@@ -8,6 +8,9 @@ use Cake\Error\ErrorLogger;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+/**
+ * Log errors and exceptions as Sentry events.
+ */
 class SentryErrorLogger extends ErrorLogger
 {
     /**
@@ -15,9 +18,7 @@ class SentryErrorLogger extends ErrorLogger
      */
     public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
-        if (!Configure::read('debug')) {
-            \Sentry\captureException($exception);
-        }
+        \Sentry\captureException($exception);
 
         return parent::log($exception, $request);
     }
@@ -27,9 +28,7 @@ class SentryErrorLogger extends ErrorLogger
      */
     public function logMessage($level, string $message, array $context = []): bool
     {
-        if (!Configure::read('debug')) {
-            \Sentry\captureMessage($message, \Sentry\Severity::fromError($level));
-        }
+        \Sentry\captureMessage($message, \Sentry\Severity::fromError($level));
 
         return parent::logMessage($level, $message, $context);
     }
