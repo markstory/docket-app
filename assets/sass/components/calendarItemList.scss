@@ -28,6 +28,7 @@
   time {
     color: var(--calendar-color);
     font-weight: 500;
+    font-variant-numeric: tabular-nums;
     margin-right: $space / 2;
   }
 
