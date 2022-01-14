@@ -11,6 +11,7 @@ div.select__control {
   // We don't have any multi-line select boxes so forcing the height is ok
   height: 36px;
   min-height: auto;
+  box-shadow: var(--shadow-inset);
 
   &:hover {
     border-color:var(--color-border-med);
