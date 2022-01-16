@@ -158,7 +158,7 @@
   position: relative;
 
   background-color: var(--color-menu-selected);
-  color: var(--color-invert-fg);
+  color: var(--color-fg);
 }
 
 .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover {
