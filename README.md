@@ -14,7 +14,7 @@ This project is great if you want to host and operate your personal todo lists
 in your personal cloud, where you know exactly what is being done with your
 data.
 
-## Installation
+## Installation & Getting Started
 
 1. Clone this repository.
 2. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
@@ -24,12 +24,16 @@ data.
    php composer.phar install
    yarn install
    ```
-
-You're now ready to build the assets:
-
-```
-yarn build
-```
+5. Build static assets to generate a `manifest.json` file used to generate URLs
+   to generated UI assets.
+   ```
+   yarn build
+   ```
+6. Start up the development server:
+   ```
+   node bin/server.js
+   ```
+7. Visit `localhost:8765` to get started.
 
 Docket is tested against MySQL, Postgres and SQLite, and will work equally well
 on all of them.  Create your database, and ensure your database is encoded as
