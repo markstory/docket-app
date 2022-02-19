@@ -225,8 +225,12 @@ class CalendarServiceTest extends TestCase
             'provider_id' => 'calendar-1',
         ]);
         $this->calendar->syncEvents($source);
-        $query = $this->calendarItems->find()->where(['CalendarItems.calendar_source_id' => $source->id]);
-        $this->assertCount(2, $query);
+        $query = $this->calendarItems->find()
+            ->where(['CalendarItems.calendar_source_id' => $source->id])
+            ->orderAsc('CalendarItems.provider_id');
+        $results = $query->all();
+        $this->assertCount(2, $results);
+        $this->assertEquals(['calendar-event-3', 'calendar-event-4'], $results->extract('provider_id')->toList());
     }
 
     /**

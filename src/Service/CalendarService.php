@@ -285,7 +285,7 @@ class CalendarService
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
     {
-        if ($event->status === 'cancelled') {
+        if ($event->status === 'cancelled' || $this->declinedAsAttendee($source, $event)) {
             Log::info("Remove cancelled event {$event->id}");
             // Remove existing local records for cancelled events.
             $this->CalendarItems->deleteAll([
@@ -336,5 +336,19 @@ class CalendarService
             'html_link' => $event->htmlLink,
         ]);
         $this->CalendarItems->saveOrFail($record);
+    }
+
+    private function declinedAsAttendee(CalendarSource $source, GoogleEvent $event): bool
+    {
+        $attendees = $event->getAttendees();
+        if (empty($attendees)) {
+            return false;
+        }
+        foreach ($attendees as $attendee) {
+            if ($attendee->getSelf() && $attendee->getResponseStatus() == 'declined') {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -102,6 +102,27 @@
                   "dateTime": "2021-06-16T13:13:14"
                 },
                 "status": "confirmed"
+              },
+              {
+                "kind": "calendar#event",
+                "etag": "etag-value",
+                "id": "calendar-event-5",
+                "summary": "1:1 meeting",
+                "description": "",
+                "htmlLink": "https://calendar.example.com/events/5",
+                "start": {
+                  "date": null,
+                  "dateTime": "2021-06-16T12:13:14"
+                },
+                "end": {
+                  "date": null,
+                  "dateTime": "2021-06-16T13:13:14"
+                },
+                "attendees": [
+                  {"email": "sally@example.com", "self": null, "responseStatus": "accepted"},
+                  {"email": "mark@example.com", "self": true, "responseStatus": "declined"}
+                ],
+                "status": "confirmed"
               }
             ]
           }
