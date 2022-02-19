@@ -80,7 +80,11 @@ class CalendarService
             $this->client->fetchAccessTokenWithRefreshToken($provider->refresh_token);
             $token = $this->client->getAccessToken();
             $provider->access_token = $token['access_token'];
-            $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
+            if (!empty($token['expires_in'])) {
+                $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
+            } else {
+                $provider->token_expiry = FrozenTime::parse("+7200 seconds");
+            }
             $this->CalendarProviders->save($provider);
         }
     }
@@ -282,6 +286,7 @@ class CalendarService
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
     {
         if ($event->status === 'cancelled') {
+            Log::info("Remove cancelled event {$event->id}");
             // Remove existing local records for cancelled events.
             $this->CalendarItems->deleteAll([
                 'calendar_source_id' => $source->id,
