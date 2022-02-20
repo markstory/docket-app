@@ -83,7 +83,7 @@ class CalendarService
             if (!empty($token['expires_in'])) {
                 $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
             } else {
-                $provider->token_expiry = FrozenTime::parse("+7200 seconds");
+                $provider->token_expiry = FrozenTime::parse('+7200 seconds');
             }
             $this->CalendarProviders->save($provider);
         }
@@ -349,6 +349,7 @@ class CalendarService
                 return true;
             }
         }
+
         return false;
     }
 }
