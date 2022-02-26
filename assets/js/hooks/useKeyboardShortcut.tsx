@@ -56,28 +56,41 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
   );
   const [keys, setKeys] = useReducer(keysReducer, initialMap);
 
+  function keyMatches(event: KeyboardEvent, keys: string[]): boolean {
+    if (!keys.includes(event.key)) {
+      return false;
+    }
+    if (event.ctrlKey && !keys.includes('ctrl')) {
+      return false;
+    }
+    if (event.altKey && !keys.includes('alt')) {
+      return false;
+    }
+    if (event.shiftKey && !keys.includes(event.key.toUpperCase())) {
+      return false;
+    }
+    return true;
+  }
+
   const keydownListener = useCallback(
     (event: KeyboardEvent) => {
-      const {key, target, repeat, ctrlKey, altKey, shiftKey} = event;
-      if (repeat) {
+      if (event.repeat) {
         return;
       }
-      if (!(target instanceof HTMLElement)) {
+      if (!(event.target instanceof HTMLElement)) {
         return;
       }
-      if (ignoreTargets.includes(target.tagName)) {
+      if (ignoreTargets.includes(event.target.tagName)) {
         return;
       }
-      if (!shortcutKeys.includes(key)) {
+      if (!keyMatches(event, shortcutKeys)) {
         return;
       }
-
-      event.preventDefault();
       setKeys({
         type: 'keydown',
-        key: shiftKey ? key.toUpperCase() : key,
-        ctrlKey,
-        altKey,
+        key: event.shiftKey ? event.key.toUpperCase() : event.key,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
       });
     },
     [shortcutKeys]
@@ -85,22 +98,20 @@ function useKeyboardShortcut(shortcutKeys: string[], callback: ShortcutCallback)
 
   const keyupListener = useCallback(
     (event: KeyboardEvent) => {
-      const {key, target, ctrlKey, altKey, shiftKey} = event;
-      if (!(target instanceof HTMLElement)) {
+      if (!(event.target instanceof HTMLElement)) {
         return;
       }
-      if (ignoreTargets.includes(target.tagName)) {
+      if (ignoreTargets.includes(event.target.tagName)) {
         return;
       }
-      if (!shortcutKeys.includes(key)) {
+      if (!keyMatches(event, shortcutKeys)) {
         return;
       }
-      event.preventDefault();
       setKeys({
-        type: 'keyup', 
-        key: shiftKey ? key.toUpperCase() : key,
-        ctrlKey,
-        altKey,
+        type: 'keyup',
+        key: event.shiftKey ? event.key.toUpperCase() : event.key,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
       });
     },
     [shortcutKeys]

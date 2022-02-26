@@ -89,22 +89,22 @@ type SummaryProps = {
 };
 
 function TaskSummary({task, onClick}: SummaryProps) {
-  const handleComplete = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleComplete(e: React.ChangeEvent<HTMLInputElement>) {
     e.stopPropagation();
     Inertia.post(
       `/tasks/${task.id}/${task.completed ? 'incomplete' : 'complete'}`,
       {},
       {only: ['task']}
     );
-  };
+  }
 
   return (
     <div className="task-view-summary">
       <div className="title">
         <Checkbox name="complete" checked={task.completed} onChange={handleComplete} />
-        <a href="#" role="button" onClick={onClick}>
-          <h3>{task.title}</h3>
-        </a>
+        <h3 role="button" onClick={onClick}>
+          {task.title}
+        </h3>
       </div>
       <a href="#" onClick={onClick} className="attributes">
         <ProjectBadge project={task.project} />
