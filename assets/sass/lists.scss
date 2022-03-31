@@ -31,6 +31,9 @@
     }
   }
 }
+.list-items.full-width {
+  width: 100%;
+}
 
 .list-item-block {
   display: flex;
@@ -56,4 +59,28 @@
     background: var(--color-bg-low);
     border-radius: $border-radius;
   }
+}
+
+// Vertically stacked list item with a border.
+// This might need to become its own UI component.
+// Gross selector to override .list-items li
+.list-items li.list-item-panel {
+  border: 1px solid var(--color-border);
+  border-radius: $border-radius;
+  padding: $space;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+// Item within a panel that has horizontal layout.
+.list-item-panel-header,
+.list-item-panel-item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+.list-item-panel-header + .list-item-panel-item{
+  padding-top: $space / 2;
+  border-top: 2px solid var(--color-border-med);
 }

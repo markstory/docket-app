@@ -1,4 +1,3 @@
-import {Fragment} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 
 import {t} from 'app/locale';
@@ -16,58 +15,39 @@ type Props = {
   unlinked: CalendarSource[];
 };
 
-function CalendarSourcesAdd({calendarProvider, unlinked}: Props) {
-  function handleClose() {
-    history.back();
-  }
-
-  const title = t('Linked Calendars');
+function CalendarSources({calendarProvider, unlinked}: Props) {
   return (
-    <LoggedIn title={title}>
-      <Modal onClose={handleClose} label={title}>
-        <h2>{t('Synced Calendars for {name}', {name: calendarProvider.display_name})}</h2>
-        <p>
-          {t(
-            `The following calendars are synced into Docket.
-             You should see calendar events in your 'today' and 'upcoming' views.`
-          )}
-        </p>
-        <ul className="list-items">
-          {calendarProvider.calendar_sources.map(source => {
-            return (
-              <CalendarSourceItem
-                key={`l:${source.provider_id}`}
-                source={source}
-                provider={calendarProvider}
-                mode="edit"
-              />
-            );
-          })}
-          {calendarProvider.calendar_sources.length == 0 && (
-            <li className="list-item-empty">
-              <InlineIcon icon="alert" width="large" />
-              {t('You have no synchronized calendars in this provider. Add one below.')}
-            </li>
-          )}
-        </ul>
-        <h2>{t('Unwatched Calendars')}</h2>
-        <ul className="list-items">
-          {unlinked.map(source => {
-            return (
-              <CalendarSourceItem
-                key={source.provider_id}
-                source={source}
-                provider={calendarProvider}
-                mode="create"
-              />
-            );
-          })}
-        </ul>
-      </Modal>
-    </LoggedIn>
+    <ul className="list-items full-width">
+      {calendarProvider.calendar_sources.map(source => {
+        return (
+          <CalendarSourceItem
+            key={`l:${source.provider_id}`}
+            source={source}
+            provider={calendarProvider}
+            mode="edit"
+          />
+        );
+      })}
+      {calendarProvider.calendar_sources.length == 0 && (
+        <li className="list-item-empty">
+          <InlineIcon icon="alert" width="large" />
+          {t('You have no synchronized calendars in this provider. Add one below.')}
+        </li>
+      )}
+      {unlinked.map(source => {
+        return (
+          <CalendarSourceItem
+            key={source.provider_id}
+            source={source}
+            provider={calendarProvider}
+            mode="create"
+          />
+        );
+      })}
+    </ul>
   );
 }
-export default CalendarSourcesAdd;
+export default CalendarSources;
 
 type ItemProps = {
   source: CalendarSource;
@@ -112,7 +92,6 @@ function CalendarSourceItem({source, mode, provider}: ItemProps) {
         )}
         <span className="calendar-name">
           {source.name}
-          <span className="calendar-add-tag">{provider.display_name}</span>
         </span>
       </span>
       <div className="list-item-block">

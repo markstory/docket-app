@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\CalendarService;
+
 /**
  * CalendarProviders Controller
  *
@@ -15,14 +17,24 @@ class CalendarProvidersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(CalendarService $service)
     {
-        $query = $this->CalendarProviders->find();
+        $query = $this->CalendarProviders->find()->contain('CalendarSources');
         $query = $this->Authorization->applyScope($query);
-        $calendarProviders = $this->paginate($query);
+        $calendarProviders = $this->paginate($query)->toArray();
         $referer = $this->getReferer('tasks:today');
 
-        $this->set(compact('calendarProviders', 'referer'));
+        $calendars = [];
+        $activeProvider = null;
+        // TODO add GET query support.
+        if (!empty($calendarProviders)) {
+            $activeProvider = $calendarProviders[0];
+            $service->setAccessToken($activeProvider);
+            $calendars = $service->listUnlinkedCalendars($activeProvider->calendar_sources);
+        }
+        $this->set('unlinked', $calendars);
+
+        $this->set(compact('activeProvider', 'calendarProviders', 'referer'));
     }
 
     /**
