@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\CalendarService;
+
 /**
  * CalendarProviders Controller
  *
@@ -15,14 +17,32 @@ class CalendarProvidersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(CalendarService $service)
     {
-        $query = $this->CalendarProviders->find();
+        $query = $this->CalendarProviders->find()->contain('CalendarSources');
         $query = $this->Authorization->applyScope($query);
-        $calendarProviders = $this->paginate($query);
+        $calendarProviders = $this->paginate($query)->toArray();
         $referer = $this->getReferer('tasks:today');
 
-        $this->set(compact('calendarProviders', 'referer'));
+        $calendars = [];
+        $activeProvider = null;
+        if (!empty($calendarProviders)) {
+            if ($this->request->getQuery('provider')) {
+                $id = (int)$this->request->getQuery('provider', null);
+                $activeProvider = array_filter($calendarProviders, function ($item) use ($id) {
+                    return $item->id === $id;
+                });
+                $activeProvider = array_pop($activeProvider);
+            }
+            if (!$activeProvider) {
+                $activeProvider = $calendarProviders[0];
+            }
+            $service->setAccessToken($activeProvider);
+            $calendars = $service->listUnlinkedCalendars($activeProvider->calendar_sources);
+        }
+        $this->set('unlinked', $calendars);
+
+        $this->set(compact('activeProvider', 'calendarProviders', 'referer'));
     }
 
     /**

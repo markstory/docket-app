@@ -45,8 +45,8 @@ button {
 
   &[aria-disabled="true"],
   &[aria-disabled="true"]:hover {
-    background: var(--color-border-low);
-    color: var(--color-low-emphasis);
+    border-color: var(--color-disabled);
+    color: var(--color-disabled);
     cursor: not-allowed;
     box-shadow: none;
   }

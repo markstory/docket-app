@@ -5,7 +5,6 @@ namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -47,9 +46,9 @@ class CalendarSourcesControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->Users = TableRegistry::get('Users');
-        $this->CalendarSources = TableRegistry::get('CalendarSources');
-        $this->CalendarItems = TableRegistry::get('CalendarItems');
+        $this->Users = $this->fetchTable('Users');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarItems = $this->fetchTable('CalendarItems');
     }
 
     protected function tearDown(): void
@@ -74,7 +73,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
 
         $result = $this->CalendarItems->find()->where([
@@ -115,7 +114,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
 
         $this->assertFalse($this->CalendarItems->exists(['id' => $remove->id]));
@@ -139,7 +138,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->enableCsrfToken();
 
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect(['_name' => 'calendarsources:add', 'providerId' => $provider->id]);
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
@@ -154,13 +153,13 @@ class CalendarSourcesControllerTest extends TestCase
         $user = $this->Users->get(1);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
-        $sub = $this->makeCalendarSubscription($source->id, 'subscription-id');
+        $this->makeCalendarSubscription($source->id, 'subscription-id');
 
         $this->login();
         $this->enableCsrfToken();
 
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect(['_name' => 'calendarsources:add', 'providerId' => $provider->id]);
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
@@ -182,38 +181,6 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testAddInvalidProvider(): void
-    {
-        $this->login();
-        $this->get('/calendars/99/sources/add');
-        $this->assertResponseCode(404);
-    }
-
-    /**
-     * @vcr controller_calendarsources_add.yml
-     */
-    public function testAddIncludeLinkedAndUnlinked(): void
-    {
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-        $source = $this->makeCalendarSource($provider->id, 'primary', [
-            'provider_id' => 'calendar-1',
-        ]);
-
-        $this->login();
-        $this->get("/calendars/{$provider->id}/sources/add");
-        $this->assertResponseOk();
-
-        $this->assertNotEmpty($this->viewVariable('referer'));
-        $resultProvider = $this->viewVariable('calendarProvider');
-        $this->assertSame($provider->identifier, $resultProvider->identifier);
-        $this->assertCount(1, $resultProvider->calendar_sources);
-        $this->assertEquals($source->id, $resultProvider->calendar_sources[0]->id);
-
-        $unlinked = $this->viewVariable('unlinked');
-        $this->assertCount(1, $unlinked);
-        $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
-    }
-
     /**
      * @vcr controller_calendarsources_add_post.yml
      */
@@ -230,13 +197,13 @@ class CalendarSourcesControllerTest extends TestCase
             'color' => 1,
             'name' => 'Work Calendar',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
 
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
         $this->assertSame('calendar-1', $source->provider_id);
 
-        $subs = TableRegistry::get('CalendarSubscriptions');
+        $subs = $this->fetchTable('CalendarSubscriptions');
         $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
         $this->assertNotEmpty($sub->identifier);
     }
@@ -257,13 +224,13 @@ class CalendarSourcesControllerTest extends TestCase
             'color' => 1,
             'name' => 'Work Calendar',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
 
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
         $this->assertSame('calendar-1', $source->provider_id);
 
-        $subs = TableRegistry::get('CalendarSubscriptions');
+        $subs = $this->fetchTable('CalendarSubscriptions');
         $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
         $this->assertNotEmpty($sub->identifier);
     }
@@ -286,7 +253,7 @@ class CalendarSourcesControllerTest extends TestCase
             'color' => 3,
             'name' => 'new values',
         ]);
-        $this->assertRedirect("/calendars/{$provider->id}/sources/add");
+        $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
     }
 
