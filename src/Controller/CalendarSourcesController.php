@@ -29,6 +29,18 @@ class CalendarSourcesController extends AppController
         return $query->firstOrFail();
     }
 
+    protected function redirectToProvider($providerId = null)
+    {
+        $providerId = $providerId ?? $this->request->getParam('providerId');
+
+        return $this->redirect([
+            '_name' => 'calendarproviders:index',
+            '?' => [
+                'provider' => $providerId,
+            ],
+        ]);
+    }
+
     /**
      * Add method
      *
@@ -58,17 +70,9 @@ class CalendarSourcesController extends AppController
             } else {
                 $this->Flash->error(__('Could not add that calendar.'));
             }
-            // Reload data to show new sources.
-            $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
-                'contain' => ['CalendarSources'],
-            ]);
         }
-        $service->setAccessToken($provider);
-        $calendars = $service->listUnlinkedCalendars($provider->calendar_sources);
 
-        $this->set('calendarProvider', $provider);
-        $this->set('unlinked', $calendars);
-        $this->set('referer', $this->getReferer('tasks:today'));
+        return $this->redirectToProvider($providerId);
     }
 
     public function sync(CalendarService $service)
@@ -84,10 +88,7 @@ class CalendarSourcesController extends AppController
             $this->Flash->error(__('Calendar could not be refreshed.'));
         }
 
-        return $this->redirect([
-            'action' => 'add',
-            'providerId' => $this->request->getParam('providerId'),
-        ]);
+        return $this->redirectToProvider();
     }
 
     /**
@@ -113,10 +114,7 @@ class CalendarSourcesController extends AppController
             }
         }
 
-        return $this->redirect([
-            'action' => 'add',
-            'providerId' => $this->request->getParam('providerId'),
-        ]);
+        return $this->redirectToProvider();
     }
 
     /**
@@ -140,9 +138,6 @@ class CalendarSourcesController extends AppController
             $this->Flash->error(__('The calendar source could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect([
-            'action' => 'add',
-            'providerId' => $this->request->getParam('providerId'),
-        ]);
+        return $this->redirectToProvider();
     }
 }
