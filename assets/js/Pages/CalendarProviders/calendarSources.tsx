@@ -1,4 +1,5 @@
 import {Inertia} from '@inertiajs/inertia';
+import {useState} from 'react';
 
 import {t} from 'app/locale';
 import {deleteSource} from 'app/actions/calendars';
@@ -56,8 +57,15 @@ type ItemProps = {
 };
 
 function CalendarSourceItem({source, mode, provider}: ItemProps) {
+  const [refreshing, setRefreshing] = useState(false);
+
   function handleSync() {
-    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`);
+    setRefreshing(true);
+    Inertia.post(`/calendars/${provider.id}/sources/${source.id}/sync`, {}, {
+      onFinish() {
+        setRefreshing(false);
+      }
+    });
   }
 
   async function handleDelete() {
@@ -106,6 +114,7 @@ function CalendarSourceItem({source, mode, provider}: ItemProps) {
                 menuItemClass: 'complete',
                 icon: <InlineIcon icon="sync" />,
                 label: t('Refresh'),
+                disabled: refreshing,
               },
               {
                 buttonClass: 'button-danger',

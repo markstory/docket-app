@@ -20,6 +20,7 @@ type ActionItem = {
   buttonClass?: string;
   menuItemClass?: string;
   dataTestId?: string;
+  disabled?: boolean;
 };
 
 type Props = {
@@ -79,6 +80,7 @@ function OverflowActionBar({items, foldWidth, label}: Props) {
             data-testid={item.dataTestId}
             className={item.menuItemClass}
             onSelect={item.onSelect}
+            disabled={item.disabled}
           >
             {item.icon}
             {item.label}
@@ -97,6 +99,7 @@ function OverflowActionBar({items, foldWidth, label}: Props) {
           className={item.buttonClass}
           data-testid={item.dataTestId}
           onClick={handleClick(item)}
+          aria-disabled={item.disabled}
         >
           {item.icon}
           {item.label}
