@@ -1,11 +1,12 @@
 import {Inertia} from '@inertiajs/inertia';
+import {InertiaLink} from '@inertiajs/inertia-react';
 
 import {t} from 'app/locale';
 import {deleteProvider} from 'app/actions/calendars';
 import LoggedIn from 'app/layouts/loggedIn';
 import Modal from 'app/components/modal';
 import OverflowActionBar from 'app/components/overflowActionBar';
-import {CalendarProviderDetailed, CalendarSource} from 'app/types';
+import {CalendarProvider, CalendarProviderDetailed, CalendarSource} from 'app/types';
 import {InlineIcon} from 'app/components/icon';
 
 import CalendarSources from './calendarSources';
@@ -47,12 +48,13 @@ function CalendarProvidersIndex({
         <h3>{t('Connected Calendar Accounts')}</h3>
         <ul className="list-items">
           {calendarProviders.map(calendarProvider => {
+            const isActive = activeProvider && calendarProvider.id === activeProvider.id;
             return (
               <CalendarProviderItem
                 key={calendarProvider.id}
-                isActive={activeProvider && calendarProvider.id === activeProvider.id}
+                isActive={isActive}
                 provider={calendarProvider}
-                unlinked={activeProvider ? unlinked : null}
+                unlinked={isActive ? unlinked : null}
               />
             );
           })}
@@ -79,11 +81,21 @@ function CalendarProviderItem({isActive, provider, unlinked}: ProviderProps) {
   }
 
   return (
-    <li className="list-item-panel">
+    <li className="list-item-panel" data-active={isActive}>
       <div className="list-item-panel-header">
-        <span className="list-item-block">
-          <ProviderIcon provider={provider} /> {provider.display_name}
-        </span>
+        {isActive && (
+          <span className="list-item-block">
+            <ProviderIcon provider={provider} /> {provider.display_name}
+          </span>
+        )}
+        {!isActive && (
+          <InertiaLink
+            href={`/calendars?provider=${provider.id}`}
+            className="list-item-block"
+          >
+            <ProviderIcon provider={provider} /> {provider.display_name}
+          </InertiaLink>
+        )}
         <div className="list-item-block">
           <OverflowActionBar
             label={t('Calendar Actions')}

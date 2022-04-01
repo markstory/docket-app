@@ -26,9 +26,17 @@ class CalendarProvidersController extends AppController
 
         $calendars = [];
         $activeProvider = null;
-        // TODO add GET query support.
         if (!empty($calendarProviders)) {
-            $activeProvider = $calendarProviders[0];
+            if ($this->request->getQuery('provider')) {
+                $id = (int)$this->request->getQuery('provider', null);
+                $activeProvider = array_filter($calendarProviders, function ($item) use ($id) {
+                    return $item->id === $id;
+                });
+                $activeProvider = array_pop($activeProvider);
+            }
+            if (!$activeProvider) {
+                $activeProvider = $calendarProviders[0];
+            }
             $service->setAccessToken($activeProvider);
             $calendars = $service->listUnlinkedCalendars($activeProvider->calendar_sources);
         }

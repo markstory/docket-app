@@ -120,7 +120,7 @@ function CalendarSourceItem({source, mode, provider}: ItemProps) {
         {mode === 'create' && (
           <button className="button-primary" onClick={handleCreate}>
             <InlineIcon icon="plus" />
-            {t('Add')}
+            {t('Link')}
           </button>
         )}
       </div>
