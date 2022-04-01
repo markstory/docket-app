@@ -45,6 +45,7 @@ class CalendarProvidersControllerTest extends TestCase
     /**
      * Test index method
      *
+     * @vcr controller_calendarsources_add.yml
      * @return void
      */
     public function testIndex(): void
@@ -56,10 +57,35 @@ class CalendarProvidersControllerTest extends TestCase
         $this->login();
         $this->get('/calendars');
         $this->assertResponseOk();
-        $records = $this->viewVariable('calendarProviders')->toArray();
+        $records = $this->viewVariable('calendarProviders');
 
         $this->assertCount(1, $records);
         $this->assertEquals($ownProvider->id, $records[0]->id);
+    }
+
+    /**
+     * @vcr controller_calendarsources_add.yml
+     */
+    public function testIndexIncludeLinkedAndUnlinked(): void
+    {
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+
+        $this->login();
+        $this->get("/calendars/?provider={$provider->id}");
+        $this->assertResponseOk();
+
+        $this->assertNotEmpty($this->viewVariable('referer'));
+        $resultProvider = $this->viewVariable('activeProvider');
+        $this->assertSame($provider->identifier, $resultProvider->identifier);
+        $this->assertCount(1, $resultProvider->calendar_sources);
+        $this->assertEquals($source->id, $resultProvider->calendar_sources[0]->id);
+
+        $unlinked = $this->viewVariable('unlinked');
+        $this->assertCount(1, $unlinked);
+        $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
     }
 
     /**
