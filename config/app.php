@@ -379,6 +379,7 @@ return [
         'timeout' => 60 * 24 * 14, // 2 weeks
         'ini' => [
             'session.gc_maxlifetime' => 60 * 60 * 24 * 14, // 2 weeks
+            'session.cookie_lifetime' => 60 * 60 * 24 * 14,
         ],
     ],
 ];
