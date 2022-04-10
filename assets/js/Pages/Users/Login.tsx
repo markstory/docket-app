@@ -24,21 +24,9 @@ export default function Login() {
         <img src="/img/docket-logo.svg" width="45" height="45" />
         {t('Login')}
       </h1>
-      <form method="post" onSubmit={onSubmit}>
-        <FormControl
-          className="narrow"
-          name="email"
-          label={t('Email')}
-          type="email"
-          required
-        />
-        <FormControl
-          className="narrow"
-          name="password"
-          label={t('Password')}
-          type="password"
-          required
-        />
+      <form method="post" className="form-narrow" onSubmit={onSubmit}>
+        <FormControl name="email" label={t('Email')} type="email" required />
+        <FormControl name="password" label={t('Password')} type="password" required />
         <div className="button-bar">
           <button className="button-primary" type="submit">
             {t('Login')}

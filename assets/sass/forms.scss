@@ -50,7 +50,7 @@ textarea {
   margin: $space 0;
 }
 
-.form-input {
+.form-control {
   display: flex;
   align-items: center;
 
@@ -60,13 +60,20 @@ textarea {
     margin-right: $space * 2;
     width: 33%;
   }
+  label[data-required="true"]:after {
+    content: "\25CF";
+    display: inline;
+    color: var(--color-input-required);
+    margin-left: $space / 2;
+  }
 
   &.is-error input {
     border-color: var(--color-error-fg);
   }
 }
 
-.form-input.narrow label {
+// Narrow controls/inputs in any form.
+.form-control.narrow label {
   width: 100px;
 }
 
@@ -74,14 +81,6 @@ textarea {
   font-size: $font-size-small;
   color: var(--color-muted);
   margin: $space / 2 0 0 0;
-}
-
-.form-input-horizontal {
-  margin-bottom: $space * 2;
-
-  label {
-    min-width: auto;
-  }
 }
 
 // Inline forms used to do renaming.
@@ -92,4 +91,32 @@ textarea {
 
 .smart-task-input {
   width: 100%;
+}
+
+
+// Forms that pivots to a stacked layout in narrow viewports.
+.form-narrow {
+  label {
+    width: 100px;
+  }
+}
+@media (max-width: $breakpoint-phone) {
+  .form-control {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .form-narrow {
+    .form-input {
+      width: 100%;
+    }
+    label {
+      width: auto;
+      margin-bottom: $space / 2;
+    }
+    input,
+    select, 
+    textarea {
+      width: 100%;
+    }
+  }
 }

@@ -26,25 +26,28 @@ export default function UpdatePassword({errors, referer}: Props) {
     <LoggedIn title={t('Update Password')}>
       <Modal onClose={handleClose}>
         <h1>{t('Update Password')}</h1>
-        <form method="post" className="form-vertical" onSubmit={handleSubmit}>
+        <form method="post" className="form-narrow" onSubmit={handleSubmit}>
           <input type="hidden" name="referer" value={referer} />
           <FormControl
             name="current_password"
             label={t('Current password')}
             type="password"
             errors={errors}
+            required
           />
           <FormControl
             name="password"
             label={t('New password')}
             type="password"
             errors={errors}
+            required
           />
           <FormControl
             name="confirm_password"
             label={t('Confirm new password')}
             type="password"
             errors={errors}
+            required
           />
           <div className="button-bar">
             <button type="submit" className="button-primary">

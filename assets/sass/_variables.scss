@@ -133,6 +133,7 @@ body {
   --color-input-focus-border: var(--color-blue-300);
   --color-menu-hover: var(--color-purple-100);
   --color-menu-selected: var(--color-purple-300);
+  --color-input-required: var(--color-red-300);
 
   --color-toggle-bg-checked: var(--color-ochre-100);
   --color-toggle-checked: var(--color-ochre-300);
@@ -202,6 +203,7 @@ body.theme-dark {
   --color-input-focus-border: var(--color-blue-500);
   --color-menu-hover: var(--color-ochre-900);
   --color-menu-selected: var(--color-ochre-700);
+  --color-input-required: var(--color-red-700);
 
   --color-toggle-bg-checked: var(--color-ochre-700);
   --color-toggle-checked: var(--color-ochre-500);

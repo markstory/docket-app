@@ -50,17 +50,17 @@ function FormControl({
     const inputAttrs = {name, id, required};
     input = type(inputAttrs);
   }
-  className = classnames('form-input', className, {
+  className = classnames('form-control', className, {
     'is-error': errors && errors[name] !== undefined,
   });
 
   return (
     <div className={className}>
-      <label htmlFor={id}>
+      <label htmlFor={id} data-required={required}>
         {label}
         {help && <p className="form-help">{help}</p>}
       </label>
-      <div>
+      <div className="form-input">
         {input}
         <FormError errors={errors} field={name} />
       </div>

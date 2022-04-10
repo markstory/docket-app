@@ -33,10 +33,9 @@ function ProjectsAdd({errors, referer}: Props) {
     <LoggedIn title={t('New Project')}>
       <Modal onClose={handleClose} label={t('New Project')}>
         <h2>{t('New Project')}</h2>
-        <form method="POST" onSubmit={handleSubmit}>
+        <form method="POST" className="form-narrow" onSubmit={handleSubmit}>
           <input type="hidden" value={referer} name="referer" />
           <FormControl
-            className="narrow"
             name="name"
             label={t('Name')}
             type="text"
@@ -44,7 +43,6 @@ function ProjectsAdd({errors, referer}: Props) {
             required
           />
           <FormControl
-            className="narrow"
             name="color"
             label={t('Color')}
             type={() => <ColorSelect />}

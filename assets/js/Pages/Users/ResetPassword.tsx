@@ -16,14 +16,8 @@ export default function ResetPassword() {
     <Card title={t('Forgot your password?')}>
       <h1>{t('Forgot your password')}</h1>
       <p>{t('We will send you an email with instructions to reset it.')}</p>
-      <form method="post" onSubmit={onSubmit}>
-        <FormControl
-          className="narrow"
-          name="email"
-          type="email"
-          label={t('Email')}
-          required
-        />
+      <form method="post" onSubmit={onSubmit} className="form-narrow">
+        <FormControl name="email" type="email" label={t('Email')} required />
         <div className="button-bar">
           <button type="submit" className="button-primary">
             {t('Reset Password')}
