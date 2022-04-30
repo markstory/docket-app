@@ -99,11 +99,11 @@ class CalendarSourcesController extends AppController
      */
     public function edit()
     {
-        // This might only need to update the color?
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
+            // Only a subset of fields are user editable.
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
                 'fields' => ['color', 'name'],
             ]);

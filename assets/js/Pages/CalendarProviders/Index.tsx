@@ -1,5 +1,6 @@
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
+import {useRef} from 'react';
 
 import {t} from 'app/locale';
 import {deleteProvider} from 'app/actions/calendars';
@@ -24,8 +25,17 @@ function CalendarProvidersIndex({
   calendarProviders,
   unlinked,
 }: Props) {
+  // Use a ref to keep track of the first referer.
+  // We only want the first one as the sync, update and delete options
+  // use redirects to end up on the same calendar list view.
+  // These redirects contain the referer *they* came from which is *this*
+  // view. Once the 'referer' becomes this view the user can't leave the modal.
+  const firstReferer = useRef('');
+  if (!firstReferer.current && referer) {
+    firstReferer.current = referer;
+  }
   function handleClose() {
-    Inertia.visit(referer);
+    Inertia.visit(firstReferer.current);
   }
 
   const title = t('Synced Calendars');
