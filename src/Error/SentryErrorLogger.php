@@ -24,7 +24,7 @@ class SentryErrorLogger extends ErrorLogger
     ): void {
         \Sentry\captureException($exception);
 
-        return parent::logException($exception, $request, $includeTrace);
+        parent::logException($exception, $request, $includeTrace);
     }
 
     /**
@@ -34,7 +34,7 @@ class SentryErrorLogger extends ErrorLogger
     {
         \Sentry\captureMessage($error->getMessage(), \Sentry\Severity::fromError($error->getCode()));
 
-        return parent::logError($error, $request, $includeTrace);
+        parent::logError($error, $request, $includeTrace);
     }
 
     /**
