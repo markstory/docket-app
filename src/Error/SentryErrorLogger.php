@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Error;
 
 use Cake\Error\ErrorLogger;
+use Cake\Error\PhpError;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -15,11 +17,32 @@ class SentryErrorLogger extends ErrorLogger
     /**
      * Capture an exception with Sentry
      */
-    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
-    {
+    public function logException(
+        Throwable $exception,
+        ?ServerRequestInterface $request = null,
+        bool $includeTrace = false
+    ): void {
         \Sentry\captureException($exception);
 
-        return parent::log($exception, $request);
+        return parent::logException($exception, $request, $includeTrace);
+    }
+
+    /**
+     * Capture an error message with Sentry.
+     */
+    public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
+    {
+        \Sentry\captureMessage($error->getMessage(), \Sentry\Severity::fromError($error->getCode()));
+
+        return parent::logError($error, $request, $includeTrace);
+    }
+
+    /**
+     * Capture an exception with Sentry
+     */
+    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
+    {
+        throw new RuntimeException('This method should not be called anymore.');
     }
 
     /**
@@ -27,8 +50,6 @@ class SentryErrorLogger extends ErrorLogger
      */
     public function logMessage($level, string $message, array $context = []): bool
     {
-        \Sentry\captureMessage($message, \Sentry\Severity::fromError($level));
-
-        return parent::logMessage($level, $message, $context);
+        throw new RuntimeException('This method should not be called anymore.');
     }
 }
