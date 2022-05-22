@@ -12,6 +12,8 @@ import {InlineIcon} from 'app/components/icon';
 
 import CalendarSources from './calendarSources';
 
+const REFERER_KEY = 'calendar-referer';
+
 type Props = {
   calendarProviders: CalendarProviderDetailed[];
   activeProvider: CalendarProviderDetailed;
@@ -25,17 +27,13 @@ function CalendarProvidersIndex({
   calendarProviders,
   unlinked,
 }: Props) {
-  // Use a ref to keep track of the first referer.
-  // We only want the first one as the sync, update and delete options
-  // use redirects to end up on the same calendar list view.
-  // These redirects contain the referer *they* came from which is *this*
-  // view. Once the 'referer' becomes this view the user can't leave the modal.
-  const firstReferer = useRef('');
-  if (!firstReferer.current && referer) {
-    firstReferer.current = referer;
+  if (!localStorage.getItem(REFERER_KEY) && referer) {
+    localStorage.setItem(REFERER_KEY, referer);
   }
   function handleClose() {
-    Inertia.visit(firstReferer.current);
+    const target = localStorage.getItem(REFERER_KEY) ?? '/tasks/today';
+    localStorage.removeItem(REFERER_KEY);
+    Inertia.visit(target);
   }
 
   const title = t('Synced Calendars');
@@ -84,10 +82,6 @@ type ProviderProps = {
 function CalendarProviderItem({isActive, provider, unlinked}: ProviderProps) {
   async function handleDelete() {
     await deleteProvider(provider);
-  }
-
-  function handleManage() {
-    Inertia.visit(`/calendars/${provider.id}/sources/add`);
   }
 
   return (
