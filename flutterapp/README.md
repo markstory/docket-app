@@ -24,7 +24,10 @@ I also needed to install the `dart` language with `TSInstall dart` to get syntax
 
 #### LSP
 
-I've not been able to get useful LSP output yet, but I'll have to figure that out next.
+I got LSP working with akinsho's plugin. I also had to upgrade my completion menu vim plugin to [nvim-cmp](https://github.com/hrsh7th/nvim-cmp). This process took some time and I had to disable automatic autocompletion as it was causing segfaults in my flutter project. I think this is probably something I should have done a long time ago as I often battle with the visual noise and overlap that the autocomplete menu uses.
 
+# Potential Libraries to use
 
+* https://pub.dev/packages/checklist Tiered draggable lists where the top level collapses.
+* https://pub.dev/packages/drag_and_drop_lists Has a demo of exactly what I need for interactions on 'upcoming' and project view
 
