@@ -179,6 +179,7 @@ class Application extends BaseApplication implements
             ],
             'fields' => $fields,
         ]);
+        $service->loadIdentifier('ApiToken');
 
         // Load the authenticators, you want session first
         $service->loadAuthenticator('Authentication.Session', [
@@ -186,6 +187,11 @@ class Application extends BaseApplication implements
             'fields' => [
                 IdentifierInterface::CREDENTIAL_USERNAME => 'email',
             ],
+        ]);
+        $service->loadAuthenticator('Authentication.Token', [
+            'queryParam' => 'token',
+            'header' => 'Authorization',
+            'tokenPrefix' => 'Token',
         ]);
         $service->loadAuthenticator('Authentication.Form', [
             'loginUrl' => '/login',

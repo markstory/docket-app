@@ -229,6 +229,19 @@ class TasksControllerTest extends TestCase
         $this->assertSame($var->title, $first->title);
     }
 
+    public function testViewApiToken(): void
+    {
+        $token = $this->makeApiToken();
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->get("/tasks/{$first->id}/view");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertSame($var->title, $first->title);
+    }
+
     public function testViewPermissions(): void
     {
         $project = $this->makeProject('work', 2);
