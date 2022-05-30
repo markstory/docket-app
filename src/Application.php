@@ -163,9 +163,14 @@ class Application extends BaseApplication implements
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
-        $service = new AuthenticationService([
+        $config = [
             'unauthenticatedRedirect' => '/login',
-        ]);
+        ];
+        // API token request. We don't want redirects.
+        if ($request->hasHeader('Authorization')) {
+            $config = [];
+        }
+        $service = new AuthenticationService($config);
 
         $fields = [
             IdentifierInterface::CREDENTIAL_USERNAME => 'email',

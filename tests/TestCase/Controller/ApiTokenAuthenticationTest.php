@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -51,9 +49,16 @@ class ApiTokenAuthenticationTest extends TestCase
         $this->useApiToken($token->token);
     }
 
+    public function testTaskViewInvalidToken(): void
+    {
+        $this->useApiToken('invalid');
+        $this->get('/tasks/upcoming');
+        $this->assertResponseCode(401);
+    }
+
     public function testTaskIndex(): void
     {
-        $this->get("/tasks/upcoming");
+        $this->get('/tasks/upcoming');
         $this->assertResponseOk();
         $var = $this->viewVariable('tasks');
         $this->assertCount(1, $var);
