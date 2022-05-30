@@ -7,6 +7,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\I18n\FrozenTime;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
 use Google\Service\Oauth2 as GoogleOauth2;
@@ -56,17 +57,25 @@ class GoogleOauthController extends AppController
         }
         $user = $this->request->getAttribute('identity');
 
-        $provider = $this->CalendarProviders->findOrCreate([
-            'user_id' => $user->id,
-            'kind' => 'google',
-            'identifier' => $googleUser->id,
-        ], function ($entity) use ($data, $googleUser) {
-            $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
-            $entity->access_token = $data['access_token'];
-            $entity->refresh_token = $data['refresh_token'] ?? '';
-            $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
-        });
-        $this->CalendarProviders->saveOrFail($provider);
+        try {
+            $provider = $this->CalendarProviders->findOrCreate([
+                'user_id' => $user->id,
+                'kind' => 'google',
+                'identifier' => $googleUser->id,
+            ], function ($entity) use ($data, $googleUser) {
+                $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
+                $entity->access_token = $data['access_token'];
+                $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
+
+                if (!isset($data['refresh_token'])) {
+                    throw new PersistenceFailedException($entity, 'Missing refresh_token');
+                }
+                $entity->refresh_token = $data['refresh_token'];
+            });
+            $this->CalendarProviders->saveOrFail($provider);
+        } catch (PersistenceFailedException $e) {
+            $this->Flash->error(__('Could not link google account. Try removing authorization in google and re-connecting'));
+        }
 
         $this->redirect(['_name' => 'calendarproviders:index']);
     }

@@ -72,4 +72,24 @@ class GoogleOauthControllerTest extends TestCase
         $this->assertNotEmpty($provider->refresh_token);
         $this->assertNotEmpty($provider->token_expiry);
     }
+
+    /**
+     * Test callback method
+     *
+     * @vcr googleoauth_callback_norefresh.yml
+     */
+    public function testCallbackNoRefreshToken(): void
+    {
+        $this->login();
+        $this->enableRetainFlashMessages();
+        $this->get('/auth/google/callback?code=auth-code');
+
+        $this->assertRedirect(['_name' => 'calendarproviders:index']);
+        $exists = $this->CalendarProviders
+            ->find()
+            ->where(['CalendarProviders.user_id' => 1])
+            ->count();
+        $this->assertEquals(0, $exists, 'No provider made as token was bad');
+        $this->assertFlashElement('flash/error');
+    }
 }
