@@ -74,7 +74,9 @@ class GoogleOauthController extends AppController
             });
             $this->CalendarProviders->saveOrFail($provider);
         } catch (PersistenceFailedException $e) {
-            $this->Flash->error(__('Could not link google account. Try removing authorization in google and re-connecting'));
+            $this->Flash->error(
+                __('Could not link google account. Try removing authorization in google and re-connecting')
+            );
         }
 
         $this->redirect(['_name' => 'calendarproviders:index']);
