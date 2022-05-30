@@ -63,7 +63,7 @@ class GoogleOauthController extends AppController
         ], function ($entity) use ($data, $googleUser) {
             $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
             $entity->access_token = $data['access_token'];
-            $entity->refresh_token = $data['refresh_token'];
+            $entity->refresh_token = $data['refresh_token'] ?? null;
             $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
         });
         $this->CalendarProviders->saveOrFail($provider);
