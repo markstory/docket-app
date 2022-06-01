@@ -127,6 +127,12 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
             ->setPass(['token']);
     });
+    $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
+        $builder->get('/', ['action' => 'index'], 'apitokens:index');
+        $builder->post('/add', ['action' => 'add'], 'apitokens:add');
+        $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
+            ->setPass(['token']);
+    });
 
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);

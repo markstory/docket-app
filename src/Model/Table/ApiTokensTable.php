@@ -88,4 +88,11 @@ class ApiTokensTable extends Table
 
         return $rules;
     }
+
+    public function findByToken(Query $query, array $options): Query
+    {
+        $query->where(['ApiTokens.token' => $options[0]]);
+
+        return $query;
+    }
 }

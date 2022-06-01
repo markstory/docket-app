@@ -37,16 +37,21 @@ trait FactoryTrait
         ]);
     }
 
+    protected function requestJson()
+    {
+        $this->configRequest([
+            'headers' => ['Accept' => 'application/json'],
+        ]);
+    }
+
     protected function makeApiToken($userId = 1, $props = []): ApiToken
     {
         $apiTokens = $this->fetchTable('ApiTokens');
         $token = $apiTokens->newEntity(array_merge([
-            'name' => 'Unknown',
-            'user_id' => $userId,
-            'token' => Text::uuid(),
-            'password' => 'super sekret',
             'last_used' => 0,
         ], $props));
+        $token->user_id = $userId;
+        $token->token = Text::uuid();
 
         return $apiTokens->saveOrFail($token);
     }

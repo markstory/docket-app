@@ -28,11 +28,8 @@ class ApiToken extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'user_id' => true,
-        'token' => true,
         'last_used' => true,
         'created' => true,
-        'user' => true,
     ];
 
     /**
@@ -41,6 +38,7 @@ class ApiToken extends Entity
      * @var array<string>
      */
     protected $_hidden = [
-        'token',
+        'id',
+        'user_id',
     ];
 }
