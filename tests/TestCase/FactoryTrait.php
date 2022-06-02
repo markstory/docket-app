@@ -48,7 +48,7 @@ trait FactoryTrait
     {
         $apiTokens = $this->fetchTable('ApiTokens');
         $token = $apiTokens->newEntity(array_merge([
-            'last_used' => 0,
+            'last_used' => null,
         ], $props));
         $token->user_id = $userId;
         $token->token = Text::uuid();
