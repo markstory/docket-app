@@ -48,6 +48,7 @@ class ApiTokensControllerTest extends TestCase
     public function testAdd(): void
     {
         $this->login();
+        $this->enableCsrfToken();
         $this->requestJson();
 
         $this->post('/apitokens/add');
@@ -66,6 +67,7 @@ class ApiTokensControllerTest extends TestCase
     public function testAddPermissions(): void
     {
         $this->login();
+        $this->enableCsrfToken();
         $this->requestJson();
 
         $this->post('/apitokens/add', [
@@ -84,6 +86,7 @@ class ApiTokensControllerTest extends TestCase
         $token = $this->makeApiToken(1);
 
         $this->login();
+        $this->enableCsrfToken();
         $this->requestJson();
 
         $this->delete("/apitokens/{$token->token}/delete");
@@ -97,6 +100,7 @@ class ApiTokensControllerTest extends TestCase
         $token = $this->makeApiToken(2);
 
         $this->login();
+        $this->enableCsrfToken();
         $this->requestJson();
 
         $this->delete("/apitokens/{$token->token}/delete");

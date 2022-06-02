@@ -45,6 +45,7 @@ class ApiTokensController extends AppController
     {
         $user = $this->request->getAttribute('identity');
         $apiToken = $this->ApiTokens->newEmptyEntity();
+
         // Fixate userid to the current user.
         $apiToken->user_id = $user->id;
         $apiToken->token = Text::uuid();

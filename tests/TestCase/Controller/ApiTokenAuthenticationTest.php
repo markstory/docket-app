@@ -32,6 +32,7 @@ class ApiTokenAuthenticationTest extends TestCase
         'app.CalendarProviders',
         'app.CalendarSources',
         'app.CalendarItems',
+        'app.ApiTokens',
     ];
 
     protected $project;

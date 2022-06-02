@@ -33,7 +33,7 @@ $routes->setRouteClass(DashedRoute::class);
 $routes->registerMiddleware('csrf', new ApiCsrfProtectionMiddleware());
 
 $routes->scope('/', function (RouteBuilder $builder) {
-    // $builder->applyMiddleware('csrf');
+    $builder->applyMiddleware('csrf');
 
     $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $builder->connect('/pages/*', 'Pages::display');
