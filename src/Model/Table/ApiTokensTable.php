@@ -12,7 +12,6 @@ use Cake\Validation\Validator;
  * ApiTokens Model
  *
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- *
  * @method \App\Model\Entity\ApiToken newEmptyEntity()
  * @method \App\Model\Entity\ApiToken newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken[] newEntities(array $data, array $options = [])
@@ -26,7 +25,6 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ApiTokensTable extends Table
