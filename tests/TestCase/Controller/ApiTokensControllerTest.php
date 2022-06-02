@@ -46,35 +46,64 @@ class ApiTokensControllerTest extends TestCase
         $this->assertSame($tokens[0]->id, $token->id);
     }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     * @uses \App\Controller\ApiTokensController::add()
-     */
     public function testAdd(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->login();
+        $this->requestJson();
+
+        $this->post('/apitokens/add');
+        $this->assertResponseOk();
+        $this->assertHeader('Content-Type', 'application/json');
+
+        $token = $this->viewVariable('apiToken');
+        $this->assertResponseContains($token->token);
+        $this->assertEquals(1, $token->user_id);
+
+        $json = $token->jsonSerialize();
+        $this->assertArrayNotHasKey('user_id', $json);
+        $this->assertArrayNotHasKey('id', $json);
     }
 
     public function testAddPermissions(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->login();
+        $this->requestJson();
+
+        $this->post('/apitokens/add', [
+            'user_id' => 2,
+        ]);
+        $this->assertResponseOk();
+        $this->assertHeader('Content-Type', 'application/json');
+
+        $token = $this->viewVariable('apiToken');
+        $this->assertResponseContains($token->token);
+        $this->assertEquals(1, $token->user_id);
     }
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     * @uses \App\Controller\ApiTokensController::delete()
-     */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = $this->makeApiToken(1);
+
+        $this->login();
+        $this->requestJson();
+
+        $this->delete("/apitokens/{$token->token}/delete");
+        $this->assertResponseCode(204);
+        $apiTokens = $this->fetchTable('ApiTokens');
+        $this->assertCount(0, $apiTokens->find()->all());
     }
 
     public function testDeletePermissions(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = $this->makeApiToken(2);
+
+        $this->login();
+        $this->requestJson();
+
+        $this->delete("/apitokens/{$token->token}/delete");
+        $this->assertResponseCode(403);
+
+        $apiTokens = $this->fetchTable('ApiTokens');
+        $this->assertCount(1, $apiTokens->find()->all());
     }
 }

@@ -49,6 +49,8 @@ class ApiTokensController extends AppController
         $apiToken->user_id = $user->id;
         $apiToken->token = Text::uuid();
 
+        $this->Authorization->authorize($apiToken);
+
         $serialize = ['apiToken'];
         if ($this->request->is('post')) {
             $apiToken = $this->ApiTokens->patchEntity($apiToken, $this->request->getData());
@@ -74,8 +76,9 @@ class ApiTokensController extends AppController
     public function delete($token = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $apiToken = $this->ApiTokens->find('byToken', [$token]);
+        $apiToken = $this->ApiTokens->find('byToken', [$token])->firstOrFail();
         $this->Authorization->authorize($apiToken, 'delete');
+
         if (!$this->ApiTokens->delete($apiToken)) {
             $this->response = $this->response->withStatus(400);
             $this->set('errors', $apiToken->getErrors());
