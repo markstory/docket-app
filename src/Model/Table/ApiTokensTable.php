@@ -7,6 +7,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Entity\User;
+use Cake\Utility\Text;
 
 /**
  * ApiTokens Model
@@ -92,5 +94,17 @@ class ApiTokensTable extends Table
         $query->where(['ApiTokens.token' => $options[0]]);
 
         return $query;
+    }
+
+    public function generateApiToken(User $user)
+    {
+        $apiToken = $this->newEmptyEntity();
+
+        // Fixate userid to the current user.
+        $apiToken->user_id = $user->id;
+        $apiToken->token = Text::uuid();
+        $this->save($apiToken);
+
+        return $apiToken;
     }
 }

@@ -44,18 +44,12 @@ class ApiTokensController extends AppController
     public function add()
     {
         $user = $this->request->getAttribute('identity');
-        $apiToken = $this->ApiTokens->newEmptyEntity();
-
-        // Fixate userid to the current user.
-        $apiToken->user_id = $user->id;
-        $apiToken->token = Text::uuid();
-
-        $this->Authorization->authorize($apiToken);
 
         $serialize = ['apiToken'];
         if ($this->request->is('post')) {
-            $apiToken = $this->ApiTokens->patchEntity($apiToken, $this->request->getData());
-            if (!$this->ApiTokens->save($apiToken)) {
+            $apiToken = $this->ApiTokens->generateApiToken($user);
+            $this->Authorization->authorize($apiToken);
+            if ($apiToken->getErrors()) {
                 $this->set('errors', $apiToken->getErrors());
                 $serialize[] = 'apiToken';
             }
