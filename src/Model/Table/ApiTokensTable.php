@@ -103,6 +103,7 @@ class ApiTokensTable extends Table
         // Fixate userid to the current user.
         $apiToken->user_id = $user->id;
         $apiToken->token = Text::uuid();
+        $apiToken->last_used = null;
         $this->save($apiToken);
 
         return $apiToken;
