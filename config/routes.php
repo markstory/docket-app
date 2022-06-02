@@ -21,7 +21,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
+// use App\Middleware\ApiCsrfProtectionMiddleware;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
@@ -30,15 +30,11 @@ $routes->setRouteClass(DashedRoute::class);
 
 // Cross Site Request Forgery (CSRF) Protection Middleware
 // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
-$routes->registerMiddleware('csrf', new CsrfProtectionMiddleware());
+// $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware());
 
 $routes->scope('/', function (RouteBuilder $builder) {
-    $builder->applyMiddleware('csrf');
-    /*
-     * Here, we are connecting '/' (base path) to a controller called 'Pages',
-     * its action called 'display', and we pass a param to select the view file
-     * to use (in this case, templates/Pages/home.php)...
-     */
+    // $builder->applyMiddleware('csrf');
+
     $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $builder->connect('/pages/*', 'Pages::display');
     $builder->connect('/manifest.json', ['controller' => 'Pages', 'action' => 'display', 'manifest']);
