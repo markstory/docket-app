@@ -13,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * Because of this I don't want CSRF applied to requests that are made via API tokens.
  */
-class ApiCsrfProtectionMiddlewareMiddleware extends CsrfProtectionMiddleware
+class ApiCsrfProtectionMiddleware extends CsrfProtectionMiddleware
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
