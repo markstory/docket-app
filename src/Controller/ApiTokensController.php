@@ -5,7 +5,6 @@ namespace App\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\View\JsonView;
-use Exception;
 
 /**
  * ApiTokens Controller
