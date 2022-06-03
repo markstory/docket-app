@@ -74,16 +74,11 @@ class ApiTokensController extends AppController
             return;
         }
 
-        $serialize = ['apiToken'];
         if ($this->request->is('post')) {
             $apiToken = $this->ApiTokens->generateApiToken($this->request->getAttribute('identity'));
-            if ($apiToken->getErrors()) {
-                $this->set('errors', $apiToken->getErrors());
-                $serialize[] = 'apiToken';
-            }
             $this->set('apiToken', $apiToken);
         }
-        $this->viewBuilder()->setOption('serialize', $serialize);
+        $this->viewBuilder()->setOption('serialize', ['apiToken']);
     }
 
     /**
@@ -98,14 +93,7 @@ class ApiTokensController extends AppController
         $apiToken = $this->ApiTokens->find('byToken', [$token])->firstOrFail();
         $this->Authorization->authorize($apiToken, 'delete');
 
-        if (!$this->ApiTokens->delete($apiToken)) {
-            $this->response = $this->response->withStatus(400);
-            $this->set('errors', $apiToken->getErrors());
-            $this->viewBuilder()->setOption('serialize', ['errors']);
-
-            return;
-        }
-
+        $this->ApiTokens->delete($apiToken);
         $this->response = $this->response->withStatus(204);
     }
 }

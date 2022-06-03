@@ -12,18 +12,6 @@ use Authorization\IdentityInterface;
 class ApiTokenPolicy
 {
     /**
-     * Check if $user can add ApiToken
-     *
-     * @param \Authorization\IdentityInterface $user The user.
-     * @param \App\Model\Entity\ApiToken $apiToken
-     * @return bool
-     */
-    public function canAdd(IdentityInterface $user, ApiToken $apiToken)
-    {
-        return true;
-    }
-
-    /**
      * Check if $user can delete ApiToken
      *
      * @param \Authorization\IdentityInterface $user The user.
