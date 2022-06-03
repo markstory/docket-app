@@ -163,9 +163,14 @@ class Application extends BaseApplication implements
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
-        $service = new AuthenticationService([
+        $config = [
             'unauthenticatedRedirect' => '/login',
-        ]);
+        ];
+        // API token request. We don't want redirects.
+        if ($request->hasHeader('Authorization')) {
+            $config = [];
+        }
+        $service = new AuthenticationService($config);
 
         $fields = [
             IdentifierInterface::CREDENTIAL_USERNAME => 'email',
@@ -179,6 +184,7 @@ class Application extends BaseApplication implements
             ],
             'fields' => $fields,
         ]);
+        $service->loadIdentifier('ApiToken');
 
         // Load the authenticators, you want session first
         $service->loadAuthenticator('Authentication.Session', [
@@ -187,8 +193,19 @@ class Application extends BaseApplication implements
                 IdentifierInterface::CREDENTIAL_USERNAME => 'email',
             ],
         ]);
+        $service->loadAuthenticator('Authentication.Token', [
+            'queryParam' => 'token',
+            'header' => 'Authorization',
+            'tokenPrefix' => 'Token',
+        ]);
+        // There are two possible login URLs. The default one is for HTML views.
+        // And the other is for the in-progress mobile app.
+        $loginUrl = '/login';
+        if ($request->getUri()->getPath() === '/mobile/login') {
+            $loginUrl = '/mobile/login';
+        }
         $service->loadAuthenticator('Authentication.Form', [
-            'loginUrl' => '/login',
+            'loginUrl' => $loginUrl,
             'fields' => [
                 IdentifierInterface::CREDENTIAL_USERNAME => 'email',
                 IdentifierInterface::CREDENTIAL_PASSWORD => 'password',

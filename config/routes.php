@@ -21,7 +21,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
+use App\Middleware\ApiCsrfProtectionMiddleware;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
@@ -30,15 +30,11 @@ $routes->setRouteClass(DashedRoute::class);
 
 // Cross Site Request Forgery (CSRF) Protection Middleware
 // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
-$routes->registerMiddleware('csrf', new CsrfProtectionMiddleware());
+$routes->registerMiddleware('csrf', new ApiCsrfProtectionMiddleware());
 
 $routes->scope('/', function (RouteBuilder $builder) {
     $builder->applyMiddleware('csrf');
-    /*
-     * Here, we are connecting '/' (base path) to a controller called 'Pages',
-     * its action called 'display', and we pass a param to select the view file
-     * to use (in this case, templates/Pages/home.php)...
-     */
+
     $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $builder->connect('/pages/*', 'Pages::display');
     $builder->connect('/manifest.json', ['controller' => 'Pages', 'action' => 'display', 'manifest']);
@@ -127,6 +123,11 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
             ->setPass(['token']);
     });
+    $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
+        $builder->get('/', ['action' => 'index'], 'apitokens:index');
+        $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
+            ->setPass(['token']);
+    });
 
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
@@ -154,4 +155,5 @@ $routes->scope('/', function (RouteBuilder $builder) {
 // Routes in this scope don't have CSRF protection.
 $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
+    $builder->post('/mobile/login', 'ApiTokens::add', 'apitokens:add');
 });

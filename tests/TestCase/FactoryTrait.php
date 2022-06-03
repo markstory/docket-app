@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use App\Model\Entity\ApiToken;
 use App\Model\Entity\CalendarItem;
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
@@ -29,6 +30,32 @@ trait FactoryTrait
         ]);
     }
 
+    protected function useApiToken($token)
+    {
+        $this->configRequest([
+            'headers' => ['Authorization' => 'token ' . $token],
+        ]);
+    }
+
+    protected function requestJson()
+    {
+        $this->configRequest([
+            'headers' => ['Accept' => 'application/json'],
+        ]);
+    }
+
+    protected function makeApiToken($userId = 1, $props = []): ApiToken
+    {
+        $apiTokens = $this->fetchTable('ApiTokens');
+        $token = $apiTokens->newEntity(array_merge([
+            'last_used' => null,
+        ], $props));
+        $token->user_id = $userId;
+        $token->token = Text::uuid();
+
+        return $apiTokens->saveOrFail($token);
+    }
+
     protected function makeUser($email, $props = []): User
     {
         $users = $this->fetchTable('Users');
@@ -42,7 +69,7 @@ trait FactoryTrait
         return $users->saveOrFail($user);
     }
 
-    protected function makeProject($name, $userId, $ranking = 0, $props = []): Project
+    protected function makeProject($name, $userId = 1, $ranking = 0, $props = []): Project
     {
         $projects = $this->fetchTable('Projects');
         $props = array_merge([

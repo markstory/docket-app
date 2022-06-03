@@ -177,6 +177,7 @@ return [
         'ignoredDeprecationPaths' => [
             'vendor/ishanvyas22/asset-mix/config/routes.php',
             'vendor/cakephp/cakephp/src/Routing/Router.php',
+            'vendor/php-vcr/',
         ],
         'log' => true,
         'trace' => true,
