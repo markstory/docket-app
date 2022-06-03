@@ -125,7 +125,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
     $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
         $builder->get('/', ['action' => 'index'], 'apitokens:index');
-        $builder->post('/add', ['action' => 'add'], 'apitokens:add');
         $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
             ->setPass(['token']);
     });
@@ -156,4 +155,5 @@ $routes->scope('/', function (RouteBuilder $builder) {
 // Routes in this scope don't have CSRF protection.
 $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
+    $builder->post('/mobile/login', 'ApiTokens::add', 'apitokens:add');
 });

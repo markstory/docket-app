@@ -198,8 +198,14 @@ class Application extends BaseApplication implements
             'header' => 'Authorization',
             'tokenPrefix' => 'Token',
         ]);
+        // There are two possible login URLs. The default one is for HTML views.
+        // And the other is for the in-progress mobile app.
+        $loginUrl = '/login';
+        if ($request->getUri()->getPath() === '/mobile/login') {
+            $loginUrl = '/mobile/login';
+        }
         $service->loadAuthenticator('Authentication.Form', [
-            'loginUrl' => '/login',
+            'loginUrl' => $loginUrl,
             'fields' => [
                 IdentifierInterface::CREDENTIAL_USERNAME => 'email',
                 IdentifierInterface::CREDENTIAL_PASSWORD => 'password',

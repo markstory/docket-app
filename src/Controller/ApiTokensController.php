@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
 use Cake\View\JsonView;
+use Exception;
 
 /**
  * ApiTokens Controller
@@ -13,6 +15,13 @@ use Cake\View\JsonView;
  */
 class ApiTokensController extends AppController
 {
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Authentication->allowUnauthenticated(['add']);
+    }
+
     /**
      * Views for content-type negotiation
      */
@@ -36,29 +45,46 @@ class ApiTokensController extends AppController
     }
 
     /**
-     * Add method
+     * Add a new API token. Currently the only use case we have for creating
+     * API tokens is for the login in the future mobile app.
+     *
+     * ## Parameters
+     *
+     * - email - string
+     * - password - string
+     *
+     * ## Response Codes
+     *
+     * 200 - Created a new token. See the `apiToken.token` response attribute.
+     * 401 - Incorrect credentials.
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
     public function add()
     {
-        $user = $this->request->getAttribute('identity');
+        $this->Authorization->skipAuthorization();
+        $this->request->allowMethod(['post']);
+
+        // This action is configured to perform a 'login'
+        $result = $this->Authentication->getResult();
+        if (!$result->isValid()) {
+            $this->set('errors', ['Authentication required']);
+            $this->viewBuilder()->setOption('serialize', ['errors']);
+            $this->response = $this->response->withStatus(401);
+
+            return;
+        }
 
         $serialize = ['apiToken'];
         if ($this->request->is('post')) {
-            $apiToken = $this->ApiTokens->generateApiToken($user);
-            $this->Authorization->authorize($apiToken);
+            $apiToken = $this->ApiTokens->generateApiToken($this->request->getAttribute('identity'));
             if ($apiToken->getErrors()) {
                 $this->set('errors', $apiToken->getErrors());
                 $serialize[] = 'apiToken';
             }
+            $this->set('apiToken', $apiToken);
         }
-        $this->set(compact('apiToken'));
         $this->viewBuilder()->setOption('serialize', $serialize);
-
-        if (!$this->request->is('json')) {
-            return $this->redirect(['_name' => 'apitokens:index']);
-        }
     }
 
     /**

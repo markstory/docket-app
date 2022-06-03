@@ -47,11 +47,12 @@ class ApiTokensControllerTest extends TestCase
 
     public function testAdd(): void
     {
-        $this->login();
-        $this->enableCsrfToken();
         $this->requestJson();
 
-        $this->post('/apitokens/add');
+        $this->post('/mobile/login', [
+            'email' => 'mark@example.com',
+            'password' => 'password123',
+        ]);
         $this->assertResponseOk();
         $this->assertHeader('Content-Type', 'application/json');
 
@@ -66,19 +67,17 @@ class ApiTokensControllerTest extends TestCase
 
     public function testAddPermissions(): void
     {
-        $this->login();
-        $this->enableCsrfToken();
         $this->requestJson();
 
-        $this->post('/apitokens/add', [
-            'user_id' => 2,
+        $this->post('/mobile/login', [
+            'email' => 'mark@example.com',
+            'password' => 'wrong value',
         ]);
-        $this->assertResponseOk();
+        $this->assertResponseCode(401);
         $this->assertHeader('Content-Type', 'application/json');
 
         $token = $this->viewVariable('apiToken');
-        $this->assertResponseContains($token->token);
-        $this->assertEquals(1, $token->user_id);
+        $this->assertNull($token);
     }
 
     public function testDelete(): void
