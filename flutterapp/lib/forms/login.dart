@@ -5,9 +5,9 @@ import '../model/session.dart';
 
 // Login Form Wrapper
 class LoginForm extends StatefulWidget {
-  final Function? onSubmit;
+  final Function onSubmit;
 
-  const LoginForm({super.key, this.onSubmit});
+  const LoginForm({super.key, required this.onSubmit});
 
   @override
   LoginFormState createState() {
@@ -25,8 +25,8 @@ class LoginFormState extends State<LoginForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
-  String _email;
-  String _password;
+  String? _email;
+  String? _password;
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +59,20 @@ class LoginFormState extends State<LoginForm> {
                     return 'Password is required';
                   }
                   return null;
-                }
+                },
                 onSaved: (value) => _password = value,
               ),
               ElevatedButton(
-                child: const Text('Login'),
+                child: const Text('Login ohmy'),
                 onPressed: () {
-                  if (widget.onSubmit != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Logging in'))
-                    );
-                    widget.onSubmit(_email, _password);
+                  if (!_formKey.currentState!.validate()) {
+                    return;
                   }
+                  _formKey.currentState!.save();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Logging in'))
+                  );
+                  widget.onSubmit(_email, _password);
                 }
               )
               // Add TextFormFields and ElevatedButton here.

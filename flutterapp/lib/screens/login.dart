@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
-import '../forms/login.dart';
-import '../model/session.dart';
-import 'today.dart';
+import 'package:docket/actions.dart';
+import 'package:docket/forms/login.dart';
+import 'package:docket/model/session.dart';
+import 'package:docket/screens/today.dart';
 
 class LoginScreen extends StatelessWidget {
   static const routeName = '/login';
@@ -14,15 +12,13 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   Future<void> _handleSubmit(String email, String password, SessionModel session) async {
-    var url = Uri.parse('https://docket.mark-story.com/mobile/login');
-    var body = {'email': email, 'password': password};
-    var response = await http.post(url, body: body);
-    if (response.statusCode < 400) {
-      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      var token = decoded['apiToken']['token'];
-
-      // Update application session provider.
-      session.set(token);
+    try {
+      // Do the login request and set the token to application state.
+      var apiToken = await doLogin(email, password);
+      debugPrint('$apiToken');
+      session.set(apiToken.token);
+    } catch (e) {
+      throw Exception('Could not login');
     }
   }
 
@@ -31,23 +27,23 @@ class LoginScreen extends StatelessWidget {
     // Build a Form widget using the _formKey created above.
     return Consumer<SessionModel>(
       builder: (context, session, child) {
+        if (session.apiToken != null) {
+          debugPrint('Doing redirect');
+          // Then redirect to Today.
+          Navigator.pushNamed(context, TodayScreen.routeName);
+        }
+
         return Scaffold(
+          appBar: AppBar(),
           body: Column(
             children: [
               const Text('Login to your Docket instance.'),
-              LoginForm(onSubmit: (email, password) => _handleSubmit(email, password, session)),
-              ElevatedButton(
-                child: const Text('Log in'),
-                onPressed: () {
-                  // Do HTTP request
-
-                  // Handle success and update the session model.
-                  // Set global state for login being active.
-
-                  // Then redirect to Today.
-                  Navigator.pushNamed(context, TodayScreen.routeName);
-                },
-              )
+              Text('API token=${session.apiToken.toString()}'),
+              LoginForm(onSubmit: (String? email, String? password) {
+                if (email != null && password != null) {
+                  _handleSubmit(email, password, session);
+                }
+              }),
             ]
           )
         );
