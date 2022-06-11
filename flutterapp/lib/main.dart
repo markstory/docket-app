@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'model/session.dart';
+import 'database.dart';
+import 'provider/session.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/today.dart';
@@ -9,9 +10,10 @@ import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
 
 void main() {
+  final dbHandler = LocalDatabase();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => SessionModel(),
+      create: (context) => SessionModel(dbHandler),
       child: const DocketApp()
     )
   );
