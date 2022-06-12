@@ -32,15 +32,19 @@ trait FactoryTrait
 
     protected function useApiToken($token)
     {
-        $this->configRequest([
-            'headers' => ['Authorization' => 'token ' . $token],
-        ]);
+        $headers = $this->_request['headers'] ?? [];
+        $headers['Authorization'] = 'bearer ' . $token;
+
+        $this->configRequest(['headers' => $headers]);
     }
 
     protected function requestJson()
     {
+        $headers = $this->_request['headers'] ?? [];
+        $headers['Accept'] = 'application/json';
+
         $this->configRequest([
-            'headers' => ['Accept' => 'application/json'],
+            'headers' => $headers,
         ]);
     }
 
