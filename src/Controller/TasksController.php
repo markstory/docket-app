@@ -84,7 +84,11 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
             $serialize[] = 'errors';
         }
-        $this->viewBuilder()->setOption('serialize', $serialize);
+
+        // API serialization
+        if ($this->request->is('json')) {
+            $this->viewBuilder()->setOption('serialize', $serialize);
+        }
     }
 
     /**
