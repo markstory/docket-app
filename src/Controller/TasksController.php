@@ -6,6 +6,7 @@ namespace App\Controller;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenTime;
+use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
@@ -17,6 +18,11 @@ use InvalidArgumentException;
  */
 class TasksController extends AppController
 {
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     /**
      * Index method
      *
@@ -66,6 +72,7 @@ class TasksController extends AppController
             $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
         }
 
+        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
         $this->set(compact('tasks', 'view', 'calendarItems'));
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
@@ -75,6 +82,12 @@ class TasksController extends AppController
         $session = $this->request->getSession();
         if ($session->check('errors')) {
             $this->set('errors', $session->consume('errors'));
+            $serialize[] = 'errors';
+        }
+
+        // API serialization
+        if ($this->request->is('json')) {
+            $this->viewBuilder()->setOption('serialize', $serialize);
         }
     }
 
