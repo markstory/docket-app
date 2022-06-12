@@ -107,6 +107,43 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
+    /**
+     * Test index method
+     *
+     * @return void
+     */
+    public function testIndexApi(): void
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow,
+        ]);
+        $token = $this->makeApiToken(1);
+
+        $this->disableErrorHandlerMiddleware();
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get('/tasks');
+
+        $this->assertResponseOk();
+        $response = json_decode(strval($this->_response->getBody()), true);
+
+        $this->assertArrayHasKey('tasks', $response);
+        $this->assertArrayHasKey('projects', $response);
+        $this->assertArrayHasKey('calendarItems', $response);
+
+        $this->assertCount(2, $response['tasks']);
+        $ids = array_map(function ($i) {
+
+            return $i['id'];
+        }, $response['tasks']);
+        $this->assertEquals([$first->id, $second->id], $ids);
+    }
+
     public function testIndexCalendarItems(): void
     {
         $tomorrow = new FrozenDate('tomorrow');
