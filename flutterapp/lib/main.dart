@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'database.dart';
 import 'provider/session.dart';
+import 'provider/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/today.dart';
@@ -12,8 +13,11 @@ import 'screens/unknown.dart';
 void main() {
   final dbHandler = LocalDatabase();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => SessionProvider(dbHandler),
+    MultiProvider(
+      providers: [
+        Provider<SessionProvider>(create: (_) => SessionProvider(dbHandler)),
+        Provider<TasksProvider>(create: (_) => TasksProvider(dbHandler)),
+      ],
       child: const DocketApp()
     )
   );

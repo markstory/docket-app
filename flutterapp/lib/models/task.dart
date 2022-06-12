@@ -38,6 +38,32 @@ class Task {
     );
   }
 
+  Task copy({
+    int? id,
+    int projectId,
+    int? sectionId,
+    String? title,
+    String? body,
+    DateTime? dueOn,
+    int? childOrder,
+    int? dayOrder,
+    bool? evening,
+    bool? completed
+  }) {
+    return Task(
+      id: id ?? this.id,
+      projectId: projectId ?? this.projectId,
+      sectionId: sectionId ?? this.sectionId,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      dueOn: dueOn ?? this.dueOne,
+      childOrder: childOrder ?? this.childOrder,
+      dayOrder: dayOrder ?? this.dayOrder,
+      evening: evening ?? this.evening,
+      completed: completed ?? this.completed,
+    );
+  }
+
   Map<String, Object?> toMap() {
     return {
       'id': id,
