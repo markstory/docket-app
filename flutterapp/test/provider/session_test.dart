@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutterapp/model/session.dart';
+import 'package:flutterapp/provider/session.dart';
 
 void main() {
   test('setting token', () {
-    final model = SessionModel();
+    final model = SessionProvider();
     expect(model.apiToken, equals(null));
 
     model.set('abc123');
@@ -12,7 +12,7 @@ void main() {
   });
 
   test('cleaing token', () {
-    final model = SessionModel();
+    final model = SessionProvider();
     expect(model.apiToken, equals(null));
 
     model.set('abc123');

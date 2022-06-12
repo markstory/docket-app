@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:docket/models/apitoken.dart';
+import 'package:docket/models/task.dart';
 
 /// This needs to come from a props/config file but I don't know
 /// how to do that yet.
@@ -34,6 +35,39 @@ Future<ApiToken> doLogin(String email, String password) async {
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
       return ApiToken.fromMap(decoded['apiToken']);
+    } catch (e) {
+      developer.log('failed to decode ${e.toString()}');
+      rethrow;
+    }
+  });
+}
+
+/// Fetch the tasks for the 'Today' view
+Future<List<Task>> loadTodayTasks(String apiToken) async {
+  var url = Uri.parse('$baseUrl/tasks/today');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode >= 200) {
+      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Could not load tasks');
+    }
+
+    try {
+      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      List<Task> tasks = [];
+      for (var item in decoded['tasks']) {
+        tasks.add(Task.fromMap(item));
+      }
+      return tasks;
     } catch (e) {
       developer.log('failed to decode ${e.toString()}');
       rethrow;

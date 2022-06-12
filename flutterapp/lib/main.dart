@@ -13,7 +13,7 @@ void main() {
   final dbHandler = LocalDatabase();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => SessionModel(dbHandler),
+      create: (context) => SessionProvider(dbHandler),
       child: const DocketApp()
     )
   );

@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:docket/models/apitoken.dart';
+import 'package:docket/models/task.dart';
 
 class LocalDatabase {
   // Configuration
@@ -9,6 +10,7 @@ class LocalDatabase {
 
   // Table Constants.
   static const String apiTokensTable = 'api_tokens';
+  static const String tasksTable = 'tasks';
 
   late Database? _database;
 
@@ -65,5 +67,11 @@ CREATE TABLE $apiTokensTable (
       return ApiToken.fromMap(result.first);
     }
     return null;
+  }
+
+  // Task Loader Methods.
+  Future<List<Task>> fetchTodayTasks() async {
+    final db = await database();
+    var results = await db.query(tasksTable)
   }
 }
