@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 // Login Form Wrapper
 class LoginForm extends StatefulWidget {
   final Function onSubmit;

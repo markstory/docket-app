@@ -7,6 +7,7 @@ class ApiToken {
 
   factory ApiToken.fromMap(Map<String, dynamic> json) {
     return ApiToken(
+      id: json['id'],
       token: json['token'],
       lastUsed: json['last_used'],
     );

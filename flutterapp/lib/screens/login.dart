@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/forms/login.dart';
-import 'package:docket/provider/session.dart';
+import 'package:docket/providers/session.dart';
 import 'package:docket/screens/today.dart';
 
 class LoginScreen extends StatelessWidget {

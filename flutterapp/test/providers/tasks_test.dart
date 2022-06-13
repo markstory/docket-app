@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutterapp/provider/session.dart';
+import 'package:docket/provider/tasks.dart';
 
 void main() {
   test('setting token', () {

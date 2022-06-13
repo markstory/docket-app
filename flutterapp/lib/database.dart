@@ -90,7 +90,7 @@ CREATE TABLE $todayTasksTable (
     var results = await db.query(todayTasksTable,
       orderBy: 'due_on ASC, evening ASC, day_order ASC, title ASC'
     );
-    if (result.notEmpty) {
+    if (results.isNotEmpty) {
       List<Task> tasks = [];
       for (var item in results) {
         tasks.add(Task.fromMap(item));

@@ -4,7 +4,7 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/database.dart';
 
 class SessionProvider with ChangeNotifier {
-  ApiToken? apiToken;
+  ApiToken? _apiToken;
   late LocalDatabase _database;
 
   SessionProvider(LocalDatabase database) {
@@ -12,23 +12,27 @@ class SessionProvider with ChangeNotifier {
     _loadApiToken();
   }
 
+  ApiToken? get apiToken {
+    return _apiToken;
+  }
+
   void _loadApiToken() async {
     try {
-      apiToken = await _database.fetchApiToken();
+      _apiToken = await _database.fetchApiToken();
       notifyListeners();
     } catch (e) {
-      apiToken = null;
+      _apiToken = null;
     }
   }
 
   void set(ApiToken token) async {
     await _database.createApiToken(token);
-    apiToken = token;
+    _apiToken = token;
     notifyListeners();
   }
 
   void clear() {
-    apiToken = null;
+    _apiToken = null;
     notifyListeners();
   }
 }

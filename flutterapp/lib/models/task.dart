@@ -40,7 +40,7 @@ class Task {
 
   Task copy({
     int? id,
-    int projectId,
+    int? projectId,
     int? sectionId,
     String? title,
     String? body,
@@ -56,7 +56,7 @@ class Task {
       sectionId: sectionId ?? this.sectionId,
       title: title ?? this.title,
       body: body ?? this.body,
-      dueOn: dueOn ?? this.dueOne,
+      dueOn: dueOn ?? this.dueOn,
       childOrder: childOrder ?? this.childOrder,
       dayOrder: dayOrder ?? this.dayOrder,
       evening: evening ?? this.evening,

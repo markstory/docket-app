@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'database.dart';
-import 'provider/session.dart';
-import 'provider/tasks.dart';
+import 'providers/session.dart';
+import 'providers/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/today.dart';

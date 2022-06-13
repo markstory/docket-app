@@ -3,33 +3,32 @@ import 'package:flutter/foundation.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/database.dart';
 import 'package:docket/actions.dart' as actions;
-import 'package:docket/model' as actions;
 
 class TasksProvider with ChangeNotifier {
   List<Task> _todayTasks = [];
 
   late LocalDatabase _database;
 
-  TodayProvider(LocalDatabase database) {
+  TasksProvider(LocalDatabase database) {
     _database = database;
   }
 
-  void refreshTodayTasks() async {
+  void refreshTodayTasks(String apiToken) async {
     await _database.clearTodayTasks();
-    tasks = await actions.loadTodayTasks(apiToken);
+    var tasks = await actions.loadTodayTasks(apiToken);
     await _database.insertTodayTasks(tasks);
 
     _todayTasks = tasks;
     notifyListeners();
   }
 
-  List<Task> todayTasks(String apiToken) async {
+  Future<List<Task>> todayTasks(String apiToken) async {
     try {
       _todayTasks = await _database.fetchTodayTasks();
-      if (!_todayTasks) {
+      if (_todayTasks.isEmpty) {
         // Load from API results, and store them locally.
-        tasks = await actions.loadTodayTasks(apiToken);
-        tasks = await _database.insertTodayTasks(tasks);
+        var tasks = await actions.loadTodayTasks(apiToken);
+        await _database.insertTodayTasks(tasks);
         _todayTasks = tasks;
       }
       notifyListeners();
