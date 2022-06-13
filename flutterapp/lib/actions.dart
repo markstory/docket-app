@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'dart:developer' as developer;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -56,7 +55,7 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
       }
     );
 
-    if (response.statusCode >= 200) {
+    if (response.statusCode > 200) {
       developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
       throw Exception('Could not load tasks');
     }
@@ -68,8 +67,9 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
         tasks.add(Task.fromMap(item));
       }
       return tasks;
-    } catch (e) {
-      developer.log('failed to decode ${e.toString()}');
+    } catch (e, stacktrace) {
+      print('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;
     }
   });

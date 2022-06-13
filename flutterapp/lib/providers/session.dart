@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/database.dart';
 
-class SessionProvider with ChangeNotifier {
+class SessionProvider extends ChangeNotifier {
   ApiToken? _apiToken;
   late LocalDatabase _database;
 
@@ -12,8 +12,15 @@ class SessionProvider with ChangeNotifier {
     _loadApiToken();
   }
 
-  ApiToken? get apiToken {
-    return _apiToken;
+  String get apiToken {
+    if (_apiToken == null) {
+      throw Exception('Cannot get token it is not set.');
+    }
+    return _apiToken!.token;
+  }
+
+  bool get hasToken {
+    return _apiToken != null;
   }
 
   void _loadApiToken() async {
@@ -25,7 +32,7 @@ class SessionProvider with ChangeNotifier {
     }
   }
 
-  void set(ApiToken token) async {
+  Future<void> set(ApiToken token) async {
     await _database.createApiToken(token);
     _apiToken = token;
     notifyListeners();

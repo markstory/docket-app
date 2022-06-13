@@ -2,8 +2,8 @@ class Task {
   final int? id;
   final int projectId;
   final int? sectionId;
-  final String? title;
-  final String? body;
+  final String title;
+  final String body;
   final DateTime? dueOn;
   final int childOrder;
   final int dayOrder;
@@ -14,8 +14,8 @@ class Task {
     this.id,
     required this.projectId, 
     this.sectionId,
-    this.title,
-    this.body,
+    required this.title,
+    required this.body,
     this.dueOn,
     required this.childOrder,
     required this.dayOrder,
@@ -24,17 +24,24 @@ class Task {
   });
 
   factory Task.fromMap(Map<String, dynamic> json) {
+    DateTime? dueOn;
+    if (json['dueOn'] != null) {
+      dueOn = DateTime.parse(json['due_on']);
+    }
+    var projectId = json['project_id'];
+    projectId ??= json['project']['id'];
+
     return Task(
       id: json['id'],
-      projectId: json['project_id'],
+      projectId: projectId,
       sectionId: json['section_id'],
-      title: json['title'],
-      body: json['body'],
-      dueOn: json['due_on'],
+      title: json['title'] ?? '',
+      body: json['body'] ?? '',
+      dueOn: dueOn,
       childOrder: json['child_order'],
       dayOrder: json['day_order'],
-      evening: json['evening'],
-      completed: json['completed'],
+      evening: json['evening'] > 0 ? true : false,
+      completed: json['completed'] > 0 ? true : false,
     );
   }
 
@@ -71,7 +78,7 @@ class Task {
       'section_id': sectionId,
       'title': title,
       'body': body,
-      'due_on': dueOn,
+      'due_on': dueOn.toString(),
       'child_order': childOrder,
       'day_order': dayOrder,
       'evening': evening,

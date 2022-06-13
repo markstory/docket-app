@@ -2,8 +2,8 @@
     package="com.docket.flutterapp">
    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="flutterapp"
-        android:name="${applicationName}"
+        android:label="Docket"
+        android:name=".Application"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

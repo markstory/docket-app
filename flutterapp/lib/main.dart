@@ -15,8 +15,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<SessionProvider>(create: (_) => SessionProvider(dbHandler)),
-        Provider<TasksProvider>(create: (_) => TasksProvider(dbHandler)),
+        ListenableProvider<SessionProvider>(create: (_) => SessionProvider(dbHandler)),
+        ListenableProvider<TasksProvider>(create: (_) => TasksProvider(dbHandler)),
       ],
       child: const DocketApp()
     )

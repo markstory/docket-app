@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
     // Build a Form widget using the _formKey created above.
     return Consumer<SessionProvider>(
       builder: (context, session, child) {
-        if (session.apiToken != null) {
+        if (session.hasToken) {
           // Then redirect to Today.
             Navigator.pushNamed(context, TodayScreen.routeName);
         }
@@ -37,7 +37,6 @@ class LoginScreen extends StatelessWidget {
           body: Column(
             children: [
               const Text('Login to your Docket instance.'),
-              Text('API token=${session.apiToken.toString()}'),
               LoginForm(onSubmit: (String? email, String? password) async {
                 if (email != null && password != null) {
                   try {
@@ -70,7 +69,7 @@ class LoginRequired extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SessionProvider>(
       builder: (context, session, _) {
-        if (session.apiToken != null) {
+        if (session.hasToken) {
           return child;
         }
         return const LoginScreen();

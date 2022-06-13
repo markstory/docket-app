@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +13,7 @@ class LocalDatabase {
   static const String apiTokensTable = 'api_tokens';
   static const String todayTasksTable = 'today_tasks';
 
-  late Database? _database;
+  Database? _database;
 
   Future<Database> database() async {
     if (_database != null) {
@@ -25,10 +26,16 @@ class LocalDatabase {
   Future<Database> _initDb(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDb);
+
+    // For when schema gets broken.
+    // await deleteDatabase(path);
+    return await openDatabase(path, version: 1,
+      onCreate: _createDb
+    );
   }
 
   Future<void> _createDb(Database db, int version) async {
+    developer.log('Creating Database');
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const intType = 'INTEGER';
     const textType = 'TEXT';
@@ -39,19 +46,21 @@ CREATE TABLE $apiTokensTable (
   id $idType,
   token $requiredTextType,
   last_used DATETIME
-);
+)
+  ''');
+    await db.execute('''
 CREATE TABLE $todayTasksTable (
   id $idType,
   project_id $intType,
   section_id $intType,
   title $textType,
   body $textType,
-  dueOn DATETIME,
-  childOrder $intType,
-  dayOrder $intType,
+  due_on DATETIME,
+  child_order $intType,
+  day_order $intType,
   evening boolean,
   completed boolean
-);
+)
     ''');
   }
 
