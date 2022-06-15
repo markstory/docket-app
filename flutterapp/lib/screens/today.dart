@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/components/taskgroup.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/models/task.dart';
@@ -29,8 +31,18 @@ class TodayScreen extends StatelessWidget {
                       // Should show task create sheet.
                     })
               ]),
-              TaskGroup(taskList),
-              // TODO add a task list sorter here.
+              // Today Task List
+              FutureBuilder<List<Task>>(
+                future: taskList,
+                builder: (context, snapshot) {
+                  var data = snapshot.data;
+                  if (data == null) {
+                    return const LoadingIndicator();
+                  }
+                  var tasks = data.where((task) => !task.evening).toList();
+                  return TaskGroup(tasks);
+                }
+              ),
               Row(children: [
                 const Icon(Icons.mode_night),
                 const Text('This Evening'),
@@ -40,7 +52,18 @@ class TodayScreen extends StatelessWidget {
                       // Should show task create sheet.
                     })
               ]),
-              // TODO add a task list sorter here.
+              // This Evening Task List
+              FutureBuilder<List<Task>>(
+                future: taskList,
+                builder: (context, snapshot) {
+                  var data = snapshot.data;
+                  if (data == null) {
+                    return const LoadingIndicator();
+                  }
+                  var tasks = data.where((task) => task.evening).toList();
+                  return TaskGroup(tasks);
+                }
+              ),
               ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/projects/home');
@@ -50,61 +73,6 @@ class TodayScreen extends StatelessWidget {
           )
         );
       }
-    );
-  }
-}
-
-class TaskGroup extends StatelessWidget {
-  const TaskGroup(this.taskList, {Key? key}) : super(key: key);
-
-  final Future<List<Task>> taskList;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Task>>(
-      future: taskList,
-      builder: (context, snapshot) {
-        var tasks = snapshot.data;
-        if (tasks != null && tasks.isNotEmpty) {
-          return Container(
-            height: 200,
-            child: ListView.builder(
-              itemCount: tasks.length,
-              itemBuilder: (BuildContext context, int index) {
-                return TaskItem(tasks[index]);
-              }
-            )
-          );
-        }
-        return const TasksLoading();
-      }
-    );
-  }
-}
-
-class TasksLoading extends StatelessWidget {
-  const TasksLoading({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 60,
-      height: 60,
-      child: CircularProgressIndicator(),
-    );
-  }
-}
-
-class TaskItem extends StatelessWidget {
-  final Task task;
-
-  const TaskItem(this.task, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      child: Text(task.title),
     );
   }
 }
