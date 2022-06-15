@@ -11,7 +11,7 @@ class TaskGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 250,
       child: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (BuildContext context, int index) {
