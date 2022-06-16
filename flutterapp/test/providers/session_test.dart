@@ -11,33 +11,35 @@ void main() {
   late ApiToken token;
   int listenerCallCount = 0;
 
-  setUp(() async {
-    var dbhandler = LocalDatabase();
-    listenerCallCount = 0;
-    provider = SessionProvider(dbhandler)
-        ..addListener(() {
-          listenerCallCount += 1;
-        });
-    token = ApiToken.fromMap({
-      'token': 'abc123', 'lastUsed':null
+  group('$SessionProvider', () {
+    setUp(() async {
+      var dbhandler = LocalDatabase();
+      listenerCallCount = 0;
+      provider = SessionProvider(dbhandler)
+          ..addListener(() {
+            listenerCallCount += 1;
+          });
+      token = ApiToken.fromMap({
+        'token': 'abc123', 'lastUsed':null
+      });
     });
-  });
-  
-  test('setting token', () async {
-    expect(provider.apiToken, equals(null));
 
-    await provider.set(token);
-    expect(provider.apiToken, equals('abc123'));
-    expect(listenerCallCount, equals(1));
-  });
+    test('setting token', () async {
+      expect(() => provider.apiToken, throwsA(isA<Exception>()));
 
-  test('clearing token', () async {
-    expect(provider.apiToken, equals(null));
+      await provider.set(token);
+      expect(provider.apiToken, equals('abc123'));
+      expect(listenerCallCount, equals(1));
+    });
 
-    await provider.set(token);
-    expect(provider.apiToken, equals('abc123'));
+    test('clearing token', () async {
+      expect(() => provider.apiToken, throwsA(isA<Exception>()));
 
-    provider.clear();
-    expect(provider.apiToken, equals(null));
+      await provider.set(token);
+      expect(provider.apiToken, equals('abc123'));
+
+      provider.clear();
+      expect(() => provider.apiToken, throwsA(Exception));
+    });
   });
 }

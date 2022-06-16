@@ -28,7 +28,7 @@ class LocalDatabase {
     final path = join(dbPath, filePath);
 
     // For when schema gets broken.
-    // await deleteDatabase(path);
+    //await deleteDatabase(path);
     return await openDatabase(path, version: 1,
       onCreate: _createDb
     );
@@ -51,7 +51,9 @@ CREATE TABLE $apiTokensTable (
     await db.execute('''
 CREATE TABLE $todayTasksTable (
   id $idType,
-  project_id $intType,
+  project_slug $textType,
+  project_name $textType,
+  project_color $int,
   section_id $intType,
   title $textType,
   body $textType,

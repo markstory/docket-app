@@ -1,18 +1,22 @@
 class Task {
-  final int? id;
-  final int projectId;
-  final int? sectionId;
-  final String title;
-  final String body;
-  final DateTime? dueOn;
-  final int childOrder;
-  final int dayOrder;
-  final bool evening;
-  final bool completed;
+  int? id;
+  String projectSlug;
+  String projectName;
+  int projectColor;
+  int? sectionId;
+  String title;
+  String body;
+  DateTime? dueOn;
+  int childOrder;
+  int dayOrder;
+  bool evening;
+  bool completed;
 
   Task({
     this.id,
-    required this.projectId, 
+    required this.projectSlug, 
+    required this.projectName,
+    required this.projectColor,
     this.sectionId,
     required this.title,
     required this.body,
@@ -28,26 +32,43 @@ class Task {
     if (json['dueOn'] != null) {
       dueOn = DateTime.parse(json['due_on']);
     }
-    var projectId = json['project_id'];
-    projectId ??= json['project']['id'];
+    var projectSlug = json['project_slug'];
+    projectSlug ??= json['project']['slug'];
+    var projectColor = json['project_color'];
+    projectColor ??= json['project']['color'];
+    var projectName = json['project_name'];
+    projectName ??= json['project']['name'];
+
+    var evening = json['evening'];
+    if (evening is int) {
+      evening = evening == 0 ? false : true;
+    }
+    var completed = json['completed'];
+    if (completed is int) {
+      completed = completed == 0 ? false : true;
+    }
 
     return Task(
       id: json['id'],
-      projectId: projectId,
+      projectSlug: projectSlug,
+      projectName: projectName,
+      projectColor: projectColor,
       sectionId: json['section_id'],
       title: json['title'] ?? '',
       body: json['body'] ?? '',
       dueOn: dueOn,
       childOrder: json['child_order'],
       dayOrder: json['day_order'],
-      evening: json['evening'] > 0 ? true : false,
-      completed: json['completed'] > 0 ? true : false,
+      evening: evening,
+      completed: completed,
     );
   }
 
   Task copy({
     int? id,
-    int? projectId,
+    String? projectSlug,
+    String? projectName,
+    int? projectColor,
     int? sectionId,
     String? title,
     String? body,
@@ -59,7 +80,9 @@ class Task {
   }) {
     return Task(
       id: id ?? this.id,
-      projectId: projectId ?? this.projectId,
+      projectSlug: projectSlug ?? this.projectSlug,
+      projectName: projectName ?? this.projectName,
+      projectColor: projectColor ?? this.projectColor,
       sectionId: sectionId ?? this.sectionId,
       title: title ?? this.title,
       body: body ?? this.body,
@@ -74,7 +97,9 @@ class Task {
   Map<String, Object?> toMap() {
     return {
       'id': id,
-      'project_id': projectId,
+      'project_slug': projectSlug,
+      'project_name': projectName,
+      'project_color': projectColor,
       'section_id': sectionId,
       'title': title,
       'body': body,

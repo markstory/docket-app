@@ -1,24 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:docket/provider/tasks.dart';
+import 'package:docket/providers/tasks.dart';
 
 void main() {
-  test('setting token', () {
-    final model = SessionProvider();
-    expect(model.apiToken, equals(null));
+  group('$TasksProvider', () {
+    test('refreshTodayTasks fetches from server', () {
+      // todo
+    });
 
-    model.set('abc123');
-    expect(model.apiToken, equals('abc123'));
-  });
+    test('refreshTodayTasks handles error on server error', () {
+      // todo
+    });
 
-  test('cleaing token', () {
-    final model = SessionProvider();
-    expect(model.apiToken, equals(null));
+    test('todayTasks loads from local db', () {
+      // todo
+    });
 
-    model.set('abc123');
-    expect(model.apiToken, equals('abc123'));
+    test('todayTasks fetches from server', () {
+      // todo
+    });
 
-    model.clear();
-    expect(model.apiToken, equals(null));
+    test('todayTasks handles server errors', () {
+      // todo
+    });
   });
 }
