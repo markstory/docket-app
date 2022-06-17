@@ -48,6 +48,7 @@ class ApiTokenAuthenticationTest extends TestCase
 
         $token = $this->makeApiToken();
         $this->useApiToken($token->token);
+        $this->requestJson();
     }
 
     public function testTaskViewInvalidToken(): void
@@ -78,7 +79,7 @@ class ApiTokenAuthenticationTest extends TestCase
     {
         $this->post("/tasks/{$this->task->id}/complete");
         $this->assertResponseOk();
-        $var = $this->viewVariable('task');
-        $this->assertTrue($var->completed);
+        $task = $this->fetchTable('Tasks')->get($this->task->id);
+        $this->assertTrue($task->completed);
     }
 }
