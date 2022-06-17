@@ -73,4 +73,12 @@ class ApiTokenAuthenticationTest extends TestCase
         $var = $this->viewVariable('task');
         $this->assertSame($var->title, $this->task->title);
     }
+
+    public function testTaskUpdate(): void
+    {
+        $this->post("/tasks/{$this->task->id}/complete");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertTrue($var->completed);
+    }
 }

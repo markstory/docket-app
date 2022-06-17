@@ -295,6 +295,23 @@ class TasksControllerTest extends TestCase
         $this->assertEquals(1, $project->incomplete_task_count);
     }
 
+    public function testAddApiToken(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $token = $this->makeApiToken(1);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post('/tasks/add', [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->find()->firstOrFail();
+        $this->assertSame('first todo', $todo->title);
+    }
+
     public function testAddToBottom(): void
     {
         $project = $this->makeProject('work', 1);
@@ -386,6 +403,23 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->evening);
     }
 
+    public function testEditApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->find()->firstOrFail();
+        $this->assertSame('updated', $todo->title);
+    }
+
     public function testEditValidation(): void
     {
         $project = $this->makeProject('work', 1);
@@ -465,6 +499,20 @@ class TasksControllerTest extends TestCase
         $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
     }
 
+    public function testDeleteApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/delete");
+        $this->assertResponseOk();
+
+        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
+    }
+
     public function testDeletePermission(): void
     {
         $project = $this->makeProject('work', 2);
@@ -505,6 +553,21 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->completed);
     }
 
+    public function testCompleteApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/complete");
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertTrue($todo->completed);
+    }
+
     public function testIncompletePermissions(): void
     {
         $project = $this->makeProject('work', 2);
@@ -528,6 +591,21 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/incomplete");
         $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertFalse($todo->completed);
+    }
+
+    public function testIncompleteApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/incomplete");
+        $this->assertResponseOk();
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);
@@ -578,6 +656,24 @@ class TasksControllerTest extends TestCase
 
         $this->assertRedirect(['_name' => 'tasks:today']);
         $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->makeTask('second', $project->id, 1);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/move", [
+            'day_order' => 1,
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertEquals(1, $todo->day_order);
     }
 
     public function testMoveUpSameDay()
