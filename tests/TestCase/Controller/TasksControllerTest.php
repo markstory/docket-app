@@ -276,6 +276,21 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
+    public function testViewApi()
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->get("/tasks/{$first->id}/view");
+
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertSame($var->title, $first->title);
+    }
+
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);
@@ -427,6 +442,22 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => '',
+            'evening' => true,
+        ]);
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('errors');
+    }
+
+    public function testEditValidationApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
         $this->post("/tasks/{$first->id}/edit", [
             'title' => '',
             'evening' => true,
