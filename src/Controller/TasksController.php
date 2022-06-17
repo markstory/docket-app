@@ -82,7 +82,6 @@ class TasksController extends AppController
         $session = $this->request->getSession();
         if ($session->check('errors')) {
             $this->set('errors', $session->consume('errors'));
-            $serialize[] = 'errors';
         }
 
         // API serialization
@@ -99,6 +98,9 @@ class TasksController extends AppController
     public function add()
     {
         $task = $this->Tasks->newEmptyEntity();
+        $isJson = $this->request->is('json');
+        $redirect = null;
+        $serialize = [];
 
         if ($this->request->is('post')) {
             $task = $this->Tasks->patchEntity($task, $this->request->getData());
@@ -113,12 +115,22 @@ class TasksController extends AppController
             if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('Task saved.'));
 
-                return $this->redirect($this->referer(['_name' => 'tasks:today']));
+                $redirect = $this->referer(['_name' => 'tasks:today']);
+                $this->set('task', $task);
+                $serialize[] = 'task';
+            } else {
+                if (!$isJson) {
+                    $this->Flash->error(__('The task could not be saved. Please, try again.'));
+                    $this->request->getSession()->write('errors', $this->flattenErrors($task->getErrors()));
+                }
+                $redirect = $this->referer(['_name' => 'tasks:today']);
             }
-            $this->Flash->error(__('The task could not be saved. Please, try again.'));
-            $this->request->getSession()->write('errors', $this->flattenErrors($task->getErrors()));
-
-            return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        }
+        if (!$isJson && isset($redirect)) {
+            return $this->redirect($redirect);
+        }
+        if ($serialize) {
+            $this->viewBuilder()->setOption('serialize', $serialize);
         }
     }
 
@@ -145,6 +157,10 @@ class TasksController extends AppController
             }
         }
 
+        if ($this->request->is('json')) {
+            return $this->response->withStatus(204);
+        }
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -169,6 +185,10 @@ class TasksController extends AppController
             }
         }
 
+        if ($this->request->is('json')) {
+            return $this->response->withStatus(204);
+        }
+
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
     }
 
@@ -191,6 +211,18 @@ class TasksController extends AppController
             $this->Flash->success(__('Task reordered.'));
         } catch (InvalidArgumentException $e) {
             $this->Flash->error($e->getMessage());
+            $this->set('errors', [$e->getMessage()]);
+
+            if ($this->request->is('json')) {
+                $this->viewBuilder()->setOption('serialize', ['errors']);
+                $this->response = $this->response->withStatus(422);
+
+                return;
+            }
+        }
+
+        if ($this->request->is('json')) {
+            return $this->response->withStatus(204);
         }
 
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
@@ -243,8 +275,12 @@ class TasksController extends AppController
         ]);
         $this->Authorization->authorize($task);
 
-        $this->set(compact('task'));
+        $this->set('task', $task);
         $this->set('referer', $this->getReferer('tasks:today'));
+
+        if ($this->request->is('json')) {
+            $this->viewBuilder()->setOption('serialize', ['task']);
+        }
     }
 
     /**
@@ -264,6 +300,10 @@ class TasksController extends AppController
             $this->Flash->success(__('The task has been deleted.'));
         } else {
             $this->Flash->error(__('The task could not be deleted. Please, try again.'));
+        }
+
+        if ($this->request->is('json')) {
+            return $this->response->withStatus(201);
         }
 
         return $this->redirect($this->referer(['_name' => 'tasks:today']));

@@ -18,7 +18,7 @@ class ApiCsrfProtectionMiddleware extends CsrfProtectionMiddleware
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $authorization = $request->getHeaderLine('Authorization');
-        if ($authorization && strtolower(substr($authorization, 0, 7)) === 'bearer') {
+        if ($authorization && strtolower(substr($authorization, 0, 6)) === 'bearer') {
             return $handler->handle($request);
         }
 
