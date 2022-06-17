@@ -40,7 +40,7 @@ class TodayScreen extends StatelessWidget {
                     return const LoadingIndicator();
                   }
                   var tasks = data.where((task) => !task.evening).toList();
-                  return TaskGroup(tasks);
+                  return TaskGroup(tasks: tasks);
                 }
               ),
               Row(children: [
@@ -61,14 +61,15 @@ class TodayScreen extends StatelessWidget {
                     return const LoadingIndicator();
                   }
                   var tasks = data.where((task) => task.evening).toList();
-                  return TaskGroup(tasks);
+                  return TaskGroup(tasks: tasks);
                 }
               ),
               ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/projects/home');
-                  },
-                  child: const Text('View Home project')),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/projects/home');
+                },
+                child: const Text('View Home project')
+              ),
             ]
           )
         );

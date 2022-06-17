@@ -145,7 +145,10 @@ class ProjectBadge extends StatelessWidget {
           padding: const EdgeInsets.all(2),
           child: Icon(Icons.circle, color: color, size: 12),
         ),
-        Text(task.projectName),
+        Text(
+          task.projectName,
+          style: const TextStyle(color: Colors.black54),
+        ),
       ]
     );
   }

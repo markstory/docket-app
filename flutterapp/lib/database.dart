@@ -69,6 +69,23 @@ class LocalDatabase {
     });
   }
 
+  Future<void> updateTask(Task task) async {
+    final db = database();
+    var results = await db.value(todayTasksKey);
+    if (results == null || results['tasks'] == null) {
+      return;
+    }
+    var index = 0;
+    for (var item in results['tasks']) {
+      index++;
+      if (item['id'] == task.id) {
+        break;
+      }
+    }
+    results['tasks'][index] = task.toMap();
+    await db.refresh(todayTasksKey, results);
+  }
+
   /// Erase all rows in the 'today' view store.
   Future<void>clearTodayTasks() async {
     final db = database();

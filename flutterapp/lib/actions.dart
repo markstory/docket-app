@@ -74,3 +74,25 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
     }
   });
 }
+
+/// Update a task complete/incomplete state..
+Future<void> taskToggle(String apiToken, Task task) async {
+  var operation = task.completed ? 'incomplete' : 'complete';
+  var url = Uri.parse('$baseUrl/tasks/${task.id}/$operation');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode > 200) {
+      print('Could not update task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
+      throw Exception('Could not load update task');
+    }
+  });
+}
