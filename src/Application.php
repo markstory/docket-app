@@ -196,7 +196,7 @@ class Application extends BaseApplication implements
         $service->loadAuthenticator('Authentication.Token', [
             'queryParam' => 'token',
             'header' => 'Authorization',
-            'tokenPrefix' => 'Token',
+            'tokenPrefix' => 'Bearer',
         ]);
         // There are two possible login URLs. The default one is for HTML views.
         // And the other is for the in-progress mobile app.
