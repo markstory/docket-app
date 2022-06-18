@@ -21,7 +21,8 @@ class TaskItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Checkbox(
-                checkColor: Colors.green,
+                activeColor: Colors.green,
+                checkColor: Colors.white,
                 value: task.completed,
                 onChanged: (bool? value) {
                   if (value == null) {
@@ -40,8 +41,9 @@ class TaskItem extends StatelessWidget {
                     Text(
                       task.title,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        decorationStyle: task.completed ? TextDecorationStyle.solid : null,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough,
                       ),
                     ),
                     Padding(
