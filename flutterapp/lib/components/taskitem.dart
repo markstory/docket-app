@@ -25,24 +25,26 @@ class TaskItem extends StatelessWidget {
 
     Future<void> _handleDelete() async {
       var messenger = ScaffoldMessenger.of(context);
-      tasksProvider.deleteTask(session.apiToken, task).then((value) {
+      try {
+        await tasksProvider.deleteTask(session.apiToken, task);
         messenger.showSnackBar(successSnackBar(text: 'Task Deleted'));
-      }).catchError((error) {
-        messenger.showSnackBar(errorSnackBar(text: 'Could not update task'));
-      });
+      } catch (e) {
+        messenger.showSnackBar(errorSnackBar(text: 'Could not delete task'));
+      }
     }
 
     Future<void> _handleReschedule() async {
       // Show reschedule menu. Perhaps as a sheet?
     }
 
-    void _handleCompleted() {
+    void _handleCompleted() async {
       var messenger = ScaffoldMessenger.of(context);
-      tasksProvider.toggleComplete(session.apiToken, task).then((value) {
+      try {
+        await tasksProvider.toggleComplete(session.apiToken, task);
         messenger.showSnackBar(successSnackBar(text: 'Task Completed'));
-      }).catchError((error) {
+      } catch (e) {
         messenger.showSnackBar(errorSnackBar(text: 'Could not update task'));
-      });
+      }
     }
 
     return Row(

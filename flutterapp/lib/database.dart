@@ -99,7 +99,9 @@ class LocalDatabase {
     if (results == null || results['tasks'] == null) {
       return;
     }
-    results['tasks'] = results['tasks'].filter((Task item) => item.id != task.id);
+    results['tasks'].removeWhere(
+      (Map<String, Object?> item) => item['id'] == task.id
+    );
     await db.refresh(todayTasksKey, results);
   }
 

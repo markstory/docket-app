@@ -61,9 +61,8 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> deleteTask(String apiToken, Task task) async {
-    // Refresh server and then update local DB
-    await actions.deleteTask(apiToken, task);
     await _database.deleteTask(task);
+    await actions.deleteTask(apiToken, task);
 
     notifyListeners();
     // TODO flag local db as potentially stale
