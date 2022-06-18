@@ -100,7 +100,7 @@ class LocalDatabase {
       return;
     }
     results['tasks'].removeWhere(
-      (Map<String, Object?> item) => item['id'] == task.id
+      (item) => item['id'] == task.id
     );
     await db.refresh(todayTasksKey, results);
   }

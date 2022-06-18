@@ -29,7 +29,7 @@ void main() {
       "day_order": 0
     },
     {
-      "id": 1,
+      "id": 2,
       "project": {"slug": "home", "name": "home", "color": 1}, 
       "title": "cut grass",
       "body": "",
@@ -121,8 +121,8 @@ void main() {
         return Response('', 204);
       });
 
-      var db = LocalDatabase();
       var taskData = json.decode(todayTasksFixture);
+      var db = LocalDatabase();
       await db.set(LocalDatabase.todayTasksKey, taskData);
       var provider = TasksProvider(db);
 
@@ -134,6 +134,28 @@ void main() {
 
       expect(updated.length, equals(2));
       expect(updated[0].completed, equals(true));
+    });
+
+    test('deleteTask removes task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/1/delete'));
+        return Response('', 204);
+      });
+
+      var taskData = json.decode(todayTasksFixture);
+      var db = LocalDatabase();
+      await db.set(LocalDatabase.todayTasksKey, taskData);
+      var provider = TasksProvider(db);
+
+      var task = Task.fromMap(taskData['tasks'][0]);
+      await provider.deleteTask(apiToken, task);
+
+      expect(listenerCallCount, greaterThan(0));
+      var updated = await db.fetchTodayTasks();
+
+      // The task should be removed locally
+      expect(updated.length, equals(1));
+      expect(updated[0].id, isNot(equals(task.id)));
     });
   });
 }
