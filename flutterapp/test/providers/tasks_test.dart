@@ -130,10 +130,38 @@ void main() {
       await provider.toggleComplete(apiToken, task);
 
       expect(listenerCallCount, greaterThan(0));
-      var updated = await db.fetchTodayTasks();
 
+      var updated = await db.fetchTodayTasks(useStale: true);
       expect(updated.length, equals(2));
       expect(updated[0].completed, equals(true));
+
+      // Data should not be expired as the task wasn't on today.
+      var withExpired = await db.fetchTodayTasks(useStale: false);
+      expect(withExpired.length, equals(2));
+    });
+
+    test('toggleComplete expires local data', () async {
+      actions.client = MockClient((request) async {
+        return Response('', 204);
+      });
+
+      var taskData = json.decode(todayTasksFixture);
+      // Make the task due today.
+      taskData['tasks'][0]['due_on'] = DateTime.now().toIso8601String();
+
+      var db = LocalDatabase();
+      await db.set(LocalDatabase.todayTasksKey, taskData);
+      var provider = TasksProvider(db);
+
+      var task = Task.fromMap(taskData['tasks'][0]);
+      await provider.toggleComplete(apiToken, task);
+
+      var updated = await db.fetchTodayTasks(useStale: true);
+      expect(updated.length, equals(2));
+
+      // Data should be expired as task was due today
+      var withExpired = await db.fetchTodayTasks(useStale: false);
+      expect(withExpired.length, equals(0));
     });
 
     test('deleteTask removes task', () async {
@@ -151,7 +179,7 @@ void main() {
       await provider.deleteTask(apiToken, task);
 
       expect(listenerCallCount, greaterThan(0));
-      var updated = await db.fetchTodayTasks();
+      var updated = await db.fetchTodayTasks(useStale: true);
 
       // The task should be removed locally
       expect(updated.length, equals(1));
