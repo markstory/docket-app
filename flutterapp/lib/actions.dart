@@ -70,7 +70,6 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
       }
       return tasks;
     } catch (e, stacktrace) {
-      print('Failed to decode ${e.toString()} $stacktrace');
       developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;
     }
@@ -79,7 +78,7 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
 
 /// Update a task complete/incomplete state..
 Future<void> taskToggle(String apiToken, Task task) async {
-  var operation = task.completed ? 'incomplete' : 'complete';
+  var operation = task.completed ? 'complete' : 'incomplete';
   var url = Uri.parse('$baseUrl/tasks/${task.id}/$operation');
   developer.log('http.request url=$url');
 
@@ -92,9 +91,30 @@ Future<void> taskToggle(String apiToken, Task task) async {
       }
     );
 
-    if (response.statusCode > 200) {
-      print('Could not update task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
-      throw Exception('Could not load update task');
+    if (response.statusCode >= 400) {
+      developer.log('Could not update task. Response: ${utf8.decode(response.bodyBytes)} ${response.statusCode}');
+      throw Exception('Could not toggle task');
+    }
+  });
+}
+
+/// Delete a task
+Future<void> deleteTask(String apiToken, Task task) async {
+  var url = Uri.parse('$baseUrl/tasks/${task.id}/delete');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode >= 400) {
+      developer.log('Could not delete task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
+      throw Exception('Could not load delete task');
     }
   });
 }

@@ -26,12 +26,18 @@ class TodayScreen extends StatelessWidget {
                 const Icon(Icons.calendar_today),
                 const Text('Today'),
                 IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // Should show task create sheet.
-                    })
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    // Should show task create sheet.
+                  }
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed:() {
+                    tasks.refreshTodayTasks(session.apiToken);
+                  }
+                )
               ]),
-              // Today Task List
               FutureBuilder<List<Task>>(
                 future: taskList,
                 builder: (context, snapshot) {

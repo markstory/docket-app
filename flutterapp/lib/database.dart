@@ -83,12 +83,23 @@ class LocalDatabase {
     }
     var index = 0;
     for (var item in results['tasks']) {
-      index++;
       if (item['id'] == task.id) {
         break;
       }
+      index++;
     }
     results['tasks'][index] = task.toMap();
+    await db.refresh(todayTasksKey, results);
+  }
+
+  Future<void> deleteTask(Task task) async {
+    final db = database();
+
+    var results = await db.value(todayTasksKey);
+    if (results == null || results['tasks'] == null) {
+      return;
+    }
+    results['tasks'] = results['tasks'].filter((Task item) => item.id != task.id);
     await db.refresh(todayTasksKey, results);
   }
 

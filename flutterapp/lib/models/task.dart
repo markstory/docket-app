@@ -103,7 +103,7 @@ class Task {
       'section_id': sectionId,
       'title': title,
       'body': body,
-      'due_on': dueOn.toString(),
+      'due_on': dueOn != null ? dueOn.toString() : null,
       'child_order': childOrder,
       'day_order': dayOrder,
       'evening': evening,

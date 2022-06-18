@@ -1,18 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/providers/session.dart';
+import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
 enum Menu {move, reschedule, delete}
 
 class TaskItem extends StatelessWidget {
   final Task task;
-  final Function(Task task)? onChange;
 
-  const TaskItem(this.task, {super.key, this.onChange});
+  const TaskItem(this.task, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    var session = Provider.of<SessionProvider>(context);
+    var tasksProvider = Provider.of<TasksProvider>(context);
+
+    Future<void> _handleMove() async {
+      // Open project picker. Perhaps as a sheet?
+    }
+
+    Future<void> _handleDelete() async {
+      var messenger = ScaffoldMessenger.of(context);
+      tasksProvider.deleteTask(session.apiToken, task).then((value) {
+        messenger.showSnackBar(successSnackBar(text: 'Task Deleted'));
+      }).catchError((error) {
+        messenger.showSnackBar(errorSnackBar(text: 'Could not update task'));
+      });
+    }
+
+    Future<void> _handleReschedule() async {
+      // Show reschedule menu. Perhaps as a sheet?
+    }
+
+    void _handleCompleted() {
+      var messenger = ScaffoldMessenger.of(context);
+      tasksProvider.toggleComplete(session.apiToken, task).then((value) {
+        messenger.showSnackBar(successSnackBar(text: 'Task Completed'));
+      }).catchError((error) {
+        messenger.showSnackBar(errorSnackBar(text: 'Could not update task'));
+      });
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -25,13 +57,7 @@ class TaskItem extends StatelessWidget {
                 checkColor: Colors.white,
                 value: task.completed,
                 onChanged: (bool? value) {
-                  if (value == null) {
-                    return;
-                  }
-                  task.completed = value;
-                  if (onChange != null) {
-                    onChange?.call(task);
-                  }
+                  _handleCompleted();
                 }
               ),
               Flexible(
@@ -41,9 +67,10 @@ class TaskItem extends StatelessWidget {
                     Text(
                       task.title,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        decoration: TextDecoration.lineThrough,
+                      style: TextStyle(
+                        color: task.completed ? Colors.grey : Colors.black,
+                        decoration: task.completed
+                          ? TextDecoration.lineThrough : null,
                       ),
                     ),
                     Padding(
@@ -63,19 +90,12 @@ class TaskItem extends StatelessWidget {
         ),
         PopupMenuButton<Menu>(
           onSelected: (Menu item) {
-            print('selected $item');
-            switch (item) {
-              case Menu.move:
-              break;
-
-              case Menu.reschedule:
-              break;
-
-              case Menu.delete:
-              break;
-              default:
-                throw Exception('Invalid menu type $item');
-            }
+            var actions = {
+              Menu.move: _handleMove,
+              Menu.reschedule: _handleReschedule,
+              Menu.delete: _handleDelete,
+            };
+            actions[item]?.call();
           },
           itemBuilder: (BuildContext context) {
             return <PopupMenuEntry<Menu>>[

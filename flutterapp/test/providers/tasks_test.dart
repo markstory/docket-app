@@ -27,6 +27,17 @@ void main() {
       "due_on": null,
       "child_order": 0,
       "day_order": 0
+    },
+    {
+      "id": 1,
+      "project": {"slug": "home", "name": "home", "color": 1}, 
+      "title": "cut grass",
+      "body": "",
+      "evening": false,
+      "completed": false,
+      "due_on": null,
+      "child_order": 1,
+      "day_order": 1
     }
   ]
 }
@@ -45,6 +56,7 @@ void main() {
 
     test('refreshTodayTasks fetches from server', () async {
       actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/today'));
         return Response(todayTasksFixture, 200);
       });
 
@@ -54,6 +66,7 @@ void main() {
 
     test('refreshTodayTasks handles error on server error', () async {
       actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/today'));
         return Response('{"errors": ["bad things"]}', 400);
       });
 
@@ -75,20 +88,22 @@ void main() {
       var provider = TasksProvider(db);
 
       var tasks = await provider.todayTasks(apiToken);
-      expect(tasks.length, equals(1));
+      expect(tasks.length, equals(2));
       expect(tasks[0].title, equals('clean dishes'));
     });
 
     test('todayTasks fetches from server', () async {
       actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/today'));
         return Response(todayTasksFixture, 200);
       });
 
       var tasks = await provider.todayTasks(apiToken);
       expect(listenerCallCount, greaterThan(0));
-      expect(tasks.length, equals(1));
+      expect(tasks.length, equals(2));
       expect(tasks[0], isA<Task>());
       expect(tasks[0].title, equals('clean dishes'));
+      expect(tasks[1].title, equals('cut grass'));
     });
 
     test('todayTasks handles server errors', () async {
@@ -98,6 +113,27 @@ void main() {
 
       var tasks = await provider.todayTasks(apiToken);
       expect(tasks.length, equals(0));
+    });
+
+    test('toggleComplete sends complete request', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/1/complete'));
+        return Response('', 204);
+      });
+
+      var db = LocalDatabase();
+      var taskData = json.decode(todayTasksFixture);
+      await db.set(LocalDatabase.todayTasksKey, taskData);
+      var provider = TasksProvider(db);
+
+      var task = Task.fromMap(taskData['tasks'][0]);
+      await provider.toggleComplete(apiToken, task);
+
+      expect(listenerCallCount, greaterThan(0));
+      var updated = await db.fetchTodayTasks();
+
+      expect(updated.length, equals(2));
+      expect(updated[0].completed, equals(true));
     });
   });
 }
