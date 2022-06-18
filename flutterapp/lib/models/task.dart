@@ -29,7 +29,7 @@ class Task {
 
   factory Task.fromMap(Map<String, dynamic> json) {
     DateTime? dueOn;
-    if (json['dueOn'] != null) {
+    if (json['due_on'] != null) {
       dueOn = DateTime.parse(json['due_on']);
     }
     var projectSlug = json['project_slug'];

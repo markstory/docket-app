@@ -9,6 +9,8 @@ import 'package:docket/models/task.dart';
 /// how to do that yet.
 const baseUrl = 'https://docket.mark-story.com';
 
+var client = http.Client();
+
 /// Perform a login request.
 /// The entity returned contains an API token
 /// that can be used until revoked serverside.
@@ -19,7 +21,7 @@ Future<ApiToken> doLogin(String email, String password) async {
   var body = {'email': email, 'password': password};
 
   return Future(() async {
-    var response = await http.post(
+    var response = await client.post(
       url,
       headers: {'Accept': 'application/json'},
       body: body
@@ -47,7 +49,7 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
   developer.log('http.request url=$url');
 
   return Future(() async {
-    var response = await http.get(
+    var response = await client.get(
       url,
       headers: {
         'Authorization': 'Bearer $apiToken',
@@ -82,7 +84,7 @@ Future<void> taskToggle(String apiToken, Task task) async {
   developer.log('http.request url=$url');
 
   return Future(() async {
-    var response = await http.post(
+    var response = await client.post(
       url,
       headers: {
         'Authorization': 'Bearer $apiToken',

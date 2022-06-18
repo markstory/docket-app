@@ -12,7 +12,7 @@ void main() {
   int listenerCallCount = 0;
 
   group('$SessionProvider', () {
-    setUp(() async {
+    setUp(() {
       var dbhandler = LocalDatabase();
       listenerCallCount = 0;
       provider = SessionProvider(dbhandler)
@@ -29,7 +29,7 @@ void main() {
 
       await provider.set(token);
       expect(provider.apiToken, equals('abc123'));
-      expect(listenerCallCount, equals(1));
+      expect(listenerCallCount, greaterThan(0));
     });
 
     test('clearing token', () async {
@@ -39,7 +39,7 @@ void main() {
       expect(provider.apiToken, equals('abc123'));
 
       provider.clear();
-      expect(() => provider.apiToken, throwsA(Exception));
+      expect(() => provider.apiToken, throwsA(isA<Exception>()));
     });
   });
 }

@@ -26,6 +26,12 @@ class LocalDatabase {
     return JsonCacheMem(JsonCacheLocalStorage(storage));
   }
 
+  /// Directly set a key. Avoid use outside of tests.
+  Future<void> set(String key, Map<String, Object?> value) async {
+    final db = database();
+    await db.refresh(key, value);
+  }
+
   // ApiToken methods.
   Future<ApiToken> createApiToken(ApiToken apiToken) async {
     final db = database();

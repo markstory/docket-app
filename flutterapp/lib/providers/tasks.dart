@@ -18,7 +18,11 @@ class TasksProvider extends ChangeNotifier {
     _database = database;
   }
 
-  void refreshTodayTasks(String apiToken) async {
+  Future<void> clear() async {
+    await _database.clearTodayTasks();
+  }
+
+  Future<List<Task>> refreshTodayTasks(String apiToken) async {
     developer.log('Refreshing today tasks');
     await _database.clearTodayTasks();
     var tasks = await actions.loadTodayTasks(apiToken);
@@ -26,6 +30,8 @@ class TasksProvider extends ChangeNotifier {
 
     _todayTasks = tasks;
     notifyListeners();
+
+    return _todayTasks;
   }
 
   Future<List<Task>> todayTasks(String apiToken) async {
