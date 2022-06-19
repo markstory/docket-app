@@ -6,6 +6,7 @@ import 'package:docket/components/taskgroup.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/theme.dart';
 
 class TodayScreen extends StatelessWidget {
   static const routeName = '/tasks/today';
@@ -18,13 +19,17 @@ class TodayScreen extends StatelessWidget {
       builder: (context, tasks, child) {
         var session = Provider.of<SessionProvider>(context);
         var taskList = tasks.todayTasks(session.apiToken);
+        var theme = Theme.of(context);
+        var customColors = theme.extension<DocketColors>()!;
+
         return Scaffold(
           appBar: AppBar(),
           body: Column(
             children: [
               Row(children: [
-                const Icon(Icons.calendar_today),
-                const Text('Today'),
+                Icon(Icons.calendar_today, color: customColors.dueToday),
+                SizedBox(width: 4),
+                Text('Today', style: theme.textTheme.headlineSmall),
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () {
@@ -50,8 +55,9 @@ class TodayScreen extends StatelessWidget {
                 }
               ),
               Row(children: [
-                const Icon(Icons.mode_night),
-                const Text('This Evening'),
+                Icon(Icons.bedtime, color: customColors.dueEvening),
+                SizedBox(width: 4),
+                Text('This Evening', style: theme.textTheme.headlineSmall),
                 IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/components/taskdue.dart';
+import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
@@ -54,6 +56,8 @@ class TaskItem extends StatelessWidget {
         );
       }
     }
+    var theme = Theme.of(context);
+    var customColors = theme.extension<DocketColors>()!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,7 +67,7 @@ class TaskItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Checkbox(
-                activeColor: Colors.green,
+                activeColor: customColors.actionComplete,
                 checkColor: Colors.white,
                 value: task.completed,
                 onChanged: (bool? value) {
@@ -84,11 +88,13 @@ class TaskItem extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
+                      padding: const EdgeInsets.only(top: 4),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ProjectBadge(task: task),
+                          SizedBox(width: 4),
+                          TaskDue(task: task),
                         ]
                       ),
                     )
@@ -109,78 +115,30 @@ class TaskItem extends StatelessWidget {
           },
           itemBuilder: (BuildContext context) {
             return <PopupMenuEntry<Menu>>[
-              const PopupMenuItem<Menu>(
+              PopupMenuItem<Menu>(
                 value: Menu.move,
-                child: TaskMenuItem(
-                  icon: Icon(Icons.drive_file_move, color: Colors.amber),
-                  text: Text('Move To'),
+                child: ListTile(
+                  leading: Icon(Icons.drive_file_move, color: customColors.actionEdit),
+                  title: const Text('Move To'),
                 ),
               ),
-              const PopupMenuItem<Menu>(
+              PopupMenuItem<Menu>(
                 value: Menu.reschedule,
-                child: TaskMenuItem(
-                  icon: Icon(Icons.calendar_today, color: Colors.purple),
-                  text: Text('Reschedule'),
+                child: ListTile(
+                  leading: Icon(Icons.calendar_today, color: customColors.dueToday),
+                  title: const Text('Reschedule'),
                 ),
               ),
-              const PopupMenuItem<Menu>(
+              PopupMenuItem<Menu>(
                 value: Menu.delete,
-                child: TaskMenuItem(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  text: Text('Delete'),
+                child: ListTile(
+                  leading: Icon(Icons.delete, color: customColors.actionDelete),
+                  title: const Text('Delete'),
                 ),
               ),
             ];
           }
         )
-      ]
-    );
-  }
-}
-
-class TaskMenuItem extends StatelessWidget {
-  final Widget icon;
-  final Widget text;
-
-  const TaskMenuItem({
-    required this.icon, 
-    required this.text, 
-    super.key
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: icon,
-        ),
-        text
-      ],
-    );
-  }
-}
-
-class ProjectBadge extends StatelessWidget {
-  final Task task;
-
-  const ProjectBadge({required this.task, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var color = getProjectColor(task.projectColor);
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(2),
-          child: Icon(Icons.circle, color: color, size: 12),
-        ),
-        Text(
-          task.projectName,
-          style: const TextStyle(color: Colors.black54),
-        ),
       ]
     );
   }

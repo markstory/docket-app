@@ -36,6 +36,7 @@ dependencies:
   json_cache: ^1.2.1
   localstorage: ^4.0.0
   adaptive_theme: ^3.0.0
+  intl: ^0.17.0
 
 
 dev_dependencies:

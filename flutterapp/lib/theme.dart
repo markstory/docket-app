@@ -90,6 +90,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
   final Color? dueOverdue;
   final Color? dueToday;
   final Color? dueEvening;
+  final Color? dueTomorrow;
   final Color? dueWeek;
   final Color? dueFortnight;
 
@@ -101,6 +102,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     required this.dueNone,
     required this.dueOverdue,
     required this.dueToday,
+    required this.dueTomorrow,
     required this.dueEvening,
     required this.dueWeek,
     required this.dueFortnight,
@@ -115,6 +117,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     Color? dueNone,
     Color? dueOverdue,
     Color? dueToday,
+    Color? dueTomorrow,
     Color? dueEvening,
     Color? dueWeek,
     Color? dueFortnight,
@@ -127,6 +130,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueNone: dueNone ?? this.dueNone,
       dueOverdue: dueOverdue ?? this.dueOverdue,
       dueToday: dueToday ?? this.dueToday,
+      dueTomorrow: dueTomorrow ?? this.dueTomorrow,
       dueEvening: dueEvening ?? this.dueEvening,
       dueWeek: dueWeek ?? this.dueWeek,
       dueFortnight: dueFortnight ?? this.dueFortnight,
@@ -146,6 +150,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueNone: Color.lerp(dueNone, other.dueNone, t),
       dueOverdue: Color.lerp(dueOverdue, other.dueOverdue, t),
       dueToday: Color.lerp(dueToday, other.dueToday, t),
+      dueTomorrow: Color.lerp(dueTomorrow, other.dueTomorrow, t),
       dueEvening: Color.lerp(dueEvening, other.dueEvening, t),
       dueWeek: Color.lerp(dueWeek, other.dueWeek, t),
       dueFortnight: Color.lerp(dueFortnight, other.dueFortnight, t),
@@ -160,6 +165,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueNone: gray600,
     dueOverdue: red500,
     dueToday: purple500,
+    dueTomorrow: ochre500,
     dueEvening: blue500,
     dueWeek: blue700,
     dueFortnight: gray500,
@@ -173,6 +179,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueNone: gray300,
     dueOverdue: red500,
     dueToday: purple500,
+    dueTomorrow: ochre500,
     dueEvening: blue500,
     dueWeek: blue300,
     dueFortnight: gray500,
@@ -183,7 +190,7 @@ final lightTheme = ThemeData(
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: DocketColors.purple500,
-    onPrimary: DocketColors.purple700,
+    onPrimary: DocketColors.white,
     primaryContainer: DocketColors.purple100,
     secondary: DocketColors.ochre500,
     onSecondary: DocketColors.ochre700,
@@ -208,10 +215,10 @@ final darkTheme = ThemeData(
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
     primary: DocketColors.purple500,
-    onPrimary: DocketColors.purple700,
+    onPrimary: DocketColors.gray300,
     primaryContainer: DocketColors.purple900,
     secondary: DocketColors.ochre500,
-    onSecondary: DocketColors.ochre700,
+    onSecondary: DocketColors.gray300,
     secondaryContainer: DocketColors.ochre900,
     tertiary: DocketColors.blue500,
     onTertiary: DocketColors.blue700,
