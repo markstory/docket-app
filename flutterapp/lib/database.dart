@@ -48,7 +48,15 @@ class LocalDatabase {
     return false;
   }
 
-  /// Expire local data
+  /// Expire tasks individually
+  /// When a task is updated or created we need to
+  /// clear the local cache so that the new item is visible.
+  ///
+  /// In a SQL based storage you'd be able to remove/update the row
+  /// individually. Because our local database is view-based. We need
+  /// custom logic to remove cached data for the impacted views.
+  /// This ensures that we don't provide stale state to the Provider
+  /// layer and instead Providers fetch fresh data from the Server.
   void _expireTask(Task task) async {
     var now = DateTime.now();
     List<String> expire = [];
@@ -161,9 +169,14 @@ class LocalDatabase {
     _expireTask(task);
   }
 
-  /// Erase all rows in the 'today' view store.
+  // Data Erasing Methods
+  Future<void>clearExpired() async {
+    final db = database();
+    return db.remove(expiredKey);
+  }
+
   Future<void>clearTodayTasks() async {
     final db = database();
-    await db.remove(todayTasksKey);
+    return db.remove(todayTasksKey);
   }
 }

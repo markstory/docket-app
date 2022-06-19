@@ -18,6 +18,7 @@ class TasksProvider extends ChangeNotifier {
 
   Future<void> clear() async {
     await _database.clearTodayTasks();
+    await _database.clearExpired();
     notifyListeners();
   }
 
@@ -57,7 +58,6 @@ class TasksProvider extends ChangeNotifier {
     await actions.taskToggle(apiToken, task);
 
     notifyListeners();
-    // TODO flag local db as potentially stale
   }
 
   Future<void> deleteTask(String apiToken, Task task) async {
@@ -65,6 +65,5 @@ class TasksProvider extends ChangeNotifier {
     await actions.deleteTask(apiToken, task);
 
     notifyListeners();
-    // TODO flag local db as potentially stale
   }
 }
