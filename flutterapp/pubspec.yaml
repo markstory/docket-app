@@ -35,6 +35,7 @@ dependencies:
   path: ^1.8.1
   json_cache: ^1.2.1
   localstorage: ^4.0.0
+  adaptive_theme: ^3.0.0
 
 
 dev_dependencies:

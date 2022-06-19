@@ -27,9 +27,13 @@ class TaskItem extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       try {
         await tasksProvider.deleteTask(session.apiToken, task);
-        messenger.showSnackBar(successSnackBar(text: 'Task Deleted'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Task Deleted')
+        );
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(text: 'Could not delete task'));
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Could not delete task')
+        );
       }
     }
 
@@ -41,9 +45,13 @@ class TaskItem extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       try {
         await tasksProvider.toggleComplete(session.apiToken, task);
-        messenger.showSnackBar(successSnackBar(text: 'Task Completed'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Task Completed')
+        );
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(text: 'Could not update task'));
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Could not update task')
+        );
       }
     }
 
