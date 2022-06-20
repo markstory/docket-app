@@ -25,12 +25,16 @@ class TaskDetailsScreen extends StatelessWidget {
         var theme = Theme.of(context);
 
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(title: const Text('Task Details')),
           body: FutureBuilder<Task>(
             future: pendingTask,
             builder: (context, snapshot) {
-              var task = snapshot.data!;
-
+              var task = snapshot.data;
+              if (task == null) {
+                return const Card(
+                  child: Text("404! Could not find that task.")
+                );
+              }
               return Column(
                 children: [
                   Row(

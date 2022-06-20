@@ -59,7 +59,7 @@ class TaskItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextButton(
+                    GestureDetector(
                       child: Text(
                         task.title,
                         overflow: TextOverflow.ellipsis,
@@ -69,7 +69,7 @@ class TaskItem extends StatelessWidget {
                             ? TextDecoration.lineThrough : null,
                         ),
                       ),
-                      onPressed: () {
+                      onTap: () {
                         Navigator.pushNamed(context, '/tasks/${task.id}/view');
                       }
                     ),
