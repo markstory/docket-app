@@ -50,20 +50,13 @@ class TaskDetailsScreen extends StatelessWidget {
                       TaskDue(task),
                     ]
                   ),
-                  Row(
-                    children: [
-                      Text('Notes', style: theme.textTheme.bodyLarge),
-                      // TODO make this rendered markdown, and click to edit.
-                      Text(task.body),
-                    ]
-                  ),
-                  Row(
-                    children: [
-                      Text('Sub-tasks', style: theme.textTheme.bodyLarge),
-                      // TODO make this rendered markdown, and click to edit.
-                      const Text('TODO subtasks go here'),
-                    ]
-                  ),
+                  // Task Notes
+                  Text('Notes', style: theme.textTheme.bodyLarge),
+                  Text(task.body),
+
+                  // Sub-tasks list
+                  Text('Sub-tasks', style: theme.textTheme.bodyLarge),
+                  const Text('TODO subtasks go here'),
                 ]
               );
             }
