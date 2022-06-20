@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 /// Date formatter for use in task rows
@@ -7,8 +8,8 @@ String compactDate(DateTime? value){
   if (value == null) {
     return '';
   }
-  var today = DateTime.now();
-  var delta = value.difference(today).inDays;
+  var today = DateUtils.dateOnly(DateTime.now());
+  var delta = DateUtils.dateOnly(value).difference(today).inDays;
 
   // In the past? Show the date.
   if (delta < -90) {
@@ -25,7 +26,7 @@ String compactDate(DateTime? value){
     return 'Tomorrow';
   }
   if (delta < 7) {
-    var formatter = DateFormat('iiii');
+    var formatter = DateFormat('EEEE');
     return formatter.format(value);
   }
   var formatter = DateFormat('MMM d');
