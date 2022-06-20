@@ -53,7 +53,24 @@ class TasksProvider extends ChangeNotifier {
         await _database.setTodayTasks(tasks);
       }
       notifyListeners();
-    } catch (e, stacktrace) {
+    } catch (e) {
+      //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
+      tasks = [];
+    }
+    return tasks;
+  }
+
+  Future<List<Task>> upcomingTasks(String apiToken) async {
+    List<Task> tasks = [];
+    try {
+      tasks = await _database.fetchUpcomingTasks();
+      if (tasks.isEmpty) {
+        tasks = await actions.loadUpcomingTasks(apiToken);
+
+        await _database.setUpcomingTasks(tasks);
+      }
+      notifyListeners();
+    } catch (e) {
       //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
       tasks = [];
     }
@@ -66,7 +83,7 @@ class TasksProvider extends ChangeNotifier {
 
     // Update local db and server
     await _database.updateTask(task);
-    await actions.taskToggle(apiToken, task);
+    await actions.toggleTask(apiToken, task);
 
     notifyListeners();
   }

@@ -12,7 +12,8 @@ class LocalDatabase {
   // Storage keys.
   static const String apiTokenKey = 'v1:apitoken';
   static const String todayTasksKey = 'v1:todaytasks';
-  static const String taskMapKey = 'v1:taskMap';
+  static const String upcomingTasksKey = 'v1:upcomingtasks';
+  static const String taskMapKey = 'v1:taskmap';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -37,6 +38,8 @@ class LocalDatabase {
   /// so we flag data as expired and then refresh next time
   /// data is used.
   Future<bool> _isDataStale(String key, bool useStale) async {
+    // TODO implement date checks so that local cache expires automatically
+    // every few hours.
     final db = database();
     var staleData = await db.value(expiredKey);
     if (staleData == null || staleData[key] == null || useStale) {
@@ -62,12 +65,14 @@ class LocalDatabase {
     var now = DateTime.now();
     List<String> expire = [];
 
+    // If the task has a due date expire upcoming and possibly
+    // today views.
     if (task.dueOn != null) {
       var delta = task.dueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
         expire.add(todayTasksKey);
       }
-      // TODO expire upcoming view.
+      expire.add(upcomingTasksKey);
     }
 
     // TODO implement project view expiration.
@@ -115,6 +120,16 @@ class LocalDatabase {
     });
   }
 
+  /// Add records to the 'today' view store.
+  Future<void> setUpcomingTasks(List<Task> tasks) async {
+    await addTasks(tasks);
+
+    final db = database();
+    await db.refresh(upcomingTasksKey, {
+      'tasks': tasks.map((task) => task.id).toList(),
+    });
+  }
+
   /// Store a list of Tasks.
   /// Provides more direct access to the database.
   Future<void> addTasks(List<Task> tasks) async {
@@ -140,14 +155,28 @@ class LocalDatabase {
       return [];
     }
     var results = await db.value(todayTasksKey);
-    if (results == null) {
+    if (results == null || results['tasks'] == null) {
       return [];
     }
-    if (results['tasks'] != null) {
-      List<int> taskIds = results['tasks'].cast<int>();
-      return getTasksById(taskIds);
+    List<int> taskIds = results['tasks'].cast<int>();
+
+    return getTasksById(taskIds);
+  }
+
+  /// Fetch all records in the 'upcoming' view store.
+  Future<List<Task>> fetchUpcomingTasks({useStale = false}) async {
+    final db = database();
+    var isStale = await _isDataStale(upcomingTasksKey, useStale);
+    if (isStale) {
+      return [];
     }
-    return [];
+    var results = await db.value(upcomingTasksKey);
+    if (results == null || results['tasks'] == null) {
+      return [];
+    }
+    List<int> taskIds = results['tasks'].cast<int>();
+
+    return getTasksById(taskIds);
   }
 
   Future<List<Task>> getTasksById(List<int> taskIds) async {
@@ -202,9 +231,12 @@ class LocalDatabase {
     return db.remove(expiredKey);
   }
 
-  Future<void>clearTasks() async {
+  Future<List<void>>clearTasks() async {
     final db = database();
-    await db.remove(taskMapKey);
-    return db.remove(todayTasksKey);
+    return Future.wait([
+      db.remove(taskMapKey),
+      db.remove(todayTasksKey),
+      db.remove(upcomingTasksKey),
+    ]);
   }
 }

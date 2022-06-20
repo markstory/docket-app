@@ -15,18 +15,14 @@ class TaskGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(
-      builder: (BuildContext context, TasksProvider tasksProvider, child) {
-        return SizedBox(
-          height: 250,
-          child: ListView.builder(
-            itemCount: tasks.length,
-            itemBuilder: (BuildContext context, int index) {
-              return TaskItem(tasks[index]);
-            }
-          )
-        );
-      }
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (BuildContext context, int index) {
+          return TaskItem(tasks[index]);
+        }
+      )
     );
   }
 }

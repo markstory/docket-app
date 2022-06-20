@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/components/taskgroup.dart';
+import 'package:docket/models/task.dart';
+import 'package:docket/providers/session.dart';
+import 'package:docket/providers/tasks.dart';
+
 
 class UpcomingScreen extends StatelessWidget {
   static const routeName = '/tasks/upcoming';
@@ -7,25 +15,33 @@ class UpcomingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO figure out how to load the tasks/upcoming data.
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          const Text('Upcoming'),
-          Row(
+    return Consumer<TasksProvider>(
+      builder: (context, tasks, child) {
+        var session = Provider.of<SessionProvider>(context);
+        var taskList = tasks.upcomingTasks(session.apiToken);
+        var theme = Theme.of(context);
+
+        return Scaffold(
+          appBar: AppBar(),
+          body: Column(
             children: [
-              const Text('Today'),
-              IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    // Should show task create sheet.
-                  })
+              Text('Upcoming', style: theme.textTheme.headlineSmall),
+              FutureBuilder<List<Task>>(
+                future: taskList,
+                builder: (context, snapshot) {
+                  var data = snapshot.data;
+                  if (data == null) {
+                    return const LoadingIndicator();
+                  }
+                  // TODO Partition data by date/evening and render
+                  // multiple groups.
+                  return TaskGroup(tasks: data);
+                }
+              ),
             ]
-          ),
-          // TODO add a task list sorter here.
-        ]
-      )
+          )
+        );
+      }
     );
   }
 }

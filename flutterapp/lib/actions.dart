@@ -76,8 +76,41 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
   });
 }
 
+/// Fetch the tasks for the 'Upcoming' view
+Future<List<Task>> loadUpcomingTasks(String apiToken) async {
+  var url = Uri.parse('$baseUrl/tasks/upcoming');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode > 200) {
+      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Could not load tasks');
+    }
+
+    try {
+      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      List<Task> tasks = [];
+      for (var item in decoded['tasks']) {
+        tasks.add(Task.fromMap(item));
+      }
+      return tasks;
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      rethrow;
+    }
+  });
+}
+
 /// Update a task complete/incomplete state..
-Future<void> taskToggle(String apiToken, Task task) async {
+Future<void> toggleTask(String apiToken, Task task) async {
   var operation = task.completed ? 'complete' : 'incomplete';
   var url = Uri.parse('$baseUrl/tasks/${task.id}/$operation');
   developer.log('http.request url=$url');
