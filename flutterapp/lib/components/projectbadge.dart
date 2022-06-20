@@ -6,7 +6,7 @@ import 'package:docket/models/task.dart';
 class ProjectBadge extends StatelessWidget {
   final Task task;
 
-  const ProjectBadge({required this.task, super.key});
+  const ProjectBadge(this.task, {super.key});
 
   @override
   Widget build(BuildContext context) {

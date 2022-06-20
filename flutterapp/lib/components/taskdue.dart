@@ -9,7 +9,7 @@ class TaskDue extends StatelessWidget {
   final bool showNull;
   final bool showDate;
 
-  const TaskDue({required this.task, this.showNull = false, this.showDate = false, super.key});
+  const TaskDue(this.task, {this.showNull = false, this.showDate = false, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,12 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'database.dart';
-import 'theme.dart' as appTheme;
+import 'theme.dart' as app_theme;
 import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/today.dart';
+import 'screens/taskdetails.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
 
@@ -43,8 +44,8 @@ class DocketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: appTheme.lightTheme,
-      dark: appTheme.darkTheme,
+      light: app_theme.lightTheme,
+    dark: app_theme.darkTheme,
       initial: savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) {
         return MaterialApp(
@@ -69,6 +70,16 @@ class DocketApp extends StatelessWidget {
             if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'projects') {
               var slug = uri.pathSegments[1].toString();
               return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(slug)));
+            }
+
+            // Task Detailed View.
+            if (
+              uri.pathSegments.length == 3 && 
+              uri.pathSegments[0] == 'tasks' &&
+              uri.pathSegments[2] == 'view'
+            ) {
+              var id = int.parse(uri.pathSegments[1]);
+              return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(id)));
             }
 
             return MaterialPageRoute(builder: (context) => const UnknownScreen());

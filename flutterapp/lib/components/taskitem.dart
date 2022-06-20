@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/taskdue.dart';
 import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/task.dart';
@@ -43,19 +44,6 @@ class TaskItem extends StatelessWidget {
       // Show reschedule menu. Perhaps as a sheet?
     }
 
-    void _handleCompleted() async {
-      var messenger = ScaffoldMessenger.of(context);
-      try {
-        await tasksProvider.toggleComplete(session.apiToken, task);
-        messenger.showSnackBar(
-          successSnackBar(context: context, text: 'Task Completed')
-        );
-      } catch (e) {
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Could not update task')
-        );
-      }
-    }
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
@@ -66,35 +54,33 @@ class TaskItem extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Checkbox(
-                activeColor: customColors.actionComplete,
-                checkColor: Colors.white,
-                value: task.completed,
-                onChanged: (bool? value) {
-                  _handleCompleted();
-                }
-              ),
+              TaskCheckbox(task),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      task.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: task.completed ? Colors.grey : Colors.black,
-                        decoration: task.completed
-                          ? TextDecoration.lineThrough : null,
+                    TextButton(
+                      child: Text(
+                        task.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: task.completed ? Colors.grey : Colors.black,
+                          decoration: task.completed
+                            ? TextDecoration.lineThrough : null,
+                        ),
                       ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/tasks/${task.id}/view');
+                      }
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ProjectBadge(task: task),
-                          SizedBox(width: 4),
-                          TaskDue(task: task),
+                          ProjectBadge(task),
+                          const SizedBox(width: 4),
+                          TaskDue(task),
                         ]
                       ),
                     )
