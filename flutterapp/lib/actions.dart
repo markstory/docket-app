@@ -118,3 +118,32 @@ Future<void> deleteTask(String apiToken, Task task) async {
     }
   });
 }
+
+/// Fetch a task by id
+Future<Task> fetchTaskById(String apiToken, int id) async {
+  var url = Uri.parse('$baseUrl/tasks/$id/view');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode > 200) {
+      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Could not load tasks');
+    }
+
+    try {
+      var taskData = jsonDecode(utf8.decode(response.bodyBytes));
+      return Task.fromMap(taskData['task']);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      rethrow;
+    }
+  });
+}

@@ -17,19 +17,30 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> clear() async {
-    await _database.clearTodayTasks();
+    await _database.clearTasks();
     await _database.clearExpired();
     notifyListeners();
   }
 
   Future<List<Task>> refreshTodayTasks(String apiToken) async {
-    await _database.clearTodayTasks();
     var tasks = await actions.loadTodayTasks(apiToken);
-    await _database.insertTodayTasks(tasks);
+    await _database.setTodayTasks(tasks);
 
     notifyListeners();
 
     return tasks;
+  }
+
+  Future<Task> getById(String apiToken, int id) async {
+    late Task? task;
+    try {
+      task = await _database.fetchTaskById(id);
+    } catch (e) {
+      rethrow;
+    }
+    task ??= await actions.fetchTaskById(apiToken, id);
+
+    return task;
   }
 
   Future<List<Task>> todayTasks(String apiToken) async {
@@ -39,7 +50,7 @@ class TasksProvider extends ChangeNotifier {
       if (tasks.isEmpty) {
         tasks = await actions.loadTodayTasks(apiToken);
 
-        await _database.insertTodayTasks(tasks);
+        await _database.setTodayTasks(tasks);
       }
       notifyListeners();
     } catch (e, stacktrace) {

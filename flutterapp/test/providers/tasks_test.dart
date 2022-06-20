@@ -15,6 +15,37 @@ void main() {
   int listenerCallCount = 0;
   String apiToken = 'api-token';
   String todayTasksFixture = """
+{"tasks": [1, 2]}
+""";
+
+  String taskMapFixture = """
+{
+  "1": {
+    "id": 1,
+    "project": {"slug": "home", "name": "home", "color": 1}, 
+    "title": "clean dishes",
+    "body": "",
+    "evening": false,
+    "completed": false,
+    "due_on": null,
+    "child_order": 0,
+    "day_order": 0
+  },
+  "2": {
+    "id": 2,
+    "project": {"slug": "home", "name": "home", "color": 1}, 
+    "title": "cut grass",
+    "body": "",
+    "evening": false,
+    "completed": false,
+    "due_on": null,
+    "child_order": 1,
+    "day_order": 1
+  }
+}
+  """;
+
+  String tasksTodayResponseFixture = """
 {
   "tasks": [
     {
@@ -41,7 +72,7 @@ void main() {
     }
   ]
 }
-  """;
+""";
 
   group('$TasksProvider', () {
     setUp(() async {
@@ -54,17 +85,17 @@ void main() {
       await provider.clear();
     });
 
-    test('refreshTodayTasks fetches from server', () async {
+    test('refreshTodayTasks() fetches from server', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/today'));
-        return Response(todayTasksFixture, 200);
+        return Response(tasksTodayResponseFixture, 200);
       });
 
       await provider.refreshTodayTasks(apiToken);
       expect(listenerCallCount, greaterThan(0));
     });
 
-    test('refreshTodayTasks handles error on server error', () async {
+    test('refreshTodayTasks() handles error on server error', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/today'));
         return Response('{"errors": ["bad things"]}', 400);
@@ -78,12 +109,13 @@ void main() {
       }
     });
 
-    test('todayTasks loads from local db', () async {
+    test('todayTasks() loads from local db', () async {
       actions.client = MockClient((request) async {
         throw Exception('Should not use network');
       });
 
       var db = LocalDatabase();
+      await db.set(LocalDatabase.taskMapKey, json.decode(taskMapFixture));
       await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
       var provider = TasksProvider(db);
 
@@ -92,10 +124,10 @@ void main() {
       expect(tasks[0].title, equals('clean dishes'));
     });
 
-    test('todayTasks fetches from server', () async {
+    test('todayTasks() fetches from server', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/today'));
-        return Response(todayTasksFixture, 200);
+        return Response(tasksTodayResponseFixture, 200);
       });
 
       var tasks = await provider.todayTasks(apiToken);
@@ -106,7 +138,7 @@ void main() {
       expect(tasks[1].title, equals('cut grass'));
     });
 
-    test('todayTasks handles server errors', () async {
+    test('todayTasks() handles server errors', () async {
       actions.client = MockClient((request) async {
         return Response('{"errors": ["bad things"]}', 400);
       });
@@ -115,18 +147,19 @@ void main() {
       expect(tasks.length, equals(0));
     });
 
-    test('toggleComplete sends complete request', () async {
+    test('toggleComplete() sends complete request', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/complete'));
         return Response('', 204);
       });
 
-      var taskData = json.decode(todayTasksFixture);
+      var taskData = json.decode(taskMapFixture);
       var db = LocalDatabase();
-      await db.set(LocalDatabase.todayTasksKey, taskData);
+      await db.set(LocalDatabase.taskMapKey, taskData);
+      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['tasks'][0]);
+      var task = Task.fromMap(taskData['1']);
       await provider.toggleComplete(apiToken, task);
 
       expect(listenerCallCount, greaterThan(0));
@@ -140,20 +173,21 @@ void main() {
       expect(withExpired.length, equals(2));
     });
 
-    test('toggleComplete expires local data', () async {
+    test('toggleComplete() expires local data', () async {
       actions.client = MockClient((request) async {
         return Response('', 204);
       });
 
-      var taskData = json.decode(todayTasksFixture);
+      var taskData = json.decode(taskMapFixture);
       // Make the task due today.
-      taskData['tasks'][0]['due_on'] = DateTime.now().toIso8601String();
+      taskData['1']['due_on'] = DateTime.now().toIso8601String();
 
       var db = LocalDatabase();
-      await db.set(LocalDatabase.todayTasksKey, taskData);
+      await db.set(LocalDatabase.taskMapKey, taskData);
+      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['tasks'][0]);
+      var task = Task.fromMap(taskData['1']);
       await provider.toggleComplete(apiToken, task);
 
       var updated = await db.fetchTodayTasks(useStale: true);
@@ -164,18 +198,19 @@ void main() {
       expect(withExpired.length, equals(0));
     });
 
-    test('deleteTask removes task', () async {
+    test('deleteTask() removes task', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/delete'));
         return Response('', 204);
       });
 
-      var taskData = json.decode(todayTasksFixture);
       var db = LocalDatabase();
-      await db.set(LocalDatabase.todayTasksKey, taskData);
+      var taskData = json.decode(taskMapFixture);
+      await db.set(LocalDatabase.taskMapKey, taskData);
+      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['tasks'][0]);
+      var task = Task.fromMap(taskData['1']);
       await provider.deleteTask(apiToken, task);
 
       expect(listenerCallCount, greaterThan(0));
@@ -184,6 +219,34 @@ void main() {
       // The task should be removed locally
       expect(updated.length, equals(1));
       expect(updated[0].id, isNot(equals(task.id)));
+    });
+
+    test('getById() reads tasks', () async {
+      actions.client = MockClient((request) async {
+        throw Exception('No request should be sent.');
+      });
+
+      var taskData = json.decode(taskMapFixture);
+      var db = LocalDatabase();
+      await db.set(LocalDatabase.taskMapKey, taskData);
+      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
+      var provider = TasksProvider(db);
+
+      var task = await provider.getById(apiToken, 1);
+      expect(task.id, equals(1));
+    });
+
+    test('getById() throws error on network failure', () async {
+      actions.client = MockClient((request) async {
+        return Response('error', 500);
+      });
+
+      try {
+        await provider.getById(apiToken, 1);
+        fail('Should not get here');
+      } catch (err) {
+        expect(err.toString(), contains('Could not load'));
+      }
     });
   });
 }

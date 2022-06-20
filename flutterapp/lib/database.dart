@@ -12,6 +12,7 @@ class LocalDatabase {
   // Storage keys.
   static const String apiTokenKey = 'v1:apitoken';
   static const String todayTasksKey = 'v1:todaytasks';
+  static const String taskMapKey = 'v1:taskMap';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -66,10 +67,9 @@ class LocalDatabase {
       if (delta != null && delta.inDays <= 0) {
         expire.add(todayTasksKey);
       }
-    }
-    if (task.dueOn != null) {
       // TODO expire upcoming view.
     }
+
     // TODO implement project view expiration.
 
     final db = database();
@@ -105,6 +105,32 @@ class LocalDatabase {
     return null;
   }
 
+  /// Add records to the 'today' view store.
+  Future<void> setTodayTasks(List<Task> tasks) async {
+    await addTasks(tasks);
+
+    final db = database();
+    await db.refresh(todayTasksKey, {
+      'tasks': tasks.map((task) => task.id).toList(),
+    });
+  }
+
+  /// Store a list of Tasks.
+  /// Provides more direct access to the database.
+  Future<void> addTasks(List<Task> tasks) async {
+    final db = database();
+    var indexed = await db.value(taskMapKey);
+    indexed ??= {};
+    for (var task in tasks) {
+      var id = task.id;
+      if (id == null) {
+        continue;
+      }
+      indexed[id.toString()] = task.toMap();
+    }
+    await db.refresh(taskMapKey, indexed);
+  }
+
   // Task Loader Methods.
   /// Fetch all records in the 'today' view store.
   Future<List<Task>> fetchTodayTasks({useStale = false}) async {
@@ -118,53 +144,54 @@ class LocalDatabase {
       return [];
     }
     if (results['tasks'] != null) {
-      List<Task> tasks = [];
-      for (var item in results['tasks']) {
-        tasks.add(Task.fromMap(item));
-      }
-      return tasks;
+      List<int> taskIds = results['tasks'].cast<int>();
+      return getTasksById(taskIds);
     }
     return [];
   }
 
-  /// Add records to the 'today' view store.
-  Future<void> insertTodayTasks(List<Task> tasks) async {
+  Future<List<Task>> getTasksById(List<int> taskIds) async {
     final db = database();
-    await db.refresh(todayTasksKey, {
-      'tasks': tasks.map((task) => task.toMap()).toList(),
-    });
+    var indexed = await db.value(taskMapKey);
+    indexed ??= {};
+    List<Task> tasks = [];
+    for (var id in taskIds) {
+      var record = indexed[id.toString()];
+      if (record == null) {
+        developer.log('Skipping task with id=$id as it could not be found.');
+        continue;
+      }
+      tasks.add(Task.fromMap(record));
+    }
+    return tasks;
   }
 
+  Future<Task?> fetchTaskById(int id) async {
+    var tasks = await getTasksById([id]);
+    if (tasks.isNotEmpty) {
+      return tasks[0];
+    }
+    throw Exception('Could not load task');
+  }
+
+  /// Replace a task in the local database.
+  /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
-    final db = database();
-    var results = await db.value(todayTasksKey);
-    if (results == null || results['tasks'] == null) {
-      return;
-    }
-    var index = 0;
-    for (var item in results['tasks']) {
-      if (item['id'] == task.id) {
-        break;
-      }
-      index++;
-    }
-    results['tasks'][index] = task.toMap();
-    await db.refresh(todayTasksKey, results);
+    addTasks([task]);
 
     _expireTask(task);
   }
 
   Future<void> deleteTask(Task task) async {
     final db = database();
-
-    var results = await db.value(todayTasksKey);
-    if (results == null || results['tasks'] == null) {
+    if (task.id == null) {
       return;
     }
-    results['tasks'].removeWhere(
-      (item) => item['id'] == task.id
-    );
-    await db.refresh(todayTasksKey, results);
+    // Remove the task from the task mapping.
+    var indexed = await db.value(taskMapKey);
+    indexed ??= {};
+    indexed.remove(task.id.toString());
+    await db.refresh(taskMapKey, indexed);
 
     _expireTask(task);
   }
@@ -175,8 +202,9 @@ class LocalDatabase {
     return db.remove(expiredKey);
   }
 
-  Future<void>clearTodayTasks() async {
+  Future<void>clearTasks() async {
     final db = database();
+    await db.remove(taskMapKey);
     return db.remove(todayTasksKey);
   }
 }
