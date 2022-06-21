@@ -23,7 +23,7 @@ class UpcomingScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(),
-          body: Column(
+          body: ListView(
             children: [
               Text('Upcoming', style: theme.textTheme.headlineSmall),
               FutureBuilder<List<Task>>(

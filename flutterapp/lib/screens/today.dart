@@ -24,11 +24,12 @@ class TodayScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(),
-          body: Column(
+          body: ListView(
+            padding: const EdgeInsets.all(4),
             children: [
               Row(children: [
                 Icon(Icons.calendar_today, color: customColors.dueToday),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text('Today', style: theme.textTheme.headlineSmall),
                 IconButton(
                   icon: const Icon(Icons.add),
@@ -55,8 +56,8 @@ class TodayScreen extends StatelessWidget {
                 }
               ),
               Row(children: [
-                Icon(Icons.bedtime, color: customColors.dueEvening),
-                SizedBox(width: 4),
+                Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
+                const SizedBox(width: 4),
                 Text('This Evening', style: theme.textTheme.headlineSmall),
                 IconButton(
                     icon: const Icon(Icons.add),

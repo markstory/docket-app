@@ -22,7 +22,7 @@ class TaskDue extends StatelessWidget {
     List<Widget> children = [];
     if (task.evening) {
       children.add(Icon(
-        Icons.bedtime, 
+        Icons.bedtime_outlined,
         color: customColors.dueEvening,
         size: 14,
       ));
