@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:docket/formatters.dart' as formatters;
+
 class Task {
   int? id;
   String projectSlug;
@@ -103,11 +106,22 @@ class Task {
       'section_id': sectionId,
       'title': title,
       'body': body,
-      'due_on': dueOn != null ? dueOn.toString() : null,
+      'due_on': dueOn?.toString(),
       'child_order': childOrder,
       'day_order': dayOrder,
       'evening': evening,
       'completed': completed,
     };
+  }
+
+  String get dateKey {
+    if (dueOn == null) {
+      return 'No Due Date';
+    }
+    var date = formatters.dateString(dueOn!);
+    if (evening) {
+      return 'evening:$date';
+    }
+    return date;
   }
 }

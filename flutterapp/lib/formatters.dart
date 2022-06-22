@@ -32,3 +32,7 @@ String compactDate(DateTime? value){
   var formatter = DateFormat('MMM d');
   return formatter.format(value);
 }
+
+String dateString(DateTime value) {
+  return '${value.year}-${value.month}-${value.day}';
+}
