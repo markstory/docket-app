@@ -6,6 +6,7 @@ import 'package:docket/components/taskgroup.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/grouping.dart' as grouping;
 
 
 class UpcomingScreen extends StatelessWidget {
@@ -33,9 +34,25 @@ class UpcomingScreen extends StatelessWidget {
                   if (data == null) {
                     return const LoadingIndicator();
                   }
-                  // TODO Partition data by date/evening and render
-                  // multiple groups.
-                  return TaskGroup(tasks: data);
+                  var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
+                  var grouped = grouperFunc(data);
+
+                  return Column(
+                    children: grouped.map<Widget>((group) {
+                      var heading = group.key;
+                      if (heading.contains('evening:')) {
+                        heading = 'Evening';
+                      }
+                      // print("$heading");
+                      // print("${group.items.length}");
+                      return Column(
+                        children: [
+                          Text(heading, style: theme.textTheme.headlineSmall),
+                          TaskGroup(tasks: group.items),
+                        ]
+                      );
+                    }).toList(),
+                  );
                 }
               ),
             ]
