@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:docket/formatters.dart' as formatters;
 
 class Task {
