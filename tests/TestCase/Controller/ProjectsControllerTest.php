@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -24,6 +23,7 @@ class ProjectsControllerTest extends TestCase
      * @var array
      */
     protected $fixtures = [
+        'app.ApiTokens',
         'app.Projects',
         'app.ProjectSections',
         'app.Users',
@@ -35,7 +35,7 @@ class ProjectsControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->Projects = TableRegistry::get('Projects');
+        $this->Projects = $this->fetchTable('Projects');
     }
 
     public function testView(): void
@@ -44,6 +44,21 @@ class ProjectsControllerTest extends TestCase
         $this->makeTask('first post', $home->id, 0);
 
         $this->login();
+        $this->get("/projects/{$home->slug}");
+
+        $this->assertResponseOk();
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(1, $this->viewVariable('tasks'));
+    }
+
+    public function testViewApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeTask('first post', $home->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
         $this->get("/projects/{$home->slug}");
 
         $this->assertResponseOk();
@@ -113,6 +128,27 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals(1, $project->ranking);
     }
 
+    public function testAddApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post('/projects/add', [
+            'name' => 'second',
+            'color' => '8',
+        ]);
+        $this->assertResponseOk();
+
+        $project = $this->viewVariable('project');
+        $this->assertEquals('second', $project->name);
+        $this->assertEquals(1, $project->ranking);
+
+        $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
+        $this->assertNotEmpty($project->id);
+    }
+
     public function testAddReservedSlug(): void
     {
         $this->login();
@@ -159,6 +195,28 @@ class ProjectsControllerTest extends TestCase
             'color' => '8',
         ]);
         $this->assertRedirect('/projects/home-too');
+
+        $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
+        $this->assertEquals('Home too', $project->name);
+        $this->assertEquals('8', $project->color);
+        $this->assertEquals(0, $project->ranking);
+    }
+
+    public function testEditApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/projects/{$home->slug}/edit", [
+            'name' => 'Home too',
+            'color' => '8',
+        ]);
+        $this->assertResponseOk();
+
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertEmpty($this->viewVariable('errors'));
 
         $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
         $this->assertEquals('Home too', $project->name);
@@ -217,6 +275,24 @@ class ProjectsControllerTest extends TestCase
      *
      * @return void
      */
+    public function testDeleteApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/projects/{$home->slug}/delete");
+
+        $this->assertResponseCode(204);
+        $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
+    }
+
+    /**
+     * Test delete method
+     *
+     * @return void
+     */
     public function testDeletePermission(): void
     {
         $home = $this->makeProject('Home', 2, 0, ['archived' => true]);
@@ -242,6 +318,21 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $archived);
     }
 
+    public function testArchivedApiToken()
+    {
+        $token = $this->makeApiToken(1);
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeProject('Work', 1, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->get('/projects/archived');
+
+        $this->assertResponseOk();
+        $archived = $this->viewVariable('projects');
+        $this->assertCount(1, $archived);
+    }
+
     public function testArchive()
     {
         $home = $this->makeProject('Home', 1, 0);
@@ -250,6 +341,20 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/archive");
         $this->assertRedirect('/tasks/today');
+
+        $result = $this->Projects->find()->where(['id' => $home->id])->first();
+        $this->assertTrue($result->archived);
+    }
+
+    public function testArchiveApiToken()
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/projects/{$home->slug}/archive");
+        $this->assertResponseCode(200);
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertTrue($result->archived);
@@ -273,6 +378,20 @@ class ProjectsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/projects/{$home->slug}/unarchive");
         $this->assertRedirect('/tasks/today');
+
+        $result = $this->Projects->find()->where(['id' => $home->id])->first();
+        $this->assertFalse($result->archived);
+    }
+
+    public function testUnarchiveApiToken()
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/projects/{$home->slug}/unarchive");
+        $this->assertResponseOk();
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertFalse($result->archived);
@@ -311,6 +430,28 @@ class ProjectsControllerTest extends TestCase
         $this->post("/projects/{$home->slug}/move");
         $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/error');
+    }
+
+    public function testMoveApiToken()
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 3);
+        $fun = $this->makeProject('Fun', 1, 6);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/projects/{$home->slug}/move", [
+            'ranking' => 1,
+        ]);
+        $this->assertResponseOk();
+
+        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $expected = [$work->id, $home->id, $fun->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 
     public function testMoveDown()
