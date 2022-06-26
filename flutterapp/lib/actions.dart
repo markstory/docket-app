@@ -4,12 +4,18 @@ import 'package:http/http.dart' as http;
 
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/models/project.dart';
 
 /// This needs to come from a props/config file but I don't know
 /// how to do that yet.
 const baseUrl = 'https://docket.mark-story.com';
 
 var client = http.Client();
+
+/// Reset the HTTP client to a new instance
+void resetClient() {
+  client = http.Client();
+}
 
 /// Perform a login request.
 /// The entity returned contains an API token
@@ -174,6 +180,70 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
     try {
       var taskData = jsonDecode(utf8.decode(response.bodyBytes));
       return Task.fromMap(taskData['task']);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      rethrow;
+    }
+  });
+}
+
+Future<Project> fetchProjectBySlug(String apiToken, String slug) async {
+  var url = Uri.parse('$baseUrl/projects/$slug');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode > 200) {
+      developer.log('Could not fetch project by id. Response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Could not load project.');
+    }
+
+    try {
+      var projectData = jsonDecode(utf8.decode(response.bodyBytes));
+      if (projectData['project'] != null) {
+        return Project.fromMap(projectData['project']);
+      }
+      throw Exception('Invalid response data received');
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      rethrow;
+    }
+  });
+}
+
+
+Future<List<Project>> fetchProjects(String apiToken) async {
+  var url = Uri.parse('$baseUrl/projects');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode > 200) {
+      developer.log('Could not fetch projects. Response: ${utf8.decode(response.bodyBytes)}');
+      throw Exception('Could not load projects.');
+    }
+
+    try {
+      var projectData = jsonDecode(utf8.decode(response.bodyBytes));
+      List<Project> projects = [];
+      for (var item in projectData['projects']) {
+        projects.add(Project.fromMap(item));
+      }
+      return projects;
     } catch (e, stacktrace) {
       developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;

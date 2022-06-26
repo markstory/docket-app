@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:docket/models/task.dart';
 import 'package:docket/database.dart';
 import 'package:docket/actions.dart' as actions;
-import 'package:flutter/material.dart';
 
 /// I'm trying to keep the update methods have a 1:1
 /// mapping with an `actions.` function. I think this

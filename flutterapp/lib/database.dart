@@ -4,6 +4,7 @@ import 'package:localstorage/localstorage.dart';
 
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/models/project.dart';
 
 class LocalDatabase {
   // Configuration
@@ -14,6 +15,7 @@ class LocalDatabase {
   static const String todayTasksKey = 'v1:todaytasks';
   static const String upcomingTasksKey = 'v1:upcomingtasks';
   static const String taskMapKey = 'v1:taskmap';
+  static const String projectsKey = 'v1:projects';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -93,7 +95,7 @@ class LocalDatabase {
     await db.refresh(key, value);
   }
 
-  // ApiToken methods.
+  // ApiToken methods. {{{
   Future<ApiToken> createApiToken(ApiToken apiToken) async {
     final db = database();
     await db.refresh(apiTokenKey, apiToken.toMap());
@@ -109,6 +111,9 @@ class LocalDatabase {
     }
     return null;
   }
+  // }}}
+
+  // Task Methods. {{{
 
   /// Add records to the 'today' view store.
   Future<void> setTodayTasks(List<Task> tasks) async {
@@ -146,7 +151,6 @@ class LocalDatabase {
     await db.refresh(taskMapKey, indexed);
   }
 
-  // Task Loader Methods.
   /// Fetch all records in the 'today' view store.
   Future<List<Task>> fetchTodayTasks({useStale = false}) async {
     final db = database();
@@ -179,6 +183,11 @@ class LocalDatabase {
     return getTasksById(taskIds);
   }
 
+  /// Fetch a list of tasks by id.
+  ///
+  /// This method will make a best effort to find as manyj
+  /// tasks as requested. There are scenarios where tasks could be
+  /// missing.
   Future<List<Task>> getTasksById(List<int> taskIds) async {
     final db = database();
     var indexed = await db.value(taskMapKey);
@@ -224,14 +233,53 @@ class LocalDatabase {
 
     _expireTask(task);
   }
+  // }}}
 
-  // Data Erasing Methods
-  Future<void>clearExpired() async {
+  // Project methods {{{
+  Future<void> addProjects(List<Project> projects) async {
+    final db = database();
+    var projectMap = await db.value(projectsKey);
+    projectMap ??= {};
+    for (var project in projects) {
+      projectMap[project.slug] = project.toMap();
+    }
+    await db.refresh(projectsKey, projectMap);
+  }
+
+  /// Get an individual project by slug.
+  Future<Project?> fetchProjectBySlug(String slug) async {
+    final db = database();
+    var projectMap = await db.value(projectsKey);
+    if (projectMap == null || projectMap[slug] == null) {
+      return null;
+    }
+    return Project.fromMap(projectMap[slug]);
+  }
+
+  /// Get a list of projects sorted by the `ranking` field.
+  Future<List<Project>> fetchProjects() async {
+    final db = database();
+    var projectMap = await db.value(projectsKey);
+    if (projectMap == null) {
+      return [];
+    }
+    List<Project> projects = [];
+    for (var item in projectMap.values) {
+      projects.add(Project.fromMap(item));
+    }
+    projects.sort((a, b) => a.ranking.compareTo(b.ranking));
+
+    return projects;
+  }
+  // }}}
+
+  // Data Erasing Methods {{{
+  Future<void> clearExpired() async {
     final db = database();
     return db.remove(expiredKey);
   }
 
-  Future<List<void>>clearTasks() async {
+  Future<List<void>> clearTasks() async {
     final db = database();
     return Future.wait([
       db.remove(taskMapKey),
@@ -239,4 +287,12 @@ class LocalDatabase {
       db.remove(upcomingTasksKey),
     ]);
   }
+
+  Future<List<void>> clearProjects() async {
+    final db = database();
+    return Future.wait([
+      db.remove(projectsKey),
+    ]);
+  }
+  // }}}
 }
