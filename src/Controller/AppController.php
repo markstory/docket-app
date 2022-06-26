@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Authentication\Authenticator\SessionAuthenticator;
-use Authentication\Authenticator\TokenAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
