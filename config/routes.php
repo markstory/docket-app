@@ -63,6 +63,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
 
     $builder->scope('/projects', ['controller' => 'Projects'], function (RouteBuilder $builder) {
+        $builder->get('/', ['action' => 'index'], 'projects:index');
         $builder->connect('/add', 'Projects::add', ['_name' => 'projects:add']);
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
         $builder->get('/{slug}', ['action' => 'view'], 'projects:view')

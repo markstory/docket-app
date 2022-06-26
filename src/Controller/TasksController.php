@@ -84,10 +84,10 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
         }
 
-        // API serialization
-        if ($this->request->is('json')) {
-            $this->viewBuilder()->setOption('serialize', $serialize);
-        }
+        $this->respond([
+            'success' => true,
+            'serialize' => $serialize,
+        ]);
     }
 
     /**
@@ -98,8 +98,9 @@ class TasksController extends AppController
     public function add()
     {
         $task = $this->Tasks->newEmptyEntity();
-        $isJson = $this->request->is('json');
+        $success = false;
         $redirect = null;
+        $errors = [];
         $serialize = [];
 
         if ($this->request->is('post')) {
@@ -113,25 +114,31 @@ class TasksController extends AppController
             $this->Tasks->setNextOrderProperties($user, $task);
 
             if ($this->Tasks->save($task)) {
-                $this->Flash->success(__('Task saved.'));
+                $success = true;
+                $redirect = $this->referer(['_name' => 'tasks:today']);
 
-                $redirect = $this->referer(['_name' => 'tasks:today']);
-                $this->set('task', $task);
                 $serialize[] = 'task';
+                $this->set('task', $task);
             } else {
-                if (!$isJson) {
-                    $this->Flash->error(__('The task could not be saved. Please, try again.'));
-                    $this->request->getSession()->write('errors', $this->flattenErrors($task->getErrors()));
-                }
                 $redirect = $this->referer(['_name' => 'tasks:today']);
+
+                $serialize[] = 'errors';
+                $errors = $this->flattenErrors($task->getErrors());
+                $this->set('errors', $errors);
             }
         }
-        if (!$isJson && isset($redirect)) {
-            return $this->redirect($redirect);
+
+        if ($errors) {
+            $this->request->getSession()->write('errors', $errors);
         }
-        if ($serialize) {
-            $this->viewBuilder()->setOption('serialize', $serialize);
-        }
+
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Task saved'),
+            'flashError' => __('The task could not be saved. Please try again.'),
+            'serialize' => $serialize,
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -148,20 +155,19 @@ class TasksController extends AppController
         ]);
         $this->Authorization->authorize($task, 'edit');
 
+        $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->complete();
-            if ($this->Tasks->save($task)) {
-                $this->Flash->success(__('Task complete.'));
-            } else {
-                $this->Flash->error(__('The task could not be completed. Please, try again.'));
-            }
+            $success = $this->Tasks->save($task);
         }
 
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(204);
-        }
-
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Task completed'),
+            'flashError' => __('The task could not be completed. Please try again.'),
+            'statusSuccess' => 204,
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     /**
@@ -177,19 +183,22 @@ class TasksController extends AppController
             'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task, 'edit');
+        $success = false;
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->incomplete();
             if ($this->Tasks->save($task)) {
-                $this->Flash->error(__('The task could not be updated. Please, try again.'));
+                $success = true;
             }
         }
 
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(204);
-        }
-
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Task updated'),
+            'flashError' => __('The task could not be updated. Please try again.'),
+            'statusSuccess' => 204,
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     public function move(string $id)
@@ -206,26 +215,27 @@ class TasksController extends AppController
         if (array_key_exists('section_id', $this->request->getData())) {
             $operation['section_id'] = $this->request->getData('section_id');
         }
+
+        $serialize = [];
+        $success = false;
+        $error = null;
         try {
             $this->Tasks->move($task, $operation);
-            $this->Flash->success(__('Task reordered.'));
+            $success = true;
         } catch (InvalidArgumentException $e) {
-            $this->Flash->error($e->getMessage());
-            $this->set('errors', [$e->getMessage()]);
-
-            if ($this->request->is('json')) {
-                $this->viewBuilder()->setOption('serialize', ['errors']);
-                $this->response = $this->response->withStatus(422);
-
-                return;
-            }
+            $error = $e->getMessage();
+            $serialize[] = ['errors'];
+            $this->set('errors', [$error]);
         }
 
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(204);
-        }
-
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Task moved'),
+            'flashError' => $error,
+            'statusSuccess' => 204,
+            'statusError' => 422,
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     /**
@@ -252,11 +262,21 @@ class TasksController extends AppController
             $task->section_id = null;
         }
 
+        $success = false;
+        $serialize = [];
         if ($this->Tasks->save($task)) {
-            $this->Flash->success(__('Task updated.'));
+            $success = true;
+        } else {
+            $serialize[] = 'errors';
+            $this->set('errors', $this->flattenErrors($task->getErrors()));
+        }
+
+        if ($success) {
+            $this->Flash->success(__('Task updated'));
 
             return $this->response->withStatus(200);
         }
+        $this->Flash->error(__('Task could not be updated.'));
 
         return $this->validationErrorResponse($task->getErrors());
     }
@@ -278,9 +298,10 @@ class TasksController extends AppController
         $this->set('task', $task);
         $this->set('referer', $this->getReferer('tasks:today'));
 
-        if ($this->request->is('json')) {
-            $this->viewBuilder()->setOption('serialize', ['task']);
-        }
+        $this->respond([
+            'success' => true,
+            'serialize' => ['task'],
+        ]);
     }
 
     /**
@@ -296,16 +317,17 @@ class TasksController extends AppController
         $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
         $this->Authorization->authorize($task);
 
+        $success = false;
         if ($this->Tasks->delete($task)) {
-            $this->Flash->success(__('The task has been deleted.'));
-        } else {
-            $this->Flash->error(__('The task could not be deleted. Please, try again.'));
+            $success = true;
         }
 
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(201);
-        }
-
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        $this->respond([
+            'success' => $success,
+            'serialize' => ['task'],
+            'flashSuccess' => __('The task has been deleted.'),
+            'flashError' => __('The task could not be deleted. Please, try again.'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Project;
+use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
@@ -20,6 +21,11 @@ class ProjectsController extends AppController
         $this->loadModel('Tasks');
     }
 
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     protected function getProject($slug, array $contain = []): Project
     {
         $query = $this->Projects->findBySlug($slug);
@@ -29,6 +35,26 @@ class ProjectsController extends AppController
         return $query
             ->contain($contain)
             ->firstOrFail();
+    }
+
+    /**
+     * Project list endpoint
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function index()
+    {
+        $projects = $this->Authorization
+            ->applyScope($this->Projects->find(), 'index')
+            ->contain('Sections');
+
+        $projects = $this->paginate($projects);
+
+        $this->set('projects', $projects);
+        $this->respond([
+            'success' => true,
+            'serialize' => ['projects'],
+        ]);
     }
 
     /**
@@ -42,8 +68,7 @@ class ProjectsController extends AppController
 
         $tasks = $this->Authorization
             ->applyScope($this->Tasks->find(), 'index')
-            ->contain('Projects')
-            ->find('incomplete')
+            ->contain('Projects') ->find('incomplete')
             ->find('forProjectDetails', ['slug' => $slug])
             ->limit(250);
 
@@ -60,6 +85,10 @@ class ProjectsController extends AppController
         }
 
         $this->set(compact('project', 'tasks', 'completed'));
+        $this->respond([
+            'success' => true,
+            'serialize' => ['project', 'tasks'],
+        ]);
     }
 
     /**
@@ -71,7 +100,13 @@ class ProjectsController extends AppController
     {
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
+
         $referer = $this->getReferer();
+        $this->set('referer', $referer);
+
+        $success = false;
+        $serialize = [];
+        $redirect = null;
 
         if ($this->request->is('post')) {
             $userId = $this->request->getAttribute('identity')->getIdentifier();
@@ -80,14 +115,23 @@ class ProjectsController extends AppController
             $project->ranking = $this->Projects->getNextRanking($userId);
 
             if ($this->Projects->save($project)) {
-                $this->Flash->success(__('Project created.'));
-
-                return $this->redirect($referer);
+                $success = true;
+                $redirect = $referer;
+                $serialize[] = 'project';
+                $this->set('project', $project);
+            } else {
+                $serialize[] = 'errors';
+                $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
-            $this->Flash->error(__('The project could not be saved. Please, try again.'));
-            $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
-        $this->set('referer', $referer);
+
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Project created'),
+            'flashError' => __('Your project could not be saved'),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -100,23 +144,38 @@ class ProjectsController extends AppController
     {
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
+
         $referer = $this->getReferer();
+        $success = false;
+        $serialize = [];
+        $redirect = null;
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $project = $this->Projects->patchEntity($project, $this->request->getData());
             if ($this->Projects->save($project)) {
-                $this->Flash->success(__('Project saved.'));
+                $success = true;
+                $serialize[] = 'project';
+                $this->set('project', $project);
 
-                return $this->redirect([
+                $redirect = [
                     '_name' => 'projects:view',
                     'slug' => $project->slug,
-                ]);
+                ];
+            } else {
+                $serialize[] = 'errors';
+                $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
-            $this->Flash->error(__('Project could not be saved. Please, try again.'));
-            $this->set('errors', $this->flattenErrors($project->getErrors()));
         }
         $this->set('referer', $referer);
         $this->set('project', $project);
+
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Project updated'),
+            'flashError' => __('Your project could not be saved'),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -132,7 +191,17 @@ class ProjectsController extends AppController
 
         $archived = $this->paginate($query);
 
+        // Avoid clashing with 'projects' set in AppController.
         $this->set('archived', $archived);
+
+        // API responses still use 'projects'
+        $serialize = ['projects'];
+        $this->set('projects', $archived);
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => $serialize,
+        ]);
     }
 
     /**
@@ -147,13 +216,21 @@ class ProjectsController extends AppController
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
-        if ($this->Projects->delete($project)) {
-            $this->Flash->success(__('Project deleted'));
+        $success = false;
+        $redirect = null;
 
-            return $this->redirect(['_name' => 'tasks:today']);
+        if ($this->Projects->delete($project)) {
+            $success = true;
+            $redirect = $this->redirect(['_name' => 'tasks:today']);
         }
 
-        return $this->response->withStatus(400);
+        return $this->respond([
+            'success' => $success,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project deleted'),
+            'flashError' => __('Could not delete project'),
+            'redirect' => $redirect,
+        ]);
     }
 
     public function archive(string $slug)
@@ -163,9 +240,13 @@ class ProjectsController extends AppController
 
         $project->archive();
         $this->Projects->save($project);
-        $this->Flash->success(__('Project archived'));
 
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => true,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project archived'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     public function unarchive(string $slug)
@@ -175,9 +256,13 @@ class ProjectsController extends AppController
 
         $project->unarchive();
         $this->Projects->save($project);
-        $this->Flash->success(__('Project unarchived'));
 
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => true,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project unarchived'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     public function move(string $slug)
@@ -185,16 +270,32 @@ class ProjectsController extends AppController
         $this->request->allowMethod(['post']);
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project, 'edit');
+
         $operation = [
             'ranking' => $this->request->getData('ranking'),
         ];
+        $success = false;
+        $error = null;
+        $serialize = [];
+
         try {
             $this->Projects->move($project, $operation);
-            $this->Flash->success(__('Project reordered.'));
+            $success = true;
+            $serialize[] = 'project';
+            $this->set('project', $project);
         } catch (InvalidArgumentException $e) {
-            $this->Flash->error($e->getMessage());
+            $error = [$e->getMessage()];
+            $serialize[] = 'errors';
+            $this->set('errors', [$error]);
         }
 
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => $success,
+            'statusSuccess' => 204,
+            'statusError' => 400,
+            'flashSuccess' => __('Project moved'),
+            'flashError' => $error,
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 }
