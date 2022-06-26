@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Authentication\Authenticator\SessionAuthenticator;
+use Authentication\Authenticator\TokenAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
@@ -132,7 +134,21 @@ class AppController extends Controller
             'statusError' => 400,
             'serialize' => null,
         ];
+        $authenticator = $this->Authentication
+            ->getAuthenticationService()
+            ->getAuthenticationProvider();
+
+        $setFlashMessages = ($authenticator instanceof SessionAuthenticator);
         $isApi = $this->request->is('json');
+
+        if ($setFlashMessages) {
+            if ($config['success'] && $config['flashSuccess']) {
+                $this->Flash->success($config['flashSuccess']);
+            }
+            if ($config['success'] === false && $config['flashError']) {
+                $this->Flash->error($config['flashError']);
+            }
+        }
 
         if ($isApi) {
             $this->viewBuilder()->setOption('serialize', $config['serialize']);
@@ -146,11 +162,6 @@ class AppController extends Controller
             return;
         }
 
-        if ($config['success']) {
-            $this->Flash->success($config['flashSuccess']);
-        } else {
-            $this->Flash->error($config['flashError']);
-        }
         if ($config['redirect']) {
             return $this->redirect($config['redirect']);
         }

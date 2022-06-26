@@ -406,11 +406,13 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
         $this->post("/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'evening' => true,
         ]);
         $this->assertResponseCode(200);
+        $this->assertFlashElement('flash/success');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);

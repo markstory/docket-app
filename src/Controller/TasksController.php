@@ -98,7 +98,6 @@ class TasksController extends AppController
     public function add()
     {
         $task = $this->Tasks->newEmptyEntity();
-        $isJson = $this->request->is('json');
         $success = false;
         $redirect = null;
         $errors = [];
@@ -272,14 +271,14 @@ class TasksController extends AppController
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
 
-        $this->respond([
-            'success' => $success,
-            'serialize' => $serialize,
-            'flashSuccess' => __('Task updated'),
-            'flashError' => __('Task could not be updated.'),
-            'statusSuccess' => 204,
-            'statusError' => 422,
-        ]);
+        if ($success) {
+            $this->Flash->success(__('Task updated'));
+
+            return $this->response->withStatus(200);
+        }
+        $this->Flash->error(__('Task could not be updated.'));
+
+        return $this->validationErrorResponse($task->getErrors());
     }
 
     /**
