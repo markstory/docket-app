@@ -77,6 +77,11 @@ class TasksProvider extends ChangeNotifier {
     return tasks;
   }
 
+  /// Get a list of projects for a given task
+  Future<List<Task> projectTasks(String apiToken, Project project) async {
+    // TODO
+  }
+
   Future<void> toggleComplete(String apiToken, Task task) async {
     // Update the completed state
     task.completed = !task.completed;
