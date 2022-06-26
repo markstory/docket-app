@@ -60,10 +60,11 @@ class TodayScreen extends StatelessWidget {
                 SizedBox(width: space(0.5)),
                 Text('This Evening', style: theme.textTheme.headlineSmall),
                 IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // Should show task create sheet.
-                    })
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    // Should show task create sheet.
+                  }
+                )
               ]),
               // This Evening Task List
               FutureBuilder<List<Task>>(
