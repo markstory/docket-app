@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Project;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -38,6 +39,59 @@ class ProjectsController extends AppController
     }
 
     /**
+     * Response generation helper
+     *
+     * Eases defining logic for common API response patterns like success/error states.
+     *
+     * ### Options
+     *
+     * - success - Whether or not the request completed successfully.
+     * - flashSuccess - The flash message to show for HTML responses that were successful.
+     * - flashError - The flash message to show for HTML responses that had errors.
+     * - redirect - The redirect to use for HTML responses.
+     * - statusSuccess - The HTTP status code for succesful API responses.
+     * - statusError - The Http status code for error responses.
+     * - serialize - The view variables to serialize into an API response.
+     *
+     * @TODO use this in other endpoints as well.
+     * @return void|Cake\Http\Response Either a response or null if we're not skipping view rendering.
+     */
+    protected function respond(array $config)
+    {
+        $config += [
+            'success' => false,
+            'flashSuccess' => null,
+            'flashError' => null,
+            'redirect' => null,
+            'statusSuccess' => 200,
+            'statusError' => 400,
+            'serialize' => null,
+        ];
+        $isApi = $this->request->is('json');
+
+        if ($isApi) {
+            $this->viewBuilder()->setOption('serialize', $config['serialize']);
+            $code = $config['success'] ? $config['statusSuccess'] : $config['statusError'];
+
+            $this->response = $this->response->withStatus($code);
+            if ($this->response->getStatusCode() == 204) {
+                return $this->response;
+            }
+
+            return;
+        }
+
+        if ($config['success']) {
+            $this->Flash->success($config['flashSuccess']);
+        } else {
+            $this->Flash->error($config['flashError']);
+        }
+        if ($config['redirect']) {
+            return $this->redirect($config['redirect']);
+        }
+    }
+
+    /**
      * View method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -66,9 +120,10 @@ class ProjectsController extends AppController
         }
 
         $this->set(compact('project', 'tasks', 'completed'));
-        if ($this->request->is('json')) {
-            $this->viewBuilder()->setOption('serialized', ['project', 'tasks']);
-        }
+        $this->respond([
+            'success' => true,
+            'serialize' => ['project', 'tasks'],
+        ]);
     }
 
     /**
@@ -81,7 +136,9 @@ class ProjectsController extends AppController
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
 
-        $isJson = $this->request->is('json');
+        $referer = $this->getReferer();
+        $this->set('referer', $referer);
+
         $success = false;
         $serialize = [];
         $redirect = null;
@@ -94,7 +151,7 @@ class ProjectsController extends AppController
 
             if ($this->Projects->save($project)) {
                 $success = true;
-                $redirect = true;
+                $redirect = $referer;
                 $serialize[] = 'project';
                 $this->set('project', $project);
             } else {
@@ -103,21 +160,13 @@ class ProjectsController extends AppController
             }
         }
 
-        $referer = $this->getReferer();
-        $this->set('referer', $referer);
-
-        if ($isJson) {
-            $this->viewBuilder()->setOption('serialize', $serialize);
-        } else {
-            if ($success) {
-                $this->Flash->success(__('Project created'));
-            } else {
-                $this->Flash->error(__('The project could not be saved.'));
-            }
-        }
-        if ($redirect && !$isJson) {
-            return $this->redirect($referer);
-        }
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Project created'),
+            'flashError' => __('Your project could not be saved'),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -131,7 +180,6 @@ class ProjectsController extends AppController
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
-        $isJson = $this->request->is('json');
         $referer = $this->getReferer();
         $success = false;
         $serialize = [];
@@ -156,18 +204,13 @@ class ProjectsController extends AppController
         $this->set('referer', $referer);
         $this->set('project', $project);
 
-        if (!$isJson) {
-            if ($success) {
-                $this->Flash->success(__('Project saved.'));
-            } else {
-                $this->Flash->error(__('Project could not be saved. Please, try again.'));
-            }
-            if ($redirect) {
-                return $this->redirect($redirect);
-            }
-        } else {
-            $this->viewBuilder()->setOption('serialize', $serialize);
-        }
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Project updated'),
+            'flashError' => __('Your project could not be saved'),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -189,9 +232,11 @@ class ProjectsController extends AppController
         // API responses still use 'projects'
         $serialize = ['projects'];
         $this->set('projects', $archived);
-        if ($this->request->is('json')) {
-            $this->viewBuilder()->setOption('serialize', $serialize);
-        }
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => $serialize,
+        ]);
     }
 
     /**
@@ -205,7 +250,7 @@ class ProjectsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
-        $isJson = $this->request->is('json');
+
         $success = false;
         $redirect = null;
 
@@ -214,17 +259,13 @@ class ProjectsController extends AppController
             $redirect = $this->redirect(['_name' => 'tasks:today']);
         }
 
-        if (!$isJson) {
-            if ($success) {
-                $this->Flash->success(__('Project deleted'));
-            } else {
-                $this->Flash->error(__('Could not delete project'));
-            }
-            if ($redirect) {
-                return $this->redirect($redirect);
-            }
-        }
-        return $this->response->withStatus(204);
+        return $this->respond([
+            'success' => $success,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project deleted'),
+            'flashError' => __('Could not delete project'),
+            'redirect' => $redirect,
+        ]);
     }
 
     public function archive(string $slug)
@@ -235,12 +276,12 @@ class ProjectsController extends AppController
         $project->archive();
         $this->Projects->save($project);
 
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(200);
-        }
-        $this->Flash->success(__('Project archived'));
-
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => true,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project archived'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     public function unarchive(string $slug)
@@ -250,12 +291,13 @@ class ProjectsController extends AppController
 
         $project->unarchive();
         $this->Projects->save($project);
-        if ($this->request->is('json')) {
-            return $this->response->withStatus(200);
-        }
-        $this->Flash->success(__('Project unarchived'));
 
-        return $this->redirect($this->referer(['_name' => 'tasks:today']));
+        return $this->respond([
+            'success' => true,
+            'statusSuccess' => 204,
+            'flashSuccess' => __('Project unarchived'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 
     public function move(string $slug)
@@ -267,9 +309,8 @@ class ProjectsController extends AppController
         $operation = [
             'ranking' => $this->request->getData('ranking'),
         ];
-        $isJson = $this->request->is('json');
         $success = false;
-        $errors = [];
+        $error = null;
         $serialize = [];
 
         try {
@@ -278,25 +319,18 @@ class ProjectsController extends AppController
             $serialize[] = 'project';
             $this->set('project', $project);
         } catch (InvalidArgumentException $e) {
+            $error = [$e->getMessage()];
             $serialize[] = 'errors';
-            $errors = [$e->getMessage()];
-            $this->set('errors', $errors);
-        }
-        if (!$isJson) {
-            if ($success) {
-                $this->Flash->success(__('Project reordered.'));
-            } else {
-                $this->Flash->error($errors[0]);
-            }
-
-            return $this->redirect($this->referer(['_name' => 'tasks:today']));
+            $this->set('errors', [$error]);
         }
 
-        $this->viewBuilder()->setOption('serialize', $serialize);
-        if (!$success) {
-            $this->response = $this->response->withStatus(400);
-        } else {
-            return $this->response->withStatus(204);
-        }
+        return $this->respond([
+            'success' => $success,
+            'statusSuccess' => 204,
+            'statusError' => 400,
+            'flashSuccess' => __('Project moved'),
+            'flashError' => $error,
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
     }
 }

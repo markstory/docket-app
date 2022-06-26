@@ -354,7 +354,7 @@ class ProjectsControllerTest extends TestCase
         $this->useApiToken($token->token);
         $this->requestJson();
         $this->post("/projects/{$home->slug}/archive");
-        $this->assertResponseCode(200);
+        $this->assertResponseOk();
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertTrue($result->archived);
