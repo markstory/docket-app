@@ -20,16 +20,17 @@ class ProjectDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<ProjectsProvider, TasksProvider>(
       builder: (context, projectsProvider, tasksProvider, child) {
-        var theme = Provider.of<ThemeData>(context);
+        var theme = Theme.of(context);
         var session = Provider.of<SessionProvider>(context);
         var projectFuture = projectsProvider.getBySlug(session.apiToken, slug); 
-        var taskList = tasksProvider.projectTasks(session.apiToken, slug);
 
         return Scaffold(
           appBar: AppBar(title: const Text('Project Details')),
           body: FutureBuilder<Project>(
             future: projectFuture,
             builder: (context, snapshot) {
+              // Doing this query here should result in us hitting cache all the time
+              var taskList = tasksProvider.projectTasks(session.apiToken, slug);
               var project = snapshot.data;
               if (project == null) {
                 return const Card(
@@ -54,18 +55,18 @@ class ProjectDetailsScreen extends StatelessWidget {
                           // Show project menu!
                         }
                       ),
-                      FutureBuilder<List<Task>>(
-                        future: taskList,
-                        builder: (context, snapshot) {
-                          var tasks = snapshot.data;
-                          if (!snapshot.hasData || tasks == null) {
-                            return const LoadingIndicator(); 
-                          }
-                          return TaskGroup(tasks: tasks);
-                        }
-                      )
                     ]
                   ),
+                  FutureBuilder<List<Task>>(
+                    future: taskList,
+                    builder: (context, snapshot) {
+                      var tasks = snapshot.data;
+                      if (!snapshot.hasData || tasks == null) {
+                        return const LoadingIndicator(); 
+                      }
+                      return TaskGroup(tasks: tasks);
+                    }
+                  )
                 ]
               );
             }

@@ -16,6 +16,7 @@ class LocalDatabase {
   static const String upcomingTasksKey = 'v1:upcomingtasks';
   static const String taskMapKey = 'v1:taskmap';
   static const String projectsKey = 'v1:projects';
+  static const String projectTaskMapKey = 'v1:projecttasks';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -151,6 +152,22 @@ class LocalDatabase {
     await db.refresh(taskMapKey, indexed);
   }
 
+  /// Fetch all tasks for a single project.
+  Future<void> addProjectTasks(Project project, List<Task> tasks) async {
+    // Add tasks and project to the shared stores.
+    await addTasks(tasks);
+    await addProjects([project]);
+
+    // Update the project : task mapping.
+    final db = database();
+    var indexed = await db.value(projectTaskMapKey);
+    indexed ??= {};
+    var taskIds = tasks.map((task) => task.id).toList();
+    indexed[project.slug] = taskIds;
+
+    await db.refresh(projectTaskMapKey, indexed);
+  }
+
   /// Fetch all records in the 'today' view store.
   Future<List<Task>> fetchTodayTasks({useStale = false}) async {
     final db = database();
@@ -183,6 +200,23 @@ class LocalDatabase {
     return getTasksById(taskIds);
   }
 
+  /// Fetch all tasks for a single project.
+  Future<List<Task>> fetchProjectTasks(String slug, {useStale = false}) async {
+    // Update the project : task mapping.
+    final db = database();
+    var isStale = await _isDataStale(projectTaskMapKey, useStale);
+    if (isStale) {
+      return [];
+    }
+    var results = await db.value(projectTaskMapKey);
+    if (results == null || results[slug] == null) {
+      return [];
+    }
+    List<int> taskIds = results[slug].cast<int>();
+
+    return getTasksById(taskIds);
+  }
+
   /// Fetch a list of tasks by id.
   ///
   /// This method will make a best effort to find as manyj
@@ -204,6 +238,7 @@ class LocalDatabase {
     return tasks;
   }
 
+  /// Fetch a single task by id.
   Future<Task?> fetchTaskById(int id) async {
     var tasks = await getTasksById([id]);
     if (tasks.isNotEmpty) {
@@ -285,6 +320,7 @@ class LocalDatabase {
       db.remove(taskMapKey),
       db.remove(todayTasksKey),
       db.remove(upcomingTasksKey),
+      db.remove(projectTaskMapKey),
     ]);
   }
 
@@ -292,6 +328,7 @@ class LocalDatabase {
     final db = database();
     return Future.wait([
       db.remove(projectsKey),
+      db.remove(projectTaskMapKey),
     ]);
   }
   // }}}

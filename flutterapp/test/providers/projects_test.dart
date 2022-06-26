@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -12,63 +13,12 @@ void main() {
   late ProjectsProvider provider;
   int listenerCallCount = 0;
   String apiToken = 'api-token';
-  String projectsResponseFixture = """
-{"projects": [
-  {
-    "id": 1,
-    "name": "Home",
-    "slug": "home",
-    "color": 1,
-    "ranking": 2,
-    "incomplete_task_count": 3,
-    "sections": [
-      {
-        "id": 1,
-        "name": "Chores",
-        "ranking": 1
-      },
-      {
-        "id": 2,
-        "name": "Bills",
-        "ranking": 0
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "Work",
-    "slug": "work",
-    "color": 2,
-    "ranking": 1,
-    "incomplete_task_count": 3,
-    "sections": []
-  }
-]}
-""";
-  String projectViewResponseFixture = """
-{
-  "project": {
-    "id": 1,
-    "name": "Home",
-    "slug": "home",
-    "color": 1,
-    "ranking": 2,
-    "incomplete_task_count": 3,
-    "sections": [
-      {
-        "id": 1,
-        "name": "Chores",
-        "ranking": 1
-      },
-      {
-        "id": 2,
-        "name": "Bills",
-        "ranking": 0
-      }
-    ]
-  }
-}
-""";
+
+  var file = File('test_resources/project_list.json');
+  final projectsResponseFixture = file.readAsStringSync();
+
+  file = File('test_resources/project_details.json');
+  final projectViewResponseFixture = file.readAsStringSync();
 
   group('$ProjectsProvider', () {
     setUp(() async {
@@ -142,6 +92,19 @@ void main() {
       } catch (exc) {
         expect(exc.toString(), contains('Could not load project'));
       }
+    });
+
+    test('getBySlug() loads updates task data', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home'));
+        return Response(projectViewResponseFixture, 200);
+      });
+
+      await provider.getBySlug(apiToken, 'home');
+
+      var db = LocalDatabase();
+      var tasks = await db.fetchProjectTasks('home');
+      expect(tasks.length, equals(2));
     });
   });
 }

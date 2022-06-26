@@ -187,7 +187,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   });
 }
 
-Future<Project> fetchProjectBySlug(String apiToken, String slug) async {
+Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
   var url = Uri.parse('$baseUrl/projects/$slug');
   developer.log('http.request url=$url');
 
@@ -206,9 +206,20 @@ Future<Project> fetchProjectBySlug(String apiToken, String slug) async {
     }
 
     try {
-      var projectData = jsonDecode(utf8.decode(response.bodyBytes));
-      if (projectData['project'] != null) {
-        return Project.fromMap(projectData['project']);
+      var data = jsonDecode(utf8.decode(response.bodyBytes));
+      if (data['project'] != null && data['tasks'] != null) {
+        var project = Project.fromMap(data['project']);
+        List<Task> tasks = [];
+        for (var item in data['tasks']) {
+          // TODO do this on the server so that tasks are serialized consistently.
+          item['project'] = {'slug': project.slug, 'name': project.name, 'color': project.color};
+
+          tasks.add(Task.fromMap(item));
+        }
+        return ProjectWithTasks(
+          project: project,
+          tasks: tasks,
+        );
       }
       throw Exception('Invalid response data received');
     } catch (e, stacktrace) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -45,34 +46,11 @@ void main() {
 }
   """;
 
-  String tasksTodayResponseFixture = """
-{
-  "tasks": [
-    {
-      "id": 1,
-      "project": {"slug": "home", "name": "home", "color": 1}, 
-      "title": "clean dishes",
-      "body": "",
-      "evening": false,
-      "completed": false,
-      "due_on": null,
-      "child_order": 0,
-      "day_order": 0
-    },
-    {
-      "id": 2,
-      "project": {"slug": "home", "name": "home", "color": 1}, 
-      "title": "cut grass",
-      "body": "",
-      "evening": false,
-      "completed": false,
-      "due_on": null,
-      "child_order": 1,
-      "day_order": 1
-    }
-  ]
-}
-""";
+  var file = File('test_resources/tasks_today.json');
+  final tasksTodayResponseFixture = file.readAsStringSync();
+
+  file = File('test_resources/project_details.json');
+  final projectDetailsResponseFixture = file.readAsStringSync();
 
   group('$TasksProvider', () {
     setUp(() async {
@@ -247,6 +225,22 @@ void main() {
       } catch (err) {
         expect(err.toString(), contains('Could not load'));
       }
+    });
+
+    test('projectTasks() fetch from the API and database', () async {
+      int requestCounter = 0;
+
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home'));
+        requestCounter += 1;
+        return Response(projectDetailsResponseFixture, 200);
+      });
+
+      await provider.projectTasks(apiToken, 'home');
+      var tasks = await provider.projectTasks(apiToken, 'home');
+
+      expect(requestCounter, equals(1));
+      expect(tasks.length, equals(2));
     });
   });
 }

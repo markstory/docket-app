@@ -4,6 +4,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'database.dart';
 import 'theme.dart' as app_theme;
+import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'screens/login.dart';
@@ -28,6 +29,9 @@ void main() {
         ),
         ListenableProvider<TasksProvider>(
           create: (_) => TasksProvider(dbHandler)
+        ),
+        ListenableProvider<ProjectsProvider>(
+          create: (_) => ProjectsProvider(dbHandler)
         ),
       ],
       child: const DocketApp()

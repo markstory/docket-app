@@ -25,8 +25,10 @@ class ProjectsProvider extends ChangeNotifier {
       rethrow;
     }
     if (project == null) {
-      project = await actions.fetchProjectBySlug(apiToken, slug);
-      await _database.addProjects([project]);
+      var projectDetails = await actions.fetchProjectBySlug(apiToken, slug);
+      project = projectDetails.project;
+
+      await _database.addProjectTasks(project, projectDetails.tasks);
     }
 
     return project;

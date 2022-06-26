@@ -1,3 +1,5 @@
+import 'package:docket/models/task.dart';
+
 class Section {
   int id;
   String name;
@@ -90,4 +92,11 @@ class Project {
       'incomplete_task_count': incompleteTaskCount,
     };
   }
+}
+
+class ProjectWithTasks {
+  final Project project;
+  final List<Task> tasks;
+
+  const ProjectWithTasks({required this.project, required this.tasks});
 }

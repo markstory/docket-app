@@ -78,24 +78,40 @@ class TasksProvider extends ChangeNotifier {
   }
 
   /// Get a list of projects for a given task
-  Future<List<Task> projectTasks(String apiToken, Project project) async {
-    // TODO
+  Future<List<Task>> projectTasks(String apiToken, String projectSlug) async {
+    List<Task> tasks = [];
+    try {
+      tasks = await _database.fetchProjectTasks(projectSlug);
+      if (tasks.isEmpty) {
+        var projectDetails = await actions.fetchProjectBySlug(apiToken, projectSlug);
+        await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
+
+        tasks = projectDetails.tasks;
+      }
+      notifyListeners();
+    } catch (e) {
+      //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
+      tasks = [];
+    }
+    return tasks;
   }
 
+  /// Flip task.completed and persist to the server.
   Future<void> toggleComplete(String apiToken, Task task) async {
     // Update the completed state
     task.completed = !task.completed;
 
     // Update local db and server
-    await _database.updateTask(task);
     await actions.toggleTask(apiToken, task);
+    await _database.updateTask(task);
 
     notifyListeners();
   }
 
+  /// Delete a task from local database and the server.
   Future<void> deleteTask(String apiToken, Task task) async {
-    await _database.deleteTask(task);
     await actions.deleteTask(apiToken, task);
+    await _database.deleteTask(task);
 
     notifyListeners();
   }
