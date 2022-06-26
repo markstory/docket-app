@@ -280,7 +280,6 @@ class TasksController extends AppController
             'statusSuccess' => 204,
             'statusError' => 422,
         ]);
-
     }
 
     /**
