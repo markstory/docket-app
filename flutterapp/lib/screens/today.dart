@@ -83,6 +83,12 @@ class TodayScreen extends StatelessWidget {
                 },
                 child: const Text('View Home project')
               ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/tasks/upcoming');
+                },
+                child: const Text('View Upcoming')
+              ),
             ]
           )
         );
