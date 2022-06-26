@@ -441,6 +441,7 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
+        $this->requestJson();
         $this->post("/tasks/{$first->id}/edit", [
             'title' => '',
             'evening' => true,

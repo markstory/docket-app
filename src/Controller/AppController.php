@@ -1,19 +1,6 @@
 <?php
 declare(strict_types=1);
 
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link      https://cakephp.org CakePHP(tm) Project
- * @since     0.2.9
- * @license   https://opensource.org/licenses/mit-license.php MIT License
- */
 namespace App\Controller;
 
 use Cake\Controller\Controller;
@@ -114,5 +101,58 @@ class AppController extends Controller
         }
 
         return $defaultUrl;
+    }
+
+    /**
+     * Response generation helper
+     *
+     * Eases defining logic for common API response patterns like success/error states.
+     *
+     * ### Options
+     *
+     * - success - Whether or not the request completed successfully.
+     * - flashSuccess - The flash message to show for HTML responses that were successful.
+     * - flashError - The flash message to show for HTML responses that had errors.
+     * - redirect - The redirect to use for HTML responses.
+     * - statusSuccess - The HTTP status code for succesful API responses.
+     * - statusError - The Http status code for error responses.
+     * - serialize - The view variables to serialize into an API response.
+     *
+     * @TODO use this in other endpoints as well.
+     * @return void|\App\Controller\Cake\Http\Response Either a response or null if we're not skipping view rendering.
+     */
+    protected function respond(array $config)
+    {
+        $config += [
+            'success' => false,
+            'flashSuccess' => null,
+            'flashError' => null,
+            'redirect' => null,
+            'statusSuccess' => 200,
+            'statusError' => 400,
+            'serialize' => null,
+        ];
+        $isApi = $this->request->is('json');
+
+        if ($isApi) {
+            $this->viewBuilder()->setOption('serialize', $config['serialize']);
+            $code = $config['success'] ? $config['statusSuccess'] : $config['statusError'];
+
+            $this->response = $this->response->withStatus($code);
+            if ($this->response->getStatusCode() == 204) {
+                return $this->response;
+            }
+
+            return;
+        }
+
+        if ($config['success']) {
+            $this->Flash->success($config['flashSuccess']);
+        } else {
+            $this->Flash->error($config['flashError']);
+        }
+        if ($config['redirect']) {
+            return $this->redirect($config['redirect']);
+        }
     }
 }
