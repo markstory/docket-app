@@ -166,7 +166,7 @@ class TasksController extends AppController
 
         if ($this->request->is('json')) {
             return $this->response->withStatus(204);
-        } 
+        }
 
         if ($success) {
             $this->Flash->success(__('Task complete.'));

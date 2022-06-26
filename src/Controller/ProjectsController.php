@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Project;
-use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -54,7 +53,7 @@ class ProjectsController extends AppController
      * - serialize - The view variables to serialize into an API response.
      *
      * @TODO use this in other endpoints as well.
-     * @return void|Cake\Http\Response Either a response or null if we're not skipping view rendering.
+     * @return void|\App\Controller\Cake\Http\Response Either a response or null if we're not skipping view rendering.
      */
     protected function respond(array $config)
     {
