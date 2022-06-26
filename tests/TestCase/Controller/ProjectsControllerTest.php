@@ -38,6 +38,42 @@ class ProjectsControllerTest extends TestCase
         $this->Projects = $this->fetchTable('Projects');
     }
 
+    public function testIndexPermissions(): void
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0);
+        $this->makeProject('Work', 2, 1);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->get('/projects');
+
+        $this->assertResponseOk();
+
+        $projects = $this->viewVariable('projects')->toArray();
+        $this->assertCount(1, $projects);
+        $this->assertEquals($home->slug, $projects[0]->slug);
+    }
+
+    public function testIndexApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 1);
+        $this->makeTask('first post', $home->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->get('/projects');
+
+        $this->assertResponseOk();
+
+        $projects = $this->viewVariable('projects')->toArray();
+        $this->assertCount(2, $projects);
+        $this->assertEquals($home->slug, $projects[0]->slug);
+        $this->assertEquals($work->slug, $projects[1]->slug);
+    }
+
     public function testView(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);

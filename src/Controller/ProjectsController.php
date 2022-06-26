@@ -91,6 +91,26 @@ class ProjectsController extends AppController
     }
 
     /**
+     * Project list endpoint
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function index()
+    {
+        $projects = $this->Authorization
+            ->applyScope($this->Projects->find(), 'index')
+            ->contain('Sections');
+
+        $projects = $this->paginate($projects);
+
+        $this->set('projects', $projects);
+        $this->respond([
+            'success' => true,
+            'serialize' => ['projects'],
+        ]);
+    }
+
+    /**
      * View method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -101,8 +121,7 @@ class ProjectsController extends AppController
 
         $tasks = $this->Authorization
             ->applyScope($this->Tasks->find(), 'index')
-            ->contain('Projects')
-            ->find('incomplete')
+            ->contain('Projects') ->find('incomplete')
             ->find('forProjectDetails', ['slug' => $slug])
             ->limit(250);
 
