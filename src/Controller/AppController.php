@@ -66,7 +66,9 @@ class AppController extends Controller
         // Load common data.
         $identity = $this->request->getAttribute('identity');
         $this->set('identity', $identity);
-        if ($identity) {
+
+        $isApiResponse = !empty($this->viewBuilder()->getOption('serialize'));
+        if (!$isApiResponse && $identity) {
             // Use a function to defer query exection on partial loads.
             $this->set('projects', function () use ($identity) {
                 $this->loadModel('Projects');
@@ -76,7 +78,7 @@ class AppController extends Controller
         }
 
         // Use inertia if we aren't making a custom JSON response.
-        if ($this->useInertia() && !$this->viewBuilder()->getOption('serialize')) {
+        if ($this->useInertia() && !$isApiResponse) {
             $this->inertiaBeforeRender($event);
         }
     }

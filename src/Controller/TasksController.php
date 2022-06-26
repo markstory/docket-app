@@ -99,7 +99,9 @@ class TasksController extends AppController
     {
         $task = $this->Tasks->newEmptyEntity();
         $isJson = $this->request->is('json');
+        $success = false;
         $redirect = null;
+        $errors = [];
         $serialize = [];
 
         if ($this->request->is('post')) {
@@ -113,21 +115,29 @@ class TasksController extends AppController
             $this->Tasks->setNextOrderProperties($user, $task);
 
             if ($this->Tasks->save($task)) {
-                $this->Flash->success(__('Task saved.'));
+                $success = true;
+                $redirect = $this->referer(['_name' => 'tasks:today']);
 
-                $redirect = $this->referer(['_name' => 'tasks:today']);
-                $this->set('task', $task);
                 $serialize[] = 'task';
+                $this->set('task', $task);
             } else {
-                if (!$isJson) {
-                    $this->Flash->error(__('The task could not be saved. Please, try again.'));
-                    $this->request->getSession()->write('errors', $this->flattenErrors($task->getErrors()));
-                }
                 $redirect = $this->referer(['_name' => 'tasks:today']);
+
+                $serialize[] = 'errors';
+                $errors = $this->flattenErrors($task->getErrors());
+                $this->set('errors', $errors);
             }
         }
-        if (!$isJson && isset($redirect)) {
-            return $this->redirect($redirect);
+        if (!$isJson) {
+            if ($success) {
+                $this->Flash->success(__('Task saved.'));
+            } else {
+                $this->Flash->error(__('The task could not be saved. Please, try again.'));
+                $this->request->getSession()->write('errors', $errors);
+            }
+            if ($redirect) {
+                return $this->redirect($redirect);
+            }
         }
         if ($serialize) {
             $this->viewBuilder()->setOption('serialize', $serialize);
@@ -148,17 +158,20 @@ class TasksController extends AppController
         ]);
         $this->Authorization->authorize($task, 'edit');
 
+        $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             $task->complete();
-            if ($this->Tasks->save($task)) {
-                $this->Flash->success(__('Task complete.'));
-            } else {
-                $this->Flash->error(__('The task could not be completed. Please, try again.'));
-            }
+            $success = $this->Tasks->save($task);
         }
 
         if ($this->request->is('json')) {
             return $this->response->withStatus(204);
+        }
+
+        if ($success) {
+            $this->Flash->success(__('Task complete.'));
+        } else {
+            $this->Flash->error(__('The task could not be completed. Please, try again.'));
         }
 
         return $this->redirect($this->referer(['_name' => 'tasks:today']));
