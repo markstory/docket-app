@@ -5,11 +5,15 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 60,
-      height: 60,
-      child: CircularProgressIndicator(),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        SizedBox(
+          width: 60,
+          height: 60,
+          child: CircularProgressIndicator(),
+        ),
+      ]
     );
   }
 }
-

@@ -45,18 +45,21 @@ class TasksProvider extends ChangeNotifier {
 
   Future<List<Task>> todayTasks(String apiToken) async {
     List<Task> tasks = [];
+    // print('getting today tasks');
     try {
       tasks = await _database.fetchTodayTasks();
       if (tasks.isEmpty) {
+        // print('fetching tasks from API');
         tasks = await actions.loadTodayTasks(apiToken);
 
         await _database.setTodayTasks(tasks);
+        notifyListeners();
       }
-      notifyListeners();
     } catch (e) {
       //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
       tasks = [];
     }
+    // print('task list ${tasks.length}');
     return tasks;
   }
 

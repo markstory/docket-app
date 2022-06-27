@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/providers/session.dart';
@@ -18,17 +19,19 @@ class TodayScreen extends StatelessWidget {
     return Consumer<TasksProvider>(
       builder: (context, tasks, child) {
         var session = Provider.of<SessionProvider>(context);
-        var taskList = tasks.todayTasks(session.apiToken);
         var theme = Theme.of(context);
         var customColors = theme.extension<DocketColors>()!;
 
+        var taskList = tasks.todayTasks(session.apiToken);
+
         return Scaffold(
           appBar: AppBar(),
+          drawer: const AppDrawer(),
           body: ListView(
             padding: EdgeInsets.all(space(0.5)),
             children: [
               Row(children: [
-                Icon(Icons.calendar_today, color: customColors.dueToday),
+                Icon(Icons.today, color: customColors.dueToday),
                 const SizedBox(width: 4),
                 Text('Today', style: theme.textTheme.headlineSmall),
                 IconButton(
@@ -51,44 +54,27 @@ class TodayScreen extends StatelessWidget {
                   if (data == null) {
                     return const LoadingIndicator();
                   }
-                  var tasks = data.where((task) => !task.evening).toList();
-                  return TaskGroup(tasks: tasks);
+                  var day = data.where((task) => !task.evening).toList();
+                  var evening = data.where((task) => task.evening).toList();
+
+                  return Column(
+                    children: [
+                      TaskGroup(tasks: day),
+                      Row(children: [
+                        Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
+                        SizedBox(width: space(0.5)),
+                        Text('This Evening', style: theme.textTheme.headlineSmall),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            // Should show task create sheet.
+                          }
+                        )
+                      ]),
+                      TaskGroup(tasks: evening),
+                    ]
+                  );
                 }
-              ),
-              Row(children: [
-                Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
-                SizedBox(width: space(0.5)),
-                Text('This Evening', style: theme.textTheme.headlineSmall),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    // Should show task create sheet.
-                  }
-                )
-              ]),
-              // This Evening Task List
-              FutureBuilder<List<Task>>(
-                future: taskList,
-                builder: (context, snapshot) {
-                  var data = snapshot.data;
-                  if (data == null) {
-                    return const LoadingIndicator();
-                  }
-                  var tasks = data.where((task) => task.evening).toList();
-                  return TaskGroup(tasks: tasks);
-                }
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/projects/home');
-                },
-                child: const Text('View Home project')
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/tasks/upcoming');
-                },
-                child: const Text('View Upcoming')
               ),
             ]
           )

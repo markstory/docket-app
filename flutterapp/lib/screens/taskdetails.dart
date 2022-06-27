@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/taskdue.dart';
 import 'package:docket/components/projectbadge.dart';
@@ -26,6 +27,7 @@ class TaskDetailsScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(title: const Text('Task Details')),
+          drawer: const AppDrawer(),
           body: FutureBuilder<Task>(
             future: pendingTask,
             builder: (context, snapshot) {

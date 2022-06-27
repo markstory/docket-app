@@ -2,6 +2,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
@@ -26,6 +27,7 @@ class ProjectDetailsScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(title: const Text('Project Details')),
+          drawer: const AppDrawer(),
           body: FutureBuilder<Project>(
             future: projectFuture,
             builder: (context, snapshot) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/formatters.dart' as formatters;
@@ -26,6 +27,7 @@ class UpcomingScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(),
+          drawer: const AppDrawer(),
           body: ListView(
             padding: const EdgeInsets.all(4),
             children: [
