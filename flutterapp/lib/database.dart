@@ -6,6 +6,10 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 
+class StaleDataError implements Exception {
+
+}
+
 class LocalDatabase {
   // Configuration
   static const String dbName = 'docket-localstorage';
@@ -49,10 +53,11 @@ class LocalDatabase {
       return false;
     }
     var time = DateTime.now().millisecondsSinceEpoch;
-    if (staleData[key] < time) {
-      return true;
-    }
-    return false;
+    var isStale = staleData[key] < time;
+    staleData.remove(key);
+    await db.refresh(expiredKey, staleData);
+
+    return isStale;
   }
 
   /// Expire tasks individually
@@ -173,11 +178,11 @@ class LocalDatabase {
     final db = database();
     var isStale = await _isDataStale(todayTasksKey, useStale);
     if (isStale) {
-      return [];
+      throw StaleDataError();
     }
     var results = await db.value(todayTasksKey);
     if (results == null || results['tasks'] == null) {
-      return [];
+      throw StaleDataError();
     }
     List<int> taskIds = results['tasks'].cast<int>();
 

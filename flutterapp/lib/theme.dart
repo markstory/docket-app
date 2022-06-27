@@ -241,3 +241,8 @@ double space(double units) {
   var unitSize = 8;
   return units * unitSize;
 }
+
+DocketColors getCustomColors(BuildContext context) {
+  var theme = Theme.of(context);
+  return theme.extension<DocketColors>()!;
+}

@@ -22,15 +22,6 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Task>> refreshTodayTasks(String apiToken) async {
-    var tasks = await actions.loadTodayTasks(apiToken);
-    await _database.setTodayTasks(tasks);
-
-    notifyListeners();
-
-    return tasks;
-  }
-
   Future<Task> getById(String apiToken, int id) async {
     late Task? task;
     try {
@@ -43,24 +34,19 @@ class TasksProvider extends ChangeNotifier {
     return task;
   }
 
-  Future<List<Task>> todayTasks(String apiToken) async {
+  /// Fetch tasks for today view from the server.
+  Future<List<Task>> fetchToday(String apiToken) async {
     List<Task> tasks = [];
-    // print('getting today tasks');
-    try {
-      tasks = await _database.fetchTodayTasks();
-      if (tasks.isEmpty) {
-        // print('fetching tasks from API');
-        tasks = await actions.loadTodayTasks(apiToken);
+    tasks = await actions.loadTodayTasks(apiToken);
 
-        await _database.setTodayTasks(tasks);
-        notifyListeners();
-      }
-    } catch (e) {
-      //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
-      tasks = [];
-    }
-    // print('task list ${tasks.length}');
+    await _database.setTodayTasks(tasks);
+    notifyListeners();
+
     return tasks;
+  }
+
+  Future<List<Task>> getToday() async {
+    return _database.fetchTodayTasks();
   }
 
   Future<List<Task>> upcomingTasks(String apiToken) async {

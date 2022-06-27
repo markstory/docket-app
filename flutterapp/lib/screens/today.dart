@@ -9,20 +9,34 @@ import 'package:docket/providers/tasks.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
-class TodayScreen extends StatelessWidget {
+class TodayScreen extends StatefulWidget {
   static const routeName = '/tasks/today';
 
   const TodayScreen({super.key});
 
   @override
+  State<TodayScreen> createState() => _TodayScreenState();
+}
+
+class _TodayScreenState extends State<TodayScreen> {
+  late SessionProvider session;
+
+  @override
+  void initState() {
+    super.initState();
+    session = Provider.of<SessionProvider>(context, listen: false);
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
+    tasksProvider.fetchToday(session.apiToken);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(
-      builder: (context, tasks, child) {
-        var session = Provider.of<SessionProvider>(context);
+      builder: (context, tasksProvider, child) {
         var theme = Theme.of(context);
-        var customColors = theme.extension<DocketColors>()!;
-
-        var taskList = tasks.todayTasks(session.apiToken);
+        var customColors = getCustomColors(context);
+        var taskList = tasksProvider.getToday();
 
         return Scaffold(
           appBar: AppBar(),
@@ -43,7 +57,7 @@ class TodayScreen extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed:() {
-                    tasks.refreshTodayTasks(session.apiToken);
+                    tasksProvider.fetchToday(session.apiToken);
                   }
                 )
               ]),
@@ -51,6 +65,7 @@ class TodayScreen extends StatelessWidget {
                 future: taskList,
                 builder: (context, snapshot) {
                   var data = snapshot.data;
+                  print('future rebuild, $data');
                   if (data == null) {
                     return const LoadingIndicator();
                   }
