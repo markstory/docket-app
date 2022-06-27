@@ -64,23 +64,17 @@ class TasksProvider extends ChangeNotifier {
     return await _database.fetchUpcomingTasks();
   }
 
-  /// Get a list of projects for a given task
-  Future<List<Task>> projectTasks(String apiToken, String projectSlug) async {
-    List<Task> tasks = [];
-    try {
-      tasks = await _database.fetchProjectTasks(projectSlug);
-      if (tasks.isEmpty) {
-        var projectDetails = await actions.fetchProjectBySlug(apiToken, projectSlug);
-        await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
+  Future<List<Task>> fetchProjectTasks(String apiToken, String projectSlug) async {
+    var projectDetails = await actions.fetchProjectBySlug(apiToken, projectSlug);
+    await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
+    notifyListeners();
 
-        tasks = projectDetails.tasks;
-      }
-      notifyListeners();
-    } catch (e) {
-      //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
-      tasks = [];
-    }
-    return tasks;
+    return projectDetails.tasks;
+  }
+
+  /// Get a list of projects for a given task
+  Future<List<Task>> projectTasks(String projectSlug) async {
+    return await _database.fetchProjectTasks(projectSlug);
   }
 
   /// Flip task.completed and persist to the server.

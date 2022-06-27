@@ -287,11 +287,11 @@ class LocalDatabase {
   }
 
   /// Get an individual project by slug.
-  Future<Project?> fetchProjectBySlug(String slug) async {
+  Future<Project> fetchProjectBySlug(String slug) async {
     final db = database();
     var projectMap = await db.value(projectsKey);
     if (projectMap == null || projectMap[slug] == null) {
-      return null;
+      throw StaleDataError();
     }
     return Project.fromMap(projectMap[slug]);
   }
@@ -301,7 +301,7 @@ class LocalDatabase {
     final db = database();
     var projectMap = await db.value(projectsKey);
     if (projectMap == null) {
-      return [];
+      throw StaleDataError();
     }
     List<Project> projects = [];
     for (var item in projectMap.values) {

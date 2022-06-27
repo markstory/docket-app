@@ -17,35 +17,26 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Project> getBySlug(String apiToken, String slug) async {
-    late Project? project;
-    try {
-      project = await _database.fetchProjectBySlug(slug);
-    } catch (e) {
-      rethrow;
-    }
-    if (project == null) {
-      var projectDetails = await actions.fetchProjectBySlug(apiToken, slug);
-      project = projectDetails.project;
+  Future<Project> fetchBySlug(String apiToken, String slug) async {
+    var projectDetails = await actions.fetchProjectBySlug(apiToken, slug);
 
-      await _database.addProjectTasks(project, projectDetails.tasks);
-    }
+    await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
 
-    return project;
+    return projectDetails.project;
   }
 
-  Future<List<Project>> getProjects(String apiToken) async {
-    late List<Project>? projects;
-    try {
-      projects = await _database.fetchProjects();
-    } catch (e) {
-      rethrow;
-    }
-    if (projects.isEmpty) {
-      projects = await actions.fetchProjects(apiToken);
-      await _database.addProjects(projects);
-    }
+  Future<Project> getBySlug(String slug) async {
+    return await _database.fetchProjectBySlug(slug);
+  }
+
+  Future<List<Project>> fetchProjects(String apiToken) async {
+    var projects = await actions.fetchProjects(apiToken);
+    await _database.addProjects(projects);
 
     return projects;
+  }
+
+  Future<List<Project>> getProjects() async {
+    return await _database.fetchProjects();
   }
 }

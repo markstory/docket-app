@@ -231,8 +231,8 @@ void main() {
         return Response(projectDetailsResponseFixture, 200);
       });
 
-      await provider.projectTasks(apiToken, 'home');
-      var tasks = await provider.projectTasks(apiToken, 'home');
+      await provider.fetchProjectTasks(apiToken, 'home');
+      var tasks = await provider.projectTasks('home');
 
       expect(requestCounter, equals(1));
       expect(tasks.length, equals(2));

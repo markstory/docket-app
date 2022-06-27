@@ -20,6 +20,10 @@ void main() {
   file = File('test_resources/project_details.json');
   final projectViewResponseFixture = file.readAsStringSync();
 
+  Matcher throwsStaleData() {
+    return throwsA(const TypeMatcher<StaleDataError>());
+  }
+
   group('$ProjectsProvider', () {
     setUp(() async {
       var db = LocalDatabase();
@@ -39,31 +43,34 @@ void main() {
         return Response(projectsResponseFixture, 200);
       });
 
-      await provider.getProjects(apiToken);
-      var projects = await provider.getProjects(apiToken);
+      expect(
+        provider.getProjects(),
+        throwsStaleData()
+      );
+
+      var projects = await provider.fetchProjects(apiToken);
       expect(listenerCallCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
+      projects = await provider.getProjects();
       expect(projects.length, equals(2));
       expect(projects[0].slug, equals('work'));
       expect(projects[1].slug, equals('home'));
     });
 
-    test('getProjects() handles error on server error', () async {
+    test('fetchProjects() handles error on server error', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects'));
         return Response('{"errors": ["bad things"]}', 400);
       });
 
-      try {
-        await provider.getProjects(apiToken);
-        fail('Should throw');
-      } catch (exc) {
-        expect(exc.toString(), contains('Could not load projects'));
-      }
+      expect(
+        provider.fetchProjects(apiToken),
+        throwsException
+      );
     });
 
-    test('getBySlug() loads from the API and database.', () async {
+    test('fetchBySlug() and getBySlug() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home'));
@@ -71,8 +78,8 @@ void main() {
         return Response(projectViewResponseFixture, 200);
       });
 
-      await provider.getBySlug(apiToken, 'home');
-      var project = await provider.getBySlug(apiToken, 'home');
+      await provider.fetchBySlug(apiToken, 'home');
+      var project = await provider.getBySlug('home');
       expect(listenerCallCount, greaterThan(0));
 
       // Only one API call made.
@@ -80,18 +87,16 @@ void main() {
       expect(project.slug, equals('home'));
     });
 
-    test('getBySlug() raises on unknown slug', () async {
+    test('fetchBySlug() raises on unknown slug', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home'));
         return Response('{"error":"Not found"}', 404);
       });
 
-      try {
-        await provider.getBySlug(apiToken, 'home');
-        fail('Should not succeed');
-      } catch (exc) {
-        expect(exc.toString(), contains('Could not load project'));
-      }
+      expect(
+        provider.fetchBySlug(apiToken, 'home'),
+        throwsException
+      );
     });
 
     test('getBySlug() loads updates task data', () async {
@@ -99,8 +104,9 @@ void main() {
         expect(request.url.path, contains('/projects/home'));
         return Response(projectViewResponseFixture, 200);
       });
+      await provider.fetchBySlug(apiToken, 'home');
 
-      await provider.getBySlug(apiToken, 'home');
+      await provider.getBySlug('home');
 
       var db = LocalDatabase();
       var tasks = await db.fetchProjectTasks('home');

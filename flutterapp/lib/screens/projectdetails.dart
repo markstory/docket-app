@@ -10,20 +10,33 @@ import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 
-class ProjectDetailsScreen extends StatelessWidget {
+class ProjectDetailsScreen extends StatefulWidget {
   static const routeName = '/projects/{slug}';
 
   final String slug;
 
-  const ProjectDetailsScreen(this.slug, {super.key});
+  const ProjectDetailsScreen({required this.slug, super.key});
+
+  @override
+  State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
+}
+
+class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    var session = Provider.of<SessionProvider>(context);
+    var projectsProvider = Provider.of<ProjectsProvider>(context);
+
+    projectsProvider.fetchBySlug(session.apiToken, widget.slug);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer2<ProjectsProvider, TasksProvider>(
       builder: (context, projectsProvider, tasksProvider, child) {
         var theme = Theme.of(context);
-        var session = Provider.of<SessionProvider>(context);
-        var projectFuture = projectsProvider.getBySlug(session.apiToken, slug); 
+        var projectFuture = projectsProvider.getBySlug(widget.slug); 
 
         return Scaffold(
           appBar: AppBar(title: const Text('Project Details')),
@@ -32,7 +45,7 @@ class ProjectDetailsScreen extends StatelessWidget {
             future: projectFuture,
             builder: (context, snapshot) {
               // Doing this query here should result in us hitting cache all the time
-              var taskList = tasksProvider.projectTasks(session.apiToken, slug);
+              var taskList = tasksProvider.projectTasks(widget.slug);
               var project = snapshot.data;
               if (project == null) {
                 return const Card(
@@ -78,4 +91,3 @@ class ProjectDetailsScreen extends StatelessWidget {
     );
   }
 }
-
