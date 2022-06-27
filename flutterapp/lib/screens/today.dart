@@ -65,7 +65,6 @@ class _TodayScreenState extends State<TodayScreen> {
                 future: taskList,
                 builder: (context, snapshot) {
                   var data = snapshot.data;
-                  print('future rebuild, $data');
                   if (data == null) {
                     return const LoadingIndicator();
                   }

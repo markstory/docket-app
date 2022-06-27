@@ -36,8 +36,7 @@ class TasksProvider extends ChangeNotifier {
 
   /// Fetch tasks for today view from the server.
   Future<List<Task>> fetchToday(String apiToken) async {
-    List<Task> tasks = [];
-    tasks = await actions.loadTodayTasks(apiToken);
+    var tasks = await actions.loadTodayTasks(apiToken);
 
     await _database.setTodayTasks(tasks);
     notifyListeners();
@@ -45,25 +44,24 @@ class TasksProvider extends ChangeNotifier {
     return tasks;
   }
 
+  /// Get the local database state for today view.
   Future<List<Task>> getToday() async {
     return _database.fetchTodayTasks();
   }
 
-  Future<List<Task>> upcomingTasks(String apiToken) async {
-    List<Task> tasks = [];
-    try {
-      tasks = await _database.fetchUpcomingTasks();
-      if (tasks.isEmpty) {
-        tasks = await actions.loadUpcomingTasks(apiToken);
+  // Fetch tasks for upcoming view from the server.
+  Future<List<Task>> fetchUpcoming(String apiToken) async {
+    var tasks = await actions.loadUpcomingTasks(apiToken);
 
-        await _database.setUpcomingTasks(tasks);
-      }
-      notifyListeners();
-    } catch (e) {
-      //print('Could not fetch tasks at all ${e.toString()}, $stacktrace');
-      tasks = [];
-    }
+    await _database.setUpcomingTasks(tasks);
+    notifyListeners();
+
     return tasks;
+  }
+
+  // Get the locally cached upcoming tasks.
+  Future<List<Task>> getUpcoming() async {
+    return await _database.fetchUpcomingTasks();
   }
 
   /// Get a list of projects for a given task

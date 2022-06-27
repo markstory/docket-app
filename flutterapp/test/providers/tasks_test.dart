@@ -96,6 +96,27 @@ void main() {
       }
     });
 
+    test('getUpcoming() and fetchUpcoming() work together', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/upcoming'));
+
+        return Response(tasksTodayResponseFixture, 200);
+      });
+      try {
+        await provider.getUpcoming();
+        fail('Should raise on no data.');
+      } on StaleDataError catch (_) {
+        expect(true, equals(true));
+      }
+
+      var result = await provider.fetchUpcoming(apiToken);
+      expect(result.length, equals(2));
+
+      var tasks = await provider.getUpcoming();
+      expect(tasks.length, equals(2));
+      expect(tasks[0].title, equals('clean dishes'));
+    });
+
     test('toggleComplete() sends complete request', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/complete'));

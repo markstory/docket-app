@@ -194,11 +194,11 @@ class LocalDatabase {
     final db = database();
     var isStale = await _isDataStale(upcomingTasksKey, useStale);
     if (isStale) {
-      return [];
+      throw StaleDataError();
     }
     var results = await db.value(upcomingTasksKey);
     if (results == null || results['tasks'] == null) {
-      return [];
+      throw StaleDataError();
     }
     List<int> taskIds = results['tasks'].cast<int>();
 
