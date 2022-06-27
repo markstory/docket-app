@@ -15,7 +15,7 @@ class ProjectDetailsScreen extends StatefulWidget {
 
   final String slug;
 
-  const ProjectDetailsScreen({required this.slug, super.key});
+  const ProjectDetailsScreen(this.slug, {super.key});
 
   @override
   State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
@@ -25,8 +25,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    var session = Provider.of<SessionProvider>(context);
-    var projectsProvider = Provider.of<ProjectsProvider>(context);
+    var session = Provider.of<SessionProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     projectsProvider.fetchBySlug(session.apiToken, widget.slug);
   }

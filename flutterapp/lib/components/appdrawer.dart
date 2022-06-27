@@ -3,22 +3,36 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/session.dart';
+import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+class AppDrawer extends StatefulWidget {
+  const AppDrawer({super.key});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  @override
+  void initState() {
+    super.initState();
+
+    var session = Provider.of<SessionProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+
+    projectsProvider.fetchProjects(session.apiToken);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectsProvider>(
+     return Consumer<ProjectsProvider>(
       builder: (context, projectsProvider, child) {
         var theme = Theme.of(context);
         var customColors = theme.extension<DocketColors>()!;
 
-        var session = Provider.of<SessionProvider>(context);
-        var projectsFuture = projectsProvider.getProjects(session.apiToken);
+        var projectsFuture = projectsProvider.getProjects();
 
         return Drawer(
           child: ListView(
