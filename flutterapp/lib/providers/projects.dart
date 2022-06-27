@@ -18,9 +18,13 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   Future<Project> fetchBySlug(String apiToken, String slug) async {
+    // TODO Perhaps this is where cache expiration should be checked.
+    // Doing it here would let network calls to be skipped which
+    // would be nice.
     var projectDetails = await actions.fetchProjectBySlug(apiToken, slug);
 
     await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
+    notifyListeners();
 
     return projectDetails.project;
   }
@@ -32,6 +36,7 @@ class ProjectsProvider extends ChangeNotifier {
   Future<List<Project>> fetchProjects(String apiToken) async {
     var projects = await actions.fetchProjects(apiToken);
     await _database.addProjects(projects);
+    notifyListeners();
 
     return projects;
   }

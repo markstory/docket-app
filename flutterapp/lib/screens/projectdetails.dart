@@ -45,13 +45,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             future: projectFuture,
             builder: (context, snapshot) {
               // Doing this query here should result in us hitting cache all the time
-              var taskList = tasksProvider.projectTasks(widget.slug);
               var project = snapshot.data;
               if (project == null) {
                 return const Card(
                   child: Text('404! Your project has gone missing!'),
                 );
               }
+              var taskList = tasksProvider.projectTasks(widget.slug);
+
               return ListView(
                 children: [
                   Row(
@@ -76,7 +77,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     future: taskList,
                     builder: (context, snapshot) {
                       var tasks = snapshot.data;
-                      if (!snapshot.hasData || tasks == null) {
+                      if (tasks == null) {
                         return const LoadingIndicator(); 
                       }
                       return TaskGroup(tasks: tasks);
