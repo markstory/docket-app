@@ -53,14 +53,20 @@ void main() {
   final projectDetailsResponseFixture = file.readAsStringSync();
 
   group('$TasksProvider', () {
+    var db = LocalDatabase();
+
     setUp(() async {
-      var db = LocalDatabase();
+      db = LocalDatabase();
       listenerCallCount = 0;
       provider = TasksProvider(db)
           ..addListener(() {
             listenerCallCount += 1;
           });
       await provider.clear();
+    });
+
+    tearDown(() {
+      db.close();
     });
 
     test('getToday() and fetchToday() work together', () async {
@@ -91,7 +97,7 @@ void main() {
 
       try {
         await provider.fetchToday(apiToken);
-      } catch (e) {
+      } on actions.ValidationError catch (e) {
         expect(e.toString(), contains('Could not load'));
       }
     });

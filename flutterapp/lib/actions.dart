@@ -15,12 +15,41 @@ class ValidationError implements Exception {
   final List<Object> errors;
 
   const ValidationError(this.message, this.errors);
-  factory ValidationError.fromResponseBody(List<int> body) {
-    var bodyData = utf8.decode(body);
-      List<String> errors = [];
 
-      throw ValidationError('Could not save task', errors);
+  /// Parse the provided body as a standard API error response
+  /// The created exception will have the parsed errors available
+  /// in `err.errors`.
+  factory ValidationError.fromResponseBody(String message, List<int> body) {
+    List<String> errors = [];
+    try {
+      var bodyData = utf8.decode(body);
+      developer.log('$message. Response: $bodyData');
+
+      var decoded = jsonDecode(bodyData);
+      if (decoded == null || decoded['errors'] == null) {
+        throw Exception('Could not parse response, or find `errors` key.');
+      }
+      for (var line in decoded['errors']) {
+        errors.add(line);
+      }
+    } catch (e) {
+      errors = [e.toString()];
+    }
+
+    throw ValidationError(message, errors);
   }
+
+  @override
+  String toString() {
+    return message;
+  }
+}
+
+Uri _makeUrl(String path) {
+  var url = Uri.parse('$baseUrl$path');
+  developer.log('http.request url=$url');
+
+  return url;
 }
 
 var client = http.Client();
@@ -34,8 +63,7 @@ void resetClient() {
 /// The entity returned contains an API token
 /// that can be used until revoked serverside.
 Future<ApiToken> doLogin(String email, String password) async {
-  var url = Uri.parse('$baseUrl/mobile/login');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/mobile/login');
 
   var body = {'email': email, 'password': password};
 
@@ -47,8 +75,7 @@ Future<ApiToken> doLogin(String email, String password) async {
     );
 
     if (response.statusCode >= 400) {
-      developer.log('Could not login. Login response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Login failed');
+      throw ValidationError.fromResponseBody('Login Failed', response.bodyBytes);
     }
     developer.log('login complete');
 
@@ -64,8 +91,7 @@ Future<ApiToken> doLogin(String email, String password) async {
 
 /// Fetch the tasks for the 'Today' view
 Future<List<Task>> loadTodayTasks(String apiToken) async {
-  var url = Uri.parse('$baseUrl/tasks/today');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/today');
 
   return Future(() async {
     var response = await client.get(
@@ -77,8 +103,7 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
     );
 
     if (response.statusCode > 200) {
-      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Could not load tasks');
+      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
     }
 
     try {
@@ -97,8 +122,7 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
 
 /// Fetch the tasks for the 'Upcoming' view
 Future<List<Task>> loadUpcomingTasks(String apiToken) async {
-  var url = Uri.parse('$baseUrl/tasks/upcoming');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/upcoming');
 
   return Future(() async {
     var response = await client.get(
@@ -110,8 +134,7 @@ Future<List<Task>> loadUpcomingTasks(String apiToken) async {
     );
 
     if (response.statusCode > 200) {
-      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Could not load tasks');
+      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
     }
 
     try {
@@ -131,8 +154,7 @@ Future<List<Task>> loadUpcomingTasks(String apiToken) async {
 /// Update a task complete/incomplete state..
 Future<void> toggleTask(String apiToken, Task task) async {
   var operation = task.completed ? 'complete' : 'incomplete';
-  var url = Uri.parse('$baseUrl/tasks/${task.id}/$operation');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/${task.id}/$operation');
 
   return Future(() async {
     var response = await client.post(
@@ -144,16 +166,14 @@ Future<void> toggleTask(String apiToken, Task task) async {
     );
 
     if (response.statusCode >= 400) {
-      developer.log('Could not update task. Response: ${utf8.decode(response.bodyBytes)} ${response.statusCode}');
-      throw Exception('Could not toggle task');
+      throw ValidationError.fromResponseBody('Could not update task', response.bodyBytes);
     }
   });
 }
 
 /// Create a task
 Future<Task> createTask(String apiToken, Project project) async {
-  var url = Uri.parse('$baseUrl/tasks/add');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/add');
 
   return Future(() async {
     var response = await client.post(
@@ -165,8 +185,7 @@ Future<Task> createTask(String apiToken, Project project) async {
     );
 
     if (response.statusCode >= 400) {
-      developer.log('Could not create task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
-      throw ValidationError.fromResponseBody(response.bodyBytes);
+      throw ValidationError.fromResponseBody('Could not save task', response.bodyBytes);
     }
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
@@ -176,8 +195,7 @@ Future<Task> createTask(String apiToken, Project project) async {
 
 /// Delete a task
 Future<void> deleteTask(String apiToken, Task task) async {
-  var url = Uri.parse('$baseUrl/tasks/${task.id}/delete');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/${task.id}/delete');
 
   return Future(() async {
     var response = await client.post(
@@ -189,16 +207,14 @@ Future<void> deleteTask(String apiToken, Task task) async {
     );
 
     if (response.statusCode >= 400) {
-      developer.log('Could not delete task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
-      throw Exception('Could not load delete task');
+      throw ValidationError.fromResponseBody('Could not delete task', response.bodyBytes);
     }
   });
 }
 
 /// Fetch a task by id
 Future<Task> fetchTaskById(String apiToken, int id) async {
-  var url = Uri.parse('$baseUrl/tasks/$id/view');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/tasks/$id/view');
 
   return Future(() async {
     var response = await client.get(
@@ -210,8 +226,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
     );
 
     if (response.statusCode > 200) {
-      developer.log('Could not fetch today tasks. Response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Could not load tasks');
+      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
     }
 
     try {
@@ -225,8 +240,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
 }
 
 Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
-  var url = Uri.parse('$baseUrl/projects/$slug');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/projects/$slug');
 
   return Future(() async {
     var response = await client.get(
@@ -238,8 +252,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
     );
 
     if (response.statusCode > 200) {
-      developer.log('Could not fetch project by id. Response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Could not load project.');
+      throw ValidationError.fromResponseBody('Could not load project', response.bodyBytes);
     }
 
     try {
@@ -268,8 +281,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
 
 
 Future<List<Project>> fetchProjects(String apiToken) async {
-  var url = Uri.parse('$baseUrl/projects');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/projects');
 
   return Future(() async {
     var response = await client.get(
@@ -281,8 +293,7 @@ Future<List<Project>> fetchProjects(String apiToken) async {
     );
 
     if (response.statusCode > 200) {
-      developer.log('Could not fetch projects. Response: ${utf8.decode(response.bodyBytes)}');
-      throw Exception('Could not load projects.');
+      throw ValidationError.fromResponseBody('Could not load projects', response.bodyBytes);
     }
 
     try {
@@ -301,8 +312,7 @@ Future<List<Project>> fetchProjects(String apiToken) async {
 
 /// Create a project
 Future<Project> createProject(String apiToken, Project project) async {
-  var url = Uri.parse('$baseUrl/projects/add');
-  developer.log('http.request url=$url');
+  var url = _makeUrl('/projects/add');
 
   return Future(() async {
     var response = await client.post(
@@ -314,8 +324,7 @@ Future<Project> createProject(String apiToken, Project project) async {
     );
 
     if (response.statusCode >= 400) {
-      developer.log('Could not create project. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
-      throw ValidationError.fromResponseBody(response.bodyBytes);
+      throw ValidationError.fromResponseBody('Could not create project', response.bodyBytes);
     }
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
