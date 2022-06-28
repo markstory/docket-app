@@ -52,6 +52,53 @@ Uri _makeUrl(String path) {
   return url;
 }
 
+Future<http.Response> httpGet(Uri url,
+    {String? apiToken, String? errorMessage}) async {
+  var headers = {
+    'User-Agent': 'docket-flutter',
+    'Accept': 'application/json',
+  };
+  if (apiToken != null) {
+    headers['Authorization'] = 'Bearer $apiToken';
+  }
+  var response = await client.get(
+    url,
+    headers: headers,
+  );
+  if (response.statusCode >= 400) {
+    errorMessage ??= 'Request Failed to ${url.path}';
+    throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
+  }
+
+  return response;
+}
+
+Future<http.Response> httpPost(
+  Uri url, {
+  String? apiToken,
+  Map<String, dynamic>? body,
+  String? errorMessage,
+}) async {
+  var headers = {
+    'User-Agent': 'docket-flutter',
+    'Accept': 'application/json',
+  };
+  if (apiToken != null) {
+    headers['Authorization'] = 'Bearer $apiToken';
+  }
+  var response = await client.post(
+    url,
+    headers: headers,
+    body: body,
+  );
+  if (response.statusCode >= 400) {
+    errorMessage ??= 'Request Failed to ${url.path}';
+    throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
+  }
+
+  return response;
+}
+
 var client = http.Client();
 
 /// Reset the HTTP client to a new instance
@@ -68,15 +115,8 @@ Future<ApiToken> doLogin(String email, String password) async {
   var body = {'email': email, 'password': password};
 
   return Future(() async {
-    var response = await client.post(
-      url,
-      headers: {'Accept': 'application/json'},
-      body: body
-    );
-
-    if (response.statusCode >= 400) {
-      throw ValidationError.fromResponseBody('Login Failed', response.bodyBytes);
-    }
+    var response =
+        await httpPost(url, body: body, errorMessage: 'Login Failed');
     developer.log('login complete');
 
     try {
@@ -94,17 +134,8 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
   var url = _makeUrl('/tasks/today');
 
   return Future(() async {
-    var response = await client.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode > 200) {
-      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
-    }
+    var response = await httpGet(url,
+        apiToken: apiToken, errorMessage: 'Could not load tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
@@ -125,17 +156,8 @@ Future<List<Task>> loadUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
 
   return Future(() async {
-    var response = await client.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode > 200) {
-      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
-    }
+    var response = await httpGet(url,
+        apiToken: apiToken, errorMessage: 'Could not load tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
@@ -157,36 +179,20 @@ Future<void> toggleTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/$operation');
 
   return Future(() async {
-    var response = await client.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode >= 400) {
-      throw ValidationError.fromResponseBody('Could not update task', response.bodyBytes);
-    }
+    await httpPost(url,
+        apiToken: apiToken, errorMessage: 'Could not update task');
   });
 }
 
 /// Create a task
-Future<Task> createTask(String apiToken, Project project) async {
+Future<Task> createTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/add');
 
   return Future(() async {
-    var response = await client.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode >= 400) {
-      throw ValidationError.fromResponseBody('Could not save task', response.bodyBytes);
-    }
+    var response = await httpPost(url,
+        apiToken: apiToken,
+        body: task.toMap(),
+        errorMessage: 'Could not create task');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Task.fromMap(decoded['task']);
@@ -198,17 +204,8 @@ Future<void> deleteTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/delete');
 
   return Future(() async {
-    var response = await client.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode >= 400) {
-      throw ValidationError.fromResponseBody('Could not delete task', response.bodyBytes);
-    }
+    await httpPost(url,
+        apiToken: apiToken, errorMessage: 'Could not delete task');
   });
 }
 
@@ -217,17 +214,9 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   var url = _makeUrl('/tasks/$id/view');
 
   return Future(() async {
-    var response = await client.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode > 200) {
-      throw ValidationError.fromResponseBody('Could not load tasks', response.bodyBytes);
-    }
+    var response = await httpGet(url,
+        apiToken: apiToken,
+        errorMessage: 'Could not load tasks');
 
     try {
       var taskData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -239,21 +228,14 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   });
 }
 
-Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
+Future<ProjectWithTasks> fetchProjectBySlug(
+    String apiToken, String slug) async {
   var url = _makeUrl('/projects/$slug');
 
   return Future(() async {
-    var response = await client.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode > 200) {
-      throw ValidationError.fromResponseBody('Could not load project', response.bodyBytes);
-    }
+    var response = await httpGet(url,
+        apiToken: apiToken,
+        errorMessage: 'Could not load project');
 
     try {
       var data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -262,7 +244,11 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
         List<Task> tasks = [];
         for (var item in data['tasks']) {
           // TODO do this on the server so that tasks are serialized consistently.
-          item['project'] = {'slug': project.slug, 'name': project.name, 'color': project.color};
+          item['project'] = {
+            'slug': project.slug,
+            'name': project.name,
+            'color': project.color
+          };
 
           tasks.add(Task.fromMap(item));
         }
@@ -279,22 +265,13 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
   });
 }
 
-
 Future<List<Project>> fetchProjects(String apiToken) async {
   var url = _makeUrl('/projects');
 
   return Future(() async {
-    var response = await client.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode > 200) {
-      throw ValidationError.fromResponseBody('Could not load projects', response.bodyBytes);
-    }
+    var response = await httpGet(url,
+        apiToken: apiToken,
+        errorMessage: 'Could not load projects');
 
     try {
       var projectData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -315,17 +292,10 @@ Future<Project> createProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/add');
 
   return Future(() async {
-    var response = await client.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $apiToken',
-        'Accept': 'application/json'
-      }
-    );
-
-    if (response.statusCode >= 400) {
-      throw ValidationError.fromResponseBody('Could not create project', response.bodyBytes);
-    }
+    var response = await httpPost(url,
+        apiToken: apiToken,
+        body: project.toMap(),
+        errorMessage: 'Could not create project');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Project.fromMap(decoded['project']);
