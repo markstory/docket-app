@@ -47,7 +47,7 @@ class _TodayScreenState extends State<TodayScreen> {
               Row(children: [
                 Icon(Icons.today, color: customColors.dueToday),
                 const SizedBox(width: 4),
-                Text('Today', style: theme.textTheme.headlineSmall),
+                Text('Today', style: theme.textTheme.titleLarge),
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () {
@@ -77,7 +77,7 @@ class _TodayScreenState extends State<TodayScreen> {
                       Row(children: [
                         Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
                         SizedBox(width: space(0.5)),
-                        Text('This Evening', style: theme.textTheme.headlineSmall),
+                        Text('This Evening', style: theme.textTheme.titleLarge),
                         IconButton(
                           icon: const Icon(Icons.add),
                           onPressed: () {

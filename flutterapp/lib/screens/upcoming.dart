@@ -46,7 +46,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
           body: ListView(
             padding: const EdgeInsets.all(4),
             children: [
-              Text('Upcoming', style: theme.textTheme.headlineSmall),
+              Text('Upcoming', style: theme.textTheme.titleLarge),
               FutureBuilder<List<Task>>(
                 future: taskList,
                 builder: (context, snapshot) {
@@ -118,12 +118,12 @@ class TaskGroupHeading extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(height: isEvening ? 4 : 32),
+        SizedBox(height: isEvening ? space(0.5) : space(3)),
         Row(
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Text(heading, style: theme.textTheme.labelLarge),
+            Text(heading, style: theme.textTheme.titleMedium),
             SizedBox(width: space(0.5)),
             subheading,
             icon,

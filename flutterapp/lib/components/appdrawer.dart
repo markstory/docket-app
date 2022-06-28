@@ -55,7 +55,9 @@ class _AppDrawerState extends State<AppDrawer> {
                 leading: Icon(Icons.calendar_today, color: customColors.dueToday),
                 title: const Text('Upcoming'),
               ),
-              Text('Projects', style: theme.textTheme.headlineSmall),
+              ListTile(
+                title: Text('Projects', style: theme.textTheme.subtitle1),
+              ),
               FutureBuilder<List<Project>>(
                 future: projectsFuture,
                 builder: (context, snapshot) {

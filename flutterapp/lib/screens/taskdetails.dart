@@ -8,6 +8,7 @@ import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/theme.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
   static const routeName = '/tasks/{taskId}/view';
@@ -27,7 +28,6 @@ class TaskDetailsScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(title: const Text('Task Details')),
-          drawer: const AppDrawer(),
           body: FutureBuilder<Task>(
             future: pendingTask,
             builder: (context, snapshot) {
@@ -37,27 +37,28 @@ class TaskDetailsScreen extends StatelessWidget {
                   child: Text("404! Could not find that task.")
                 );
               }
-              return Column(
+              return ListView(
+                padding: EdgeInsets.all(space(1)),
                 children: [
-                  Row(
-                    children: [
-                      TaskCheckbox(task),
-                      Text(task.title, style: theme.textTheme.bodyLarge),
-                    ]
-                  ),
-                  Row(
-                    children: [
-                      ProjectBadge(task),
-                      const SizedBox(width: 4),
-                      TaskDue(task),
-                    ]
+                  ListTile(
+                    leading: TaskCheckbox(task),
+                    title: Text(task.title, style: theme.textTheme.titleMedium),
+                    subtitle: Row(
+                      children: [
+                        ProjectBadge(task),
+                        const SizedBox(width: 4),
+                        TaskDue(task),
+                      ]
+                    ),
                   ),
                   // Task Notes
-                  Text('Notes', style: theme.textTheme.bodyLarge),
+                  SizedBox(height: space(3)),
+                  Text('Notes', style: theme.textTheme.titleLarge),
                   Text(task.body),
 
                   // Sub-tasks list
-                  Text('Sub-tasks', style: theme.textTheme.bodyLarge),
+                  SizedBox(height: space(3)),
+                  Text('Sub-tasks', style: theme.textTheme.titleLarge),
                   const Text('TODO subtasks go here'),
                 ]
               );
