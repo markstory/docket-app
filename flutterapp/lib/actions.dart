@@ -47,7 +47,7 @@ class ValidationError implements Exception {
 
 Uri _makeUrl(String path) {
   var url = Uri.parse('$baseUrl$path');
-  developer.log('http.request url=$url');
+  developer.log('actions.request url=$url');
 
   return url;
 }
@@ -66,9 +66,11 @@ Future<http.Response> httpGet(Uri url,
     headers: headers,
   );
   if (response.statusCode >= 400) {
+  developer.log('actions.request failed');
     errorMessage ??= 'Request Failed to ${url.path}';
     throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
   }
+  developer.log('actions.request ok');
 
   return response;
 }
