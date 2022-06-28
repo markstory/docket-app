@@ -40,6 +40,13 @@ class LocalDatabase {
     return _database!;
   }
 
+  void close() {
+    if (_database == null) {
+      return;
+    }
+    _database = null;
+  }
+
   /// See if the storage key is old, or force expired.
   /// We don't want to eagerly refresh data from the server
   /// so we flag data as expired and then refresh next time

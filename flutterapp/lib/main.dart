@@ -21,22 +21,31 @@ void main() {
 
   final dbHandler = LocalDatabase();
 
-  runApp(
-    MultiProvider(
+  runApp(EntryPoint(database: dbHandler));
+}
+
+class EntryPoint extends StatelessWidget {
+  final LocalDatabase database;
+
+  const EntryPoint({required this.database, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ListenableProvider<SessionProvider>(
-          create: (_) => SessionProvider(dbHandler)
+          create: (_) => SessionProvider(database)
         ),
         ListenableProvider<TasksProvider>(
-          create: (_) => TasksProvider(dbHandler)
+          create: (_) => TasksProvider(database)
         ),
         ListenableProvider<ProjectsProvider>(
-          create: (_) => ProjectsProvider(dbHandler)
+          create: (_) => ProjectsProvider(database)
         ),
       ],
       child: const DocketApp()
-    )
-  );
+    );
+  }
 }
 
 class DocketApp extends StatelessWidget {
