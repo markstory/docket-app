@@ -9,6 +9,7 @@ import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/theme.dart';
 
 class ProjectDetailsScreen extends StatefulWidget {
   static const routeName = '/projects/{slug}';
@@ -57,7 +58,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text(project.name, style: theme.textTheme.headlineLarge),
+                      SizedBox(width: space(2)),
+                      Text(project.name, style: theme.textTheme.titleLarge),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
