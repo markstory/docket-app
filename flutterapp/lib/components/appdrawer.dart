@@ -52,7 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pushNamed(context, '/tasks/upcoming');
                 },
-                leading: Icon(Icons.calendar_today, color: customColors.dueToday),
+                leading: Icon(Icons.calendar_today, color: customColors.dueTomorrow),
                 title: const Text('Upcoming'),
               ),
               ListTile(
@@ -72,19 +72,19 @@ class _AppDrawerState extends State<AppDrawer> {
                   );
                 }
               ),
-              TextButton.icon(
-                icon: const Icon(Icons.add),
-                label: const Text('Add Project'),
-                onPressed: () {
-                  // TODO Show new project sheet.
+              ListTile(
+                leading:Icon(Icons.add, color: theme.colorScheme.primary),
+                title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
+                onTap: () {
+                  Navigator.pushNamed(context, '/projects/new');
                 }
               ),
-              TextButton(
-                child: const Text('Archived Projects'),
-                onPressed: () {
-                  // TODO Show archived projects list.
+              ListTile(
+                title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
+                onTap: () {
+                  Navigator.pushNamed(context, '/projects/add');
                 }
-              )
+              ),
             ]
           )
         );
