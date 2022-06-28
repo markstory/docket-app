@@ -9,6 +9,7 @@ import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
+import 'screens/projectadd.dart';
 import 'screens/today.dart';
 import 'screens/taskdetails.dart';
 import 'screens/upcoming.dart';
@@ -78,8 +79,15 @@ class DocketApp extends StatelessWidget {
             if (settings.name == LoginScreen.routeName) {
               return MaterialPageRoute(builder: (context) => const LoginScreen());
             }
-            // Project Detailed View.
+            // Project Add
+            if (settings.name == ProjectAddScreen.routeName) {
+              return MaterialPageRoute(builder: (context) => const LoginRequired(child: ProjectAddScreen()));
+            }
+
+            // Remaining routes require URL parsing
             var uri = Uri.parse(settings.name.toString());
+
+            // Project Detailed View.
             if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'projects') {
               var slug = uri.pathSegments[1].toString();
               return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(slug)));
