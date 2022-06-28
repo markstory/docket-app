@@ -10,6 +10,19 @@ import 'package:docket/models/project.dart';
 /// how to do that yet.
 const baseUrl = 'https://docket.mark-story.com';
 
+class ValidationError implements Exception {
+  final String message;
+  final List<Object> errors;
+
+  const ValidationError(this.message, this.errors);
+  factory ValidationError.fromResponseBody(List<int> body) {
+    var bodyData = utf8.decode(body);
+      List<String> errors = [];
+
+      throw ValidationError('Could not save task', errors);
+  }
+}
+
 var client = http.Client();
 
 /// Reset the HTTP client to a new instance
@@ -137,6 +150,30 @@ Future<void> toggleTask(String apiToken, Task task) async {
   });
 }
 
+/// Create a task
+Future<Task> createTask(String apiToken, Project project) async {
+  var url = Uri.parse('$baseUrl/tasks/add');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode >= 400) {
+      developer.log('Could not create task. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
+      throw ValidationError.fromResponseBody(response.bodyBytes);
+    }
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return Task.fromMap(decoded['task']);
+  });
+}
+
 /// Delete a task
 Future<void> deleteTask(String apiToken, Task task) async {
   var url = Uri.parse('$baseUrl/tasks/${task.id}/delete');
@@ -259,5 +296,29 @@ Future<List<Project>> fetchProjects(String apiToken) async {
       developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;
     }
+  });
+}
+
+/// Create a project
+Future<Project> createProject(String apiToken, Project project) async {
+  var url = Uri.parse('$baseUrl/projects/add');
+  developer.log('http.request url=$url');
+
+  return Future(() async {
+    var response = await client.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode >= 400) {
+      developer.log('Could not create project. Response: ${utf8.decode(response.bodyBytes)} $apiToken');
+      throw ValidationError.fromResponseBody(response.bodyBytes);
+    }
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return Project.fromMap(decoded['project']);
   });
 }
