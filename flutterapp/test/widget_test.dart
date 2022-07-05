@@ -21,5 +21,6 @@ void main() {
 
     // Go to login page
     expect(find.text('Login'), findsOneWidget);
+    db.close();
   });
 }
