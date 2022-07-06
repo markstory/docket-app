@@ -89,6 +89,7 @@ class TaskGroupHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var docketColors = theme.extension<DocketColors>()!;
     var heading = dateKey;
 
     var isEvening = heading.contains('evening:');
@@ -100,10 +101,14 @@ class TaskGroupHeading extends StatelessWidget {
     if (!isEvening) {
       var dateVal = DateTime.parse('$dateKey 00:00:00');
       heading = formatters.compactDate(dateVal);
-      subheading = Text(
-        formatters.monthDay(dateVal),
-        style: theme.textTheme.labelMedium
-      );
+      var subheadingContent = formatters.monthDay(dateVal);
+
+      if (subheadingContent != heading) {
+        subheading = Text(
+          formatters.monthDay(dateVal),
+          style: theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText)
+        );
+      }
     }
 
     Widget icon = const SizedBox(width: 0);
@@ -116,6 +121,11 @@ class TaskGroupHeading extends StatelessWidget {
       });
     }
 
+    var headingStyle = theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500);
+    if (isEvening) {
+      headingStyle = theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText);
+    }
+
     return Column(
       children: [
         SizedBox(height: isEvening ? space(0.5) : space(3)),
@@ -123,7 +133,7 @@ class TaskGroupHeading extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Text(heading, style: theme.textTheme.titleMedium),
+            Text(heading, style: headingStyle),
             SizedBox(width: space(0.5)),
             subheading,
             icon,

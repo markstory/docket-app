@@ -1,3 +1,4 @@
+import 'package:docket/screens/projectadd.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -76,7 +77,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 leading:Icon(Icons.add, color: theme.colorScheme.primary),
                 title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
                 onTap: () {
-                  Navigator.pushNamed(context, '/projects/new');
+                  Navigator.pushNamed(context, ProjectAddScreen.routeName);
                 }
               ),
               ListTile(

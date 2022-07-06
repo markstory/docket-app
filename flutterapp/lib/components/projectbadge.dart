@@ -10,6 +10,9 @@ class ProjectBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var docketColors = theme.extension<DocketColors>()!;
+
     var color = getProjectColor(task.projectColor);
     return Row(
       children: [
@@ -17,7 +20,7 @@ class ProjectBadge extends StatelessWidget {
         SizedBox(width: space(1)),
         Text(
           task.projectName,
-          style: const TextStyle(color: Colors.black54),
+          style: TextStyle(color: docketColors.secondaryText),
         ),
       ]
     );

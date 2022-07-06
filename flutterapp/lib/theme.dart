@@ -1,38 +1,45 @@
 import 'package:flutter/material.dart';
 
-final projectColors = {
-  0: const Color(0xFF28aa48),
-  1: const Color(0xFF6fd19d),
-  2: const Color(0xFF5d3688),
-  3: const Color(0xFFb86fd1),
-  4: const Color(0xFF218fa7),
-  5: const Color(0xFF78f0f6),
-  6: const Color(0xFFab6709),
-  7: const Color(0xFFfbaf45),
-  8: const Color(0xFFa00085),
-  9: const Color(0xFFfb4fc8),
-  10: const Color(0xFF818c00),
-  11: const Color(0xFFcef226),
-  12: const Color(0xFF4755ff),
-  13: const Color(0xFF91b5ff),
-  14: const Color(0xFF525876),
-  15: const Color(0xFF91971f),
-  16: const Color(0xFFb60909),
-  17: const Color(0xFFf14949),
-};
+class ProjectColor {
+  final int id;
+  final String name;
+  final Color color;
+
+  const ProjectColor(this.id, this.name, this.color);
+}
+
+const projectColors = [
+  ProjectColor(0, 'green', Color(0xFF28aa48)),
+  ProjectColor(1, 'teal', Color(0xFF6fd19d)),
+  ProjectColor(2, 'plum', Color(0xFF5d3688)),
+  ProjectColor(3, 'lavender', Color(0xFFb86fd1)),
+  ProjectColor(4, 'sea blue', Color(0xFF218fa7)),
+  ProjectColor(5, 'light blue', Color(0xFF78f0f6)),
+  ProjectColor(6, 'toffee', Color(0xFFab6709)),
+  ProjectColor(7, 'peach', Color(0xFFfbaf45)),
+  ProjectColor(8, 'berry', Color(0xFFa00085)),
+  ProjectColor(9, 'pink', Color(0xFFfb4fc8)),
+  ProjectColor(10, 'olive', Color(0xFF818c00)),
+  ProjectColor(11, 'lime', Color(0xFFcef226)),
+  ProjectColor(12, 'ultramarine', Color(0xFF4755ff)),
+  ProjectColor(13, 'sky', Color(0xFF91b5ff)),
+  ProjectColor(14, 'slate', Color(0xFF525876)),
+  ProjectColor(15, 'smoke', Color(0xFF91971f)),
+  ProjectColor(16, 'brick', Color(0xFFb60909)),
+  ProjectColor(17, 'flame', Color(0xFFf14949)),
+];
+
 
 /// Convert a server side colour 'id' to material
 /// colors.
 Color getProjectColor(int colorId) {
-  var color = projectColors[colorId];
-  if (color == null) {
-    var color = projectColors[0];
-    if (color == null) {
-      throw Exception('Invalid fallback color');
+  for (var color in projectColors) {
+    if (color.id == colorId) {
+      return color.color;
     }
-    return color;
   }
-  return color;
+
+  return projectColors[0].color;
 }
 
 @immutable
@@ -94,6 +101,8 @@ class DocketColors extends ThemeExtension<DocketColors> {
   final Color? dueWeek;
   final Color? dueFortnight;
 
+  final Color? secondaryText;
+
   const DocketColors({
     required this.actionLock,
     required this.actionEdit,
@@ -106,6 +115,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     required this.dueEvening,
     required this.dueWeek,
     required this.dueFortnight,
+    required this.secondaryText,
   });
 
   @override
@@ -121,6 +131,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     Color? dueEvening,
     Color? dueWeek,
     Color? dueFortnight,
+    Color? secondaryText,
   }) {
     return DocketColors(
       actionLock: actionLock ?? this.actionLock,
@@ -134,6 +145,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueEvening: dueEvening ?? this.dueEvening,
       dueWeek: dueWeek ?? this.dueWeek,
       dueFortnight: dueFortnight ?? this.dueFortnight,
+      secondaryText: secondaryText ?? this.secondaryText,
     );
   }
 
@@ -154,6 +166,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueEvening: Color.lerp(dueEvening, other.dueEvening, t),
       dueWeek: Color.lerp(dueWeek, other.dueWeek, t),
       dueFortnight: Color.lerp(dueFortnight, other.dueFortnight, t),
+      secondaryText: Color.lerp(secondaryText, other.secondaryText, t),
     );
   }
 
@@ -169,6 +182,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueEvening: blue500,
     dueWeek: blue700,
     dueFortnight: gray500,
+    secondaryText: gray700,
   );
 
   static const dark = DocketColors(
@@ -183,6 +197,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueEvening: blue500,
     dueWeek: blue300,
     dueFortnight: gray500,
+    secondaryText: gray500,
   );
 }
 
@@ -203,8 +218,8 @@ final lightTheme = ThemeData(
     errorContainer: DocketColors.red100,
     background: DocketColors.white,
     onBackground: DocketColors.gray000,
-    surface: DocketColors.gray100,
-    onSurface: DocketColors.gray200,
+    surface: DocketColors.gray200,
+    onSurface: DocketColors.black,
     surfaceVariant: DocketColors.gray000,
     surfaceTint: DocketColors.purple100,
   ),
@@ -229,7 +244,7 @@ final darkTheme = ThemeData(
     background: DocketColors.gray900,
     onBackground: DocketColors.gray800,
     surface: DocketColors.gray800,
-    onSurface: DocketColors.gray700,
+    onSurface: DocketColors.white,
     surfaceVariant: DocketColors.purple900,
     surfaceTint: DocketColors.purple100,
   ),
