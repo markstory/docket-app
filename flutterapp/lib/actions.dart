@@ -41,7 +41,9 @@ class ValidationError implements Exception {
 
   @override
   String toString() {
-    return message;
+    var details = errors.reduce((error, built) => "$built $error");
+
+    return "$message $details";
   }
 }
 
@@ -84,6 +86,7 @@ Future<http.Response> httpPost(
   var headers = {
     'User-Agent': 'docket-flutter',
     'Accept': 'application/json',
+    'Content-Type': 'application/json',
   };
   if (apiToken != null) {
     headers['Authorization'] = 'Bearer $apiToken';
@@ -91,11 +94,13 @@ Future<http.Response> httpPost(
   var response = await client.post(
     url,
     headers: headers,
-    body: body,
+    body: jsonEncode(body),
   );
   if (response.statusCode >= 400) {
     errorMessage ??= 'Request Failed to ${url.path}';
-    throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
+    var err = ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
+    print(err.toString());
+    throw err;
   }
 
   return response;

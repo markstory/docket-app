@@ -37,7 +37,7 @@ class Project {
   int incompleteTaskCount;
 
   Project({
-    required this.slug, 
+    required this.slug,
     required this.name,
     required this.color,
     required this.ranking,
@@ -58,7 +58,18 @@ class Project {
       color: json['color'],
       ranking: json['ranking'],
       sections: sections,
-      incompleteTaskCount: json['incomplete_task_count'],
+      incompleteTaskCount: json['incomplete_task_count'] ?? 0,
+    );
+  }
+
+  factory Project.blank() {
+    return Project(
+      slug: '',
+      name: '',
+      color: 0,
+      sections: [],
+      incompleteTaskCount: 0,
+      ranking: 0,
     );
   }
 

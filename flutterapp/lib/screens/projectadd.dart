@@ -1,15 +1,11 @@
-// import 'package:docket/components/loadingindicator.dart';
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// import 'package:docket/components/appdrawer.dart';
-// import 'package:docket/components/taskgroup.dart';
-// import 'package:docket/models/project.dart';
-// import 'package:docket/models/task.dart';
-// import 'package:docket/providers/session.dart';
+import 'package:docket/models/project.dart';
+import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/tasks.dart';
-// import 'package:docket/theme.dart';
+import 'package:docket/theme.dart';
 
 class ProjectAddScreen extends StatefulWidget {
   static const routeName = '/projects/add';
@@ -23,6 +19,7 @@ class ProjectAddScreen extends StatefulWidget {
 class _ProjectAddScreenState extends State<ProjectAddScreen> {
   late TextEditingController _controller;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Project project = Project.blank();
 
   @override
   void initState() {
@@ -36,18 +33,33 @@ class _ProjectAddScreenState extends State<ProjectAddScreen> {
     super.dispose();
   }
 
-  void _saveProject() {
-    // TODO save things
+  void _saveProject(BuildContext context, SessionProvider session, ProjectsProvider projects) async {
+    var messenger = ScaffoldMessenger.of(context);
+    void complete() { 
+      Navigator.pop(context); 
+    }
+    try {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Saving'))
+      );
+      await projects.createProject(session.apiToken, project);
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Project Created'))
+      );
+      complete();
+    } catch (e) {
+      developer.log("Failed to create project ${e.toString()}");
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Failed to create project')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProjectsProvider, TasksProvider>(
-      builder: (context, projectsProvider, tasksProvider, child) {
-        // var session = Provider.of<SessionProvider>(context);
-        // var theme = Theme.of(context);
-        // var projectFuture = projectsProvider.getBySlug(widget.slug); 
-
+    return Consumer2<ProjectsProvider, SessionProvider>(
+      builder: (context, projectsProvider, sessionProvider, child) {
+        // TODO extract this form so it can be used for updates too.
         return Scaffold(
           appBar: AppBar(title: const Text('New Project')),
           body: Form(
@@ -64,13 +76,38 @@ class _ProjectAddScreenState extends State<ProjectAddScreen> {
                     return (value != null && value.isNotEmpty) 
                         ? null
                         : 'Project name required';
+                  },
+                  onSaved: (value) {
+                    if (value != null) {
+                      project.name = value;
+                    }
                   }
                 ),
-                TextFormField(
+                DropdownButtonFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Color'
                   ),
+                  onChanged: (int? value) {
+                    if (value != null) {
+                      project.color = value;
+                    }
+                  },
+                  items: projectColors.map((item) {
+                    return DropdownMenuItem(
+                      value: item.id,
+                      child: Row(
+                        children: [
+                          Icon(Icons.circle, color: item.color, size: 12),
+                          SizedBox(width: space(1)),
+                          Text(
+                            item.name,
+                            style: const TextStyle(color: Colors.black54),
+                          ),
+                        ]
+                      )
+                    );
+                  }).toList(),
                 ),
                 ButtonBar(
                   children: [
@@ -82,8 +119,11 @@ class _ProjectAddScreenState extends State<ProjectAddScreen> {
                     ),
                     ElevatedButton(
                       child: const Text('Save'),
-                      onPressed: () {
-                        _saveProject();
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          _saveProject(context, sessionProvider, projectsProvider);
+                        }
                       }
                     )
                   ]
