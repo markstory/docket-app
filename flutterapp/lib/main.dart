@@ -81,7 +81,7 @@ class DocketApp extends StatelessWidget {
             }
             // Project Add
             if (settings.name == ProjectAddScreen.routeName) {
-              return MaterialPageRoute(builder: (context) => const LoginRequired(child: ProjectAddScreen()));
+              return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
             }
 
             // Remaining routes require URL parsing
