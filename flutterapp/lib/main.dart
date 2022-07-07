@@ -7,6 +7,7 @@ import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
+import 'screens/boot.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
@@ -27,8 +28,13 @@ void main() {
 
 class EntryPoint extends StatelessWidget {
   final LocalDatabase database;
+  final Widget? child;
 
-  const EntryPoint({required this.database, super.key});
+  const EntryPoint({
+    required this.database, 
+    this.child,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +50,7 @@ class EntryPoint extends StatelessWidget {
           create: (_) => ProjectsProvider(database)
         ),
       ],
-      child: const DocketApp()
+      child: DocketApp(child: child),
     );
   }
 }
@@ -52,20 +58,37 @@ class EntryPoint extends StatelessWidget {
 class DocketApp extends StatelessWidget {
   // TODO implement theme saving with profile/settings.
   final AdaptiveThemeMode? savedThemeMode;
+  final Widget? child;
 
-  const DocketApp({this.savedThemeMode, super.key});
+  const DocketApp({
+    this.savedThemeMode, 
+    this.child,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: app_theme.lightTheme,
-    dark: app_theme.darkTheme,
+      dark: app_theme.darkTheme,
       initial: savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) {
+        if (child != null) {
+          return MaterialApp(
+            theme: theme,
+            darkTheme: darkTheme,
+            home: child,
+          );
+        }
         return MaterialApp(
           theme: theme,
           darkTheme: darkTheme,
           onGenerateRoute: (settings) {
+            // The default route goes to a splash screen
+            if (settings.name == '/') {
+              return MaterialPageRoute(builder: (context) => const BootScreen());
+            }
+
             // The named route and the default application route go to Today.
             // Should the user not have a session they are directed to Login.
             if (settings.name == TodayScreen.routeName || settings.name == '/') {
