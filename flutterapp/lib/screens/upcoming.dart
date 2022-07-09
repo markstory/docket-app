@@ -38,7 +38,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     return Consumer<TasksProvider>(
       builder: (context, tasks, child) {
         var theme = Theme.of(context);
-        var taskList = tasks.getUpcoming();
+        var taskViewData = tasks.getUpcoming();
 
         return Scaffold(
           appBar: AppBar(),
@@ -47,15 +47,15 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
             padding: const EdgeInsets.all(4),
             children: [
               Text('Upcoming', style: theme.textTheme.titleLarge),
-              FutureBuilder<List<Task>>(
-                future: taskList,
+              FutureBuilder<TaskViewData>(
+                future: taskViewData,
                 builder: (context, snapshot) {
                   var data = snapshot.data;
                   if (data == null) {
                     return const LoadingIndicator();
                   }
                   var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
-                  var grouped = grouperFunc(data);
+                  var grouped = grouperFunc(data.tasks);
 
                   return Column(
                     children: grouped.map<Widget>((group) {

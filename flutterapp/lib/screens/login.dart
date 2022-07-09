@@ -27,11 +27,6 @@ class LoginScreen extends StatelessWidget {
     // Build a Form widget using the _formKey created above.
     return Consumer<SessionProvider>(
       builder: (context, session, child) {
-        if (session.hasToken) {
-          // Then redirect to Today.
-            Navigator.pushNamed(context, TodayScreen.routeName);
-        }
-
         return Scaffold(
           appBar: AppBar(),
           body: Column(
@@ -40,7 +35,11 @@ class LoginScreen extends StatelessWidget {
               LoginForm(onSubmit: (String? email, String? password) async {
                 if (email != null && password != null) {
                   try {
+                    void complete() {
+                     Navigator.pushNamed(context, TodayScreen.routeName);
+                    }
                     await _handleSubmit(email, password, session);
+                    complete();
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(e.toString()))

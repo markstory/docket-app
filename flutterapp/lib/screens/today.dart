@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/providers/session.dart';
@@ -36,7 +37,7 @@ class _TodayScreenState extends State<TodayScreen> {
       builder: (context, tasksProvider, child) {
         var theme = Theme.of(context);
         var customColors = getCustomColors(context);
-        var taskList = tasksProvider.getToday();
+        var taskViewData = tasksProvider.getToday();
 
         return Scaffold(
           appBar: AppBar(),
@@ -61,19 +62,23 @@ class _TodayScreenState extends State<TodayScreen> {
                   }
                 )
               ]),
-              FutureBuilder<List<Task>>(
-                future: taskList,
+              FutureBuilder<TaskViewData>(
+                future: taskViewData,
                 builder: (context, snapshot) {
                   var data = snapshot.data;
+                  print("snapshot ${snapshot.data}");
                   if (data == null) {
                     return const LoadingIndicator();
                   }
-                  var day = data.where((task) => !task.evening).toList();
-                  var evening = data.where((task) => task.evening).toList();
+                  var day = data.tasks.where((task) => !task.evening).toList();
+                  var evening = data.tasks.where((task) => task.evening).toList();
 
                   return Column(
                     children: [
+                      CalendarItemList(calendarItems: data.calendarItems),
+                      SizedBox(height: space(2)),
                       TaskGroup(tasks: day),
+                      SizedBox(height: space(2)),
                       Row(children: [
                         Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
                         SizedBox(width: space(0.5)),

@@ -7,7 +7,6 @@ import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
-import 'screens/boot.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
@@ -84,11 +83,6 @@ class DocketApp extends StatelessWidget {
           theme: theme,
           darkTheme: darkTheme,
           onGenerateRoute: (settings) {
-            // The default route goes to a splash screen
-            if (settings.name == '/') {
-              return MaterialPageRoute(builder: (context) => const BootScreen());
-            }
-
             // The named route and the default application route go to Today.
             // Should the user not have a session they are directed to Login.
             if (settings.name == TodayScreen.routeName || settings.name == '/') {
@@ -98,13 +92,14 @@ class DocketApp extends StatelessWidget {
             if (settings.name == UpcomingScreen.routeName) {
               return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
             }
-            // Login
-            if (settings.name == LoginScreen.routeName) {
-              return MaterialPageRoute(builder: (context) => const LoginScreen());
-            }
             // Project Add
             if (settings.name == ProjectAddScreen.routeName) {
               return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
+            }
+
+            // Login
+            if (settings.name == LoginScreen.routeName) {
+              return MaterialPageRoute(builder: (context) => const LoginScreen());
             }
 
             // Remaining routes require URL parsing

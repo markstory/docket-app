@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:docket/models/apitoken.dart';
+import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 
@@ -137,7 +138,7 @@ Future<ApiToken> doLogin(String email, String password) async {
 }
 
 /// Fetch the tasks for the 'Today' view
-Future<List<Task>> loadTodayTasks(String apiToken) async {
+Future<TaskViewData> loadTodayTasks(String apiToken) async {
   var url = _makeUrl('/tasks/today');
 
   return Future(() async {
@@ -147,10 +148,14 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
       List<Task> tasks = [];
+      List<CalendarItem> calendarItems = [];
       for (var item in decoded['tasks']) {
         tasks.add(Task.fromMap(item));
       }
-      return tasks;
+      for (var item in decoded['calendarItems']) {
+        calendarItems.add(CalendarItem.fromMap(item));
+      }
+      return TaskViewData(tasks: tasks, calendarItems: calendarItems);
     } catch (e, stacktrace) {
       developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;
@@ -158,8 +163,8 @@ Future<List<Task>> loadTodayTasks(String apiToken) async {
   });
 }
 
-/// Fetch the tasks for the 'Upcoming' view
-Future<List<Task>> loadUpcomingTasks(String apiToken) async {
+/// Fetch the tasks and calendar items for the 'Upcoming' view
+Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
 
   return Future(() async {
@@ -169,10 +174,14 @@ Future<List<Task>> loadUpcomingTasks(String apiToken) async {
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
       List<Task> tasks = [];
+      List<CalendarItem> calendarItems = [];
       for (var item in decoded['tasks']) {
         tasks.add(Task.fromMap(item));
       }
-      return tasks;
+      for (var item in decoded['calendarItems']) {
+        calendarItems.add(CalendarItem.fromMap(item));
+      }
+      return TaskViewData(tasks: tasks, calendarItems: calendarItems);
     } catch (e, stacktrace) {
       developer.log('Failed to decode ${e.toString()} $stacktrace');
       rethrow;

@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:docket/models/calendaritem.dart';
 import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -21,6 +22,9 @@ class LocalDatabase {
   static const String taskMapKey = 'v1:taskmap';
   static const String projectsKey = 'v1:projects';
   static const String projectTaskMapKey = 'v1:projecttasks';
+  static const String calendarItemMapKey = 'v1:calendaritems';
+  static const String todayCalendarItemKey = 'v1:todaycalendaritems';
+  static const String upcomingCalendarItemKey = 'v1:upcomingcalendaritems';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -90,9 +94,14 @@ class LocalDatabase {
       expire.add(upcomingTasksKey);
     }
 
-    // TODO implement project view expiration.
-
     final db = database();
+
+    // Clear the project index so we read it fresh again.
+    var projectIndex = await db.value(projectTaskMapKey);
+    projectIndex ??= {};
+    projectIndex.remove(task.projectSlug);
+    await db.refresh(projectTaskMapKey, projectIndex);
+
     var current = await db.value(expiredKey);
     current ??= {};
 
@@ -317,6 +326,92 @@ class LocalDatabase {
     projects.sort((a, b) => a.ranking.compareTo(b.ranking));
 
     return projects;
+  }
+  // }}}
+
+  // Calendar Item Methods {{{
+
+  /// Add a list of calendar items to the canonical lookup.
+  Future<void> addCalendarItems(List<CalendarItem> calendarItems) async {
+    final db = database();
+    var indexed = await db.value(calendarItemMapKey);
+    indexed ??= {};
+    for (var calendarItem in calendarItems) {
+      indexed[calendarItem.id] = calendarItem.toMap();
+    }
+    await db.refresh(calendarItemMapKey, indexed);
+  }
+
+  /// Get a list of calendar items for the today view
+  Future<List<CalendarItem>> fetchTodayCalendarItems({useStale = false}) async {
+    final db = database();
+    var isStale = await _isDataStale(todayCalendarItemKey, useStale);
+    if (isStale) {
+      throw StaleDataError();
+    }
+    var results = await db.value(todayCalendarItemKey);
+    if (results == null || results['items'] == null) {
+      throw StaleDataError();
+    }
+    List<String> ids = results['items'];
+
+    return _getCalendarItemsById(ids);
+  }
+
+  /// Get a list of calendar items for the upcoming view
+  Future<List<CalendarItem>> fetchUpcomingCalendarItems({useStale = false}) async {
+    final db = database();
+    var isStale = await _isDataStale(upcomingCalendarItemKey, useStale);
+    if (isStale) {
+      throw StaleDataError();
+    }
+    var results = await db.value(upcomingCalendarItemKey);
+    if (results == null || results['items'] == null) {
+      throw StaleDataError();
+    }
+    List<String> ids = results['items'];
+
+    return _getCalendarItemsById(ids);
+  }
+
+  /// Add records to the 'today' view store.
+  Future<void> setTodayCalendarItems(List<CalendarItem> items) async {
+    await addCalendarItems(items);
+
+    final db = database();
+    await db.refresh(todayCalendarItemKey, {
+      'items': items.map((item) => item.id).toList(),
+    });
+  }
+
+  /// Add records to the 'today' view store.
+  Future<void> setUpcomingCalendarItems(List<CalendarItem> items) async {
+    await addCalendarItems(items);
+
+    final db = database();
+    await db.refresh(upcomingCalendarItemKey, {
+      'items': items.map((item) => item.id).toList(),
+    });
+  }
+
+  /// Get a list of calendar items by id.
+  ///
+  /// Used by fetch methods to read results from the local mapping
+  /// of items.
+  Future<List<CalendarItem>> _getCalendarItemsById(List<String> ids) async {
+    final db = database();
+    var indexed = await db.value(calendarItemMapKey);
+    indexed ??= {};
+    List<CalendarItem> items = [];
+    for (var id in ids) {
+      var record = indexed[id];
+      if (record == null) {
+        developer.log('Skipping item with id=$id as it could not be found.');
+        continue;
+      }
+      items.add(CalendarItem.fromMap(record));
+    }
+    return items;
   }
   // }}}
 

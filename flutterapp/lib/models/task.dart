@@ -1,4 +1,5 @@
 import 'package:docket/formatters.dart' as formatters;
+import 'package:docket/models/calendaritem.dart';
 
 class Task {
   int? id;
@@ -123,4 +124,12 @@ class Task {
     }
     return date;
   }
+}
+
+/// Container type for APIs that return both tasks and calendar items
+class TaskViewData {
+  final List<Task> tasks;
+  final List<CalendarItem> calendarItems;
+
+  const TaskViewData({required this.tasks, required this.calendarItems});
 }

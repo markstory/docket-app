@@ -1,6 +1,6 @@
 
 class CalendarItem {
-  int? id;
+  String id;
   int? calendarSourceId;
   String? providerId;
   String title;
@@ -13,8 +13,8 @@ class CalendarItem {
   String htmlLink;
 
   CalendarItem({
-    this.id,
-    this.calendarSourceId,, 
+    this.id = '',
+    this.calendarSourceId,
     this.providerId,
     this.title = '',
     this.color = 0,
@@ -44,24 +44,9 @@ class CalendarItem {
     if (json['end_date'] != null) {
        endDate = DateTime.parse(json['end_date']);
     }
-    var projectSlug = json['project_slug'];
-    projectSlug ??= json['project']['slug'];
-    var projectColor = json['project_color'];
-    projectColor ??= json['project']['color'];
-    var projectName = json['project_name'];
-    projectName ??= json['project']['name'];
-
-    var evening = json['evening'];
-    if (evening is int) {
-      evening = evening == 0 ? false : true;
-    }
-    var completed = json['completed'];
-    if (completed is int) {
-      completed = completed == 0 ? false : true;
-    }
 
     return CalendarItem(
-      id: json['id'],
+      id: json['id'].toString(),
       calendarSourceId: json['calendar_source_id'],
       providerId: json['provider_id'],
       title: json['title'] ?? '',
@@ -76,7 +61,7 @@ class CalendarItem {
   }
 
   CalendarItem copy({
-    int? id,
+    String? id,
     int? calendarSourceId,
     String? providerId,
     String? title,

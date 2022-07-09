@@ -30,46 +30,51 @@ class TasksProvider extends ChangeNotifier {
       rethrow;
     }
     task ??= await actions.fetchTaskById(apiToken, id);
+    await _database.addTasks([task]);
 
     return task;
   }
 
   /// Fetch tasks for today view from the server.
-  Future<List<Task>> fetchToday(String apiToken) async {
-    var tasks = await actions.loadTodayTasks(apiToken);
+  /// Will notifyListeners() on completion.
+  Future<void> fetchToday(String apiToken) async {
+    var taskViewData = await actions.loadTodayTasks(apiToken);
 
-    await _database.setTodayTasks(tasks);
+    await _database.setTodayTasks(taskViewData.tasks);
+    await _database.setTodayCalendarItems(taskViewData.calendarItems);
     notifyListeners();
-
-    return tasks;
   }
 
   /// Get the local database state for today view.
-  Future<List<Task>> getToday() async {
-    return _database.fetchTodayTasks();
+  Future<TaskViewData> getToday() async {
+    var tasks = await _database.fetchTodayTasks();
+    var calendarItems = await _database.fetchTodayCalendarItems();
+
+    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
   }
 
-  // Fetch tasks for upcoming view from the server.
-  Future<List<Task>> fetchUpcoming(String apiToken) async {
-    var tasks = await actions.loadUpcomingTasks(apiToken);
+  /// Fetch tasks for upcoming view from the server.
+  /// Will notifyListeners() on completion.
+  Future<void> fetchUpcoming(String apiToken) async {
+    var taskViewData = await actions.loadUpcomingTasks(apiToken);
 
-    await _database.setUpcomingTasks(tasks);
+    await _database.setUpcomingTasks(taskViewData.tasks);
+    await _database.setUpcomingCalendarItems(taskViewData.calendarItems);
     notifyListeners();
-
-    return tasks;
   }
 
   // Get the locally cached upcoming tasks.
-  Future<List<Task>> getUpcoming() async {
-    return await _database.fetchUpcomingTasks();
+  Future<TaskViewData> getUpcoming() async {
+    var tasks = await _database.fetchUpcomingTasks();
+    var calendarItems = await _database.fetchUpcomingCalendarItems();
+
+    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
   }
 
-  Future<List<Task>> fetchProjectTasks(String apiToken, String projectSlug) async {
+  Future<void> fetchProjectTasks(String apiToken, String projectSlug) async {
     var projectDetails = await actions.fetchProjectBySlug(apiToken, projectSlug);
     await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
     notifyListeners();
-
-    return projectDetails.tasks;
   }
 
   /// Get a list of projects for a given task

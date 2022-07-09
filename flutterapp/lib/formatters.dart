@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+var _calendarTime = DateFormat('Hm');
 var _monthDay = DateFormat('MMM d');
 var _monthDayYear = DateFormat('MMM d yyyy');
 var _weekday = DateFormat('EEEE');
@@ -47,4 +48,8 @@ String dateString(DateTime value) {
 
 String monthDay(DateTime value) {
   return _monthDay.format(value);
+}
+
+String paddedTime(DateTime value) {
+  return _calendarTime.format(value);
 }
