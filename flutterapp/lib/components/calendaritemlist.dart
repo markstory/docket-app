@@ -32,12 +32,14 @@ class CalendarItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var color = getProjectColor(calendarItem.color);
+    // Block element for all day events
     Widget timeWidget = Container(
       color: color,
       width: space(1),
       height: space(3),
     );
 
+    // Time based events show up on the start time.
     var startTime = calendarItem.startTime;
     if (startTime != null) {
       timeWidget = Text(
