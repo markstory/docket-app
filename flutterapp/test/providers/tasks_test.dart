@@ -81,13 +81,13 @@ void main() {
       } on StaleDataError catch (_) {
         expect(true, equals(true));
       }
+      await provider.fetchToday(apiToken);
 
-      var result = await provider.fetchToday(apiToken);
-      expect(result.length, equals(2));
-
-      var tasks = await provider.getToday();
-      expect(tasks.length, equals(2));
-      expect(tasks[0].title, equals('clean dishes'));
+      var taskData = await provider.getToday();
+      expect(taskData.tasks.length, equals(2));
+      expect(taskData.tasks[0].title, equals('clean dishes'));
+      expect(taskData.calendarItems.length, equals(1));
+      expect(taskData.calendarItems[0].title, equals('Get haircut'));
     });
 
     test('fetchToday() handles server errors', () async {
@@ -115,12 +115,13 @@ void main() {
         expect(true, equals(true));
       }
 
-      var result = await provider.fetchUpcoming(apiToken);
-      expect(result.length, equals(2));
+      await provider.fetchUpcoming(apiToken);
 
-      var tasks = await provider.getUpcoming();
-      expect(tasks.length, equals(2));
-      expect(tasks[0].title, equals('clean dishes'));
+      var taskData = await provider.getUpcoming();
+      expect(taskData.tasks.length, equals(2));
+      expect(taskData.tasks[0].title, equals('clean dishes'));
+      expect(taskData.calendarItems.length, equals(1));
+      expect(taskData.calendarItems[0].title, equals('Get haircut'));
     });
 
     test('toggleComplete() sends complete request', () async {

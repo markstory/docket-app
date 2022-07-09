@@ -22,5 +22,20 @@
       "child_order": 1,
       "day_order": 1
     }
+  ],
+  "calendarItems": [
+    {
+      "id": 1,
+      "calendar_source_id": 1,
+      "provider_id": "google",
+      "color": 1,
+      "title": "Get haircut",
+      "start_time": null,
+      "end_time": null,
+      "start_date": "2022-07-09",
+      "end_date": "2022-07-09",
+      "all_day": true,
+      "html_link": ""
+    }
   ]
 }
