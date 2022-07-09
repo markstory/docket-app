@@ -45,6 +45,7 @@ class _ProjectFormState extends State<ProjectForm> {
                   ? null
                   : 'Project name required';
             },
+            initialValue: project.name,
             onSaved: (value) {
               if (value != null) {
                 project.name = value;
@@ -54,6 +55,7 @@ class _ProjectFormState extends State<ProjectForm> {
           SizedBox(height: space(2)),
           DropdownButtonFormField(
             key: const ValueKey('color'),
+            value: project.color,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Color'

@@ -36,9 +36,28 @@ void main() {
       await tester.tap(find.text('berry').last);
       await tester.pumpAndSettle();
 
-      // Save
+      // Save onSaveCalled is mutated by callback.
       await tester.tap(find.text('Save'));
       expect(onSaveCalled, equals(true));
+    });
+
+    testWidgets('Renders an edit form', (tester) async {
+      var database = LocalDatabase();
+
+      void onSave(Project project) {}
+      final project = Project.blank();
+      project.name = 'Hobbies';
+      project.color = 8;
+
+      await tester.pumpWidget(EntryPoint(
+        database: database,
+        child: Scaffold(
+          body: ProjectForm(project: project, onSave: onSave)
+        )
+      ));
+
+      expect(find.text('Hobbies'), findsOneWidget);
+      expect(find.text('berry'), findsOneWidget);
     });
   });
 }
