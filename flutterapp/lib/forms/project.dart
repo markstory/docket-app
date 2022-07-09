@@ -53,6 +53,7 @@ class _ProjectFormState extends State<ProjectForm> {
           ),
           SizedBox(height: space(2)),
           DropdownButtonFormField(
+            key: const ValueKey('color'),
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Color'

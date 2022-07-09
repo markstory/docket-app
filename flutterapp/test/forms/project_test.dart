@@ -17,7 +17,7 @@ void main() {
       void onSave(Project project) {
         onSaveCalled = true;
         expect(project.name, equals('Home'));
-        expect(project.color, equals(0));
+        expect(project.color, equals(8));
       }
       final project = Project.blank();
       await tester.pumpWidget(EntryPoint(
@@ -30,13 +30,11 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Home');
 
       // Open the dropdown, and select berry
-      /*
-      await tester.tap(find.byType(DropdownButton));
+      await tester.tap(find.byKey(const ValueKey('color')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('berry'));
+      await tester.tap(find.text('berry').last);
       await tester.pumpAndSettle();
-      */
 
       // Save
       await tester.tap(find.text('Save'));
