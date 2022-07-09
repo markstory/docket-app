@@ -66,7 +66,6 @@ class _TodayScreenState extends State<TodayScreen> {
                 future: taskViewData,
                 builder: (context, snapshot) {
                   var data = snapshot.data;
-                  print("snapshot ${snapshot.data}");
                   if (data == null) {
                     return const LoadingIndicator();
                   }
