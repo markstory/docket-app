@@ -59,5 +59,29 @@ void main() {
       expect(find.text('Hobbies'), findsOneWidget);
       expect(find.text('berry'), findsOneWidget);
     });
+
+    testWidgets('Name required', (tester) async {
+      var database = LocalDatabase();
+
+      var onSaveCalled = false;
+      void onSave(Project project) {
+        onSaveCalled = true;
+      }
+      final project = Project.blank();
+      project.color = 8;
+
+      await tester.pumpWidget(EntryPoint(
+        database: database,
+        child: Scaffold(
+          body: ProjectForm(project: project, onSave: onSave)
+        )
+      ));
+
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(onSaveCalled, equals(false));
+      expect(find.text('Project name required'), findsOneWidget);
+    });
   });
 }
