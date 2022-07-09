@@ -17,6 +17,7 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Create a project on the server and notify listeners.
   Future<Project> createProject(String apiToken, Project project) async {
     project = await actions.createProject(apiToken, project);
 
@@ -26,7 +27,8 @@ class ProjectsProvider extends ChangeNotifier {
     return project;
   }
 
-  Future<Project> fetchBySlug(String apiToken, String slug) async {
+  /// Fetch a project from the API and notifyListeners.
+  Future<void> fetchBySlug(String apiToken, String slug) async {
     // TODO Perhaps this is where cache expiration should be checked.
     // Doing it here would let network calls to be skipped which
     // would be nice.
@@ -34,20 +36,17 @@ class ProjectsProvider extends ChangeNotifier {
 
     await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
     notifyListeners();
-
-    return projectDetails.project;
   }
 
   Future<Project> getBySlug(String slug) async {
     return await _database.fetchProjectBySlug(slug);
   }
 
-  Future<List<Project>> fetchProjects(String apiToken) async {
+  /// Fetch projects from the API and notifyListeners
+  Future<void> fetchProjects(String apiToken) async {
     var projects = await actions.fetchProjects(apiToken);
     await _database.addProjects(projects);
     notifyListeners();
-
-    return projects;
   }
 
   Future<List<Project>> getProjects() async {

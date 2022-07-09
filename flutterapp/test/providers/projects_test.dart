@@ -35,7 +35,7 @@ void main() {
       await provider.clear();
     });
 
-    test('getProjects() loads from the API and then database.', () async {
+    test('fetchProject() and getProjects() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects'));
@@ -48,11 +48,11 @@ void main() {
         throwsStaleData()
       );
 
-      var projects = await provider.fetchProjects(apiToken);
+      await provider.fetchProjects(apiToken);
       expect(listenerCallCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
-      projects = await provider.getProjects();
+      var projects = await provider.getProjects();
       expect(projects.length, equals(2));
       expect(projects[0].slug, equals('work'));
       expect(projects[1].slug, equals('home'));

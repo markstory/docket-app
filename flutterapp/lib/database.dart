@@ -292,6 +292,7 @@ class LocalDatabase {
   // }}}
 
   // Project methods {{{
+
   Future<void> addProjects(List<Project> projects) async {
     final db = database();
     var projectMap = await db.value(projectsKey);
