@@ -11,6 +11,9 @@ class CalendarItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (calendarItems.isEmpty) {
+      return const SizedBox();
+    }
     return Material(
       elevation: 1,
       child: Container(
