@@ -1,3 +1,4 @@
+import 'package:docket/formatters.dart' as formatters;
 
 class CalendarItem {
   String id;
@@ -95,12 +96,34 @@ class CalendarItem {
       'provider_id': providerId,
       'title': title,
       'color': color,
-      'startTime': startTime?.toString(),
-      'endTime': endTime?.toString(),
-      'startDate': startDate?.toString(),
-      'endDate': endDate?.toString(),
+      'start_time': startTime?.toString(),
+      'end_time': endTime?.toString(),
+      'start_date': startDate?.toString(),
+      'end_date': endDate?.toString(),
       'all_day': allDay,
       'html_link': htmlLink,
     };
+  }
+
+  /// Get the list of datekeys that this calendar should appear in.
+  List<String> dateKeys() {
+    var allOptions = [startDate, endDate, startTime, endTime];
+    var options = allOptions.whereType<DateTime>().toList();
+
+    if (options.length == 2) {
+      return _getRangeInDays.call(options[0], options[1]);
+    }
+    return [];
+  }
+
+  List<String> _getRangeInDays(DateTime start, DateTime end) {
+    List<String> days = [];
+    var current = start;
+    var inDays = start.difference(end).inDays;
+    for (var i = 0; i <= inDays; i++) {
+      current = current.add(const Duration(days: 1));
+      days.add(formatters.dateString(current));
+    }
+    return days;
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/formatters.dart' as formatters;
 
@@ -90,26 +92,33 @@ Function(List<Task>) createGrouper(DateTime start, int numDays) {
   return function;
 }
 
-/*
-type GroupedCalendarItems = Record<string, CalendarItem[]>;
+/// Container for calendar items grouped by date.
+class GroupedCalendarItems {
+  Map<String, List<CalendarItem>> groupings = {};
 
-function groupCalendarItems(items: CalendarItem[]): GroupedCalendarItems {
-  return items.reduce<GroupedCalendarItems>((acc, item) => {
-    let keys = [];
-    if (item.all_day) {
-      keys = getRangeInDays(parseDate(item.start_date), parseDate(item.end_date));
-    } else {
-      keys = getRangeInDays(new Date(item.start_time), new Date(item.end_time));
-    }
+  GroupedCalendarItems();
 
-    keys.forEach(key => {
-      if (typeof acc[key] === 'undefined') {
-        acc[key] = [];
+  void addItem(CalendarItem item) {
+    var dateKeys = item.dateKeys();
+    for (var key in dateKeys) {
+      if (groupings[key] == null) {
+        List<CalendarItem> group = [];
+        groupings[key] = group;
       }
-      acc[key].push(item);
-    });
+      groupings[key]!.add(item);
+    }
+  }
 
-    return acc;
-  }, {});
+  List<CalendarItem> get(String dateKey) {
+    return groupings[dateKey] ?? [];
+  }
 }
-*/
+
+GroupedCalendarItems groupCalendarItems(List<CalendarItem> items) {
+  var grouped = GroupedCalendarItems();
+  for (var item in items) {
+    grouped.addItem(item);
+  }
+
+  return grouped;
+}

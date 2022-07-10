@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/formatters.dart' as formatters;
@@ -56,14 +57,18 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                   }
                   var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
                   var grouped = grouperFunc(data.tasks);
+                  var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
 
                   return Column(
                     children: grouped.map<Widget>((group) {
+                      var calendarItems = groupedCalendarItems.get(group.key);
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TaskGroupHeading(dateKey: group.key),
-                          const SizedBox(height: 4),
+                          SizedBox(height: space(0.5)),
+                          CalendarItemList(calendarItems: calendarItems),
                           TaskGroup(tasks: group.items),
                         ]
                       );
