@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/calendaritemlist.dart';
+import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/providers/session.dart';
@@ -42,6 +43,7 @@ class _TodayScreenState extends State<TodayScreen> {
         return Scaffold(
           appBar: AppBar(),
           drawer: const AppDrawer(),
+          floatingActionButton: const FloatingCreateTaskButton(),
           body: ListView(
             padding: EdgeInsets.all(space(0.5)),
             children: [

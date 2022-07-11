@@ -30,6 +30,23 @@ class Task {
     required this.completed,
   });
 
+  factory Task.blank() {
+    return Task(
+      id: null,
+      projectSlug: '',
+      projectName: '',
+      projectColor: 0,
+      sectionId: null,
+      title: '',
+      body: '',
+      dueOn: null,
+      childOrder: 0,
+      dayOrder: 0,
+      evening: false,
+      completed: false,
+    );
+  }
+
   factory Task.fromMap(Map<String, dynamic> json) {
     DateTime? dueOn;
     if (json['due_on'] != null) {

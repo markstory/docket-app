@@ -11,6 +11,7 @@ import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
 import 'screens/today.dart';
+import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
@@ -92,6 +93,11 @@ class DocketApp extends StatelessWidget {
             if (settings.name == UpcomingScreen.routeName) {
               return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
             }
+            // Task Add
+            if (settings.name == TaskAddScreen.routeName) {
+              return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen()));
+            }
+
             // Project Add
             if (settings.name == ProjectAddScreen.routeName) {
               return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));

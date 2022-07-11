@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/calendaritemlist.dart';
+import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/formatters.dart' as formatters;
@@ -44,6 +45,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
         return Scaffold(
           appBar: AppBar(),
           drawer: const AppDrawer(),
+          floatingActionButton: const FloatingCreateTaskButton(),
           body: ListView(
             padding: const EdgeInsets.all(4),
             children: [
