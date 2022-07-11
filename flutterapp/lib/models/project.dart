@@ -29,6 +29,7 @@ class Section {
 }
 
 class Project {
+  int id;
   String slug;
   String name;
   int color;
@@ -37,6 +38,7 @@ class Project {
   int incompleteTaskCount;
 
   Project({
+    this.id = 0,
     required this.slug,
     required this.name,
     required this.color,
@@ -53,6 +55,7 @@ class Project {
       }
     }
     return Project(
+      id: json['id'],
       slug: json['slug'],
       name: json['name'],
       color: json['color'],
@@ -64,6 +67,7 @@ class Project {
 
   factory Project.blank() {
     return Project(
+      id: 0,
       slug: '',
       name: '',
       color: 0,
@@ -83,6 +87,7 @@ class Project {
     int? incompleteTaskCount,
   }) {
     return Project(
+      id: id ?? this.id,
       slug: slug ?? this.slug,
       name: name ?? this.name,
       color: color ?? this.color,
@@ -95,6 +100,7 @@ class Project {
   Map<String, Object?> toMap() {
     var sectionInstances = sections.map((section) => section.toMap()).toList();
     return {
+      'id': id,
       'slug': slug,
       'name': name,
       'color': color,

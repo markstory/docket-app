@@ -3,6 +3,7 @@ import 'package:docket/models/calendaritem.dart';
 
 class Task {
   int? id;
+  int? projectId;
   String projectSlug;
   String projectName;
   int projectColor;
@@ -17,7 +18,8 @@ class Task {
 
   Task({
     this.id,
-    required this.projectSlug, 
+    required this.projectId,
+    required this.projectSlug,
     required this.projectName,
     required this.projectColor,
     this.sectionId,
@@ -33,6 +35,7 @@ class Task {
   factory Task.blank() {
     return Task(
       id: null,
+      projectId: null,
       projectSlug: '',
       projectName: '',
       projectColor: 0,
@@ -52,6 +55,8 @@ class Task {
     if (json['due_on'] != null) {
       dueOn = DateTime.parse(json['due_on']);
     }
+    var projectId = json['project_id'];
+    projectId ??= json['project']['id'];
     var projectSlug = json['project_slug'];
     projectSlug ??= json['project']['slug'];
     var projectColor = json['project_color'];
@@ -70,6 +75,7 @@ class Task {
 
     return Task(
       id: json['id'],
+      projectId: projectId,
       projectSlug: projectSlug,
       projectName: projectName,
       projectColor: projectColor,
@@ -86,6 +92,7 @@ class Task {
 
   Task copy({
     int? id,
+    int? projectId,
     String? projectSlug,
     String? projectName,
     int? projectColor,
@@ -100,6 +107,7 @@ class Task {
   }) {
     return Task(
       id: id ?? this.id,
+      projectId: projectId ?? this.projectId,
       projectSlug: projectSlug ?? this.projectSlug,
       projectName: projectName ?? this.projectName,
       projectColor: projectColor ?? this.projectColor,
@@ -117,6 +125,7 @@ class Task {
   Map<String, Object?> toMap() {
     return {
       'id': id,
+      'project_id': projectId,
       'project_slug': projectSlug,
       'project_name': projectName,
       'project_color': projectColor,
