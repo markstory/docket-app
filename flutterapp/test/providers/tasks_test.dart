@@ -23,7 +23,7 @@ void main() {
 {
   "1": {
     "id": 1,
-    "project": {"slug": "home", "name": "home", "color": 1}, 
+    "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
     "title": "clean dishes",
     "body": "",
     "evening": false,
@@ -34,7 +34,7 @@ void main() {
   },
   "2": {
     "id": 2,
-    "project": {"slug": "home", "name": "home", "color": 1}, 
+    "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
     "title": "cut grass",
     "body": "",
     "evening": false,

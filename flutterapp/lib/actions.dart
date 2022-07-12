@@ -100,7 +100,7 @@ Future<http.Response> httpPost(
   if (response.statusCode >= 400) {
     errorMessage ??= 'Request Failed to ${url.path}';
     var err = ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
-    print(err.toString());
+    developer.log(err.toString());
     throw err;
   }
 
@@ -261,6 +261,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(
         for (var item in data['tasks']) {
           // TODO do this on the server so that tasks are serialized consistently.
           item['project'] = {
+            'id': project.id,
             'slug': project.slug,
             'name': project.name,
             'color': project.color

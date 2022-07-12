@@ -15,6 +15,7 @@ void main() {
     projectSlug: 'home',
     projectName: 'home',
     projectColor: 1,
+    projectId: 1,
     id: 1,
   );
 
@@ -28,6 +29,7 @@ void main() {
     projectSlug: 'home',
     projectName: 'home',
     projectColor: 1,
+    projectId: 1,
     dueOn: DateTime.now().add(const Duration(days: 30)),
     id: 2,
   );
@@ -42,6 +44,7 @@ void main() {
     projectSlug: 'home',
     projectName: 'home',
     projectColor: 1,
+    projectId: 1,
     dueOn: DateTime.now().add(const Duration(days: 30)),
     id: 3,
   );
@@ -56,6 +59,7 @@ void main() {
     projectSlug: 'home',
     projectName: 'home',
     projectColor: 1,
+    projectId: 1,
     dueOn: DateTime.now(),
     id: 3,
   );
@@ -70,6 +74,7 @@ void main() {
     projectSlug: 'home',
     projectName: 'home',
     projectColor: 1,
+    projectId: 1,
     dueOn: DateTime.now(),
     id: 4,
   );
