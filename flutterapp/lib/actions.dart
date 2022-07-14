@@ -215,6 +215,25 @@ Future<Task> createTask(String apiToken, Task task) async {
   });
 }
 
+/// Update a task
+Future<Task> updateTask(String apiToken, Task task) async {
+  if (task.id == null) {
+    return createTask(apiToken, task);
+  }
+
+  var url = _makeUrl('/tasks/${task.id}/edit');
+
+  return Future(() async {
+    var response = await httpPost(url,
+        apiToken: apiToken,
+        body: task.toMap(),
+        errorMessage: 'Could not update task');
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return Task.fromMap(decoded['task']);
+  });
+}
+
 /// Delete a task
 Future<void> deleteTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/delete');

@@ -44,9 +44,6 @@ class TaskItem extends StatelessWidget {
       // Show reschedule menu. Perhaps as a sheet?
     }
 
-    var theme = Theme.of(context);
-    var customColors = theme.extension<DocketColors>()!;
-
     return ListTile(
       dense: true,
       leading: TaskCheckbox(task),
@@ -62,7 +59,7 @@ class TaskItem extends StatelessWidget {
       subtitle: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ProjectBadge(task),
+          ProjectBadge(text: task.projectName, color: task.projectColor),
           const SizedBox(width: 4),
           TaskDue(task),
         ]

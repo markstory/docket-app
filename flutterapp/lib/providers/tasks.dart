@@ -104,6 +104,14 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Create or Update a task on the server and local state.
+  Future<void> updateTask(String apiToken, Task task) async {
+    task = await actions.updateTask(apiToken, task);
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
+
   /// Delete a task from local database and the server.
   Future<void> deleteTask(String apiToken, Task task) async {
     await actions.deleteTask(apiToken, task);

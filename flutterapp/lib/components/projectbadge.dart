@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'package:docket/theme.dart';
-import 'package:docket/models/task.dart';
 
 class ProjectBadge extends StatelessWidget {
-  final Task task;
+  final String text;
+  final int color;
 
-  const ProjectBadge(this.task, {super.key});
+  const ProjectBadge({required this.text, required this.color, super.key});
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var docketColors = theme.extension<DocketColors>()!;
 
-    var color = getProjectColor(task.projectColor);
+    var projectColor = getProjectColor(color);
     return Row(
       children: [
-        Icon(Icons.circle, color: color, size: 12),
+        Icon(Icons.circle, color: projectColor, size: 12),
         SizedBox(width: space(1)),
         Text(
-          task.projectName,
+          text,
           style: TextStyle(color: docketColors.secondaryText),
         ),
       ]

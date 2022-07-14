@@ -65,7 +65,7 @@ class _ProjectFormState extends State<ProjectForm> {
                 project.color = value;
               }
             },
-            items: projectColors.map((item) {
+            items: getProjectColors().map((item) {
               return DropdownMenuItem(
                 value: item.id,
                 child: Row(

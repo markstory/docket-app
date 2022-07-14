@@ -8,7 +8,7 @@ class ProjectColor {
   const ProjectColor(this.id, this.name, this.color);
 }
 
-const projectColors = [
+const _projectColors = [
   ProjectColor(0, 'green', Color(0xFF28aa48)),
   ProjectColor(1, 'teal', Color(0xFF6fd19d)),
   ProjectColor(2, 'plum', Color(0xFF5d3688)),
@@ -33,17 +33,24 @@ const projectColors = [
 /// Convert a server side colour 'id' to material
 /// colors.
 Color getProjectColor(int colorId) {
-  for (var color in projectColors) {
+  for (var color in _projectColors) {
     if (color.id == colorId) {
       return color.color;
     }
   }
 
-  return projectColors[0].color;
+  return _projectColors[0].color;
+}
+
+List<ProjectColor> getProjectColors() {
+  return _projectColors;
 }
 
 @immutable
 class DocketColors extends ThemeExtension<DocketColors> {
+  static const double iconSize = 24;
+
+  // Color values for docket theme.
   static const Color white = Color(0xFFffffff);
   static const Color black = Color(0xFF120a08);
 
@@ -88,6 +95,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
   static const Color blue700 = Color(0xFF1d5a83);
   static const Color blue900 = Color(0xFF052f4b);
 
+  // Semantic names that vary in light/dark mode.
   final Color? actionLock;
   final Color? actionEdit;
   final Color? actionDelete;

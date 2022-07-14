@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:docket/components/appdrawer.dart';
-import 'package:docket/components/taskcheckbox.dart';
-import 'package:docket/components/taskdue.dart';
-import 'package:docket/components/projectbadge.dart';
+import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
@@ -17,14 +15,30 @@ class TaskDetailsScreen extends StatelessWidget {
 
   const TaskDetailsScreen(this.taskId, {super.key});
 
+  void _onSave(Task task, context) async {
+    var messenger = ScaffoldMessenger.of(context);
+    var tasksProvider = Provider.of<TasksProvider>(context);
+    var session = Provider.of<SessionProvider>(context);
+
+      try {
+        await tasksProvider.updateTask(session.apiToken, task);
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Task Completed')
+        );
+      } catch (e) {
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Could not update task')
+        );
+      }
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO figure out how to load tasks/today data.
     return Consumer<TasksProvider>(
       builder: (context, tasksProvider, child) {
         var session = Provider.of<SessionProvider>(context);
         var pendingTask = tasksProvider.getById(session.apiToken, taskId);
-        var theme = Theme.of(context);
 
         return Scaffold(
           appBar: AppBar(title: const Text('Task Details')),
@@ -40,26 +54,7 @@ class TaskDetailsScreen extends StatelessWidget {
               return ListView(
                 padding: EdgeInsets.all(space(1)),
                 children: [
-                  ListTile(
-                    leading: TaskCheckbox(task),
-                    title: Text(task.title, style: theme.textTheme.titleMedium),
-                    subtitle: Row(
-                      children: [
-                        ProjectBadge(task),
-                        const SizedBox(width: 4),
-                        TaskDue(task),
-                      ]
-                    ),
-                  ),
-                  // Task Notes
-                  SizedBox(height: space(3)),
-                  Text('Notes', style: theme.textTheme.titleLarge),
-                  Text(task.body),
-
-                  // Sub-tasks list
-                  SizedBox(height: space(3)),
-                  Text('Sub-tasks', style: theme.textTheme.titleLarge),
-                  const Text('TODO subtasks go here'),
+                  TaskForm(task: task, onSave: (task) => _onSave(task, context)),
                 ]
               );
             }

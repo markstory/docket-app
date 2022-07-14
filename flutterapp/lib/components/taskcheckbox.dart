@@ -37,6 +37,7 @@ class TaskCheckbox extends StatelessWidget {
       activeColor: customColors.actionComplete,
       checkColor: Colors.white,
       value: task.completed,
+      visualDensity: VisualDensity.compact,
       onChanged: (bool? value) {
         _handleCompleted();
       }
