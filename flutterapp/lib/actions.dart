@@ -13,7 +13,7 @@ const baseUrl = 'https://docket.mark-story.com';
 
 class ValidationError implements Exception {
   final String message;
-  final List<Object> errors;
+  final List<String> errors;
 
   const ValidationError(this.message, this.errors);
 
@@ -30,8 +30,16 @@ class ValidationError implements Exception {
       if (decoded == null || decoded['errors'] == null) {
         throw Exception('Could not parse response, or find `errors` key.');
       }
-      for (var line in decoded['errors']) {
-        errors.add(line);
+      if (decoded['errors'] is List) {
+        for (var line in decoded['errors']) {
+            errors.add(line.toString());
+        }
+      }
+      if (decoded['errors'] is Map) {
+        for (var key in decoded['errors'].keys) {
+          var fieldError = decoded['errors'][key].toString();
+          errors.add("$key: $fieldError");
+        }
       }
     } catch (e) {
       errors = [e.toString()];

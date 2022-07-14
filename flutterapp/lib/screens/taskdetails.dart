@@ -17,15 +17,16 @@ class TaskDetailsScreen extends StatelessWidget {
 
   void _onSave(Task task, context) async {
     var messenger = ScaffoldMessenger.of(context);
-    var tasksProvider = Provider.of<TasksProvider>(context);
-    var session = Provider.of<SessionProvider>(context);
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    var session = Provider.of<SessionProvider>(context, listen: false);
 
       try {
         await tasksProvider.updateTask(session.apiToken, task);
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Completed')
         );
-      } catch (e) {
+      } catch (e, stack) {
+        print("${e.toString()}, $stack");
         messenger.showSnackBar(
           errorSnackBar(context: context, text: 'Could not update task')
         );
