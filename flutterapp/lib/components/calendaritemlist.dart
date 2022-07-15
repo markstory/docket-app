@@ -39,7 +39,7 @@ class CalendarItemTile extends StatelessWidget {
     Widget timeWidget = Container(
       color: color,
       width: space(1),
-      height: space(3),
+      height: space(2.5),
     );
 
     // Time based events show up on the start time.
@@ -51,12 +51,15 @@ class CalendarItemTile extends StatelessWidget {
       );
     }
 
-    return Row(
-      children: [
-        timeWidget,
-        SizedBox(width: space(1)),
-        Text(calendarItem.title),
-      ]
+    return Padding(
+      padding: EdgeInsets.all(space(1)),
+      child: Row(
+        children: [
+          timeWidget,
+          SizedBox(width: space(1)),
+          Text(calendarItem.title),
+        ]
+      )
     );
   }
 }

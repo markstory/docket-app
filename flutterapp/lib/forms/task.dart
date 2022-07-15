@@ -106,13 +106,14 @@ class _TaskFormState extends State<TaskForm> {
               ),
               FormIconRow(
                 icon: const Icon(Icons.calendar_today, size: DocketColors.iconSize, semanticLabel: 'Due on'),
-                child:TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Due On',
-                  ),
-                  onSaved: (value) {
-                    // TODO replace this input.
+                child: DueOnInput(
+                  dueOn: task.dueOn, 
+                  evening: task.evening,
+                  onUpdate: (dueOn, evening) {
+                    setState(() {
+                      task.dueOn = dueOn;
+                      task.evening = evening;
+                    });
                   }
                 ),
               ),

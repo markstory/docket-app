@@ -1,41 +1,47 @@
 import 'package:flutter/material.dart';
 
 import 'package:docket/formatters.dart' as formatters;
-import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
 class TaskDue extends StatelessWidget {
-  final Task task;
+  final DateTime? dueOn;
+  final bool evening;
   final bool showNull;
   final bool showDate;
 
-  const TaskDue(this.task, {this.showNull = false, this.showDate = false, super.key});
+  const TaskDue({
+    required this.dueOn,
+    required this.evening,
+    this.showNull = false,
+    this.showDate = false,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
-    if (task.dueOn == null && showNull) {
-      return Text('No Due Date', style: TextStyle(color: customColors.dueNone));
+    if (dueOn == null && showNull) {
+      return Text('No due date', style: TextStyle(color: customColors.dueNone));
     }
 
     List<Widget> children = [];
-    if (task.evening) {
+    if (evening) {
       children.add(Icon(
         Icons.bedtime_outlined,
         color: customColors.dueEvening,
         size: 14,
       ));
     }
-    if (showDate && task.dueOn != null) {
+    if (showDate && dueOn != null) {
       var today = DateTime.now();
-      var diff = task.dueOn!.difference(today).inDays;
+      var diff = dueOn!.difference(today).inDays;
       var color = customColors.dueToday;
       if (diff < 0) {
         color = customColors.dueOverdue;
-      } else if (diff == 0 && task.evening == false) {
+      } else if (diff == 0 && evening == false) {
         color = customColors.dueToday;
-      } else if (diff == 0 && task.evening) {
+      } else if (diff == 0 && evening) {
         color = customColors.dueEvening;
       } else if (diff >= 1 && diff < 2) {
         color = customColors.dueTomorrow;
@@ -44,7 +50,7 @@ class TaskDue extends StatelessWidget {
       } else if (diff >= 8 && diff < 15) {
         color = customColors.dueFortnight;
       }
-      var text = task.evening ? 'This evening' : formatters.compactDate(task.dueOn);
+      var text = formatters.compactDate(dueOn);
       children.add(Text(text, style: TextStyle(color: color)));
     }
     return Row(children: children);

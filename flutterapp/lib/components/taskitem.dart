@@ -61,7 +61,7 @@ class TaskItem extends StatelessWidget {
         children: [
           ProjectBadge(text: task.projectName, color: task.projectColor),
           const SizedBox(width: 4),
-          TaskDue(task),
+          TaskDue(dueOn: task.dueOn, evening: task.evening),
         ]
       ),
       trailing: TaskActions(task),
