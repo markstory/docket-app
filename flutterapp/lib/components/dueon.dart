@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/theme.dart';
 
-class TaskDue extends StatelessWidget {
+class DueOn extends StatelessWidget {
   final DateTime? dueOn;
   final bool evening;
   final bool showNull;
   final bool showDate;
 
-  const TaskDue({
+  const DueOn({
     required this.dueOn,
     required this.evening,
     this.showNull = false,

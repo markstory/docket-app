@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:docket/theme.dart';
 
-import 'package:docket/components/taskdue.dart';
+import 'package:docket/components/dueon.dart';
 import 'package:docket/formatters.dart' as formatters;
 
 /// Form layout widget.
@@ -19,7 +19,7 @@ class FormIconRow extends StatelessWidget {
     if (icon != null) {
       iconWidget = Padding(padding: EdgeInsets.fromLTRB(0, space(1), space(2), 0), child: icon);
     } else {
-      iconWidget = SizedBox(width: 34);
+      iconWidget = const SizedBox(width: 34);
     }
 
     return Container(
@@ -192,7 +192,7 @@ class DueOnInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: TaskDue(dueOn: dueOn, evening: evening, showDate: true, showNull: true),
+      child: DueOn(dueOn: dueOn, evening: evening, showDate: true, showNull: true),
       onPressed: () {
         _showDialog(context);
       }

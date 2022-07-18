@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskcheckbox.dart';
-import 'package:docket/components/taskdue.dart';
+import 'package:docket/components/dueon.dart';
 import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
@@ -61,7 +61,7 @@ class TaskItem extends StatelessWidget {
         children: [
           ProjectBadge(text: task.projectName, color: task.projectColor),
           const SizedBox(width: 4),
-          TaskDue(dueOn: task.dueOn, evening: task.evening),
+          DueOn(dueOn: task.dueOn, evening: task.evening),
         ]
       ),
       trailing: TaskActions(task),
