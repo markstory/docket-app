@@ -9,20 +9,24 @@ import 'package:docket/forms/task.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
   var home = Project(id: 1, slug: 'home', name: 'Home', color: 0, ranking: 0);
   var work = Project(id: 2, slug: 'work', name: 'Work', color: 1, ranking: 1);
+  var database = LocalDatabase();
+
+  setUp(() async {
+    await database.clearProjects();
+    await database.addProjects([home, work]);
+  });
 
   group('Create Task', () {
-    testWidgets('Renders an empty form', (tester) async {
-      var database = LocalDatabase();
-      // TODO this should wait for the db to update.
-      database.addProjects([home, work]);
-
+    testWidgets('Renders form for new task and can update the task', (tester) async {
       var onSaveCalled = false;
       void onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
+        expect(task.body, equals('Use lots of soap'));
       }
       final task = Task.blank();
       await tester.pumpWidget(EntryPoint(
@@ -31,9 +35,12 @@ void main() {
           body: TaskForm(task: task, onSave: onSave)
         )
       ));
+      // database.addProjects([home, work]);
       await tester.pumpAndSettle();
 
+      // Fill out the title and description
       await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
+      await tester.enterText(find.byKey(const ValueKey('body')), 'Use lots of soap');
 
       // Open the project dropdown and select home
       await tester.tap(find.byKey(const ValueKey('project')));

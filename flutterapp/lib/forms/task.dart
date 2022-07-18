@@ -35,16 +35,16 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    var projectProvider = Provider.of<ProjectsProvider>(context, listen: false);
+    var projectProvider = Provider.of<ProjectsProvider>(context);
     var projectPromise = projectProvider.getProjects();
 
     return FutureBuilder<List<Project>>(
       future: projectPromise,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const LoadingIndicator();
+        List<Project> projects = [];
+        if (snapshot.hasData) {
+          projects = snapshot.data!;
         }
-        List<Project> projects = snapshot.data!;
 
         return Form(
           key: _formKey,
@@ -121,6 +121,7 @@ class _TaskFormState extends State<TaskForm> {
               FormIconRow(
                 icon: const Icon(Icons.description, size: DocketColors.iconSize, semanticLabel: 'Notes on'),
                 child: TextFormField(
+                  key: const ValueKey('body'),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: null,
