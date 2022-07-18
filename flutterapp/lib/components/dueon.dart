@@ -7,13 +7,11 @@ class DueOn extends StatelessWidget {
   final DateTime? dueOn;
   final bool evening;
   final bool showNull;
-  final bool showDate;
 
   const DueOn({
     required this.dueOn,
     required this.evening,
     this.showNull = false,
-    this.showDate = false,
     super.key
   });
 
@@ -33,16 +31,19 @@ class DueOn extends StatelessWidget {
         size: 14,
       ));
     }
-    if (showDate && dueOn != null) {
+    if (dueOn != null) {
       var today = DateTime.now();
       var diff = dueOn!.difference(today).inDays;
       var color = customColors.dueToday;
+      var text = formatters.compactDate(dueOn);
+
       if (diff < 0) {
         color = customColors.dueOverdue;
       } else if (diff == 0 && evening == false) {
         color = customColors.dueToday;
       } else if (diff == 0 && evening) {
         color = customColors.dueEvening;
+        text = 'This evening';
       } else if (diff >= 1 && diff < 2) {
         color = customColors.dueTomorrow;
       } else if (diff >= 2 && diff < 8) {
@@ -50,7 +51,6 @@ class DueOn extends StatelessWidget {
       } else if (diff >= 8 && diff < 15) {
         color = customColors.dueFortnight;
       }
-      var text = formatters.compactDate(dueOn);
       children.add(Text(text, style: TextStyle(color: color)));
     }
     return Row(children: children);
