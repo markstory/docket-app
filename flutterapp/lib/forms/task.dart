@@ -54,6 +54,7 @@ class _TaskFormState extends State<TaskForm> {
               FormIconRow(
                 icon: TaskCheckbox(task),
                 child: TextFormField(
+                  key: const ValueKey('title'),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Title',
