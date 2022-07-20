@@ -113,6 +113,7 @@ class TasksController extends AppController
             $user = $this->request->getAttribute('identity');
             $this->Tasks->setNextOrderProperties($user, $task);
 
+            $task->project = $project;
             if ($this->Tasks->save($task)) {
                 $success = true;
                 $redirect = $this->referer(['_name' => 'tasks:today']);
@@ -266,19 +267,20 @@ class TasksController extends AppController
         $serialize = [];
         if ($this->Tasks->save($task)) {
             $success = true;
+            $serialize[] = 'task';
+            $this->set('task', $task);
         } else {
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
 
-        if ($success) {
-            $this->Flash->success(__('Task updated'));
-
-            return $this->response->withStatus(200);
-        }
-        $this->Flash->error(__('Task could not be updated.'));
-
-        return $this->validationErrorResponse($task->getErrors());
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Task updated'),
+            'flashError' => __('Task could not be updated.'),
+            'statusSuccess' => 200,
+            'statusError' => 422,
+        ]);
     }
 
     /**

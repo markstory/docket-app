@@ -302,8 +302,10 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect(['_name' => 'tasks:today']);
 
-        $todo = $this->Tasks->find()->firstOrFail();
-        $this->assertSame('first todo', $todo->title);
+        $task = $this->viewVariable('task');
+        $this->assertSame('first todo', $task->title);
+        $this->assertNotEmpty($task->project);
+        $this->assertSame('work', $task->project->slug);
 
         $project = $this->Tasks->Projects->get($project->id);
         $this->assertEquals(1, $project->incomplete_task_count);
@@ -414,9 +416,11 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(200);
         $this->assertFlashElement('flash/success');
 
-        $todo = $this->Tasks->get($first->id);
-        $this->assertSame('updated', $todo->title);
-        $this->assertTrue($todo->evening);
+        $updated = $this->viewVariable('task');
+        $this->assertSame('updated', $updated->title);
+        $this->assertTrue($updated->evening);
+        // Need to have the project as well.
+        $this->assertSame('work', $updated->project->slug);
     }
 
     public function testEditApiToken(): void
@@ -432,8 +436,10 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertResponseOk();
 
-        $todo = $this->Tasks->find()->firstOrFail();
-        $this->assertSame('updated', $todo->title);
+        $updated = $this->viewVariable('task');
+        $this->assertSame('updated', $updated->title);
+        // Need to have the project as well.
+        $this->assertSame('work', $updated->project->slug);
     }
 
     public function testEditValidation(): void
