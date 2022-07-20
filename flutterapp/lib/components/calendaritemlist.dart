@@ -52,12 +52,12 @@ class CalendarItemTile extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.all(space(1)),
+      padding: EdgeInsets.symmetric(vertical: space(1), horizontal: space(0.5)),
       child: Row(
         children: [
           timeWidget,
           SizedBox(width: space(1)),
-          Text(calendarItem.title),
+          Expanded(child: Text(calendarItem.title, overflow: TextOverflow.ellipsis)),
         ]
       )
     );
