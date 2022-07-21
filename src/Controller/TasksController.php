@@ -281,8 +281,10 @@ class TasksController extends AppController
             'statusSuccess' => 200,
             'statusError' => 422,
         ]);
-
-        return $this->response;
+        if ($success) {
+            // This is necessary to get flash messages to show up for this action.
+            return $this->response;
+        }
     }
 
     /**
