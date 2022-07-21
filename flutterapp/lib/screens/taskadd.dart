@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
@@ -43,13 +44,15 @@ class TaskAddScreen extends StatelessWidget {
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('New Task')),
-      body: Container(
-        padding: EdgeInsets.all(space(2)),
-        child: TaskForm(
-          task: task,
-          onSave: (updated) => _saveTask(context, updated),
+    return Portal(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('New Task')),
+        body: Container(
+          padding: EdgeInsets.all(space(2)),
+          child: TaskForm(
+            task: task,
+            onSave: (updated) => _saveTask(context, updated),
+          )
         )
       )
     );

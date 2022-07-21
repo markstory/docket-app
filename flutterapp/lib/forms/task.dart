@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/forms.dart';
+import 'package:docket/components/tasktitleinput.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
@@ -53,27 +54,29 @@ class _TaskFormState extends State<TaskForm> {
             children: [
               FormIconRow(
                 icon: TaskCheckbox(task),
-                child: TextFormField(
-                  key: const ValueKey('title'),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Title',
-                  ),
-                  validator: (String? value) {
-                    return (value != null && value.isNotEmpty) 
-                        ? null
-                        : 'Task title required';
+                child: TaskTitleInput(
+                  value: task.title,
+                  projects: projects,
+                  onChangeTitle: (title) {
+                    setState(() {
+                      task.title = title;
+                    });
                   },
-                  initialValue: task.title,
-                  onSaved: (value) {
-                    if (value != null) {
-                      task.title = value;
-                    }
+                  onChangeDate: (date, evening) {
+                    setState(() {
+                      task.dueOn = date;
+                      task.evening = evening;
+                    });
+                  },
+                  onChangeProject: (projectId) {
+                    setState(() {
+                      task.projectId = projectId;
+                    });
                   }
-                ),
+                )
               ),
               FormIconRow(
-                icon: const Icon(Icons.folder, size: DocketColors.iconSize, semanticLabel: 'Project'),
+                icon: const Icon(Icons.folder_outlined, size: DocketColors.iconSize, semanticLabel: 'Project'),
                 child: DropdownButtonFormField(
                   key: const ValueKey('project'),
                   decoration: const InputDecoration(
