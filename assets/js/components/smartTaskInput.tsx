@@ -57,11 +57,6 @@ function generateDateOptions(today: string): MentionOption[] {
   ];
 }
 
-const EVENING_OPTIONS = [
-  {id: 1, display: 'Evening'},
-  {id: 0, display: 'Day'},
-];
-
 function SmartTaskInput({
   value,
   projects,
