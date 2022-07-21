@@ -8,13 +8,19 @@ import 'package:docket/formatters.dart' as formatters;
 typedef MentionData = Map<String, dynamic>;
 
 final dateParser = DateFormat('yyyy-MM-dd');
+final monthdayParser = DateFormat.MMMMd();
 final weekdayParser = DateFormat.EEEE();
 
 List<MentionData> generateMonth(String name, int end) {
+  var today = DateUtils.dateOnly(DateTime.now());
   List<MentionData> options = [];
   for (var i = 1; i <= end; i++) {
     var value = "$name $i";
-    options.add({"id": "d:$value", "display": value});
+    var dateValue = monthdayParser.parse(value);
+    if (dateValue.isBefore(today)) {
+      dateValue = dateValue.add(const Duration(days: 365));
+    }
+    options.add({"id": "d:${formatters.dateString(dateValue)}", "display": value});
   }
   return options;
 }
@@ -108,7 +114,8 @@ class TaskTitleInput extends StatelessWidget {
           // absolute dates
           case 'd':
           case 'ed':
-            print("$value, ${type == 'de'}");
+            var dateValue = dateParser.parse(value);
+            onChangeDate(dateValue, type == 'de');
           break;
         }
       },
