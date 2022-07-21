@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:docket/models/task.dart';
 import 'package:docket/screens/taskadd.dart';
 
 class FloatingCreateTaskButton extends StatelessWidget {
@@ -11,7 +12,11 @@ class FloatingCreateTaskButton extends StatelessWidget {
 
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, TaskAddScreen.routeName);
+        Navigator.pushNamed(
+          context,
+          TaskAddScreen.routeName,
+          arguments: TaskAddScreenArguments(Task.blank()),
+        );
       },
       backgroundColor:theme.colorScheme.primary,
       child: Icon(Icons.add, color: theme.colorScheme.onPrimary),

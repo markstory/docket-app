@@ -9,12 +9,17 @@ import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
+class TaskAddScreenArguments {
+  final Task task;
+
+  TaskAddScreenArguments(this.task);
+}
+
 class TaskAddScreen extends StatelessWidget {
   static const routeName = '/tasks/add';
+  final Task task;
 
-  final Task task = Task.blank();
-
-  TaskAddScreen({super.key});
+  const TaskAddScreen({required this.task, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +48,11 @@ class TaskAddScreen extends StatelessWidget {
         );
       }
     }
+    var title = task.id != null ? const Text('Edit Task') : const Text('New Task');
 
     return Portal(
       child: Scaffold(
-        appBar: AppBar(title: const Text('New Task')),
+        appBar: AppBar(title: title),
         body: Container(
           padding: EdgeInsets.all(space(2)),
           child: TaskForm(
