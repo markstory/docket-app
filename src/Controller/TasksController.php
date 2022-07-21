@@ -274,13 +274,14 @@ class TasksController extends AppController
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
 
-        return $this->respond([
+        $this->respond([
             'success' => $success,
             'flashSuccess' => __('Task updated'),
             'flashError' => __('Task could not be updated.'),
             'statusSuccess' => 200,
             'statusError' => 422,
         ]);
+        return $this->response;
     }
 
     /**
