@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
@@ -60,17 +61,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     children: [
                       SizedBox(width: space(2)),
                       Text(project.name, style: theme.textTheme.titleLarge),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          // Should show task create sheet.
-                        }
-                      ),
+                      TaskAddButton(projectId: project.id),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.more_horiz),
+                        icon: const Icon(Icons.more_vert),
                         onPressed: () {
-                          // Show project menu!
+                          // TODO Show project menu!
                         }
                       ),
                     ]

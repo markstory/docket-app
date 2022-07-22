@@ -5,6 +5,7 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
@@ -105,9 +106,12 @@ class TaskGroupHeading extends StatelessWidget {
     }
 
     Widget subheading = const SizedBox(width: 0);
+    Widget icon = const SizedBox(width: 0);
     if (!isEvening) {
       var dateVal = DateTime.parse('$dateKey 00:00:00');
       heading = formatters.compactDate(dateVal);
+      icon = TaskAddButton(dueOn: dateVal);
+
       var subheadingContent = formatters.monthDay(dateVal);
 
       if (subheadingContent != heading) {
@@ -118,15 +122,6 @@ class TaskGroupHeading extends StatelessWidget {
       }
     }
 
-    Widget icon = const SizedBox(width: 0);
-    if (!isEvening) {
-      icon = IconButton(
-        icon: const Icon(Icons.add),
-        color: theme.splashColor,
-        onPressed: () {
-          // TODO add onPressed action to open new task with dateKey value set.
-      });
-    }
 
     var headingStyle = theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500);
     if (isEvening) {
