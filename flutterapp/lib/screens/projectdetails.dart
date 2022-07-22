@@ -78,7 +78,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       if (tasks == null) {
                         return const LoadingIndicator(); 
                       }
-                      return TaskGroup(tasks: tasks);
+                      return TaskGroup(tasks: tasks, showDate: true);
                     }
                   )
                 ]

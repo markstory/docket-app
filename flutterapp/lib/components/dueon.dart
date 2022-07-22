@@ -7,11 +7,13 @@ class DueOn extends StatelessWidget {
   final DateTime? dueOn;
   final bool evening;
   final bool showNull;
+  final bool showIcon;
 
   const DueOn({
     required this.dueOn,
     required this.evening,
     this.showNull = false,
+    this.showIcon = false,
     super.key
   });
 
@@ -24,13 +26,6 @@ class DueOn extends StatelessWidget {
     }
 
     List<Widget> children = [];
-    if (evening) {
-      children.add(Icon(
-        Icons.bedtime_outlined,
-        color: customColors.dueEvening,
-        size: 14,
-      ));
-    }
     if (dueOn != null) {
       var today = DateTime.now();
       var diff = dueOn!.difference(today).inDays;
@@ -51,8 +46,29 @@ class DueOn extends StatelessWidget {
       } else if (diff >= 8 && diff < 15) {
         color = customColors.dueFortnight;
       }
+
+      if (showIcon) {
+        if (evening) {
+          children.add(Icon(
+            Icons.bedtime_outlined,
+            color: color,
+            size: 14,
+          ));
+        } else {
+          children.add(Icon(
+            Icons.calendar_today,
+            color: color,
+            size: 14,
+          ));
+        }
+      }
+
       children.add(Text(text, style: TextStyle(color: color)));
     }
-    return Row(children: children);
+    return Wrap(
+      spacing: space(0.5),
+      runAlignment: WrapAlignment.center,
+      children: children
+    );
   }
 }

@@ -15,34 +15,29 @@ enum Menu {move, reschedule, delete}
 class TaskItem extends StatelessWidget {
   final Task task;
 
-  const TaskItem(this.task, {super.key});
+  /// Should the date + evening icon be shown?
+  final bool showDate;
+
+  /// Should the project badge be shown?
+  final bool showProject;
+
+  const TaskItem({
+    required this.task,
+    this.showDate = false,
+    this.showProject = false,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
-    var session = Provider.of<SessionProvider>(context);
-    var tasksProvider = Provider.of<TasksProvider>(context);
-
-    Future<void> _handleMove() async {
-      // Open project picker. Perhaps as a sheet?
+    List<Widget> attributes = [];
+    if (showProject) {
+      attributes.add(ProjectBadge(text: task.projectName, color: task.projectColor));
     }
-
-    Future<void> _handleDelete() async {
-      var messenger = ScaffoldMessenger.of(context);
-      try {
-        await tasksProvider.deleteTask(session.apiToken, task);
-        messenger.showSnackBar(
-          successSnackBar(context: context, text: 'Task Deleted')
-        );
-      } catch (e) {
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Could not delete task')
-        );
-      }
+    if (showDate) {
+      attributes.add(DueOn(dueOn: task.dueOn, evening: task.evening, showIcon: true));
     }
-
-    Future<void> _handleReschedule() async {
-      // Show reschedule menu. Perhaps as a sheet?
-    }
+    // TODO include subtask summary
 
     return ListTile(
       dense: true,
@@ -56,13 +51,10 @@ class TaskItem extends StatelessWidget {
             ? TextDecoration.lineThrough : null,
         ),
       ),
-      subtitle: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ProjectBadge(text: task.projectName, color: task.projectColor),
-          const SizedBox(width: 4),
-          DueOn(dueOn: task.dueOn, evening: task.evening),
-        ]
+      subtitle: Wrap(
+        runAlignment: WrapAlignment.center,
+        spacing: space(0.5),
+        children: attributes,
       ),
       trailing: TaskActions(task),
       onTap: () {

@@ -72,7 +72,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                           TaskGroupHeading(dateKey: group.key),
                           SizedBox(height: space(0.5)),
                           CalendarItemList(calendarItems: calendarItems),
-                          TaskGroup(tasks: group.items),
+                          TaskGroup(tasks: group.items, showProject: true),
                         ]
                       );
                     }).toList(),

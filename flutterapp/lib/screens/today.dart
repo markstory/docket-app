@@ -75,7 +75,7 @@ class _TodayScreenState extends State<TodayScreen> {
                     children: [
                       CalendarItemList(calendarItems: data.calendarItems),
                       SizedBox(height: space(2)),
-                      TaskGroup(tasks: day),
+                      TaskGroup(tasks: day, showProject: true),
                       SizedBox(height: space(2)),
                       Row(children: [
                         Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
@@ -83,7 +83,7 @@ class _TodayScreenState extends State<TodayScreen> {
                         Text('This Evening', style: theme.textTheme.titleLarge),
                         TaskAddButton(dueOn: today, evening: true),
                       ]),
-                      TaskGroup(tasks: evening),
+                      TaskGroup(tasks: evening, showProject: true),
                     ]
                   );
                 }

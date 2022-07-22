@@ -107,7 +107,7 @@ class ProjectItem extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, '/projects/${project.slug}');
       },
-      leading: Icon(Icons.circle, color: color),
+      leading: Icon(Icons.fiber_manual_record, color: color),
       title: Text(project.name),
       trailing: Text(
         project.incompleteTaskCount.toString(),
