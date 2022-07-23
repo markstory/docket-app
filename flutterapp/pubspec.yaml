@@ -38,6 +38,7 @@ dependencies:
   adaptive_theme: ^3.0.0
   intl: ^0.17.0
   flutter_mentions: ^2.0.1
+  drag_and_drop_lists: ^0.3.2
 
 
 dev_dependencies:

@@ -5,6 +5,7 @@ import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/dueon.dart';
 import 'package:docket/components/projectbadge.dart';
+import 'package:docket/dialogs/changedueon.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
@@ -73,13 +74,14 @@ class TaskActions extends StatelessWidget {
   Widget build(BuildContext context) {
     var session = Provider.of<SessionProvider>(context);
     var tasksProvider = Provider.of<TasksProvider>(context);
+    var navigator = Navigator.of(context);
+    var messenger = ScaffoldMessenger.of(context);
 
     Future<void> _handleMove() async {
       // Open project picker. Perhaps as a sheet?
     }
 
     Future<void> _handleDelete() async {
-      var messenger = ScaffoldMessenger.of(context);
       try {
         await tasksProvider.deleteTask(session.apiToken, task);
         messenger.showSnackBar(
@@ -93,7 +95,16 @@ class TaskActions extends StatelessWidget {
     }
 
     Future<void> _handleReschedule() async {
-      // Show reschedule menu. Perhaps as a sheet?
+      void changeComplete(dueOn, evening) {
+        task.dueOn = dueOn;
+        task.evening = evening;
+        tasksProvider.updateTask(session.apiToken, task);
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Task Updated')
+        );
+        navigator.pop();
+      }
+      showChangeDueOnDialog(context, task.dueOn, task.evening, changeComplete);
     }
 
     var theme = Theme.of(context);
