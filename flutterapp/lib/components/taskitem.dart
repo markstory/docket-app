@@ -6,6 +6,7 @@ import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/dueon.dart';
 import 'package:docket/components/projectbadge.dart';
 import 'package:docket/dialogs/changedueon.dart';
+import 'package:docket/dialogs/changeproject.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
@@ -77,8 +78,16 @@ class TaskActions extends StatelessWidget {
     var navigator = Navigator.of(context);
     var messenger = ScaffoldMessenger.of(context);
 
-    Future<void> _handleMove() async {
-      // Open project picker. Perhaps as a sheet?
+    Future<void> _handleChangeProject() async {
+      void changeComplete(projectId) {
+        task.projectId = projectId;
+        tasksProvider.updateTask(session.apiToken, task);
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Task Updated')
+        );
+        navigator.pop();
+      }
+      showChangeProjectDialog(context, task.projectId, changeComplete);
     }
 
     Future<void> _handleDelete() async {
@@ -113,7 +122,7 @@ class TaskActions extends StatelessWidget {
     return PopupMenuButton<Menu>(
       onSelected: (Menu item) {
         var actions = {
-          Menu.move: _handleMove,
+          Menu.move: _handleChangeProject,
           Menu.reschedule: _handleReschedule,
           Menu.delete: _handleDelete,
         };
@@ -125,7 +134,7 @@ class TaskActions extends StatelessWidget {
             value: Menu.move,
             child: ListTile(
               leading: Icon(Icons.drive_file_move, color: customColors.actionEdit),
-              title: const Text('Move To'),
+              title: const Text('Change Project'),
             ),
           ),
           PopupMenuItem<Menu>(

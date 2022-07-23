@@ -2,6 +2,7 @@ import 'package:docket/screens/projectadd.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/projectbadge.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
@@ -74,7 +75,6 @@ class _AppDrawerState extends State<AppDrawer> {
                 }
               ),
               ListTile(
-                leading:Icon(Icons.add, color: theme.colorScheme.primary),
                 title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
                 onTap: () {
                   Navigator.pushNamed(context, ProjectAddScreen.routeName);
@@ -107,8 +107,7 @@ class ProjectItem extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, '/projects/${project.slug}');
       },
-      leading: Icon(Icons.fiber_manual_record, color: color),
-      title: Text(project.name),
+      title: ProjectBadge(text: project.name, color: project.color),
       trailing: Text(
         project.incompleteTaskCount.toString(),
         style: TextStyle(color: theme.disabledColor),

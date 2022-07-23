@@ -138,7 +138,7 @@ Future<void> showChangeDueOnDialog(
       );
 
       return AlertDialog(
-        title: const Text('Set Due Date'),
+        title: const Text('Set Date'),
         content: SingleChildScrollView(
           child: ListBody(
             children: items,
