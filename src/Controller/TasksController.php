@@ -276,12 +276,13 @@ class TasksController extends AppController
 
         $this->respond([
             'success' => $success,
+            'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),
             'flashError' => __('Task could not be updated.'),
             'statusSuccess' => 200,
             'statusError' => 422,
         ]);
-        if ($success) {
+        if ($success && !$this->request->is('json')) {
             // This is necessary to get flash messages to show up for this action.
             return $this->response;
         }
