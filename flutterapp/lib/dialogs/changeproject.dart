@@ -24,6 +24,8 @@ Future<void> showChangeProjectDialog(
               child: FutureBuilder<List<Project>>(
                 future: projectsProvider.getProjects(),
                 builder: (context, snapshot) {
+                  // TODO if there is no data and we have a stale data error
+                  // load projects.
                   if (!snapshot.hasData) {
                     return const LoadingIndicator();
                   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
@@ -37,14 +38,12 @@ class TaskAddScreen extends StatelessWidget {
           const SnackBar(content: Text('Saving'))
         );
         await tasks.createTask(session.apiToken, task);
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Task Created'))
-        );
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
       } catch (e, stacktrace) {
-        developer.log("Failed to create project ${e.toString()} $stacktrace");
+        developer.log("Failed to create task ${e.toString()} $stacktrace");
         messenger.showSnackBar(
-          const SnackBar(content: Text('Failed to create task')),
+          errorSnackBar(context: context, text: 'Failed to create task.')
         );
       }
     }

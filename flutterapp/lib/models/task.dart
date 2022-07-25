@@ -83,10 +83,10 @@ class Task {
       title: json['title'] ?? '',
       body: json['body'] ?? '',
       dueOn: dueOn,
-      childOrder: json['child_order'],
-      dayOrder: json['day_order'],
-      evening: evening,
-      completed: completed,
+      childOrder: json['child_order'] ?? 0,
+      dayOrder: json['day_order'] ?? 0,
+      evening: evening ?? false,
+      completed: completed ?? false,
     );
   }
 

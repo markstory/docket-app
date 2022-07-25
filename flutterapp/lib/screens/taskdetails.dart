@@ -26,8 +26,7 @@ class TaskDetailsScreen extends StatelessWidget {
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Completed')
         );
-      } catch (e, stack) {
-        print("${e.toString()}, $stack");
+      } catch (e) {
         messenger.showSnackBar(
           errorSnackBar(context: context, text: 'Could not update task')
         );

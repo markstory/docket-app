@@ -75,7 +75,6 @@ class TaskActions extends StatelessWidget {
   Widget build(BuildContext context) {
     var session = Provider.of<SessionProvider>(context);
     var tasksProvider = Provider.of<TasksProvider>(context);
-    var navigator = Navigator.of(context);
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> _handleChangeProject() async {
@@ -85,7 +84,6 @@ class TaskActions extends StatelessWidget {
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Updated')
         );
-        navigator.pop();
       }
       showChangeProjectDialog(context, task.projectId, changeComplete);
     }
@@ -111,7 +109,6 @@ class TaskActions extends StatelessWidget {
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Updated')
         );
-        navigator.pop();
       }
       showChangeDueOnDialog(context, task.dueOn, task.evening, changeComplete);
     }

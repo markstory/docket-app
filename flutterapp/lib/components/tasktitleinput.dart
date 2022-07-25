@@ -95,6 +95,10 @@ class TaskTitleInput extends StatelessWidget {
       maxLines: 5,
       minLines: 1,
       defaultText: value,
+      onChanged: (title) {
+        // TODO this might need to strip out markup.
+        onChangeTitle(title);
+      },
       onMentionAdd: (item) {
         var parts = item['id'].toString().split(':');
         assert(parts.length == 2);
