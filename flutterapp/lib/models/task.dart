@@ -123,6 +123,10 @@ class Task {
   }
 
   Map<String, Object?> toMap() {
+    String? dueOnDate;
+    if (dueOn != null) {
+      dueOnDate = formatters.dateString(dueOn!);
+    }
     return {
       'id': id,
       'project_id': projectId,
@@ -132,7 +136,7 @@ class Task {
       'section_id': sectionId,
       'title': title,
       'body': body,
-      'due_on': dueOn?.toString(),
+      'due_on': dueOnDate,
       'child_order': childOrder,
       'day_order': dayOrder,
       'evening': evening,

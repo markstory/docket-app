@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
@@ -41,25 +42,27 @@ class TaskDetailsScreen extends StatelessWidget {
         var session = Provider.of<SessionProvider>(context);
         var pendingTask = tasksProvider.getById(session.apiToken, taskId);
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Task Details')),
-          body: FutureBuilder<Task>(
-            future: pendingTask,
-            builder: (context, snapshot) {
-              var task = snapshot.data;
-              if (task == null) {
-                return const Card(
-                  child: Text("404! Could not find that task.")
+        return Portal(
+          child: Scaffold(
+            appBar: AppBar(title: const Text('Task Details')),
+            body: FutureBuilder<Task>(
+              future: pendingTask,
+              builder: (context, snapshot) {
+                var task = snapshot.data;
+                if (task == null) {
+                  return const Card(
+                    child: Text("404! Could not find that task.")
+                  );
+                }
+                return ListView(
+                  padding: EdgeInsets.all(space(1)),
+                  children: [
+                    TaskForm(task: task, onSave: (task) => _onSave(task, context)),
+                  ]
                 );
               }
-              return ListView(
-                padding: EdgeInsets.all(space(1)),
-                children: [
-                  TaskForm(task: task, onSave: (task) => _onSave(task, context)),
-                ]
-              );
-            }
-          ),
+            ),
+          )
         );
       }
     );

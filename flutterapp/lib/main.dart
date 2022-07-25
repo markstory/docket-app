@@ -95,7 +95,8 @@ class DocketApp extends StatelessWidget {
             }
             // Task Add
             if (settings.name == TaskAddScreen.routeName) {
-              return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen()));
+              final args = settings.arguments as TaskAddScreenArguments;
+              return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen(task: args.task)));
             }
 
             // Project Add

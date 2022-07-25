@@ -6,6 +6,7 @@ import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
+import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/models/task.dart';
@@ -39,6 +40,7 @@ class _TodayScreenState extends State<TodayScreen> {
         var theme = Theme.of(context);
         var customColors = getCustomColors(context);
         var taskViewData = tasksProvider.getToday();
+        var today = DateUtils.dateOnly(DateTime.now());
 
         return Scaffold(
           appBar: AppBar(),
@@ -51,12 +53,7 @@ class _TodayScreenState extends State<TodayScreen> {
                 Icon(Icons.today, color: customColors.dueToday),
                 const SizedBox(width: 4),
                 Text('Today', style: theme.textTheme.titleLarge),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    // Should show task create sheet.
-                  }
-                ),
+                TaskAddButton(dueOn: today),
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed:() {
@@ -78,20 +75,15 @@ class _TodayScreenState extends State<TodayScreen> {
                     children: [
                       CalendarItemList(calendarItems: data.calendarItems),
                       SizedBox(height: space(2)),
-                      TaskGroup(tasks: day),
+                      TaskGroup(tasks: day, showProject: true),
                       SizedBox(height: space(2)),
                       Row(children: [
                         Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
                         SizedBox(width: space(0.5)),
                         Text('This Evening', style: theme.textTheme.titleLarge),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            // Should show task create sheet.
-                          }
-                        )
+                        TaskAddButton(dueOn: today, evening: true),
                       ]),
-                      TaskGroup(tasks: evening),
+                      TaskGroup(tasks: evening, showProject: true),
                     ]
                   );
                 }

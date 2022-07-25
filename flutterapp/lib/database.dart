@@ -295,6 +295,7 @@ class LocalDatabase {
 
   Future<void> addProjects(List<Project> projects) async {
     final db = database();
+    // TODO got stuck here as this future never resolves in a widget test
     var projectMap = await db.value(projectsKey);
     projectMap ??= {};
     for (var project in projects) {
