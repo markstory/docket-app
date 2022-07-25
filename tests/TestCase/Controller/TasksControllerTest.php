@@ -435,6 +435,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
         ]);
         $this->assertResponseOk();
+        $this->assertResponseContains('"title": "updated"');
 
         $updated = $this->viewVariable('task');
         $this->assertSame('updated', $updated->title);
