@@ -8,11 +8,19 @@ import 'package:docket/forms/project.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  var database = LocalDatabase();
+
+  Widget renderForm(Project project, Function(Project project) onSave) {
+    return EntryPoint(
+      database: database,
+      child: Scaffold(
+        body: ProjectForm(project: project, onSave: onSave)
+      )
+    );
+  }
 
   group('Create Project', () {
     testWidgets('Renders an empty form', (tester) async {
-      var database = LocalDatabase();
-
       var onSaveCalled = false;
       void onSave(Project project) {
         onSaveCalled = true;
@@ -20,12 +28,7 @@ void main() {
         expect(project.color, equals(8));
       }
       final project = Project.blank();
-      await tester.pumpWidget(EntryPoint(
-        database: database,
-        child: Scaffold(
-          body: ProjectForm(project: project, onSave: onSave)
-        )
-      ));
+      await tester.pumpWidget(renderForm(project, onSave));
 
       await tester.enterText(find.byType(TextField), 'Home');
 
@@ -42,27 +45,18 @@ void main() {
     });
 
     testWidgets('Renders an edit form', (tester) async {
-      var database = LocalDatabase();
-
       void onSave(Project project) {}
       final project = Project.blank();
       project.name = 'Hobbies';
       project.color = 8;
 
-      await tester.pumpWidget(EntryPoint(
-        database: database,
-        child: Scaffold(
-          body: ProjectForm(project: project, onSave: onSave)
-        )
-      ));
+      await tester.pumpWidget(renderForm(project, onSave));
 
       expect(find.text('Hobbies'), findsOneWidget);
       expect(find.text('berry'), findsOneWidget);
     });
 
     testWidgets('Name required', (tester) async {
-      var database = LocalDatabase();
-
       var onSaveCalled = false;
       void onSave(Project project) {
         onSaveCalled = true;
@@ -70,13 +64,7 @@ void main() {
       final project = Project.blank();
       project.color = 8;
 
-      await tester.pumpWidget(EntryPoint(
-        database: database,
-        child: Scaffold(
-          body: ProjectForm(project: project, onSave: onSave)
-        )
-      ));
-
+      await tester.pumpWidget(renderForm(project, onSave));
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 

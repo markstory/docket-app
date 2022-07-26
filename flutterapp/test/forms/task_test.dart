@@ -15,6 +15,7 @@ void main() {
   var work = Project(id: 2, slug: 'work', name: 'Work', color: 1, ranking: 1);
   var database = LocalDatabase();
 
+  // Rendering helper.
   Widget renderForm(Task task, Function(Task task) onSave) {
     return EntryPoint(
       database: database,
