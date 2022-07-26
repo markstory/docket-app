@@ -7,7 +7,7 @@
       "body": "",
       "evening": false,
       "completed": false,
-      "due_on": null,
+      "due_on": "__TODAY__",
       "child_order": 0,
       "day_order": 0
     },
@@ -18,7 +18,7 @@
       "body": "",
       "evening": false,
       "completed": false,
-      "due_on": null,
+      "due_on": "__TODAY__",
       "child_order": 1,
       "day_order": 1
     }

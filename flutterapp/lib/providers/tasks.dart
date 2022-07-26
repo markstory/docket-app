@@ -99,7 +99,7 @@ class TasksProvider extends ChangeNotifier {
 
     // Update local db and server
     await actions.toggleTask(apiToken, task);
-    await _database.updateTask(task);
+    await _database.deleteTask(task);
 
     notifyListeners();
   }

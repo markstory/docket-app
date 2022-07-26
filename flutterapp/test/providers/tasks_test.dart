@@ -1,56 +1,46 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
+import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
+
+
+// Parse a list response into a list of tasks.
+List<Task> parseTaskList(String data) {
+  var decoded = jsonDecode(data);
+  if (!decoded.containsKey('tasks')) {
+    throw 'Cannot parse tasks without tasks key';
+  }
+  List<Task> tasks = [];
+  for (var item in decoded['tasks']) {
+    tasks.add(Task.fromMap(item));
+  }
+  return tasks;
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late TasksProvider provider;
   int listenerCallCount = 0;
-  String apiToken = 'api-token';
-  String todayTasksFixture = """
-{"tasks": [1, 2]}
-""";
-
-  String taskMapFixture = """
-{
-  "1": {
-    "id": 1,
-    "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
-    "title": "clean dishes",
-    "body": "",
-    "evening": false,
-    "completed": false,
-    "due_on": null,
-    "child_order": 0,
-    "day_order": 0
-  },
-  "2": {
-    "id": 2,
-    "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
-    "title": "cut grass",
-    "body": "",
-    "evening": false,
-    "completed": false,
-    "due_on": null,
-    "child_order": 1,
-    "day_order": 1
-  }
-}
-  """;
+  const apiToken = 'api-token';
+  var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
-  final tasksTodayResponseFixture = file.readAsStringSync();
+  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
   file = File('test_resources/project_details.json');
   final projectDetailsResponseFixture = file.readAsStringSync();
+
+  file = File('test_resources/task_create_today.json');
+  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
   group('$TasksProvider', () {
     var db = LocalDatabase();
@@ -130,24 +120,23 @@ void main() {
         return Response('', 204);
       });
 
-      var taskData = json.decode(taskMapFixture);
       var db = LocalDatabase();
-      await db.set(LocalDatabase.taskMapKey, taskData);
-      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
+
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await db.addTasks(tasks);
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['1']);
-      await provider.toggleComplete(apiToken, task);
+      await provider.toggleComplete(apiToken, tasks[0]);
 
       expect(listenerCallCount, greaterThan(0));
 
       var updated = await db.fetchTodayTasks(useStale: true);
-      expect(updated.length, equals(2));
-      expect(updated[0].completed, equals(true));
+      expect(updated.length, equals(1));
+      expect(updated[0].completed, equals(false));
 
       // Data should not be expired as the task wasn't on today.
       var withExpired = await db.fetchTodayTasks(useStale: false);
-      expect(withExpired.length, equals(2));
+      expect(withExpired.length, equals(1));
     });
 
     test('toggleComplete() expires local data', () async {
@@ -155,20 +144,15 @@ void main() {
         return Response('', 204);
       });
 
-      var taskData = json.decode(taskMapFixture);
-      // Make the task due today.
-      taskData['1']['due_on'] = DateTime.now().toIso8601String();
-
       var db = LocalDatabase();
-      await db.set(LocalDatabase.taskMapKey, taskData);
-      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await db.addTasks(tasks);
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['1']);
-      await provider.toggleComplete(apiToken, task);
+      await provider.toggleComplete(apiToken, tasks[0]);
 
       var updated = await db.fetchTodayTasks(useStale: true);
-      expect(updated.length, equals(2));
+      expect(updated.length, equals(1));
 
       // Data should be expired as task was due today
       try {
@@ -185,12 +169,11 @@ void main() {
       });
 
       var db = LocalDatabase();
-      var taskData = json.decode(taskMapFixture);
-      await db.set(LocalDatabase.taskMapKey, taskData);
-      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await db.addTasks(tasks);
       var provider = TasksProvider(db);
 
-      var task = Task.fromMap(taskData['1']);
+      var task = tasks[0];
       await provider.deleteTask(apiToken, task);
 
       expect(listenerCallCount, greaterThan(0));
@@ -206,10 +189,9 @@ void main() {
         throw Exception('No request should be sent.');
       });
 
-      var taskData = json.decode(taskMapFixture);
       var db = LocalDatabase();
-      await db.set(LocalDatabase.taskMapKey, taskData);
-      await db.set(LocalDatabase.todayTasksKey, json.decode(todayTasksFixture));
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await db.addTasks(tasks);
       var provider = TasksProvider(db);
 
       var task = await provider.getById(apiToken, 1);
@@ -243,6 +225,42 @@ void main() {
 
       expect(requestCounter, equals(1));
       expect(tasks.length, equals(2));
+    });
+
+    test('createTask() calls API, updates today view & project view', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/add'));
+
+        return Response(taskCreateTodayResponseFixture, 200);
+      });
+
+      var task = Task.blank();
+      task.title = "clean dishes";
+      task.projectId = 1;
+      task.dueOn = today;
+
+      var created = await provider.createTask(apiToken, task);
+      expect(created.id, equals(1));
+
+      var todayData = await provider.getToday();
+      expect(todayData.tasks.length, equals(1));
+      expect(todayData.tasks[0].title, equals(task.title));
+
+      var projectTasks = await provider.projectTasks('home');
+      expect(projectTasks.length, equals(1));
+      expect(projectTasks[0].title, equals(task.title));
+    });
+
+    test('createTask() update API, and upcoming view', () async {
+    });
+
+    test('createTask() update API, and project view', () async {
+    });
+
+    test('updateTask() update API, and today view', () async {
+    });
+
+    test('updateTask() update API, and project view', () async {
     });
   });
 }

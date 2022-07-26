@@ -71,7 +71,32 @@ class LocalDatabase {
     return isStale;
   }
 
-  /// Expire tasks individually
+  /// Locate which date based views a task would be involved in.
+  ///
+  /// When tasks are added/removed we need to update or expire
+  /// the view entries those tasks will be displayed in.
+  ///
+  /// In a SQL based storage you'd be able to remove/update the row
+  /// individually. Because our local database is view-based. We need
+  /// custom logic to locate the views and then update those views.
+  Future<List<String>> _taskViews(Task task) async {
+    var now = DateTime.now();
+    List<String> views = [];
+
+    // If the task has a due date expire upcoming and possibly
+    // today views.
+    if (task.dueOn != null) {
+      var delta = task.dueOn?.difference(now);
+      if (delta != null && delta.inDays <= 0) {
+        views.add(todayTasksKey);
+      }
+      views.add(upcomingTasksKey);
+    }
+
+    return views;
+  }
+
+  /// Expire task views for a task.
   /// When a task is updated or created we need to
   /// clear the local cache so that the new item is visible.
   ///
@@ -81,22 +106,9 @@ class LocalDatabase {
   /// This ensures that we don't provide stale state to the Provider
   /// layer and instead Providers fetch fresh data from the Server.
   void _expireTask(Task task) async {
-    var now = DateTime.now();
-    List<String> expire = [];
-
-    // If the task has a due date expire upcoming and possibly
-    // today views.
-    if (task.dueOn != null) {
-      var delta = task.dueOn?.difference(now);
-      if (delta != null && delta.inDays <= 0) {
-        expire.add(todayTasksKey);
-      }
-      expire.add(upcomingTasksKey);
-    }
-
     final db = database();
 
-    // Clear the project index so we read it fresh again.
+    // Remove the project key so we read fresh data next time.
     var projectIndex = await db.value(projectTaskMapKey);
     projectIndex ??= {};
     projectIndex.remove(task.projectSlug);
@@ -105,7 +117,9 @@ class LocalDatabase {
     var current = await db.value(expiredKey);
     current ??= {};
 
-    for (var key in expire) {
+    var now = DateTime.now();
+    var views = await _taskViews(task);
+    for (var key in views) {
       current[key] = now.millisecondsSinceEpoch;
     }
     await db.refresh(expiredKey, current);
@@ -113,14 +127,12 @@ class LocalDatabase {
 
   /// Directly set a key. Avoid use outside of tests.
   Future<void> set(String key, Map<String, Object?> value) async {
-    final db = database();
-    await db.refresh(key, value);
+    await database().refresh(key, value);
   }
 
   // ApiToken methods. {{{
   Future<ApiToken> createApiToken(ApiToken apiToken) async {
-    final db = database();
-    await db.refresh(apiTokenKey, apiToken.toMap());
+    await database().refresh(apiTokenKey, apiToken.toMap());
 
     return apiToken;
   }
@@ -139,38 +151,71 @@ class LocalDatabase {
 
   /// Add records to the 'today' view store.
   Future<void> setTodayTasks(List<Task> tasks) async {
+    await database().remove(todayTasksKey);
     await addTasks(tasks);
-
-    final db = database();
-    await db.refresh(todayTasksKey, {
-      'tasks': tasks.map((task) => task.id).toList(),
-    });
   }
 
   /// Add records to the 'today' view store.
   Future<void> setUpcomingTasks(List<Task> tasks) async {
+    await database().remove(upcomingTasksKey);
     await addTasks(tasks);
-
-    final db = database();
-    await db.refresh(upcomingTasksKey, {
-      'tasks': tasks.map((task) => task.id).toList(),
-    });
   }
 
+  Map<int, List<String>> viewUpdates = {};
+
   /// Store a list of Tasks.
-  /// Provides more direct access to the database.
+  /// 
+  /// Each task will added to the relevant date/project
+  /// views as well as the task lookup map
   Future<void> addTasks(List<Task> tasks) async {
     final db = database();
-    var indexed = await db.value(taskMapKey);
-    indexed ??= {};
+
+    Map<String, List<int>> viewUpdates = {};
+    Map<String, List<int>> projectUpdates = {};
+
+    var taskMap = await db.value(taskMapKey) ?? {};
     for (var task in tasks) {
       var id = task.id;
       if (id == null) {
         continue;
       }
-      indexed[id.toString()] = task.toMap();
+      taskMap[id.toString()] = task.toMap();
+
+      // Update the pending view updates.
+      for (var view in await _taskViews(task)) {
+        if (!viewUpdates.containsKey(view)) {
+          viewUpdates[view] = [];
+        }
+        viewUpdates[view]?.add(id);
+      }
+
+      // Update pending project tasks
+      var projectSlug = task.projectSlug;
+      if (!projectUpdates.containsKey(projectSlug)) {
+        projectUpdates[projectSlug] = [];
+      }
+      projectUpdates[projectSlug]?.add(id);
     }
-    await db.refresh(taskMapKey, indexed);
+
+    // Update task mapping.
+    await db.refresh(taskMapKey, taskMap);
+
+    // Update date views
+    for (var view in viewUpdates.keys) {
+      var viewData = await db.value(view) ?? {"tasks": []};
+      viewData["tasks"].addAll(viewUpdates[view]);
+      await db.refresh(view, viewData);
+    }
+
+    // Update Project views.
+    var projectTasks = await db.value(projectTaskMapKey) ?? {};
+    for (var projectSlug in projectUpdates.keys) {
+      if (!projectTasks.containsKey(projectSlug)) {
+        projectTasks[projectSlug] = [];
+      }
+      projectTasks[projectSlug].addAll(projectUpdates[projectSlug]);
+    }
+    await db.refresh(projectTaskMapKey, projectTasks);
   }
 
   /// Fetch all tasks for a single project.
@@ -181,8 +226,7 @@ class LocalDatabase {
 
     // Update the project : task mapping.
     final db = database();
-    var indexed = await db.value(projectTaskMapKey);
-    indexed ??= {};
+    var indexed = await db.value(projectTaskMapKey) ?? {};
     var taskIds = tasks.map((task) => task.id).toList();
     indexed[project.slug] = taskIds;
 
@@ -207,12 +251,11 @@ class LocalDatabase {
 
   /// Fetch all records in the 'upcoming' view store.
   Future<List<Task>> fetchUpcomingTasks({useStale = false}) async {
-    final db = database();
     var isStale = await _isDataStale(upcomingTasksKey, useStale);
     if (isStale) {
       throw StaleDataError();
     }
-    var results = await db.value(upcomingTasksKey);
+    var results = await database().value(upcomingTasksKey);
     if (results == null || results['tasks'] == null) {
       throw StaleDataError();
     }
@@ -224,12 +267,11 @@ class LocalDatabase {
   /// Fetch all tasks for a single project.
   Future<List<Task>> fetchProjectTasks(String slug, {useStale = false}) async {
     // Update the project : task mapping.
-    final db = database();
     var isStale = await _isDataStale(projectTaskMapKey, useStale);
     if (isStale) {
       return [];
     }
-    var results = await db.value(projectTaskMapKey);
+    var results = await database().value(projectTaskMapKey);
     if (results == null || results[slug] == null) {
       return [];
     }
@@ -244,9 +286,7 @@ class LocalDatabase {
   /// tasks as requested. There are scenarios where tasks could be
   /// missing.
   Future<List<Task>> getTasksById(List<int> taskIds) async {
-    final db = database();
-    var indexed = await db.value(taskMapKey);
-    indexed ??= {};
+    var indexed = await database().value(taskMapKey) ?? {};
     List<Task> tasks = [];
     for (var id in taskIds) {
       var record = indexed[id.toString()];
@@ -271,19 +311,19 @@ class LocalDatabase {
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
-    addTasks([task]);
+    await addTasks([task]);
 
     _expireTask(task);
   }
 
   Future<void> deleteTask(Task task) async {
-    final db = database();
     if (task.id == null) {
       return;
     }
+    final db = database();
+
     // Remove the task from the task mapping.
-    var indexed = await db.value(taskMapKey);
-    indexed ??= {};
+    var indexed = await db.value(taskMapKey) ?? {};
     indexed.remove(task.id.toString());
     await db.refresh(taskMapKey, indexed);
 
@@ -295,9 +335,7 @@ class LocalDatabase {
 
   Future<void> addProjects(List<Project> projects) async {
     final db = database();
-    // TODO got stuck here as this future never resolves in a widget test
-    var projectMap = await db.value(projectsKey);
-    projectMap ??= {};
+    var projectMap = await db.value(projectsKey) ?? {};
     for (var project in projects) {
       projectMap[project.slug] = project.toMap();
     }
@@ -336,8 +374,7 @@ class LocalDatabase {
   /// Add a list of calendar items to the canonical lookup.
   Future<void> addCalendarItems(List<CalendarItem> calendarItems) async {
     final db = database();
-    var indexed = await db.value(calendarItemMapKey);
-    indexed ??= {};
+    var indexed = await db.value(calendarItemMapKey) ?? {};
     for (var calendarItem in calendarItems) {
       indexed[calendarItem.id] = calendarItem.toMap();
     }
