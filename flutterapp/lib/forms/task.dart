@@ -1,9 +1,8 @@
-import 'package:docket/components/loadingindicator.dart';
-import 'package:docket/components/taskcheckbox.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/forms.dart';
+import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/tasktitleinput.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
