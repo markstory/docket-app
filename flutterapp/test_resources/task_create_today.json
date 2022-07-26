@@ -2,7 +2,7 @@
   "task": {
       "id": 1,
       "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
-      "title": "clean dishes",
+      "title": "fold the towels",
       "body": "",
       "evening": false,
       "completed": false,

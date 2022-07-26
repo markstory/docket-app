@@ -227,7 +227,7 @@ void main() {
       expect(tasks.length, equals(2));
     });
 
-    test('createTask() calls API, updates today view & project view', () async {
+    test('createTask() calls API, updates date views & project view', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/add'));
 
@@ -235,7 +235,8 @@ void main() {
       });
 
       var task = Task.blank();
-      task.title = "clean dishes";
+      // This data has to match the fixture file.
+      task.title = "fold the towels";
       task.projectId = 1;
       task.dueOn = today;
 
@@ -249,18 +250,13 @@ void main() {
       var projectTasks = await provider.projectTasks('home');
       expect(projectTasks.length, equals(1));
       expect(projectTasks[0].title, equals(task.title));
+
+      var upcoming= await provider.getUpcoming();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
     });
 
-    test('createTask() update API, and upcoming view', () async {
-    });
-
-    test('createTask() update API, and project view', () async {
-    });
-
-    test('updateTask() update API, and today view', () async {
-    });
-
-    test('updateTask() update API, and project view', () async {
+    test('updateTask() call API, and update today view & project views', () async {
     });
   });
 }
