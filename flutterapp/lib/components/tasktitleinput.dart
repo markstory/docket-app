@@ -91,6 +91,7 @@ class TaskTitleInput extends StatelessWidget {
     }).toList();
 
     return FlutterMentions(
+      key: const ValueKey('title'),
       suggestionPosition: SuggestionPosition.Bottom,
       maxLines: 5,
       minLines: 1,
