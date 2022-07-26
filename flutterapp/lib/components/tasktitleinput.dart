@@ -90,6 +90,7 @@ class TaskTitleInput extends StatelessWidget {
       return {"id": "e${item['id']}", "display": item['display']};
     }).toList();
 
+    // TODO this form should make sure title is not empty.
     return FlutterMentions(
       key: const ValueKey('title'),
       suggestionPosition: SuggestionPosition.Bottom,
