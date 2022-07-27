@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.17.0
   flutter_mentions: ^2.0.1
   drag_and_drop_lists: ^0.3.2
+  flutter_markdown: ^0.6.10
 
 
 dev_dependencies:

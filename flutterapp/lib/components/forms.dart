@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:docket/theme.dart';
 
 import 'package:docket/components/dueon.dart';
@@ -55,6 +56,67 @@ class DueOnInput extends StatelessWidget {
       child: DueOn(dueOn: dueOn, evening: evening, showNull: true),
       onPressed: () {
         showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+      }
+    );
+  }
+}
+
+/// Render text as markdown. Switch to TextInput on tap
+/// for editing. Once editing is complete, the onChange
+/// callback is triggered.
+class MarkdownInput extends StatefulWidget {
+  final String value;
+  final String label;
+  final Function(String newText) onChange;
+
+  const MarkdownInput({
+    required this.value,
+    required this.onChange,
+    this.label = "Notes",
+    super.key
+  });
+
+  @override
+  State<MarkdownInput> createState() => _MarkdownInputState();
+}
+
+class _MarkdownInputState extends State<MarkdownInput> {
+  bool _editing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_editing) {
+      var body = widget.value.isNotEmpty ? widget.value : 'Tap to edit';
+
+      return MarkdownBody(
+        key: const ValueKey('markdown-preview'),
+        data: body,
+        selectable: true,
+        onTapText: () {
+          setState(() {
+            _editing = true;
+          });
+        }
+      );
+    }
+
+    return TextFormField(
+      key: const ValueKey('markdown-input'),
+      keyboardType: TextInputType.multiline,
+      minLines: 1,
+      maxLines: null,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: widget.label,
+      ),
+      initialValue: widget.value,
+      onSaved: (value) {
+        if (value != null) {
+          widget.onChange(value);
+          setState(() {
+            _editing = false;
+          });
+        }
       }
     );
   }

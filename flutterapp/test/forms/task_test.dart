@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/database.dart';
@@ -27,6 +28,7 @@ void main() {
     );
   }
 
+
   setUpAll(() async {
     await database.clearProjects();
     await database.addProjects([home, work]);
@@ -47,7 +49,13 @@ void main() {
 
       // Fill out the title and description
       await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
-      await tester.enterText(find.byKey(const ValueKey('body')), 'Use lots of soap');
+
+      // Toggle description and fill it out
+      var bodyFinder = find.text('Tap to edit');
+      await tester.ensureVisible(bodyFinder);
+      await tester.tap(bodyFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('markdown-input')), 'Use lots of soap');
 
       // Open the project dropdown and select home
       await tester.tap(find.byKey(const ValueKey('project')));
@@ -99,7 +107,13 @@ void main() {
 
       // Fill out the title
       await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
-      await tester.enterText(find.byKey(const ValueKey('body')), 'Use lots of soap');
+
+      // Fill out body
+      var bodyFinder = find.text('Original notes');
+      await tester.ensureVisible(bodyFinder);
+      await tester.tap(bodyFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('markdown-input')), 'Use lots of soap');
 
       // Open the project dropdown and select home
       await tester.tap(find.byKey(const ValueKey('project')));

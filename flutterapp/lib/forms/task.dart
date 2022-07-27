@@ -121,21 +121,18 @@ class _TaskFormState extends State<TaskForm> {
                 ),
               ),
               FormIconRow(
-                icon: const Icon(Icons.description, size: DocketColors.iconSize, semanticLabel: 'Notes on'),
-                child: TextFormField(
+                icon: const Icon(
+                  Icons.description,
+                  size: DocketColors.iconSize,
+                  semanticLabel: 'Notes'
+                ),
+                child: MarkdownInput(
                   key: const ValueKey('body'),
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Notes',
-                  ),
-                  initialValue: task.body,
-                  onSaved: (value) {
-                    if (value != null) {
+                  value: task.body,
+                  onChange: (value) {
+                    setState(() {
                       task.body = value;
-                    }
+                    });
                   }
                 )
               ),
