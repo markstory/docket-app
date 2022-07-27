@@ -4,6 +4,7 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/database.dart';
 
 class SessionProvider extends ChangeNotifier {
+  bool loading = false;
   ApiToken? _apiToken;
   late LocalDatabase _database;
 
@@ -24,11 +25,14 @@ class SessionProvider extends ChangeNotifier {
   }
 
   void _loadApiToken() async {
+    loading = true;
     try {
       _apiToken = await _database.fetchApiToken();
       notifyListeners();
     } catch (e) {
       _apiToken = null;
+    } finally {
+      loading = false;
     }
   }
 

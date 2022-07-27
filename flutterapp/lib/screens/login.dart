@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/actions.dart' as actions;
+import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/forms/login.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/screens/today.dart';
@@ -56,18 +57,25 @@ class LoginScreen extends StatelessWidget {
 }
 
 
+/// Render the child widget if we have a session token
+/// available or render the login screen if we don't.
+/// Because loading the session token is async we show a loading
+/// indicator while loading is in progress.
 class LoginRequired extends StatelessWidget {
   final Widget child;
 
   const LoginRequired({
-    Key? key,
     required this.child,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SessionProvider>(
       builder: (context, session, _) {
+        if (session.loading) {
+          return const LoadingIndicator();
+        }
         if (session.hasToken) {
           return child;
         }
