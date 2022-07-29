@@ -223,6 +223,8 @@ class TasksController extends AppController
         try {
             $this->Tasks->move($task, $operation);
             $success = true;
+            $this->set('task', $task);
+            $serialize[] = 'task';
         } catch (InvalidArgumentException $e) {
             $error = $e->getMessage();
             $serialize[] = ['errors'];
@@ -231,9 +233,9 @@ class TasksController extends AppController
 
         return $this->respond([
             'success' => $success,
+            'serialize' => $serialize,
             'flashSuccess' => __('Task moved'),
             'flashError' => $error,
-            'statusSuccess' => 204,
             'statusError' => 422,
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
@@ -279,7 +281,6 @@ class TasksController extends AppController
             'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),
             'flashError' => __('Task could not be updated.'),
-            'statusSuccess' => 200,
             'statusError' => 422,
         ]);
         if ($success && !$this->request->is('json')) {
