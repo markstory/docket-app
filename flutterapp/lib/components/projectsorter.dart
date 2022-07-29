@@ -15,7 +15,7 @@ class ProjectSorter extends StatelessWidget {
   const ProjectSorter({super.key});
 
   void _onItemReorder(ProjectsProvider projectsProvider, String apiToken, Project project, int newIndex) {
-    projectsProvider.moveProject(apiToken, project, newIndex);
+    projectsProvider.move(apiToken, project, newIndex);
   }
 
   @override

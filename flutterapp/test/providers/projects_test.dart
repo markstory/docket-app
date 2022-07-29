@@ -5,6 +5,7 @@ import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
+import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 
 void main() {
@@ -99,7 +100,7 @@ void main() {
       );
     });
 
-    test('getBySlug() loads updates task data', () async {
+    test('getBySlug() loads from API and updates task data', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home'));
         return Response(projectViewResponseFixture, 200);
@@ -111,6 +112,26 @@ void main() {
       var db = LocalDatabase();
       var tasks = await db.fetchProjectTasks('home');
       expect(tasks.length, equals(2));
+    });
+
+    test('move() makes API request and updates local db', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/1/move'));
+        return Response(projectViewResponseFixture, 200);
+      });
+
+      var project = Project.blank();
+      project.id = 1;
+      project.slug = 'home';
+      project.name = 'Home';
+      project.ranking = 1;
+
+      await provider.move(apiToken, project, 2);
+
+      var db = LocalDatabase();
+      project = await db.fetchProjectBySlug('home');
+      expect(project.ranking, equals(2));
+      expect(listenerCallCount, greaterThan(0));
     });
   });
 }

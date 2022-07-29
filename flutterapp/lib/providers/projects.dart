@@ -57,7 +57,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Move a project on the server and locally
   /// and then notifyListeners
-  Future<void> moveProject(String apiToken, Project project, int newRank) async {
+  Future<void> move(String apiToken, Project project, int newRank) async {
     await actions.moveProject(apiToken, project, newRank);
     project.ranking = newRank;
     await _database.updateProject(project);
