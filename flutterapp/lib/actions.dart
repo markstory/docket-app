@@ -347,13 +347,16 @@ Future<Project> createProject(String apiToken, Project project) async {
 }
 
 /// Move a project
-Future<void> moveProject(String apiToken, Project project, int newRank) async {
-  var url = _makeUrl('/projects/${project.id}/move');
+Future<Project> moveProject(String apiToken, Project project, int newRank) async {
+  var url = _makeUrl('/projects/${project.slug}/move');
 
   return Future(() async {
-    await httpPost(url,
+    var response = await httpPost(url,
         apiToken: apiToken,
         body: {'ranking': newRank},
         errorMessage: 'Could not move project');
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return Project.fromMap(decoded['project']);
   });
 }

@@ -116,7 +116,7 @@ void main() {
 
     test('move() makes API request and updates local db', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects/1/move'));
+        expect(request.url.path, contains('/projects/home/move'));
         return Response(projectViewResponseFixture, 200);
       });
 
