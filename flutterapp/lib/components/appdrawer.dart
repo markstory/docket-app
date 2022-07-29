@@ -24,7 +24,8 @@ class _AppDrawerState extends State<AppDrawer> {
     var session = Provider.of<SessionProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    /// Ensure that projects are loaded each time the sidebar is opened.
+    // TODO this should probably be done on the today view
+    // if the project list is 'stale'
     projectsProvider.fetchProjects(session.apiToken);
   }
 

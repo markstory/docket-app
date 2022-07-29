@@ -22,9 +22,9 @@ class ProjectSorter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<SessionProvider, ProjectsProvider>(
       builder: (context, sessionProvider, projectsProvider, child) {
-        // TODO this might get annoying as each update could replace
-        // the list with a spinner. A stateful widget might be better
-        // but I don't yet know how to manage the futures for that.
+        // TODO This has some rendering bugs still.
+        // It might be good to make this a stateful widget
+        // that fetches from local DB on init.
         var projectsFuture = projectsProvider.getProjects();
 
         return FutureBuilder<List<Project>>(
