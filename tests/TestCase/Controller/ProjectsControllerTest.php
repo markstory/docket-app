@@ -481,6 +481,7 @@ class ProjectsControllerTest extends TestCase
             'ranking' => 1,
         ]);
         $this->assertResponseOk();
+        $this->assertResponseContains('"slug": "Home"');
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];

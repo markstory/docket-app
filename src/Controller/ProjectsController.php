@@ -291,7 +291,7 @@ class ProjectsController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'statusSuccess' => 204,
+            'serialize' => $serialize,
             'statusError' => 400,
             'flashSuccess' => __('Project moved'),
             'flashError' => $error,
