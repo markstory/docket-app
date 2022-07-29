@@ -711,6 +711,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 1,
         ]);
         $this->assertResponseOk();
+        $this->assertResponseContains('"title": "first"');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertEquals(1, $todo->day_order);
