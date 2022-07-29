@@ -77,7 +77,7 @@ Future<http.Response> httpGet(Uri url,
     headers: headers,
   );
   if (response.statusCode >= 400) {
-  developer.log('actions.request failed');
+    developer.log('actions.request failed');
     errorMessage ??= 'Request Failed to ${url.path}';
     throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
   }
@@ -343,5 +343,17 @@ Future<Project> createProject(String apiToken, Project project) async {
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Project.fromMap(decoded['project']);
+  });
+}
+
+/// Move a project
+Future<void> moveProject(String apiToken, Project project, int newRank) async {
+  var url = _makeUrl('/projects/${project.id}/move');
+
+  return Future(() async {
+    await httpPost(url,
+        apiToken: apiToken,
+        body: {'ranking': newRank},
+        errorMessage: 'Could not move project');
   });
 }

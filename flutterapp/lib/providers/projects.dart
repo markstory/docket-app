@@ -38,6 +38,7 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Read a project from the local database by slug.
   Future<Project> getBySlug(String slug) async {
     return await _database.fetchProjectBySlug(slug);
   }
@@ -49,7 +50,17 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Get the project list from the local database.
   Future<List<Project>> getProjects() async {
     return await _database.fetchProjects();
+  }
+
+  /// Move a project on the server and locally
+  /// and then notifyListeners
+  Future<void> moveProject(String apiToken, Project project, int newRank) async {
+    await actions.moveProject(apiToken, project, newRank);
+    project.ranking = newRank;
+    await _database.updateProject(project);
+    notifyListeners();
   }
 }

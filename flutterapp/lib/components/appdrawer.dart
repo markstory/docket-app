@@ -2,8 +2,8 @@ import 'package:docket/screens/projectadd.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:docket/components/projectbadge.dart';
 import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/components/projectsorter.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
@@ -24,6 +24,7 @@ class _AppDrawerState extends State<AppDrawer> {
     var session = Provider.of<SessionProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
+    /// Ensure that projects are loaded each time the sidebar is opened.
     projectsProvider.fetchProjects(session.apiToken);
   }
 
@@ -34,10 +35,9 @@ class _AppDrawerState extends State<AppDrawer> {
         var theme = Theme.of(context);
         var customColors = theme.extension<DocketColors>()!;
 
-        var projectsFuture = projectsProvider.getProjects();
-
         return Drawer(
           child: ListView(
+            shrinkWrap: true,
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
@@ -60,20 +60,7 @@ class _AppDrawerState extends State<AppDrawer> {
               ListTile(
                 title: Text('Projects', style: theme.textTheme.subtitle1),
               ),
-              FutureBuilder<List<Project>>(
-                future: projectsFuture,
-                builder: (context, snapshot) {
-                  var projects = snapshot.data;
-                  if (snapshot.hasData == false || projects == null) {
-                    return const LoadingIndicator();
-                  }
-                  return Column(
-                    children: projects.map((project) {
-                      return ProjectItem(project: project);
-                    }).toList(),
-                  );
-                }
-              ),
+              const ProjectSorter(),
               ListTile(
                 title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
                 onTap: () {
@@ -94,24 +81,3 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 }
 
-class ProjectItem extends StatelessWidget {
-  final Project project;
-
-  const ProjectItem({required this.project, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var color = getProjectColor(project.color);
-    return ListTile(
-      onTap: () {
-        Navigator.pushNamed(context, '/projects/${project.slug}');
-      },
-      title: ProjectBadge(text: project.name, color: project.color),
-      trailing: Text(
-        project.incompleteTaskCount.toString(),
-        style: TextStyle(color: theme.disabledColor),
-      ),
-    );
-  }
-}

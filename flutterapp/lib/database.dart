@@ -333,12 +333,21 @@ class LocalDatabase {
 
   // Project methods {{{
 
+  /// Add a list of projects to the local database.
   Future<void> addProjects(List<Project> projects) async {
     final db = database();
     var projectMap = await db.value(projectsKey) ?? {};
     for (var project in projects) {
       projectMap[project.slug] = project.toMap();
     }
+    await db.refresh(projectsKey, projectMap);
+  }
+
+  /// Update a project in the project list state.
+  Future<void> updateProject(Project project) async {
+    final db = database();
+    var projectMap = await db.value(projectsKey) ?? {};
+    projectMap[project.slug] = project.toMap();
     await db.refresh(projectsKey, projectMap);
   }
 
