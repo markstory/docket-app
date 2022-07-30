@@ -435,7 +435,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
         ]);
         $this->assertResponseOk();
-        $this->assertResponseContains('"title": "updated"');
+        $this->assertResponseContains('"updated"');
 
         $updated = $this->viewVariable('task');
         $this->assertSame('updated', $updated->title);
@@ -711,7 +711,7 @@ class TasksControllerTest extends TestCase
             'day_order' => 1,
         ]);
         $this->assertResponseOk();
-        $this->assertResponseContains('"title": "first"');
+        $this->assertResponseContains('"first"');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertEquals(1, $todo->day_order);
