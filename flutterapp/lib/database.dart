@@ -417,7 +417,7 @@ class LocalDatabase {
     }
     var results = await db.value(upcomingCalendarItemKey);
     if (results == null || results['items'] == null) {
-      throw StaleDataError();
+      return [];
     }
     List<String> ids = results['items'];
 

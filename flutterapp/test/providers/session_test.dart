@@ -24,10 +24,10 @@ void main() {
       });
     });
 
-    test('setting token', () async {
+    test('saveToken()', () async {
       expect(() => provider.apiToken, throwsA(isA<Exception>()));
 
-      await provider.set(token);
+      await provider.saveToken(token);
       expect(provider.apiToken, equals('abc123'));
       expect(listenerCallCount, greaterThan(0));
     });
@@ -35,7 +35,7 @@ void main() {
     test('clearing token', () async {
       expect(() => provider.apiToken, throwsA(isA<Exception>()));
 
-      await provider.set(token);
+      await provider.saveToken(token);
       expect(provider.apiToken, equals('abc123'));
 
       provider.clear();
