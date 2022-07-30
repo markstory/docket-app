@@ -11,64 +11,77 @@ import 'package:docket/providers/projects.dart';
 /// Sortable project list used in the application drawer.
 /// When sorting is complete, the moved project will be updated
 /// and projects will be updated.
-class ProjectSorter extends StatelessWidget {
+class ProjectSorter extends StatefulWidget {
   const ProjectSorter({super.key});
 
-  void _onItemReorder(ProjectsProvider projectsProvider, String apiToken, Project project, int newIndex) {
-    projectsProvider.move(apiToken, project, newIndex);
+  @override
+  State<ProjectSorter> createState() => _ProjectSorterState();
+}
+
+class _ProjectSorterState extends State<ProjectSorter> {
+  late Future<List<Project>> projectsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+
+    projectsFuture = projectsProvider.getAll();
+  }
+
+  void _onItemReorder(Project project, int newIndex) async {
+    var sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+
+    await projectsProvider.move(sessionProvider.apiToken, project, newIndex);
+
+    setState(() {
+      projectsFuture = projectsProvider.getAll();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<SessionProvider, ProjectsProvider>(
-      builder: (context, sessionProvider, projectsProvider, child) {
-        // TODO This has some rendering bugs still.
-        // It might be good to make this a stateful widget
-        // that fetches from local DB on init.
-        var projectsFuture = projectsProvider.getProjects();
+    return FutureBuilder<List<Project>>(
+      future: projectsFuture,
+      builder: (context, snapshot) {
+        var projects = snapshot.data;
+        if (snapshot.hasData == false || projects == null) {
+          return const LoadingIndicator();
+        }
 
-        return FutureBuilder<List<Project>>(
-          future: projectsFuture,
-          builder: (context, snapshot) {
-            var projects = snapshot.data;
-            if (snapshot.hasData == false || projects == null) {
-              return const LoadingIndicator();
-            }
-
-            return DragAndDropLists(
-              disableScrolling: true,
-              children: [
-                DragAndDropList(
-                  canDrag: false,
-                  children: projects.map((project) {
-                    return DragAndDropItem(
-                      child: ProjectItem(project: project),
-                    );
-                  }).toList(),
-                )
-              ],
-              itemDragOnLongPress: true,
-              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-                var project = projects[oldItemIndex];
-                _onItemReorder(projectsProvider, sessionProvider.apiToken, project, newItemIndex);
-              },
-              onListReorder: (int oldIndex, int newIndex) {
-                throw 'List reordering not supported';
-              },
-              itemDecorationWhileDragging: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 3,
-                    offset: const Offset(0, 0),
-                   )
-                ]
-              ),
-            );
-          }
+        return DragAndDropLists(
+          disableScrolling: true,
+          children: [
+            DragAndDropList(
+              canDrag: false,
+              children: projects.map((project) {
+                return DragAndDropItem(
+                  child: ProjectItem(project: project),
+                );
+              }).toList(),
+            )
+          ],
+          itemDragOnLongPress: true,
+          onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+            var project = projects[oldItemIndex];
+            _onItemReorder(project, newItemIndex);
+          },
+          onListReorder: (int oldIndex, int newIndex) {
+            throw 'List reordering not supported';
+          },
+          itemDecorationWhileDragging: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 3,
+                offset: const Offset(0, 0),
+               )
+            ]
+          ),
         );
-      },
+      }
     );
   }
 }

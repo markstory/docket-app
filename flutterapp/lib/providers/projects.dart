@@ -51,7 +51,7 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Get the project list from the local database.
-  Future<List<Project>> getProjects() async {
+  Future<List<Project>> getAll() async {
     return await _database.fetchProjects();
   }
 

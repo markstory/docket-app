@@ -22,7 +22,7 @@ Future<void> showChangeProjectDialog(
             title: const Text('Change Project'),
             content: SingleChildScrollView(
               child: FutureBuilder<List<Project>>(
-                future: projectsProvider.getProjects(),
+                future: projectsProvider.getAll(),
                 builder: (context, snapshot) {
                   // TODO if there is no data and we have a stale data error
                   // load projects.

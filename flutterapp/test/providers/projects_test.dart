@@ -36,7 +36,7 @@ void main() {
       await provider.clear();
     });
 
-    test('fetchProject() and getProjects() work together', () async {
+    test('fetchProject() and getAll() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects'));
@@ -45,7 +45,7 @@ void main() {
       });
 
       expect(
-        provider.getProjects(),
+        provider.getAll(),
         throwsStaleData()
       );
 
@@ -53,7 +53,7 @@ void main() {
       expect(listenerCallCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
-      var projects = await provider.getProjects();
+      var projects = await provider.getAll();
       expect(projects.length, equals(2));
       expect(projects[0].slug, equals('work'));
       expect(projects[1].slug, equals('home'));

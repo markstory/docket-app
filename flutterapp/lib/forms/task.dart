@@ -36,7 +36,7 @@ class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     var projectProvider = Provider.of<ProjectsProvider>(context);
-    var projectPromise = projectProvider.getProjects();
+    var projectPromise = projectProvider.getAll();
 
     return FutureBuilder<List<Project>>(
       future: projectPromise,
