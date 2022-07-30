@@ -6,7 +6,6 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
@@ -26,7 +25,6 @@ class TaskAddScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     void _saveTask(BuildContext context, Task task) async {
       var messenger = ScaffoldMessenger.of(context);
-      var session = Provider.of<SessionProvider>(context, listen: false);
       var tasks = Provider.of<TasksProvider>(context, listen: false);
 
       void complete() { 
@@ -37,7 +35,7 @@ class TaskAddScreen extends StatelessWidget {
         messenger.showSnackBar(
           const SnackBar(content: Text('Saving'))
         );
-        await tasks.createTask(session.apiToken, task);
+        await tasks.createTask(task);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
       } catch (e, stacktrace) {

@@ -2,10 +2,7 @@ import 'package:docket/screens/projectadd.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/projectsorter.dart';
-import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 
@@ -21,12 +18,11 @@ class _AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
 
-    var session = Provider.of<SessionProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     // TODO this should probably be done on the today view
     // if the project list is 'stale'
-    projectsProvider.fetchProjects(session.apiToken);
+    projectsProvider.fetchProjects();
   }
 
   @override

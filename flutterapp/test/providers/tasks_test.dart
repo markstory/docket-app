@@ -9,6 +9,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 
 
@@ -29,8 +30,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late TasksProvider provider;
+  late SessionProvider sessionProvider;
+
   int listenerCallCount = 0;
-  const apiToken = 'api-token';
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
@@ -44,11 +46,12 @@ void main() {
 
   group('$TasksProvider', () {
     var db = LocalDatabase();
+    var session = SessionProvider(db)
+        ..set('api-token');
 
     setUp(() async {
-      db = LocalDatabase();
       listenerCallCount = 0;
-      provider = TasksProvider(db)
+      provider = TasksProvider(db, session)
           ..addListener(() {
             listenerCallCount += 1;
           });
@@ -71,7 +74,7 @@ void main() {
       } on StaleDataError catch (_) {
         expect(true, equals(true));
       }
-      await provider.fetchToday(apiToken);
+      await provider.fetchToday();
 
       var taskData = await provider.getToday();
       expect(taskData.tasks.length, equals(2));
@@ -86,7 +89,7 @@ void main() {
       });
 
       try {
-        await provider.fetchToday(apiToken);
+        await provider.fetchToday();
       } on actions.ValidationError catch (e) {
         expect(e.toString(), contains('Could not load'));
       }
@@ -105,7 +108,7 @@ void main() {
         expect(true, equals(true));
       }
 
-      await provider.fetchUpcoming(apiToken);
+      await provider.fetchUpcoming();
 
       var taskData = await provider.getUpcoming();
       expect(taskData.tasks.length, equals(2));
@@ -124,9 +127,9 @@ void main() {
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await db.addTasks(tasks);
-      var provider = TasksProvider(db);
+      var provider = TasksProvider(db, session);
 
-      await provider.toggleComplete(apiToken, tasks[0]);
+      await provider.toggleComplete(tasks[0]);
 
       expect(listenerCallCount, greaterThan(0));
 
@@ -147,9 +150,9 @@ void main() {
       var db = LocalDatabase();
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await db.addTasks(tasks);
-      var provider = TasksProvider(db);
+      var provider = TasksProvider(db, session);
 
-      await provider.toggleComplete(apiToken, tasks[0]);
+      await provider.toggleComplete(tasks[0]);
 
       var updated = await db.fetchTodayTasks(useStale: true);
       expect(updated.length, equals(1));
@@ -171,10 +174,10 @@ void main() {
       var db = LocalDatabase();
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await db.addTasks(tasks);
-      var provider = TasksProvider(db);
+      var provider = TasksProvider(db, session);
 
       var task = tasks[0];
-      await provider.deleteTask(apiToken, task);
+      await provider.deleteTask(task);
 
       expect(listenerCallCount, greaterThan(0));
       var updated = await db.fetchTodayTasks(useStale: true);
@@ -192,9 +195,9 @@ void main() {
       var db = LocalDatabase();
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await db.addTasks(tasks);
-      var provider = TasksProvider(db);
+      var provider = TasksProvider(db, session);
 
-      var task = await provider.getById(apiToken, 1);
+      var task = await provider.getById(1);
       expect(task.id, equals(1));
     });
 
@@ -204,7 +207,7 @@ void main() {
       });
 
       try {
-        await provider.getById(apiToken, 1);
+        await provider.getById(1);
         fail('Should not get here');
       } catch (err) {
         expect(err.toString(), contains('Could not load'));
@@ -220,7 +223,7 @@ void main() {
         return Response(projectDetailsResponseFixture, 200);
       });
 
-      await provider.fetchProjectTasks(apiToken, 'home');
+      await provider.fetchProjectTasks('home');
       var tasks = await provider.projectTasks('home');
 
       expect(requestCounter, equals(1));
@@ -240,7 +243,7 @@ void main() {
       task.projectId = 1;
       task.dueOn = today;
 
-      var created = await provider.createTask(apiToken, task);
+      var created = await provider.createTask(task);
       expect(created.id, equals(1));
 
       var todayData = await provider.getToday();
@@ -256,7 +259,30 @@ void main() {
       expect(upcoming.tasks[0].title, equals(task.title));
     });
 
-    test('updateTask() call API, and update today view & project views', () async {
+    test('updateTask() call API, and update today view', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/edit'));
+
+        return Response(taskCreateTodayResponseFixture, 200);
+      });
+
+      var task = Task.blank();
+      // This data has to match the fixture file.
+      task.id = 1;
+      task.title = "fold the towels";
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.dueOn = today;
+
+      var updated = await provider.updateTask(task);
+      expect(updated.id, equals(1));
+      expect(updated.title, equals('fold the towels'));
+
+      var todayData = await provider.getToday();
+      expect(todayData.tasks.length, equals(1));
+      expect(todayData.tasks[0].title, equals(task.title));
+
+      // TODO expand this test to cover project and upcoming views.
     });
   });
 }

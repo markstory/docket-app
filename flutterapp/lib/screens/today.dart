@@ -7,7 +7,6 @@ import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/components/taskaddbutton.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
@@ -22,15 +21,13 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
-  late SessionProvider session;
 
   @override
   void initState() {
     super.initState();
-    session = Provider.of<SessionProvider>(context, listen: false);
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
-    tasksProvider.fetchToday(session.apiToken);
+    tasksProvider.fetchToday();
   }
 
   @override
@@ -57,7 +54,7 @@ class _TodayScreenState extends State<TodayScreen> {
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed:() {
-                    tasksProvider.fetchToday(session.apiToken);
+                    tasksProvider.fetchToday();
                   }
                 )
               ]),

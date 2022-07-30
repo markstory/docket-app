@@ -73,14 +73,13 @@ class TaskActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var session = Provider.of<SessionProvider>(context);
     var tasksProvider = Provider.of<TasksProvider>(context);
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> _handleChangeProject() async {
       void changeComplete(projectId) {
         task.projectId = projectId;
-        tasksProvider.updateTask(session.apiToken, task);
+        tasksProvider.updateTask(task);
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Updated')
         );
@@ -90,7 +89,7 @@ class TaskActions extends StatelessWidget {
 
     Future<void> _handleDelete() async {
       try {
-        await tasksProvider.deleteTask(session.apiToken, task);
+        await tasksProvider.deleteTask(task);
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Deleted')
         );
@@ -105,7 +104,7 @@ class TaskActions extends StatelessWidget {
       void changeComplete(dueOn, evening) {
         task.dueOn = dueOn;
         task.evening = evening;
-        tasksProvider.updateTask(session.apiToken, task);
+        tasksProvider.updateTask(task);
         messenger.showSnackBar(
           successSnackBar(context: context, text: 'Task Updated')
         );

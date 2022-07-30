@@ -7,13 +7,14 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
+import 'package:docket/providers/session.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late ProjectsProvider provider;
+  late SessionProvider session;
   int listenerCallCount = 0;
-  String apiToken = 'api-token';
 
   var file = File('test_resources/project_list.json');
   final projectsResponseFixture = file.readAsStringSync();
@@ -27,9 +28,11 @@ void main() {
 
   group('$ProjectsProvider', () {
     setUp(() async {
-      var db = LocalDatabase();
       listenerCallCount = 0;
-      provider = ProjectsProvider(db)
+      var db = LocalDatabase();
+      session = SessionProvider(db)
+          ..set('api-token');
+      provider = ProjectsProvider(db, session)
           ..addListener(() {
             listenerCallCount += 1;
           });
@@ -49,7 +52,7 @@ void main() {
         throwsStaleData()
       );
 
-      await provider.fetchProjects(apiToken);
+      await provider.fetchProjects();
       expect(listenerCallCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
@@ -66,7 +69,7 @@ void main() {
       });
 
       expect(
-        provider.fetchProjects(apiToken),
+        provider.fetchProjects(),
         throwsException
       );
     });
@@ -79,7 +82,7 @@ void main() {
         return Response(projectViewResponseFixture, 200);
       });
 
-      await provider.fetchBySlug(apiToken, 'home');
+      await provider.fetchBySlug('home');
       var project = await provider.getBySlug('home');
       expect(listenerCallCount, greaterThan(0));
 
@@ -95,7 +98,7 @@ void main() {
       });
 
       expect(
-        provider.fetchBySlug(apiToken, 'home'),
+        provider.fetchBySlug('home'),
         throwsException
       );
     });
@@ -105,7 +108,7 @@ void main() {
         expect(request.url.path, contains('/projects/home'));
         return Response(projectViewResponseFixture, 200);
       });
-      await provider.fetchBySlug(apiToken, 'home');
+      await provider.fetchBySlug('home');
 
       await provider.getBySlug('home');
 
@@ -126,7 +129,7 @@ void main() {
       project.name = 'Home';
       project.ranking = 1;
 
-      await provider.move(apiToken, project, 2);
+      await provider.move(project, 2);
 
       var db = LocalDatabase();
       project = await db.fetchProjectBySlug('home');

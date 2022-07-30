@@ -36,10 +36,21 @@ class SessionProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> set(ApiToken token) async {
+  /// Save an API token to the local database for future use.
+  Future<void> saveToken(ApiToken token) async {
     await _database.createApiToken(token);
     _apiToken = token;
     notifyListeners();
+  }
+
+  /// Store a token in memory but not persist it.
+  /// Mostly used in tests.
+  void set(String token) {
+    _apiToken = ApiToken.fromMap({
+      'id': 1,
+      'token': token,
+      'lastUsed': DateTime.now()
+    });
   }
 
   void clear() {

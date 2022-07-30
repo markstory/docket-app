@@ -40,14 +40,22 @@ class EntryPoint extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ListenableProvider<SessionProvider>(
+        ChangeNotifierProvider<SessionProvider>(
           create: (_) => SessionProvider(database)
         ),
-        ListenableProvider<TasksProvider>(
-          create: (_) => TasksProvider(database)
+        ChangeNotifierProxyProvider<SessionProvider, ProjectsProvider>(
+          create: (_) => ProjectsProvider(database, null),
+          update: (_, session, provider) {
+            provider!.setSession(session);
+            return provider;
+          }
         ),
-        ListenableProvider<ProjectsProvider>(
-          create: (_) => ProjectsProvider(database)
+        ChangeNotifierProxyProvider<SessionProvider, TasksProvider>(
+          create: (_) => TasksProvider(database, null),
+          update: (_, session, provider) {
+            provider!.setSession(session);
+            return provider;
+          }
         ),
       ],
       child: DocketApp(child: child),

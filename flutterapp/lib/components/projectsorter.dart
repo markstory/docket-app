@@ -5,7 +5,6 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/components/projectitem.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
 
 /// Sortable project list used in the application drawer.
@@ -30,10 +29,9 @@ class _ProjectSorterState extends State<ProjectSorter> {
   }
 
   void _onItemReorder(Project project, int newIndex) async {
-    var sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    await projectsProvider.move(sessionProvider.apiToken, project, newIndex);
+    await projectsProvider.move(project, newIndex);
 
     setState(() {
       projectsFuture = projectsProvider.getAll();

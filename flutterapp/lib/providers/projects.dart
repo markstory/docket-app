@@ -3,13 +3,19 @@ import 'package:flutter/foundation.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
+import 'package:docket/providers/session.dart';
 import 'package:docket/models/project.dart';
 
 class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
+  SessionProvider? session;
 
-  ProjectsProvider(LocalDatabase database) {
+  ProjectsProvider(LocalDatabase database, this.session) {
     _database = database;
+  }
+
+  void setSession(SessionProvider session) {
+    this.session = session;
   }
 
   Future<void> clear() async {
@@ -18,8 +24,8 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Create a project on the server and notify listeners.
-  Future<Project> createProject(String apiToken, Project project) async {
-    project = await actions.createProject(apiToken, project);
+  Future<Project> createProject(Project project) async {
+    project = await actions.createProject(session!.apiToken, project);
 
     await _database.addProjects([project]);
     notifyListeners();
@@ -28,11 +34,11 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Fetch a project from the API and notifyListeners.
-  Future<void> fetchBySlug(String apiToken, String slug) async {
+  Future<void> fetchBySlug(String slug) async {
     // TODO Perhaps this is where cache expiration should be checked.
     // Doing it here would let network calls to be skipped which
     // would be nice.
-    var projectDetails = await actions.fetchProjectBySlug(apiToken, slug);
+    var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
 
     await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
     notifyListeners();
@@ -44,8 +50,8 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Fetch projects from the API and notifyListeners
-  Future<void> fetchProjects(String apiToken) async {
-    var projects = await actions.fetchProjects(apiToken);
+  Future<void> fetchProjects() async {
+    var projects = await actions.fetchProjects(session!.apiToken);
     await _database.addProjects(projects);
     notifyListeners();
   }
@@ -57,8 +63,8 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Move a project on the server and locally
   /// and then notifyListeners
-  Future<void> move(String apiToken, Project project, int newRank) async {
-    project = await actions.moveProject(apiToken, project, newRank);
+  Future<void> move(Project project, int newRank) async {
+    project = await actions.moveProject(session!.apiToken, project, newRank);
     await _database.updateProject(project);
     notifyListeners();
   }

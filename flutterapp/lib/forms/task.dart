@@ -122,7 +122,7 @@ class _TaskFormState extends State<TaskForm> {
               ),
               FormIconRow(
                 icon: const Icon(
-                  Icons.description,
+                  Icons.description_outlined,
                   size: DocketColors.iconSize,
                   semanticLabel: 'Notes'
                 ),

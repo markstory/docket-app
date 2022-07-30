@@ -196,7 +196,6 @@ class LocalDatabase {
       }
       projectUpdates[projectSlug]?.add(id);
     }
-
     // Update task mapping.
     await db.refresh(taskMapKey, taskMap);
 
@@ -271,8 +270,8 @@ class LocalDatabase {
     if (isStale) {
       return [];
     }
-    var results = await database().value(projectTaskMapKey);
-    if (results == null || results[slug] == null) {
+    var results = await database().value(projectTaskMapKey) ?? {};
+    if (results[slug] == null) {
       return [];
     }
     List<int> taskIds = results[slug].cast<int>();
@@ -311,6 +310,9 @@ class LocalDatabase {
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
+    // TODO remove this task from all project views.
+    // There isn't a good way to find the task other than to
+    // enumerate all of the project task maps :|
     await addTasks([task]);
 
     _expireTask(task);
@@ -399,7 +401,7 @@ class LocalDatabase {
     }
     var results = await db.value(todayCalendarItemKey);
     if (results == null || results['items'] == null) {
-      throw StaleDataError();
+      return [];
     }
     List<String> ids = results['items'];
 
@@ -476,6 +478,9 @@ class LocalDatabase {
       db.remove(todayTasksKey),
       db.remove(upcomingTasksKey),
       db.remove(projectTaskMapKey),
+      db.remove(calendarItemMapKey),
+      db.remove(todayCalendarItemKey),
+      db.remove(upcomingCalendarItemKey),
     ]);
   }
 

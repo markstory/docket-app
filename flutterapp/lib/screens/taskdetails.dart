@@ -5,7 +5,6 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
@@ -16,30 +15,31 @@ class TaskDetailsScreen extends StatelessWidget {
 
   const TaskDetailsScreen(this.taskId, {super.key});
 
-  void _onSave(Task task, context) async {
+  void _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
+    var navigator = Navigator.of(context);
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-    var session = Provider.of<SessionProvider>(context, listen: false);
 
-      try {
-        await tasksProvider.updateTask(session.apiToken, task);
-        messenger.showSnackBar(
-          successSnackBar(context: context, text: 'Task Completed')
-        );
-      } catch (e) {
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Could not update task')
-        );
+    try {
+      await tasksProvider.updateTask(task);
+      messenger.showSnackBar(
+        successSnackBar(context: context, text: 'Task Completed')
+      );
+      if (navigator.canPop()) {
+        navigator.pop();
       }
-
+    } catch (e) {
+      messenger.showSnackBar(
+        errorSnackBar(context: context, text: 'Could not update task')
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(
       builder: (context, tasksProvider, child) {
-        var session = Provider.of<SessionProvider>(context);
-        var pendingTask = tasksProvider.getById(session.apiToken, taskId);
+        var pendingTask = tasksProvider.getById(taskId);
 
         return Portal(
           child: Scaffold(
@@ -56,7 +56,7 @@ class TaskDetailsScreen extends StatelessWidget {
                 return ListView(
                   padding: EdgeInsets.all(space(1)),
                   children: [
-                    TaskForm(task: task, onSave: (task) => _onSave(task, context)),
+                    TaskForm(task: task, onSave: (task) => _onSave(context, task)),
                   ]
                 );
               }

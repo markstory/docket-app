@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
     try {
       // Do the login request and set the token to application state.
       var apiToken = await actions.doLogin(email, password);
-      session.set(apiToken);
+      session.saveToken(apiToken);
     } catch (e) {
       // Raise an error to the UI State
       throw Exception('Could not login');

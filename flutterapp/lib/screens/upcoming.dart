@@ -9,7 +9,6 @@ import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/grouping.dart' as grouping;
 import 'package:docket/theme.dart';
@@ -25,15 +24,12 @@ class UpcomingScreen extends StatefulWidget {
 }
 
 class _UpcomingScreenState extends State<UpcomingScreen> {
-  late SessionProvider session;
-
   @override
   void initState() {
     super.initState();
-    session = Provider.of<SessionProvider>(context, listen: false);
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
-    tasksProvider.fetchUpcoming(session.apiToken);
+    tasksProvider.fetchUpcoming();
   }
 
   @override

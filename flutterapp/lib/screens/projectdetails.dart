@@ -7,7 +7,6 @@ import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
@@ -27,10 +26,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    var session = Provider.of<SessionProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    projectsProvider.fetchBySlug(session.apiToken, widget.slug);
+    projectsProvider.fetchBySlug(widget.slug);
   }
 
   @override
