@@ -175,6 +175,9 @@ class TaskSortMetadata {
   Widget renderHeader(ThemeData theme) {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
+
+    children.add(SizedBox(width: space(3)));
+
     if (icon != null) {
       children..add(icon!)..add(SizedBox(width: space(0.5)));
     }
@@ -190,7 +193,9 @@ class TaskSortMetadata {
     if (button != null) {
       children.add(button!);
     }
-    var titleRow = Row(children: children);
+    var titleRow = Row(
+      children: children
+    );
     if (calendarItems.isEmpty) {
       return titleRow;
     }
