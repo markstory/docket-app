@@ -272,14 +272,20 @@ DocketColors getCustomColors(BuildContext context) {
 
 BoxDecoration itemDragBoxDecoration(ThemeData theme) {
   return BoxDecoration(
-    color: theme.colorScheme.surface,
-    boxShadow: [
+    color: theme.colorScheme.background,
+    boxShadow: const [
       BoxShadow(
-        color: theme.colorScheme.shadow,
-        spreadRadius: 2,
-        blurRadius: 3,
-        offset: const Offset(0, 0),
-       )
+        color: Color.fromARGB(5, 63, 63, 68),
+        spreadRadius: 0,
+        blurRadius: 1,
+        offset: Offset(0, 0),
+      ),
+      BoxShadow(
+        color: Color.fromARGB(25, 34, 33, 81),
+        spreadRadius: 0,
+        blurRadius: 15,
+        offset: Offset(0, 15),
+       ),
     ]
   );
 }
