@@ -252,6 +252,20 @@ Future<void> deleteTask(String apiToken, Task task) async {
   });
 }
 
+/// Move a task
+Future<void> moveTask(String apiToken, Task task, Map<String, dynamic> updates) async {
+  var url = _makeUrl('/tasks/${task.id}/move');
+
+  return Future(() async {
+    await httpPost(
+      url,
+      apiToken: apiToken, 
+      body: updates,
+      errorMessage: 'Could not move task'
+    );
+  });
+}
+
 /// Fetch a task by id
 Future<Task> fetchTaskById(String apiToken, int id) async {
   var url = _makeUrl('/tasks/$id/view');

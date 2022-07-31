@@ -269,3 +269,17 @@ DocketColors getCustomColors(BuildContext context) {
   var theme = Theme.of(context);
   return theme.extension<DocketColors>()!;
 }
+
+BoxDecoration itemDragBoxDecoration(ThemeData theme) {
+  return BoxDecoration(
+    color: theme.colorScheme.surface,
+    boxShadow: [
+      BoxShadow(
+        color: theme.colorScheme.shadow,
+        spreadRadius: 2,
+        blurRadius: 3,
+        offset: const Offset(0, 0),
+       )
+    ]
+  );
+}

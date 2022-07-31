@@ -6,6 +6,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/components/projectitem.dart';
 import 'package:docket/providers/projects.dart';
+import 'package:docket/theme.dart';
 
 /// Sortable project list used in the application drawer.
 /// When sorting is complete, the moved project will be updated
@@ -43,13 +44,13 @@ class _ProjectSorterState extends State<ProjectSorter> {
     return FutureBuilder<List<Project>>(
       future: projectsFuture,
       builder: (context, snapshot) {
+        var theme = Theme.of(context);
         var projects = snapshot.data;
         if (snapshot.hasData == false || projects == null) {
           return const LoadingIndicator();
         }
 
         return DragAndDropLists(
-          disableScrolling: true,
           children: [
             DragAndDropList(
               canDrag: false,
@@ -60,6 +61,7 @@ class _ProjectSorterState extends State<ProjectSorter> {
               }).toList(),
             )
           ],
+          disableScrolling: true,
           itemDragOnLongPress: true,
           onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
             var project = projects[oldItemIndex];
@@ -68,16 +70,7 @@ class _ProjectSorterState extends State<ProjectSorter> {
           onListReorder: (int oldIndex, int newIndex) {
             throw 'List reordering not supported';
           },
-          itemDecorationWhileDragging: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 3,
-                offset: const Offset(0, 0),
-               )
-            ]
-          ),
+          itemDecorationWhileDragging: itemDragBoxDecoration(theme),
         );
       }
     );
