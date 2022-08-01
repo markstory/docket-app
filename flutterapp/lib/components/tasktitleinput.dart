@@ -67,14 +67,13 @@ class TaskTitleInput extends StatelessWidget {
   final Function(String text) onChangeTitle;
   final String value;
 
-  const TaskTitleInput({
-    required this.projects,
-    required this.onChangeDate,
-    required this.onChangeProject,
-    required this.onChangeTitle,
-    required this.value,
-    super.key
-  });
+  const TaskTitleInput(
+      {required this.projects,
+      required this.onChangeDate,
+      required this.onChangeProject,
+      required this.onChangeTitle,
+      required this.value,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +81,8 @@ class TaskTitleInput extends StatelessWidget {
     var today = DateUtils.dateOnly(DateTime.now());
 
     // TODO These lists might need memoization
-    List<MentionData> projectOptions = projects.map((project) =>
-        ({'id': 'p:${project.id}', 'display': project.name})
-    ).toList();
+    List<MentionData> projectOptions =
+        projects.map((project) => ({'id': 'p:${project.id}', 'display': project.name})).toList();
     var dateOptions = generateDateOptions(today);
     var eveningDateOptions = dateOptions.map((item) {
       return {"id": "e${item['id']}", "display": item['display']};
@@ -92,56 +90,51 @@ class TaskTitleInput extends StatelessWidget {
 
     // TODO this form should make sure title is not empty.
     return FlutterMentions(
-      key: const ValueKey('title'),
-      suggestionPosition: SuggestionPosition.Bottom,
-      maxLines: 5,
-      minLines: 1,
-      defaultText: value,
-      onChanged: (title) {
-        // TODO this might need to strip out markup.
-        onChangeTitle(title);
-      },
-      onMentionAdd: (item) {
-        var parts = item['id'].toString().split(':');
-        assert(parts.length == 2);
-        var type = parts[0];
-        var value = parts[1];
+        key: const ValueKey('title'),
+        suggestionPosition: SuggestionPosition.Bottom,
+        maxLines: 5,
+        minLines: 1,
+        defaultText: value,
+        onChanged: (title) {
+          // TODO this might need to strip out markup.
+          onChangeTitle(title);
+        },
+        onMentionAdd: (item) {
+          var parts = item['id'].toString().split(':');
+          assert(parts.length == 2);
+          var type = parts[0];
+          var value = parts[1];
 
-        switch (type) {
-          case 'p':
-            onChangeProject(int.parse(value));
-          break;
-          // relative dates
-          case 'r':
-          case 'er':
-            var dateValue = dateParser.parse(value);
-            onChangeDate(dateValue, type == 're');
-          break;
-          // absolute dates
-          case 'd':
-          case 'ed':
-            var dateValue = dateParser.parse(value);
-            onChangeDate(dateValue, type == 'de');
-          break;
-        }
-      },
-      mentions: [
-        Mention(
-          trigger: '#',
-          style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
-          data: projectOptions
-        ),
-        Mention(
-          trigger: '%',
-          style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
-          data: dateOptions,
-        ),
-        Mention(
-          trigger: '&',
-          style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
-          data: eveningDateOptions,
-        )
-      ]
-    );
+          switch (type) {
+            case 'p':
+              onChangeProject(int.parse(value));
+              break;
+            // relative dates
+            case 'r':
+            case 'er':
+              var dateValue = dateParser.parse(value);
+              onChangeDate(dateValue, type == 're');
+              break;
+            // absolute dates
+            case 'd':
+            case 'ed':
+              var dateValue = dateParser.parse(value);
+              onChangeDate(dateValue, type == 'de');
+              break;
+          }
+        },
+        mentions: [
+          Mention(trigger: '#', style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint), data: projectOptions),
+          Mention(
+            trigger: '%',
+            style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
+            data: dateOptions,
+          ),
+          Mention(
+            trigger: '&',
+            style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
+            data: eveningDateOptions,
+          )
+        ]);
   }
 }

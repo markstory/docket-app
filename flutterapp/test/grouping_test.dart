@@ -89,10 +89,7 @@ void main() {
       expect(grouped.length, equals(6));
       expect(grouped[0].key, equals(formatters.dateString(start)));
       expect(grouped[0].items.length, equals(0));
-      expect(
-        grouped[1].key,
-        equals(formatters.dateString(start.add(const Duration(days: 1))))
-      );
+      expect(grouped[1].key, equals(formatters.dateString(start.add(const Duration(days: 1)))));
       expect(grouped[1].items.length, equals(0));
 
       expect(grouped[5].key, equals(formatters.dateString(dueLast.dueOn!)));

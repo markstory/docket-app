@@ -36,41 +36,39 @@ class _TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(
-      builder: (context, tasksProvider, child) {
-        var customColors = getCustomColors(context);
-        var today = DateUtils.dateOnly(DateTime.now());
+    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
+      var customColors = getCustomColors(context);
+      var today = DateUtils.dateOnly(DateTime.now());
 
-        return Scaffold(
-          appBar: AppBar(),
-          drawer: const AppDrawer(),
-          floatingActionButton: const FloatingCreateTaskButton(),
-          body: FutureBuilder<TaskViewData>(
-            future: tasksProvider.getToday(),
-            builder: (context, snapshot) {
-              TaskViewData? data = snapshot.data;
-              if (data == null) {
-                // Reset internal state but don't re-render
-                // as we will rebuild the state when the future resolves.
-                _taskLists = [];
-                return const LoadingIndicator();
-              }
+      return Scaffold(
+        appBar: AppBar(),
+        drawer: const AppDrawer(),
+        floatingActionButton: const FloatingCreateTaskButton(),
+        body: FutureBuilder<TaskViewData>(
+          future: tasksProvider.getToday(),
+          builder: (context, snapshot) {
+            TaskViewData? data = snapshot.data;
+            if (data == null) {
+              // Reset internal state but don't re-render
+              // as we will rebuild the state when the future resolves.
+              _taskLists = [];
+              return const LoadingIndicator();
+            }
 
-              if (_taskLists.isEmpty) {
-                var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
-                if (overdueTasks.isNotEmpty) {
-                  _overdue = TaskSortMetadata(
+            if (_taskLists.isEmpty) {
+              var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
+              if (overdueTasks.isNotEmpty) {
+                _overdue = TaskSortMetadata(
                     icon: Icon(Icons.warning_outlined, color: customColors.actionDelete),
                     title: 'Overdue',
                     tasks: overdueTasks,
                     onReceive: (Task task, int newIndex) {
                       throw 'Cannot move task to overdue';
-                    }
-                  );
-                }
+                    });
+              }
 
-                // No setState() as we don't want to re-render.
-                var todayTasks = TaskSortMetadata(
+              // No setState() as we don't want to re-render.
+              var todayTasks = TaskSortMetadata(
                   icon: Icon(Icons.today, color: customColors.dueToday),
                   title: 'Today',
                   button: TaskAddButton(dueOn: today),
@@ -86,14 +84,12 @@ class _TodayScreenState extends State<TodayScreen> {
                       updates['due_on'] = formatters.dateString(today);
                     }
                     return updates;
-                  }
-                );
+                  });
 
-                var eveningTasks = TaskSortMetadata(
+              var eveningTasks = TaskSortMetadata(
                   icon: Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
                   title: 'This Evening',
                   button: TaskAddButton(dueOn: today, evening: true),
-
                   tasks: data.tasks.where((task) => task.evening).toList(),
                   onReceive: (Task task, int newIndex) {
                     var updates = {'evening': true, 'day_order': newIndex};
@@ -105,13 +101,14 @@ class _TodayScreenState extends State<TodayScreen> {
                       updates['due_on'] = formatters.dateString(today);
                     }
                     return updates;
-                  }
-                );
+                  });
 
-                _taskLists..add(todayTasks)..add(eveningTasks);
-              }
+              _taskLists
+                ..add(todayTasks)
+                ..add(eveningTasks);
+            }
 
-              return TaskDateSorter(
+            return TaskDateSorter(
                 taskLists: _taskLists,
                 overdue: _overdue,
                 onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
@@ -156,12 +153,10 @@ class _TodayScreenState extends State<TodayScreen> {
                   // Update the moved task and reload from server async
                   await tasksProvider.move(task, updates);
                   tasksProvider.fetchToday();
-                }
-              );
-            },
-          ),
-        );
-      }
-    );
+                });
+          },
+        ),
+      );
+    });
   }
 }

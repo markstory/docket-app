@@ -8,12 +8,7 @@ class TaskGroup extends StatelessWidget {
   final bool showDate;
   final bool showProject;
 
-  const TaskGroup({
-    required this.tasks,
-    this.showDate = false,
-    this.showProject = false,
-    super.key
-  });
+  const TaskGroup({required this.tasks, this.showDate = false, this.showProject = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,4 +19,3 @@ class TaskGroup extends StatelessWidget {
     return Column(children: taskItems);
   }
 }
-

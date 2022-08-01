@@ -16,12 +16,10 @@ void main() {
       var dbhandler = LocalDatabase();
       listenerCallCount = 0;
       provider = SessionProvider(dbhandler)
-          ..addListener(() {
-            listenerCallCount += 1;
-          });
-      token = ApiToken.fromMap({
-        'token': 'abc123', 'lastUsed':null
-      });
+        ..addListener(() {
+          listenerCallCount += 1;
+        });
+      token = ApiToken.fromMap({'token': 'abc123', 'lastUsed': null});
     });
 
     test('saveToken()', () async {

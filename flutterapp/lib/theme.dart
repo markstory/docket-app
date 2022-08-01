@@ -29,7 +29,6 @@ const _projectColors = [
   ProjectColor(17, 'flame', Color(0xFFf14949)),
 ];
 
-
 /// Convert a server side colour 'id' to material
 /// colors.
 Color getProjectColor(int colorId) {
@@ -259,7 +258,6 @@ final darkTheme = ThemeData(
   extensions: const [DocketColors.dark],
 );
 
-
 double space(double units) {
   var unitSize = 8;
   return units * unitSize;
@@ -271,21 +269,18 @@ DocketColors getCustomColors(BuildContext context) {
 }
 
 BoxDecoration itemDragBoxDecoration(ThemeData theme) {
-  return BoxDecoration(
-    color: theme.colorScheme.background,
-    boxShadow: const [
-      BoxShadow(
-        color: Color.fromARGB(5, 63, 63, 68),
-        spreadRadius: 0,
-        blurRadius: 1,
-        offset: Offset(0, 0),
-      ),
-      BoxShadow(
-        color: Color.fromARGB(25, 34, 33, 81),
-        spreadRadius: 0,
-        blurRadius: 15,
-        offset: Offset(0, 15),
-       ),
-    ]
-  );
+  return BoxDecoration(color: theme.colorScheme.background, boxShadow: const [
+    BoxShadow(
+      color: Color.fromARGB(5, 63, 63, 68),
+      spreadRadius: 0,
+      blurRadius: 1,
+      offset: Offset(0, 0),
+    ),
+    BoxShadow(
+      color: Color.fromARGB(25, 34, 33, 81),
+      spreadRadius: 0,
+      blurRadius: 15,
+      offset: Offset(0, 15),
+    ),
+  ]);
 }

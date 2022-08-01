@@ -30,12 +30,11 @@ void main() {
     setUp(() async {
       listenerCallCount = 0;
       var db = LocalDatabase();
-      session = SessionProvider(db)
-          ..set('api-token');
+      session = SessionProvider(db)..set('api-token');
       provider = ProjectsProvider(db, session)
-          ..addListener(() {
-            listenerCallCount += 1;
-          });
+        ..addListener(() {
+          listenerCallCount += 1;
+        });
       await provider.clear();
     });
 
@@ -47,10 +46,7 @@ void main() {
         return Response(projectsResponseFixture, 200);
       });
 
-      expect(
-        provider.getAll(),
-        throwsStaleData()
-      );
+      expect(provider.getAll(), throwsStaleData());
 
       await provider.fetchProjects();
       expect(listenerCallCount, greaterThan(0));
@@ -68,10 +64,7 @@ void main() {
         return Response('{"errors": ["bad things"]}', 400);
       });
 
-      expect(
-        provider.fetchProjects(),
-        throwsException
-      );
+      expect(provider.fetchProjects(), throwsException);
     });
 
     test('fetchBySlug() and getBySlug() work together', () async {
@@ -97,10 +90,7 @@ void main() {
         return Response('{"error":"Not found"}', 404);
       });
 
-      expect(
-        provider.fetchBySlug('home'),
-        throwsException
-      );
+      expect(provider.fetchBySlug('home'), throwsException);
     });
 
     test('getBySlug() loads from API and updates task data', () async {

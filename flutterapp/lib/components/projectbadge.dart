@@ -7,12 +7,7 @@ class ProjectBadge extends StatelessWidget {
   final int color;
   final bool isActive;
 
-  const ProjectBadge({
-    required this.text,
-    required this.color,
-    this.isActive = false,
-    super.key
-  });
+  const ProjectBadge({required this.text, required this.color, this.isActive = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +16,13 @@ class ProjectBadge extends StatelessWidget {
 
     var projectColor = getProjectColor(color);
     return Container(
-      color: isActive ? theme.colorScheme.surfaceTint : null,
-      child: Wrap(
-        spacing: space(1),
-        children: [
+        color: isActive ? theme.colorScheme.surfaceTint : null,
+        child: Wrap(spacing: space(1), children: [
           Icon(Icons.circle, color: projectColor, size: 12),
           Text(
             text,
             style: TextStyle(color: docketColors.secondaryText),
           ),
-        ]
-      )
-    );
+        ]));
   }
 }

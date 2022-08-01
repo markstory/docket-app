@@ -26,36 +26,29 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Consumer<SessionProvider>(
-      builder: (context, session, child) {
-        return Scaffold(
+    return Consumer<SessionProvider>(builder: (context, session, child) {
+      return Scaffold(
           appBar: AppBar(),
-          body: Column(
-            children: [
-              const Text('Login to your Docket instance.'),
-              LoginForm(onSubmit: (String? email, String? password) async {
-                if (email != null && password != null) {
-                  try {
-                    void complete() {
-                     Navigator.pushNamed(context, TodayScreen.routeName);
-                    }
-                    await _handleSubmit(email, password, session);
-                    complete();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString()))
-                    );
+          body: Column(children: [
+            const Text('Login to your Docket instance.'),
+            LoginForm(onSubmit: (String? email, String? password) async {
+              if (email != null && password != null) {
+                try {
+                  void complete() {
+                    Navigator.pushNamed(context, TodayScreen.routeName);
                   }
+
+                  await _handleSubmit(email, password, session);
+                  complete();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
                 }
-              }),
-            ]
-          )
-        );
-      }
-    );
+              }
+            }),
+          ]));
+    });
   }
 }
-
 
 /// Render the child widget if we have a session token
 /// available or render the login screen if we don't.
@@ -71,16 +64,14 @@ class LoginRequired extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SessionProvider>(
-      builder: (context, session, _) {
-        if (session.loading) {
-          return const LoadingIndicator();
-        }
-        if (session.hasToken) {
-          return child;
-        }
-        return const LoginScreen();
+    return Consumer<SessionProvider>(builder: (context, session, _) {
+      if (session.loading) {
+        return const LoadingIndicator();
       }
-    );
+      if (session.hasToken) {
+        return child;
+      }
+      return const LoginScreen();
+    });
   }
 }

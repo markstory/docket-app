@@ -8,23 +8,17 @@ import 'package:docket/dialogs/changedueon.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Widget _buildButton(
-    DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate
-  ) {
+  Widget _buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
     var database = LocalDatabase();
     return EntryPoint(
-      database: database,
-      child: Builder(
-        builder: (BuildContext context) {
+        database: database,
+        child: Builder(builder: (BuildContext context) {
           return TextButton(
-            child: const Text('Open'),
-            onPressed:() {
-              showChangeDueOnDialog(context, dueOn, evening, onUpdate);
-            }
-          );
-        }
-      )
-    );
+              child: const Text('Open'),
+              onPressed: () {
+                showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+              });
+        }));
   }
 
   group('ChangeDueOnDialog', () {

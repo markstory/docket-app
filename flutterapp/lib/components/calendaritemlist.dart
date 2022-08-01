@@ -15,15 +15,13 @@ class CalendarItemList extends StatelessWidget {
       return const SizedBox();
     }
     return Material(
-      elevation: 1,
-      child: Container(
-        padding: EdgeInsets.all(space(1)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: calendarItems.map((item) => CalendarItemTile(calendarItem: item)).toList(),
-        )
-      )
-    );
+        elevation: 1,
+        child: Container(
+            padding: EdgeInsets.all(space(1)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: calendarItems.map((item) => CalendarItemTile(calendarItem: item)).toList(),
+            )));
   }
 }
 
@@ -52,14 +50,11 @@ class CalendarItemTile extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: space(1), horizontal: space(0.5)),
-      child: Row(
-        children: [
+        padding: EdgeInsets.symmetric(vertical: space(1), horizontal: space(0.5)),
+        child: Row(children: [
           timeWidget,
           SizedBox(width: space(1)),
           Expanded(child: Text(calendarItem.title, overflow: TextOverflow.ellipsis)),
-        ]
-      )
-    );
+        ]));
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:docket/formatters.dart' as formatters;
 
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

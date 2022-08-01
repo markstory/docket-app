@@ -46,11 +46,7 @@ class SessionProvider extends ChangeNotifier {
   /// Store a token in memory but not persist it.
   /// Mostly used in tests.
   void set(String token) {
-    _apiToken = ApiToken.fromMap({
-      'id': 1,
-      'token': token,
-      'lastUsed': DateTime.now()
-    });
+    _apiToken = ApiToken.fromMap({'id': 1, 'token': token, 'lastUsed': DateTime.now()});
   }
 
   void clear() {

@@ -11,12 +11,7 @@ void main() {
   var database = LocalDatabase();
 
   Widget renderForm(Project project, Function(Project project) onSave) {
-    return EntryPoint(
-      database: database,
-      child: Scaffold(
-        body: ProjectForm(project: project, onSave: onSave)
-      )
-    );
+    return EntryPoint(database: database, child: Scaffold(body: ProjectForm(project: project, onSave: onSave)));
   }
 
   group('Create Project', () {
@@ -27,6 +22,7 @@ void main() {
         expect(project.name, equals('Home'));
         expect(project.color, equals(8));
       }
+
       final project = Project.blank();
       await tester.pumpWidget(renderForm(project, onSave));
 
@@ -61,6 +57,7 @@ void main() {
       void onSave(Project project) {
         onSaveCalled = true;
       }
+
       final project = Project.blank();
       project.color = 8;
 

@@ -25,11 +25,7 @@ class GroupedItem {
 ///
 /// Fill out the sparse input data to have all the days.
 ///
-List<GroupedItem> zeroFillItems(
-  DateTime firstDate,
-  int numDays,
-  List<GroupedItem> groups
-) {
+List<GroupedItem> zeroFillItems(DateTime firstDate, int numDays, List<GroupedItem> groups) {
   firstDate = DateUtils.dateOnly(firstDate);
   var endDate = firstDate.add(Duration(days: numDays));
 
@@ -80,13 +76,14 @@ Function(List<Task>) createGrouper(DateTime start, int numDays) {
     List<GroupedItem> grouped = [];
     for (var entry in byDate.entries) {
       grouped.add(GroupedItem(
-          key: entry.key,
-          items: entry.value,
-          ids: entry.value.map((task) => task.id.toString()).toList(),
+        key: entry.key,
+        items: entry.value,
+        ids: entry.value.map((task) => task.id.toString()).toList(),
       ));
     }
     return zeroFillItems(start, numDays, grouped);
   }
+
   final function = taskGrouper;
 
   return function;

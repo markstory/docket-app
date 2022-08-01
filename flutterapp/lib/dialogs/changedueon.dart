@@ -5,11 +5,7 @@ import 'package:docket/formatters.dart' as formatters;
 
 /// Dialog sheet for changing a task due on.
 Future<void> showChangeDueOnDialog(
-  BuildContext context,
-  DateTime? dueOn,
-  bool evening,
-  Function(DateTime? newDueOn, bool newEvening) onChange 
-) {
+    BuildContext context, DateTime? dueOn, bool evening, Function(DateTime? newDueOn, bool newEvening) onChange) {
   var theme = Theme.of(context);
   var docketColors = theme.extension<DocketColors>()!;
 
@@ -29,8 +25,7 @@ Future<void> showChangeDueOnDialog(
 
       List<Widget> items = [];
       if (!isToday) {
-        items.add(
-          ListTile(
+        items.add(ListTile(
             dense: true,
             leading: Icon(Icons.today, color: docketColors.dueToday),
             title: const Text('Today'),
@@ -38,32 +33,24 @@ Future<void> showChangeDueOnDialog(
               var newValue = DateUtils.dateOnly(DateTime.now());
               onChange(newValue, false);
               Navigator.of(context).pop();
-            }
-          )
-        );
+            }));
       }
 
       if (!isTomorrow) {
-        items.add(
-          ListTile(
+        items.add(ListTile(
             dense: true,
             leading: Icon(Icons.light_mode_outlined, color: docketColors.dueTomorrow),
             title: const Text('Tomorrow'),
             onTap: () {
-              var newValue = DateUtils.dateOnly(
-                currentValue.add(const Duration(days: 1))
-              );
+              var newValue = DateUtils.dateOnly(currentValue.add(const Duration(days: 1)));
 
               onChange(newValue, evening);
               Navigator.of(context).pop();
-            }
-          )
-        );
+            }));
       }
 
       if (!isThisEvening) {
-        items.add(
-          ListTile(
+        items.add(ListTile(
             dense: true,
             leading: Icon(Icons.bedtime_outlined, color: docketColors.dueEvening),
             title: const Text('This evening'),
@@ -72,53 +59,41 @@ Future<void> showChangeDueOnDialog(
 
               onChange(newValue, true);
               Navigator.of(context).pop();
-            }
-          )
-        );
+            }));
       }
 
       if (futureDue && isEvening) {
-        items.add(
-          ListTile(
+        items.add(ListTile(
             dense: true,
             leading: Icon(Icons.calendar_today, color: docketColors.dueTomorrow),
             title: Text('${formatters.compactDate(currentValue)} day'),
             onTap: () {
               onChange(currentValue, false);
               Navigator.of(context).pop();
-            }
-          )
-        );
+            }));
       }
 
       if (futureDue && !isEvening) {
-        items.add(
-          ListTile(
+        items.add(ListTile(
             dense: true,
             leading: Icon(Icons.bedtime_outlined, color: docketColors.dueTomorrow),
             title: Text('${formatters.compactDate(currentValue)} evening'),
             onTap: () {
               onChange(currentValue, true);
               Navigator.of(context).pop();
-            }
-          )
-        );
+            }));
       }
 
-      items.add(
-        ListTile(
+      items.add(ListTile(
           dense: true,
           leading: Icon(Icons.delete, color: docketColors.dueNone),
           title: const Text('No Due Date'),
           onTap: () {
             onChange(null, evening);
             Navigator.of(context).pop();
-          }
-        )
-      );
+          }));
 
-      items.add(
-        ListTile(
+      items.add(ListTile(
           dense: true,
           leading: Icon(Icons.calendar_today, color: docketColors.dueFortnight),
           title: const Text('Pick Date'),
@@ -133,18 +108,15 @@ Future<void> showChangeDueOnDialog(
             );
             onChange(newValue, evening);
             navigator.pop();
-          }
-        )
-      );
+          }));
 
       return AlertDialog(
-        title: const Text('Set Date'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: items,
-          ),
-        )
-      );
+          title: const Text('Set Date'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: items,
+            ),
+          ));
     },
   );
 }

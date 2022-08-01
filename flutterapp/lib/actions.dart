@@ -32,7 +32,7 @@ class ValidationError implements Exception {
       }
       if (decoded['errors'] is List) {
         for (var line in decoded['errors']) {
-            errors.add(line.toString());
+          errors.add(line.toString());
         }
       }
       if (decoded['errors'] is Map) {
@@ -63,8 +63,7 @@ Uri _makeUrl(String path) {
   return url;
 }
 
-Future<http.Response> httpGet(Uri url,
-    {String? apiToken, String? errorMessage}) async {
+Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
   var headers = {
     'User-Agent': 'docket-flutter',
     'Accept': 'application/json',
@@ -131,8 +130,7 @@ Future<ApiToken> doLogin(String email, String password) async {
   var body = {'email': email, 'password': password};
 
   return Future(() async {
-    var response =
-        await httpPost(url, body: body, errorMessage: 'Login Failed');
+    var response = await httpPost(url, body: body, errorMessage: 'Login Failed');
     developer.log('login complete');
 
     try {
@@ -150,8 +148,7 @@ Future<TaskViewData> loadTodayTasks(String apiToken) async {
   var url = _makeUrl('/tasks/today');
 
   return Future(() async {
-    var response = await httpGet(url,
-        apiToken: apiToken, errorMessage: 'Could not load tasks');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
@@ -176,8 +173,7 @@ Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
 
   return Future(() async {
-    var response = await httpGet(url,
-        apiToken: apiToken, errorMessage: 'Could not load tasks');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
@@ -203,8 +199,7 @@ Future<void> toggleTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/$operation');
 
   return Future(() async {
-    await httpPost(url,
-        apiToken: apiToken, errorMessage: 'Could not update task');
+    await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update task');
   });
 }
 
@@ -213,10 +208,7 @@ Future<Task> createTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/add');
 
   return Future(() async {
-    var response = await httpPost(url,
-        apiToken: apiToken,
-        body: task.toMap(),
-        errorMessage: 'Could not create task');
+    var response = await httpPost(url, apiToken: apiToken, body: task.toMap(), errorMessage: 'Could not create task');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Task.fromMap(decoded['task']);
@@ -232,10 +224,7 @@ Future<Task> updateTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/edit');
 
   return Future(() async {
-    var response = await httpPost(url,
-        apiToken: apiToken,
-        body: task.toMap(),
-        errorMessage: 'Could not update task');
+    var response = await httpPost(url, apiToken: apiToken, body: task.toMap(), errorMessage: 'Could not update task');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Task.fromMap(decoded['task']);
@@ -247,8 +236,7 @@ Future<void> deleteTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/delete');
 
   return Future(() async {
-    await httpPost(url,
-        apiToken: apiToken, errorMessage: 'Could not delete task');
+    await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete task');
   });
 }
 
@@ -257,12 +245,7 @@ Future<void> moveTask(String apiToken, Task task, Map<String, dynamic> updates) 
   var url = _makeUrl('/tasks/${task.id}/move');
 
   return Future(() async {
-    await httpPost(
-      url,
-      apiToken: apiToken, 
-      body: updates,
-      errorMessage: 'Could not move task'
-    );
+    await httpPost(url, apiToken: apiToken, body: updates, errorMessage: 'Could not move task');
   });
 }
 
@@ -271,9 +254,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   var url = _makeUrl('/tasks/$id/view');
 
   return Future(() async {
-    var response = await httpGet(url,
-        apiToken: apiToken,
-        errorMessage: 'Could not load tasks');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
     try {
       var taskData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -285,14 +266,11 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   });
 }
 
-Future<ProjectWithTasks> fetchProjectBySlug(
-    String apiToken, String slug) async {
+Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
   var url = _makeUrl('/projects/$slug');
 
   return Future(() async {
-    var response = await httpGet(url,
-        apiToken: apiToken,
-        errorMessage: 'Could not load project');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load project');
 
     try {
       var data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -301,12 +279,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(
         List<Task> tasks = [];
         for (var item in data['tasks']) {
           // TODO do this on the server so that tasks are serialized consistently.
-          item['project'] = {
-            'id': project.id,
-            'slug': project.slug,
-            'name': project.name,
-            'color': project.color
-          };
+          item['project'] = {'id': project.id, 'slug': project.slug, 'name': project.name, 'color': project.color};
 
           tasks.add(Task.fromMap(item));
         }
@@ -327,9 +300,7 @@ Future<List<Project>> fetchProjects(String apiToken) async {
   var url = _makeUrl('/projects');
 
   return Future(() async {
-    var response = await httpGet(url,
-        apiToken: apiToken,
-        errorMessage: 'Could not load projects');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
 
     try {
       var projectData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -350,10 +321,8 @@ Future<Project> createProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/add');
 
   return Future(() async {
-    var response = await httpPost(url,
-        apiToken: apiToken,
-        body: project.toMap(),
-        errorMessage: 'Could not create project');
+    var response =
+        await httpPost(url, apiToken: apiToken, body: project.toMap(), errorMessage: 'Could not create project');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Project.fromMap(decoded['project']);
@@ -365,10 +334,8 @@ Future<Project> moveProject(String apiToken, Project project, int newRank) async
   var url = _makeUrl('/projects/${project.slug}/move');
 
   return Future(() async {
-    var response = await httpPost(url,
-        apiToken: apiToken,
-        body: {'ranking': newRank},
-        errorMessage: 'Could not move project');
+    var response =
+        await httpPost(url, apiToken: apiToken, body: {'ranking': newRank}, errorMessage: 'Could not move project');
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Project.fromMap(decoded['project']);

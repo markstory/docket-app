@@ -7,9 +7,7 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 
-class StaleDataError implements Exception {
-
-}
+class StaleDataError implements Exception {}
 
 class LocalDatabase {
   // Configuration
@@ -164,7 +162,7 @@ class LocalDatabase {
   Map<int, List<String>> viewUpdates = {};
 
   /// Store a list of Tasks.
-  /// 
+  ///
   /// Each task will added to the relevant date/project
   /// views as well as the task lookup map
   Future<void> addTasks(List<Task> tasks) async {

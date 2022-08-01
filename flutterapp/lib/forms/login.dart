@@ -58,18 +58,15 @@ class LoginFormState extends State<LoginForm> {
             onSaved: (value) => _password = value,
           ),
           ElevatedButton(
-            child: const Text('Log in'),
-            onPressed: () {
-              if (!_formKey.currentState!.validate()) {
-                return;
-              }
-              _formKey.currentState!.save();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logging in'))
-              );
-              widget.onSubmit(_email, _password);
-            }
-          )
+              child: const Text('Log in'),
+              onPressed: () {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                }
+                _formKey.currentState!.save();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging in')));
+                widget.onSubmit(_email, _password);
+              })
           // Add TextFormFields and ElevatedButton here.
         ],
       ),

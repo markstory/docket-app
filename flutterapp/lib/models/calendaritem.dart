@@ -34,16 +34,16 @@ class CalendarItem {
     DateTime? endDate;
 
     if (json['start_time'] != null) {
-       startTime = DateTime.parse(json['start_time']);
+      startTime = DateTime.parse(json['start_time']);
     }
     if (json['start_time'] != null) {
-       endTime = DateTime.parse(json['start_time']);
+      endTime = DateTime.parse(json['start_time']);
     }
     if (json['start_date'] != null) {
-       startDate = DateTime.parse(json['start_date']);
+      startDate = DateTime.parse(json['start_date']);
     }
     if (json['end_date'] != null) {
-       endDate = DateTime.parse(json['end_date']);
+      endDate = DateTime.parse(json['end_date']);
     }
 
     return CalendarItem(

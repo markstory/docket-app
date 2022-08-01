@@ -18,16 +18,8 @@ void main() {
 
   // Rendering helper.
   Widget renderForm(Task task, Function(Task task) onSave) {
-    return EntryPoint(
-      database: database,
-      child: Scaffold(
-        body: Portal(
-          child: TaskForm(task: task, onSave: onSave)
-        )
-      )
-    );
+    return EntryPoint(database: database, child: Scaffold(body: Portal(child: TaskForm(task: task, onSave: onSave))));
   }
-
 
   setUpAll(() async {
     await database.clearProjects();
@@ -43,6 +35,7 @@ void main() {
         expect(task.projectId, equals(1));
         expect(task.body, equals('Use lots of soap'));
       }
+
       final task = Task.blank();
       await tester.pumpWidget(renderForm(task, onSave));
       await tester.pumpAndSettle();
@@ -73,6 +66,7 @@ void main() {
       void onSave(Task task) {
         throw "Should not be called";
       }
+
       final task = Task.blank();
       await tester.pumpWidget(renderForm(task, onSave));
       await tester.pumpAndSettle();
@@ -94,6 +88,7 @@ void main() {
         expect(task.projectId, equals(1));
         expect(task.body, equals('Use lots of soap'));
       }
+
       var task = Task.blank();
       task.title = "Original title";
       task.projectId = 2;
@@ -134,6 +129,7 @@ void main() {
 
         expect(task.dueOn, equals(today));
       }
+
       var task = Task.blank();
       await tester.pumpWidget(renderForm(task, onSave));
       await tester.pumpAndSettle();

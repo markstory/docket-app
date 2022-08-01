@@ -24,15 +24,11 @@ class FormIconRow extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.all(space(1)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        padding: EdgeInsets.all(space(1)),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           iconWidget,
           Expanded(child: child),
-        ]
-      )
-    );
+        ]));
   }
 }
 
@@ -43,21 +39,15 @@ class DueOnInput extends StatelessWidget {
 
   final Function(DateTime? dueOn, bool evening) onUpdate;
 
-  const DueOnInput({
-    required this.onUpdate,
-    required this.dueOn,
-    required this.evening,
-    super.key
-  });
+  const DueOnInput({required this.onUpdate, required this.dueOn, required this.evening, super.key});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: DueOn(dueOn: dueOn, evening: evening, showNull: true),
-      onPressed: () {
-        showChangeDueOnDialog(context, dueOn, evening, onUpdate);
-      }
-    );
+        child: DueOn(dueOn: dueOn, evening: evening, showNull: true),
+        onPressed: () {
+          showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+        });
   }
 }
 
@@ -69,12 +59,7 @@ class MarkdownInput extends StatefulWidget {
   final String label;
   final Function(String newText) onChange;
 
-  const MarkdownInput({
-    required this.value,
-    required this.onChange,
-    this.label = "Notes",
-    super.key
-  });
+  const MarkdownInput({required this.value, required this.onChange, this.label = "Notes", super.key});
 
   @override
   State<MarkdownInput> createState() => _MarkdownInputState();
@@ -89,35 +74,33 @@ class _MarkdownInputState extends State<MarkdownInput> {
       var body = widget.value.isNotEmpty ? widget.value : 'Tap to edit';
 
       return MarkdownBody(
-        key: const ValueKey('markdown-preview'),
-        data: body,
-        selectable: true,
-        onTapText: () {
-          setState(() {
-            _editing = true;
+          key: const ValueKey('markdown-preview'),
+          data: body,
+          selectable: true,
+          onTapText: () {
+            setState(() {
+              _editing = true;
+            });
           });
-        }
-      );
     }
 
     return TextFormField(
-      key: const ValueKey('markdown-input'),
-      keyboardType: TextInputType.multiline,
-      minLines: 1,
-      maxLines: null,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: widget.label,
-      ),
-      initialValue: widget.value,
-      onSaved: (value) {
-        if (value != null) {
-          widget.onChange(value);
-          setState(() {
-            _editing = false;
-          });
-        }
-      }
-    );
+        key: const ValueKey('markdown-input'),
+        keyboardType: TextInputType.multiline,
+        minLines: 1,
+        maxLines: null,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: widget.label,
+        ),
+        initialValue: widget.value,
+        onSaved: (value) {
+          if (value != null) {
+            widget.onChange(value);
+            setState(() {
+              _editing = false;
+            });
+          }
+        });
   }
 }

@@ -18,26 +18,22 @@ class TaskCheckbox extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       try {
         await tasksProvider.toggleComplete(task);
-        messenger.showSnackBar(
-          successSnackBar(context: context, text: 'Task Completed')
-        );
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Completed'));
       } catch (e) {
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Could not update task')
-        );
+        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
       }
     }
+
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
     return Checkbox(
-      activeColor: customColors.actionComplete,
-      checkColor: Colors.white,
-      value: task.completed,
-      visualDensity: VisualDensity.compact,
-      onChanged: (bool? value) {
-        _handleCompleted();
-      }
-    );
+        activeColor: customColors.actionComplete,
+        checkColor: Colors.white,
+        value: task.completed,
+        visualDensity: VisualDensity.compact,
+        onChanged: (bool? value) {
+          _handleCompleted();
+        });
   }
 }

@@ -42,37 +42,36 @@ class _ProjectSorterState extends State<ProjectSorter> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Project>>(
-      future: projectsFuture,
-      builder: (context, snapshot) {
-        var theme = Theme.of(context);
-        var projects = snapshot.data;
-        if (snapshot.hasData == false || projects == null) {
-          return const LoadingIndicator();
-        }
+        future: projectsFuture,
+        builder: (context, snapshot) {
+          var theme = Theme.of(context);
+          var projects = snapshot.data;
+          if (snapshot.hasData == false || projects == null) {
+            return const LoadingIndicator();
+          }
 
-        return DragAndDropLists(
-          children: [
-            DragAndDropList(
-              canDrag: false,
-              children: projects.map((project) {
-                return DragAndDropItem(
-                  child: ProjectItem(project: project),
-                );
-              }).toList(),
-            )
-          ],
-          disableScrolling: true,
-          itemDragOnLongPress: true,
-          onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-            var project = projects[oldItemIndex];
-            _onItemReorder(project, newItemIndex);
-          },
-          onListReorder: (int oldIndex, int newIndex) {
-            throw 'List reordering not supported';
-          },
-          itemDecorationWhileDragging: itemDragBoxDecoration(theme),
-        );
-      }
-    );
+          return DragAndDropLists(
+            children: [
+              DragAndDropList(
+                canDrag: false,
+                children: projects.map((project) {
+                  return DragAndDropItem(
+                    child: ProjectItem(project: project),
+                  );
+                }).toList(),
+              )
+            ],
+            disableScrolling: true,
+            itemDragOnLongPress: true,
+            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+              var project = projects[oldItemIndex];
+              _onItemReorder(project, newItemIndex);
+            },
+            onListReorder: (int oldIndex, int newIndex) {
+              throw 'List reordering not supported';
+            },
+            itemDecorationWhileDragging: itemDragBoxDecoration(theme),
+          );
+        });
   }
 }

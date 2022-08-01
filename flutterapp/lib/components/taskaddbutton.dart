@@ -10,13 +10,7 @@ class TaskAddButton extends StatelessWidget {
   final int? sectionId;
   final bool? evening;
 
-  const TaskAddButton({
-    this.dueOn,
-    this.projectId,
-    this.sectionId,
-    this.evening,
-    super.key
-  });
+  const TaskAddButton({this.dueOn, this.projectId, this.sectionId, this.evening, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +30,14 @@ class TaskAddButton extends StatelessWidget {
       task.evening = evening!;
     }
     return IconButton(
-      icon: const Icon(Icons.add),
-      color: theme.colorScheme.primary,
-      onPressed: () {
-        Navigator.pushNamed(
-          context,
-          TaskAddScreen.routeName,
-          arguments: TaskAddScreenArguments(task),
-        );
-      }
-    );
+        icon: const Icon(Icons.add),
+        color: theme.colorScheme.primary,
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            TaskAddScreen.routeName,
+            arguments: TaskAddScreenArguments(task),
+          );
+        });
   }
 }

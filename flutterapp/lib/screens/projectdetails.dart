@@ -33,15 +33,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProjectsProvider, TasksProvider>(
-      builder: (context, projectsProvider, tasksProvider, child) {
-        var theme = Theme.of(context);
-        var projectFuture = projectsProvider.getBySlug(widget.slug); 
+    return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
+      var theme = Theme.of(context);
+      var projectFuture = projectsProvider.getBySlug(widget.slug);
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Project Details')),
-          drawer: const AppDrawer(),
-          body: FutureBuilder<Project>(
+      return Scaffold(
+        appBar: AppBar(title: const Text('Project Details')),
+        drawer: const AppDrawer(),
+        body: FutureBuilder<Project>(
             future: projectFuture,
             builder: (context, snapshot) {
               // Doing this query here should result in us hitting cache all the time
@@ -53,38 +52,30 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               }
               var taskList = tasksProvider.projectTasks(widget.slug);
 
-              return ListView(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(width: space(2)),
-                      Text(project.name, style: theme.textTheme.titleLarge),
-                      TaskAddButton(projectId: project.id),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.more_vert),
-                        onPressed: () {
-                          // TODO Show project menu!
-                        }
-                      ),
-                    ]
-                  ),
-                  FutureBuilder<List<Task>>(
+              return ListView(children: [
+                Row(children: [
+                  SizedBox(width: space(2)),
+                  Text(project.name, style: theme.textTheme.titleLarge),
+                  TaskAddButton(projectId: project.id),
+                  const Spacer(),
+                  IconButton(
+                      icon: const Icon(Icons.more_vert),
+                      onPressed: () {
+                        // TODO Show project menu!
+                      }),
+                ]),
+                FutureBuilder<List<Task>>(
                     future: taskList,
                     builder: (context, snapshot) {
                       var tasks = snapshot.data;
                       if (tasks == null) {
-                        return const LoadingIndicator(); 
+                        return const LoadingIndicator();
                       }
                       return TaskGroup(tasks: tasks, showDate: true);
-                    }
-                  )
-                ]
-              );
-            }
-          ),
-        );
-      }
-    );
+                    })
+              ]);
+            }),
+      );
+    });
   }
 }

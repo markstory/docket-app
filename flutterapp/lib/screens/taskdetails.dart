@@ -22,49 +22,35 @@ class TaskDetailsScreen extends StatelessWidget {
 
     try {
       await tasksProvider.updateTask(task);
-      messenger.showSnackBar(
-        successSnackBar(context: context, text: 'Task Completed')
-      );
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Completed'));
       if (navigator.canPop()) {
         navigator.pop();
       }
     } catch (e) {
-      messenger.showSnackBar(
-        errorSnackBar(context: context, text: 'Could not update task')
-      );
+      messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(
-      builder: (context, tasksProvider, child) {
-        var pendingTask = tasksProvider.getById(taskId);
+    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
+      var pendingTask = tasksProvider.getById(taskId);
 
-        return Portal(
+      return Portal(
           child: Scaffold(
-            appBar: AppBar(title: const Text('Task Details')),
-            body: FutureBuilder<Task>(
-              future: pendingTask,
-              builder: (context, snapshot) {
-                var task = snapshot.data;
-                if (task == null) {
-                  return const Card(
-                    child: Text("404! Could not find that task.")
-                  );
-                }
-                return ListView(
-                  padding: EdgeInsets.all(space(1)),
-                  children: [
-                    TaskForm(task: task, onSave: (task) => _onSave(context, task)),
-                  ]
-                );
+        appBar: AppBar(title: const Text('Task Details')),
+        body: FutureBuilder<Task>(
+            future: pendingTask,
+            builder: (context, snapshot) {
+              var task = snapshot.data;
+              if (task == null) {
+                return const Card(child: Text("404! Could not find that task."));
               }
-            ),
-          )
-        );
-      }
-    );
+              return ListView(padding: EdgeInsets.all(space(1)), children: [
+                TaskForm(task: task, onSave: (task) => _onSave(context, task)),
+              ]);
+            }),
+      ));
+    });
   }
 }
-

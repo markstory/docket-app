@@ -12,7 +12,6 @@ import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 
-
 // Parse a list response into a list of tasks.
 List<Task> parseTaskList(String data) {
   var decoded = jsonDecode(data);
@@ -46,15 +45,14 @@ void main() {
 
   group('$TasksProvider', () {
     var db = LocalDatabase();
-    var session = SessionProvider(db)
-        ..set('api-token');
+    var session = SessionProvider(db)..set('api-token');
 
     setUp(() async {
       listenerCallCount = 0;
       provider = TasksProvider(db, session)
-          ..addListener(() {
-            listenerCallCount += 1;
-          });
+        ..addListener(() {
+          listenerCallCount += 1;
+        });
       await provider.clear();
     });
 
@@ -254,7 +252,7 @@ void main() {
       expect(projectTasks.length, equals(1));
       expect(projectTasks[0].title, equals(task.title));
 
-      var upcoming= await provider.getUpcoming();
+      var upcoming = await provider.getUpcoming();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
     });

@@ -90,21 +90,20 @@ class Task {
     );
   }
 
-  Task copy({
-    int? id,
-    int? projectId,
-    String? projectSlug,
-    String? projectName,
-    int? projectColor,
-    int? sectionId,
-    String? title,
-    String? body,
-    DateTime? dueOn,
-    int? childOrder,
-    int? dayOrder,
-    bool? evening,
-    bool? completed
-  }) {
+  Task copy(
+      {int? id,
+      int? projectId,
+      String? projectSlug,
+      String? projectName,
+      int? projectColor,
+      int? sectionId,
+      String? title,
+      String? body,
+      DateTime? dueOn,
+      int? childOrder,
+      int? dayOrder,
+      bool? evening,
+      bool? completed}) {
     return Task(
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
@@ -163,5 +162,3 @@ class TaskViewData {
 
   const TaskViewData({required this.tasks, required this.calendarItems});
 }
-
-

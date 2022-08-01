@@ -27,37 +27,31 @@ class TaskAddScreen extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       var tasks = Provider.of<TasksProvider>(context, listen: false);
 
-      void complete() { 
-        Navigator.pop(context); 
+      void complete() {
+        Navigator.pop(context);
       }
 
       try {
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Saving'))
-        );
+        messenger.showSnackBar(const SnackBar(content: Text('Saving')));
         await tasks.createTask(task);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
       } catch (e, stacktrace) {
         developer.log("Failed to create task ${e.toString()} $stacktrace");
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Failed to create task.')
-        );
+        messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to create task.'));
       }
     }
+
     var title = task.id != null ? const Text('Edit Task') : const Text('New Task');
 
     return Portal(
-      child: Scaffold(
-        appBar: AppBar(title: title),
-        body: Container(
-          padding: EdgeInsets.all(space(2)),
-          child: TaskForm(
-            task: task,
-            onSave: (updated) => _saveTask(context, updated),
-          )
-        )
-      )
-    );
+        child: Scaffold(
+            appBar: AppBar(title: title),
+            body: Container(
+                padding: EdgeInsets.all(space(2)),
+                child: TaskForm(
+                  task: task,
+                  onSave: (updated) => _saveTask(context, updated),
+                ))));
   }
 }

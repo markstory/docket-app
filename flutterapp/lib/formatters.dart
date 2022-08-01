@@ -9,7 +9,7 @@ var _weekday = DateFormat('EEEE');
 /// Date formatter for use in task rows
 /// or other locations where a short relative date
 /// is required.
-String compactDate(DateTime? value){
+String compactDate(DateTime? value) {
   if (value == null) {
     return '';
   }

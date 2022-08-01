@@ -27,54 +27,44 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-     return Consumer<ProjectsProvider>(
-      builder: (context, projectsProvider, child) {
-        var theme = Theme.of(context);
-        var customColors = theme.extension<DocketColors>()!;
+    return Consumer<ProjectsProvider>(builder: (context, projectsProvider, child) {
+      var theme = Theme.of(context);
+      var customColors = theme.extension<DocketColors>()!;
 
-        return Drawer(
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                child: Text('Docket'),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, '/tasks/today');
-                },
-                leading: Icon(Icons.today, color: customColors.dueToday),
-                title: const Text('Today'),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.pushNamed(context, '/tasks/upcoming');
-                },
-                leading: Icon(Icons.calendar_today, color: customColors.dueTomorrow),
-                title: const Text('Upcoming'),
-              ),
-              ListTile(
-                title: Text('Projects', style: theme.textTheme.subtitle1),
-              ),
-              const ProjectSorter(),
-              ListTile(
-                title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
-                onTap: () {
-                  Navigator.pushNamed(context, ProjectAddScreen.routeName);
-                }
-              ),
-              ListTile(
-                title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
-                onTap: () {
-                  Navigator.pushNamed(context, '/projects/add');
-                }
-              ),
-            ]
-          )
-        );
-      }
-    );
+      return Drawer(
+          child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [
+        const DrawerHeader(
+          child: Text('Docket'),
+        ),
+        ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, '/tasks/today');
+          },
+          leading: Icon(Icons.today, color: customColors.dueToday),
+          title: const Text('Today'),
+        ),
+        ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, '/tasks/upcoming');
+          },
+          leading: Icon(Icons.calendar_today, color: customColors.dueTomorrow),
+          title: const Text('Upcoming'),
+        ),
+        ListTile(
+          title: Text('Projects', style: theme.textTheme.subtitle1),
+        ),
+        const ProjectSorter(),
+        ListTile(
+            title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
+            onTap: () {
+              Navigator.pushNamed(context, ProjectAddScreen.routeName);
+            }),
+        ListTile(
+            title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
+            onTap: () {
+              Navigator.pushNamed(context, '/projects/add');
+            }),
+      ]));
+    });
   }
 }
-

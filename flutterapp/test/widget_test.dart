@@ -12,8 +12,7 @@ import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 
 void main() {
-  testWidgets('Renders a login screen with an empty database.',
-      (WidgetTester tester) async {
+  testWidgets('Renders a login screen with an empty database.', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final db = LocalDatabase();
     await tester.pumpWidget(EntryPoint(database: db));

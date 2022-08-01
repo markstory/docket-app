@@ -18,7 +18,7 @@ class FloatingCreateTaskButton extends StatelessWidget {
           arguments: TaskAddScreenArguments(Task.blank()),
         );
       },
-      backgroundColor:theme.colorScheme.primary,
+      backgroundColor: theme.colorScheme.primary,
       child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
     );
   }

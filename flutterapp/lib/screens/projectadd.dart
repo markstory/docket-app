@@ -20,18 +20,14 @@ class ProjectAddScreen extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       var projects = Provider.of<ProjectsProvider>(context, listen: false);
 
-      void complete() { 
-        Navigator.pop(context); 
+      void complete() {
+        Navigator.pop(context);
       }
 
       try {
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Saving'))
-        );
+        messenger.showSnackBar(const SnackBar(content: Text('Saving')));
         await projects.createProject(project);
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Project Created'))
-        );
+        messenger.showSnackBar(const SnackBar(content: Text('Project Created')));
         complete();
       } catch (e, stacktrace) {
         developer.log("Failed to create project ${e.toString()} $stacktrace");
@@ -42,14 +38,12 @@ class ProjectAddScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Project')),
-      body: Container(
-        padding: EdgeInsets.all(space(2)),
-        child: ProjectForm(
-          project: project,
-          onSave: (updated) => _saveProject(context, updated),
-        )
-      )
-    );
+        appBar: AppBar(title: const Text('New Project')),
+        body: Container(
+            padding: EdgeInsets.all(space(2)),
+            child: ProjectForm(
+              project: project,
+              onSave: (updated) => _saveProject(context, updated),
+            )));
   }
 }

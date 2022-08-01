@@ -9,13 +9,7 @@ class DueOn extends StatelessWidget {
   final bool showNull;
   final bool showIcon;
 
-  const DueOn({
-    required this.dueOn,
-    required this.evening,
-    this.showNull = false,
-    this.showIcon = false,
-    super.key
-  });
+  const DueOn({required this.dueOn, required this.evening, this.showNull = false, this.showIcon = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +59,6 @@ class DueOn extends StatelessWidget {
 
       children.add(Text(text, style: TextStyle(color: color)));
     }
-    return Wrap(
-      spacing: space(0.5),
-      runAlignment: WrapAlignment.center,
-      children: children
-    );
+    return Wrap(spacing: space(0.5), runAlignment: WrapAlignment.center, children: children);
   }
 }
