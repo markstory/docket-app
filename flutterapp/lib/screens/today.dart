@@ -173,7 +173,6 @@ class _TodayScreenState extends State<TodayScreen> {
                     _taskLists[listIndex].tasks.insert(itemIndex, task);
                   });
 
-                  print('moving task ${task.title} updates $updates');
                   // Update the moved task and reload from server async
                   await tasksProvider.move(task, updates);
                   tasksProvider.fetchToday();
