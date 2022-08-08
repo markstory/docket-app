@@ -160,10 +160,14 @@ class TaskViewData {
   final List<Task> tasks;
   final List<CalendarItem> calendarItems;
 
-  // Whether or not this is a loading state.
-  bool loading = false;
+  // Whether or not a data refresh is pending
+  bool pending = false;
 
-  TaskViewData({required this.tasks, required this.calendarItems});
+  TaskViewData({
+    required this.tasks,
+    required this.calendarItems,
+    this.pending = false
+  });
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();

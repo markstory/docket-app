@@ -65,6 +65,8 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
+    // TODO make this conditional on the existence of the today key.
+    // Will likely need another database method.
     _pending.add(ViewNames.today);
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
     _pending.remove(ViewNames.today);
@@ -77,7 +79,7 @@ class TasksProvider extends ChangeNotifier {
   Future<TaskViewData> getToday() async {
     var taskView = await _database.getToday();
     if (_pending.contains(ViewNames.today)) {
-      taskView.loading = true;
+      taskView.pending = true;
     }
     return taskView;
   }

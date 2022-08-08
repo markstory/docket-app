@@ -105,7 +105,7 @@ class LocalDatabase {
   /// custom logic to remove cached data for the impacted views.
   /// This ensures that we don't provide stale state to the Provider
   /// layer and instead Providers fetch fresh data from the Server.
-  void _expireTask(Task task) async {
+  Future<void> _expireTask(Task task) async {
     final db = database();
 
     // Remove the project key so we read fresh data next time.
@@ -120,7 +120,12 @@ class LocalDatabase {
     var now = DateTime.now();
     var views = _taskViews(task);
     for (var key in views) {
-      current[key] = now.millisecondsSinceEpoch;
+      // Trying out having today as a full page cache
+      if (key == todayTasksKey) {
+        await db.remove(todayTasksKey);
+      } else {
+        current[key] = now.millisecondsSinceEpoch;
+      }
     }
     await db.refresh(expiredKey, current);
   }
@@ -237,7 +242,6 @@ class LocalDatabase {
     await db.refresh(projectTaskMapKey, indexed);
   }
 
-
   /// Refresh the data stored for the 'today' view.
   Future<void> setToday(TaskViewData todayData) async {
     await database().refresh(todayTasksKey, todayData.toMap());
@@ -250,6 +254,7 @@ class LocalDatabase {
     // Likely loading.
     if (data == null) {
       return TaskViewData(
+        pending: true,
         tasks: [],
         calendarItems: []
       );
@@ -345,7 +350,7 @@ class LocalDatabase {
     indexed.remove(task.id.toString());
     await db.refresh(taskMapKey, indexed);
 
-    _expireTask(task);
+    await _expireTask(task);
   }
   // }}}
 

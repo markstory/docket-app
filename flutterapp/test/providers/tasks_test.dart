@@ -73,11 +73,11 @@ void main() {
         return Response(tasksTodayResponseFixture, 200);
       });
       var viewData = await provider.getToday();
-      expect(viewData.loading, equals(true));
+      expect(viewData.pending, equals(true));
 
       await provider.fetchToday();
       var taskData = await provider.getToday();
-      expect(taskData.loading, equals(false));
+      expect(taskData.pending, equals(false));
       expect(taskData.tasks.length, equals(2));
       expect(taskData.tasks[0].title, equals('clean dishes'));
       expect(taskData.calendarItems.length, equals(1));
@@ -170,7 +170,7 @@ void main() {
       expect(listenerCallCount, greaterThan(0));
 
       var updated = await provider.getToday();
-      expect(updated.loading, equals(false));
+      expect(updated.pending, equals(true));
       expect(updated.tasks.length, equals(0));
     });
 
@@ -268,7 +268,7 @@ void main() {
       expect(updated.title, equals('fold the towels'));
 
       var todayData = await provider.getToday();
-      expect(todayData.loading, equals(false));
+      expect(todayData.pending, equals(true));
       expect(todayData.tasks.length, equals(0));
     });
   });

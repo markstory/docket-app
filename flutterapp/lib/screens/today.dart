@@ -48,7 +48,7 @@ class _TodayScreenState extends State<TodayScreen> {
           future: tasksProvider.getToday(),
           builder: (context, snapshot) {
             TaskViewData? data = snapshot.data;
-            if (data == null || data.loading) {
+            if (data == null || data.pending) {
               // Reset internal state but don't re-render
               // as we will rebuild the state when the future resolves.
               _taskLists = [];
