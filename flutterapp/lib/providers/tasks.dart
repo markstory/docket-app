@@ -6,6 +6,12 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 
+enum ViewNames {
+  today,
+  upcoming,
+  project,
+}
+
 /// I'm trying to keep the update methods have a 1:1
 /// mapping with an `actions.` function. I think this
 /// will be useful in the future if I want to have
@@ -13,9 +19,12 @@ import 'package:docket/providers/session.dart';
 class TasksProvider extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
+  Set<ViewNames> _pending = {};
+
 
   TasksProvider(LocalDatabase database, this.session) {
     _database = database;
+    _pending = {};
   }
 
   void setSession(SessionProvider session) {
@@ -56,19 +65,21 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
+    _pending.add(ViewNames.today);
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
+    _pending.remove(ViewNames.today);
 
-    await _database.setTodayTasks(taskViewData.tasks);
-    await _database.setTodayCalendarItems(taskViewData.calendarItems);
+    await _database.setToday(taskViewData);
     notifyListeners();
   }
 
   /// Get the local database state for today view.
   Future<TaskViewData> getToday() async {
-    var tasks = await _database.fetchTodayTasks();
-    var calendarItems = await _database.fetchTodayCalendarItems();
-
-    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
+    var taskView = await _database.getToday();
+    if (_pending.contains(ViewNames.today)) {
+      taskView.loading = true;
+    }
+    return taskView;
   }
 
   /// Fetch tasks for upcoming view from the server.

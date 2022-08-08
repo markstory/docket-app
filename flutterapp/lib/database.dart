@@ -9,6 +9,8 @@ import 'package:docket/models/project.dart';
 
 class StaleDataError implements Exception {}
 
+const isStale = '__is_stale__';
+
 class LocalDatabase {
   // Configuration
   static const String dbName = 'docket-localstorage';
@@ -77,7 +79,7 @@ class LocalDatabase {
   /// In a SQL based storage you'd be able to remove/update the row
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
-  Future<List<String>> _taskViews(Task task) async {
+  List<String> _taskViews(Task task) {
     var now = DateTime.now();
     List<String> views = [];
 
@@ -116,7 +118,7 @@ class LocalDatabase {
     current ??= {};
 
     var now = DateTime.now();
-    var views = await _taskViews(task);
+    var views = _taskViews(task);
     for (var key in views) {
       current[key] = now.millisecondsSinceEpoch;
     }
@@ -180,11 +182,16 @@ class LocalDatabase {
       taskMap[id.toString()] = task.toMap();
 
       // Update the pending view updates.
-      for (var view in await _taskViews(task)) {
-        if (!viewUpdates.containsKey(view)) {
-          viewUpdates[view] = [];
+      for (var view in _taskViews(task)) {
+        // Trying out having today as a full page cache
+        if (view == todayTasksKey) {
+          await db.remove(todayTasksKey);
+        } else {
+          if (!viewUpdates.containsKey(view)) {
+            viewUpdates[view] = [];
+          }
+          viewUpdates[view]?.add(id);
         }
-        viewUpdates[view]?.add(id);
       }
 
       // Update pending project tasks
@@ -197,7 +204,7 @@ class LocalDatabase {
     // Update task mapping.
     await db.refresh(taskMapKey, taskMap);
 
-    // Update date views
+    // Update legacy date views
     for (var view in viewUpdates.keys) {
       var viewData = await db.value(view) ?? {"tasks": []};
       viewData["tasks"].addAll(viewUpdates[view]);
@@ -230,20 +237,27 @@ class LocalDatabase {
     await db.refresh(projectTaskMapKey, indexed);
   }
 
-  /// Fetch all records in the 'today' view store.
-  Future<List<Task>> fetchTodayTasks({useStale = false}) async {
-    final db = database();
-    var isStale = await _isDataStale(todayTasksKey, useStale);
-    if (isStale) {
-      throw StaleDataError();
-    }
-    var results = await db.value(todayTasksKey);
-    if (results == null || results['tasks'] == null) {
-      throw StaleDataError();
-    }
-    List<int> taskIds = results['tasks'].cast<int>();
 
-    return getTasksById(taskIds);
+  /// Refresh the data stored for the 'today' view.
+  Future<void> setToday(TaskViewData todayData) async {
+    await database().refresh(todayTasksKey, todayData.toMap());
+  }
+
+  Future<TaskViewData> getToday() async {
+    final db = database();
+    var data = await db.value(todayTasksKey);
+
+    // Likely loading.
+    if (data == null) {
+      return TaskViewData(
+        tasks: [],
+        calendarItems: []
+      );
+    }
+    if (data['tasks'] == null) {
+      throw StaleDataError();
+    }
+    return TaskViewData.fromMap(data);
   }
 
   /// Fetch all records in the 'upcoming' view store.
@@ -314,6 +328,10 @@ class LocalDatabase {
     await addTasks([task]);
 
     _expireTask(task);
+  }
+
+  Future<void> expireTask(Task task) async {
+    // TODO remove the task from all the views it is in.
   }
 
   Future<void> deleteTask(Task task) async {

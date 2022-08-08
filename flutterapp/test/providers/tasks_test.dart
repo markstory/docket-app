@@ -43,6 +43,12 @@ void main() {
   file = File('test_resources/task_create_today.json');
   final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
+  Future<void> setTodayView(List<Task> tasks) async {
+    var db = LocalDatabase();
+    var taskView = TaskViewData(tasks: tasks, calendarItems: []);
+    await db.setToday(taskView);
+  }
+
   group('$TasksProvider', () {
     var db = LocalDatabase();
     var session = SessionProvider(db)..set('api-token');
@@ -66,15 +72,12 @@ void main() {
 
         return Response(tasksTodayResponseFixture, 200);
       });
-      try {
-        await provider.getToday();
-        fail('Should raise on no data.');
-      } on StaleDataError catch (_) {
-        expect(true, equals(true));
-      }
-      await provider.fetchToday();
+      var viewData = await provider.getToday();
+      expect(viewData.loading, equals(true));
 
+      await provider.fetchToday();
       var taskData = await provider.getToday();
+      expect(taskData.loading, equals(false));
       expect(taskData.tasks.length, equals(2));
       expect(taskData.tasks[0].title, equals('clean dishes'));
       expect(taskData.calendarItems.length, equals(1));
@@ -131,13 +134,9 @@ void main() {
 
       expect(listenerCallCount, greaterThan(0));
 
-      var updated = await db.fetchTodayTasks(useStale: true);
-      expect(updated.length, equals(1));
-      expect(updated[0].completed, equals(false));
-
-      // Data should not be expired as the task wasn't on today.
-      var withExpired = await db.fetchTodayTasks(useStale: false);
-      expect(withExpired.length, equals(1));
+      var updated = await db.getToday();
+      expect(updated.tasks.length, equals(0));
+      expect(updated.calendarItems.length, equals(0));
     });
 
     test('toggleComplete() expires local data', () async {
@@ -145,22 +144,15 @@ void main() {
         return Response('', 204);
       });
 
-      var db = LocalDatabase();
       var tasks = parseTaskList(tasksTodayResponseFixture);
-      await db.addTasks(tasks);
-      var provider = TasksProvider(db, session);
+      await setTodayView(tasks);
 
+      var provider = TasksProvider(db, session);
       await provider.toggleComplete(tasks[0]);
 
-      var updated = await db.fetchTodayTasks(useStale: true);
-      expect(updated.length, equals(1));
-
-      // Data should be expired as task was due today
-      try {
-        await db.fetchTodayTasks(useStale: false);
-      } on StaleDataError catch (_) {
-        expect(true, equals(true));
-      }
+      // Data should be expired as task was from today.
+      var updated = await db.getToday();
+      expect(updated.tasks.length, equals(0));
     });
 
     test('deleteTask() removes task', () async {
@@ -169,20 +161,17 @@ void main() {
         return Response('', 204);
       });
 
-      var db = LocalDatabase();
       var tasks = parseTaskList(tasksTodayResponseFixture);
-      await db.addTasks(tasks);
-      var provider = TasksProvider(db, session);
+      await setTodayView(tasks);
 
-      var task = tasks[0];
-      await provider.deleteTask(task);
+      var provider = TasksProvider(db, session);
+      await provider.deleteTask(tasks[0]);
 
       expect(listenerCallCount, greaterThan(0));
-      var updated = await db.fetchTodayTasks(useStale: true);
 
-      // The task should be removed locally
-      expect(updated.length, equals(1));
-      expect(updated[0].id, isNot(equals(task.id)));
+      var updated = await provider.getToday();
+      expect(updated.loading, equals(false));
+      expect(updated.tasks.length, equals(0));
     });
 
     test('getById() reads tasks', () async {
@@ -245,8 +234,7 @@ void main() {
       expect(created.id, equals(1));
 
       var todayData = await provider.getToday();
-      expect(todayData.tasks.length, equals(1));
-      expect(todayData.tasks[0].title, equals(task.title));
+      expect(todayData.tasks.length, equals(0));
 
       var projectTasks = await provider.projectTasks('home');
       expect(projectTasks.length, equals(1));
@@ -257,12 +245,15 @@ void main() {
       expect(upcoming.tasks[0].title, equals(task.title));
     });
 
-    test('updateTask() call API, and update today view', () async {
+    test('updateTask() call API, and clears today view', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/1/edit'));
 
         return Response(taskCreateTodayResponseFixture, 200);
       });
+
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await setTodayView(tasks);
 
       var task = Task.blank();
       // This data has to match the fixture file.
@@ -277,10 +268,8 @@ void main() {
       expect(updated.title, equals('fold the towels'));
 
       var todayData = await provider.getToday();
-      expect(todayData.tasks.length, equals(1));
-      expect(todayData.tasks[0].title, equals(task.title));
-
-      // TODO expand this test to cover project and upcoming views.
+      expect(todayData.loading, equals(false));
+      expect(todayData.tasks.length, equals(0));
     });
   });
 }

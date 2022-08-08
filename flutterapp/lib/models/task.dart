@@ -160,5 +160,25 @@ class TaskViewData {
   final List<Task> tasks;
   final List<CalendarItem> calendarItems;
 
-  const TaskViewData({required this.tasks, required this.calendarItems});
+  // Whether or not this is a loading state.
+  bool loading = false;
+
+  TaskViewData({required this.tasks, required this.calendarItems});
+
+  factory TaskViewData.fromMap(Map<String, dynamic> map) {
+    List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
+    List<CalendarItem> calendarItems = (map['tasks'] as List? ?? []).map((data) => CalendarItem.fromMap(data)).toList();
+
+    return TaskViewData(
+      tasks: tasks,
+      calendarItems: calendarItems,
+    );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'tasks': tasks.map((task) => task.toMap()).toList(),
+      'calendarItems': calendarItems.map((item) => item.toMap()).toList(),
+    };
+  }
 }
