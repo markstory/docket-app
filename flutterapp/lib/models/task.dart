@@ -171,7 +171,7 @@ class TaskViewData {
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
-    List<CalendarItem> calendarItems = (map['tasks'] as List? ?? []).map((data) => CalendarItem.fromMap(data)).toList();
+    List<CalendarItem> calendarItems = (map['calendarItems'] as List? ?? []).map((data) => CalendarItem.fromMap(data)).toList();
 
     return TaskViewData(
       tasks: tasks,

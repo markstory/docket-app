@@ -34,6 +34,15 @@ class LocalDatabase {
 
   JsonCache? _database;
 
+  late TodayView today;
+  late UpcomingView upcoming;
+
+  LocalDatabase() {
+    var db = database();
+    today = TodayView(db, const Duration(hours: 1));
+    upcoming = UpcomingView(db, const Duration(hours: 1));
+  }
+
   /// Lazily create the database.
   JsonCache database() {
     if (_database != null) {
@@ -42,13 +51,6 @@ class LocalDatabase {
     final LocalStorage storage = LocalStorage(dbName);
     _database = JsonCacheMem(JsonCacheLocalStorage(storage));
     return _database!;
-  }
-
-  void close() {
-    if (_database == null) {
-      return;
-    }
-    _database = null;
   }
 
   /// See if the storage key is old, or force expired.
@@ -240,29 +242,6 @@ class LocalDatabase {
     indexed[project.slug] = taskIds;
 
     await db.refresh(projectTaskMapKey, indexed);
-  }
-
-  /// Refresh the data stored for the 'today' view.
-  Future<void> setToday(TaskViewData todayData) async {
-    await database().refresh(todayTasksKey, todayData.toMap());
-  }
-
-  Future<TaskViewData> getToday() async {
-    final db = database();
-    var data = await db.value(todayTasksKey);
-
-    // Likely loading.
-    if (data == null) {
-      return TaskViewData(
-        pending: true,
-        tasks: [],
-        calendarItems: []
-      );
-    }
-    if (data['tasks'] == null) {
-      throw StaleDataError();
-    }
-    return TaskViewData.fromMap(data);
   }
 
   /// Fetch all records in the 'upcoming' view store.
@@ -513,4 +492,104 @@ class LocalDatabase {
     ]);
   }
   // }}}
+}
+
+
+/// Abstract class that will act as the base of the ViewCache based database implementation.
+abstract class ViewCache<T> {
+  static const String keyName = '-default-';
+
+  late JsonCache _database;
+  Duration duration;
+
+  ViewCache(JsonCache database, this.duration) {
+    _database = database;
+  }
+
+  Future<bool> isFresh() async {
+    var data = await _database.value(keyName) ?? {};
+    var updated = data['updatedAt'];
+    if (updated == null) {
+      return false;
+    }
+    var timestamp = DateTime.parse(updated);
+    var expires = DateTime.now()..subtract(duration);
+    if (timestamp.isBefore(expires)) {
+      return false;
+    }
+    return true;
+  }
+
+  /// Refresh the data stored for the 'today' view.
+  Future<void> _set(Map<String, dynamic> data) async {
+    await _database.refresh(keyName, data);
+  }
+
+  /// Refresh the data stored for the 'today' view.
+  Future<Map<String, dynamic>?> _get() async {
+    return _database.value(keyName);
+  }
+
+  Future<void>clear() async {
+    return _database.remove(keyName);
+  }
+
+  /// Set data into the view cache.
+  Future<void>set(T data);
+
+  // Get data from the view cache.
+  Future<T>get();
+}
+
+
+class TodayView extends ViewCache<TaskViewData> {
+  static const String keyName = 'v1:todaytasks';
+
+  TodayView(JsonCache database, Duration duration): super(database, duration);
+
+  /// Refresh the data stored for the 'today' view.
+  @override
+  Future<void> set(TaskViewData todayData) async {
+    return _set(todayData.toMap());
+  }
+
+  @override
+  Future<TaskViewData> get() async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data['tasks'] == null) {
+      return TaskViewData(
+        pending: true,
+        tasks: [],
+        calendarItems: []
+      );
+    }
+    return TaskViewData.fromMap(data);
+  }
+}
+
+class UpcomingView extends ViewCache<TaskViewData> {
+  static const String keyName = 'v1:upcomingtasks';
+
+  UpcomingView(JsonCache database, Duration duration): super(database, duration);
+
+  /// Refresh the data stored for the 'upcoming' view.
+  @override
+  Future<void> set(TaskViewData data) async {
+    return _set(data.toMap());
+  }
+
+  @override
+  Future<TaskViewData> get() async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data['tasks'] == null) {
+      return TaskViewData(
+        pending: true,
+        tasks: [],
+        calendarItems: []
+      );
+    }
+    return TaskViewData.fromMap(data);
+  }
 }

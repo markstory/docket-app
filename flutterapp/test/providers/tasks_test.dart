@@ -29,7 +29,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late TasksProvider provider;
-  late SessionProvider sessionProvider;
 
   int listenerCallCount = 0;
   var today = DateUtils.dateOnly(DateTime.now());
@@ -46,7 +45,7 @@ void main() {
   Future<void> setTodayView(List<Task> tasks) async {
     var db = LocalDatabase();
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.setToday(taskView);
+    await db.today.set(taskView);
   }
 
   group('$TasksProvider', () {
@@ -62,10 +61,6 @@ void main() {
       await provider.clear();
     });
 
-    tearDown(() {
-      db.close();
-    });
-
     test('getToday() and fetchToday() work together', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/today'));
@@ -74,6 +69,7 @@ void main() {
       });
       var viewData = await provider.getToday();
       expect(viewData.pending, equals(true));
+      expect(viewData.tasks.length, equals(0));
 
       await provider.fetchToday();
       var taskData = await provider.getToday();
@@ -134,7 +130,7 @@ void main() {
 
       expect(listenerCallCount, greaterThan(0));
 
-      var updated = await db.getToday();
+      var updated = await db.today.get();
       expect(updated.tasks.length, equals(0));
       expect(updated.calendarItems.length, equals(0));
     });
@@ -151,7 +147,7 @@ void main() {
       await provider.toggleComplete(tasks[0]);
 
       // Data should be expired as task was from today.
-      var updated = await db.getToday();
+      var updated = await db.today.get();
       expect(updated.tasks.length, equals(0));
     });
 

@@ -32,6 +32,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> clear() async {
+    await _database.today.clear();
     await _database.clearTasks();
     await _database.clearExpired();
     notifyListeners();
@@ -71,13 +72,14 @@ class TasksProvider extends ChangeNotifier {
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
     _pending.remove(ViewNames.today);
 
-    await _database.setToday(taskViewData);
+    print('set data');
+    await _database.today.set(taskViewData);
     notifyListeners();
   }
 
   /// Get the local database state for today view.
   Future<TaskViewData> getToday() async {
-    var taskView = await _database.getToday();
+    var taskView = await _database.today.get();
     if (_pending.contains(ViewNames.today)) {
       taskView.pending = true;
     }
