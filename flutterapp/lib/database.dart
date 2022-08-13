@@ -37,11 +37,17 @@ class LocalDatabase {
 
   late TodayView today;
   late UpcomingView upcoming;
+  late TaskDetailsView taskDetails;
+  late ProjectMapView projectMap;
+  late ProjectDetailsView projectDetails;
 
   LocalDatabase() {
     var db = database();
     today = TodayView(db, const Duration(hours: 1));
     upcoming = UpcomingView(db, const Duration(hours: 1));
+    taskDetails = TaskDetailsView(db, const Duration(hours: 1));
+    projectMap = ProjectMapView(db, const Duration(hours: 1));
+    projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
   }
 
   /// Lazily create the database.
@@ -108,34 +114,25 @@ class LocalDatabase {
   /// custom logic to remove cached data for the impacted views.
   /// This ensures that we don't provide stale state to the Provider
   /// layer and instead Providers fetch fresh data from the Server.
-  Future<void> _expireTask(Task task) async {
-    final db = database();
+  Future<void> _expireTaskViews(Task task) async {
+    List<Future> futures = [];
 
     // Remove the project key so we read fresh data next time.
-    var projectIndex = await db.value(projectTaskMapKey);
-    projectIndex ??= {};
-    projectIndex.remove(task.projectSlug);
-    await db.refresh(projectTaskMapKey, projectIndex);
+    futures.add(projectDetails.remove(task.projectSlug));
 
-    var now = DateTime.now();
-    var views = _taskViews(task);
-    // Long term this will go away as views are moved to the ViewCache approach
-    var current = await db.value(expiredKey) ?? {};
-
-    for (var key in views) {
+    for (var key in _taskViews(task)) {
       switch (key) {
         case TodayView.keyName:
-          await today.clear();
+          futures.add(today.clear());
           break;
         case UpcomingView.keyName:
-          await upcoming.clear();
+          futures.add(upcoming.clear());
           break;
         default:
-          current[key] = now.millisecondsSinceEpoch;
-          break;
+          throw 'Unknown view key of $key';
       }
     }
-    return db.refresh(expiredKey, current);
+    await Future.wait(futures);
   }
 
   /// Directly set a key. Avoid use outside of tests.
@@ -162,18 +159,6 @@ class LocalDatabase {
 
   // Task Methods. {{{
 
-  /// Add records to the 'today' view store.
-  Future<void> setTodayTasks(List<Task> tasks) async {
-    await database().remove(todayTasksKey);
-    await addTasks(tasks);
-  }
-
-  /// Add records to the 'today' view store.
-  Future<void> setUpcomingTasks(List<Task> tasks) async {
-    await database().remove(upcomingTasksKey);
-    await addTasks(tasks);
-  }
-
   Map<int, List<String>> viewUpdates = {};
 
   /// Store a list of Tasks.
@@ -181,19 +166,10 @@ class LocalDatabase {
   /// Each task will added to the relevant date/project
   /// views as well as the task lookup map
   Future<void> addTasks(List<Task> tasks, {bool expire = false}) async {
-    final db = database();
-
-    Map<String, List<int>> viewUpdates = {};
-    Map<String, List<int>> projectUpdates = {};
-
-    var taskMap = await db.value(taskMapKey) ?? {};
     List<Future> futures = [];
     for (var task in tasks) {
-      var id = task.id;
-      if (id == null) {
-        continue;
-      }
-      taskMap[id.toString()] = task.toMap();
+      // Refresh task in taskDetails lookup.
+      futures.add(taskDetails.set(task));
 
       // Update the pending view updates.
       for (var view in _taskViews(task)) {
@@ -205,82 +181,13 @@ class LocalDatabase {
             futures.add(upcoming.clear());
           break;
           default:
-            if (!viewUpdates.containsKey(view)) {
-              viewUpdates[view] = [];
-            }
-            viewUpdates[view]?.add(id);
-          break;
+            throw 'Unknown view to clear "$view"';
         }
       }
-
-      // Update pending project tasks
-      var projectSlug = task.projectSlug;
-      if (!projectUpdates.containsKey(projectSlug)) {
-        projectUpdates[projectSlug] = [];
-      }
-      projectUpdates[projectSlug]?.add(id);
+      futures.add(projectDetails.remove(task.projectSlug));
     }
-
-    // Update task mapping.
-    futures.add(db.refresh(taskMapKey, taskMap));
-
-    // Update Project views.
-    var projectTasks = await db.value(projectTaskMapKey) ?? {};
-    for (var projectSlug in projectUpdates.keys) {
-      if (!projectTasks.containsKey(projectSlug)) {
-        projectTasks[projectSlug] = [];
-      }
-      projectTasks[projectSlug].addAll(projectUpdates[projectSlug]);
-    }
-    futures.add(db.refresh(projectTaskMapKey, projectTasks));
 
     await Future.wait(futures);
-  }
-
-  /// Fetch all tasks for a single project.
-  Future<void> addProjectTasks(Project project, List<Task> tasks) async {
-    // Add tasks and project to the shared stores.
-    await addTasks(tasks);
-    await addProjects([project]);
-
-    // Update the project : task mapping.
-    final db = database();
-    var indexed = await db.value(projectTaskMapKey) ?? {};
-    var taskIds = tasks.map((task) => task.id).toList();
-    indexed[project.slug] = taskIds;
-
-    await db.refresh(projectTaskMapKey, indexed);
-  }
-
-  /// Fetch all records in the 'upcoming' view store.
-  Future<List<Task>> fetchUpcomingTasks({useStale = false}) async {
-    var isStale = await _isDataStale(upcomingTasksKey, useStale);
-    if (isStale) {
-      throw StaleDataError();
-    }
-    var results = await database().value(upcomingTasksKey);
-    if (results == null || results['tasks'] == null) {
-      throw StaleDataError();
-    }
-    List<int> taskIds = results['tasks'].cast<int>();
-
-    return getTasksById(taskIds);
-  }
-
-  /// Fetch all tasks for a single project.
-  Future<List<Task>> fetchProjectTasks(String slug, {useStale = false}) async {
-    // Update the project : task mapping.
-    var isStale = await _isDataStale(projectTaskMapKey, useStale);
-    if (isStale) {
-      return [];
-    }
-    var results = await database().value(projectTaskMapKey) ?? {};
-    if (results[slug] == null) {
-      return [];
-    }
-    List<int> taskIds = results[slug].cast<int>();
-
-    return getTasksById(taskIds);
   }
 
   /// Fetch a list of tasks by id.
@@ -315,25 +222,17 @@ class LocalDatabase {
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
     await addTasks([task]);
-    return _expireTask(task);
-  }
-
-  Future<void> expireTask(Task task) async {
-    // TODO remove the task from all the views it is in.
+    return _expireTaskViews(task);
   }
 
   Future<void> deleteTask(Task task) async {
-    if (task.id == null) {
+    var id = task.id;
+    if (id == null) {
       return;
     }
-    final db = database();
+    await taskDetails.remove(id);
 
-    // Remove the task from the task mapping.
-    var indexed = await db.value(taskMapKey) ?? {};
-    indexed.remove(task.id.toString());
-    await db.refresh(taskMapKey, indexed);
-
-    return _expireTask(task);
+    return _expireTaskViews(task);
   }
   // }}}
 
@@ -341,158 +240,35 @@ class LocalDatabase {
 
   /// Add a list of projects to the local database.
   Future<void> addProjects(List<Project> projects) async {
-    final db = database();
-    var projectMap = await db.value(projectsKey) ?? {};
-    for (var project in projects) {
-      projectMap[project.slug] = project.toMap();
-    }
-    await db.refresh(projectsKey, projectMap);
+    await Future.wait(
+      projects.map((item) => projectMap.set(item)).toList()
+    );
   }
 
   /// Update a project in the project list state.
   Future<void> updateProject(Project project) async {
-    final db = database();
-    var projectMap = await db.value(projectsKey) ?? {};
-    projectMap[project.slug] = project.toMap();
-    await db.refresh(projectsKey, projectMap);
-  }
-
-  /// Get an individual project by slug.
-  Future<Project> fetchProjectBySlug(String slug) async {
-    final db = database();
-    var projectMap = await db.value(projectsKey);
-    if (projectMap == null || projectMap[slug] == null) {
-      throw StaleDataError();
-    }
-    return Project.fromMap(projectMap[slug]);
-  }
-
-  /// Get a list of projects sorted by the `ranking` field.
-  Future<List<Project>> fetchProjects() async {
-    final db = database();
-    var projectMap = await db.value(projectsKey);
-    if (projectMap == null) {
-      throw StaleDataError();
-    }
-    List<Project> projects = [];
-    for (var item in projectMap.values) {
-      projects.add(Project.fromMap(item));
-    }
-    projects.sort((a, b) => a.ranking.compareTo(b.ranking));
-
-    return projects;
+    await Future.wait([
+      projectMap.set(project),
+      projectDetails.remove(project.slug),
+    ]);
   }
   // }}}
 
-  // Calendar Item Methods {{{
 
-  /// Add a list of calendar items to the canonical lookup.
-  Future<void> addCalendarItems(List<CalendarItem> calendarItems) async {
-    final db = database();
-    var indexed = await db.value(calendarItemMapKey) ?? {};
-    for (var calendarItem in calendarItems) {
-      indexed[calendarItem.id] = calendarItem.toMap();
-    }
-    await db.refresh(calendarItemMapKey, indexed);
-  }
-
-  /// Get a list of calendar items for the today view
-  Future<List<CalendarItem>> fetchTodayCalendarItems({useStale = false}) async {
-    final db = database();
-    var isStale = await _isDataStale(todayCalendarItemKey, useStale);
-    if (isStale) {
-      throw StaleDataError();
-    }
-    var results = await db.value(todayCalendarItemKey);
-    if (results == null || results['items'] == null) {
-      return [];
-    }
-    List<String> ids = results['items'];
-
-    return _getCalendarItemsById(ids);
-  }
-
-  /// Get a list of calendar items for the upcoming view
-  Future<List<CalendarItem>> fetchUpcomingCalendarItems({useStale = false}) async {
-    final db = database();
-    var isStale = await _isDataStale(upcomingCalendarItemKey, useStale);
-    if (isStale) {
-      throw StaleDataError();
-    }
-    var results = await db.value(upcomingCalendarItemKey);
-    if (results == null || results['items'] == null) {
-      return [];
-    }
-    List<String> ids = results['items'];
-
-    return _getCalendarItemsById(ids);
-  }
-
-  /// Add records to the 'today' view store.
-  Future<void> setTodayCalendarItems(List<CalendarItem> items) async {
-    await addCalendarItems(items);
-
-    final db = database();
-    await db.refresh(todayCalendarItemKey, {
-      'items': items.map((item) => item.id).toList(),
-    });
-  }
-
-  /// Add records to the 'today' view store.
-  Future<void> setUpcomingCalendarItems(List<CalendarItem> items) async {
-    await addCalendarItems(items);
-
-    final db = database();
-    await db.refresh(upcomingCalendarItemKey, {
-      'items': items.map((item) => item.id).toList(),
-    });
-  }
-
-  /// Get a list of calendar items by id.
-  ///
-  /// Used by fetch methods to read results from the local mapping
-  /// of items.
-  Future<List<CalendarItem>> _getCalendarItemsById(List<String> ids) async {
-    final db = database();
-    var indexed = await db.value(calendarItemMapKey);
-    indexed ??= {};
-    List<CalendarItem> items = [];
-    for (var id in ids) {
-      var record = indexed[id];
-      if (record == null) {
-        developer.log('Skipping item with id=$id as it could not be found.');
-        continue;
-      }
-      items.add(CalendarItem.fromMap(record));
-    }
-    return items;
-  }
-  // }}}
-
-  // Data Erasing Methods {{{
-  Future<void> clearExpired() async {
-    final db = database();
-    return db.remove(expiredKey);
-  }
-
+  // Clearing methods {{{
   Future<List<void>> clearTasks() async {
-    final db = database();
     return Future.wait([
-      db.remove(taskMapKey),
-      db.remove(todayTasksKey),
-      db.remove(upcomingTasksKey),
-      db.remove(projectTaskMapKey),
-      db.remove(calendarItemMapKey),
-      db.remove(todayCalendarItemKey),
-      db.remove(upcomingCalendarItemKey),
+      taskDetails.clear(),
+      today.clear(),
+      upcoming.clear(),
+      projectDetails.clear(),
     ]);
   }
 
   Future<List<void>> clearProjects() async {
-    final db = database();
     return Future.wait([
-      db.remove(projectsKey),
-      db.remove(projectTaskMapKey),
+      projectMap.clear(),
+      projectDetails.clear(),
     ]);
   }
   // }}}
@@ -540,14 +316,13 @@ abstract class ViewCache<T> {
   }
 
   Future<void>clear() async {
-    return _database.remove(keyName);
+    // TODO this doesn't actually work.
+    // the keyname is -default-
+    return _database.remove(static.keyName);
   }
 
   /// Set data into the view cache.
   Future<void>set(T data);
-
-  // Get data from the view cache.
-  Future<T>get();
 }
 
 
@@ -562,7 +337,6 @@ class TodayView extends ViewCache<TaskViewData> {
     return _set(todayData.toMap());
   }
 
-  @override
   Future<TaskViewData> get() async {
     var data = await _get();
     // Likely loading.
@@ -588,7 +362,6 @@ class UpcomingView extends ViewCache<TaskViewData> {
     return _set(data.toMap());
   }
 
-  @override
   Future<TaskViewData> get() async {
     var data = await _get();
     // Likely loading.
@@ -600,5 +373,120 @@ class UpcomingView extends ViewCache<TaskViewData> {
       );
     }
     return TaskViewData.fromMap(data);
+  }
+}
+
+// A map based view data provider
+class TaskDetailsView extends ViewCache<Task> {
+  static const String keyName = 'v1:taskmap';
+
+  TaskDetailsView(JsonCache database, Duration duration): super(database, duration);
+
+  /// Set a task into the details view.
+  @override
+  Future<void> set(Task task) async {
+    var current = await _get() ?? {};
+    current[task.id.toString()] = task.toMap();
+
+    return _set(current);
+  }
+
+  Future<Task?> get(int id) async {
+    var taskId = id.toString();
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data[taskId] == null) {
+      return null;
+    }
+    return Task.fromMap(data[taskId]);
+  }
+
+  Future<void> remove(int id) async {
+    var data = await _get() ?? {};
+    var taskId = id.toString();
+
+    data.remove(taskId);
+    return _set(data);
+  }
+}
+
+// A map based view data provider
+class ProjectMapView extends ViewCache<Project> {
+  static const String keyName = 'v1:projectmap';
+
+  ProjectMapView(JsonCache database, Duration duration): super(database, duration);
+
+  /// Set a project into the lookup
+  @override
+  Future<void> set(Project project) async {
+    var current = await _get() ?? {};
+    current[project.slug] = project.toMap();
+
+    return _set(current);
+  }
+
+  Future<void> addMany(List<Project> projects) async {
+    var current = await _get() ?? {};
+    for (var project in projects) {
+      current[project.slug] = project.toMap();
+    }
+    return _set(current);
+  }
+
+  Future<Project?> get(String slug) async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data[slug] == null) {
+      return null;
+    }
+    return Project.fromMap(data[slug]);
+  }
+
+  Future<List<Project>> all() async {
+    var data = await _get();
+    if (data == null) {
+      return [];
+    }
+    var projects = data.values.map((item) => Project.fromMap(item)) .toList();
+    projects.sort((a, b) => a.ranking.compareTo(b.ranking));
+    return projects;
+  }
+
+  Future<void> remove(String slug) async {
+    var data = await _get() ?? {};
+    data.remove(slug);
+    return _set(data);
+  }
+}
+
+
+// A map based view data provider
+class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
+  static const String keyName = 'v1:projectmap';
+
+  ProjectDetailsView(JsonCache database, Duration duration): super(database, duration);
+
+  /// Set a project into the lookup
+  @override
+  Future<void> set(ProjectWithTasks view) async {
+    var current = await _get() ?? {};
+    current[view.project.slug] = view.toMap();
+
+    return _set(current);
+  }
+
+  Future<ProjectWithTasks?> get(String slug) async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data[slug] == null) {
+      return null;
+    }
+    return ProjectWithTasks.fromMap(data[slug]);
+  }
+
+  Future<void> remove(String slug) async {
+    var data = await _get() ?? {};
+    data.remove(slug);
+    return _set(data);
   }
 }

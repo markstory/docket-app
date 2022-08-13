@@ -39,7 +39,7 @@ class TaskDetailsScreen extends StatelessWidget {
       return Portal(
           child: Scaffold(
         appBar: AppBar(title: const Text('Task Details')),
-        body: FutureBuilder<Task>(
+        body: FutureBuilder<Task?>(
             future: pendingTask,
             builder: (context, snapshot) {
               var task = snapshot.data;

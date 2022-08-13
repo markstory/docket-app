@@ -6,7 +6,6 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/models/task.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
@@ -40,7 +39,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       return Scaffold(
         appBar: AppBar(title: const Text('Project Details')),
         drawer: const AppDrawer(),
-        body: FutureBuilder<Project>(
+        body: FutureBuilder<ProjectWithTasks?>(
             future: projectFuture,
             builder: (context, snapshot) {
               // Doing this query here should result in us hitting cache all the time
@@ -50,29 +49,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   child: Text('404! Your project has gone missing!'),
                 );
               }
-              var taskList = tasksProvider.projectTasks(widget.slug);
-
               return ListView(children: [
                 Row(children: [
                   SizedBox(width: space(2)),
-                  Text(project.name, style: theme.textTheme.titleLarge),
-                  TaskAddButton(projectId: project.id),
+                  Text(project.project.name, style: theme.textTheme.titleLarge),
+                  TaskAddButton(projectId: project.project.id),
                   const Spacer(),
                   IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        // TODO Show project menu!
-                      }),
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      // TODO Show project menu!
+                    }
+                  ),
+                  TaskGroup(tasks: project.tasks, showDate: true),
                 ]),
-                FutureBuilder<List<Task>>(
-                    future: taskList,
-                    builder: (context, snapshot) {
-                      var tasks = snapshot.data;
-                      if (tasks == null) {
-                        return const LoadingIndicator();
-                      }
-                      return TaskGroup(tasks: tasks, showDate: true);
-                    })
               ]);
             }),
       );

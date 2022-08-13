@@ -178,7 +178,8 @@ void main() {
       var provider = TasksProvider(db, session);
 
       var task = await provider.getById(1);
-      expect(task.id, equals(1));
+      expect(task, isNotNull);
+      expect(task!.id, equals(1));
     });
 
     test('getById() throws error on network failure', () async {
@@ -192,22 +193,6 @@ void main() {
       } catch (err) {
         expect(err.toString(), contains('Could not load'));
       }
-    });
-
-    test('projectTasks() fetch from the API and database', () async {
-      int requestCounter = 0;
-
-      actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects/home'));
-        requestCounter += 1;
-        return Response(projectDetailsResponseFixture, 200);
-      });
-
-      await provider.fetchProjectTasks('home');
-      var tasks = await provider.projectTasks('home');
-
-      expect(requestCounter, equals(1));
-      expect(tasks.length, equals(2));
     });
 
     test('createTask() calls API, clears date views & project view', () async {
@@ -232,10 +217,6 @@ void main() {
 
       var todayData = await provider.getToday();
       expect(todayData.tasks.length, equals(0));
-
-      var projectTasks = await provider.projectTasks('home');
-      expect(projectTasks.length, equals(1));
-      expect(projectTasks[0].title, equals(task.title));
     });
 
     test('updateTask() call API, and clears today view', () async {
@@ -257,11 +238,12 @@ void main() {
       task.dueOn = today;
 
       var updated = await provider.updateTask(task);
+      print('update complete');
       expect(updated.id, equals(1));
       expect(updated.title, equals('fold the towels'));
 
       var todayData = await provider.getToday();
-      expect(todayData.pending, equals(true));
+      expect(todayData.pending, equals(false));
       expect(todayData.tasks.length, equals(0));
     });
   });

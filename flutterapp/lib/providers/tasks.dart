@@ -21,7 +21,6 @@ class TasksProvider extends ChangeNotifier {
   SessionProvider? session;
   Set<ViewNames> _pending = {};
 
-
   TasksProvider(LocalDatabase database, this.session) {
     _database = database;
     _pending = {};
@@ -32,25 +31,22 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> clear() async {
-    await _database.today.clear();
     await _database.clearTasks();
-    await _database.clearExpired();
+
+    notifyListeners();
+  }
+
+  Future<void> fetchById(int id) async {
+    var task = await actions.fetchTaskById(session!.apiToken, id);
+    await _database.addTasks([task], expire: true);
+
     notifyListeners();
   }
 
   /// Get a task from the local database or server if
   /// it doesn't exist locally.
-  Future<Task> getById(int id) async {
-    late Task? task;
-    try {
-      task = await _database.fetchTaskById(id);
-    } catch (e) {
-      rethrow;
-    }
-    task ??= await actions.fetchTaskById(session!.apiToken, id);
-    await _database.addTasks([task], expire: true);
-
-    return task;
+  Future<Task?> getById(int id) async {
+    return _database.taskDetails.get(id);
   }
 
   /// Create a task on the server and notify listeners.
@@ -103,17 +99,6 @@ class TasksProvider extends ChangeNotifier {
       taskView.pending = true;
     }
     return taskView;
-  }
-
-  Future<void> fetchProjectTasks(String projectSlug) async {
-    var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, projectSlug);
-    await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
-    notifyListeners();
-  }
-
-  /// Get a list of projects for a given task
-  Future<List<Task>> projectTasks(String projectSlug) async {
-    return await _database.fetchProjectTasks(projectSlug);
   }
 
   /// Flip task.completed and persist to the server.

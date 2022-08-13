@@ -115,5 +115,25 @@ class ProjectWithTasks {
   final Project project;
   final List<Task> tasks;
 
-  const ProjectWithTasks({required this.project, required this.tasks});
+  ProjectWithTasks({required this.project, required this.tasks});
+
+  // Whether or not a data refresh is pending
+  bool pending = false;
+
+  factory ProjectWithTasks.fromMap(Map<String, dynamic> map) {
+    List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
+    Project project = Project.fromMap(map['project'] ?? {});
+
+    return ProjectWithTasks(
+      project: project,
+      tasks: tasks,
+    );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'project': project.toMap(),
+      'tasks': tasks.map((task) => task.toMap()).toList(),
+    };
+  }
 }

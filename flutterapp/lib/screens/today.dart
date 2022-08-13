@@ -10,6 +10,7 @@ import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskdatesorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/providers/projects.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
@@ -30,8 +31,10 @@ class _TodayScreenState extends State<TodayScreen> {
   void initState() {
     super.initState();
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     tasksProvider.fetchToday();
+    projectsProvider.fetchProjects();
   }
 
   @override

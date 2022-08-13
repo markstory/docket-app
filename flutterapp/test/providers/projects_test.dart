@@ -46,8 +46,6 @@ void main() {
         return Response(projectsResponseFixture, 200);
       });
 
-      expect(provider.getAll(), throwsStaleData());
-
       await provider.fetchProjects();
       expect(listenerCallCount, greaterThan(0));
       expect(requestCounter, equals(1));
@@ -76,12 +74,13 @@ void main() {
       });
 
       await provider.fetchBySlug('home');
-      var project = await provider.getBySlug('home');
-      expect(listenerCallCount, greaterThan(0));
+      var view = await provider.getBySlug('home');
+      expect(view, isNotNull);
+      expect(view!.project.slug, equals('home'));
 
       // Only one API call made.
       expect(requestCounter, equals(1));
-      expect(project.slug, equals('home'));
+      expect(listenerCallCount, greaterThan(0));
     });
 
     test('fetchBySlug() raises on unknown slug', () async {
@@ -100,14 +99,11 @@ void main() {
       });
       await provider.fetchBySlug('home');
 
-      await provider.getBySlug('home');
-
-      var db = LocalDatabase();
-      var tasks = await db.fetchProjectTasks('home');
-      expect(tasks.length, equals(2));
+      var view = await provider.getBySlug('home');
+      expect(view!.tasks.length, equals(2));
     });
 
-    test('move() makes API request and updates local db', () async {
+    test('move() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home/move'));
         return Response(projectViewResponseFixture, 200);
@@ -122,9 +118,8 @@ void main() {
       await provider.move(project, 2);
 
       var db = LocalDatabase();
-      project = await db.fetchProjectBySlug('home');
-      expect(project.ranking, equals(2));
-      expect(listenerCallCount, greaterThan(0));
+      var reloaded = await db.projectMap.get('home');
+      expect(reloaded, isNull);
     });
   });
 }

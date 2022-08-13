@@ -27,7 +27,7 @@ class ProjectsProvider extends ChangeNotifier {
   Future<Project> createProject(Project project) async {
     project = await actions.createProject(session!.apiToken, project);
 
-    await _database.addProjects([project]);
+    await _database.projectMap.set(project);
     notifyListeners();
 
     return project;
@@ -35,37 +35,40 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Fetch a project from the API and notifyListeners.
   Future<void> fetchBySlug(String slug) async {
-    // TODO Perhaps this is where cache expiration should be checked.
-    // Doing it here would let network calls to be skipped which
-    // would be nice.
+    // TODO add cache checks
     var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
 
-    await _database.addProjectTasks(projectDetails.project, projectDetails.tasks);
+    await _database.projectDetails.set(projectDetails);
     notifyListeners();
   }
 
   /// Read a project from the local database by slug.
-  Future<Project> getBySlug(String slug) async {
-    return await _database.fetchProjectBySlug(slug);
+  Future<ProjectWithTasks?> getBySlug(String slug) async {
+    return _database.projectDetails.get(slug);
   }
 
   /// Fetch projects from the API and notifyListeners
   Future<void> fetchProjects() async {
     var projects = await actions.fetchProjects(session!.apiToken);
-    await _database.addProjects(projects);
+
+    await _database.projectMap.addMany(projects);
+
     notifyListeners();
   }
 
   /// Get the project list from the local database.
   Future<List<Project>> getAll() async {
-    return await _database.fetchProjects();
+    return _database.projectMap.all();
   }
 
   /// Move a project on the server and locally
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
     project = await actions.moveProject(session!.apiToken, project, newRank);
-    await _database.updateProject(project);
+    await Future.wait([
+      _database.projectMap.set(project),
+      _database.projectDetails.remove(project.slug),
+    ]);
     notifyListeners();
   }
 }
