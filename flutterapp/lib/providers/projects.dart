@@ -65,10 +65,12 @@ class ProjectsProvider extends ChangeNotifier {
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
     project = await actions.moveProject(session!.apiToken, project, newRank);
+
     await Future.wait([
       _database.projectMap.set(project),
       _database.projectDetails.remove(project.slug),
     ]);
+
     notifyListeners();
   }
 }

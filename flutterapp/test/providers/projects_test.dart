@@ -118,8 +118,12 @@ void main() {
       await provider.move(project, 2);
 
       var db = LocalDatabase();
-      var reloaded = await db.projectMap.get('home');
-      expect(reloaded, isNull);
+      var projectMap = await db.projectMap.get('home');
+      expect(project, isNotNull);
+      expect(projectMap!.slug, equals('home'));
+
+      var details = await db.projectDetails.get('home');
+      expect(details, isNull);
     });
   });
 }
