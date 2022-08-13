@@ -3,6 +3,7 @@ import 'package:docket/models/calendaritem.dart';
 import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
+import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
@@ -116,20 +117,25 @@ class LocalDatabase {
     projectIndex.remove(task.projectSlug);
     await db.refresh(projectTaskMapKey, projectIndex);
 
-    var current = await db.value(expiredKey);
-    current ??= {};
-
     var now = DateTime.now();
     var views = _taskViews(task);
+    // Long term this will go away as views are moved to the ViewCache approach
+    var current = await db.value(expiredKey) ?? {};
+
     for (var key in views) {
-      // Trying out having today as a full page cache
-      if (key == todayTasksKey) {
-        await db.remove(todayTasksKey);
-      } else {
-        current[key] = now.millisecondsSinceEpoch;
+      switch (key) {
+        case TodayView.keyName:
+          await today.clear();
+          break;
+        case UpcomingView.keyName:
+          await upcoming.clear();
+          break;
+        default:
+          current[key] = now.millisecondsSinceEpoch;
+          break;
       }
     }
-    await db.refresh(expiredKey, current);
+    return db.refresh(expiredKey, current);
   }
 
   /// Directly set a key. Avoid use outside of tests.
@@ -174,13 +180,14 @@ class LocalDatabase {
   ///
   /// Each task will added to the relevant date/project
   /// views as well as the task lookup map
-  Future<void> addTasks(List<Task> tasks) async {
+  Future<void> addTasks(List<Task> tasks, {bool expire = false}) async {
     final db = database();
 
     Map<String, List<int>> viewUpdates = {};
     Map<String, List<int>> projectUpdates = {};
 
     var taskMap = await db.value(taskMapKey) ?? {};
+    List<Future> futures = [];
     for (var task in tasks) {
       var id = task.id;
       if (id == null) {
@@ -190,14 +197,19 @@ class LocalDatabase {
 
       // Update the pending view updates.
       for (var view in _taskViews(task)) {
-        // Trying out having today as a full page cache
-        if (view == todayTasksKey) {
-          await db.remove(todayTasksKey);
-        } else {
-          if (!viewUpdates.containsKey(view)) {
-            viewUpdates[view] = [];
-          }
-          viewUpdates[view]?.add(id);
+        switch (view) {
+          case TodayView.keyName:
+            futures.add(today.clear());
+          break;
+          case UpcomingView.keyName:
+            futures.add(upcoming.clear());
+          break;
+          default:
+            if (!viewUpdates.containsKey(view)) {
+              viewUpdates[view] = [];
+            }
+            viewUpdates[view]?.add(id);
+          break;
         }
       }
 
@@ -208,15 +220,9 @@ class LocalDatabase {
       }
       projectUpdates[projectSlug]?.add(id);
     }
-    // Update task mapping.
-    await db.refresh(taskMapKey, taskMap);
 
-    // Update legacy date views
-    for (var view in viewUpdates.keys) {
-      var viewData = await db.value(view) ?? {"tasks": []};
-      viewData["tasks"].addAll(viewUpdates[view]);
-      await db.refresh(view, viewData);
-    }
+    // Update task mapping.
+    futures.add(db.refresh(taskMapKey, taskMap));
 
     // Update Project views.
     var projectTasks = await db.value(projectTaskMapKey) ?? {};
@@ -226,7 +232,9 @@ class LocalDatabase {
       }
       projectTasks[projectSlug].addAll(projectUpdates[projectSlug]);
     }
-    await db.refresh(projectTaskMapKey, projectTasks);
+    futures.add(db.refresh(projectTaskMapKey, projectTasks));
+
+    await Future.wait(futures);
   }
 
   /// Fetch all tasks for a single project.
@@ -306,12 +314,8 @@ class LocalDatabase {
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
-    // TODO remove this task from all project views.
-    // There isn't a good way to find the task other than to
-    // enumerate all of the project task maps :|
     await addTasks([task]);
-
-    _expireTask(task);
+    return _expireTask(task);
   }
 
   Future<void> expireTask(Task task) async {
@@ -329,7 +333,7 @@ class LocalDatabase {
     indexed.remove(task.id.toString());
     await db.refresh(taskMapKey, indexed);
 
-    await _expireTask(task);
+    return _expireTask(task);
   }
   // }}}
 
@@ -522,12 +526,17 @@ abstract class ViewCache<T> {
 
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
-    await _database.refresh(keyName, data);
+    var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
+    await _database.refresh(keyName, payload);
   }
 
   /// Refresh the data stored for the 'today' view.
   Future<Map<String, dynamic>?> _get() async {
-    return _database.value(keyName);
+    var payload = await _database.value(keyName);
+    if (payload == null) {
+      return null;
+    }
+    return payload['data'];
   }
 
   Future<void>clear() async {

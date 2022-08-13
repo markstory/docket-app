@@ -48,7 +48,7 @@ class TasksProvider extends ChangeNotifier {
       rethrow;
     }
     task ??= await actions.fetchTaskById(session!.apiToken, id);
-    await _database.addTasks([task]);
+    await _database.addTasks([task], expire: true);
 
     return task;
   }
@@ -66,13 +66,11 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
-    // TODO make this conditional on the existence of the today key.
-    // Will likely need another database method.
+    // TODO make this use _database.today.isFresh()
     _pending.add(ViewNames.today);
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
     _pending.remove(ViewNames.today);
 
-    print('set data');
     await _database.today.set(taskViewData);
     notifyListeners();
   }
@@ -89,19 +87,22 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for upcoming view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchUpcoming() async {
+    // TODO make this use _database.upcoming.isFresh()
+    _pending.add(ViewNames.upcoming);
     var taskViewData = await actions.loadUpcomingTasks(session!.apiToken);
+    _pending.remove(ViewNames.upcoming);
 
-    await _database.setUpcomingTasks(taskViewData.tasks);
-    await _database.setUpcomingCalendarItems(taskViewData.calendarItems);
+    await _database.upcoming.set(taskViewData);
     notifyListeners();
   }
 
   // Get the locally cached upcoming tasks.
   Future<TaskViewData> getUpcoming() async {
-    var tasks = await _database.fetchUpcomingTasks();
-    var calendarItems = await _database.fetchUpcomingCalendarItems();
-
-    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
+    var taskView = await _database.upcoming.get();
+    if (_pending.contains(ViewNames.upcoming)) {
+      taskView.pending = true;
+    }
+    return taskView;
   }
 
   Future<void> fetchProjectTasks(String projectSlug) async {

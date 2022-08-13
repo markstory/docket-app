@@ -78,6 +78,7 @@ void main() {
       expect(taskData.tasks[0].title, equals('clean dishes'));
       expect(taskData.calendarItems.length, equals(1));
       expect(taskData.calendarItems[0].title, equals('Get haircut'));
+      expect(listenerCallCount, greaterThanOrEqualTo(1));
     });
 
     test('fetchToday() handles server errors', () async {
@@ -98,20 +99,16 @@ void main() {
 
         return Response(tasksTodayResponseFixture, 200);
       });
-      try {
-        await provider.getUpcoming();
-        fail('Should raise on no data.');
-      } on StaleDataError catch (_) {
-        expect(true, equals(true));
-      }
+      var viewData = await provider.getUpcoming();
+      expect(viewData.pending, equals(true));
 
       await provider.fetchUpcoming();
-
       var taskData = await provider.getUpcoming();
       expect(taskData.tasks.length, equals(2));
       expect(taskData.tasks[0].title, equals('clean dishes'));
       expect(taskData.calendarItems.length, equals(1));
       expect(taskData.calendarItems[0].title, equals('Get haircut'));
+      expect(listenerCallCount, greaterThanOrEqualTo(1));
     });
 
     test('toggleComplete() sends complete request', () async {
@@ -213,12 +210,16 @@ void main() {
       expect(tasks.length, equals(2));
     });
 
-    test('createTask() calls API, updates date views & project view', () async {
+    test('createTask() calls API, clears date views & project view', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/add'));
 
         return Response(taskCreateTodayResponseFixture, 200);
       });
+
+      // Seed the today view
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await setTodayView(tasks);
 
       var task = Task.blank();
       // This data has to match the fixture file.
@@ -235,10 +236,6 @@ void main() {
       var projectTasks = await provider.projectTasks('home');
       expect(projectTasks.length, equals(1));
       expect(projectTasks[0].title, equals(task.title));
-
-      var upcoming = await provider.getUpcoming();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
     });
 
     test('updateTask() call API, and clears today view', () async {
