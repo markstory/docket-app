@@ -169,26 +169,27 @@ void main() {
 
     test('getById() reads tasks', () async {
       actions.client = MockClient((request) async {
-        throw Exception('No request should be sent.');
+        expect(request.url.path, equals('/tasks/1/view'));
+        return Response(taskCreateTodayResponseFixture, 200);
       });
 
       var db = LocalDatabase();
-      var tasks = parseTaskList(tasksTodayResponseFixture);
-      await db.addTasks(tasks);
       var provider = TasksProvider(db, session);
+
+      await provider.fetchById(1);
 
       var task = await provider.getById(1);
       expect(task, isNotNull);
       expect(task!.id, equals(1));
     });
 
-    test('getById() throws error on network failure', () async {
+    test('fetchById() throws error on network failure', () async {
       actions.client = MockClient((request) async {
         return Response('error', 500);
       });
 
       try {
-        await provider.getById(1);
+        await provider.fetchById(1);
         fail('Should not get here');
       } catch (err) {
         expect(err.toString(), contains('Could not load'));
@@ -238,12 +239,11 @@ void main() {
       task.dueOn = today;
 
       var updated = await provider.updateTask(task);
-      print('update complete');
       expect(updated.id, equals(1));
       expect(updated.title, equals('fold the towels'));
 
       var todayData = await provider.getToday();
-      expect(todayData.pending, equals(false));
+      expect(todayData.pending, equals(true));
       expect(todayData.tasks.length, equals(0));
     });
   });

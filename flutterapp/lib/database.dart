@@ -60,26 +60,6 @@ class LocalDatabase {
     return _database!;
   }
 
-  /// See if the storage key is old, or force expired.
-  /// We don't want to eagerly refresh data from the server
-  /// so we flag data as expired and then refresh next time
-  /// data is used.
-  Future<bool> _isDataStale(String key, bool useStale) async {
-    // TODO implement date checks so that local cache expires automatically
-    // every few hours.
-    final db = database();
-    var staleData = await db.value(expiredKey);
-    if (staleData == null || staleData[key] == null || useStale) {
-      return false;
-    }
-    var time = DateTime.now().millisecondsSinceEpoch;
-    var isStale = staleData[key] < time;
-    staleData.remove(key);
-    await db.refresh(expiredKey, staleData);
-
-    return isStale;
-  }
-
   /// Locate which date based views a task would be involved in.
   ///
   /// When tasks are added/removed we need to update or expire
@@ -97,9 +77,9 @@ class LocalDatabase {
     if (task.dueOn != null) {
       var delta = task.dueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
-        views.add(todayTasksKey);
+        views.add(TodayView.name);
       }
-      views.add(upcomingTasksKey);
+      views.add(UpcomingView.name);
     }
 
     return views;
@@ -122,10 +102,10 @@ class LocalDatabase {
 
     for (var key in _taskViews(task)) {
       switch (key) {
-        case TodayView.keyName:
+        case TodayView.name:
           futures.add(today.clear());
           break;
-        case UpcomingView.keyName:
+        case UpcomingView.name:
           futures.add(upcoming.clear());
           break;
         default:
@@ -159,8 +139,6 @@ class LocalDatabase {
 
   // Task Methods. {{{
 
-  Map<int, List<String>> viewUpdates = {};
-
   /// Store a list of Tasks.
   ///
   /// Each task will added to the relevant date/project
@@ -174,10 +152,10 @@ class LocalDatabase {
       // Update the pending view updates.
       for (var view in _taskViews(task)) {
         switch (view) {
-          case TodayView.keyName:
+          case TodayView.name:
             futures.add(today.clear());
           break;
-          case UpcomingView.keyName:
+          case UpcomingView.name:
             futures.add(upcoming.clear());
           break;
           default:
@@ -277,8 +255,6 @@ class LocalDatabase {
 
 /// Abstract class that will act as the base of the ViewCache based database implementation.
 abstract class ViewCache<T> {
-  static const String keyName = '-default-';
-
   late JsonCache _database;
   Duration duration;
 
@@ -287,7 +263,7 @@ abstract class ViewCache<T> {
   }
 
   Future<bool> isFresh() async {
-    var data = await _database.value(keyName) ?? {};
+    var data = await _database.value(keyName()) ?? {};
     var updated = data['updatedAt'];
     if (updated == null) {
       return false;
@@ -303,12 +279,12 @@ abstract class ViewCache<T> {
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
     var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
-    await _database.refresh(keyName, payload);
+    await _database.refresh(keyName(), payload);
   }
 
   /// Refresh the data stored for the 'today' view.
   Future<Map<String, dynamic>?> _get() async {
-    var payload = await _database.value(keyName);
+    var payload = await _database.value(keyName());
     if (payload == null) {
       return null;
     }
@@ -316,10 +292,11 @@ abstract class ViewCache<T> {
   }
 
   Future<void>clear() async {
-    // TODO this doesn't actually work.
-    // the keyname is -default-
-    return _database.remove(static.keyName);
+    return _database.remove(keyName());
   }
+
+  /// Get the keyname for this viewcache,
+  String keyName();
 
   /// Set data into the view cache.
   Future<void>set(T data);
@@ -327,9 +304,14 @@ abstract class ViewCache<T> {
 
 
 class TodayView extends ViewCache<TaskViewData> {
-  static const String keyName = 'v1:todaytasks';
+  static const String name = 'today';
 
   TodayView(JsonCache database, Duration duration): super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:todaytasks';
+  }
 
   /// Refresh the data stored for the 'today' view.
   @override
@@ -352,9 +334,14 @@ class TodayView extends ViewCache<TaskViewData> {
 }
 
 class UpcomingView extends ViewCache<TaskViewData> {
-  static const String keyName = 'v1:upcomingtasks';
+  static const String name = 'upcoming';
 
   UpcomingView(JsonCache database, Duration duration): super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:upcomingtasks';
+  }
 
   /// Refresh the data stored for the 'upcoming' view.
   @override
@@ -378,9 +365,14 @@ class UpcomingView extends ViewCache<TaskViewData> {
 
 // A map based view data provider
 class TaskDetailsView extends ViewCache<Task> {
-  static const String keyName = 'v1:taskmap';
+  static const String name = 'taskdetails';
 
   TaskDetailsView(JsonCache database, Duration duration): super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:taskmap';
+  }
 
   /// Set a task into the details view.
   @override
@@ -412,9 +404,14 @@ class TaskDetailsView extends ViewCache<Task> {
 
 // A map based view data provider
 class ProjectMapView extends ViewCache<Project> {
-  static const String keyName = 'v1:projectmap';
+  static const String name = 'projectmap';
 
   ProjectMapView(JsonCache database, Duration duration): super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:projectmap';
+  }
 
   /// Set a project into the lookup
   @override
@@ -462,9 +459,14 @@ class ProjectMapView extends ViewCache<Project> {
 
 // A map based view data provider
 class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
-  static const String keyName = 'v1:projectmap';
+  static const String name = 'projectdetails';
 
   ProjectDetailsView(JsonCache database, Duration duration): super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:projectdetails';
+  }
 
   /// Set a project into the lookup
   @override
