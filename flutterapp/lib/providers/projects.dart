@@ -6,14 +6,20 @@ import 'package:docket/database.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/models/project.dart';
 
+enum ViewNames {
+  projectDetails,
+  projectMap,
+}
+
 class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
 
-  Set<String> _pending = {};
+  Set<ViewNames> _pending = {};
 
   ProjectsProvider(LocalDatabase database, this.session) {
     _database = database;
+    _pending = {};
   }
 
   void setSession(SessionProvider session) {
@@ -40,21 +46,27 @@ class ProjectsProvider extends ChangeNotifier {
     // TODO add cache checks
     var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
 
-    _pending.add(_database.projectDetails.keyName());
+    _pending.add(ViewNames.projectDetails);
     await _database.projectDetails.set(projectDetails);
-    _pending.remove(_database.projectDetails.keyName());
+    _pending.remove(ViewNames.projectDetails);
 
     notifyListeners();
   }
 
   /// Read a project from the local database by slug.
-  Future<ProjectWithTasks?> getBySlug(String slug) async {
-    return _database.projectDetails.get(slug);
+  Future<ProjectWithTasks> getBySlug(String slug) async {
+    var projectData = await _database.projectDetails.get(slug);
+    if (_pending.contains(ViewNames.projectDetails)) {
+      projectData.pending = true;
+    }
+    return projectData;
   }
 
   /// Fetch projects from the API and notifyListeners
   Future<void> fetchProjects() async {
+    _pending.add(ViewNames.projectMap);
     var projects = await actions.fetchProjects(session!.apiToken);
+    _pending.remove(ViewNames.projectMap);
 
     await _database.projectMap.addMany(projects);
 

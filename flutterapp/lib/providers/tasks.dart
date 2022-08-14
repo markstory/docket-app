@@ -59,6 +59,7 @@ class TasksProvider extends ChangeNotifier {
     // Ideally long term addTasks() becomes clever enough to
     // insert items into the various view caches.
     await _database.addTasks([task], expire: true);
+
     notifyListeners();
 
     return task;

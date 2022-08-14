@@ -161,7 +161,7 @@ class TaskViewData {
   final List<CalendarItem> calendarItems;
 
   // Whether or not a data refresh is pending
-  final bool pending;
+  bool pending;
 
   // True when the cache key could not be found.
   final bool missingData;

@@ -119,10 +119,14 @@ class ProjectWithTasks {
   final bool missingData;
 
   // Whether or not a data refresh is pending
-  final bool pending;
+  bool pending;
 
-  const ProjectWithTasks({required this.project, required this.tasks, this.missingData = false, this.pending = false});
-
+  ProjectWithTasks({
+    required this.project,
+    required this.tasks,
+    this.missingData = false,
+    this.pending = false
+  });
 
   factory ProjectWithTasks.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
