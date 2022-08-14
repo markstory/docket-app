@@ -42,27 +42,32 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         body: FutureBuilder<ProjectWithTasks?>(
             future: projectFuture,
             builder: (context, snapshot) {
-              // Doing this query here should result in us hitting cache all the time
-              var project = snapshot.data;
-              if (project == null) {
-                return const Card(
-                  child: Text('404! Your project has gone missing!'),
-                );
+              if (snapshot.hasError) {
+                return const Card(child: Text("Something terrible happened"));
               }
-              return ListView(children: [
-                Row(children: [
-                  SizedBox(width: space(2)),
-                  Text(project.project.name, style: theme.textTheme.titleLarge),
-                  TaskAddButton(projectId: project.project.id),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      // TODO Show project menu!
-                    }
-                  ),
+              var project = snapshot.data;
+              if (project == null || project.pending || project.missingData) {
+                if (project?.missingData ?? false) {
+                  projectsProvider.fetchBySlug(widget.slug);
+                }
+                return const LoadingIndicator();
+              }
+
+              return ListView(
+                padding: EdgeInsets.all(space(1)),
+                children: [
+                  Row(children: [
+                    SizedBox(width: space(2)),
+                    Text(project.project.name, style: theme.textTheme.titleLarge),
+                    TaskAddButton(projectId: project.project.id),
+                    const Spacer(),
+                    IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () {
+                          // TODO Show project menu!
+                        }),
+                  ]),
                   TaskGroup(tasks: project.tasks, showDate: true),
-                ]),
               ]);
             }),
       );

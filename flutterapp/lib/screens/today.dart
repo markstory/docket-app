@@ -50,11 +50,21 @@ class _TodayScreenState extends State<TodayScreen> {
         body: FutureBuilder<TaskViewData>(
           future: tasksProvider.getToday(),
           builder: (context, snapshot) {
-            TaskViewData? data = snapshot.data;
-            if (data == null || data.pending) {
+            if (snapshot.hasError) {
+              return const Card(child: Text("Something terrible happened"));
+            }
+            var data = snapshot.data;
+
+            // Loading state
+            if (data == null || data.pending || data.missingData) {
               // Reset internal state but don't re-render
               // as we will rebuild the state when the future resolves.
               _taskLists = [];
+
+              // Reload if we were missing data and not an error
+              if (data?.missingData ?? false) {
+                tasksProvider.fetchToday();
+              }
               return const LoadingIndicator();
             }
 

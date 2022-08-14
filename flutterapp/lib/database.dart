@@ -149,20 +149,22 @@ class LocalDatabase {
       // Refresh task in taskDetails lookup.
       futures.add(taskDetails.set(task));
 
-      // Update the pending view updates.
-      for (var view in _taskViews(task)) {
-        switch (view) {
-          case TodayView.name:
-            futures.add(today.clear());
-          break;
-          case UpcomingView.name:
-            futures.add(upcoming.clear());
-          break;
-          default:
-            throw 'Unknown view to clear "$view"';
+      if (expire) {
+        // Update the pending view updates.
+        for (var view in _taskViews(task)) {
+          switch (view) {
+            case TodayView.name:
+              futures.add(today.clear());
+              break;
+            case UpcomingView.name:
+              futures.add(upcoming.clear());
+              break;
+            default:
+              throw 'Unknown view to clear "$view"';
+          }
         }
+        futures.add(projectDetails.remove(task.projectSlug));
       }
-      futures.add(projectDetails.remove(task.projectSlug));
     }
 
     await Future.wait(futures);
@@ -218,9 +220,7 @@ class LocalDatabase {
 
   /// Add a list of projects to the local database.
   Future<void> addProjects(List<Project> projects) async {
-    await Future.wait(
-      projects.map((item) => projectMap.set(item)).toList()
-    );
+    await Future.wait(projects.map((item) => projectMap.set(item)).toList());
   }
 
   /// Update a project in the project list state.
@@ -231,7 +231,6 @@ class LocalDatabase {
     ]);
   }
   // }}}
-
 
   // Clearing methods {{{
   Future<List<void>> clearTasks() async {
@@ -251,7 +250,6 @@ class LocalDatabase {
   }
   // }}}
 }
-
 
 /// Abstract class that will act as the base of the ViewCache based database implementation.
 abstract class ViewCache<T> {
@@ -291,7 +289,7 @@ abstract class ViewCache<T> {
     return payload['data'];
   }
 
-  Future<void>clear() async {
+  Future<void> clear() async {
     return _database.remove(keyName());
   }
 
@@ -299,14 +297,13 @@ abstract class ViewCache<T> {
   String keyName();
 
   /// Set data into the view cache.
-  Future<void>set(T data);
+  Future<void> set(T data);
 }
-
 
 class TodayView extends ViewCache<TaskViewData> {
   static const String name = 'today';
 
-  TodayView(JsonCache database, Duration duration): super(database, duration);
+  TodayView(JsonCache database, Duration duration) : super(database, duration);
 
   @override
   String keyName() {
@@ -323,11 +320,7 @@ class TodayView extends ViewCache<TaskViewData> {
     var data = await _get();
     // Likely loading.
     if (data == null || data['tasks'] == null) {
-      return TaskViewData(
-        pending: true,
-        tasks: [],
-        calendarItems: []
-      );
+      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
   }
@@ -336,7 +329,7 @@ class TodayView extends ViewCache<TaskViewData> {
 class UpcomingView extends ViewCache<TaskViewData> {
   static const String name = 'upcoming';
 
-  UpcomingView(JsonCache database, Duration duration): super(database, duration);
+  UpcomingView(JsonCache database, Duration duration) : super(database, duration);
 
   @override
   String keyName() {
@@ -353,11 +346,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
     var data = await _get();
     // Likely loading.
     if (data == null || data['tasks'] == null) {
-      return TaskViewData(
-        pending: true,
-        tasks: [],
-        calendarItems: []
-      );
+      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
   }
@@ -367,7 +356,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
 class TaskDetailsView extends ViewCache<Task> {
   static const String name = 'taskdetails';
 
-  TaskDetailsView(JsonCache database, Duration duration): super(database, duration);
+  TaskDetailsView(JsonCache database, Duration duration) : super(database, duration);
 
   @override
   String keyName() {
@@ -406,7 +395,7 @@ class TaskDetailsView extends ViewCache<Task> {
 class ProjectMapView extends ViewCache<Project> {
   static const String name = 'projectmap';
 
-  ProjectMapView(JsonCache database, Duration duration): super(database, duration);
+  ProjectMapView(JsonCache database, Duration duration) : super(database, duration);
 
   @override
   String keyName() {
@@ -444,7 +433,7 @@ class ProjectMapView extends ViewCache<Project> {
     if (data == null) {
       return [];
     }
-    var projects = data.values.map((item) => Project.fromMap(item)) .toList();
+    var projects = data.values.map((item) => Project.fromMap(item)).toList();
     projects.sort((a, b) => a.ranking.compareTo(b.ranking));
     return projects;
   }
@@ -456,12 +445,11 @@ class ProjectMapView extends ViewCache<Project> {
   }
 }
 
-
 // A map based view data provider
 class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   static const String name = 'projectdetails';
 
-  ProjectDetailsView(JsonCache database, Duration duration): super(database, duration);
+  ProjectDetailsView(JsonCache database, Duration duration) : super(database, duration);
 
   @override
   String keyName() {
@@ -477,11 +465,15 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     return _set(current);
   }
 
-  Future<ProjectWithTasks?> get(String slug) async {
+  Future<ProjectWithTasks> get(String slug) async {
     var data = await _get();
     // Likely loading.
     if (data == null || data[slug] == null) {
-      return null;
+      return ProjectWithTasks(
+        project: Project.blank(),
+        tasks: [],
+        missingData: true,
+      );
     }
     return ProjectWithTasks.fromMap(data[slug]);
   }

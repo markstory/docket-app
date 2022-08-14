@@ -161,12 +161,16 @@ class TaskViewData {
   final List<CalendarItem> calendarItems;
 
   // Whether or not a data refresh is pending
-  bool pending = false;
+  final bool pending;
+
+  // True when the cache key could not be found.
+  final bool missingData;
 
   TaskViewData({
     required this.tasks,
     required this.calendarItems,
-    this.pending = false
+    this.pending = false,
+    this.missingData = false,
   });
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {

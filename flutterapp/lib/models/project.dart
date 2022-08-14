@@ -115,10 +115,14 @@ class ProjectWithTasks {
   final Project project;
   final List<Task> tasks;
 
-  ProjectWithTasks({required this.project, required this.tasks});
+  // Whether the view cache read failed.
+  final bool missingData;
 
   // Whether or not a data refresh is pending
-  bool pending = false;
+  final bool pending;
+
+  const ProjectWithTasks({required this.project, required this.tasks, this.missingData = false, this.pending = false});
+
 
   factory ProjectWithTasks.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();

@@ -10,6 +10,8 @@ class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
 
+  Set<String> _pending = {};
+
   ProjectsProvider(LocalDatabase database, this.session) {
     _database = database;
   }
@@ -38,7 +40,10 @@ class ProjectsProvider extends ChangeNotifier {
     // TODO add cache checks
     var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
 
+    _pending.add(_database.projectDetails.keyName());
     await _database.projectDetails.set(projectDetails);
+    _pending.remove(_database.projectDetails.keyName());
+
     notifyListeners();
   }
 

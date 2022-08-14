@@ -38,7 +38,9 @@ class TasksProvider extends ChangeNotifier {
 
   Future<void> fetchById(int id) async {
     var task = await actions.fetchTaskById(session!.apiToken, id);
-    await _database.addTasks([task], expire: true);
+    // We don't expire other views here as fetching a task by id
+    // is usually because of a navigation.
+    await _database.addTasks([task], expire: false);
 
     notifyListeners();
   }
@@ -53,7 +55,10 @@ class TasksProvider extends ChangeNotifier {
   Future<Task> createTask(Task task) async {
     task = await actions.createTask(session!.apiToken, task);
 
-    await _database.addTasks([task]);
+    // Force expire related views so that we read our write.
+    // Ideally long term addTasks() becomes clever enough to
+    // insert items into the various view caches.
+    await _database.addTasks([task], expire: true);
     notifyListeners();
 
     return task;
