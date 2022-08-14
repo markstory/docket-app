@@ -46,10 +46,19 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
             FutureBuilder<TaskViewData>(
                 future: taskViewData,
                 builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Card(child: Text("Something terrible happened"));
+                  }
                   var data = snapshot.data;
-                  if (data == null) {
+                  // Loading state
+                  if (data == null || data.pending || data.missingData) {
+                    // Reload if we were missing data and not an error
+                    if (data?.missingData ?? false) {
+                      tasks.fetchUpcoming();
+                    }
                     return const LoadingIndicator();
                   }
+
                   var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
                   var grouped = grouperFunc(data.tasks);
                   var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
