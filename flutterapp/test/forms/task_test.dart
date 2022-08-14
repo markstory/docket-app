@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/database.dart';
@@ -23,7 +22,7 @@ void main() {
 
   setUpAll(() async {
     await database.clearProjects();
-    await database.addProjects([home, work]);
+    await database.projectMap.addMany([home, work]);
   });
 
   group('$TaskForm', () {
