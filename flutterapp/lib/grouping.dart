@@ -62,8 +62,9 @@ List<GroupedItem> zeroFillItems(DateTime firstDate, int numDays, List<GroupedIte
   }
   return complete;
 }
+typedef GrouperCallback = List<GroupedItem> Function(List<Task>);
 
-Function(List<Task>) createGrouper(DateTime start, int numDays) {
+GrouperCallback createGrouper(DateTime start, int numDays) {
   List<GroupedItem> taskGrouper(List<Task> items) {
     Map<String, List<Task>> byDate = {};
     for (var task in items) {

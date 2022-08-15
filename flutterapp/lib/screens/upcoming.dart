@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:docket/components/appdrawer.dart';
-import 'package:docket/components/calendaritemlist.dart';
+import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskaddbutton.dart';
-import 'package:docket/components/taskgroup.dart';
+import 'package:docket/components/taskdatesorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/grouping.dart' as grouping;
-import 'package:docket/theme.dart';
 
 class UpcomingScreen extends StatefulWidget {
   static const routeName = '/tasks/upcoming';
@@ -23,6 +23,8 @@ class UpcomingScreen extends StatefulWidget {
 }
 
 class _UpcomingScreenState extends State<UpcomingScreen> {
+  List<TaskSortMetadata> _taskLists = [];
+
   @override
   void initState() {
     super.initState();
@@ -31,103 +33,129 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     tasksProvider.fetchUpcoming();
   }
 
+  void _buildTaskLists(TaskViewData data) {
+    var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
+    var grouped = grouperFunc(data.tasks);
+    var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
+
+    for (var group in grouped) {
+      var groupDate = group.key;
+      var isEvening = groupDate.contains('evening:');
+      if (isEvening) {
+        groupDate = groupDate.replaceFirst('evening:', '');
+      }
+      var dateVal = DateTime.parse('$groupDate 00:00:00');
+
+      late TaskSortMetadata metadata;
+
+      if (isEvening) {
+        // Evening sections only have a subtitle and no calendar items.
+        metadata = TaskSortMetadata(
+            subtitle: 'Evening',
+            tasks: group.items,
+            onReceive: (Task task, int newIndex) {
+              task.evening = true;
+              task.dayOrder = newIndex;
+              task.dueOn = dateVal;
+
+              return {'evening': true, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
+            });
+      } else {
+        var title = formatters.compactDate(dateVal);
+
+        metadata = TaskSortMetadata(
+            title: title,
+            button: TaskAddButton(dueOn: dateVal),
+            tasks: group.items,
+            calendarItems: groupedCalendarItems.get(groupDate),
+            onReceive: (Task task, int newIndex) {
+              task.evening = false;
+              task.dayOrder = newIndex;
+              task.dueOn = dateVal;
+
+              return {'evening': false, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
+            });
+      }
+      _taskLists.add(metadata);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(builder: (context, tasks, child) {
-      var theme = Theme.of(context);
-      var taskViewData = tasks.getUpcoming();
+    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
+      var taskViewData = tasksProvider.getUpcoming();
 
       return Scaffold(
           appBar: AppBar(),
           drawer: const AppDrawer(),
           floatingActionButton: const FloatingCreateTaskButton(),
-          body: ListView(padding: const EdgeInsets.all(4), children: [
-            Text('Upcoming', style: theme.textTheme.titleLarge),
-            FutureBuilder<TaskViewData>(
-                future: taskViewData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Card(child: Text("Something terrible happened"));
-                  }
-                  var data = snapshot.data;
-                  // Loading state
-                  if (data == null || data.pending || data.missingData) {
-                    // Reload if we were missing data and not an error
-                    if (data?.missingData ?? false) {
-                      tasks.fetchUpcoming();
+          body: FutureBuilder<TaskViewData>(
+            future: taskViewData,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Card(child: Text("Something terrible happened"));
+              }
+              var data = snapshot.data;
+              // Loading state
+              if (data == null || data.pending || data.missingData) {
+                // Reset internal state but don't re-render
+                // as we will rebuild the state when the future resolves.
+                _taskLists = [];
+
+                // Reload if we were missing data and not an error
+                if (data?.missingData ?? false) {
+                  tasksProvider.fetchUpcoming();
+                }
+                return const LoadingIndicator();
+              }
+
+              if (_taskLists.isEmpty) {
+                _buildTaskLists(data);
+              }
+
+              return TaskDateSorter(
+                  taskLists: _taskLists,
+                  onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                    var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+
+                    // Get the changes that need to be made on the server.
+                    var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+
+                    // Update local state assuming server will be ok.
+                    setState(() {
+                      _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                      _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+                    });
+
+                    // Update the moved task and reload from server async
+                    await tasksProvider.move(task, updates);
+                    tasksProvider.fetchToday();
+                  },
+                  onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                    // Calculate position of adding to a end.
+                    // Generally this will be zero but it is possible to add to the
+                    // bottom of a populated list too.
+                    var targetList = _taskLists[listIndex];
+                    if (itemIndex == -1) {
+                      itemIndex = targetList.tasks.length;
                     }
-                    return const LoadingIndicator();
+
+                    var itemChild = newItem.child as TaskItem;
+                    var task = itemChild.task;
+
+                    // Get the changes that need to be made on the server.
+                    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                    setState(() {
+                      _taskLists[listIndex].tasks.insert(itemIndex, task);
+                    });
+
+                    // Update the moved task and reload from server async
+                    await tasksProvider.move(task, updates);
+                    tasksProvider.fetchUpcoming();
                   }
-
-                  var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
-                  var grouped = grouperFunc(data.tasks);
-                  var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
-
-                  return Column(
-                    children: grouped.map<Widget>((group) {
-                      var calendarItems = groupedCalendarItems.get(group.key);
-
-                      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        TaskGroupHeading(dateKey: group.key),
-                        SizedBox(height: space(0.5)),
-                        CalendarItemList(calendarItems: calendarItems),
-                        TaskGroup(tasks: group.items, showProject: true),
-                      ]);
-                    }).toList(),
-                  );
-                }),
-          ]));
+              );
+            }),
+          );
     });
-  }
-}
-
-class TaskGroupHeading extends StatelessWidget {
-  // Uses the keys format generated by grouping.createGrouper() and Task.dateKey
-  final String dateKey;
-
-  const TaskGroupHeading({required this.dateKey, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var docketColors = theme.extension<DocketColors>()!;
-    var heading = dateKey;
-
-    var isEvening = heading.contains('evening:');
-    if (isEvening) {
-      heading = 'Evening';
-    }
-
-    Widget subheading = const SizedBox(width: 0);
-    Widget icon = const SizedBox(width: 0);
-    if (!isEvening) {
-      var dateVal = DateTime.parse('$dateKey 00:00:00');
-      heading = formatters.compactDate(dateVal);
-      icon = TaskAddButton(dueOn: dateVal);
-
-      var subheadingContent = formatters.monthDay(dateVal);
-
-      if (subheadingContent != heading) {
-        subheading = Text(formatters.monthDay(dateVal),
-            style: theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText));
-      }
-    }
-
-    var headingStyle = theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500);
-    if (isEvening) {
-      headingStyle = theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText);
-    }
-
-    return Column(
-      children: [
-        SizedBox(height: isEvening ? space(0.5) : space(3)),
-        Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
-          Text(heading, style: headingStyle),
-          SizedBox(width: space(0.5)),
-          subheading,
-          icon,
-        ]),
-      ],
-    );
   }
 }

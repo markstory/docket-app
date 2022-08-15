@@ -37,12 +37,65 @@ class _TodayScreenState extends State<TodayScreen> {
     projectsProvider.fetchProjects();
   }
 
+  void _buildTaskLists(TaskViewData data) {
+    var customColors = getCustomColors(context);
+    var today = DateUtils.dateOnly(DateTime.now());
+
+    var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
+    if (overdueTasks.isNotEmpty) {
+      _overdue = TaskSortMetadata(
+          icon: Icon(Icons.warning_outlined, color: customColors.actionDelete),
+          title: 'Overdue',
+          tasks: overdueTasks,
+          onReceive: (Task task, int newIndex) {
+            throw 'Cannot move task to overdue';
+          });
+    }
+
+    // No setState() as we don't want to re-render.
+    var todayTasks = TaskSortMetadata(
+        icon: Icon(Icons.today, color: customColors.dueToday),
+        title: 'Today',
+        button: TaskAddButton(dueOn: today),
+        calendarItems: data.calendarItems,
+        tasks: data.tasks.where((task) => !task.evening).toList(),
+        onReceive: (Task task, int newIndex) {
+          var updates = {'evening': false, 'day_order': newIndex};
+          task.evening = false;
+          task.dayOrder = newIndex;
+
+          if (task.dueOn?.isBefore(today) ?? false) {
+            task.dueOn = today;
+            updates['due_on'] = formatters.dateString(today);
+          }
+          return updates;
+        });
+
+    var eveningTasks = TaskSortMetadata(
+        icon: Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
+        title: 'This Evening',
+        button: TaskAddButton(dueOn: today, evening: true),
+        tasks: data.tasks.where((task) => task.evening).toList(),
+        onReceive: (Task task, int newIndex) {
+          var updates = {'evening': true, 'day_order': newIndex};
+          task.evening = true;
+          task.dayOrder = newIndex;
+
+          if (task.dueOn?.isBefore(today) ?? false) {
+            task.dueOn = today;
+            updates['due_on'] = formatters.dateString(today);
+          }
+          return updates;
+        });
+
+    _taskLists
+      ..add(todayTasks)
+      ..add(eveningTasks);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var customColors = getCustomColors(context);
-      var today = DateUtils.dateOnly(DateTime.now());
-
       return Scaffold(
         appBar: AppBar(),
         drawer: const AppDrawer(),
@@ -69,104 +122,56 @@ class _TodayScreenState extends State<TodayScreen> {
             }
 
             if (_taskLists.isEmpty) {
-              var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
-              if (overdueTasks.isNotEmpty) {
-                _overdue = TaskSortMetadata(
-                    icon: Icon(Icons.warning_outlined, color: customColors.actionDelete),
-                    title: 'Overdue',
-                    tasks: overdueTasks,
-                    onReceive: (Task task, int newIndex) {
-                      throw 'Cannot move task to overdue';
-                    });
-              }
-
-              // No setState() as we don't want to re-render.
-              var todayTasks = TaskSortMetadata(
-                  icon: Icon(Icons.today, color: customColors.dueToday),
-                  title: 'Today',
-                  button: TaskAddButton(dueOn: today),
-                  calendarItems: data.calendarItems,
-                  tasks: data.tasks.where((task) => !task.evening).toList(),
-                  onReceive: (Task task, int newIndex) {
-                    var updates = {'evening': false, 'day_order': newIndex};
-                    task.evening = false;
-                    task.dayOrder = newIndex;
-
-                    if (task.dueOn?.isBefore(today) ?? false) {
-                      task.dueOn = today;
-                      updates['due_on'] = formatters.dateString(today);
-                    }
-                    return updates;
-                  });
-
-              var eveningTasks = TaskSortMetadata(
-                  icon: Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
-                  title: 'This Evening',
-                  button: TaskAddButton(dueOn: today, evening: true),
-                  tasks: data.tasks.where((task) => task.evening).toList(),
-                  onReceive: (Task task, int newIndex) {
-                    var updates = {'evening': true, 'day_order': newIndex};
-                    task.evening = true;
-                    task.dayOrder = newIndex;
-
-                    if (task.dueOn?.isBefore(today) ?? false) {
-                      task.dueOn = today;
-                      updates['due_on'] = formatters.dateString(today);
-                    }
-                    return updates;
-                  });
-
-              _taskLists
-                ..add(todayTasks)
-                ..add(eveningTasks);
+              _buildTaskLists(data);
             }
 
             return TaskDateSorter(
-                taskLists: _taskLists,
-                overdue: _overdue,
-                onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                  var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+              taskLists: _taskLists,
+              overdue: _overdue,
+              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                // Get the changes that need to be made on the server.
+                var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
 
-                  // Update local state assuming server will be ok.
-                  setState(() {
-                    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                  });
-
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchToday();
-                },
-                onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                  if (_overdue == null) {
-                    throw 'Should not receive items when _overdue is null';
-                  }
-
-                  // Calculate position of adding to a end.
-                  // Generally this will be zero but it is possible to add to the
-                  // bottom of a populated list too.
-                  var targetList = _taskLists[listIndex];
-                  if (itemIndex == -1) {
-                    itemIndex = targetList.tasks.length;
-                  }
-
-                  var itemChild = newItem.child as TaskItem;
-                  var task = itemChild.task;
-
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                  setState(() {
-                    _overdue?.tasks.remove(task);
-                    _taskLists[listIndex].tasks.insert(itemIndex, task);
-                  });
-
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchToday();
+                // Update local state assuming server will be ok.
+                setState(() {
+                  _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                  _taskLists[newListIndex].tasks.insert(newItemIndex, task);
                 });
+
+                // Update the moved task and reload from server async
+                await tasksProvider.move(task, updates);
+                tasksProvider.fetchToday();
+              },
+              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                if (_overdue == null) {
+                  throw 'Should not receive items when _overdue is null';
+                }
+
+                // Calculate position of adding to a end.
+                // Generally this will be zero but it is possible to add to the
+                // bottom of a populated list too.
+                var targetList = _taskLists[listIndex];
+                if (itemIndex == -1) {
+                  itemIndex = targetList.tasks.length;
+                }
+
+                var itemChild = newItem.child as TaskItem;
+                var task = itemChild.task;
+
+                // Get the changes that need to be made on the server.
+                var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                setState(() {
+                  _overdue?.tasks.remove(task);
+                  _taskLists[listIndex].tasks.insert(itemIndex, task);
+                });
+
+                // Update the moved task and reload from server async
+                await tasksProvider.move(task, updates);
+                tasksProvider.fetchToday();
+              }
+            );
           },
         ),
       );

@@ -26,6 +26,10 @@ class TaskDateSorter extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = getCustomColors(context);
     var dragList = DragAndDropLists(
+      // TODO figure out how to handle scrolling.
+      // Currently this works ok for today & upcoming renders, but with
+      // unscrollable overflow. Perhaps the column below needs to be a scrollable container.
+      disableScrolling: true,
       children: taskLists.map((taskListMeta) {
         return DragAndDropList(
           header: buildHeader(taskListMeta, theme),
@@ -46,22 +50,15 @@ class TaskDateSorter extends StatelessWidget {
 
     List<Widget> children = [];
     if (overdue != null) {
-      children.add(Flexible(
-        flex: 2,
-        child: buildOverdue(overdue!, theme, customColors),
-      ));
+      children.add(buildOverdue(overdue!, theme, customColors));
     }
+    children.add(dragList);
 
-    children.add(Flexible(
-      flex: 10,
-      child: dragList,
-    ));
-
-    return Column(children: children);
+    return Column(mainAxisSize: MainAxisSize.min, children: children);
   }
 
   Widget buildOverdue(TaskSortMetadata taskMeta, ThemeData theme, DocketColors customColors) {
-    return Column(children: [
+    return Column(mainAxisSize: MainAxisSize.min, children: [
       buildHeader(taskMeta, theme),
       ...taskMeta.tasks.map((task) {
         var taskItem = TaskItem(task: task, showDate: false, showProject: true);
@@ -86,7 +83,9 @@ class TaskDateSorter extends StatelessWidget {
         ..add(taskMeta.icon!)
         ..add(SizedBox(width: space(0.5)));
     }
-    children.add(Text(taskMeta.title ?? '', style: theme.textTheme.titleLarge));
+    if (taskMeta.title != null) {
+      children.add(Text(taskMeta.title ?? '', style: theme.textTheme.titleLarge));
+    }
     if (taskMeta.subtitle != null) {
       children.add(Text(taskMeta.subtitle ?? '',
           style: theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText)));
@@ -99,7 +98,7 @@ class TaskDateSorter extends StatelessWidget {
       return titleRow;
     }
 
-    return Column(children: [
+    return Column(mainAxisSize: MainAxisSize.min, children: [
       titleRow,
       CalendarItemList(calendarItems: taskMeta.calendarItems),
       SizedBox(height: space(2)),
@@ -115,7 +114,8 @@ class TaskSortMetadata {
   /// Title shown in large bold type.
   String? title;
 
-  /// Title shown smaller with an underline.
+  /// Title shown beside the title if its present or as the only title.
+  /// Rendered with secondary text.
   String? subtitle;
 
   /// Header button shown after title. Can also be a Row
