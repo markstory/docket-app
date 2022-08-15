@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -63,6 +64,8 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       } else {
         var title = formatters.compactDate(dateVal);
 
+        // TODO figure out why calendar items aren't displaying/grouping
+        // correctly once scrolling is sorted out.
         metadata = TaskSortMetadata(
             title: title,
             button: TaskAddButton(dueOn: dateVal),
@@ -114,45 +117,45 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
               }
 
               return TaskDateSorter(
-                  taskLists: _taskLists,
-                  onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                    var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+                taskLists: _taskLists,
+                onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                  var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
-                    // Get the changes that need to be made on the server.
-                    var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                  // Get the changes that need to be made on the server.
+                  var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
 
-                    // Update local state assuming server will be ok.
-                    setState(() {
-                      _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                      _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                    });
+                  // Update local state assuming server will be ok.
+                  setState(() {
+                    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+                  });
 
-                    // Update the moved task and reload from server async
-                    await tasksProvider.move(task, updates);
-                    tasksProvider.fetchToday();
-                  },
-                  onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                    // Calculate position of adding to a end.
-                    // Generally this will be zero but it is possible to add to the
-                    // bottom of a populated list too.
-                    var targetList = _taskLists[listIndex];
-                    if (itemIndex == -1) {
-                      itemIndex = targetList.tasks.length;
-                    }
-
-                    var itemChild = newItem.child as TaskItem;
-                    var task = itemChild.task;
-
-                    // Get the changes that need to be made on the server.
-                    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                    setState(() {
-                      _taskLists[listIndex].tasks.insert(itemIndex, task);
-                    });
-
-                    // Update the moved task and reload from server async
-                    await tasksProvider.move(task, updates);
-                    tasksProvider.fetchUpcoming();
+                  // Update the moved task and reload from server async
+                  await tasksProvider.move(task, updates);
+                  tasksProvider.fetchToday();
+                },
+                onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                  // Calculate position of adding to a end.
+                  // Generally this will be zero but it is possible to add to the
+                  // bottom of a populated list too.
+                  var targetList = _taskLists[listIndex];
+                  if (itemIndex == -1) {
+                    itemIndex = targetList.tasks.length;
                   }
+
+                  var itemChild = newItem.child as TaskItem;
+                  var task = itemChild.task;
+
+                  // Get the changes that need to be made on the server.
+                  var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                  setState(() {
+                    _taskLists[listIndex].tasks.insert(itemIndex, task);
+                  });
+
+                  // Update the moved task and reload from server async
+                  await tasksProvider.move(task, updates);
+                  tasksProvider.fetchUpcoming();
+                }
               );
             }),
           );
