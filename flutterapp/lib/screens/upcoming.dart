@@ -122,7 +122,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                   var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
                   // Get the changes that need to be made on the server.
-                  var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                  var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
 
                   // Update local state assuming server will be ok.
                   setState(() {

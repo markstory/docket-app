@@ -24,12 +24,9 @@ class TaskDateSorter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var customColors = getCustomColors(context);
-    var dragList = DragAndDropLists(
-      // TODO figure out how to handle scrolling.
-      // Currently this works ok for today & upcoming renders, but with
-      // unscrollable overflow. Perhaps the column below needs to be a scrollable container.
-      disableScrolling: true,
+
+    return DragAndDropLists(
+      // TODO test if this putting overdue into the header helps resolve scrolling issues.
       children: taskLists.map((taskListMeta) {
         return DragAndDropList(
           header: buildHeader(taskListMeta, theme),
@@ -47,14 +44,6 @@ class TaskDateSorter extends StatelessWidget {
       },
       onItemAdd: onItemAdd,
     );
-
-    List<Widget> children = [];
-    if (overdue != null) {
-      children.add(buildOverdue(overdue!, theme, customColors));
-    }
-    children.add(dragList);
-
-    return Column(mainAxisSize: MainAxisSize.min, children: children);
   }
 
   Widget buildOverdue(TaskSortMetadata taskMeta, ThemeData theme, DocketColors customColors) {
@@ -76,6 +65,22 @@ class TaskDateSorter extends StatelessWidget {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
 
+    if (overdue != null) {
+      children.add(buildOverdue(overdue!, theme, docketColors));
+    }
+    children.add(buildTitle(taskMeta, theme, docketColors));
+
+    if (taskMeta.calendarItems.isNotEmpty) {
+      children.add(CalendarItemList(calendarItems: taskMeta.calendarItems));
+      children.add(SizedBox(height: space(2)));
+    }
+
+    return Column(mainAxisSize: MainAxisSize.min, children: children);
+  }
+
+  Widget buildTitle(TaskSortMetadata taskMeta, ThemeData theme, DocketColors docketColors) {
+    List<Widget> children = [];
+
     children.add(SizedBox(width: space(3)));
 
     if (taskMeta.icon != null) {
@@ -93,16 +98,7 @@ class TaskDateSorter extends StatelessWidget {
     if (taskMeta.button != null) {
       children.add(taskMeta.button!);
     }
-    var titleRow = Row(children: children);
-    if (taskMeta.calendarItems.isEmpty) {
-      return titleRow;
-    }
-
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      titleRow,
-      CalendarItemList(calendarItems: taskMeta.calendarItems),
-      SizedBox(height: space(2)),
-    ]);
+    return Row(children: children);
   }
 }
 
