@@ -43,7 +43,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
       try {
         messenger.showSnackBar(const SnackBar(content: Text('Saving')));
-        await projects.updateProject(project);
+        await projects.update(project);
         messenger.showSnackBar(const SnackBar(content: Text('Project updated')));
         complete();
       } catch (e, stacktrace) {

@@ -42,7 +42,7 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Update the project map and clear local data for project details.
-  Future<Project> updateProject(Project project) async {
+  Future<Project> update(Project project) async {
     project = await actions.updateProject(session!.apiToken, project);
 
     await _database.projectMap.set(project);

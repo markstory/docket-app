@@ -125,6 +125,29 @@ void main() {
       expect(details.missingData, equals(true));
     });
 
+    test('update() makes API request and expires local db', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home/edit'));
+        return Response(projectViewResponseFixture, 200);
+      });
+
+      var project = Project.blank();
+      project.id = 1;
+      project.slug = 'home';
+      project.name = 'Home';
+      project.ranking = 1;
+
+      await provider.update(project);
+
+      var db = LocalDatabase();
+      var projectMap = await db.projectMap.get('home');
+      expect(project, isNotNull);
+      expect(projectMap!.slug, equals('home'));
+
+      var details = await db.projectDetails.get('home');
+      expect(details.missingData, equals(true));
+    });
+
     test('archive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home/archive'));
