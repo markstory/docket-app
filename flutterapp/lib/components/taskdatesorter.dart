@@ -26,10 +26,12 @@ class TaskDateSorter extends StatelessWidget {
     var theme = Theme.of(context);
 
     return DragAndDropLists(
-      // TODO test if this putting overdue into the header helps resolve scrolling issues.
       children: taskLists.map((taskListMeta) {
+        // TODO This is janky AF
+        var includeOverdue = taskListMeta.title == 'Today';
+
         return DragAndDropList(
-          header: buildHeader(taskListMeta, theme),
+          header: buildHeader(taskListMeta, theme, includeOverdue: includeOverdue),
           canDrag: false,
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: TaskItem(task: task, showDate: false, showProject: true));
@@ -48,7 +50,7 @@ class TaskDateSorter extends StatelessWidget {
 
   Widget buildOverdue(TaskSortMetadata taskMeta, ThemeData theme, DocketColors customColors) {
     return Column(mainAxisSize: MainAxisSize.min, children: [
-      buildHeader(taskMeta, theme),
+      buildTitle(taskMeta, theme, customColors),
       ...taskMeta.tasks.map((task) {
         var taskItem = TaskItem(task: task, showDate: false, showProject: true);
         return Draggable<DragAndDropItem>(
@@ -61,11 +63,11 @@ class TaskDateSorter extends StatelessWidget {
   }
 
   /// Render a header for a TaskSortMetadata instance
-  Widget buildHeader(TaskSortMetadata taskMeta, ThemeData theme) {
+  Widget buildHeader(TaskSortMetadata taskMeta, ThemeData theme, {includeOverdue = false}) {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
 
-    if (overdue != null) {
+    if (overdue != null && includeOverdue) {
       children.add(buildOverdue(overdue!, theme, docketColors));
     }
     children.add(buildTitle(taskMeta, theme, docketColors));

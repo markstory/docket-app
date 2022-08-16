@@ -121,8 +121,8 @@ class CalendarItem {
     var current = start;
     var inDays = start.difference(end).inDays;
     for (var i = 0; i <= inDays; i++) {
-      current = current.add(const Duration(days: 1));
       days.add(formatters.dateString(current));
+      current = current.add(const Duration(days: 1));
     }
     return days;
   }

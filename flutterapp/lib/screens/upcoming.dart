@@ -63,8 +63,6 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       } else {
         var title = formatters.compactDate(dateVal);
 
-        // TODO figure out why calendar items aren't displaying/grouping
-        // correctly once scrolling is sorted out.
         metadata = TaskSortMetadata(
             title: title,
             button: TaskAddButton(dueOn: dateVal),
