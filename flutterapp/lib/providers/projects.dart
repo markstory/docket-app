@@ -41,6 +41,17 @@ class ProjectsProvider extends ChangeNotifier {
     return project;
   }
 
+  /// Update the project map and clear local data for project details.
+  Future<Project> updateProject(Project project) async {
+    project = await actions.updateProject(session!.apiToken, project);
+
+    await _database.projectMap.set(project);
+    await _database.projectDetails.remove(project.slug);
+    notifyListeners();
+
+    return project;
+  }
+
   /// Fetch a project from the API and notifyListeners.
   Future<void> fetchBySlug(String slug) async {
     // TODO add cache checks
@@ -62,7 +73,7 @@ class ProjectsProvider extends ChangeNotifier {
     return projectData;
   }
 
-  /// Fetch projects from the API and notifyListeners
+  /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
     _pending.add(ViewNames.projectMap);
     var projects = await actions.fetchProjects(session!.apiToken);
@@ -89,5 +100,15 @@ class ProjectsProvider extends ChangeNotifier {
     ]);
 
     notifyListeners();
+  }
+
+  /// Archive a project and remove the project the project and project details.
+  Future<Project> archive(Project project) async {
+    await actions.archiveProject(session!.apiToken, project);
+    await _database.projectMap.remove(project.slug);
+    await _database.projectDetails.remove(project.slug);
+    notifyListeners();
+
+    return project;
   }
 }

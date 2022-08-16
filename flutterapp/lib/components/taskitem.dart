@@ -8,7 +8,6 @@ import 'package:docket/components/projectbadge.dart';
 import 'package:docket/dialogs/changedueon.dart';
 import 'package:docket/dialogs/changeproject.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 

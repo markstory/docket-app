@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
+import 'package:docket/components/projectactions.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
@@ -61,11 +62,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     Text(project.project.name, style: theme.textTheme.titleLarge),
                     TaskAddButton(projectId: project.project.id),
                     const Spacer(),
-                    IconButton(
-                        icon: const Icon(Icons.more_vert),
-                        onPressed: () {
-                          // TODO Show project menu!
-                        }),
+                    ProjectActions(project.project),
                   ]),
                   TaskGroup(tasks: project.tasks, showDate: true),
               ]);

@@ -75,8 +75,7 @@ void main() {
 
       await provider.fetchBySlug('home');
       var view = await provider.getBySlug('home');
-      expect(view, isNotNull);
-      expect(view!.project.slug, equals('home'));
+      expect(view.project.slug, equals('home'));
 
       // Only one API call made.
       expect(requestCounter, equals(1));
@@ -100,7 +99,7 @@ void main() {
       await provider.fetchBySlug('home');
 
       var view = await provider.getBySlug('home');
-      expect(view!.tasks.length, equals(2));
+      expect(view.tasks.length, equals(2));
     });
 
     test('move() makes API request and expires local db', () async {
@@ -123,7 +122,29 @@ void main() {
       expect(projectMap!.slug, equals('home'));
 
       var details = await db.projectDetails.get('home');
-      expect(details, isNull);
+      expect(details.missingData, equals(true));
+    });
+
+    test('archive() makes API request and expires local db', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home/archive'));
+        return Response("", 200);
+      });
+
+      var project = Project.blank();
+      project.id = 1;
+      project.slug = 'home';
+      project.name = 'Home';
+      project.ranking = 1;
+
+      await provider.archive(project);
+
+      var db = LocalDatabase();
+      var projectMap = await db.projectMap.get('home');
+      expect(projectMap, isNull);
+
+      var details = await db.projectDetails.get('home');
+      expect(details.missingData, equals(true));
     });
   });
 }

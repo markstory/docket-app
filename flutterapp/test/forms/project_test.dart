@@ -14,8 +14,8 @@ void main() {
     return EntryPoint(database: database, child: Scaffold(body: ProjectForm(project: project, onSave: onSave)));
   }
 
-  group('Create Project', () {
-    testWidgets('Renders an empty form', (tester) async {
+  group('ProjectForm', () {
+    testWidgets('Can update and save a new project', (tester) async {
       var onSaveCalled = false;
       void onSave(Project project) {
         onSaveCalled = true;
@@ -40,7 +40,7 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('Renders an edit form', (tester) async {
+    testWidgets('can display existing data and update a project', (tester) async {
       void onSave(Project project) {}
       final project = Project.blank();
       project.name = 'Hobbies';
@@ -52,7 +52,7 @@ void main() {
       expect(find.text('berry'), findsOneWidget);
     });
 
-    testWidgets('Name required', (tester) async {
+    testWidgets('name is required', (tester) async {
       var onSaveCalled = false;
       void onSave(Project project) {
         onSaveCalled = true;

@@ -10,6 +10,7 @@ import 'providers/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
+import 'screens/projectedit.dart';
 import 'screens/today.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
@@ -89,6 +90,7 @@ class DocketApp extends StatelessWidget {
               if (settings.name == UpcomingScreen.routeName) {
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
               }
+
               // Task Add
               if (settings.name == TaskAddScreen.routeName) {
                 final args = settings.arguments as TaskAddScreenArguments;
@@ -112,6 +114,14 @@ class DocketApp extends StatelessWidget {
               if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'projects') {
                 var slug = uri.pathSegments[1].toString();
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(slug)));
+              }
+              // Project Edit View.
+              if (uri.pathSegments.length == 2 
+                && uri.pathSegments[0] == 'projects'
+                && uri.pathSegments[2] == 'edit'
+              ) {
+                var slug = uri.pathSegments[1].toString();
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(slug)));
               }
 
               // Task Detailed View.

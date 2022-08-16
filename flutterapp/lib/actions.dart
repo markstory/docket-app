@@ -329,6 +329,19 @@ Future<Project> createProject(String apiToken, Project project) async {
   });
 }
 
+/// Update a project
+Future<Project> updateProject(String apiToken, Project project) async {
+  var url = _makeUrl('/projects/${project.slug}/edit');
+
+  return Future(() async {
+    var response =
+        await httpPost(url, apiToken: apiToken, body: project.toMap(), errorMessage: 'Could not update project');
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return Project.fromMap(decoded['project']);
+  });
+}
+
 /// Move a project
 Future<Project> moveProject(String apiToken, Project project, int newRank) async {
   var url = _makeUrl('/projects/${project.slug}/move');
@@ -339,5 +352,14 @@ Future<Project> moveProject(String apiToken, Project project, int newRank) async
     var decoded = jsonDecode(utf8.decode(response.bodyBytes));
 
     return Project.fromMap(decoded['project']);
+  });
+}
+
+/// Archive a project
+Future<void> archiveProject(String apiToken, Project project) async {
+  var url = _makeUrl('/projects/${project.slug}/archive');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
   });
 }
