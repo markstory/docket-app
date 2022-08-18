@@ -36,10 +36,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
     try {
       await tasksProvider.updateTask(task);
-      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Completed'));
-      if (navigator.canPop()) {
-        navigator.pop();
-      }
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
+      navigator.pop();
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
     }
@@ -61,7 +59,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   return const LoadingIndicator();
                 }
                 return ListView(padding: EdgeInsets.all(space(1)), children: [
-                  TaskForm(task: task, onSave: (task) => _onSave(context, task)),
+                  TaskForm(
+                    task: task,
+                    onSave: (task) => _onSave(context, task),
+                    onComplete: () => Navigator.of(context).pop(),
+                  ),
                 ]);
               }),
         ),

@@ -12,8 +12,9 @@ import 'package:docket/theme.dart';
 class TaskForm extends StatefulWidget {
   final Task task;
   final void Function(Task task) onSave;
+  final void Function()? onComplete;
 
-  const TaskForm({required this.task, required this.onSave, super.key});
+  const TaskForm({required this.task, required this.onSave, this.onComplete, super.key});
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -45,8 +46,8 @@ class _TaskFormState extends State<TaskForm> {
           return Form(
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                FormIconRow(
-                    icon: TaskCheckbox(task),
+                FormIconRow (
+                    icon: TaskCheckbox(task, onComplete: widget.onComplete),
                     child: TaskTitleInput(
                         value: task.title,
                         projects: projects,

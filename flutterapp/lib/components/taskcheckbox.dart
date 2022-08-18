@@ -8,8 +8,9 @@ import 'package:docket/theme.dart';
 
 class TaskCheckbox extends StatelessWidget {
   final Task task;
+  final void Function()? onComplete;
 
-  const TaskCheckbox(this.task, {super.key});
+  const TaskCheckbox(this.task, {this.onComplete, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,9 @@ class TaskCheckbox extends StatelessWidget {
       try {
         await tasksProvider.toggleComplete(task);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Completed'));
+        if (onComplete != null) {
+          onComplete!();
+        }
       } catch (e) {
         messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
       }
