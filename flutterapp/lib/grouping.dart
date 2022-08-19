@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:docket/models/calendaritem.dart';
+import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/formatters.dart' as formatters;
 
@@ -91,6 +92,7 @@ GrouperCallback createGrouper(DateTime start, int numDays) {
 }
 
 /// Container for calendar items grouped by date.
+// TODO why is this not just Map<String, List<CalendarItem>>?
 class GroupedCalendarItems {
   Map<String, List<CalendarItem>> groupings = {};
 
@@ -112,6 +114,9 @@ class GroupedCalendarItems {
   }
 }
 
+/// Group a list of calendar items by date.
+/// Used to render a list of dates that may or may not contain
+/// calendar items.
 GroupedCalendarItems groupCalendarItems(List<CalendarItem> items) {
   var grouped = GroupedCalendarItems();
   for (var item in items) {
@@ -119,4 +124,30 @@ GroupedCalendarItems groupCalendarItems(List<CalendarItem> items) {
   }
 
   return grouped;
+}
+
+List<SectionWithTasks> groupTasksBySection(List<Section> sections, List<Task> tasks) {
+  Map<int, List<Task>> sectionTable = {};
+  for (var task in tasks) {
+    var sectionId = task.sectionId ?? Section.root;
+    if (!sectionTable.containsKey(sectionId)) {
+      List<Task> group = [];
+      sectionTable[sectionId] = group;
+    }
+    sectionTable[sectionId]?.add(task);
+  }
+  List<SectionWithTasks> output = [];
+  if (sectionTable.containsKey(Section.root)) {
+    output.add(SectionWithTasks(
+      section: null,
+      tasks: sectionTable[Section.root] ?? []
+    ));
+  }
+  for (var section in sections) {
+    output.add(SectionWithTasks(
+        section: section,
+        tasks: sectionTable[section.id] ?? [],
+    ));
+  }
+  return output;
 }

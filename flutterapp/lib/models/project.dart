@@ -1,6 +1,8 @@
 import 'package:docket/models/task.dart';
 
 class Section {
+  static int root = -1;
+
   int id;
   String name;
   int ranking;
@@ -28,7 +30,15 @@ class Section {
   }
 }
 
+class SectionWithTasks {
+  final Section? section;
+  final List<Task> tasks;
+
+  SectionWithTasks({required this.section, required this.tasks});
+}
+
 class Project {
+
   int id;
   String slug;
   String name;
