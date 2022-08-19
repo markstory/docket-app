@@ -115,6 +115,9 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
 
               return TaskDateSorter(
                 taskLists: _taskLists,
+                buildItem: (Task task) {
+                  return TaskItem(task: task, showDate: false, showProject: true);
+                },
                 onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
                   var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 

@@ -18,8 +18,13 @@ class TaskDateSorter extends StatelessWidget {
   // Fired when items are reordered.
   final void Function(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) onItemReorder;
 
+  // Fired when a list is reordered.
+  final void Function(int oldListIndex, int newListIndex)? onListReorder;
+
+  final Widget Function(Task task) buildItem;
+
   const TaskDateSorter(
-      {required this.taskLists, required this.onItemAdd, required this.onItemReorder, this.overdue, super.key});
+      {required this.taskLists, required this.onItemAdd, required this.onItemReorder, required this.buildItem, this.onListReorder, this.overdue, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +46,7 @@ class TaskDateSorter extends StatelessWidget {
       itemDecorationWhileDragging: itemDragBoxDecoration(theme),
       itemDragOnLongPress: true,
       onItemReorder: onItemReorder,
-      onListReorder: (int oldIndex, int newIndex) {
-        throw 'List reordering not supported';
-      },
+      onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
       onItemAdd: onItemAdd,
     );
   }
