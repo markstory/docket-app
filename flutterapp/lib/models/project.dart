@@ -38,7 +38,6 @@ class SectionWithTasks {
 }
 
 class Project {
-
   int id;
   String slug;
   String name;

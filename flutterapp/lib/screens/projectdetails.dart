@@ -6,6 +6,7 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskgroup.dart';
 import 'package:docket/components/projectactions.dart';
+import 'package:docket/grouping.dart' as grouping;
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
@@ -54,18 +55,28 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 return const LoadingIndicator();
               }
 
+              List<Widget> children = [
+                Row(children: [
+                  SizedBox(width: space(2)),
+                  Text(project.project.name, style: theme.textTheme.titleLarge),
+                  TaskAddButton(projectId: project.project.id),
+                  const Spacer(),
+                  ProjectActions(project.project),
+                ]),
+              ];
+              var sectionGroups = grouping.groupTasksBySection(project.project.sections, project.tasks);
+              for (var sectionData in sectionGroups) {
+                var section = sectionData.section;
+                if (section != null) {
+                  // TODO make a better section header.
+                  children.add(Text(section.name));
+                }
+                children.add(TaskGroup(tasks: sectionData.tasks, showDate: true));
+              }
               return ListView(
                 padding: EdgeInsets.all(space(1)),
-                children: [
-                  Row(children: [
-                    SizedBox(width: space(2)),
-                    Text(project.project.name, style: theme.textTheme.titleLarge),
-                    TaskAddButton(projectId: project.project.id),
-                    const Spacer(),
-                    ProjectActions(project.project),
-                  ]),
-                  TaskGroup(tasks: project.tasks, showDate: true),
-              ]);
+                children: children,
+              );
             }),
       );
     });
