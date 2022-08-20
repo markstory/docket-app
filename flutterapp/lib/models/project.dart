@@ -13,6 +13,14 @@ class Section {
     required this.ranking,
   });
 
+  factory Section.blank() {
+    return Section(
+      id: 0,
+      name: '',
+      ranking: 0,
+    );
+  }
+
   factory Section.fromMap(Map<String, dynamic> json) {
     return Section(
       id: json['id'],

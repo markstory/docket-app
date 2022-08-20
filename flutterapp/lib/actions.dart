@@ -143,6 +143,7 @@ Future<ApiToken> doLogin(String email, String password) async {
   });
 }
 
+// Task Methods {{{
 /// Fetch the tasks for the 'Today' view
 Future<TaskViewData> loadTodayTasks(String apiToken) async {
   var url = _makeUrl('/tasks/today');
@@ -265,7 +266,9 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
     }
   });
 }
+// }}}
 
+// Project methods {{{
 Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
   var url = _makeUrl('/projects/$slug');
 
@@ -363,6 +366,17 @@ Future<void> archiveProject(String apiToken, Project project) async {
       await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
   });
 }
+// }}}
+
+// {{{ Section Methods
+/// Create a project section
+Future<void> createSection(String apiToken, Project project, Section section) async {
+  var url = _makeUrl('/projects/${project.slug}/sections/');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not create section');
+  });
+}
 
 /// Delete a project section
 Future<void> deleteSection(String apiToken, Project project, Section section) async {
@@ -390,3 +404,4 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
       await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
   });
 }
+// }}}

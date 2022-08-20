@@ -114,6 +114,14 @@ class ProjectsProvider extends ChangeNotifier {
 
   // Section Methods {{{
   // Remove a section and clear the project details view cache
+  Future<void> createSection(Project project, Section section) async {
+    await actions.createSection(session!.apiToken, project, section);
+    await _database.projectDetails.remove(project.slug);
+
+    notifyListeners();
+  }
+
+  // Remove a section and clear the project details view cache
   Future<void> deleteSection(Project project, Section section) async {
     await actions.deleteSection(session!.apiToken, project, section);
     await _database.projectDetails.remove(project.slug);

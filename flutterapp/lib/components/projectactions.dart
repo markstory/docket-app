@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/dialogs/createsection.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
@@ -10,6 +11,7 @@ import 'package:docket/theme.dart';
 enum Menu {
   archive,
   edit,
+  addSection,
 }
 
 class ProjectActions extends StatelessWidget {
@@ -32,6 +34,15 @@ class ProjectActions extends StatelessWidget {
       Navigator.pushNamed(context, route);
     }
 
+    void _handleAddSection() async {
+      try {
+        await showCreateSectionDialog(context, project);
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Section Created'));
+      } catch (e) {
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Could not create section'));
+      }
+    }
+
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
@@ -39,7 +50,7 @@ class ProjectActions extends StatelessWidget {
       var actions = {
         Menu.edit: _handleEdit,
         Menu.archive: _handleArchive,
-        // TODO add project deletion
+        Menu.addSection: _handleAddSection,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
@@ -49,6 +60,13 @@ class ProjectActions extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.edit_outlined, color: customColors.actionEdit),
             title: const Text('Edit Project'),
+          ),
+        ),
+        PopupMenuItem<Menu>(
+          value: Menu.addSection,
+          child: ListTile(
+            leading: Icon(Icons.add, color: customColors.actionComplete),
+            title: const Text('Add Section'),
           ),
         ),
         PopupMenuItem<Menu>(
