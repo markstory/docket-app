@@ -115,6 +115,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             SectionActions(project.project, data),
                           ]));
                     },
+                    onListReorder: (int oldIndex, int newIndex) async {
+                      var metadata = _taskLists[oldIndex];
+                      setState(() {
+                        _taskLists.removeAt(oldIndex);
+                        _taskLists.insert(newIndex, metadata);
+                      });
+                      var section = metadata.data;
+                      if (!section) {
+                        return;
+                      }
+                      await projectsProvider.moveSection(project.project, section, newIndex);
+                    },
                     onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
                       var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
@@ -129,7 +141,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
-                      tasksProvider.fetchToday();
                     },
                     onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
                       // Calculate position of adding to a end.
@@ -159,12 +170,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Widget buildWrapper({required Widget child, Project? project}) {
     List<Widget> actions = [];
+    var title = "Project Details";
     if (project != null) {
       actions = [ProjectActions(project)];
+      title = project.name;
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Project Details'),
+        backgroundColor: getProjectColor(project?.color ?? 2),
+        title: Text(title),
         actions: actions,
       ),
       drawer: const AppDrawer(),

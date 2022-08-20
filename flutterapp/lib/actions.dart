@@ -372,3 +372,12 @@ Future<void> deleteSection(String apiToken, Project project, Section section) as
       await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
   });
 }
+
+/// Move a project section
+Future<void> moveSection(String apiToken, Project project, Section section, int newIndex) async {
+  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/move');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: {'ranking': newIndex}, errorMessage: 'Could not move section');
+  });
+}

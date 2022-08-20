@@ -73,6 +73,14 @@ class ProjectsProvider extends ChangeNotifier {
     return projectData;
   }
 
+  /// Read a project from the local database by slug.
+  Future<void> moveSection(Project project, Section section, int newIndex) async {
+    await actions.moveSection(session!.apiToken, project, section, newIndex);
+    await _database.projectDetails.remove(project.slug);
+
+    notifyListeners();
+  }
+
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
     _pending.add(ViewNames.projectMap);
