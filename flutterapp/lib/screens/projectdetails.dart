@@ -9,6 +9,7 @@ import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/taskdatesorter.dart';
 import 'package:docket/components/projectactions.dart';
+import 'package:docket/dialogs/renamesection.dart';
 import 'package:docket/grouping.dart' as grouping;
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
@@ -120,7 +121,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         _taskLists.insert(newIndex, metadata);
                       });
                       var section = metadata.data;
-                      if (!section) {
+                      if (section == null) {
                         return;
                       }
                       await projectsProvider.moveSection(project.project, section, newIndex);
@@ -212,7 +213,12 @@ class SectionActions extends StatelessWidget {
     }
 
     Future<void> _handleEdit() async {
-      // TODO show dialog with section name
+      try {
+        await showRenameSectionDialog(context, project, section);
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Section renamed'));
+      } catch (e) {
+        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not rename section'));
+      }
     }
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
