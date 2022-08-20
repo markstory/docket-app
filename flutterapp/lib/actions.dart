@@ -366,7 +366,7 @@ Future<void> archiveProject(String apiToken, Project project) async {
 
 /// Delete a project section
 Future<void> deleteSection(String apiToken, Project project, Section section) async {
-  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}');
+  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/delete');
 
   return Future(() async {
       await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
@@ -379,5 +379,14 @@ Future<void> moveSection(String apiToken, Project project, Section section, int 
 
   return Future(() async {
       await httpPost(url, apiToken: apiToken, body: {'ranking': newIndex}, errorMessage: 'Could not move section');
+  });
+}
+
+/// Update a project section
+Future<void> updateSection(String apiToken, Project project, Section section) async {
+  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/edit');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
   });
 }

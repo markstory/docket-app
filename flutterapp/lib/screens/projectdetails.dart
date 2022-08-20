@@ -28,7 +28,7 @@ class ProjectDetailsScreen extends StatefulWidget {
 }
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
-  List<TaskSortMetadata> _taskLists = [];
+  List<TaskSortMetadata<Section>> _taskLists = [];
 
   @override
   void initState() {
@@ -39,9 +39,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   void _buildTaskLists(ProjectWithTasks data) {
+    _taskLists = [];
     var grouped = grouping.groupTasksBySection(data.project.sections, data.tasks);
     for (var group in grouped) {
-      late TaskSortMetadata metadata;
+      late TaskSortMetadata<Section> metadata;
       if (group.section == null) {
         metadata = TaskSortMetadata(
             title: group.section?.name ?? '',
@@ -52,9 +53,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               return {'child_order': newIndex, 'section_id': null};
             });
       } else {
-        // TODO might need to add a trailing header button here
-        // TODO add 'add button' for the section.
         metadata = TaskSortMetadata(
+            canDrag: true,
             title: group.section?.name ?? '',
             tasks: group.tasks,
             data: group.section,
@@ -86,9 +86,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               }
               return buildWrapper(child: const LoadingIndicator());
             }
-            if (_taskLists.isEmpty) {
-              _buildTaskLists(project);
-            }
+            // See if this fixes sections dropping off.
+            // if (_taskLists.isEmpty) {
+            _buildTaskLists(project);
+            // }
 
             return buildWrapper(
                 project: project.project,
@@ -102,9 +103,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       if (data == null) {
                         return const SizedBox(width: 0, height: 0);
                       }
-
-                      // TODO this will likely need to become a stateful component
-                      // to include the inline form.
                       return Padding(
                           padding: EdgeInsets.only(left: space(3), right: space(1)),
                           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -171,13 +169,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Widget buildWrapper({required Widget child, Project? project}) {
     List<Widget> actions = [];
     var title = "Project Details";
+    var colorId = 2;
     if (project != null) {
       actions = [ProjectActions(project)];
       title = project.name;
+      colorId = project.color;
     }
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: getProjectColor(project?.color ?? 2),
+        backgroundColor: getProjectColor(colorId),
         title: Text(title),
         actions: actions,
       ),
@@ -211,13 +211,25 @@ class SectionActions extends StatelessWidget {
       }
     }
 
+    Future<void> _handleEdit() async {
+      // TODO show dialog with section name
+    }
+
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
+        Menu.edit: _handleEdit,
         Menu.delete: _handleDelete,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
       return <PopupMenuEntry<Menu>>[
+        PopupMenuItem<Menu>(
+          value: Menu.edit,
+          child: ListTile(
+            leading: Icon(Icons.edit, color: customColors.actionEdit),
+            title: const Text('Rename'),
+          ),
+        ),
         PopupMenuItem<Menu>(
           value: Menu.delete,
           child: ListTile(

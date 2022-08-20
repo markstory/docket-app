@@ -47,11 +47,11 @@ class Project {
   int incompleteTaskCount;
 
   Project({
-    this.id = 0,
     required this.slug,
     required this.name,
-    required this.color,
-    required this.ranking,
+    this.id = 0,
+    this.color = 2,
+    this.ranking = 1,
     this.sections = const [],
     this.incompleteTaskCount = 0,
   });

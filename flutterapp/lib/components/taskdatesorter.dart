@@ -47,7 +47,7 @@ class TaskDateSorter extends StatelessWidget {
         }
         return DragAndDropList(
           header: header,
-          canDrag: false,
+          canDrag: taskListMeta.canDrag,
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: TaskItem(task: task, showDate: false, showProject: true));
           }).toList(),
@@ -119,25 +119,30 @@ class TaskDateSorter extends StatelessWidget {
 
 /// Metadata container for building sortable task lists.
 class TaskSortMetadata<T> {
-  T? data;
+  /// Enable if a task group can be dragsorted as well.
+  final bool canDrag;
+
+  /// Additional data related to the sorting group.
+  /// Used for containing the Section on project details.
+  final T? data;
 
   /// Icon to show on the left of the heading.
-  Widget? icon;
+  final Widget? icon;
 
   /// Title shown in large bold type.
-  String? title;
+  final String? title;
 
   /// Title shown beside the title if its present or as the only title.
   /// Rendered with secondary text.
-  String? subtitle;
+  final String? subtitle;
 
   /// Header button shown after title. Can also be a Row
   /// if more than one button is required.
-  Widget? button;
+  final Widget? button;
 
-  List<Task> tasks;
+  final List<Task> tasks;
 
-  List<CalendarItem> calendarItems;
+  final List<CalendarItem> calendarItems;
 
   /// Called when a task is moved into this list.
   /// Expected to return the map of data that needs to be sent to the server.
@@ -145,12 +150,13 @@ class TaskSortMetadata<T> {
 
   TaskSortMetadata({
     required this.onReceive,
-    this.tasks = const [],
-    this.calendarItems = const [],
     this.icon,
     this.title,
     this.subtitle,
     this.button,
     this.data,
+    this.tasks = const [],
+    this.calendarItems = const [],
+    this.canDrag = false,
   });
 }

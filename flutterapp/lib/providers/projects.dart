@@ -31,6 +31,20 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Get the project list from the local database.
+  Future<List<Project>> getAll() async {
+    return _database.projectMap.all();
+  }
+
+  /// Read a project from the local database by slug.
+  Future<ProjectWithTasks> getBySlug(String slug) async {
+    var projectData = await _database.projectDetails.get(slug);
+    if (_pending.contains(ViewNames.projectDetails)) {
+      projectData.pending = true;
+    }
+    return projectData;
+  }
+
   /// Create a project on the server and notify listeners.
   Future<Project> createProject(Project project) async {
     project = await actions.createProject(session!.apiToken, project);
@@ -64,23 +78,6 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Read a project from the local database by slug.
-  Future<ProjectWithTasks> getBySlug(String slug) async {
-    var projectData = await _database.projectDetails.get(slug);
-    if (_pending.contains(ViewNames.projectDetails)) {
-      projectData.pending = true;
-    }
-    return projectData;
-  }
-
-  /// Read a project from the local database by slug.
-  Future<void> moveSection(Project project, Section section, int newIndex) async {
-    await actions.moveSection(session!.apiToken, project, section, newIndex);
-    await _database.projectDetails.remove(project.slug);
-
-    notifyListeners();
-  }
-
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
     _pending.add(ViewNames.projectMap);
@@ -90,11 +87,6 @@ class ProjectsProvider extends ChangeNotifier {
     await _database.projectMap.addMany(projects);
 
     notifyListeners();
-  }
-
-  /// Get the project list from the local database.
-  Future<List<Project>> getAll() async {
-    return _database.projectMap.all();
   }
 
   /// Move a project on the server and locally
@@ -120,6 +112,7 @@ class ProjectsProvider extends ChangeNotifier {
     return project;
   }
 
+  // Section Methods {{{
   // Remove a section and clear the project details view cache
   Future<void> deleteSection(Project project, Section section) async {
     await actions.deleteSection(session!.apiToken, project, section);
@@ -127,4 +120,22 @@ class ProjectsProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Read a project from the local database by slug.
+  Future<void> updateSection(Project project, Section section) async {
+    await actions.updateSection(session!.apiToken, project, section);
+    await _database.projectDetails.remove(project.slug);
+
+    notifyListeners();
+  }
+
+  /// Read a project from the local database by slug.
+  Future<void> moveSection(Project project, Section section, int newIndex) async {
+    await actions.moveSection(session!.apiToken, project, section, newIndex);
+    section.ranking = newIndex;
+    await _database.projectDetails.remove(project.slug);
+
+    notifyListeners();
+  }
+  // }}}
 }
