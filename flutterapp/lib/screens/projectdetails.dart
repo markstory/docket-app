@@ -44,25 +44,25 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       late TaskSortMetadata metadata;
       if (group.section == null) {
         metadata = TaskSortMetadata(
-          title: group.section?.name ?? '',
-          tasks: group.tasks,
-          onReceive: (Task task, int newIndex) {
-            task.childOrder = newIndex;
-            task.sectionId = null;
-            return {'child_order': newIndex, 'section_id': null};
-          });
+            title: group.section?.name ?? '',
+            tasks: group.tasks,
+            onReceive: (Task task, int newIndex) {
+              task.childOrder = newIndex;
+              task.sectionId = null;
+              return {'child_order': newIndex, 'section_id': null};
+            });
       } else {
         // TODO might need to add a trailing header button here
         // TODO add 'add button' for the section.
         metadata = TaskSortMetadata(
-          title: group.section?.name ?? '',
-          tasks: group.tasks,
-          data: group.section,
-          onReceive: (Task task, int newIndex) {
-            task.childOrder = newIndex;
-            task.sectionId = group.section?.id;
-            return {'child_order': newIndex, 'section_id': task.sectionId};
-          });
+            title: group.section?.name ?? '',
+            tasks: group.tasks,
+            data: group.section,
+            onReceive: (Task task, int newIndex) {
+              task.childOrder = newIndex;
+              task.sectionId = group.section?.id;
+              return {'child_order': newIndex, 'section_id': task.sectionId};
+            });
       }
       _taskLists.add(metadata);
     }
@@ -71,114 +71,109 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
-      var theme = Theme.of(context);
       var projectFuture = projectsProvider.getBySlug(widget.slug);
 
-      return Scaffold(
-        appBar: AppBar(title: const Text('Project Details')),
-        drawer: const AppDrawer(),
-        body: FutureBuilder<ProjectWithTasks?>(
-            future: projectFuture,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Card(child: Text("Something terrible happened"));
+      return FutureBuilder<ProjectWithTasks?>(
+          future: projectFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return buildWrapper(child: const Card(child: Text("Something terrible happened")));
+            }
+            var project = snapshot.data;
+            if (project == null || project.pending || project.missingData) {
+              if (project?.missingData ?? false) {
+                projectsProvider.fetchBySlug(widget.slug);
               }
-              var project = snapshot.data;
-              if (project == null || project.pending || project.missingData) {
-                if (project?.missingData ?? false) {
-                  projectsProvider.fetchBySlug(widget.slug);
-                }
-                return const LoadingIndicator();
-              }
+              return buildWrapper(child: const LoadingIndicator());
+            }
+            if (_taskLists.isEmpty) {
+              _buildTaskLists(project);
+            }
 
-              List<Widget> children = [
-                Row(children: [
-                  SizedBox(width: space(2)),
-                  Text(project.project.name, style: theme.textTheme.titleLarge),
-                  TaskAddButton(projectId: project.project.id),
-                  const Spacer(),
-                  ProjectActions(project.project),
-                ]),
-              ];
+            return buildWrapper(
+                project: project.project,
+                child: TaskDateSorter(
+                    taskLists: _taskLists,
+                    buildItem: (Task task) {
+                      return TaskItem(task: task, showDate: true, showProject: false);
+                    },
+                    buildHeader: (TaskSortMetadata metadata) {
+                      var data = metadata.data as Section?;
+                      if (data == null) {
+                        return const SizedBox(width: 0, height: 0);
+                      }
 
-              if (_taskLists.isEmpty) {
-                _buildTaskLists(project);
-              }
+                      // TODO this will likely need to become a stateful component
+                      // to include the inline form.
+                      return Padding(
+                          padding: EdgeInsets.only(left: space(3), right: space(1)),
+                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Row(children: [
+                              Text(metadata.title ?? ''),
+                              TaskAddButton(projectId: project.project.id, sectionId: data.id),
+                            ]),
+                            SectionActions(project.project, data),
+                          ]));
+                    },
+                    onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                      var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
-              var sorter = TaskDateSorter(
-                taskLists: _taskLists,
-                buildItem: (Task task) {
-                  return TaskItem(task: task, showDate: true, showProject: true);
-                },
-                buildHeader: (TaskSortMetadata metadata) {
-                  var data = metadata.data as Section?;
-                  if (data == null) {
-                    return const SizedBox(width:0, height: 0);
-                  }
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
 
-                  // TODO this will likely need to become a stateful component
-                  // to include the inline form.
-                  return Row(
-                    children: [
-                      Text(metadata.title ?? ''),
-                      TaskAddButton(projectId: project.project.id, sectionId: data.id),
-                      Expanded(child: SectionActions(project.project, data)),
-                    ]
-                  );
-                },
-                onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                  var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+                      // Update local state assuming server will be ok.
+                      setState(() {
+                        _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                        _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+                      });
 
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                      tasksProvider.fetchToday();
+                    },
+                    onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                      // Calculate position of adding to a end.
+                      // Generally this will be zero but it is possible to add to the
+                      // bottom of a populated list too.
+                      var targetList = _taskLists[listIndex];
+                      if (itemIndex == -1) {
+                        itemIndex = targetList.tasks.length;
+                      }
 
-                  // Update local state assuming server will be ok.
-                  setState(() {
-                    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                  });
+                      var itemChild = newItem.child as TaskItem;
+                      var task = itemChild.task;
 
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchToday();
-                },
-                onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                  // Calculate position of adding to a end.
-                  // Generally this will be zero but it is possible to add to the
-                  // bottom of a populated list too.
-                  var targetList = _taskLists[listIndex];
-                  if (itemIndex == -1) {
-                    itemIndex = targetList.tasks.length;
-                  }
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                      setState(() {
+                        _taskLists[listIndex].tasks.insert(itemIndex, task);
+                      });
 
-                  var itemChild = newItem.child as TaskItem;
-                  var task = itemChild.task;
-
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                  setState(() {
-                    _taskLists[listIndex].tasks.insert(itemIndex, task);
-                  });
-
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchToday();
-                }
-              );
-              children.add(sorter);
-
-              return ListView(
-                children: children,
-              );
-            }),
-      );
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                      tasksProvider.fetchToday();
+                    }));
+          });
     });
+  }
+
+  Widget buildWrapper({required Widget child, Project? project}) {
+    List<Widget> actions = [];
+    if (project != null) {
+      actions = [ProjectActions(project)];
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Project Details'),
+        actions: actions,
+      ),
+      drawer: const AppDrawer(),
+      body: child,
+    );
   }
 }
 
-enum Menu {
-  delete, edit
-}
+enum Menu { delete, edit }
 
 class SectionActions extends StatelessWidget {
   final Section section;
