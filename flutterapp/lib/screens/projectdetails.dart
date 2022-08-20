@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskitem.dart';
-import 'package:docket/components/taskgroup.dart';
 import 'package:docket/components/taskdatesorter.dart';
 import 'package:docket/components/projectactions.dart';
 import 'package:docket/grouping.dart' as grouping;
@@ -57,6 +57,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         metadata = TaskSortMetadata(
           title: group.section?.name ?? '',
           tasks: group.tasks,
+          data: group.section,
           onReceive: (Task task, int newIndex) {
             task.childOrder = newIndex;
             task.sectionId = group.section?.id;
@@ -109,6 +110,22 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 buildItem: (Task task) {
                   return TaskItem(task: task, showDate: true, showProject: true);
                 },
+                buildHeader: (TaskSortMetadata metadata) {
+                  var data = metadata.data as Section?;
+                  if (data == null) {
+                    return const SizedBox(width:0, height: 0);
+                  }
+
+                  // TODO this will likely need to become a stateful component
+                  // to include the inline form.
+                  return Row(
+                    children: [
+                      Text(metadata.title ?? ''),
+                      TaskAddButton(projectId: project.project.id, sectionId: data.id),
+                      Expanded(child: SectionActions(project.project, data)),
+                    ]
+                  );
+                },
                 onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
                   var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
@@ -155,6 +172,51 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               );
             }),
       );
+    });
+  }
+}
+
+enum Menu {
+  delete, edit
+}
+
+class SectionActions extends StatelessWidget {
+  final Section section;
+  final Project project;
+
+  const SectionActions(this.project, this.section, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var customColors = theme.extension<DocketColors>()!;
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+    var messenger = ScaffoldMessenger.of(context);
+
+    Future<void> _handleDelete() async {
+      try {
+        await projectsProvider.deleteSection(project, section);
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Section Deleted'));
+      } catch (e) {
+        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete section task'));
+      }
+    }
+
+    return PopupMenuButton<Menu>(onSelected: (Menu item) {
+      var actions = {
+        Menu.delete: _handleDelete,
+      };
+      actions[item]?.call();
+    }, itemBuilder: (BuildContext context) {
+      return <PopupMenuEntry<Menu>>[
+        PopupMenuItem<Menu>(
+          value: Menu.delete,
+          child: ListTile(
+            leading: Icon(Icons.delete, color: customColors.actionDelete),
+            title: const Text('Delete'),
+          ),
+        ),
+      ];
     });
   }
 }

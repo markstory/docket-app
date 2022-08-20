@@ -15,16 +15,20 @@ class TaskDateSorter extends StatelessWidget {
   /// Fired when an item moves from overdue to one of the other sections.
   final void Function(DragAndDropItem newItem, int listIndex, int itemIndex) onItemAdd;
 
-  // Fired when items are reordered.
+  /// Fired when items are reordered.
   final void Function(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) onItemReorder;
 
-  // Fired when a list is reordered.
-  final void Function(int oldListIndex, int newListIndex)? onListReorder;
-
+  /// Used to render the task list item.
   final Widget Function(Task task) buildItem;
 
+  /// Fired when a list is reordered.
+  final void Function(int oldListIndex, int newListIndex)? onListReorder;
+
+  /// Customize the header rendering.
+  final Widget Function(TaskSortMetadata metadata)? buildHeader;
+
   const TaskDateSorter(
-      {required this.taskLists, required this.onItemAdd, required this.onItemReorder, required this.buildItem, this.onListReorder, this.overdue, super.key});
+      {required this.taskLists, required this.onItemAdd, required this.onItemReorder, required this.buildItem, this.onListReorder, this.overdue, this.buildHeader, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +39,14 @@ class TaskDateSorter extends StatelessWidget {
         // TODO This is janky AF
         var includeOverdue = taskListMeta.title == 'Today';
 
+        late Widget header;
+        if (buildHeader != null) {
+          header = buildHeader!(taskListMeta);
+        } else {
+          header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
+        }
         return DragAndDropList(
-          header: buildHeader(taskListMeta, theme, includeOverdue: includeOverdue),
+          header: header,
           canDrag: false,
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: TaskItem(task: task, showDate: false, showProject: true));
@@ -66,7 +76,7 @@ class TaskDateSorter extends StatelessWidget {
   }
 
   /// Render a header for a TaskSortMetadata instance
-  Widget buildHeader(TaskSortMetadata taskMeta, ThemeData theme, {includeOverdue = false}) {
+  Widget buildHeaderDefault(TaskSortMetadata taskMeta, ThemeData theme, {includeOverdue = false}) {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
 
@@ -108,7 +118,9 @@ class TaskDateSorter extends StatelessWidget {
 }
 
 /// Metadata container for building sortable task lists.
-class TaskSortMetadata {
+class TaskSortMetadata<T> {
+  T? data;
+
   /// Icon to show on the left of the heading.
   Widget? icon;
 
@@ -139,5 +151,6 @@ class TaskSortMetadata {
     this.title,
     this.subtitle,
     this.button,
+    this.data,
   });
 }

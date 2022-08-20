@@ -363,3 +363,12 @@ Future<void> archiveProject(String apiToken, Project project) async {
       await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
   });
 }
+
+/// Delete a project section
+Future<void> deleteSection(String apiToken, Project project, Section section) async {
+  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
+  });
+}
