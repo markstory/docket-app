@@ -97,9 +97,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               return buildWrapper(child: const LoadingIndicator());
             }
             // See if this fixes sections dropping off.
-            // if (_taskLists.isEmpty) {
-            _buildTaskLists(project);
-            // }
+            if (_taskLists.isEmpty) {
+              _buildTaskLists(project);
+            }
 
             return buildWrapper(
                 project: project.project,
