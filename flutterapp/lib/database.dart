@@ -279,7 +279,7 @@ abstract class ViewCache<T> {
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
     var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
-    _state = null;
+    _state = data;
     await _database.refresh(keyName(), payload);
   }
 
@@ -292,10 +292,13 @@ abstract class ViewCache<T> {
     if (payload == null) {
       return null;
     }
+    _state = payload['data'];
+
     return payload['data'];
   }
 
   Future<void> clear() async {
+    _state = null;
     return _database.remove(keyName());
   }
 
