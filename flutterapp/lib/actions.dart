@@ -24,7 +24,7 @@ class ValidationError implements Exception {
     List<String> errors = [];
     try {
       var bodyData = utf8.decode(body);
-      developer.log('$message. Response: $bodyData');
+      developer.log('$message. Response: $bodyData', name: 'docket.actions');
 
       var decoded = jsonDecode(bodyData);
       if (decoded == null || decoded['errors'] == null) {
@@ -58,7 +58,7 @@ class ValidationError implements Exception {
 
 Uri _makeUrl(String path) {
   var url = Uri.parse('$baseUrl$path');
-  developer.log('actions.request url=$url');
+  developer.log('actions.request url=$url', name: 'docket.actions');
 
   return url;
 }
@@ -76,11 +76,11 @@ Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage})
     headers: headers,
   );
   if (response.statusCode >= 400) {
-    developer.log('actions.request failed');
+    developer.log('actions.request failed', name: 'docket.actions');
     errorMessage ??= 'Request Failed to ${url.path}';
     throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
   }
-  developer.log('actions.request ok');
+  developer.log('actions.request ok', name: 'docket.actions');
 
   return response;
 }
@@ -96,7 +96,7 @@ Future<http.Response> httpPost(
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   };
-  if (apiToken != null) {
+  if (apiToken != null && apiToken.isNotEmpty) {
     headers['Authorization'] = 'Bearer $apiToken';
   }
   var response = await client.post(
@@ -107,7 +107,7 @@ Future<http.Response> httpPost(
   if (response.statusCode >= 400) {
     errorMessage ??= 'Request Failed to ${url.path}';
     var err = ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
-    developer.log(err.toString());
+    developer.log(err.toString(), name: 'docket.actions');
     throw err;
   }
 
@@ -131,13 +131,13 @@ Future<ApiToken> doLogin(String email, String password) async {
 
   return Future(() async {
     var response = await httpPost(url, body: body, errorMessage: 'Login Failed');
-    developer.log('login complete');
+    developer.log('login complete', name: 'docket.actions');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
       return ApiToken.fromMap(decoded['apiToken']);
     } catch (e) {
-      developer.log('failed to decode ${e.toString()}');
+      developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
       rethrow;
     }
   });
@@ -163,7 +163,7 @@ Future<TaskViewData> loadTodayTasks(String apiToken) async {
       }
       return TaskViewData(tasks: tasks, calendarItems: calendarItems);
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
   });
@@ -188,7 +188,7 @@ Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
       }
       return TaskViewData(tasks: tasks, calendarItems: calendarItems);
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
   });
@@ -261,7 +261,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
       var taskData = jsonDecode(utf8.decode(response.bodyBytes));
       return Task.fromMap(taskData['task']);
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
   });
@@ -293,7 +293,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
       }
       throw Exception('Invalid response data received');
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
   });
@@ -313,7 +313,7 @@ Future<List<Project>> fetchProjects(String apiToken) async {
       }
       return projects;
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
   });
