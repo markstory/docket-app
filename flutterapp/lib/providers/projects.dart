@@ -94,11 +94,7 @@ class ProjectsProvider extends ChangeNotifier {
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
     project = await actions.moveProject(session!.apiToken, project, newRank);
-
-    await Future.wait([
-      _database.projectMap.set(project),
-      _database.projectDetails.remove(project.slug),
-    ]);
+    await _database.projectMap.set(project);
 
     notifyListeners();
   }
@@ -106,8 +102,10 @@ class ProjectsProvider extends ChangeNotifier {
   /// Archive a project and remove the project the project and project details.
   Future<Project> archive(Project project) async {
     await actions.archiveProject(session!.apiToken, project);
-    await _database.projectMap.remove(project.slug);
-    await _database.projectDetails.remove(project.slug);
+    await Future.wait([
+      _database.projectMap.remove(project.slug),
+      _database.projectDetails.remove(project.slug),
+    ]);
     notifyListeners();
 
     return project;

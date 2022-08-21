@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -68,6 +69,10 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
+    if (_pending.contains(ViewNames.today)) {
+      return;
+    }
+
     // TODO make this use _database.today.isFresh()
     _pending.add(ViewNames.today);
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
@@ -80,6 +85,9 @@ class TasksProvider extends ChangeNotifier {
   /// Get the local database state for today view.
   Future<TaskViewData> getToday() async {
     var taskView = await _database.today.get();
+    if (taskView.missingData) {
+      fetchToday();
+    }
     if (_pending.contains(ViewNames.today)) {
       taskView.pending = true;
     }

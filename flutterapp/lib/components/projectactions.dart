@@ -42,7 +42,6 @@ class ProjectActions extends StatelessWidget {
         messenger.showSnackBar(successSnackBar(context: context, text: 'Could not create section'));
       }
     }
-
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 

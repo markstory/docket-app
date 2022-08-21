@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Future<void> _refresh() {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
+    _taskLists = [];
     return projectsProvider.fetchBySlug(widget.slug);
   }
 
@@ -91,9 +93,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             }
             var project = snapshot.data;
             if (project == null || project.pending || project.missingData) {
-              if (project?.missingData ?? false) {
-                _refresh();
-              }
               return buildWrapper(child: const LoadingIndicator());
             }
             // See if this fixes sections dropping off.

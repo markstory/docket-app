@@ -34,14 +34,18 @@ class _TodayScreenState extends State<TodayScreen> {
     _refresh();
   }
 
-  void _refresh() {
+  void _refresh() async {
     var today = DateUtils.dateOnly(DateTime.now());
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    tasksProvider.fetchToday();
-    projectsProvider.fetchProjects();
     _newTask = Task.blank(dueOn: today);
+
+    await Future.wait([
+      tasksProvider.fetchToday(),
+      projectsProvider.fetchProjects(),
+    ]);
+    _taskLists = [];
   }
 
   void _buildTaskLists(TaskViewData data) {
@@ -116,14 +120,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
             // Loading state
             if (data == null || data.pending || data.missingData) {
-              // Reset internal state but don't re-render
-              // as we will rebuild the state when the future resolves.
               _taskLists = [];
-
-              // Reload if we were missing data and not an error
-              if (data?.missingData ?? false) {
-                _refresh();
-              }
               return const LoadingIndicator();
             }
 
@@ -151,7 +148,6 @@ class _TodayScreenState extends State<TodayScreen> {
 
                 // Update the moved task and reload from server async
                 await tasksProvider.move(task, updates);
-                tasksProvider.fetchToday();
               },
               onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
                 if (_overdue == null) {
@@ -178,7 +174,6 @@ class _TodayScreenState extends State<TodayScreen> {
 
                 // Update the moved task and reload from server async
                 await tasksProvider.move(task, updates);
-                tasksProvider.fetchToday();
               }
             );
           },
