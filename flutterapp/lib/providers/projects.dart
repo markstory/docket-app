@@ -40,9 +40,11 @@ class ProjectsProvider extends ChangeNotifier {
   /// Read a project from the local database by slug.
   Future<ProjectWithTasks> getBySlug(String slug) async {
     var projectData = await _database.projectDetails.get(slug);
-    if (_pending.contains(ViewNames.projectDetails)) {
-      projectData.pending = true;
+    if (projectData.missingData) {
+      fetchBySlug(slug);
     }
+    projectData.pending = _pending.contains(ViewNames.projectDetails);
+
     return projectData;
   }
 
@@ -69,10 +71,12 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Fetch a project from the API and notifyListeners.
   Future<void> fetchBySlug(String slug) async {
-    // TODO add cache checks
-    var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
+    if (_pending.contains(ViewNames.projectDetails)) {
+      return;
+    }
 
     _pending.add(ViewNames.projectDetails);
+    var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
     await _database.projectDetails.set(projectDetails);
     _pending.remove(ViewNames.projectDetails);
 
@@ -81,6 +85,9 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
+    if (_pending.contains(ViewNames.projectMap)) {
+      return;
+    }
     _pending.add(ViewNames.projectMap);
     var projects = await actions.fetchProjects(session!.apiToken);
     _pending.remove(ViewNames.projectMap);

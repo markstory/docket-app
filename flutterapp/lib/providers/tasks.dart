@@ -69,11 +69,10 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
+    // TODO Add freshness check
     if (_pending.contains(ViewNames.today)) {
       return;
     }
-
-    // TODO make this use _database.today.isFresh()
     _pending.add(ViewNames.today);
     var taskViewData = await actions.loadTodayTasks(session!.apiToken);
     _pending.remove(ViewNames.today);
@@ -88,9 +87,8 @@ class TasksProvider extends ChangeNotifier {
     if (taskView.missingData) {
       fetchToday();
     }
-    if (_pending.contains(ViewNames.today)) {
-      taskView.pending = true;
-    }
+    taskView.pending = _pending.contains(ViewNames.today);
+
     return taskView;
   }
 
@@ -98,6 +96,9 @@ class TasksProvider extends ChangeNotifier {
   /// Will notifyListeners() on completion.
   Future<void> fetchUpcoming() async {
     // TODO make this use _database.upcoming.isFresh()
+    if (_pending.contains(ViewNames.upcoming)) {
+      return;
+    }
     _pending.add(ViewNames.upcoming);
     var taskViewData = await actions.loadUpcomingTasks(session!.apiToken);
     _pending.remove(ViewNames.upcoming);
@@ -109,9 +110,10 @@ class TasksProvider extends ChangeNotifier {
   // Get the locally cached upcoming tasks.
   Future<TaskViewData> getUpcoming() async {
     var taskView = await _database.upcoming.get();
-    if (_pending.contains(ViewNames.upcoming)) {
-      taskView.pending = true;
+    if (taskView.missingData) {
+      fetchUpcoming();
     }
+    taskView.pending = _pending.contains(ViewNames.upcoming);
     return taskView;
   }
 

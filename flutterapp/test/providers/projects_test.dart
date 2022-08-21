@@ -113,9 +113,6 @@ void main() {
       var projectMap = await db.projectMap.get('home');
       expect(project, isNotNull);
       expect(projectMap!.slug, equals('home'));
-
-      var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
     });
 
     test('update() makes API request and expires local db', () async {

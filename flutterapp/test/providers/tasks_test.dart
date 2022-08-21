@@ -48,8 +48,9 @@ void main() {
     await db.today.set(taskView);
   }
 
+  var db = LocalDatabase();
+
   group('$TasksProvider', () {
-    var db = LocalDatabase();
     var session = SessionProvider(db)..set('api-token');
 
     setUp(() async {
@@ -67,12 +68,10 @@ void main() {
 
         return Response(tasksTodayResponseFixture, 200);
       });
-      var viewData = await provider.getToday();
-      expect(viewData.pending, equals(true));
-      expect(viewData.tasks.length, equals(0));
 
       await provider.fetchToday();
       var taskData = await provider.getToday();
+
       expect(taskData.pending, equals(false));
       expect(taskData.tasks.length, equals(2));
       expect(taskData.tasks[0].title, equals('clean dishes'));
@@ -99,8 +98,6 @@ void main() {
 
         return Response(tasksTodayResponseFixture, 200);
       });
-      var viewData = await provider.getUpcoming();
-      expect(viewData.pending, equals(true));
 
       await provider.fetchUpcoming();
       var taskData = await provider.getUpcoming();
@@ -148,7 +145,7 @@ void main() {
       expect(updated.tasks.length, equals(0));
     });
 
-    test('deleteTask() removes task', () async {
+    test('deleteTask() removes task and clears local db', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/delete'));
         return Response('', 204);
@@ -162,9 +159,9 @@ void main() {
 
       expect(listenerCallCount, greaterThan(0));
 
-      var updated = await provider.getToday();
-      expect(updated.pending, equals(true));
-      expect(updated.tasks.length, equals(0));
+      var todayData = await db.today.get();
+      expect(todayData.missingData, equals(true));
+      expect(todayData.tasks.length, equals(0));
     });
 
     test('getById() reads tasks', () async {
@@ -215,9 +212,6 @@ void main() {
 
       var created = await provider.createTask(task);
       expect(created.id, equals(1));
-
-      var todayData = await provider.getToday();
-      expect(todayData.tasks.length, equals(0));
     });
 
     test('updateTask() call API, and clears today view', () async {
@@ -242,8 +236,7 @@ void main() {
       expect(updated.id, equals(1));
       expect(updated.title, equals('fold the towels'));
 
-      var todayData = await provider.getToday();
-      expect(todayData.pending, equals(true));
+      var todayData = await db.today.get();
       expect(todayData.tasks.length, equals(0));
     });
   });
