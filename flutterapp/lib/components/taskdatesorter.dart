@@ -47,6 +47,7 @@ class TaskDateSorter extends StatelessWidget {
         }
         return DragAndDropList(
           header: header,
+          contentsWhenEmpty: buildEmpty(theme),
           canDrag: taskListMeta.canDrag,
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: TaskItem(task: task, showDate: false, showProject: true));
@@ -58,6 +59,17 @@ class TaskDateSorter extends StatelessWidget {
       onItemReorder: onItemReorder,
       onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
       onItemAdd: onItemAdd,
+    );
+  }
+
+  Widget buildEmpty(ThemeData theme) {
+    var docketColors = theme.extension<DocketColors>()!;
+    // TODO make contents dynamic based on the current metadata information
+    var contents = Text('No tasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText));
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: space(4)),
+      child: contents,
     );
   }
 

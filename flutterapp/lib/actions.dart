@@ -57,10 +57,7 @@ class ValidationError implements Exception {
 }
 
 Uri _makeUrl(String path) {
-  var url = Uri.parse('$baseUrl$path');
-  developer.log('actions.request url=$url', name: 'docket.actions');
-
-  return url;
+  return Uri.parse('$baseUrl$path');
 }
 
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
@@ -75,12 +72,13 @@ Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage})
     url,
     headers: headers,
   );
+  developer.log('Sending request to $url', name: 'docket.actions');
   if (response.statusCode >= 400) {
-    developer.log('actions.request failed', name: 'docket.actions');
+    developer.log('Request to $url failed', name: 'docket.actions');
     errorMessage ??= 'Request Failed to ${url.path}';
     throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
   }
-  developer.log('actions.request ok', name: 'docket.actions');
+  developer.log('Request to $url completed', name: 'docket.actions');
 
   return response;
 }
@@ -163,7 +161,7 @@ Future<TaskViewData> loadTodayTasks(String apiToken) async {
       }
       return TaskViewData(tasks: tasks, calendarItems: calendarItems);
     } catch (e, stacktrace) {
-      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions.today');
       rethrow;
     }
   });

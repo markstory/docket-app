@@ -4,7 +4,9 @@ import 'package:docket/models/task.dart';
 import 'package:docket/screens/taskadd.dart';
 
 class FloatingCreateTaskButton extends StatelessWidget {
-  const FloatingCreateTaskButton({super.key});
+  final Task? task;
+
+  const FloatingCreateTaskButton({this.task, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class FloatingCreateTaskButton extends StatelessWidget {
         Navigator.pushNamed(
           context,
           TaskAddScreen.routeName,
-          arguments: TaskAddScreenArguments(Task.blank()),
+          arguments: TaskAddScreenArguments(task ?? Task.blank()),
         );
       },
       backgroundColor: theme.colorScheme.primary,

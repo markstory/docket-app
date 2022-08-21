@@ -26,20 +26,27 @@ class TodayScreen extends StatefulWidget {
 class _TodayScreenState extends State<TodayScreen> {
   List<TaskSortMetadata> _taskLists = [];
   TaskSortMetadata? _overdue;
+  Task? _newTask;
 
   @override
   void initState() {
     super.initState();
+    _refresh();
+  }
+
+  void _refresh() {
+    var today = DateUtils.dateOnly(DateTime.now());
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     tasksProvider.fetchToday();
     projectsProvider.fetchProjects();
+    _newTask = Task.blank(dueOn: today);
   }
 
   void _buildTaskLists(TaskViewData data) {
-    var customColors = getCustomColors(context);
     var today = DateUtils.dateOnly(DateTime.now());
+    var customColors = getCustomColors(context);
 
     var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
     if (overdueTasks.isNotEmpty) {
@@ -54,9 +61,6 @@ class _TodayScreenState extends State<TodayScreen> {
 
     // No setState() as we don't want to re-render.
     var todayTasks = TaskSortMetadata(
-        icon: Icon(Icons.today, color: customColors.dueToday),
-        title: 'Today',
-        button: TaskAddButton(dueOn: today),
         calendarItems: data.calendarItems,
         tasks: data.tasks.where((task) => !task.evening).toList(),
         onReceive: (Task task, int newIndex) {
@@ -97,9 +101,11 @@ class _TodayScreenState extends State<TodayScreen> {
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
       return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: const Text('Today')
+        ),
         drawer: const AppDrawer(),
-        floatingActionButton: const FloatingCreateTaskButton(),
+        floatingActionButton: FloatingCreateTaskButton(task: _newTask),
         body: FutureBuilder<TaskViewData>(
           future: tasksProvider.getToday(),
           builder: (context, snapshot) {
@@ -116,7 +122,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
               // Reload if we were missing data and not an error
               if (data?.missingData ?? false) {
-                tasksProvider.fetchToday();
+                _refresh();
               }
               return const LoadingIndicator();
             }

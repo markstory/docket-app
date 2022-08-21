@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:docket/models/task.dart';
 
 class Section {
@@ -66,7 +67,8 @@ class Project {
 
   factory Project.fromMap(Map<String, dynamic> json) {
     List<Section> sections = [];
-    if (json['sections'] != null && json['sections'].runtimeType == List) {
+    if (json['sections'] != null &&
+        (json['sections'].runtimeType == List || json['sections'].runtimeType == List<Map<String, Object?>>)) {
       for (var item in json['sections']) {
         sections.add(Section.fromMap(item));
       }
@@ -138,12 +140,7 @@ class ProjectWithTasks {
   // Whether or not a data refresh is pending
   bool pending;
 
-  ProjectWithTasks({
-    required this.project,
-    required this.tasks,
-    this.missingData = false,
-    this.pending = false
-  });
+  ProjectWithTasks({required this.project, required this.tasks, this.missingData = false, this.pending = false});
 
   factory ProjectWithTasks.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();

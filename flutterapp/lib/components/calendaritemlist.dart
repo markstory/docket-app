@@ -14,14 +14,19 @@ class CalendarItemList extends StatelessWidget {
     if (calendarItems.isEmpty) {
       return const SizedBox();
     }
-    return Material(
-        elevation: 1,
-        child: Container(
-            padding: EdgeInsets.all(space(1)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: calendarItems.map((item) => CalendarItemTile(calendarItem: item)).toList(),
-            )));
+    var padding = EdgeInsets.all(space(1));
+
+    return Container(
+        padding: padding,
+        child: Material(
+            elevation: 1,
+            borderRadius: DocketColors.borderRadius,
+            child: Container(
+                padding: padding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: calendarItems.map((item) => CalendarItemTile(calendarItem: item)).toList(),
+                ))));
   }
 }
 

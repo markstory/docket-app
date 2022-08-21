@@ -88,6 +88,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       return Scaffold(
           appBar: AppBar(),
           drawer: const AppDrawer(),
+          // TODO add scroll tracking for sections and update add button.
           floatingActionButton: const FloatingCreateTaskButton(),
           body: FutureBuilder<TaskViewData>(
             future: taskViewData,

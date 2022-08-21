@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskitem.dart';
@@ -30,17 +31,25 @@ class ProjectDetailsScreen extends StatefulWidget {
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   List<TaskSortMetadata<Section>> _taskLists = [];
+  Task? _newTask;
 
   @override
   void initState() {
     super.initState();
+
+    _refresh();
+  }
+
+  Future<void> _refresh() {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    projectsProvider.fetchBySlug(widget.slug);
+    return projectsProvider.fetchBySlug(widget.slug);
   }
 
   void _buildTaskLists(ProjectWithTasks data) {
+    _newTask = Task.blank(projectId: data.project.id);
     _taskLists = [];
+
     var grouped = grouping.groupTasksBySection(data.project.sections, data.tasks);
     for (var group in grouped) {
       late TaskSortMetadata<Section> metadata;
@@ -83,7 +92,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             var project = snapshot.data;
             if (project == null || project.pending || project.missingData) {
               if (project?.missingData ?? false) {
-                projectsProvider.fetchBySlug(widget.slug);
+                _refresh();
               }
               return buildWrapper(child: const LoadingIndicator());
             }
@@ -169,8 +178,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Widget buildWrapper({required Widget child, Project? project}) {
     List<Widget> actions = [];
-    var title = "Project Details";
-    var colorId = 2;
+    var title = "";
+    // Default to a gray color
+    var colorId = 14;
     if (project != null) {
       actions = [ProjectActions(project)];
       title = project.name;
@@ -183,6 +193,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         actions: actions,
       ),
       drawer: const AppDrawer(),
+      // TODO add scroll tracking for sections and update add button.
+      floatingActionButton: FloatingCreateTaskButton(task: _newTask),
       body: child,
     );
   }

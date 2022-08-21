@@ -256,6 +256,8 @@ abstract class ViewCache<T> {
   late JsonCache _database;
   Duration duration;
 
+  Map<String, dynamic>? _state;
+
   ViewCache(JsonCache database, this.duration) {
     _database = database;
   }
@@ -277,11 +279,15 @@ abstract class ViewCache<T> {
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
     var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
+    _state = null;
     await _database.refresh(keyName(), payload);
   }
 
   /// Refresh the data stored for the 'today' view.
   Future<Map<String, dynamic>?> _get() async {
+    if (_state != null) {
+      return _state;
+    }
     var payload = await _database.value(keyName());
     if (payload == null) {
       return null;
@@ -307,7 +313,7 @@ class TodayView extends ViewCache<TaskViewData> {
 
   @override
   String keyName() {
-    return 'v1:todaytasks';
+    return 'v1:$name';
   }
 
   /// Refresh the data stored for the 'today' view.
@@ -333,7 +339,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
 
   @override
   String keyName() {
-    return 'v1:upcomingtasks';
+    return 'v1:$name';
   }
 
   /// Refresh the data stored for the 'upcoming' view.
@@ -360,7 +366,7 @@ class TaskDetailsView extends ViewCache<Task> {
 
   @override
   String keyName() {
-    return 'v1:taskmap';
+    return 'v1:$name';
   }
 
   /// Set a task into the details view.
@@ -399,7 +405,7 @@ class ProjectMapView extends ViewCache<Project> {
 
   @override
   String keyName() {
-    return 'v1:projectmap';
+    return 'v1:$name';
   }
 
   /// Set a project into the lookup
@@ -453,7 +459,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
 
   @override
   String keyName() {
-    return 'v1:projectdetails';
+    return 'v1:$name';
   }
 
   /// Set a project into the lookup
@@ -475,7 +481,8 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
         missingData: true,
       );
     }
-    return ProjectWithTasks.fromMap(data[slug]);
+    var projectTasks = ProjectWithTasks.fromMap(data[slug]);
+    return projectTasks;
   }
 
   Future<void> remove(String slug) async {

@@ -48,6 +48,7 @@ List<ProjectColor> getProjectColors() {
 @immutable
 class DocketColors extends ThemeExtension<DocketColors> {
   static const double iconSize = 24;
+  static const BorderRadius borderRadius = BorderRadius.all(Radius.circular(14));
 
   // Color values for docket theme.
   static const Color white = Color(0xFFffffff);
@@ -109,6 +110,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
   final Color? dueFortnight;
 
   final Color? secondaryText;
+  final Color? disabledText;
 
   const DocketColors({
     required this.actionLock,
@@ -123,6 +125,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     required this.dueWeek,
     required this.dueFortnight,
     required this.secondaryText,
+    required this.disabledText,
   });
 
   @override
@@ -139,6 +142,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     Color? dueWeek,
     Color? dueFortnight,
     Color? secondaryText,
+    Color? disabledText,
   }) {
     return DocketColors(
       actionLock: actionLock ?? this.actionLock,
@@ -153,6 +157,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueWeek: dueWeek ?? this.dueWeek,
       dueFortnight: dueFortnight ?? this.dueFortnight,
       secondaryText: secondaryText ?? this.secondaryText,
+      disabledText: disabledText ?? this.disabledText,
     );
   }
 
@@ -174,6 +179,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
       dueWeek: Color.lerp(dueWeek, other.dueWeek, t),
       dueFortnight: Color.lerp(dueFortnight, other.dueFortnight, t),
       secondaryText: Color.lerp(secondaryText, other.secondaryText, t),
+      disabledText: Color.lerp(disabledText, other.disabledText, t),
     );
   }
 
@@ -190,6 +196,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueWeek: blue700,
     dueFortnight: gray500,
     secondaryText: gray700,
+    disabledText: gray800,
   );
 
   static const dark = DocketColors(
@@ -205,6 +212,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueWeek: blue300,
     dueFortnight: gray500,
     secondaryText: gray500,
+    disabledText: gray300,
   );
 }
 
