@@ -72,13 +72,12 @@ Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage})
     url,
     headers: headers,
   );
-  developer.log('Sending request to $url', name: 'docket.actions');
+  developer.log('Sending GET request to $url', name: 'docket.actions');
   if (response.statusCode >= 400) {
     developer.log('Request to $url failed', name: 'docket.actions');
     errorMessage ??= 'Request Failed to ${url.path}';
     throw ValidationError.fromResponseBody(errorMessage, response.bodyBytes);
   }
-  developer.log('Request to $url completed', name: 'docket.actions');
 
   return response;
 }
@@ -97,6 +96,7 @@ Future<http.Response> httpPost(
   if (apiToken != null && apiToken.isNotEmpty) {
     headers['Authorization'] = 'Bearer $apiToken';
   }
+  developer.log('Sending POST request to $url', name: 'docket.actions');
   var response = await client.post(
     url,
     headers: headers,
