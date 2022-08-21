@@ -93,6 +93,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             }
             var project = snapshot.data;
             if (project == null || project.pending || project.missingData) {
+              _taskLists = [];
               return buildWrapper(child: const LoadingIndicator());
             }
             // See if this fixes sections dropping off.
@@ -123,6 +124,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           ]));
                     },
                     onListReorder: (int oldIndex, int newIndex) async {
+                      // Reduce by one as the 0th section is 'root'
+                      // which is not a proper section on the server.
+                      newIndex -= 1;
                       var metadata = _taskLists[oldIndex];
                       setState(() {
                         _taskLists.removeAt(oldIndex);
