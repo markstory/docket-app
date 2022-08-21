@@ -58,13 +58,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 if (task == null) {
                   return const LoadingIndicator();
                 }
-                return ListView(padding: EdgeInsets.all(space(1)), children: [
-                  TaskForm(
+                return SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
+                  child: TaskForm(
                     task: task,
                     onSave: (task) => _onSave(context, task),
                     onComplete: () => Navigator.of(context).pop(),
                   ),
-                ]);
+                );
               }),
         ),
       );
