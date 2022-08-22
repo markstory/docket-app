@@ -132,7 +132,7 @@ class _TodayScreenState extends State<TodayScreen> {
               taskLists: _taskLists,
               overdue: _overdue,
               buildItem: (Task task) {
-                return TaskItem(task: task, showDate: false, showProject: true);
+                return TaskItem(task: task, showProject: true);
               },
               onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
                 var task = _taskLists[oldListIndex].tasks[oldItemIndex];

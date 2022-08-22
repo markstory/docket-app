@@ -50,7 +50,7 @@ class TaskDateSorter extends StatelessWidget {
           contentsWhenEmpty: buildEmpty(theme),
           canDrag: taskListMeta.canDrag,
           children: taskListMeta.tasks.map((task) {
-            return DragAndDropItem(child: TaskItem(task: task, showDate: false, showProject: true));
+            return DragAndDropItem(child: buildItem(task));
           }).toList(),
         );
       }).toList(),
