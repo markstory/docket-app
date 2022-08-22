@@ -19,6 +19,12 @@ import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
+class ProjectDetailsArguments {
+  final Project task;
+
+  ProjectDetailsArguments(this.task);
+}
+
 class ProjectDetailsScreen extends StatefulWidget {
   static const routeName = '/projects/{slug}';
 
@@ -106,7 +112,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 child: TaskDateSorter(
                     taskLists: _taskLists,
                     buildItem: (Task task) {
-                      return TaskItem(task: task, showDate: true);
+                      eturn TaskItem(task: task, showDate: true);
                     },
                     buildHeader: (TaskSortMetadata metadata) {
                       var data = metadata.data as Section?;
