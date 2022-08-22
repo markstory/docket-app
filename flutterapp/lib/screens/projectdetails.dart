@@ -26,7 +26,7 @@ class ProjectDetailsArguments {
 }
 
 class ProjectDetailsScreen extends StatefulWidget {
-  static const routeName = '/projects/{slug}';
+  static const routeName = '/projects/view';
 
   final Project project;
 
@@ -51,7 +51,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     _taskLists = [];
-    return projectsProvider.fetchBySlug(widget.slug);
+    return projectsProvider.fetchBySlug(widget.project.slug);
   }
 
   void _buildTaskLists(ProjectWithTasks data) {
@@ -89,18 +89,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
-      var projectFuture = projectsProvider.getBySlug(widget.slug);
+      var projectFuture = projectsProvider.getBySlug(widget.project.slug);
 
       return FutureBuilder<ProjectWithTasks?>(
           future: projectFuture,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return buildWrapper(child: const Card(child: Text("Something terrible happened")));
+              return buildWrapper(project: widget.project, child: const Card(child: Text("Something terrible happened")));
             }
             var project = snapshot.data;
             if (project == null || project.pending || project.missingData) {
               _taskLists = [];
-              return buildWrapper(child: const LoadingIndicator());
+              return buildWrapper(project: widget.project, child: const LoadingIndicator());
             }
             // See if this fixes sections dropping off.
             if (_taskLists.isEmpty) {
@@ -185,20 +185,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     });
   }
 
-  Widget buildWrapper({required Widget child, Project? project}) {
-    List<Widget> actions = [];
-    var title = "";
-    // Default to a gray color
-    var colorId = 14;
-    if (project != null) {
-      actions = [ProjectActions(project)];
-      title = project.name;
-      colorId = project.color;
-    }
+  Widget buildWrapper({required Widget child, required Project project}) {
+    var actions = [ProjectActions(project)];
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: getProjectColor(colorId),
-        title: Text(title),
+        backgroundColor: getProjectColor(project.color),
+        title: Text(project.name),
         actions: actions,
       ),
       drawer: const AppDrawer(),
