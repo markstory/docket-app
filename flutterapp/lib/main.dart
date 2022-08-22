@@ -63,6 +63,10 @@ class DocketApp extends StatelessWidget {
 
   const DocketApp({this.savedThemeMode, this.child, super.key});
 
+  Route unknownScreen(BuildContext context) {
+    return MaterialPageRoute(builder: (context) => const UnknownScreen());
+  }
+
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
@@ -115,22 +119,25 @@ class DocketApp extends StatelessWidget {
                 var slug = uri.pathSegments[1].toString();
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(slug)));
               }
+
               // Project Edit View.
-              if (uri.pathSegments.length == 2 
-                && uri.pathSegments[0] == 'projects'
-                && uri.pathSegments[2] == 'edit'
-              ) {
+              if (uri.pathSegments.length == 3 && uri.pathSegments[0] == 'projects' && uri.pathSegments[2] == 'edit') {
                 var slug = uri.pathSegments[1].toString();
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(slug)));
               }
 
               // Task Detailed View.
-              if (uri.pathSegments.length == 3 && uri.pathSegments[0] == 'tasks' && uri.pathSegments[2] == 'view') {
-                var id = int.parse(uri.pathSegments[1]);
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(id)));
+              if (settings.name == TaskDetailsScreen.routeName) {
+                final args = settings.arguments as TaskDetailsArguments;
+                var id = args.task.id;
+                if (id != null) {
+                  return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(id)));
+                }
+                return unknownScreen(context);
+                // Fallthrough to UnknownScreen
               }
 
-              return MaterialPageRoute(builder: (context) => const UnknownScreen());
+              return unknownScreen(context);
             },
           );
         });

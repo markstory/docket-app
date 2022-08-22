@@ -9,8 +9,14 @@ import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
+class TaskDetailsArguments {
+  final Task task;
+
+  TaskDetailsArguments(this.task);
+}
+
 class TaskDetailsScreen extends StatefulWidget {
-  static const routeName = '/tasks/{taskId}/view';
+  static const routeName = '/tasks/view';
 
   final int taskId;
 

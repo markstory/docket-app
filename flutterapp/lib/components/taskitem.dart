@@ -1,3 +1,4 @@
+import 'package:docket/screens/taskdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,15 @@ class TaskItem extends StatelessWidget {
     }
     // TODO include subtask summary
 
+    Widget? subtitle;
+    if (attributes.isNotEmpty) {
+      subtitle = Wrap(
+        runAlignment: WrapAlignment.center,
+        spacing: space(0.5),
+        children: attributes,
+      );
+    }
+
     return ListTile(
         dense: true,
         leading: TaskCheckbox(task),
@@ -46,14 +56,10 @@ class TaskItem extends StatelessWidget {
             decoration: task.completed ? TextDecoration.lineThrough : null,
           ),
         ),
-        subtitle: Wrap(
-          runAlignment: WrapAlignment.center,
-          spacing: space(0.5),
-          children: attributes,
-        ),
+        subtitle: subtitle,
         trailing: TaskActions(task),
         onTap: () {
-          Navigator.pushNamed(context, '/tasks/${task.id}/view');
+          Navigator.pushNamed(context, TaskDetailsScreen.routeName, arguments: TaskDetailsArguments(task));
         });
   }
 }
