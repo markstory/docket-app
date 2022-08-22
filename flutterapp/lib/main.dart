@@ -121,9 +121,11 @@ class DocketApp extends StatelessWidget {
               }
 
               // Project Edit View.
-              if (uri.pathSegments.length == 3 && uri.pathSegments[0] == 'projects' && uri.pathSegments[2] == 'edit') {
-                var slug = uri.pathSegments[1].toString();
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(slug)));
+              if (settings.name == ProjectEditScreen.routeName) {
+                var args = settings.arguments as ProjectEditArguments;
+                var project = args.project;
+
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(project)));
               }
 
               // Task Detailed View.

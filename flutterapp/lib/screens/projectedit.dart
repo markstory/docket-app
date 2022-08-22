@@ -3,17 +3,24 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/project.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 
+class ProjectEditArguments {
+  final Project project;
+
+  ProjectEditArguments(this.project);
+}
+
 class ProjectEditScreen extends StatefulWidget {
-  static const routeName = '/projects/{slug}/edit/';
+  static const routeName = '/projects/edit';
 
-  final String slug;
+  final Project project;
 
-  const ProjectEditScreen(this.slug, {super.key});
+  const ProjectEditScreen(this.project, {super.key});
 
   @override
   State<ProjectEditScreen> createState() => _ProjectEditScreenState();
@@ -27,7 +34,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
     // TODO this should probably refresh the project summary and not the project
     // details.
-    projectsProvider.fetchBySlug(widget.slug);
+    projectsProvider.fetchBySlug(widget.project.slug);
   }
 
   @override
@@ -37,19 +44,20 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
     void _saveProject(BuildContext context, Project project) async {
       var messenger = ScaffoldMessenger.of(context);
 
-      void complete() {
+      void complete(project) {
+        // When a project is renamed this is wrong.
         Navigator.pop(context);
       }
 
       try {
-        messenger.showSnackBar(const SnackBar(content: Text('Saving')));
-        await projects.update(project);
-        messenger.showSnackBar(const SnackBar(content: Text('Project updated')));
-        complete();
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Saving'));
+        project = await projects.update(project);
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Project updated'));
+        complete(project);
       } catch (e, stacktrace) {
         developer.log("Failed to update project ${e.toString()} $stacktrace");
         messenger.showSnackBar(
-          const SnackBar(content: Text('Failed to update project')),
+          errorSnackBar(context: context, text: 'Failed to update project')
         );
       }
     }
