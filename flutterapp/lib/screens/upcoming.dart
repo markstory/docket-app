@@ -84,9 +84,13 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
       var taskViewData = tasksProvider.getUpcoming();
+      var theme = Theme.of(context);
 
       return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+            backgroundColor: theme.colorScheme.secondary,
+            title: const Text('Upcoming')
+          ),
           drawer: const AppDrawer(),
           // TODO add scroll tracking for sections and update add button.
           floatingActionButton: const FloatingCreateTaskButton(),
