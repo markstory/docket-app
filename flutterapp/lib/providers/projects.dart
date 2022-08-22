@@ -83,8 +83,8 @@ class ProjectsProvider extends ChangeNotifier {
     // Remove the old entry by id as the slug could have been changed.
     // Remove the projectDetails view cache as well.
     await _database.projectMap.removeById(project.id);
-    await _database.projectDetails.remove(project.slug);
     await _database.projectMap.set(project);
+    await _database.projectDetails.remove(project.slug);
     notifyListeners();
 
     return project;

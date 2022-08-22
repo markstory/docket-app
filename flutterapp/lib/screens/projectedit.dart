@@ -45,10 +45,11 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
     void _saveProject(BuildContext context, Project project) async {
       var messenger = ScaffoldMessenger.of(context);
 
-      void complete(project) {
-        if (widget.project.slug != project.slug) {
+      void complete(proj) {
+        if (widget.project.slug != proj.slug) {
           Navigator.pushReplacementNamed(context, ProjectDetailsScreen.routeName,
-              arguments: ProjectDetailsArguments(project));
+              arguments: ProjectDetailsArguments(proj));
+          return;
         }
         Navigator.pop(context);
       }
