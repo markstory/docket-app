@@ -62,8 +62,11 @@ class ProjectsProvider extends ChangeNotifier {
   Future<Project> update(Project project) async {
     project = await actions.updateProject(session!.apiToken, project);
 
-    await _database.projectMap.set(project);
+    // Remove the old entry by id as the slug could have been changed.
+    // Remove the projectDetails view cache as well.
+    await _database.projectMap.removeById(project.id);
     await _database.projectDetails.remove(project.slug);
+    await _database.projectMap.set(project);
     notifyListeners();
 
     return project;

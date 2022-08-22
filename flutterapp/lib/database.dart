@@ -452,6 +452,18 @@ class ProjectMapView extends ViewCache<Project> {
     data.remove(slug);
     return _set(data);
   }
+
+  Future<void> removeById(int id) async {
+    var data = await _get() ?? {};
+    for (var entry in data.entries) {
+      // Linear scan should be fine as most accounts
+      // have a small number of active projects.
+      if (entry.value.id == id) {
+        data.remove(entry.value.slug);
+      }
+    }
+    return _set(data);
+  }
 }
 
 // A map based view data provider
