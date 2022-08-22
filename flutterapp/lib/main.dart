@@ -94,40 +94,17 @@ class DocketApp extends StatelessWidget {
               if (settings.name == UpcomingScreen.routeName) {
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
               }
-
               // Task Add
               if (settings.name == TaskAddScreen.routeName) {
                 final args = settings.arguments as TaskAddScreenArguments;
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen(task: args.task)));
               }
-
-              // Project Add
-              if (settings.name == ProjectAddScreen.routeName) {
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
-              }
-
-              // Login
-              if (settings.name == LoginScreen.routeName) {
-                return MaterialPageRoute(builder: (context) => const LoginScreen());
-              }
-
-              // Remaining routes require URL parsing
-              var uri = Uri.parse(settings.name.toString());
-
               // Project Detailed View.
-              if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'projects') {
-                var slug = uri.pathSegments[1].toString();
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(slug)));
+              if (settings.name == ProjectDetailsScreen.routeName) {
+                var args = settings.arguments as ProjectDetailsArguments;
+
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
               }
-
-              // Project Edit View.
-              if (settings.name == ProjectEditScreen.routeName) {
-                var args = settings.arguments as ProjectEditArguments;
-                var project = args.project;
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(project)));
-              }
-
               // Task Detailed View.
               if (settings.name == TaskDetailsScreen.routeName) {
                 final args = settings.arguments as TaskDetailsArguments;
@@ -138,6 +115,24 @@ class DocketApp extends StatelessWidget {
 
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(task)));
               }
+
+              // Project Edit View.
+              if (settings.name == ProjectEditScreen.routeName) {
+                var args = settings.arguments as ProjectEditArguments;
+                var project = args.project;
+
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(project)));
+              }
+              // Project Add
+              if (settings.name == ProjectAddScreen.routeName) {
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
+              }
+
+              // Login
+              if (settings.name == LoginScreen.routeName) {
+                return MaterialPageRoute(builder: (context) => const LoginScreen());
+              }
+
               return unknownScreen(context);
             },
           );

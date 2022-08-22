@@ -20,17 +20,17 @@ import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
 class ProjectDetailsArguments {
-  final Project task;
+  final Project project;
 
-  ProjectDetailsArguments(this.task);
+  ProjectDetailsArguments(this.project);
 }
 
 class ProjectDetailsScreen extends StatefulWidget {
   static const routeName = '/projects/{slug}';
 
-  final String slug;
+  final Project project;
 
-  const ProjectDetailsScreen(this.slug, {super.key});
+  const ProjectDetailsScreen(this.project, {super.key});
 
   @override
   State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
