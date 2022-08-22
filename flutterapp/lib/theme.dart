@@ -24,7 +24,7 @@ const _projectColors = [
   ProjectColor(12, 'ultramarine', Color(0xFF4755ff)),
   ProjectColor(13, 'sky', Color(0xFF91b5ff)),
   ProjectColor(14, 'slate', Color(0xFF525876)),
-  ProjectColor(15, 'smoke', Color(0xFF91971f)),
+  ProjectColor(15, 'smoke', Color(0xFF9197af)),
   ProjectColor(16, 'brick', Color(0xFFb60909)),
   ProjectColor(17, 'flame', Color(0xFFf14949)),
 ];
