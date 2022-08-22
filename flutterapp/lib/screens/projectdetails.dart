@@ -112,7 +112,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 child: TaskDateSorter(
                     taskLists: _taskLists,
                     buildItem: (Task task) {
-                      eturn TaskItem(task: task, showDate: true);
+                      return TaskItem(task: task, showDate: true);
                     },
                     buildHeader: (TaskSortMetadata metadata) {
                       var data = metadata.data as Section?;

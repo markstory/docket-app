@@ -1,3 +1,4 @@
+import 'package:docket/screens/projectdetails.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/components/projectbadge.dart';
@@ -14,7 +15,10 @@ class ProjectItem extends StatelessWidget {
     var theme = Theme.of(context);
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, '/projects/${project.slug}');
+        Navigator.pushNamed(context, 
+          ProjectDetailsScreen.routeName,
+          arguments: ProjectDetailsArguments(project)
+        );
       },
       title: ProjectBadge(text: project.name, color: project.color),
       trailing: Text(

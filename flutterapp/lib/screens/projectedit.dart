@@ -7,6 +7,7 @@ import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/project.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
+import 'package:docket/screens/projectdetails.dart';
 import 'package:docket/theme.dart';
 
 class ProjectEditArguments {
@@ -45,7 +46,10 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
       var messenger = ScaffoldMessenger.of(context);
 
       void complete(project) {
-        // When a project is renamed this is wrong.
+        if (widget.project.slug != project.slug) {
+          Navigator.pushReplacementNamed(context, ProjectDetailsScreen.routeName,
+              arguments: ProjectDetailsArguments(project));
+        }
         Navigator.pop(context);
       }
 
@@ -56,12 +60,11 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
         complete(project);
       } catch (e, stacktrace) {
         developer.log("Failed to update project ${e.toString()} $stacktrace");
-        messenger.showSnackBar(
-          errorSnackBar(context: context, text: 'Failed to update project')
-        );
+        messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to update project'));
       }
     }
-    var projectFuture = projects.getBySlug(widget.slug);
+
+    var projectFuture = projects.getBySlug(widget.project.slug);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Update Project')),
@@ -73,13 +76,13 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
               if (snapshot.hasError) {
                 return const Card(child: Text("Something terrible happened"));
               }
-              var project = snapshot.data;
-              if (project == null || !snapshot.hasData) {
+              var data = snapshot.data;
+              if (data == null || !snapshot.hasData) {
                 return const LoadingIndicator();
               }
 
               return ProjectForm(
-                project: project.project,
+                project: data.project,
                 onSave: (updated) => _saveProject(context, updated),
               );
             }),

@@ -131,14 +131,13 @@ class DocketApp extends StatelessWidget {
               // Task Detailed View.
               if (settings.name == TaskDetailsScreen.routeName) {
                 final args = settings.arguments as TaskDetailsArguments;
-                var id = args.task.id;
-                if (id != null) {
-                  return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(id)));
+                var task = args.task;
+                if (task.id == null) {
+                  return unknownScreen(context);
                 }
-                return unknownScreen(context);
-                // Fallthrough to UnknownScreen
-              }
 
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(task)));
+              }
               return unknownScreen(context);
             },
           );

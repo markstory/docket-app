@@ -17,10 +17,23 @@ class ProjectsProvider extends ChangeNotifier {
   SessionProvider? session;
 
   Set<ViewNames> _pending = {};
+  Map<ViewNames, int> _retryCount = {};
 
   ProjectsProvider(LocalDatabase database, this.session) {
     _database = database;
     _pending = {};
+    _retryCount = {};
+  }
+
+  /// Record a retry and return an indication
+  bool _recordRetry(ViewNames name, int limit) {
+    var currentVal = _retryCount[name] ?? 0;
+    // Check threshold
+    if (currentVal >= limit) {
+      return false;
+    }
+    _retryCount[name] = currentVal + 1;
+    return true;
   }
 
   void setSession(SessionProvider session) {
@@ -34,7 +47,12 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Get the project list from the local database.
   Future<List<Project>> getAll() async {
-    return _database.projectMap.all();
+    var projects = await _database.projectMap.all();
+    // We don't have a good indicator of an empty states.
+    if (projects.isEmpty && _recordRetry(ViewNames.projectMap, 5)) {
+      fetchProjects();
+    }
+    return projects;
   }
 
   /// Read a project from the local database by slug.

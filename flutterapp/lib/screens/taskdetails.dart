@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
-import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
@@ -18,23 +17,15 @@ class TaskDetailsArguments {
 class TaskDetailsScreen extends StatefulWidget {
   static const routeName = '/tasks/view';
 
-  final int taskId;
+  final Task task;
 
-  const TaskDetailsScreen(this.taskId, {super.key});
+  const TaskDetailsScreen(this.task, {super.key});
 
   @override
   State<TaskDetailsScreen> createState() => _TaskDetailsScreenState();
 }
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-
-    tasksProvider.fetchById(widget.taskId);
-  }
-
   void _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
@@ -52,7 +43,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var pendingTask = tasksProvider.getById(widget.taskId);
+      var id = widget.task.id!;
+      var pendingTask = tasksProvider.getById(id);
 
       return Portal(
         child: Scaffold(
@@ -60,10 +52,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           body: FutureBuilder<Task?>(
               future: pendingTask,
               builder: (context, snapshot) {
-                var task = snapshot.data;
-                if (task == null) {
-                  return const LoadingIndicator();
-                }
+                var task = snapshot.data ?? widget.task;
+
                 return SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
                   child: TaskForm(
                     task: task,
