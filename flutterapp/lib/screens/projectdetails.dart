@@ -196,7 +196,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       drawer: const AppDrawer(),
       // TODO add scroll tracking for sections and update add button.
       floatingActionButton: FloatingCreateTaskButton(task: _newTask),
-      body: child,
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: child,
+      ),
     );
   }
 }

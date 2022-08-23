@@ -28,6 +28,10 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
   @override
   void initState() {
     super.initState();
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
     tasksProvider.fetchUpcoming();
@@ -87,14 +91,11 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       var theme = Theme.of(context);
 
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.colorScheme.secondary,
-            title: const Text('Upcoming')
-          ),
-          drawer: const AppDrawer(),
-          // TODO add scroll tracking for sections and update add button.
-          floatingActionButton: const FloatingCreateTaskButton(),
-          body: FutureBuilder<TaskViewData>(
+        appBar: AppBar(backgroundColor: theme.colorScheme.secondary, title: const Text('Upcoming')),
+        drawer: const AppDrawer(),
+        // TODO add scroll tracking for sections and update add button.
+        floatingActionButton: const FloatingCreateTaskButton(),
+        body: FutureBuilder<TaskViewData>(
             future: taskViewData,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -118,52 +119,54 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                 _buildTaskLists(data);
               }
 
-              return TaskSorter(
-                taskLists: _taskLists,
-                buildItem: (Task task) {
-                  return TaskItem(task: task, showDate: false, showProject: true);
-                },
-                onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                  var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: TaskSorter(
+                    taskLists: _taskLists,
+                    buildItem: (Task task) {
+                      return TaskItem(task: task, showDate: false, showProject: true);
+                    },
+                    onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                      var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
 
-                  // Update local state assuming server will be ok.
-                  setState(() {
-                    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                  });
+                      // Update local state assuming server will be ok.
+                      setState(() {
+                        _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                        _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+                      });
 
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchToday();
-                },
-                onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                  // Calculate position of adding to a end.
-                  // Generally this will be zero but it is possible to add to the
-                  // bottom of a populated list too.
-                  var targetList = _taskLists[listIndex];
-                  if (itemIndex == -1) {
-                    itemIndex = targetList.tasks.length;
-                  }
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                      tasksProvider.fetchToday();
+                    },
+                    onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                      // Calculate position of adding to a end.
+                      // Generally this will be zero but it is possible to add to the
+                      // bottom of a populated list too.
+                      var targetList = _taskLists[listIndex];
+                      if (itemIndex == -1) {
+                        itemIndex = targetList.tasks.length;
+                      }
 
-                  var itemChild = newItem.child as TaskItem;
-                  var task = itemChild.task;
+                      var itemChild = newItem.child as TaskItem;
+                      var task = itemChild.task;
 
-                  // Get the changes that need to be made on the server.
-                  var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                  setState(() {
-                    _taskLists[listIndex].tasks.insert(itemIndex, task);
-                  });
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                      setState(() {
+                        _taskLists[listIndex].tasks.insert(itemIndex, task);
+                      });
 
-                  // Update the moved task and reload from server async
-                  await tasksProvider.move(task, updates);
-                  tasksProvider.fetchUpcoming();
-                }
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                      tasksProvider.fetchUpcoming();
+                    }),
               );
             }),
-          );
+      );
     });
   }
 }

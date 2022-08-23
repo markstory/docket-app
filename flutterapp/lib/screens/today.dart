@@ -40,7 +40,6 @@ class _TodayScreenState extends State<TodayScreen> {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     _newTask = Task.blank(dueOn: today);
-
     await Future.wait([
       tasksProvider.fetchToday(),
       projectsProvider.fetchProjects(),
