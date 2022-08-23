@@ -9,7 +9,7 @@ import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskitem.dart';
-import 'package:docket/components/taskdatesorter.dart';
+import 'package:docket/components/tasksorter.dart';
 import 'package:docket/components/projectactions.dart';
 import 'package:docket/dialogs/renamesection.dart';
 import 'package:docket/grouping.dart' as grouping;
@@ -109,7 +109,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
             return buildWrapper(
                 project: project.project,
-                child: TaskDateSorter(
+                child: TaskSorter(
                     taskLists: _taskLists,
                     buildItem: (Task task) {
                       return TaskItem(task: task, showDate: true);

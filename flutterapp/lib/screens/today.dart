@@ -7,7 +7,7 @@ import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskaddbutton.dart';
-import 'package:docket/components/taskdatesorter.dart';
+import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/providers/projects.dart';
@@ -34,7 +34,7 @@ class _TodayScreenState extends State<TodayScreen> {
     _refresh();
   }
 
-  void _refresh() async {
+  Future<void> _refresh() async {
     var today = DateUtils.dateOnly(DateTime.now());
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
@@ -105,9 +105,7 @@ class _TodayScreenState extends State<TodayScreen> {
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Today')
-        ),
+        appBar: AppBar(title: const Text('Today')),
         drawer: const AppDrawer(),
         floatingActionButton: FloatingCreateTaskButton(task: _newTask),
         body: FutureBuilder<TaskViewData>(
@@ -128,54 +126,55 @@ class _TodayScreenState extends State<TodayScreen> {
               _buildTaskLists(data);
             }
 
-            return TaskDateSorter(
-              taskLists: _taskLists,
-              overdue: _overdue,
-              buildItem: (Task task) {
-                return TaskItem(task: task, showProject: true);
-              },
-              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+            return RefreshIndicator(
+                onRefresh: _refresh,
+                child: TaskSorter(
+                    taskLists: _taskLists,
+                    overdue: _overdue,
+                    buildItem: (Task task) {
+                      return TaskItem(task: task, showProject: true);
+                    },
+                    onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                      var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
-                // Get the changes that need to be made on the server.
-                var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
 
-                // Update local state assuming server will be ok.
-                setState(() {
-                  _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                  _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                });
+                      // Update local state assuming server will be ok.
+                      setState(() {
+                        _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+                        _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+                      });
 
-                // Update the moved task and reload from server async
-                await tasksProvider.move(task, updates);
-              },
-              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                if (_overdue == null) {
-                  throw 'Should not receive items when _overdue is null';
-                }
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                    },
+                    onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                      if (_overdue == null) {
+                        throw 'Should not receive items when _overdue is null';
+                      }
 
-                // Calculate position of adding to a end.
-                // Generally this will be zero but it is possible to add to the
-                // bottom of a populated list too.
-                var targetList = _taskLists[listIndex];
-                if (itemIndex == -1) {
-                  itemIndex = targetList.tasks.length;
-                }
+                      // Calculate position of adding to a end.
+                      // Generally this will be zero but it is possible to add to the
+                      // bottom of a populated list too.
+                      var targetList = _taskLists[listIndex];
+                      if (itemIndex == -1) {
+                        itemIndex = targetList.tasks.length;
+                      }
 
-                var itemChild = newItem.child as TaskItem;
-                var task = itemChild.task;
+                      var itemChild = newItem.child as TaskItem;
+                      var task = itemChild.task;
 
-                // Get the changes that need to be made on the server.
-                var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                setState(() {
-                  _overdue?.tasks.remove(task);
-                  _taskLists[listIndex].tasks.insert(itemIndex, task);
-                });
+                      // Get the changes that need to be made on the server.
+                      var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+                      setState(() {
+                        _overdue?.tasks.remove(task);
+                        _taskLists[listIndex].tasks.insert(itemIndex, task);
+                      });
 
-                // Update the moved task and reload from server async
-                await tasksProvider.move(task, updates);
-              }
-            );
+                      // Update the moved task and reload from server async
+                      await tasksProvider.move(task, updates);
+                    }));
           },
         ),
       );

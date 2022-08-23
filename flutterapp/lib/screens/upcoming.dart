@@ -7,7 +7,7 @@ import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskaddbutton.dart';
-import 'package:docket/components/taskdatesorter.dart';
+import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
@@ -118,7 +118,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                 _buildTaskLists(data);
               }
 
-              return TaskDateSorter(
+              return TaskSorter(
                 taskLists: _taskLists,
                 buildItem: (Task task) {
                   return TaskItem(task: task, showDate: false, showProject: true);

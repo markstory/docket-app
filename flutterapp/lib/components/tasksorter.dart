@@ -7,7 +7,7 @@ import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
-class TaskDateSorter extends StatelessWidget {
+class TaskSorter extends StatelessWidget {
   final List<TaskSortMetadata> taskLists;
 
   final TaskSortMetadata? overdue;
@@ -27,7 +27,7 @@ class TaskDateSorter extends StatelessWidget {
   /// Customize the header rendering.
   final Widget Function(TaskSortMetadata metadata)? buildHeader;
 
-  const TaskDateSorter(
+  const TaskSorter(
       {required this.taskLists, required this.onItemAdd, required this.onItemReorder, required this.buildItem, this.onListReorder, this.overdue, this.buildHeader, super.key});
 
   @override

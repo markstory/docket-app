@@ -34,16 +34,28 @@ class CalendarItem {
     DateTime? endDate;
 
     if (json['start_time'] != null) {
-      startTime = DateTime.parse(json['start_time']);
+      startTime = DateTime.parse(json['start_time'], );
+      if (startTime.isUtc) {
+        startTime = startTime.toLocal();
+      }
     }
     if (json['start_time'] != null) {
       endTime = DateTime.parse(json['start_time']);
+      if (endTime.isUtc) {
+        endTime = endTime.toLocal();
+      }
     }
     if (json['start_date'] != null) {
       startDate = DateTime.parse(json['start_date']);
+      if (startDate.isUtc) {
+        startDate = startDate.toLocal();
+      }
     }
     if (json['end_date'] != null) {
       endDate = DateTime.parse(json['end_date']);
+      if (endDate.isUtc) {
+        endDate = endDate.toLocal();
+      }
     }
 
     return CalendarItem(

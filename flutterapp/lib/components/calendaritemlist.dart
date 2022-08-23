@@ -40,9 +40,9 @@ class CalendarItemTile extends StatelessWidget {
     var color = getProjectColor(calendarItem.color);
     // Block element for all day events
     Widget timeWidget = Container(
-      color: color,
       width: space(1),
-      height: space(2.5),
+      height: space(1.5),
+      decoration: BoxDecoration(color: color, borderRadius: DocketColors.borderRadius),
     );
 
     // Time based events show up on the start time.
