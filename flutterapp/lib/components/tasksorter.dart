@@ -28,7 +28,14 @@ class TaskSorter extends StatelessWidget {
   final Widget Function(TaskSortMetadata metadata)? buildHeader;
 
   const TaskSorter(
-      {required this.taskLists, required this.onItemAdd, required this.onItemReorder, required this.buildItem, this.onListReorder, this.overdue, this.buildHeader, super.key});
+      {required this.taskLists,
+      required this.onItemAdd,
+      required this.onItemReorder,
+      required this.buildItem,
+      this.onListReorder,
+      this.overdue,
+      this.buildHeader,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +59,7 @@ class TaskSorter extends StatelessWidget {
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: buildItem(task));
           }).toList(),
+          lastTarget: SizedBox(height: space(3)),
         );
       }).toList(),
       itemDecorationWhileDragging: itemDragBoxDecoration(theme),
@@ -59,6 +67,7 @@ class TaskSorter extends StatelessWidget {
       onItemReorder: onItemReorder,
       onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
       onItemAdd: onItemAdd,
+      lastItemTargetHeight: space(3),
     );
   }
 
@@ -68,7 +77,7 @@ class TaskSorter extends StatelessWidget {
     var contents = Text('No tasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText));
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: space(4)),
+      padding: EdgeInsets.symmetric(vertical: space(2)),
       child: contents,
     );
   }
@@ -107,6 +116,7 @@ class TaskSorter extends StatelessWidget {
 
   Widget buildTitle(TaskSortMetadata taskMeta, ThemeData theme, DocketColors docketColors) {
     List<Widget> children = [];
+    List<Widget> text = [];
 
     children.add(SizedBox(width: space(3)));
 
@@ -116,16 +126,28 @@ class TaskSorter extends StatelessWidget {
         ..add(SizedBox(width: space(0.5)));
     }
     if (taskMeta.title != null) {
-      children.add(Text(taskMeta.title ?? '', style: theme.textTheme.titleLarge));
+      text.add(Text(taskMeta.title ?? '', style: theme.textTheme.titleLarge));
+      text.add(SizedBox(width: space(1)));
     }
     if (taskMeta.subtitle != null) {
-      children.add(Text(taskMeta.subtitle ?? '',
+      text.add(Text(taskMeta.subtitle ?? '',
           style: theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText)));
     }
+    if (text.isNotEmpty) {
+      children.add(Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: text,
+      ));
+    }
+
     if (taskMeta.button != null) {
       children.add(taskMeta.button!);
     }
-    return Row(children: children);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: children
+    );
   }
 }
 

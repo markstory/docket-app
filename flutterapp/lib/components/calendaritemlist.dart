@@ -15,12 +15,14 @@ class CalendarItemList extends StatelessWidget {
       return const SizedBox();
     }
     var padding = EdgeInsets.all(space(1));
+    var theme = Theme.of(context);
 
     return Container(
         padding: padding,
         child: Material(
             elevation: 1,
             borderRadius: DocketColors.borderRadius,
+            color: theme.colorScheme.surfaceVariant,
             child: Container(
                 padding: padding,
                 child: Column(
