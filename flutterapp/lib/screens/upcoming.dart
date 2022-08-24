@@ -10,6 +10,7 @@ import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
+import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/grouping.dart' as grouping;
 
@@ -31,10 +32,21 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     _refresh();
   }
 
-  Future<void> _refresh() async {
+  Future<List<void>> _refresh() async {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    tasksProvider.fetchUpcoming();
+    // TODO move link between actions + database into the ViewCache classes.
+    // Move the ViewCache classes out into their own files as they are getting
+    // big.
+    // With that done, there is a good abstraction point for
+    // the pending logic. This could be a good opportunity to hold onto futures
+    // and give out the same reference multiple times.
+    // It enables async reloading of related caches without flushing the render tree.
+    return Future.wait([
+      tasksProvider.fetchUpcoming(),
+      projectsProvider.fetchProjects(),
+    ]);
   }
 
   void _buildTaskLists(TaskViewData data) {
@@ -66,9 +78,11 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
             });
       } else {
         var title = formatters.compactDate(dateVal);
+        var subtitle = formatters.monthDay(dateVal);
 
         metadata = TaskSortMetadata(
             title: title,
+            subtitle: subtitle,
             button: TaskAddButton(dueOn: dateVal),
             tasks: group.items,
             calendarItems: groupedCalendarItems.get(groupDate),

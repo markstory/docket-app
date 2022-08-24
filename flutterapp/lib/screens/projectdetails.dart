@@ -47,11 +47,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     _refresh();
   }
 
-  Future<void> _refresh() {
+  Future<List<void>> _refresh() {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     _taskLists = [];
-    return projectsProvider.fetchBySlug(widget.project.slug);
+    return Future.wait([
+      projectsProvider.fetchBySlug(widget.project.slug),
+      projectsProvider.fetchProjects(),
+    ]);
   }
 
   void _buildTaskLists(ProjectWithTasks data) {

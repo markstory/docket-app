@@ -34,17 +34,18 @@ class _TodayScreenState extends State<TodayScreen> {
     _refresh();
   }
 
-  Future<void> _refresh() async {
+  Future<List<void>> _refresh() async {
     var today = DateUtils.dateOnly(DateTime.now());
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
     _newTask = Task.blank(dueOn: today);
-    await Future.wait([
+    _taskLists = [];
+
+    return Future.wait([
       tasksProvider.fetchToday(),
       projectsProvider.fetchProjects(),
     ]);
-    _taskLists = [];
   }
 
   void _buildTaskLists(TaskViewData data) {
