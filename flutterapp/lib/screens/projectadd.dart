@@ -39,7 +39,7 @@ class ProjectAddScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(title: const Text('New Project')),
-        body: Container(
+        body: SingleChildScrollView(
             padding: EdgeInsets.all(space(2)),
             child: ProjectForm(
               project: project,

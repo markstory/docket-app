@@ -47,7 +47,7 @@ class TaskAddScreen extends StatelessWidget {
     return Portal(
         child: Scaffold(
             appBar: AppBar(title: title),
-            body: Container(
+            body: SingleChildScrollView(
                 padding: EdgeInsets.all(space(2)),
                 child: TaskForm(
                   task: task,

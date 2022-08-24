@@ -69,7 +69,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Update Project')),
-      body: Container(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(space(2)),
         child: FutureBuilder<ProjectWithTasks>(
             future: projectFuture,
