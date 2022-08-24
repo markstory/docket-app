@@ -25,7 +25,7 @@ class CalendarItem {
     this.endDate,
     this.allDay = false,
     this.htmlLink = '',
-  });
+  }); 
 
   factory CalendarItem.fromMap(Map<String, dynamic> json) {
     DateTime? startTime;
@@ -34,28 +34,16 @@ class CalendarItem {
     DateTime? endDate;
 
     if (json['start_time'] != null) {
-      startTime = DateTime.parse(json['start_time'], );
-      if (startTime.isUtc) {
-        startTime = startTime.toLocal();
-      }
+      startTime = formatters.parseToLocal(json['start_time']);
     }
     if (json['start_time'] != null) {
-      endTime = DateTime.parse(json['start_time']);
-      if (endTime.isUtc) {
-        endTime = endTime.toLocal();
-      }
+      endTime = formatters.parseToLocal(json['start_time']);
     }
     if (json['start_date'] != null) {
-      startDate = DateTime.parse(json['start_date']);
-      if (startDate.isUtc) {
-        startDate = startDate.toLocal();
-      }
+      startDate = formatters.parseToLocal(json['start_date']);
     }
     if (json['end_date'] != null) {
-      endDate = DateTime.parse(json['end_date']);
-      if (endDate.isUtc) {
-        endDate = endDate.toLocal();
-      }
+      endDate = formatters.parseToLocal(json['end_date']);
     }
 
     return CalendarItem(

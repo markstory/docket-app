@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/theme.dart';
@@ -21,8 +22,9 @@ class DueOn extends StatelessWidget {
 
     List<Widget> children = [];
     if (dueOn != null) {
-      var today = DateTime.now();
+      var today = DateUtils.dateOnly(DateTime.now());
       var diff = dueOn!.difference(today).inDays;
+      developer.log('dueon $dueOn today $today diff $diff', name: 'debug');
       var color = customColors.dueToday;
       var text = formatters.compactDate(dueOn);
 

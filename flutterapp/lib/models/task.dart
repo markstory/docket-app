@@ -51,10 +51,6 @@ class Task {
   }
 
   factory Task.fromMap(Map<String, dynamic> json) {
-    DateTime? dueOn;
-    if (json['due_on'] != null) {
-      dueOn = DateTime.parse(json['due_on']);
-    }
     var projectId = json['project_id'];
     projectId ??= json['project']['id'];
     var projectSlug = json['project_slug'];
@@ -71,6 +67,10 @@ class Task {
     var completed = json['completed'];
     if (completed is int) {
       completed = completed == 0 ? false : true;
+    }
+    DateTime? dueOn;
+    if (json['due_on'] != null) {
+      dueOn = formatters.parseToLocal(json['due_on']);
     }
 
     return Task(

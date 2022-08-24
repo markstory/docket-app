@@ -34,6 +34,19 @@ String compactDate(DateTime? value) {
   return _monthDay.format(value);
 }
 
+/// Parse a string into a local DateTime.
+/// Server data is generally in UTC but
+/// local time is easier for formatting.
+/// Not really a formatter, but meh.
+DateTime parseToLocal(String input) {
+  var parsed = DateTime.parse(input);
+  if (parsed.isUtc) {
+    return parsed.toLocal();
+  }
+  return parsed;
+}
+
+
 String dateString(DateTime value) {
   var month = value.month.toString();
   if (value.month < 10) {
