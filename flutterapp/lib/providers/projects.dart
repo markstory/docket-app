@@ -172,6 +172,7 @@ class ProjectsProvider extends ChangeNotifier {
       _database.projectMap.clear(),
       _database.projectArchive.clear(),
     ]);
+    await fetchProjects();
 
     notifyListeners();
   }

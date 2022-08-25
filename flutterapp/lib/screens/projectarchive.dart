@@ -10,9 +10,7 @@ import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 
 class ProjectArchiveScreen extends StatefulWidget {
-  final Project project;
-
-  const ProjectArchiveScreen(this.project, {super.key});
+  const ProjectArchiveScreen({super.key});
 
   @override
   State<ProjectArchiveScreen> createState() => _ProjectArchiveScreenState();
@@ -95,7 +93,7 @@ class ArchivedProjectActions extends StatelessWidget {
 
     Future<void> _handleUnarchive() async {
       try {
-        await projectsProvider.delete(project);
+        await projectsProvider.unarchive(project);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Project Unarchived'));
       } catch (e) {
         messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not unarchive project'));

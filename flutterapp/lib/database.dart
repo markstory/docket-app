@@ -160,6 +160,7 @@ class LocalDatabase {
         futures.add(projectDetails.remove(task.projectSlug));
       }
     }
+    // TODO this should increment the task totals.
 
     await Future.wait(futures);
   }
@@ -176,6 +177,7 @@ class LocalDatabase {
     if (id == null) {
       return;
     }
+    // TODO this should also update the project task totals in the projectMap
     await taskDetails.remove(id);
 
     return _expireTaskViews(task);
