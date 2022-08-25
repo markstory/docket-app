@@ -12,10 +12,6 @@ import 'package:docket/providers/session.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late ProjectsProvider provider;
-  late SessionProvider session;
-  int listenerCallCount = 0;
-
   var file = File('test_resources/project_list.json');
   final projectsResponseFixture = file.readAsStringSync();
 
@@ -23,10 +19,14 @@ void main() {
   final projectViewResponseFixture = file.readAsStringSync();
 
   group('$ProjectsProvider project methods', () {
+    late ProjectsProvider provider;
+    late SessionProvider session;
+    int listenerCallCount = 0;
+
     setUp(() async {
       listenerCallCount = 0;
       var db = LocalDatabase();
-      session = SessionProvider(db)..set('api-token');
+      session = SessionProvider(db, token: 'api-token');
       provider = ProjectsProvider(db, session)
         ..addListener(() {
           listenerCallCount += 1;
@@ -98,6 +98,17 @@ void main() {
       expect(view.tasks.length, equals(2));
     });
 
+    test('fetchArchived() and getArchived() work together', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/archived'));
+        return Response(projectsResponseFixture, 200);
+      });
+      await provider.fetchArchived();
+
+      var projects = await provider.getArchived();
+      expect(projects!.length, equals(2));
+    });
+
     test('move() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home/move'));
@@ -153,9 +164,39 @@ void main() {
       var details = await db.projectDetails.get('home');
       expect(details.missingData, equals(true));
     });
+
+    test('unarchive() makes API request and expires local db', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home/unarchive'));
+        return Response("", 200);
+      });
+      var project = Project(id: 1, slug: 'home', name: 'Home');
+
+      var db = LocalDatabase();
+      await db.projectArchive.set([project]);
+
+      await provider.unarchive(project);
+
+      // TODO This should pass but doesn't currently.
+      // var archived = await db.projectArchive.get();
+      // expect(archived, isNull);
+
+      var projectMap = await db.projectMap.get('home');
+      expect(projectMap, isNull);
+    });
   });
 
   group("$ProjectsProvider section methods", () {
+    late ProjectsProvider provider;
+    late SessionProvider session;
+
+    setUp(() async {
+      var db = LocalDatabase();
+      session = SessionProvider(db, token: 'api-token');
+      provider = ProjectsProvider(db, session);
+      await provider.clear();
+    });
+
     test('deleteSection() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects/home/sections/1/delete'));

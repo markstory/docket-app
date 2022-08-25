@@ -1,5 +1,4 @@
 import 'dart:developer' as developer;
-import 'package:docket/models/calendaritem.dart';
 import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -18,14 +17,7 @@ class LocalDatabase {
 
   // Storage keys.
   static const String apiTokenKey = 'v1:apitoken';
-  static const String todayTasksKey = 'v1:todaytasks';
-  static const String upcomingTasksKey = 'v1:upcomingtasks';
   static const String taskMapKey = 'v1:taskmap';
-  static const String projectsKey = 'v1:projects';
-  static const String projectTaskMapKey = 'v1:projecttasks';
-  static const String calendarItemMapKey = 'v1:calendaritems';
-  static const String todayCalendarItemKey = 'v1:todaycalendaritems';
-  static const String upcomingCalendarItemKey = 'v1:upcomingcalendaritems';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -40,6 +32,7 @@ class LocalDatabase {
   late TaskDetailsView taskDetails;
   late ProjectMapView projectMap;
   late ProjectDetailsView projectDetails;
+  late ProjectArchiveView projectArchive;
 
   LocalDatabase() {
     var db = database();
@@ -48,6 +41,7 @@ class LocalDatabase {
     taskDetails = TaskDetailsView(db, const Duration(hours: 1));
     projectMap = ProjectMapView(db, const Duration(hours: 1));
     projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
+    projectArchive = ProjectArchiveView(db, const Duration(hours: 1));
   }
 
   /// Lazily create the database.
@@ -170,34 +164,6 @@ class LocalDatabase {
     await Future.wait(futures);
   }
 
-  /// Fetch a list of tasks by id.
-  ///
-  /// This method will make a best effort to find as manyj
-  /// tasks as requested. There are scenarios where tasks could be
-  /// missing.
-  Future<List<Task>> getTasksById(List<int> taskIds) async {
-    var indexed = await database().value(taskMapKey) ?? {};
-    List<Task> tasks = [];
-    for (var id in taskIds) {
-      var record = indexed[id.toString()];
-      if (record == null) {
-        developer.log('Skipping task with id=$id as it could not be found.');
-        continue;
-      }
-      tasks.add(Task.fromMap(record));
-    }
-    return tasks;
-  }
-
-  /// Fetch a single task by id.
-  Future<Task?> fetchTaskById(int id) async {
-    var tasks = await getTasksById([id]);
-    if (tasks.isNotEmpty) {
-      return tasks[0];
-    }
-    throw Exception('Could not load task');
-  }
-
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
@@ -246,6 +212,7 @@ class LocalDatabase {
     return Future.wait([
       projectMap.clear(),
       projectDetails.clear(),
+      projectArchive.clear(),
     ]);
   }
   // }}}
@@ -498,5 +465,32 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     var data = await _get() ?? {};
     data.remove(slug);
     return _set(data);
+  }
+}
+
+class ProjectArchiveView extends ViewCache<List<Project>> {
+  static const String name = 'projectarchive';
+
+  ProjectArchiveView(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Refresh the data stored for the 'upcoming' view.
+  @override
+  Future<void> set(List<Project> data) async {
+    return _set({'projects': data.map((project) => project.toMap()).toList()});
+  }
+
+  Future<List<Project>?> get() async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data['projects'] == null) {
+      return null;
+    }
+
+    return (data['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
   }
 }

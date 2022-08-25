@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'database.dart';
+import 'routes.dart';
 import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
@@ -10,6 +11,7 @@ import 'providers/tasks.dart';
 import 'screens/login.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
+import 'screens/projectarchive.dart';
 import 'screens/projectedit.dart';
 import 'screens/today.dart';
 import 'screens/taskadd.dart';
@@ -87,26 +89,26 @@ class DocketApp extends StatelessWidget {
             onGenerateRoute: (settings) {
               // The named route and the default application route go to Today.
               // Should the user not have a session they are directed to Login.
-              if (settings.name == TodayScreen.routeName || settings.name == '/') {
+              if (settings.name == Routes.today || settings.name == '/') {
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: TodayScreen()));
               }
               // Upcoming tasks in the next 28 days.
-              if (settings.name == UpcomingScreen.routeName) {
+              if (settings.name == Routes.upcoming) {
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
               }
               // Task Add
-              if (settings.name == TaskAddScreen.routeName) {
-                final args = settings.arguments as TaskAddScreenArguments;
+              if (settings.name == Routes.taskAdd) {
+                final args = settings.arguments as TaskAddArguments;
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen(task: args.task)));
               }
               // Project Detailed View.
-              if (settings.name == ProjectDetailsScreen.routeName) {
+              if (settings.name == Routes.projectDetails) {
                 var args = settings.arguments as ProjectDetailsArguments;
 
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
               }
               // Task Detailed View.
-              if (settings.name == TaskDetailsScreen.routeName) {
+              if (settings.name == Routes.taskDetails) {
                 final args = settings.arguments as TaskDetailsArguments;
                 var task = args.task;
                 if (task.id == null) {
@@ -116,20 +118,21 @@ class DocketApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(task)));
               }
 
-              // Project Edit View.
-              if (settings.name == ProjectEditScreen.routeName) {
+              if (settings.name == Routes.projectEdit) {
                 var args = settings.arguments as ProjectEditArguments;
                 var project = args.project;
 
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(project)));
               }
-              // Project Add
-              if (settings.name == ProjectAddScreen.routeName) {
+              if (settings.name == Routes.projectAdd) {
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
+              }
+              if (settings.name == Routes.projectArchive) {
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectArchiveScreen()));
               }
 
               // Login
-              if (settings.name == LoginScreen.routeName) {
+              if (settings.name == Routes.login) {
                 return MaterialPageRoute(builder: (context) => const LoginScreen());
               }
 

@@ -8,9 +8,13 @@ class SessionProvider extends ChangeNotifier {
   ApiToken? _apiToken;
   late LocalDatabase _database;
 
-  SessionProvider(LocalDatabase database) {
+  SessionProvider(LocalDatabase database, {String? token}) {
     _database = database;
-    _loadApiToken();
+    if (token != null) {
+      set(token);
+    } else {
+      _loadApiToken();
+    }
   }
 
   String get apiToken {

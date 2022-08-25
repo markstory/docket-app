@@ -317,6 +317,27 @@ Future<List<Project>> fetchProjects(String apiToken) async {
   });
 }
 
+/// Fetch archived projects
+Future<List<Project>> fetchProjectArchive(String apiToken) async {
+  var url = _makeUrl('/projects/archived');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
+
+    try {
+      var projectData = jsonDecode(utf8.decode(response.bodyBytes));
+      List<Project> projects = [];
+      for (var item in projectData['projects']) {
+        projects.add(Project.fromMap(item));
+      }
+      return projects;
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
 /// Create a project
 Future<Project> createProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/add');
@@ -362,6 +383,24 @@ Future<void> archiveProject(String apiToken, Project project) async {
 
   return Future(() async {
       await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
+  });
+}
+
+/// Unarchive a project
+Future<void> unarchiveProject(String apiToken, Project project) async {
+  var url = _makeUrl('/projects/${project.slug}/unarchive');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not unarchive project');
+  });
+}
+
+/// Delete a project
+Future<void> deleteProject(String apiToken, Project project) async {
+  var url = _makeUrl('/projects/${project.slug}/delete');
+
+  return Future(() async {
+      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete project');
   });
 }
 // }}}

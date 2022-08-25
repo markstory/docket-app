@@ -8,6 +8,7 @@ import 'package:docket/providers/session.dart';
 import 'package:docket/models/project.dart';
 
 enum ViewNames {
+  projectArchive,
   projectDetails,
   projectMap,
 }
@@ -66,6 +67,16 @@ class ProjectsProvider extends ChangeNotifier {
     return projectData;
   }
 
+  /// Get the list of archived projects
+  Future<List<Project>?> getArchived() async {
+    var projects = await _database.projectArchive.get();
+    if (projects == null) {
+      fetchArchived();
+    }
+
+    return projects;
+  }
+
   /// Create a project on the server and notify listeners.
   Future<Project> createProject(Project project) async {
     project = await actions.createProject(session!.apiToken, project);
@@ -118,6 +129,20 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Fetch project list from the API and notifyListeners
+  Future<void> fetchArchived() async {
+    if (_pending.contains(ViewNames.projectArchive)) {
+      return;
+    }
+    _pending.add(ViewNames.projectArchive);
+    var projects = await actions.fetchProjectArchive(session!.apiToken);
+    _pending.remove(ViewNames.projectArchive);
+
+    await _database.projectArchive.set(projects);
+
+    notifyListeners();
+  }
+
   /// Move a project on the server and locally
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
@@ -133,10 +158,33 @@ class ProjectsProvider extends ChangeNotifier {
     await Future.wait([
       _database.projectMap.remove(project.slug),
       _database.projectDetails.remove(project.slug),
+      _database.projectArchive.clear(),
     ]);
     notifyListeners();
 
     return project;
+  }
+
+  /// Un-archive a project
+  Future<void> unarchive(Project project) async {
+    await actions.unarchiveProject(session!.apiToken, project);
+    await Future.wait([
+      _database.projectMap.clear(),
+      _database.projectArchive.clear(),
+    ]);
+
+    notifyListeners();
+  }
+
+  /// Delete a project and remove the project the project and project details.
+  Future<void> delete(Project project) async {
+    await actions.deleteProject(session!.apiToken, project);
+    await Future.wait([
+      _database.projectMap.remove(project.slug),
+      _database.projectDetails.remove(project.slug),
+      _database.projectArchive.clear(),
+    ]);
+    notifyListeners();
   }
 
   // Section Methods {{{
