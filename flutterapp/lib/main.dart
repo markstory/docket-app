@@ -24,10 +24,13 @@ Future<void> main() async {
   // TODO implement theme saving with profile/settings.
   // WidgetsFlutterBinding.ensureInitialized();
   // final savedThemeMode = await AdaptiveTheme.getThemeMode();
-
   final dbHandler = LocalDatabase();
+
   await SentryFlutter.init(
-    (options) => options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
+    (options) => {
+      options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
+      options.tracesSampleRate = 0.2,
+    },
     appRunner: () => runApp(EntryPoint(database: dbHandler)),
   );
 }
