@@ -107,11 +107,11 @@ class CalendarItem {
 
   /// Get the list of datekeys that this calendar should appear in.
   List<String> dateKeys() {
-    var allOptions = [startDate, endDate, startTime, endTime];
-    var options = allOptions.whereType<DateTime>().toList();
-
-    if (options.length == 2) {
-      return _getRangeInDays.call(options[0], options[1]);
+    if (startDate != null && endDate != null) {
+      return _getRangeInDays(startDate!, endDate!);
+    }
+    if (startTime != null && endTime != null) {
+      return _getRangeInDays(startTime!, endTime!);
     }
     return [];
   }
@@ -120,6 +120,12 @@ class CalendarItem {
     List<String> days = [];
     var current = start;
     var inDays = start.difference(end).inDays;
+
+    if (inDays <= 0) {
+      days.add(formatters.dateString(current));
+      return days;
+    }
+
     for (var i = 0; i <= inDays; i++) {
       days.add(formatters.dateString(current));
       current = current.add(const Duration(days: 1));

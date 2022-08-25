@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 import 'package:docket/models/calendaritem.dart';
@@ -99,8 +100,7 @@ class GroupedCalendarItems {
   GroupedCalendarItems();
 
   void addItem(CalendarItem item) {
-    var dateKeys = item.dateKeys();
-    for (var key in dateKeys) {
+    for (var key in item.dateKeys()) {
       if (groupings[key] == null) {
         List<CalendarItem> group = [];
         groupings[key] = group;
