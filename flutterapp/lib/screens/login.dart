@@ -5,11 +5,9 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/forms/login.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/screens/today.dart';
+import 'package:docket/routes.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const routeName = '/login';
-
   const LoginScreen({super.key});
 
   Future<void> _handleSubmit(String email, String password, SessionProvider session) async {
@@ -35,7 +33,7 @@ class LoginScreen extends StatelessWidget {
               if (email != null && password != null) {
                 try {
                   void complete() {
-                    Navigator.pushNamed(context, TodayScreen.routeName);
+                    Navigator.pushNamed(context, Routes.today);
                   }
 
                   await _handleSubmit(email, password, session);

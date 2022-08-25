@@ -6,7 +6,7 @@ import 'package:docket/dialogs/createsection.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/screens/projectedit.dart';
+import 'package:docket/routes.dart';
 
 enum Menu {
   archive,
@@ -30,7 +30,7 @@ class ProjectActions extends StatelessWidget {
     }
 
     void _handleEdit() {
-      Navigator.pushNamed(context, ProjectEditScreen.routeName, arguments: ProjectEditArguments(project));
+      Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectEditArguments(project));
     }
 
     void _handleAddSection() async {

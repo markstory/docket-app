@@ -15,8 +15,6 @@ import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
 class TodayScreen extends StatefulWidget {
-  static const routeName = '/tasks/today';
-
   const TodayScreen({super.key});
 
   @override

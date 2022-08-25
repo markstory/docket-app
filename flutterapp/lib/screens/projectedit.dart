@@ -7,18 +7,10 @@ import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/project.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/screens/projectdetails.dart';
+import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
 
-class ProjectEditArguments {
-  final Project project;
-
-  ProjectEditArguments(this.project);
-}
-
 class ProjectEditScreen extends StatefulWidget {
-  static const routeName = '/projects/edit';
-
   final Project project;
 
   const ProjectEditScreen(this.project, {super.key});
@@ -47,7 +39,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
       void complete(proj) {
         if (widget.project.slug != proj.slug) {
-          Navigator.pushReplacementNamed(context, ProjectDetailsScreen.routeName,
+          Navigator.pushReplacementNamed(context, Routes.projectDetails,
               arguments: ProjectDetailsArguments(proj));
           return;
         }

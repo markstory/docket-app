@@ -1,3 +1,4 @@
+import 'package:docket/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -15,8 +16,6 @@ import 'package:docket/providers/tasks.dart';
 import 'package:docket/grouping.dart' as grouping;
 
 class UpcomingScreen extends StatefulWidget {
-  static const routeName = '/tasks/upcoming';
-
   const UpcomingScreen({super.key});
 
   @override

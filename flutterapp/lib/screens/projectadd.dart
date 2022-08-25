@@ -8,8 +8,6 @@ import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 
 class ProjectAddScreen extends StatelessWidget {
-  static const routeName = '/projects/add';
-
   final Project project = Project.blank();
 
   ProjectAddScreen({super.key});

@@ -1,4 +1,3 @@
-import 'package:docket/screens/taskdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +9,7 @@ import 'package:docket/dialogs/changedueon.dart';
 import 'package:docket/dialogs/changeproject.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
 
 enum Menu { move, reschedule, delete }
@@ -59,7 +59,7 @@ class TaskItem extends StatelessWidget {
         subtitle: subtitle,
         trailing: TaskActions(task),
         onTap: () {
-          Navigator.pushNamed(context, TaskDetailsScreen.routeName, arguments: TaskDetailsArguments(task));
+          Navigator.pushNamed(context, Routes.taskDetails, arguments: TaskDetailsArguments(task));
         });
   }
 }

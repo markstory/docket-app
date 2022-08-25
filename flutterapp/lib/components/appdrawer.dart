@@ -1,7 +1,7 @@
-import 'package:docket/screens/projectadd.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/components/projectsorter.dart';
+import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -38,12 +38,12 @@ class AppDrawer extends StatelessWidget {
       ListTile(
           title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
           onTap: () {
-            Navigator.pushNamed(context, ProjectAddScreen.routeName);
+            Navigator.pushNamed(context, Routes.projectAdd);
           }),
       ListTile(
           title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
           onTap: () {
-            Navigator.pushNamed(context, '/projects/add');
+            Navigator.pushNamed(context, Routes.projectArchive);
           }),
     ]));
   }

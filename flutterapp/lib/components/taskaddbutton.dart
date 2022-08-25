@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:docket/models/task.dart';
-import 'package:docket/screens/taskadd.dart';
+import 'package:docket/routes.dart';
 
 /// Button to create a new task with some fields initialized.
 class TaskAddButton extends StatelessWidget {
@@ -35,8 +35,8 @@ class TaskAddButton extends StatelessWidget {
         onPressed: () {
           Navigator.pushNamed(
             context,
-            TaskAddScreen.routeName,
-            arguments: TaskAddScreenArguments(task),
+            Routes.taskAdd,
+            arguments: TaskAddArguments(task),
           );
         });
   }

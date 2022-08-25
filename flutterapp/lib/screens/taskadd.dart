@@ -9,14 +9,7 @@ import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
-class TaskAddScreenArguments {
-  final Task task;
-
-  TaskAddScreenArguments(this.task);
-}
-
 class TaskAddScreen extends StatelessWidget {
-  static const routeName = '/tasks/add';
   final Task task;
 
   const TaskAddScreen({required this.task, super.key});

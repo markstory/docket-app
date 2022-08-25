@@ -19,15 +19,7 @@ import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
-class ProjectDetailsArguments {
-  final Project project;
-
-  ProjectDetailsArguments(this.project);
-}
-
 class ProjectDetailsScreen extends StatefulWidget {
-  static const routeName = '/projects/view';
-
   final Project project;
 
   const ProjectDetailsScreen(this.project, {super.key});

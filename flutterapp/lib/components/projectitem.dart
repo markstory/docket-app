@@ -1,8 +1,8 @@
-import 'package:docket/screens/projectdetails.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/project.dart';
+import 'package:docket/routes.dart';
 
 /// A project list item, primarily used in the application drawer.
 class ProjectItem extends StatelessWidget {
@@ -16,7 +16,7 @@ class ProjectItem extends StatelessWidget {
     return ListTile(
       onTap: () {
         Navigator.pushNamed(context, 
-          ProjectDetailsScreen.routeName,
+          Routes.projectDetails,
           arguments: ProjectDetailsArguments(project)
         );
       },
