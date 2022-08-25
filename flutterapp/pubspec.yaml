@@ -40,7 +40,7 @@ dependencies:
   flutter_mentions: ^2.0.1
   drag_and_drop_lists: ^0.3.2
   flutter_markdown: ^0.6.10
-
+  sentry_flutter: ^6.9.1
 
 dev_dependencies:
   flutter_test:
@@ -95,7 +95,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  #
+
+
 flutter_icons:
   image_path: 'icons/docket-logo.png'
   android: true

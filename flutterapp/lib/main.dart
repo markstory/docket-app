@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'database.dart';
 import 'routes.dart';
@@ -19,14 +20,16 @@ import 'screens/taskdetails.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
 
-void main() {
+Future<void> main() async {
   // TODO implement theme saving with profile/settings.
   // WidgetsFlutterBinding.ensureInitialized();
   // final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   final dbHandler = LocalDatabase();
-
-  runApp(EntryPoint(database: dbHandler));
+  await SentryFlutter.init(
+    (options) => options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
+    appRunner: () => runApp(EntryPoint(database: dbHandler)),
+  );
 }
 
 class EntryPoint extends StatelessWidget {
