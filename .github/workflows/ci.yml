@@ -132,7 +132,7 @@ jobs:
       with:
         fetch-depth: 1
 
-    - uses: subsito/flutter-action@v2
+    - uses: subosito/flutter-action@v2
 
     - name: Run pub get
       run: flutter pub get
