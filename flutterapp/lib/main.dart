@@ -92,6 +92,7 @@ class DocketApp extends StatelessWidget {
           return MaterialApp(
             theme: theme,
             darkTheme: darkTheme,
+            navigatorObservers: [SentryNavigatorObserver()],
             onGenerateRoute: (settings) {
               // The named route and the default application route go to Today.
               // Should the user not have a session they are directed to Login.
