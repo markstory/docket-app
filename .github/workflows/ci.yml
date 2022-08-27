@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  testsuite:
+  phpunit:
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
@@ -125,6 +125,24 @@ jobs:
         vendor/bin/phpunit tests/Acceptance/TodayTest.php
         vendor/bin/phpunit tests/Acceptance/UpcomingTest.php
 
+  flutter-test:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - uses: subosito/flutter-action@v2
+
+    - name: Run pub get
+      run: |
+        cd flutterapp
+        flutter pub get
+
+    - name: Run flutter test
+      run: |
+        cd flutterapp
+        flutter test
 
   cs-stan:
     name: Coding Standard & Static Analysis

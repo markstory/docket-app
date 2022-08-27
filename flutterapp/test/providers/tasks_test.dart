@@ -51,7 +51,7 @@ void main() {
   var db = LocalDatabase();
 
   group('$TasksProvider', () {
-    var session = SessionProvider(db)..set('api-token');
+    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
       listenerCallCount = 0;
