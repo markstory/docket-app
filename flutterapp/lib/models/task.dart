@@ -15,6 +15,7 @@ class Task {
   int dayOrder;
   bool evening;
   bool completed;
+  List<Subtask> subtasks;
 
   Task({
     this.id,
@@ -30,6 +31,7 @@ class Task {
     required this.dayOrder,
     required this.evening,
     required this.completed,
+    this.subtasks = const [],
   });
 
   factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
@@ -72,6 +74,13 @@ class Task {
     if (json['due_on'] != null) {
       dueOn = formatters.parseToLocal(json['due_on']);
     }
+    List<Subtask> subtasks = [];
+    if (json['subtasks'] != null &&
+        (json['subtasks'].runtimeType == List || json['subtasks'].runtimeType == List<Map<String, Object?>>)) {
+      for (var item in json['subtasks']) {
+        subtasks.add(Subtask.fromMap(item));
+      }
+    }
 
     return Task(
       id: json['id'],
@@ -87,6 +96,7 @@ class Task {
       dayOrder: json['day_order'] ?? 0,
       evening: evening ?? false,
       completed: completed ?? false,
+      subtasks: subtasks,
     );
   }
 
@@ -140,6 +150,7 @@ class Task {
       'day_order': dayOrder,
       'evening': evening,
       'completed': completed,
+      'subtasks': subtasks.map((sub) => sub.toMap()).toList(),
     };
   }
 
@@ -152,6 +163,38 @@ class Task {
       return 'evening:$date';
     }
     return date;
+  }
+}
+
+class Subtask {
+  int? id;
+  String title = '';
+  int ranking = 0;
+  bool completed = false;
+
+  Subtask({
+    this.id,
+    required this.title,
+    this.ranking = 0,
+    this.completed = false,
+  });
+
+  factory Subtask.fromMap(Map<String, dynamic> json) {
+    return Subtask(
+      id: json['id'],
+      title: json['title']?.toString() ?? '',
+      ranking: json['ranking'] ?? 0,
+      completed: json['completed'] ?? false,
+    );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'ranking': ranking,
+      'completed': completed,
+    };
   }
 }
 
