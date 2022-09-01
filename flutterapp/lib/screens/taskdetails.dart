@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
@@ -33,6 +34,21 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     }
   }
 
+  void _onSubtaskComplete(BuildContext context, Task task, Subtask subtask) {
+    var messenger = ScaffoldMessenger.of(context);
+    var navigator = Navigator.of(context);
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
+    try {
+      // TODO continue here.
+      await tasksProvider.completeSubtask(task, subtask);
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Complete'));
+      navigator.pop();
+    } catch (e) {
+      messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
@@ -48,15 +64,34 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 var task = snapshot.data ?? widget.task;
 
                 return SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
-                  child: TaskForm(
-                    task: task,
-                    onSave: (task) => _onSave(context, task),
-                    onComplete: () => Navigator.of(context).pop(),
-                  ),
+                  child: Column(children: [
+                    TaskForm(
+                      task: task,
+                      onSave: (task) => _onSave(context, task),
+                      onComplete: () => Navigator.of(context).pop(),
+                    ),
+                    _buildSubtasks(context, task),
+                  ]),
                 );
               }),
         ),
       );
     });
+  }
+
+  Widget _buildSubtasks(BuildContext context, Task task) {
+    if (task.subtasks.isEmpty) {
+      return const SizedBox(height: 0, width: 0);
+    }
+
+    var theme = Theme.of(context);
+    return Column(children: [
+      Text('Subtasks', style: theme.textTheme.titleSmall),
+      ...task.subtasks.map<Widget>((sub) {
+        return SubtaskItem(task: task, subtask: sub, onComplete: () {
+          _onSubtaskComplete(context, task, sub);
+        });
+      }),
+    ]);
   }
 }
