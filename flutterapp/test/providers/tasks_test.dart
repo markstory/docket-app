@@ -239,5 +239,29 @@ void main() {
       var todayData = await db.today.get();
       expect(todayData.tasks.length, equals(0));
     });
+
+    test('toggleSubtask() call API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/2/complete'));
+
+        return Response('', 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(id: 2, title: 'subtask');
+      task.subtasks.add(subtask);
+
+      await provider.toggleSubtask(task, subtask);
+
+      // Should notify listeners.
+      expect(listenerCallCount, greaterThan(1));
+      var updated = await provider.getById(task.id!);
+      expect(updated, isNotNull);
+      expect(updated!.subtasks[0].completed, isTrue);
+    });
   });
 }

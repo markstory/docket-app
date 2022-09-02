@@ -49,6 +49,7 @@ class Task {
       dayOrder: 0,
       evening: evening,
       completed: false,
+      subtasks: [],
     );
   }
 

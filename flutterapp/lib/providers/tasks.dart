@@ -152,4 +152,16 @@ class TasksProvider extends ChangeNotifier {
   Future<void> move(Task task, Map<String, dynamic> updates) async {
     await actions.moveTask(session!.apiToken, task, updates);
   }
+
+  /// Flip subtask.completed and persist to the server.
+  Future<void> toggleSubtask(Task task, Subtask subtask) async {
+    subtask.completed = !subtask.completed;
+    await actions.toggleSubtask(session!.apiToken, task, subtask);
+
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    task.subtasks[index] = subtask;
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
 }
