@@ -6,11 +6,30 @@ import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
-class SubtaskItem extends StatelessWidget {
+class SubtaskItem extends StatefulWidget {
   final Task task;
   final Subtask subtask;
 
   const SubtaskItem({required this.task, required this.subtask, super.key});
+
+  @override
+  State<SubtaskItem> createState() => _SubtaskItemState();
+}
+
+class _SubtaskItemState extends State<SubtaskItem> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.subtask.title);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void handleSubtaskComplete(BuildContext context, Task task, Subtask subtask) async {
     var messenger = ScaffoldMessenger.of(context);
@@ -41,8 +60,8 @@ class SubtaskItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
+    var subtask = widget.subtask;
 
-    // TODO add inline edit with blur to save.
     return ListTile(
       dense: true,
       leading: Checkbox(
@@ -54,15 +73,16 @@ class SubtaskItem extends StatelessWidget {
           if (value == null) {
             return;
           }
-          handleSubtaskComplete(context, task, subtask);
+          handleSubtaskComplete(context, widget.task, subtask);
         }),
-      title: Text(
-        subtask.title,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: subtask.completed ? Colors.grey : Colors.black,
-          decoration: subtask.completed ? TextDecoration.lineThrough : null,
-        ),
+      title: TextField(
+        controller: _controller,
+        onSubmitted: (String value) async {
+          var tasksProvider = Provider.of<TasksProvider>(context);
+          var sub = widget.subtask;
+          sub.title = value;
+          await tasksProvider.updateSubtask(widget.task, sub);
+        },
       ),
     );
   }
