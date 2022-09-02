@@ -154,6 +154,7 @@ class SubtasksControllerTest extends TestCase
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
 
         $this->login();
+        $this->requestJson();
         $this->enableCsrfToken();
         $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
             'title' => 'Updated',
@@ -161,6 +162,33 @@ class SubtasksControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertNotEmpty($this->viewVariable('subtask'));
         $this->assertContentType('application/json');
+
+        $update = $this->Subtasks->get($subtask->id);
+        $this->assertSame('Updated', $update->title);
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
+    public function testEditApi(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
+            'title' => 'Updated',
+        ]);
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+        $viewVar = $this->viewVariable('subtask');
+        $this->assertNotEmpty($viewVar);
+        $this->assertEquals('Updated', $viewVar->title);
 
         $update = $this->Subtasks->get($subtask->id);
         $this->assertSame('Updated', $update->title);

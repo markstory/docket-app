@@ -22,6 +22,11 @@ class SubtasksController extends AppController
         $this->loadModel('Subtasks');
     }
 
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     protected function getTask(string $id): Task
     {
         $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
@@ -79,11 +84,15 @@ class SubtasksController extends AppController
         $subtask->toggle();
         $this->Subtasks->saveOrFail($subtask);
 
-        return $this->redirect($this->referer([
+        $redirect = $this->referer([
             'controller' => 'Tasks',
             'action' => 'view',
             'id' => $taskId,
-        ]));
+        ]);
+        $this->respond([
+            'success' => true,
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -100,14 +109,23 @@ class SubtasksController extends AppController
 
         $subtask = $this->getSubtask($taskId, $id);
         $subtask = $this->Subtasks->patchEntity($subtask, $this->request->getData());
-        if (!$this->Subtasks->save($subtask)) {
-            return $this->validationErrorResponse($subtask->getErrors());
+        $serialize = [];
+        $success = false;
+        if ($this->Subtasks->save($subtask)) {
+            $success = true;
+            $serialize[] = 'subtask';
+            $this->set('subtask', $subtask);
+        } else {
+            $serialize[] = 'errors';
+            $this->set('errors', $this->flattenErrors($subtask->getErrors()));
         }
-        $this->Flash->success(__('Subtask updated.'));
-        $this->set('subtask', $subtask);
-        $this->viewBuilder()
-            ->setClassName(JsonView::class)
-            ->setOption('serialize', ['subtask']);
+        $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Subtask updated'),
+            'flashError' => __('Subtask could not be updated'),
+            'statusError' => 422,
+        ]);
     }
 
     /**
@@ -146,16 +164,29 @@ class SubtasksController extends AppController
         $operation = [
             'ranking' => $this->request->getData('ranking'),
         ];
+        $success = false;
+        $serialize = [];
         try {
             $this->Subtasks->move($subtask, $operation);
-            $this->Flash->success(__('Subtask reordered.'));
+            $success = true;
+            $serialize[] = 'subtask';
+            $this->set('subtask', $subtask);
         } catch (InvalidArgumentException $e) {
-            $this->Flash->error($e->getMessage());
+            $this->set('errors', [$e->getMessage()]);
+            $serialize[] = 'errors';
         }
-
-        return $this->redirect($this->referer([
+        $redirect = $this->referer([
             '_name' => 'tasks:view',
             'id' => $taskId,
-        ]));
+        ]);
+
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Subtask moved'),
+            'flashError' => __('Could not move subtask'),
+            'statusError' => 422,
+            'redirect' => $redirect,
+        ]);
     }
 }
