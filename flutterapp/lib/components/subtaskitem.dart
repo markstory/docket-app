@@ -26,6 +26,17 @@ class SubtaskItem extends StatelessWidget {
     }
   }
 
+  void handleUpdate(BuildContext context, Task task, Subtask subtask) async {
+    var messenger = ScaffoldMessenger.of(context);
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
+    try {
+      await tasksProvider.updateSubtask(task, subtask);
+    } catch (e) {
+      messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);

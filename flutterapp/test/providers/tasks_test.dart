@@ -42,6 +42,9 @@ void main() {
   file = File('test_resources/task_create_today.json');
   final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
+  file = File('test_resources/subtask_update.json');
+  final subtaskUpdateResponse = file.readAsStringSync();
+
   Future<void> setTodayView(List<Task> tasks) async {
     var db = LocalDatabase();
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
@@ -262,6 +265,33 @@ void main() {
       var updated = await provider.getById(task.id!);
       expect(updated, isNotNull);
       expect(updated!.subtasks[0].completed, isTrue);
+    });
+
+    test('updateSubtask() call API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(id: 1, title: 'replaced by server data');
+      task.subtasks.add(subtask);
+
+      await provider.updateSubtask(task, subtask);
+
+      // Should notify listeners.
+      expect(listenerCallCount, greaterThan(1));
+      var updated = await provider.getById(task.id!);
+
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.completed, isFalse);
+      expect(updatedSubtask.title, equals('replaced by server data'));
     });
   });
 }

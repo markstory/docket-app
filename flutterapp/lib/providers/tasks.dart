@@ -164,4 +164,15 @@ class TasksProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Update a subtask and persist to the server.
+  Future<void> updateSubtask(Task task, Subtask subtask) async {
+    subtask = await actions.updateSubtask(session!.apiToken, task, subtask);
+
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    task.subtasks[index] = subtask;
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
 }
