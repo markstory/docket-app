@@ -34,21 +34,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     }
   }
 
-  void _onSubtaskComplete(BuildContext context, Task task, Subtask subtask) {
-    var messenger = ScaffoldMessenger.of(context);
-    var navigator = Navigator.of(context);
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-
-    try {
-      // TODO continue here.
-      await tasksProvider.completeSubtask(task, subtask);
-      messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Complete'));
-      navigator.pop();
-    } catch (e) {
-      messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
@@ -88,9 +73,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     return Column(children: [
       Text('Subtasks', style: theme.textTheme.titleSmall),
       ...task.subtasks.map<Widget>((sub) {
-        return SubtaskItem(task: task, subtask: sub, onComplete: () {
-          _onSubtaskComplete(context, task, sub);
-        });
+        return SubtaskItem(task: task, subtask: sub);
       }),
     ]);
   }
