@@ -277,6 +277,45 @@ Future<void> toggleSubtask(String apiToken, Task task, Subtask subtask) async {
     await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update subtask');
   });
 }
+
+/// Update a subtask
+Future<Subtask> updateSubtask(String apiToken, Task task, Subtask subtask) async {
+  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/edit');
+
+  return Future(() async {
+    var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
+    try {
+      var data = jsonDecode(utf8.decode(response.bodyBytes));
+      if (data['subtask'] != null) { 
+        return Subtask.fromMap(data['subtask']);
+      }
+      throw Exception('Invalid response data received');
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+/// Create a subtask
+Future<Subtask> createSubtask(String apiToken, Task task, Subtask subtask) async {
+  var url = _makeUrl('/tasks/${task.id}/subtasks');
+
+  return Future(() async {
+    var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
+    try {
+      var data = jsonDecode(utf8.decode(response.bodyBytes));
+      if (data['subtask'] != null) { 
+        return Subtask.fromMap(data['subtask']);
+      }
+      throw Exception('Invalid response data received');
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
 // }}}
 
 // Project methods {{{
@@ -395,7 +434,7 @@ Future<void> archiveProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/${project.slug}/archive');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
+    await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
   });
 }
 
@@ -404,7 +443,7 @@ Future<void> unarchiveProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/${project.slug}/unarchive');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not unarchive project');
+    await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not unarchive project');
   });
 }
 
@@ -413,7 +452,7 @@ Future<void> deleteProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/${project.slug}/delete');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete project');
+    await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete project');
   });
 }
 // }}}
@@ -424,7 +463,7 @@ Future<void> createSection(String apiToken, Project project, Section section) as
   var url = _makeUrl('/projects/${project.slug}/sections/');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not create section');
+    await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not create section');
   });
 }
 
@@ -433,7 +472,7 @@ Future<void> deleteSection(String apiToken, Project project, Section section) as
   var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/delete');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
+    await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
   });
 }
 
@@ -442,7 +481,7 @@ Future<void> moveSection(String apiToken, Project project, Section section, int 
   var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/move');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: {'ranking': newIndex}, errorMessage: 'Could not move section');
+    await httpPost(url, apiToken: apiToken, body: {'ranking': newIndex}, errorMessage: 'Could not move section');
   });
 }
 
@@ -451,7 +490,7 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
   var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/edit');
 
   return Future(() async {
-      await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
+    await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
   });
 }
 // }}}

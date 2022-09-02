@@ -75,6 +75,14 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       ...task.subtasks.map<Widget>((sub) {
         return SubtaskItem(task: task, subtask: sub);
       }),
+      TextButton(
+        child: const Text('Add Subtask'),
+        onPressed: () {
+          setState(() {
+            task.subtasks.add(Subtask.blank());
+          });
+        }
+      )
     ]);
   }
 }

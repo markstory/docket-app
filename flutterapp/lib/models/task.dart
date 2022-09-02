@@ -151,7 +151,8 @@ class Task {
       'day_order': dayOrder,
       'evening': evening,
       'completed': completed,
-      'subtasks': subtasks.map((sub) => sub.toMap()).toList(),
+      // Filtering to exclude any pending subtasks that didn't get saved.
+      'subtasks': subtasks.where((sub) => sub.id != null).map((sub) => sub.toMap()).toList(),
     };
   }
 
@@ -179,6 +180,10 @@ class Subtask {
     this.ranking = 0,
     this.completed = false,
   });
+
+  factory Subtask.blank({String title = ''}) {
+    return Subtask(title: title);
+  }
 
   factory Subtask.fromMap(Map<String, dynamic> json) {
     return Subtask(
