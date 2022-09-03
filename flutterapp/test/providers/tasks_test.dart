@@ -267,7 +267,7 @@ void main() {
       expect(updated!.subtasks[0].completed, isTrue);
     });
 
-    test('updateSubtask() call API and update local task', () async {
+    test('saveSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
 
@@ -282,7 +282,7 @@ void main() {
       var subtask = Subtask(id: 1, title: 'replaced by server data');
       task.subtasks.add(subtask);
 
-      await provider.updateSubtask(task, subtask);
+      await provider.saveSubtask(task, subtask);
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
@@ -291,7 +291,35 @@ void main() {
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.completed, isFalse);
-      expect(updatedSubtask.title, equals('replaced by server data'));
+      expect(updatedSubtask.title, equals('fold big towels'));
+    });
+
+    test('saveSubtask() uses create API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(title: 'replaced by server data');
+      task.subtasks.add(subtask);
+
+      await provider.saveSubtask(task, subtask);
+
+      // Should notify listeners.
+      expect(listenerCallCount, greaterThan(1));
+      var updated = await provider.getById(task.id!);
+
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.id, equals(1));
+      expect(updatedSubtask.completed, isFalse);
+      expect(updatedSubtask.title, equals('fold big towels'));
     });
   });
 }

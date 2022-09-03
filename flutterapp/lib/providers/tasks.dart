@@ -166,14 +166,18 @@ class TasksProvider extends ChangeNotifier {
   }
 
   /// Create or Update a subtask and persist to the server.
-  Future<void> updateSubtask(Task task, Subtask subtask) async {
+  Future<void> saveSubtask(Task task, Subtask subtask) async {
+    // Get the index before updating the server so that we can
+    // get the index of new subtasks. We're assuming that there is only
+    // one unsaved subtask at a time.
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+
     if (subtask.id == null) {
       subtask = await actions.createSubtask(session!.apiToken, task, subtask);
     } else {
       subtask = await actions.updateSubtask(session!.apiToken, task, subtask);
     }
 
-    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
     task.subtasks[index] = subtask;
     await _database.updateTask(task);
 

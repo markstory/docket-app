@@ -81,7 +81,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
           var tasksProvider = Provider.of<TasksProvider>(context);
           var sub = widget.subtask;
           sub.title = value;
-          await tasksProvider.updateSubtask(widget.task, sub);
+          await tasksProvider.saveSubtask(widget.task, sub);
         },
       ),
     );
