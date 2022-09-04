@@ -50,7 +50,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
     try {
-      await tasksProvider.updateSubtask(task, subtask);
+      await tasksProvider.saveSubtask(task, subtask);
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
     }
