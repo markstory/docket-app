@@ -42,8 +42,9 @@ class _TaskFormState extends State<TaskForm> {
     }
 
     var theme = Theme.of(context);
-    return Column(children: [
-      Text('Subtasks', style: theme.textTheme.titleSmall),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SizedBox(height: space(2)),
+      Text('Subtasks', style: theme.textTheme.titleLarge),
       ...task.subtasks.map<Widget>((sub) {
         return SubtaskItem(task: task, subtask: sub);
       }),
@@ -69,6 +70,10 @@ class _TaskFormState extends State<TaskForm> {
           List<Project> projects = [];
           if (snapshot.hasData) {
             projects = snapshot.data!;
+          }
+          int? defaultProject;
+          if (projects.isNotEmpty) {
+            defaultProject = projects[0].id;
           }
 
           return Form(
@@ -100,7 +105,7 @@ class _TaskFormState extends State<TaskForm> {
                   child: DropdownButtonFormField(
                       key: const ValueKey('project'),
                       decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Project'),
-                      value: task.projectId,
+                      value: task.projectId ?? defaultProject,
                       items: projects.map((item) {
                         var color = getProjectColor(item.color);
 
