@@ -75,6 +75,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
           handleSubtaskComplete(context, widget.task, subtask);
         }),
       title: TextField(
+        // TODO style this text when the subtask is completed.
         controller: _controller,
         onSubmitted: (String value) async {
           var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
