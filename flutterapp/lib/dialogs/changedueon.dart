@@ -76,7 +76,7 @@ Future<void> showChangeDueOnDialog(
       if (futureDue && !isEvening) {
         items.add(ListTile(
             dense: true,
-            leading: Icon(Icons.bedtime_outlined, color: docketColors.dueTomorrow),
+            leading: Icon(Icons.calendar_today, color: docketColors.dueEvening),
             title: Text('${formatters.compactDate(currentValue)} evening'),
             onTap: () {
               onChange(currentValue, true);

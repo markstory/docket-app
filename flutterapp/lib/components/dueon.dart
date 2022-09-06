@@ -47,7 +47,7 @@ class DueOn extends StatelessWidget {
         if (evening) {
           children.add(Icon(
             Icons.bedtime_outlined,
-            color: color,
+            color: customColors.dueEvening,
             size: 14,
           ));
         } else {
