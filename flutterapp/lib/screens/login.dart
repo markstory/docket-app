@@ -6,6 +6,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/forms/login.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/routes.dart';
+import 'package:docket/theme.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -27,23 +28,25 @@ class LoginScreen extends StatelessWidget {
     return Consumer<SessionProvider>(builder: (context, session, child) {
       return Scaffold(
           appBar: AppBar(),
-          body: Column(children: [
-            const Text('Login to your Docket instance.'),
-            LoginForm(onSubmit: (String? email, String? password) async {
-              if (email != null && password != null) {
-                try {
-                  void complete() {
-                    Navigator.pushNamed(context, Routes.today);
-                  }
+          body: Padding(
+              padding: EdgeInsets.all(space(2)),
+              child: Column(children: [
+                const Text('Login to your Docket instance'),
+                LoginForm(onSubmit: (String? email, String? password) async {
+                  if (email != null && password != null) {
+                    try {
+                      void complete() {
+                        Navigator.pushNamed(context, Routes.today);
+                      }
 
-                  await _handleSubmit(email, password, session);
-                  complete();
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                }
-              }
-            }),
-          ]));
+                      await _handleSubmit(email, password, session);
+                      complete();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  }
+                }),
+              ])));
     });
   }
 }
