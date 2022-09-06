@@ -270,8 +270,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
 
 /// Update a task complete/incomplete state..
 Future<void> toggleSubtask(String apiToken, Task task, Subtask subtask) async {
-  var operation = subtask.completed ? 'complete' : 'incomplete';
-  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/$operation');
+  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/toggle');
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update subtask');

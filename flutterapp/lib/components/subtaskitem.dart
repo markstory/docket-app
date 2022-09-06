@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,13 +34,11 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
   void handleSubtaskComplete(BuildContext context, Task task, Subtask subtask) async {
     var messenger = ScaffoldMessenger.of(context);
-    var navigator = Navigator.of(context);
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
     try {
       await tasksProvider.toggleSubtask(task, subtask);
       messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Complete'));
-      navigator.pop();
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
     }
@@ -78,7 +77,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
       title: TextField(
         controller: _controller,
         onSubmitted: (String value) async {
-          var tasksProvider = Provider.of<TasksProvider>(context);
+          var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
           var sub = widget.subtask;
           sub.title = value;
           await tasksProvider.saveSubtask(widget.task, sub);

@@ -245,7 +245,7 @@ void main() {
 
     test('toggleSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/2/complete'));
+        expect(request.url.path, equals('/tasks/1/subtasks/2/toggle'));
 
         return Response('', 200);
       });

@@ -20,6 +20,21 @@ class TaskDetailsScreen extends StatefulWidget {
 }
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
+  late Task task;
+
+  @override
+  void initState() {
+    super.initState();
+    task = widget.task;
+
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    await tasksProvider.fetchById(task.id!);
+  }
+
   void _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
@@ -55,34 +70,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       onSave: (task) => _onSave(context, task),
                       onComplete: () => Navigator.of(context).pop(),
                     ),
-                    _buildSubtasks(context, task),
                   ]),
                 );
               }),
         ),
       );
     });
-  }
-
-  Widget _buildSubtasks(BuildContext context, Task task) {
-    if (task.subtasks.isEmpty) {
-      return const SizedBox(height: 0, width: 0);
-    }
-
-    var theme = Theme.of(context);
-    return Column(children: [
-      Text('Subtasks', style: theme.textTheme.titleSmall),
-      ...task.subtasks.map<Widget>((sub) {
-        return SubtaskItem(task: task, subtask: sub);
-      }),
-      TextButton(
-        child: const Text('Add Subtask'),
-        onPressed: () {
-          setState(() {
-            task.subtasks.add(Subtask.blank());
-          });
-        }
-      )
-    ]);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/forms.dart';
+import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/tasktitleinput.dart';
 import 'package:docket/models/task.dart';
@@ -28,6 +29,33 @@ class _TaskFormState extends State<TaskForm> {
   void initState() {
     super.initState();
     task = widget.task.copy();
+  }
+
+  /// Create the subtasks section for task details. This is a bit
+  /// at odds with how the rest of the page as subtasks update immediately
+  /// while other changes are deferred. Perhaps task updates should apply immediately 
+  /// or as a time throttled async change?
+  Widget _buildSubtasks(BuildContext context, Task task) {
+    // No subtasks for unsaved tasks.
+    if (task.id == null) {
+      return const SizedBox(height: 0, width: 0);
+    }
+
+    var theme = Theme.of(context);
+    return Column(children: [
+      Text('Subtasks', style: theme.textTheme.titleSmall),
+      ...task.subtasks.map<Widget>((sub) {
+        return SubtaskItem(task: task, subtask: sub);
+      }),
+      TextButton(
+        child: const Text('Add Subtask'),
+        onPressed: () {
+          setState(() {
+            task.subtasks.add(Subtask.blank());
+          });
+        }
+      )
+    ]);
   }
 
   @override
@@ -115,6 +143,7 @@ class _TaskFormState extends State<TaskForm> {
                             task.body = value;
                           });
                         })),
+                _buildSubtasks(context, widget.task),
                 ButtonBar(children: [
                   TextButton(
                       child: const Text('Cancel'),

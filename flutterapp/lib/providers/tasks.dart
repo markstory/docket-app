@@ -172,10 +172,14 @@ class TasksProvider extends ChangeNotifier {
     // one unsaved subtask at a time.
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
 
+    developer.log('saving subtask $subtask index=$index', name: 'debug');
     if (subtask.id == null) {
+      developer.log('create');
       subtask = await actions.createSubtask(session!.apiToken, task, subtask);
     } else {
+      developer.log('update');
       subtask = await actions.updateSubtask(session!.apiToken, task, subtask);
+      developer.log('updated subtask ${subtask.toMap()}', name: 'debug');
     }
 
     task.subtasks[index] = subtask;
