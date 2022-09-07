@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -64,7 +65,7 @@ class _TodayScreenState extends State<TodayScreen> {
     // No setState() as we don't want to re-render.
     var todayTasks = TaskSortMetadata(
         calendarItems: data.calendarItems,
-        tasks: data.tasks.where((task) => !task.evening).toList(),
+        tasks: data.tasks.where((task) => !task.evening && (task.dueOn?.isBefore(today) ?? false) == false).toList(),
         onReceive: (Task task, int newIndex) {
           var updates = {'evening': false, 'day_order': newIndex};
           task.evening = false;

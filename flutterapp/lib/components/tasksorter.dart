@@ -43,8 +43,7 @@ class TaskSorter extends StatelessWidget {
 
     return DragAndDropLists(
       children: taskLists.map((taskListMeta) {
-        // TODO This is janky AF
-        var includeOverdue = taskListMeta.title == 'Today';
+        var includeOverdue = overdue != null && taskLists.indexOf(taskListMeta) == 0;
 
         late Widget header;
         if (buildHeader != null) {
@@ -84,6 +83,7 @@ class TaskSorter extends StatelessWidget {
 
   Widget buildOverdue(TaskSortMetadata taskMeta, ThemeData theme, DocketColors customColors) {
     return Column(mainAxisSize: MainAxisSize.min, children: [
+      SizedBox(height: space(2)),
       buildTitle(taskMeta, theme, customColors),
       ...taskMeta.tasks.map((task) {
         var taskItem = TaskItem(task: task, showDate: false, showProject: true);
