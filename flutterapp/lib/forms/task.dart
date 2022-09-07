@@ -71,9 +71,9 @@ class _TaskFormState extends State<TaskForm> {
           if (snapshot.hasData) {
             projects = snapshot.data!;
           }
-          int? defaultProject;
-          if (projects.isNotEmpty) {
-            defaultProject = projects[0].id;
+          // Set a default projectId
+          if (task.projectId == null && projects.isNotEmpty) {
+            task.projectId = projects[0].id;
           }
 
           return Form(
@@ -105,7 +105,7 @@ class _TaskFormState extends State<TaskForm> {
                   child: DropdownButtonFormField(
                       key: const ValueKey('project'),
                       decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Project'),
-                      value: task.projectId ?? defaultProject,
+                      value: task.projectId,
                       items: projects.map((item) {
                         var color = getProjectColor(item.color);
 
@@ -124,7 +124,14 @@ class _TaskFormState extends State<TaskForm> {
                         if (value != null) {
                           task.projectId = value;
                         }
-                      }),
+                      },
+                      validator: (int? value) {
+                        if (value == null) {
+                          return 'Project is required';
+                        }
+                        return null;
+                      },
+                    ),
                 ),
                 FormIconRow(
                   icon: const Icon(Icons.calendar_today, size: DocketColors.iconSize, semanticLabel: 'Due on'),

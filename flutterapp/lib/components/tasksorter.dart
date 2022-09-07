@@ -43,7 +43,7 @@ class TaskSorter extends StatelessWidget {
 
     return DragAndDropLists(
       children: taskLists.map((taskListMeta) {
-        var includeOverdue = overdue != null && taskLists.indexOf(taskListMeta) == 0;
+        var includeOverdue = (overdue?.tasks.isNotEmpty ?? false)  && taskLists.indexOf(taskListMeta) == 0;
 
         late Widget header;
         if (buildHeader != null) {

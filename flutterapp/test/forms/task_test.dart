@@ -61,6 +61,28 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
+    testWidgets('project value has a default', (tester) async {
+      var onSaveCalled = false;
+      void onSave(Task task) {
+        onSaveCalled = true;
+        expect(task.title, equals('Do dishes'));
+        expect(task.projectId, equals(1));
+      }
+
+      final task = Task.blank();
+      expect(task.projectId, isNull);
+
+      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpAndSettle();
+
+      // Fill out the title and use default project and notes
+      await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
+
+      // Save onSaveCalled is mutated by callback.
+      await tester.tap(find.text('Save'));
+      expect(onSaveCalled, equals(true));
+    });
+
     testWidgets('cancel does not apply changes', (tester) async {
       void onSave(Task task) {
         throw "Should not be called";
