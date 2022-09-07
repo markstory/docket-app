@@ -16,6 +16,8 @@ class Task {
   bool evening;
   bool completed;
   List<Subtask> subtasks;
+  int subtaskCount;
+  int completeSubtaskCount;
 
   Task({
     this.id,
@@ -32,6 +34,8 @@ class Task {
     required this.evening,
     required this.completed,
     this.subtasks = const [],
+    this.subtaskCount = 0,
+    this.completeSubtaskCount = 0,
   });
 
   factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
@@ -82,6 +86,8 @@ class Task {
         subtasks.add(Subtask.fromMap(item));
       }
     }
+    var subtaskCount = json['subtask_count'] ?? 0;
+    var completeSubtaskCount = json['complete_subtask_count'] ?? 0;
 
     return Task(
       id: json['id'],
@@ -98,6 +104,8 @@ class Task {
       evening: evening ?? false,
       completed: completed ?? false,
       subtasks: subtasks,
+      subtaskCount: subtaskCount,
+      completeSubtaskCount: completeSubtaskCount,
     );
   }
 
@@ -153,6 +161,8 @@ class Task {
       'completed': completed,
       // Filtering to exclude any pending subtasks that didn't get saved.
       'subtasks': subtasks.where((sub) => sub.id != null).map((sub) => sub.toMap()).toList(),
+      'subtask_count': subtaskCount,
+      'complete_subtask_count': completeSubtaskCount,
     };
   }
 
