@@ -10,7 +10,7 @@ on:
 
 jobs:
   phpunit:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +73,7 @@ jobs:
       uses: codecov/codecov-action@v1
 
   jest:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
       with:
@@ -89,7 +89,7 @@ jobs:
 
   acceptance:
     name: Browser Acceptance
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     env:
       DATABASE_TEST_URL: mysql://root:root@127.0.0.1/docket
@@ -126,7 +126,7 @@ jobs:
         vendor/bin/phpunit tests/Acceptance/UpcomingTest.php
 
   flutter-test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
       with:
@@ -146,7 +146,7 @@ jobs:
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
       DATABASE_TEST_URL: sqlite://./docket.db
 
