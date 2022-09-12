@@ -36,7 +36,7 @@ class TaskItem extends StatelessWidget {
     }
     if (task.subtaskCount > 0) {
       attributes.add(Row(children: [
-        const Icon(Icons.checklist_outlined, color: Colors.grey, size: 14),
+        const Icon(Icons.done, color: Colors.grey, size: 14),
         Text("${task.completeSubtaskCount}/${task.subtaskCount}"),
       ]));
     }
