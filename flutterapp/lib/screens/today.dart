@@ -40,6 +40,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
     _newTask = Task.blank(dueOn: today);
     _taskLists = [];
+    _overdue = null;
 
     return Future.wait([
       tasksProvider.fetchToday(),
@@ -65,7 +66,9 @@ class _TodayScreenState extends State<TodayScreen> {
     // No setState() as we don't want to re-render.
     var todayTasks = TaskSortMetadata(
         calendarItems: data.calendarItems,
-        tasks: data.tasks.where((task) => !task.evening && (task.dueOn?.isBefore(today) ?? false) == false).toList(),
+        tasks: data.tasks.where((task) {
+          return !task.evening && !overdueTasks.contains(task);
+        }).toList(),
         onReceive: (Task task, int newIndex) {
           var updates = {'evening': false, 'day_order': newIndex};
           task.evening = false;
@@ -82,7 +85,9 @@ class _TodayScreenState extends State<TodayScreen> {
         icon: Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
         title: 'This Evening',
         button: TaskAddButton(dueOn: today, evening: true),
-        tasks: data.tasks.where((task) => task.evening).toList(),
+        tasks: data.tasks.where((task) {
+          return task.evening && !overdueTasks.contains(task);
+        }).toList(),
         onReceive: (Task task, int newIndex) {
           var updates = {'evening': true, 'day_order': newIndex};
           task.evening = true;
