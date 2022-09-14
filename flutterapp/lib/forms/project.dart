@@ -30,7 +30,6 @@ class _ProjectFormState extends State<ProjectForm> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
               decoration: const InputDecoration(
-                border: OutlineInputBorder(),
                 labelText: 'Name',
               ),
               validator: (String? value) {
@@ -46,7 +45,7 @@ class _ProjectFormState extends State<ProjectForm> {
           DropdownButtonFormField(
             key: const ValueKey('color'),
             value: project.color,
-            decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Color'),
+            decoration: const InputDecoration(labelText: 'Color'),
             onChanged: (int? value) {
               if (value != null) {
                 project.color = value;
