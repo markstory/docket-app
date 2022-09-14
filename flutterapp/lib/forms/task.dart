@@ -104,7 +104,6 @@ class _TaskFormState extends State<TaskForm> {
                   icon: const Icon(Icons.folder_outlined, size: DocketColors.iconSize, semanticLabel: 'Project'),
                   child: DropdownButtonFormField(
                       key: const ValueKey('project'),
-                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Project'),
                       value: task.projectId,
                       items: projects.map((item) {
                         var color = getProjectColor(item.color);

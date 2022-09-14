@@ -66,7 +66,21 @@ class MarkdownInput extends StatefulWidget {
 }
 
 class _MarkdownInputState extends State<MarkdownInput> {
+  late FocusNode inputFocus;
   bool _editing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    inputFocus = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    inputFocus.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +95,7 @@ class _MarkdownInputState extends State<MarkdownInput> {
             setState(() {
               _editing = true;
             });
+            inputFocus.requestFocus();
           });
     }
 
@@ -89,8 +104,8 @@ class _MarkdownInputState extends State<MarkdownInput> {
         keyboardType: TextInputType.multiline,
         minLines: 1,
         maxLines: null,
+        focusNode: inputFocus,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
           labelText: widget.label,
         ),
         initialValue: widget.value,
