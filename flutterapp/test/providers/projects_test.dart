@@ -34,13 +34,39 @@ void main() {
       await provider.clear();
     });
 
-    test('fetchProject() and getAll() work together', () async {
+    test('fetchProjects() and getAll() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/projects'));
         requestCounter += 1;
         return Response(projectsResponseFixture, 200);
       });
+
+      await provider.fetchProjects();
+      expect(listenerCallCount, greaterThan(0));
+      expect(requestCounter, equals(1));
+
+      var projects = await provider.getAll();
+      expect(projects.length, equals(2));
+      expect(projects[0].slug, equals('work'));
+      expect(projects[1].slug, equals('home'));
+    });
+
+    test('fetchProjects() will remove stale projects', () async {
+      int requestCounter = 0;
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects'));
+        requestCounter += 1;
+        return Response(projectsResponseFixture, 200);
+      });
+
+      var stale = Project.blank();
+      stale.slug = 'stale';
+      stale.id = 99;
+      stale.name = 'Stale';
+
+      var db = LocalDatabase();
+      await db.projectMap.set(stale);
 
       await provider.fetchProjects();
       expect(listenerCallCount, greaterThan(0));

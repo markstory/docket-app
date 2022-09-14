@@ -389,6 +389,17 @@ class ProjectMapView extends ViewCache<Project> {
     return _set(current);
   }
 
+  /// Replace all projects in the mapping.
+  /// Useful when refreshing from the server to handle project
+  /// renames or slug changes.
+  Future<void> replace(List<Project> projects) async {
+    Map<String, dynamic> map = {};
+    for (var project in projects) {
+      map[project.slug] = project.toMap();
+    }
+    return _set(map);
+  }
+
   Future<void> addMany(List<Project> projects) async {
     var current = await _get() ?? {};
     for (var project in projects) {

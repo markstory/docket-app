@@ -124,7 +124,7 @@ class ProjectsProvider extends ChangeNotifier {
     var projects = await actions.fetchProjects(session!.apiToken);
     _pending.remove(ViewNames.projectMap);
 
-    await _database.projectMap.addMany(projects);
+    await _database.projectMap.replace(projects);
 
     notifyListeners();
   }
