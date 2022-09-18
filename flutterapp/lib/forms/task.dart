@@ -146,6 +146,7 @@ class _TaskFormState extends State<TaskForm> {
                   child: DueOnInput(
                       dueOn: task.dueOn,
                       evening: task.evening,
+                      alignment: Alignment.centerLeft,
                       onUpdate: (dueOn, evening) {
                         setState(() {
                           task.dueOn = dueOn;

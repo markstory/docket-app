@@ -36,18 +36,23 @@ class FormIconRow extends StatelessWidget {
 class DueOnInput extends StatelessWidget {
   final DateTime? dueOn;
   final bool evening;
+  final Alignment? alignment;
 
   final Function(DateTime? dueOn, bool evening) onUpdate;
 
-  const DueOnInput({required this.onUpdate, required this.dueOn, required this.evening, super.key});
+  const DueOnInput({required this.onUpdate, required this.dueOn, required this.evening, this.alignment, super.key});
 
   @override
   Widget build(BuildContext context) {
+    Widget child = DueOn(dueOn: dueOn, evening: evening, showNull: true);
+    if (alignment != null) {
+      child = Align(alignment: alignment!, child: child);
+    }
     return TextButton(
-        child: DueOn(dueOn: dueOn, evening: evening, showNull: true),
-        onPressed: () {
-          showChangeDueOnDialog(context, dueOn, evening, onUpdate);
-        });
+      child: child,
+      onPressed: () {
+        showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+      });
   }
 }
 
@@ -87,7 +92,9 @@ class _MarkdownInputState extends State<MarkdownInput> {
     if (!_editing) {
       var body = widget.value.isNotEmpty ? widget.value : 'Tap to edit';
 
-      return MarkdownBody(
+      return Padding(
+        padding: EdgeInsets.fromLTRB(0, space(1.8), 0, 0),
+        child: MarkdownBody(
           key: const ValueKey('markdown-preview'),
           data: body,
           selectable: true,
@@ -96,7 +103,7 @@ class _MarkdownInputState extends State<MarkdownInput> {
               _editing = true;
             });
             inputFocus.requestFocus();
-          });
+          }));
     }
 
     return TextFormField(
