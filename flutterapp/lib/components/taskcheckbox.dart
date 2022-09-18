@@ -31,13 +31,17 @@ class TaskCheckbox extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
+    Function(bool?)? onChanged;
+    if (task.id != null) {
+      onChanged = (bool? value) => _handleCompleted();
+    }
+
     return Checkbox(
-        activeColor: customColors.actionComplete,
-        checkColor: Colors.white,
-        value: task.completed,
-        visualDensity: VisualDensity.compact,
-        onChanged: (bool? value) {
-          _handleCompleted();
-        });
+      activeColor: customColors.actionComplete,
+      checkColor: Colors.white,
+      value: task.completed,
+      visualDensity: VisualDensity.compact,
+      onChanged: onChanged,
+    );
   }
 }

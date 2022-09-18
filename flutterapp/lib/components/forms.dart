@@ -18,9 +18,9 @@ class FormIconRow extends StatelessWidget {
   Widget build(BuildContext context) {
     late Widget iconWidget;
     if (icon != null) {
-      iconWidget = Padding(padding: EdgeInsets.fromLTRB(0, space(1), space(2), 0), child: icon);
+      iconWidget = Padding(padding: EdgeInsets.fromLTRB(space(1), space(1.2), space(2.5), 0), child: icon);
     } else {
-      iconWidget = const SizedBox(width: 34);
+      iconWidget = const SizedBox(width: 48);
     }
 
     return Container(

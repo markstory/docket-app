@@ -90,6 +90,9 @@ class TaskTitleInput extends StatelessWidget {
 
     // TODO this form should make sure title is not empty.
     return FlutterMentions(
+        appendSpaceOnAdd: true,
+        autofocus: true,
+        enableInteractiveSelection: true,
         key: const ValueKey('title'),
         suggestionPosition: SuggestionPosition.Bottom,
         maxLines: 5,

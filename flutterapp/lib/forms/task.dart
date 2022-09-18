@@ -75,13 +75,20 @@ class _TaskFormState extends State<TaskForm> {
           if (task.projectId == null && projects.isNotEmpty) {
             task.projectId = projects[0].id;
           }
+          var theme = Theme.of(context);
+          var docketColors = theme.extension<DocketColors>()!;
 
           return Form(
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                FormIconRow (
-                    icon: TaskCheckbox(task, onComplete: widget.onComplete),
-                    child: TaskTitleInput(
+                Container(
+                  padding: EdgeInsets.all(space(1)),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Padding(padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
+                      child: TaskCheckbox(task, onComplete: widget.onComplete)
+                    ),
+                    Expanded(child:
+                      TaskTitleInput(
                         value: task.title,
                         projects: projects,
                         onChangeTitle: (title) {
@@ -99,9 +106,11 @@ class _TaskFormState extends State<TaskForm> {
                           setState(() {
                             task.projectId = projectId;
                           });
-                        })),
+                        }))
+                      ]),
+                    ),
                 FormIconRow(
-                  icon: const Icon(Icons.folder_outlined, size: DocketColors.iconSize, semanticLabel: 'Project'),
+                  icon: Icon(Icons.folder_outlined, size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Project'),
                   child: DropdownButtonFormField(
                       key: const ValueKey('project'),
                       value: task.projectId,
@@ -133,7 +142,7 @@ class _TaskFormState extends State<TaskForm> {
                     ),
                 ),
                 FormIconRow(
-                  icon: const Icon(Icons.calendar_today, size: DocketColors.iconSize, semanticLabel: 'Due on'),
+                  icon: Icon(Icons.calendar_today, size: DocketColors.iconSize, color: docketColors.dueTomorrow, semanticLabel: 'Due on'),
                   child: DueOnInput(
                       dueOn: task.dueOn,
                       evening: task.evening,
@@ -145,7 +154,7 @@ class _TaskFormState extends State<TaskForm> {
                       }),
                 ),
                 FormIconRow(
-                    icon: const Icon(Icons.description_outlined, size: DocketColors.iconSize, semanticLabel: 'Notes'),
+                    icon: Icon(Icons.description_outlined, size: DocketColors.iconSize, color: docketColors.dueFortnight, semanticLabel: 'Notes'),
                     child: MarkdownInput(
                         key: const ValueKey('body'),
                         value: task.body,

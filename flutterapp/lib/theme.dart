@@ -266,6 +266,7 @@ final darkTheme = ThemeData(
   extensions: const [DocketColors.dark],
 );
 
+/// Return a value based on the sizing unit of 8px
 double space(double units) {
   var unitSize = 8;
   return units * unitSize;
