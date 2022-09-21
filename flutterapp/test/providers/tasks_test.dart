@@ -9,6 +9,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 
@@ -23,6 +24,15 @@ List<Task> parseTaskList(String data) {
     tasks.add(Task.fromMap(item));
   }
   return tasks;
+}
+
+Project parseProjectDetails(String data) {
+  var decoded = jsonDecode(data);
+  if (!decoded.containsKey('project')) {
+    throw 'Cannot parse tasks without tasks key';
+  }
+
+  return Project.fromMap(decoded['project']);
 }
 
 void main() {
@@ -165,6 +175,25 @@ void main() {
       var todayData = await db.today.get();
       expect(todayData.missingData, equals(true));
       expect(todayData.tasks.length, equals(0));
+    });
+
+    test('deleteTask() reduces the local project incomplete task count', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/1/delete'));
+        return Response('', 204);
+      });
+
+      var project = parseProjectDetails(projectDetailsResponseFixture);
+      var db = LocalDatabase();
+      db.projectMap.set(project);
+
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await setTodayView(tasks);
+
+      var provider = TasksProvider(db, session);
+      await provider.deleteTask(tasks[0]);
+      var updated = await db.projectMap.get(project.slug);
+      expect(updated?.incompleteTaskCount, lessThan(project.incompleteTaskCount));
     });
 
     test('getById() reads tasks', () async {

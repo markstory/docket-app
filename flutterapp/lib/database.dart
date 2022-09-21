@@ -137,6 +137,7 @@ class LocalDatabase {
   ///
   /// Each task will added to the relevant date/project
   /// views as well as the task lookup map
+  /// Mostly used in tests.
   Future<void> addTasks(List<Task> tasks, {bool expire = false}) async {
     List<Future> futures = [];
     for (var task in tasks) {
@@ -177,8 +178,8 @@ class LocalDatabase {
     if (id == null) {
       return;
     }
-    // TODO this should also update the project task totals in the projectMap
     await taskDetails.remove(id);
+    await projectMap.decrement(task.projectSlug);
 
     return _expireTaskViews(task);
   }
@@ -409,9 +410,9 @@ class ProjectMapView extends ViewCache<Project> {
   }
 
   Future<Project?> get(String slug) async {
-    var data = await _get();
+    var data = await _get() ?? {};
     // Likely loading.
-    if (data == null || data[slug] == null) {
+    if (data[slug] == null) {
       return null;
     }
     return Project.fromMap(data[slug]);
@@ -425,6 +426,17 @@ class ProjectMapView extends ViewCache<Project> {
     var projects = data.values.map((item) => Project.fromMap(item)).toList();
     projects.sort((a, b) => a.ranking.compareTo(b.ranking));
     return projects;
+  }
+
+  Future<void> decrement(String slug) async {
+    var data = await _get() ?? {};
+    if (data[slug] == null) {
+      return;
+    }
+    var project = Project.fromMap(data[slug]);
+    project.incompleteTaskCount -= 1;
+
+    return set(project);
   }
 
   Future<void> remove(String slug) async {
