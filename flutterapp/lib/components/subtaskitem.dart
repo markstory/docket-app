@@ -19,16 +19,24 @@ class SubtaskItem extends StatefulWidget {
 
 class _SubtaskItemState extends State<SubtaskItem> {
   late TextEditingController _controller;
+  FocusNode inputFocus = FocusNode();
+  bool hasFocus = false;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.subtask.title);
+    inputFocus.addListener(() {
+      setState(() {
+        hasFocus = inputFocus.hasFocus;
+      });
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    inputFocus.dispose();
     super.dispose();
   }
 
@@ -75,15 +83,61 @@ class _SubtaskItemState extends State<SubtaskItem> {
           handleSubtaskComplete(context, widget.task, subtask);
         }),
       title: TextField(
-        // TODO style this text when the subtask is completed.
+        focusNode: inputFocus,
+        style: subtask.completed ? TextStyle(color: customColors.disabledText, decoration: TextDecoration.lineThrough) : null,
         controller: _controller,
+        textInputAction: TextInputAction.done,
         onSubmitted: (String value) async {
           var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
           var sub = widget.subtask;
           sub.title = value;
           await tasksProvider.saveSubtask(widget.task, sub);
         },
+        decoration: inputSuffix(context),
       ),
+    );
+  }
+
+  InputDecoration? inputSuffix(BuildContext context) {
+    if (!hasFocus) {
+      return const InputDecoration();
+    }
+    var theme = Theme.of(context);
+    var customColors = theme.extension<DocketColors>()!;
+
+    return InputDecoration(
+      suffixIcon: IconButton(
+        icon: Icon(Icons.delete, color: customColors.actionDelete),
+        onPressed: () {
+          _confirmDelete(context);
+        }
+      ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Are you sure?"),
+          content: const Text("Are you sure you want to delete this subtask?"),
+          actions: [
+            TextButton(
+              child: const Text("Yes"),
+              onPressed: () async {
+                var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+                var navigator = Navigator.of(context);
+
+                await tasksProvider.deleteSubtask(widget.task, widget.subtask);
+                navigator.pop();
+              }),
+            ElevatedButton(child: const Text("No thanks"), onPressed: () {
+              Navigator.pop(context);
+            }),
+          ]
+        );
+      }
     );
   }
 }
