@@ -140,17 +140,21 @@ class SubtasksController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $subtask = $this->getSubtask($taskId, $id);
+        $success = $this->Subtasks->delete($subtask);
 
-        if ($this->Subtasks->delete($subtask)) {
-            $this->Flash->success(__('Subtask deleted.'));
-        } else {
-            $this->Flash->error(__('Subtask could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect([
+        $redirect = [
             'controller' => 'Tasks',
             'action' => 'view',
             'id' => $taskId,
+        ];
+
+        $this->respond([
+            'success' => $success,
+            'serialize' => [],
+            'redirect' => $redirect,
+            'flashSuccess' => __('Subtask deleted'),
+            'flashError' => __('Subtask could not be deleted'),
+            'statusError' => 422,
         ]);
     }
 

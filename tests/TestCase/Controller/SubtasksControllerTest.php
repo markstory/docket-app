@@ -226,6 +226,20 @@ class SubtasksControllerTest extends TestCase
         $this->assertCount(0, $this->Subtasks->find()->all());
     }
 
+    public function testDeleteApi(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $item = $this->makeTask('Cut grass', $project->id, 0);
+        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+
+        $token = $this->makeApiToken(1);
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->assertResponseOk();
+        $this->assertCount(0, $this->Subtasks->find()->all());
+    }
+
     public function testDeletePermissions(): void
     {
         $project = $this->makeProject('work', 2);
