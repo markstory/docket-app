@@ -350,5 +350,29 @@ void main() {
       expect(updatedSubtask.completed, isFalse);
       expect(updatedSubtask.title, equals('fold big towels'));
     });
+
+    test('deleteSubtask() uses API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/2/delete'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(id: 2, title: 'get the towels');
+      task.subtasks.add(subtask);
+
+      await provider.deleteSubtask(task, subtask);
+
+      // Should notify listeners.
+      expect(listenerCallCount, greaterThan(1));
+      var updated = await provider.getById(task.id!);
+
+      expect(updated?.subtasks.length, equals(0));
+    });
   });
 }

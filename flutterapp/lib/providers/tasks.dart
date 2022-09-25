@@ -187,4 +187,15 @@ class TasksProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> deleteSubtask(Task task, Subtask subtask) async {
+    task.subtasks.remove(subtask);
+
+    await Future.wait([
+      actions.deleteSubtask(session!.apiToken, task, subtask),
+      _database.updateTask(task),
+    ]);
+
+    notifyListeners();
+  }
 }

@@ -315,6 +315,15 @@ Future<Subtask> createSubtask(String apiToken, Task task, Subtask subtask) async
   });
 }
 
+/// Delete a subtask
+Future<void> deleteSubtask(String apiToken, Task task, Subtask subtask) async {
+  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/delete');
+
+  return Future(() async {
+    await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete subtask.');
+  });
+}
+
 // }}}
 
 // Project methods {{{
