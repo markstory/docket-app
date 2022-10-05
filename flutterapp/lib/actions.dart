@@ -192,6 +192,27 @@ Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
   });
 }
 
+/// Fetch completed tasks for a project
+Future<TaskViewData> loadCompletedTasks(String apiToken, Project project) async {
+  var url = _makeUrl('/projects/${project.slug}/view?completed=1');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
+
+    try {
+      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      List<Task> tasks = [];
+      for (var item in decoded['completed']) {
+        tasks.add(Task.fromMap(item));
+      }
+      return TaskViewData(tasks: tasks, calendarItems: []);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
 /// Update a task complete/incomplete state..
 Future<void> toggleTask(String apiToken, Task task) async {
   var operation = task.completed ? 'complete' : 'incomplete';
