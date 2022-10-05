@@ -193,11 +193,11 @@ Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
 }
 
 /// Fetch completed tasks for a project
-Future<TaskViewData> loadCompletedTasks(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/${project.slug}/view?completed=1');
+Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async {
+  var url = _makeUrl('/projects/$slug/view?completed=1');
 
   return Future(() async {
-    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load completed tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
@@ -205,7 +205,10 @@ Future<TaskViewData> loadCompletedTasks(String apiToken, Project project) async 
       for (var item in decoded['completed']) {
         tasks.add(Task.fromMap(item));
       }
-      return TaskViewData(tasks: tasks, calendarItems: []);
+      return ProjectWithTasks(
+        tasks: tasks,
+        project: Project.fromMap(decoded['project']),
+      );
     } catch (e, stacktrace) {
       developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;

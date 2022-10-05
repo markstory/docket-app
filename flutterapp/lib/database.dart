@@ -33,6 +33,7 @@ class LocalDatabase {
   late ProjectMapView projectMap;
   late ProjectDetailsView projectDetails;
   late ProjectArchiveView projectArchive;
+  late CompletedTasksView completedTasks;
 
   LocalDatabase() {
     var db = database();
@@ -42,6 +43,7 @@ class LocalDatabase {
     projectMap = ProjectMapView(db, const Duration(hours: 1));
     projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
     projectArchive = ProjectArchiveView(db, const Duration(hours: 1));
+    completedTasks = CompletedTasksView(db, const Duration(hours: 1));
   }
 
   /// Lazily create the database.
@@ -208,6 +210,7 @@ class LocalDatabase {
       today.clear(),
       upcoming.clear(),
       projectDetails.clear(),
+      completedTasks.clear(),
     ]);
   }
 
@@ -216,6 +219,7 @@ class LocalDatabase {
       projectMap.clear(),
       projectDetails.clear(),
       projectArchive.clear(),
+      completedTasks.clear(),
     ]);
   }
   // }}}
@@ -482,8 +486,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
         missingData: true,
       );
     }
-    var projectTasks = ProjectWithTasks.fromMap(data[slug]);
-    return projectTasks;
+    return ProjectWithTasks.fromMap(data[slug]);
   }
 
   Future<void> remove(String slug) async {
@@ -517,5 +520,45 @@ class ProjectArchiveView extends ViewCache<List<Project>> {
     }
 
     return (data['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+  }
+}
+
+// A map based view data provider
+class CompletedTasksView extends ViewCache<ProjectWithTasks> {
+  static const String name = 'completedTasks';
+
+  CompletedTasksView(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Set completed tasks for a project into the lookup
+  @override
+  Future<void> set(ProjectWithTasks view) async {
+    var current = await _get() ?? {};
+    current[view.project.slug] = view.toMap();
+
+    return _set(current);
+  }
+
+  Future<ProjectWithTasks> get(String slug) async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data[slug] == null) {
+      return ProjectWithTasks(
+        project: Project.blank(),
+        tasks: [],
+        missingData: true,
+      );
+    }
+    return ProjectWithTasks.fromMap(data[slug]);
+  }
+
+  Future<void> remove(String slug) async {
+    var data = await _get() ?? {};
+    data.remove(slug);
+    return _set(data);
   }
 }

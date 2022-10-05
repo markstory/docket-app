@@ -11,6 +11,7 @@ enum ViewNames {
   projectArchive,
   projectDetails,
   projectMap,
+  completedTasks,
 }
 
 class ProjectsProvider extends ChangeNotifier {
@@ -65,6 +66,16 @@ class ProjectsProvider extends ChangeNotifier {
     projectData.pending = _pending.contains(ViewNames.projectDetails);
 
     return projectData;
+  }
+
+  Future<ProjectWithTasks> getCompletedTasks(String slug) async {
+    var taskData = await _database.completedTasks.get(slug);
+    if (taskData.missingData) {
+      fetchCompletedTasks(slug);
+    }
+    taskData.pending = _pending.contains(ViewNames.projectDetails);
+
+    return taskData;
   }
 
   /// Get the list of archived projects
@@ -125,6 +136,20 @@ class ProjectsProvider extends ChangeNotifier {
     _pending.remove(ViewNames.projectMap);
 
     await _database.projectMap.replace(projects);
+
+    notifyListeners();
+  }
+
+  /// Fetch a project from the API and notifyListeners.
+  Future<void> fetchCompletedTasks(String slug) async {
+    if (_pending.contains(ViewNames.completedTasks)) {
+      return;
+    }
+
+    _pending.add(ViewNames.completedTasks);
+    var completed = await actions.fetchCompletedTasks(session!.apiToken, slug);
+    await _database.completedTasks.set(completed);
+    _pending.remove(ViewNames.completedTasks);
 
     notifyListeners();
   }

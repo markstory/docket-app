@@ -18,6 +18,9 @@ void main() {
   file = File('test_resources/project_details.json');
   final projectViewResponseFixture = file.readAsStringSync();
 
+  file = File('test_resources/project_completed.json');
+  final projectCompletedResponseFixture = file.readAsStringSync();
+
   group('$ProjectsProvider project methods', () {
     late ProjectsProvider provider;
     late SessionProvider session;
@@ -133,6 +136,26 @@ void main() {
 
       var projects = await provider.getArchived();
       expect(projects!.length, equals(2));
+    });
+
+    test('fetchCompletedTasks() and getCompletedTasks() work together', () async {
+      int requestCounter = 0;
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home/'));
+        expect(request.url.query, contains('completed=1'));
+        requestCounter += 1;
+        return Response(projectCompletedResponseFixture, 200);
+      });
+
+      await provider.fetchCompletedTasks('home');
+      expect(listenerCallCount, greaterThan(0));
+      expect(requestCounter, equals(1));
+
+      var viewdata = await provider.getCompletedTasks('home');
+      expect(viewdata.project.slug, equals('home'));
+      expect(viewdata.tasks.length, equals(2));
+      expect(viewdata.tasks[0].completed, isTrue);
+      expect(viewdata.tasks[1].completed, isTrue);
     });
 
     test('move() makes API request and expires local db', () async {

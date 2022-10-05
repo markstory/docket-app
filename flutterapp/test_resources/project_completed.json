@@ -1,0 +1,46 @@
+{
+  "project": {
+    "id": 1,
+    "name": "Home",
+    "slug": "home",
+    "color": 1,
+    "ranking": 2,
+    "incomplete_task_count": 3,
+    "sections": [
+      {
+        "id": 1,
+        "name": "Chores",
+        "ranking": 1
+      },
+      {
+        "id": 2,
+        "name": "Bills",
+        "ranking": 0
+      }
+    ]
+  },
+  "completed": [
+    {
+      "id": 1,
+      "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
+      "title": "clean dishes",
+      "body": "",
+      "evening": false,
+      "completed": true,
+      "due_on": null,
+      "child_order": 0,
+      "day_order": 0
+    },
+    {
+      "id": 2,
+      "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
+      "title": "cut grass",
+      "body": "",
+      "evening": false,
+      "completed": true,
+      "due_on": null,
+      "child_order": 1,
+      "day_order": 1
+    }
+  ]
+}
