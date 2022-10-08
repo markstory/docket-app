@@ -12,6 +12,7 @@ enum Menu {
   archive,
   edit,
   addSection,
+  viewCompleted,
 }
 
 class ProjectActions extends StatelessWidget {
@@ -30,7 +31,11 @@ class ProjectActions extends StatelessWidget {
     }
 
     void _handleEdit() {
-      Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectEditArguments(project));
+      Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectDetailsArguments(project));
+    }
+
+    void _handleViewCompleted() {
+      Navigator.pushNamed(context, Routes.projectCompleted, arguments: ProjectDetailsArguments(project));
     }
 
     void _handleAddSection() async {
@@ -49,6 +54,7 @@ class ProjectActions extends StatelessWidget {
         Menu.edit: _handleEdit,
         Menu.archive: _handleArchive,
         Menu.addSection: _handleAddSection,
+        Menu.viewCompleted: _handleViewCompleted,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
@@ -67,6 +73,14 @@ class ProjectActions extends StatelessWidget {
             title: const Text('Add Section'),
           ),
         ),
+        PopupMenuItem<Menu>(
+          value: Menu.viewCompleted,
+          child: ListTile(
+            leading: Icon(Icons.done, color: customColors.actionComplete),
+            title: const Text('Completed Tasks'),
+          ),
+        ),
+        const PopupMenuDivider(),
         PopupMenuItem<Menu>(
           value: Menu.archive,
           child: ListTile(

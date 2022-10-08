@@ -12,6 +12,7 @@ class Routes {
   static const String projectEdit = '/projects/edit';
   static const String projectDetails = '/projects/view';
   static const String projectArchive = '/projects/archive';
+  static const String projectCompleted = '/projects/completed';
 }
 
 // Route Parameter Classes {{{
@@ -25,12 +26,6 @@ class TaskDetailsArguments {
   final Task task;
 
   TaskDetailsArguments(this.task);
-}
-
-class ProjectEditArguments {
-  final Project project;
-
-  ProjectEditArguments(this.project);
 }
 
 class ProjectDetailsArguments {

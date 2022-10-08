@@ -14,6 +14,7 @@ import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
 import 'screens/projectarchive.dart';
 import 'screens/projectedit.dart';
+import 'screens/projectcompleted.dart';
 import 'screens/today.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
@@ -108,12 +109,6 @@ class DocketApp extends StatelessWidget {
                 final args = settings.arguments as TaskAddArguments;
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen(task: args.task)));
               }
-              // Project Detailed View.
-              if (settings.name == Routes.projectDetails) {
-                var args = settings.arguments as ProjectDetailsArguments;
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
-              }
               // Task Detailed View.
               if (settings.name == Routes.taskDetails) {
                 final args = settings.arguments as TaskDetailsArguments;
@@ -125,11 +120,21 @@ class DocketApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(task)));
               }
 
-              if (settings.name == Routes.projectEdit) {
-                var args = settings.arguments as ProjectEditArguments;
-                var project = args.project;
+              // Project Detailed View.
+              if (settings.name == Routes.projectDetails) {
+                var args = settings.arguments as ProjectDetailsArguments;
 
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(project)));
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
+              }
+              if (settings.name == Routes.projectEdit) {
+                var args = settings.arguments as ProjectDetailsArguments;
+
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(args.project)));
+              }
+              if (settings.name == Routes.projectCompleted) {
+                var args = settings.arguments as ProjectDetailsArguments;
+
+                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectCompletedScreen(args.project)));
               }
               if (settings.name == Routes.projectAdd) {
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
