@@ -35,7 +35,9 @@ class TaskItem extends StatelessWidget {
       attributes.add(DueOn(dueOn: task.dueOn, evening: task.evening, showIcon: true));
     }
     if (task.subtaskCount > 0) {
-      attributes.add(Row(children: [
+      attributes.add(Wrap(
+          spacing: space(0.25),
+          children: [
         const Icon(Icons.done, color: Colors.grey, size: 14),
         Text("${task.completeSubtaskCount}/${task.subtaskCount}"),
       ]));
@@ -44,8 +46,8 @@ class TaskItem extends StatelessWidget {
     Widget? subtitle;
     if (attributes.isNotEmpty) {
       subtitle = Wrap(
-        runAlignment: WrapAlignment.center,
-        spacing: space(0.5),
+        runAlignment: WrapAlignment.start,
+        spacing: space(1),
         children: attributes,
       );
     }
