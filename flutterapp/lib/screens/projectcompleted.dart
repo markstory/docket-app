@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:docket/components/appdrawer.dart';
-import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
-import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/models/task.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
