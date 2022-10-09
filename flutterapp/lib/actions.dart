@@ -56,8 +56,8 @@ class ValidationError implements Exception {
   }
 }
 
-Uri _makeUrl(String path) {
-  return Uri.parse('$baseUrl$path');
+Uri _makeUrl(String pathAndQuery) {
+  return Uri.parse('$baseUrl$pathAndQuery');
 }
 
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
@@ -194,17 +194,21 @@ Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
 
 /// Fetch completed tasks for a project
 Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async {
-  var url = _makeUrl('/projects/$slug/view?completed=1');
+  var url = _makeUrl('/projects/$slug?completed=1');
 
   return Future(() async {
     var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load completed tasks');
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      developer.log('completed tasks $decoded', name: 'debug');
       List<Task> tasks = [];
-      for (var item in decoded['completed']) {
-        tasks.add(Task.fromMap(item));
+      if (decoded['completed'] != null) {
+        for (var item in decoded['completed']) {
+          tasks.add(Task.fromMap(item));
+        }
       }
+
       return ProjectWithTasks(
         tasks: tasks,
         project: Project.fromMap(decoded['project']),

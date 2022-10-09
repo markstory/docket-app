@@ -5,6 +5,7 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/models/project.dart';
+import 'package:docket/models/task.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
@@ -21,9 +22,9 @@ class ProjectCompletedScreen extends StatefulWidget {
 class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
   @override
   void initState() {
-    super.initState();
-
     _refresh();
+
+    super.initState();
   }
 
   Future<List<void>> _refresh() {
@@ -37,6 +38,8 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
+
+      projectsProvider.fetchCompletedTasks(widget.project.slug);
       var projectFuture = projectsProvider.getCompletedTasks(widget.project.slug);
 
       return FutureBuilder<ProjectWithTasks?>(
@@ -54,7 +57,7 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
                 project: data.project,
                 child: ListView.builder(
                     itemCount: data.tasks.length,
-                    prototypeItem: TaskItem(task: data.tasks.first, showDate: true),
+                    prototypeItem: TaskItem(task: data.tasks.isNotEmpty ? data.tasks.first : Task.blank(), showDate: true),
                     itemBuilder: (BuildContext context, int index) {
                       return TaskItem(task: data.tasks[index], showDate: true);
                     },
