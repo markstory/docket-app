@@ -82,13 +82,10 @@ class TaskActions extends StatelessWidget {
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> _handleChangeProject() async {
-      void changeComplete(projectId) {
-        task.projectId = projectId;
-        tasksProvider.updateTask(task);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
-      }
-
-      showChangeProjectDialog(context, task.projectId, changeComplete);
+      var projectId = await showChangeProjectDialog(context, task.projectId);
+      task.projectId = projectId;
+      tasksProvider.updateTask(task);
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     }
 
     Future<void> _handleDelete() async {
@@ -101,14 +98,11 @@ class TaskActions extends StatelessWidget {
     }
 
     Future<void> _handleReschedule() async {
-      void changeComplete(dueOn, evening) {
-        task.dueOn = dueOn;
-        task.evening = evening;
-        tasksProvider.updateTask(task);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
-      }
-
-      showChangeDueOnDialog(context, task.dueOn, task.evening, changeComplete);
+      var result = await showChangeDueOnDialog(context, task.dueOn, task.evening);
+      task.dueOn = result.dueOn;
+      task.evening = result.evening;
+      tasksProvider.updateTask(task);
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     }
 
     var theme = Theme.of(context);

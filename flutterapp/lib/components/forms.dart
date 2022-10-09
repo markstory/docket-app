@@ -50,8 +50,9 @@ class DueOnInput extends StatelessWidget {
     }
     return TextButton(
       child: child,
-      onPressed: () {
-        showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+      onPressed: () async {
+        var result = await showChangeDueOnDialog(context, dueOn, evening);
+        onUpdate(result.dueOn, result.evening);
       });
   }
 }

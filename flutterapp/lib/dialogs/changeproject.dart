@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +8,10 @@ import 'package:docket/components/projectbadge.dart';
 import 'package:docket/providers/projects.dart';
 
 /// Dialog sheet for changing a project id
-Future<void> showChangeProjectDialog(BuildContext context, int? projectId, Function(int projectId) onChange) {
-  return showDialog<void>(
+Future<int> showChangeProjectDialog(BuildContext context, int? projectId) {
+  var completer = Completer<int>();
+
+  showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -30,7 +33,8 @@ Future<void> showChangeProjectDialog(BuildContext context, int? projectId, Funct
                               title: ProjectBadge(
                                   text: project.name, color: project.color, isActive: project.id == projectId),
                               onTap: () {
-                                onChange(project.id);
+                                completer.complete(project.id);
+                                Navigator.pop(context);
                               });
                         }).toList(),
                       );
@@ -38,4 +42,6 @@ Future<void> showChangeProjectDialog(BuildContext context, int? projectId, Funct
           );
         });
       });
+
+  return completer.future;
 }

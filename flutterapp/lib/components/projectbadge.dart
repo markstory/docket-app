@@ -15,14 +15,13 @@ class ProjectBadge extends StatelessWidget {
     var docketColors = theme.extension<DocketColors>()!;
 
     var projectColor = getProjectColor(color);
-    return Container(
-        color: isActive ? theme.colorScheme.surfaceTint : null,
-        child: Wrap(spacing: space(1), children: [
-          Icon(Icons.circle, color: projectColor, size: 12),
-          Text(
-            text,
-            style: TextStyle(color: docketColors.secondaryText),
-          ),
-        ]));
+    var icon = isActive ? Icons.star : Icons.circle;
+    return Wrap(spacing: space(1), children: [
+      Icon(icon, color: projectColor, size: 12),
+      Text(
+        text,
+        style: TextStyle(color: docketColors.secondaryText),
+      ),
+    ]);
   }
 }

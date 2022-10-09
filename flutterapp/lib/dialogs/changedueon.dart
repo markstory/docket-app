@@ -1,15 +1,23 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:docket/theme.dart';
 
 import 'package:docket/formatters.dart' as formatters;
 
+class ChangeDueOnResult {
+  final bool evening;
+  final DateTime? dueOn;
+
+  const ChangeDueOnResult({required this.evening, required this.dueOn});
+}
+
 /// Dialog sheet for changing a task due on.
-Future<void> showChangeDueOnDialog(
-    BuildContext context, DateTime? dueOn, bool evening, Function(DateTime? newDueOn, bool newEvening) onChange) {
+Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? dueOn, bool evening) {
   var theme = Theme.of(context);
   var docketColors = theme.extension<DocketColors>()!;
 
-  return showDialog<void>(
+  var completer = Completer<ChangeDueOnResult>();
+  showDialog<void>(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
@@ -31,7 +39,7 @@ Future<void> showChangeDueOnDialog(
             title: const Text('Today'),
             onTap: () {
               var newValue = DateUtils.dateOnly(DateTime.now());
-              onChange(newValue, false);
+              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: false));
               Navigator.of(context).pop();
             }));
       }
@@ -43,8 +51,7 @@ Future<void> showChangeDueOnDialog(
             title: const Text('Tomorrow'),
             onTap: () {
               var newValue = DateUtils.dateOnly(currentValue.add(const Duration(days: 1)));
-
-              onChange(newValue, evening);
+              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: evening));
               Navigator.of(context).pop();
             }));
       }
@@ -57,7 +64,7 @@ Future<void> showChangeDueOnDialog(
             onTap: () {
               var newValue = DateUtils.dateOnly(DateTime.now());
 
-              onChange(newValue, true);
+              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: true));
               Navigator.of(context).pop();
             }));
       }
@@ -68,7 +75,7 @@ Future<void> showChangeDueOnDialog(
             leading: Icon(Icons.calendar_today, color: docketColors.dueTomorrow),
             title: Text('${formatters.compactDate(currentValue)} day'),
             onTap: () {
-              onChange(currentValue, false);
+              completer.complete(ChangeDueOnResult(dueOn: currentValue, evening: false));
               Navigator.of(context).pop();
             }));
       }
@@ -79,7 +86,7 @@ Future<void> showChangeDueOnDialog(
             leading: Icon(Icons.calendar_today, color: docketColors.dueEvening),
             title: Text('${formatters.compactDate(currentValue)} evening'),
             onTap: () {
-              onChange(currentValue, true);
+              completer.complete(ChangeDueOnResult(dueOn: currentValue, evening: true));
               Navigator.of(context).pop();
             }));
       }
@@ -89,7 +96,7 @@ Future<void> showChangeDueOnDialog(
           leading: Icon(Icons.delete, color: docketColors.dueNone),
           title: const Text('No Due Date'),
           onTap: () {
-            onChange(null, evening);
+            completer.complete(ChangeDueOnResult(dueOn: null, evening: evening));
             Navigator.of(context).pop();
           }));
 
@@ -106,7 +113,7 @@ Future<void> showChangeDueOnDialog(
               lastDate: today.add(const Duration(days: 365)),
               helpText: 'Choose a Due Date',
             );
-            onChange(newValue, evening);
+            completer.complete(ChangeDueOnResult(dueOn: newValue, evening: evening));
             navigator.pop();
           }));
 
@@ -119,4 +126,6 @@ Future<void> showChangeDueOnDialog(
           ));
     },
   );
+
+  return completer.future;
 }
