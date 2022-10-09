@@ -87,7 +87,7 @@ class ProjectsController extends AppController
         $this->set(compact('project', 'tasks', 'completed'));
         $this->respond([
             'success' => true,
-            'serialize' => ['project', 'tasks'],
+            'serialize' => ['project', 'tasks', 'completed'],
         ]);
     }
 
