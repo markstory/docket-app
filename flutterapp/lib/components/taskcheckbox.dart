@@ -19,7 +19,8 @@ class TaskCheckbox extends StatelessWidget {
       var messenger = ScaffoldMessenger.of(context);
       try {
         await tasksProvider.toggleComplete(task);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Completed'));
+        var text = task.completed ? 'Task Complete' : 'Task Incomplete';
+        messenger.showSnackBar(successSnackBar(context: context, text: text));
         if (onComplete != null) {
           onComplete!();
         }

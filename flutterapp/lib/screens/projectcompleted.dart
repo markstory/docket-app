@@ -46,14 +46,15 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
           future: projectFuture,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return buildWrapper(project: widget.project, child: const Card(child: Text("Something terrible happened")));
+              return buildWrapper(context: context, project: widget.project, child: const Card(child: Text("Something terrible happened")));
             }
             var data = snapshot.data;
             if (data == null || data.pending || data.missingData) {
-              return buildWrapper(project: widget.project, child: const LoadingIndicator());
+              return buildWrapper(context: context, project: widget.project, child: const LoadingIndicator());
             }
 
             return buildWrapper(
+                context: context,
                 project: data.project,
                 child: ListView.builder(
                     itemCount: data.tasks.length,
@@ -66,11 +67,14 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
     });
   }
 
-  Widget buildWrapper({required Widget child, required Project project}) {
+  Widget buildWrapper({required BuildContext context, required Widget child, required Project project}) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: getProjectColor(project.color),
-        title: Text("${project.name} Completed Tasks"),
+        title: Text("Completed ${project.name} Tasks"),
+        leading: IconButton(onPressed: () {
+          Navigator.pop(context);
+        }, icon: const Icon(Icons.arrow_back)),
       ),
       drawer: const AppDrawer(),
       body: RefreshIndicator(
