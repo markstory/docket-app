@@ -15,6 +15,10 @@ void main() {
   }
 
   group('ProjectForm', () {
+    setUp(() async {
+      return database.clearProjects();
+    });
+
     testWidgets('Can update and save a new project', (tester) async {
       var onSaveCalled = false;
       void onSave(Project project) {

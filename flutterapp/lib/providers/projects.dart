@@ -112,58 +112,54 @@ class ProjectsProvider extends ChangeNotifier {
     return project;
   }
 
+  Future<void> _withPending(ViewNames view, Future<void> Function() callback) {
+    if (_pending.contains(view)) {
+      return Future.value(null);
+    }
+    _pending.add(view);
+    try {
+      return callback();
+    } finally {
+      _pending.remove(view);
+    }
+  }
+
   /// Fetch a project from the API and notifyListeners.
   Future<void> fetchBySlug(String slug) async {
-    if (_pending.contains(ViewNames.projectDetails)) {
-      return;
-    }
-
-    _pending.add(ViewNames.projectDetails);
-    var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
-    await _database.projectDetails.set(projectDetails);
-    _pending.remove(ViewNames.projectDetails);
+    await _withPending(ViewNames.projectDetails, () async {
+      var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
+      return _database.projectDetails.set(projectDetails);
+    });
 
     notifyListeners();
   }
 
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
-    if (_pending.contains(ViewNames.projectMap)) {
-      return;
-    }
-    _pending.add(ViewNames.projectMap);
-    var projects = await actions.fetchProjects(session!.apiToken);
-    _pending.remove(ViewNames.projectMap);
-
-    await _database.projectMap.replace(projects);
+    await _withPending(ViewNames.projectMap, () async {
+      var projects = await actions.fetchProjects(session!.apiToken);
+      return _database.projectMap.replace(projects);
+    });
 
     notifyListeners();
   }
 
   /// Fetch a project from the API and notifyListeners.
   Future<void> fetchCompletedTasks(String slug) async {
-    if (_pending.contains(ViewNames.completedTasks)) {
-      return;
-    }
-
-    _pending.add(ViewNames.completedTasks);
-    var completed = await actions.fetchCompletedTasks(session!.apiToken, slug);
-    await _database.completedTasks.set(completed);
-    _pending.remove(ViewNames.completedTasks);
+    await _withPending(ViewNames.completedTasks, () async {
+      var completed = await actions.fetchCompletedTasks(session!.apiToken, slug);
+      return _database.completedTasks.set(completed);
+    });
 
     notifyListeners();
   }
 
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchArchived() async {
-    if (_pending.contains(ViewNames.projectArchive)) {
-      return;
-    }
-    _pending.add(ViewNames.projectArchive);
-    var projects = await actions.fetchProjectArchive(session!.apiToken);
-    _pending.remove(ViewNames.projectArchive);
-
-    await _database.projectArchive.set(projects);
+    await _withPending(ViewNames.projectArchive, () async {
+      var projects = await actions.fetchProjectArchive(session!.apiToken);
+      return _database.projectArchive.set(projects);
+    });
 
     notifyListeners();
   }
@@ -171,8 +167,10 @@ class ProjectsProvider extends ChangeNotifier {
   /// Move a project on the server and locally
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
-    project = await actions.moveProject(session!.apiToken, project, newRank);
-    await _database.projectMap.set(project);
+    await _withPending(ViewNames.projectArchive, () async {
+      project = await actions.moveProject(session!.apiToken, project, newRank);
+      return _database.projectMap.set(project);
+    });
 
     notifyListeners();
   }

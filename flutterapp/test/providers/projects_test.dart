@@ -141,7 +141,7 @@ void main() {
     test('fetchCompletedTasks() and getCompletedTasks() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects/home/'));
+        expect(request.url.path, equals('/projects/home'));
         expect(request.url.query, contains('completed=1'));
         requestCounter += 1;
         return Response(projectCompletedResponseFixture, 200);
