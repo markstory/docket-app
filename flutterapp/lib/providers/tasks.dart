@@ -27,6 +27,18 @@ class TasksProvider extends ChangeNotifier {
     _pending = {};
   }
 
+  Future<void> _withPending(ViewNames view, Future<void> Function() callback) {
+    if (_pending.contains(view)) {
+      return Future.value(null);
+    }
+    _pending.add(view);
+    try {
+      return callback();
+    } finally {
+      _pending.remove(view);
+    }
+  }
+
   void setSession(SessionProvider session) {
     this.session = session;
   }
@@ -69,15 +81,10 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for today view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
-    // TODO Add freshness check
-    if (_pending.contains(ViewNames.today)) {
-      return;
-    }
-    _pending.add(ViewNames.today);
-    var taskViewData = await actions.loadTodayTasks(session!.apiToken);
-    _pending.remove(ViewNames.today);
-
-    await _database.today.set(taskViewData);
+    await _withPending(ViewNames.today, () async {
+      var taskViewData = await actions.loadTodayTasks(session!.apiToken);
+      return _database.today.set(taskViewData);
+    });
     notifyListeners();
   }
 
@@ -95,15 +102,11 @@ class TasksProvider extends ChangeNotifier {
   /// Fetch tasks for upcoming view from the server.
   /// Will notifyListeners() on completion.
   Future<void> fetchUpcoming() async {
-    // TODO make this use _database.upcoming.isFresh()
-    if (_pending.contains(ViewNames.upcoming)) {
-      return;
-    }
-    _pending.add(ViewNames.upcoming);
-    var taskViewData = await actions.loadUpcomingTasks(session!.apiToken);
-    _pending.remove(ViewNames.upcoming);
+    await _withPending(ViewNames.upcoming, () async {
+      var taskViewData = await actions.loadUpcomingTasks(session!.apiToken);
 
-    await _database.upcoming.set(taskViewData);
+      return _database.upcoming.set(taskViewData);
+    });
     notifyListeners();
   }
 
