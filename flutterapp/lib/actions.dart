@@ -296,12 +296,22 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
 
 // {{{ Subtask methods
 
-/// Update a task complete/incomplete state..
+/// Update a subtask complete/incomplete state..
 Future<void> toggleSubtask(String apiToken, Task task, Subtask subtask) async {
   var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/toggle');
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update subtask');
+  });
+}
+
+/// Move a subtask
+Future<void> moveSubtask(String apiToken, Task task, Subtask subtask) async {
+  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/move');
+  var updates = {'ranking': subtask.ranking};
+
+  return Future(() async {
+    await httpPost(url, apiToken: apiToken, body: updates, errorMessage: 'Could not move subtask');
   });
 }
 

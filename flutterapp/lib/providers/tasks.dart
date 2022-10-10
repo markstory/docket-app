@@ -156,18 +156,8 @@ class TasksProvider extends ChangeNotifier {
     await actions.moveTask(session!.apiToken, task, updates);
   }
 
-  /// Flip subtask.completed and persist to the server.
-  Future<void> toggleSubtask(Task task, Subtask subtask) async {
-    subtask.completed = !subtask.completed;
-    await actions.toggleSubtask(session!.apiToken, task, subtask);
 
-    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
-    task.subtasks[index] = subtask;
-    await _database.updateTask(task);
-
-    notifyListeners();
-  }
-
+  // {{{ Subtask methods
   /// Create or Update a subtask and persist to the server.
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     // Get the index before updating the server so that we can
@@ -191,6 +181,30 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Flip subtask.completed and persist to the server.
+  Future<void> toggleSubtask(Task task, Subtask subtask) async {
+    subtask.completed = !subtask.completed;
+    await actions.toggleSubtask(session!.apiToken, task, subtask);
+
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    task.subtasks[index] = subtask;
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
+
+  /// Send an API request to move a task
+  /// Does not update the local database.
+  /// Assumption is that the calling view will refresh from server.
+  Future<void> moveSubtask(Task task, Subtask subtask) async {
+    await Future.wait([
+      actions.moveSubtask(session!.apiToken, task, subtask),
+      _database.updateTask(task),
+    ]);
+
+    notifyListeners();
+  }
+
   Future<void> deleteSubtask(Task task, Subtask subtask) async {
     task.subtasks.remove(subtask);
 
@@ -201,4 +215,5 @@ class TasksProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+  // }}}
 }

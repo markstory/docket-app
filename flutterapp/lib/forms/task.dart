@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,9 +6,11 @@ import 'package:docket/components/forms.dart';
 import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/tasktitleinput.dart';
+import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
+import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
 
 class TaskForm extends StatefulWidget {
@@ -41,13 +44,31 @@ class _TaskFormState extends State<TaskForm> {
       return const SizedBox(height: 0, width: 0);
     }
 
-    var theme = Theme.of(context);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: space(2)),
-      Text('Subtasks', style: theme.textTheme.titleLarge),
-      ...task.subtasks.map<Widget>((sub) {
-        return SubtaskItem(task: task, subtask: sub);
-      }),
+      SubtaskSorter(
+        items: task.subtasks,
+        buildItem: (Subtask subtask) {
+          return SubtaskItem(task: task, subtask: subtask);
+        },
+        onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
+          dev.log('doing reorder $oldItemIndex, $newItemIndex', name: 'debug');
+          // assert(oldListIndex == newListIndex);
+          var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+          var item = task.subtasks[oldItemIndex];
+          item.ranking = newItemIndex;
+
+          // Update local state assuming server will be ok.
+          setState(() {
+            task.subtasks.removeAt(oldItemIndex);
+            task.subtasks.insert(newItemIndex, item);
+          });
+          dev.log('updated localstate', name: 'debug');
+
+          // Update the moved task and reload from server async
+          await tasksProvider.moveSubtask(task, item);
+        },
+      ),
       TextButton(
         child: const Text('Add Subtask'),
         onPressed: () {

@@ -46,7 +46,9 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
     try {
       await tasksProvider.toggleSubtask(task, subtask);
-      messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Complete'));
+      if (subtask.completed) {
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Updated'));
+      }
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
     }
@@ -82,19 +84,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
           }
           handleSubtaskComplete(context, widget.task, subtask);
         }),
-      title: TextField(
-        focusNode: inputFocus,
-        style: subtask.completed ? TextStyle(color: customColors.disabledText, decoration: TextDecoration.lineThrough) : null,
-        controller: _controller,
-        textInputAction: TextInputAction.done,
-        onSubmitted: (String value) async {
-          var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-          var sub = widget.subtask;
-          sub.title = value;
-          await tasksProvider.saveSubtask(widget.task, sub);
-        },
-        decoration: inputSuffix(context),
-      ),
+      title: itemContents(context, subtask, customColors),
     );
   }
 
@@ -113,6 +103,49 @@ class _SubtaskItemState extends State<SubtaskItem> {
         }
       ),
     );
+  }
+
+  Widget itemContents(BuildContext context, Subtask subtask, DocketColors customColors) {
+    var theme = Theme.of(context);
+    var textTheme = theme.textTheme;
+
+    // Show uneditable text at first so that drag/drop can work.
+    if (!hasFocus) {
+      var textStyle = titleStyle(subtask, textTheme, customColors);
+      return GestureDetector(
+        child: Text(subtask.title, style: textStyle),
+        onTap: () {
+          setState(() {
+            hasFocus = !hasFocus;
+          });
+        }
+      );
+    }
+
+    return TextField(
+      focusNode: inputFocus,
+      style: subtask.completed ? TextStyle(color: customColors.disabledText, decoration: TextDecoration.lineThrough) : null,
+      controller: _controller,
+      textInputAction: TextInputAction.done,
+      onSubmitted: (String value) async {
+        var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+        var sub = widget.subtask;
+        sub.title = value;
+        await tasksProvider.saveSubtask(widget.task, sub);
+      },
+      decoration: inputSuffix(context),
+    );
+  }
+
+  TextStyle titleStyle(Subtask subtask, TextTheme textTheme, DocketColors customColors) {
+    var titleStyle = textTheme.bodyMedium!.copyWith(height: 2.2);
+    if (subtask.completed) {
+      titleStyle = titleStyle.copyWith(
+        color: customColors.disabledText,
+        decoration: TextDecoration.lineThrough,
+      );
+    }
+    return titleStyle;
   }
 
   void _confirmDelete(BuildContext context) {
