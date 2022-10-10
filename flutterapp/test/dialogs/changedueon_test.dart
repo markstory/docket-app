@@ -15,8 +15,9 @@ void main() {
         child: Builder(builder: (BuildContext context) {
           return TextButton(
               child: const Text('Open'),
-              onPressed: () {
-                showChangeDueOnDialog(context, dueOn, evening, onUpdate);
+              onPressed: () async {
+                var result = await showChangeDueOnDialog(context, dueOn, evening);
+                onUpdate(result.dueOn, result.evening);
               });
         }));
   }
