@@ -173,7 +173,7 @@ void main() {
       expect(listenerCallCount, greaterThan(0));
 
       var todayData = await db.today.get();
-      expect(todayData.missingData, equals(true));
+      expect(todayData.missingData, isTrue);
       expect(todayData.tasks.length, equals(0));
     });
 
@@ -373,6 +373,33 @@ void main() {
       var updated = await provider.getById(task.id!);
 
       expect(updated?.subtasks.length, equals(0));
+    });
+
+    test('moveSubtask() uses API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/2/move'));
+        expect(request.body, contains('ranking'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(id: 2, title: 'replaced by server data', ranking: 3);
+      task.subtasks.add(subtask);
+
+      await provider.moveSubtask(task, subtask);
+
+      // Should notify listeners.
+      expect(listenerCallCount, greaterThan(1));
+      var updated = await provider.getById(task.id!);
+
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.ranking, equals(3));
     });
   });
 }
