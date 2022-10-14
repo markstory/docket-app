@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:docket/models/project.dart';
 import 'package:docket/formatters.dart' as formatters;
+import 'package:docket/theme.dart';
 
 typedef MentionData = Map<String, dynamic>;
 
@@ -92,10 +93,10 @@ class TaskTitleInput extends StatelessWidget {
 
     // TODO this form should make sure title is not empty.
     return FlutterMentions(
+        key: const ValueKey('title'),
         appendSpaceOnAdd: true,
         autofocus: true,
         enableInteractiveSelection: true,
-        key: const ValueKey('title'),
         suggestionPosition: SuggestionPosition.Bottom,
         maxLines: 5,
         minLines: 1,
@@ -132,7 +133,13 @@ class TaskTitleInput extends StatelessWidget {
           Mention(
               trigger: '#',
               style: inputTextStyle,
-              data: projectOptions
+              data: projectOptions,
+              suggestionBuilder: (data) {
+                return Container(
+                  padding: EdgeInsets.all(space(3)),
+                  child: Text(data['display'], style: theme.textTheme.bodyMedium),
+                );
+              }
           ),
           Mention(
             trigger: '%',
