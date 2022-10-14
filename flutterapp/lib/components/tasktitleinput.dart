@@ -88,6 +88,8 @@ class TaskTitleInput extends StatelessWidget {
       return {"id": "e${item['id']}", "display": item['display']};
     }).toList();
 
+    var inputTextStyle = TextStyle(backgroundColor: theme.colorScheme.surfaceTint, color: theme.colorScheme.primary);
+
     // TODO this form should make sure title is not empty.
     return FlutterMentions(
         appendSpaceOnAdd: true,
@@ -99,7 +101,7 @@ class TaskTitleInput extends StatelessWidget {
         minLines: 1,
         defaultText: value,
         onChanged: (title) {
-          // TODO this might need to strip out markup.
+          title = _removeMarkup(title, ['#', '%', '&']);
           onChangeTitle(title);
         },
         onMentionAdd: (item) {
@@ -127,17 +129,32 @@ class TaskTitleInput extends StatelessWidget {
           }
         },
         mentions: [
-          Mention(trigger: '#', style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint), data: projectOptions),
+          Mention(
+              trigger: '#',
+              style: inputTextStyle,
+              data: projectOptions
+          ),
           Mention(
             trigger: '%',
-            style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
+            style: inputTextStyle,
             data: dateOptions,
           ),
           Mention(
             trigger: '&',
-            style: TextStyle(backgroundColor: theme.colorScheme.surfaceTint),
+            style: inputTextStyle,
             data: eveningDateOptions,
           )
         ]);
+  }
+
+  String _removeMarkup(String value, List<String> triggers) {
+    for (var trigger in triggers) {
+      var pattern = RegExp(r'/\b\\' + trigger + r'\s/');
+      value = value.replaceAllMapped(pattern, (match) {
+        return "${match.group(0)}";
+      });
+    }
+
+    return value;
   }
 }

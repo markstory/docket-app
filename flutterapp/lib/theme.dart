@@ -235,6 +235,7 @@ final lightTheme = ThemeData(
     onBackground: DocketColors.gray000,
     surface: DocketColors.gray200,
     onSurface: DocketColors.black,
+    // Used for high contrast backgrounds
     surfaceVariant: DocketColors.gray000,
     surfaceTint: DocketColors.purple100,
   ),
