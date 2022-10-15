@@ -203,20 +203,24 @@ class DocketColors extends ThemeExtension<DocketColors> {
     actionLock: ochre500,
     actionEdit: ochre300,
     actionDelete: red300,
-    actionComplete: green300,
-    dueNone: gray300,
+    actionComplete: green500,
+    dueNone: gray500,
     dueOverdue: red500,
     dueToday: purple500,
     dueTomorrow: ochre500,
     dueEvening: blue500,
     dueWeek: blue300,
     dueFortnight: gray500,
-    secondaryText: gray500,
-    disabledText: gray400,
+    secondaryText: gray300,
+    disabledText: gray600,
   );
 }
 
 final lightTheme = ThemeData(
+  scaffoldBackgroundColor: Colors.white,
+  drawerTheme: const DrawerThemeData(
+    backgroundColor: DocketColors.gray000,
+  ),
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: DocketColors.purple500,
@@ -243,26 +247,38 @@ final lightTheme = ThemeData(
 );
 
 final darkTheme = ThemeData(
+  scaffoldBackgroundColor: DocketColors.gray900,
+  dialogBackgroundColor: DocketColors.gray900,
+  popupMenuTheme: const PopupMenuThemeData(
+    color: DocketColors.gray800,
+  ),
+  drawerTheme: const DrawerThemeData(
+    backgroundColor: DocketColors.gray900,
+  ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: DocketColors.purple700,
+  ),
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
-    primary: DocketColors.purple500,
+    primary: DocketColors.purple700,
     onPrimary: DocketColors.gray300,
-    primaryContainer: DocketColors.purple900,
-    secondary: DocketColors.ochre500,
+    primaryContainer: DocketColors.purple500,
+    secondary: DocketColors.ochre700,
     onSecondary: DocketColors.gray300,
     secondaryContainer: DocketColors.ochre900,
     tertiary: DocketColors.blue500,
     onTertiary: DocketColors.blue700,
     tertiaryContainer: DocketColors.blue900,
-    error: DocketColors.red300,
-    onError: DocketColors.red500,
+    error: DocketColors.red500,
+    onError: DocketColors.red300,
     errorContainer: DocketColors.red900,
     background: DocketColors.gray900,
     onBackground: DocketColors.gray800,
     surface: DocketColors.gray800,
     onSurface: DocketColors.white,
-    surfaceVariant: DocketColors.purple900,
-    surfaceTint: DocketColors.purple100,
+    // Used for high contrast backgrounds
+    surfaceVariant: DocketColors.gray900,
+    surfaceTint: DocketColors.purple700,
   ),
   extensions: const [DocketColors.dark],
 );
@@ -293,4 +309,15 @@ BoxDecoration itemDragBoxDecoration(ThemeData theme) {
       offset: Offset(0, 15),
     ),
   ]);
+}
+
+TextStyle? completedStyle(BuildContext context, bool completed) {
+  var customColors = getCustomColors(context);
+  if (!completed) {
+    return null;
+  }
+  return TextStyle(
+    color: customColors.disabledText,
+    decoration: TextDecoration.lineThrough,
+  );
 }

@@ -115,10 +115,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         return const SizedBox(width: 0, height: 0);
                       }
                       return Padding(
-                          padding: EdgeInsets.only(left: space(3), right: space(1)),
+                          padding: EdgeInsets.only(left: space(2.5), right: space(1)),
                           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                             Row(children: [
-                              Text(metadata.title ?? ''),
+                              Text(metadata.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
                               TaskAddButton(projectId: project.project.id, sectionId: data.id),
                             ]),
                             SectionActions(project.project, data),

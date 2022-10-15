@@ -22,9 +22,8 @@ import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
 
 Future<void> main() async {
-  // TODO implement theme saving with profile/settings.
-  // WidgetsFlutterBinding.ensureInitialized();
-  // final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  WidgetsFlutterBinding.ensureInitialized();
+  final themeMode = await AdaptiveTheme.getThemeMode();
   final dbHandler = LocalDatabase();
 
   await SentryFlutter.init(
@@ -32,15 +31,16 @@ Future<void> main() async {
       options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
       options.tracesSampleRate = 0.2,
     },
-    appRunner: () => runApp(EntryPoint(database: dbHandler)),
+    appRunner: () => runApp(EntryPoint(database: dbHandler, themeMode: themeMode)),
   );
 }
 
 class EntryPoint extends StatelessWidget {
   final LocalDatabase database;
   final Widget? child;
+  final AdaptiveThemeMode? themeMode;
 
-  const EntryPoint({required this.database, this.child, super.key});
+  const EntryPoint({required this.database, this.child, this.themeMode, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +60,16 @@ class EntryPoint extends StatelessWidget {
               return provider;
             }),
       ],
-      child: DocketApp(child: child),
+      child: DocketApp(themeMode: themeMode, child: child),
     );
   }
 }
 
 class DocketApp extends StatelessWidget {
-  // TODO implement theme saving with profile/settings.
-  final AdaptiveThemeMode? savedThemeMode;
+  final AdaptiveThemeMode? themeMode;
   final Widget? child;
 
-  const DocketApp({this.savedThemeMode, this.child, super.key});
+  const DocketApp({this.child, this.themeMode, super.key});
 
   Route unknownScreen(BuildContext context) {
     return MaterialPageRoute(builder: (context) => const UnknownScreen());
@@ -81,7 +80,7 @@ class DocketApp extends StatelessWidget {
     return AdaptiveTheme(
         light: app_theme.lightTheme,
         dark: app_theme.darkTheme,
-        initial: savedThemeMode ?? AdaptiveThemeMode.light,
+        initial: AdaptiveThemeMode.dark, //themeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) {
           if (child != null) {
             return MaterialApp(
@@ -91,7 +90,8 @@ class DocketApp extends StatelessWidget {
             );
           }
           return MaterialApp(
-            theme: theme,
+            // theme: theme,
+            theme: darkTheme,
             darkTheme: darkTheme,
             navigatorObservers: [SentryNavigatorObserver()],
             onGenerateRoute: (settings) {

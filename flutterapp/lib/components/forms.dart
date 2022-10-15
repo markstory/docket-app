@@ -24,7 +24,7 @@ class FormIconRow extends StatelessWidget {
     }
 
     return Container(
-        padding: EdgeInsets.all(space(1)),
+        padding: EdgeInsets.symmetric(vertical: space(1)),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           iconWidget,
           Expanded(child: child),

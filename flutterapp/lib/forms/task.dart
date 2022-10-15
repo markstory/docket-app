@@ -100,35 +100,32 @@ class _TaskFormState extends State<TaskForm> {
           return Form(
               key: _formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                  padding: EdgeInsets.all(space(1)),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Padding(
-                        padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
-                        child: TaskCheckbox(task, onComplete: widget.onComplete)),
-                    Expanded(
-                        child: TaskTitleInput(
-                            autoFocus: task.id == null,
-                            value: task.title,
-                            projects: projects,
-                            onChangeTitle: (title) {
-                              setState(() {
-                                task.title = title;
-                              });
-                            },
-                            onChangeDate: (date, evening) {
-                              setState(() {
-                                task.dueOn = date;
-                                task.evening = evening;
-                              });
-                            },
-                            onChangeProject: (projectId) {
-                              setState(() {
-                                task.projectId = projectId;
-                              });
-                            }))
-                  ]),
-                ),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
+                      child: TaskCheckbox(task, onComplete: widget.onComplete)),
+                  Expanded(
+                      child: TaskTitleInput(
+                          autoFocus: task.id == null,
+                          value: task.title,
+                          projects: projects,
+                          onChangeTitle: (title) {
+                            setState(() {
+                              task.title = title;
+                            });
+                          },
+                          onChangeDate: (date, evening) {
+                            setState(() {
+                              task.dueOn = date;
+                              task.evening = evening;
+                            });
+                          },
+                          onChangeProject: (projectId) {
+                            setState(() {
+                              task.projectId = projectId;
+                            });
+                          }))
+                ]),
                 FormIconRow(
                   icon: Icon(Icons.folder_outlined,
                       size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Project'),
@@ -145,7 +142,6 @@ class _TaskFormState extends State<TaskForm> {
                             SizedBox(width: space(1)),
                             Text(
                               item.name,
-                              style: const TextStyle(color: Colors.black54),
                             ),
                           ]));
                     }).toList(),

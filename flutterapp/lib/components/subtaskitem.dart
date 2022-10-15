@@ -124,7 +124,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
     return TextField(
       focusNode: inputFocus,
-      style: subtask.completed ? TextStyle(color: customColors.disabledText, decoration: TextDecoration.lineThrough) : null,
+      style: completedStyle(context, subtask.completed),
       controller: _controller,
       textInputAction: TextInputAction.done,
       onSubmitted: (String value) async {

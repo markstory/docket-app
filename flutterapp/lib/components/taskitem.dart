@@ -31,13 +31,11 @@ class TaskItem extends StatelessWidget {
     if (showProject) {
       attributes.add(ProjectBadge(text: task.projectName, color: task.projectColor));
     }
-    if (showDate) {
+    if (showDate && task.dueOn != null) {
       attributes.add(DueOn(dueOn: task.dueOn, evening: task.evening, showIcon: true));
     }
     if (task.subtaskCount > 0) {
-      attributes.add(Wrap(
-          spacing: space(0.25),
-          children: [
+      attributes.add(Wrap(spacing: space(0.25), children: [
         const Icon(Icons.done, color: Colors.grey, size: 14),
         Text("${task.completeSubtaskCount}/${task.subtaskCount}"),
       ]));
@@ -51,17 +49,14 @@ class TaskItem extends StatelessWidget {
         children: attributes,
       );
     }
-
     return ListTile(
         dense: true,
+        contentPadding: EdgeInsets.fromLTRB(space(1), space(0.5), space(1), space(0.5)),
         leading: TaskCheckbox(task),
         title: Text(
           task.title,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: task.completed ? Colors.grey : Colors.black,
-            decoration: task.completed ? TextDecoration.lineThrough : null,
-          ),
+          style: completedStyle(context, task.completed),
         ),
         subtitle: subtitle,
         trailing: TaskActions(task),

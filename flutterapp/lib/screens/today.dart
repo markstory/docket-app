@@ -1,4 +1,3 @@
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -109,7 +108,9 @@ class _TodayScreenState extends State<TodayScreen> {
   Widget build(BuildContext context) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Today')),
+        appBar: AppBar(
+          title: const Text('Today'),
+        ),
         drawer: const AppDrawer(),
         floatingActionButton: FloatingCreateTaskButton(task: _newTask),
         body: FutureBuilder<TaskViewData>(
