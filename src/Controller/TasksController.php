@@ -72,7 +72,7 @@ class TasksController extends AppController
             $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
         }
 
-        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
+        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart', 'identity'];
         $this->set(compact('tasks', 'view', 'calendarItems'));
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
