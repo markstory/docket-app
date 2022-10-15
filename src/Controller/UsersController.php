@@ -69,6 +69,8 @@ class UsersController extends AppController
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
 
+        $success = true;
+        $serialize = ['user'];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $allowedFields = ['name', 'timezone', 'theme'];
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
@@ -84,14 +86,23 @@ class UsersController extends AppController
                 if ($emailChanged) {
                     $this->getMailer('Users')->send('verifyEmail', [$user]);
                 }
-                $this->Flash->success(__('Your profile has been updated.'));
-
-                return $this->redirect($referer);
+                $success = true;
+            } else {
+                $success = false;
+                $serialize[] = 'errors';
+                $this->set('errors', $this->flattenErrors($user->getErrors()));
             }
-            $this->set('errors', $this->flattenErrors($user->getErrors()));
-            $this->Flash->error(__('Your profile not be saved. Please, try again.'));
         }
-        $this->set(compact('user', 'referer'));
+        $this->set('user', $user);
+
+        $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'redirect' => $this->redirect($referer),
+            'flashSuccess' => __('Your profile has been updated'),
+            'flashError' => __('Your profile could not be saved'),
+            'statusError' => 422,
+        ]);
     }
 
     /**
