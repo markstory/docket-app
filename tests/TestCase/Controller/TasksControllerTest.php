@@ -132,7 +132,6 @@ class TasksControllerTest extends TestCase
         $this->assertResponseOk();
         $response = json_decode(strval($this->_response->getBody()), true);
 
-        $this->assertArrayHasKey('identity', $response);
         $this->assertArrayHasKey('tasks', $response);
         $this->assertArrayHasKey('calendarItems', $response);
 
