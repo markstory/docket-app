@@ -49,6 +49,9 @@ class DueOnInput extends StatelessWidget {
       child = Align(alignment: alignment!, child: child);
     }
     return TextButton(
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+      ),
       child: child,
       onPressed: () async {
         var result = await showChangeDueOnDialog(context, dueOn, evening);
@@ -92,10 +95,21 @@ class _MarkdownInputState extends State<MarkdownInput> {
   Widget build(BuildContext context) {
     if (!_editing) {
       var body = widget.value.isNotEmpty ? widget.value : 'Tap to edit';
+      var theme = Theme.of(context);
 
       return Padding(
         padding: EdgeInsets.fromLTRB(0, space(1.8), 0, 0),
         child: MarkdownBody(
+          styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+            p: theme.textTheme.bodyMedium,
+            code: TextStyle(
+              color: theme.colorScheme.primary,
+              backgroundColor: theme.colorScheme.surface,
+            ),
+            blockquoteDecoration: BoxDecoration(color: theme.colorScheme.surface),
+            blockquote: const TextStyle(fontStyle: FontStyle.italic),
+            codeblockDecoration: BoxDecoration(color: theme.colorScheme.surface),
+          ),
           key: const ValueKey('markdown-preview'),
           data: body,
           selectable: true,

@@ -30,7 +30,7 @@ class SubtaskSorter extends StatelessWidget {
           header: Column(
             children: [
               Row(children: [
-                SizedBox(width: space(3)),
+                const SizedBox(width: 18),
                 Text('Subtasks', style: theme.textTheme.titleLarge),
               ]),
               SizedBox(height: space(1)),
@@ -55,8 +55,9 @@ class SubtaskSorter extends StatelessWidget {
     var docketColors = theme.extension<DocketColors>()!;
     var contents = Text('No subtasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText));
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: space(2)),
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.fromLTRB(20, space(2.75), 0, 0),
       child: contents,
     );
   }

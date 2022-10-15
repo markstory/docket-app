@@ -196,7 +196,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueWeek: blue700,
     dueFortnight: gray500,
     secondaryText: gray700,
-    disabledText: gray800,
+    disabledText: gray400,
   );
 
   static const dark = DocketColors(
@@ -212,7 +212,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     dueWeek: blue300,
     dueFortnight: gray500,
     secondaryText: gray500,
-    disabledText: gray300,
+    disabledText: gray400,
   );
 }
 
