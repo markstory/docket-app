@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
 
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/theme.dart';
@@ -17,14 +16,13 @@ class DueOn extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
     if (dueOn == null && showNull) {
-      return Text('No due date', style: TextStyle(color: customColors.dueNone));
+      return Text('Later', style: TextStyle(color: customColors.dueNone));
     }
 
     List<Widget> children = [];
     if (dueOn != null) {
       var today = DateUtils.dateOnly(DateTime.now());
       var diff = dueOn!.difference(today).inDays;
-      developer.log('dueon $dueOn today $today diff $diff', name: 'debug');
       var color = customColors.dueToday;
       var text = formatters.compactDate(dueOn);
 

@@ -25,6 +25,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
       final tomorrow = today.add(const Duration(days: 1));
 
       final isToday = dueOn == today && evening == false;
+      final isTodayFriday = dueOn == today && today.weekday == DateTime.friday;
       final isThisEvening = dueOn == today && evening == true;
       final isTomorrow = dueOn == tomorrow;
       final isEvening = evening;
@@ -91,10 +92,23 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             }));
       }
 
+      if (isTodayFriday) {
+        // Today is friday, in 3 days it will be monday
+        var monday = today.add(const Duration(days: 3));
+        items.add(ListTile(
+            dense: true,
+            leading: Icon(Icons.date_range_outlined, color: docketColors.dueFortnight),
+            title: Text(formatters.compactDate(currentValue)),
+            onTap: () {
+              completer.complete(ChangeDueOnResult(dueOn: monday, evening: true));
+              Navigator.of(context).pop();
+            }));
+      }
+
       items.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete, color: docketColors.dueNone),
-          title: const Text('No Due Date'),
+          leading: Icon(Icons.watch_later_outlined, color: docketColors.dueNone),
+          title: const Text('Later'),
           onTap: () {
             completer.complete(ChangeDueOnResult(dueOn: null, evening: evening));
             Navigator.of(context).pop();
