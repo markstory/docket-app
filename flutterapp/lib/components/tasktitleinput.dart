@@ -83,8 +83,10 @@ class TaskTitleInput extends StatelessWidget {
     var today = DateUtils.dateOnly(DateTime.now());
 
     // TODO These lists might need memoization
-    List<MentionData> projectOptions =
-        projects.map((project) => ({'id': 'p:${project.id}', 'display': project.name})).toList();
+    List<MentionData> projectOptions = projects.map((project) {
+      return {'id': 'p:${project.id}', 'display': project.name};
+    }).toList();
+
     var dateOptions = generateDateOptions(today);
     var eveningDateOptions = dateOptions.map((item) {
       return {"id": "e${item['id']}", "display": item['display']};
@@ -102,12 +104,12 @@ class TaskTitleInput extends StatelessWidget {
         maxLines: 5,
         minLines: 1,
         defaultText: value,
-        onChanged: (title) {
-          title = _removeMarkup(title, ['#', '%', '&']);
-          dev.log('updated title : $title', name: 'mentions');
-          onChangeTitle(title);
+        onMarkupChanged: (value) {
+          var cleaned = _captureMarkup(value, ['#', '%', '&']);
+          onChangeTitle(cleaned);
         },
         onMentionAdd: (item) {
+          // This could be done in onMarkupChange eventually.
           var parts = item['id'].toString().split(':');
           assert(parts.length == 2);
           var type = parts[0];
@@ -141,8 +143,7 @@ class TaskTitleInput extends StatelessWidget {
                   padding: EdgeInsets.all(space(3)),
                   child: Text(data['display'], style: theme.textTheme.bodyMedium),
                 );
-              }
-          ),
+              }),
           Mention(
             trigger: '%',
             style: inputTextStyle,
@@ -156,18 +157,14 @@ class TaskTitleInput extends StatelessWidget {
         ]);
   }
 
-  String _removeMarkup(String value, List<String> triggers) {
-    for (var trigger in triggers) {
-      var pattern = RegExp(r'/\b\\' + trigger + r'\s/');
-      // This isn't working yet.
-      dev.log("pattern $pattern", name: 'mentions');
-      value = value.replaceAllMapped(pattern, (match) {
-        dev.log("$match ${match.groupCount}", name: 'mentions');
+  /// Remove markup text and trigger special actions based on mentions
+  String _captureMarkup(String value, List<String> triggers) {
+    var triggerString = triggers.join('');
+    var pattern = RegExp(r'([' + triggerString + r'])\[__([^_]+)__\]\(__([^_]+)__\)');
+    var cleaned = value.replaceAllMapped(pattern, (match) {
+      return "";
+    });
 
-        return "${match.group(0)}";
-      });
-    }
-
-    return value;
+    return cleaned;
   }
 }
