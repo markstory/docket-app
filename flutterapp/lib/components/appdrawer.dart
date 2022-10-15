@@ -11,11 +11,17 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
+    var gravatarurl = 'https://www.gravatar.com/avatar/669144d1ab0a861af5d54175371bc586?s=50&default=retro';
 
     return Drawer(
         child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [
-      const DrawerHeader(
-        child: Text('Docket'),
+      UserAccountsDrawerHeader(
+        accountEmail: const Text('mark@mark-story.com'),
+        accountName: const Text('Mark Story'),
+        currentAccountPicture: CircleAvatar(foregroundImage: NetworkImage(gravatarurl)),
+        onDetailsPressed: () {
+          Navigator.pushNamed(context, Routes.profileSettings);
+        }
       ),
       ListTile(
         onTap: () {

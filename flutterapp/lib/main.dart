@@ -10,6 +10,7 @@ import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'screens/login.dart';
+import 'screens/profilesettings.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
 import 'screens/projectarchive.dart';
@@ -146,6 +147,10 @@ class DocketApp extends StatelessWidget {
               // Login
               if (settings.name == Routes.login) {
                 return MaterialPageRoute(builder: (context) => const LoginScreen());
+              }
+              // Profile settings
+              if (settings.name == Routes.profileSettings) {
+                return MaterialPageRoute(builder: (context) => const ProfileSettingsScreen());
               }
 
               return unknownScreen(context);
