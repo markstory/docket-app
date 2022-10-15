@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:intl/intl.dart';
@@ -103,6 +104,7 @@ class TaskTitleInput extends StatelessWidget {
         defaultText: value,
         onChanged: (title) {
           title = _removeMarkup(title, ['#', '%', '&']);
+          dev.log('updated title : $title', name: 'mentions');
           onChangeTitle(title);
         },
         onMentionAdd: (item) {
@@ -157,7 +159,11 @@ class TaskTitleInput extends StatelessWidget {
   String _removeMarkup(String value, List<String> triggers) {
     for (var trigger in triggers) {
       var pattern = RegExp(r'/\b\\' + trigger + r'\s/');
+      // This isn't working yet.
+      dev.log("pattern $pattern", name: 'mentions');
       value = value.replaceAllMapped(pattern, (match) {
+        dev.log("$match ${match.groupCount}", name: 'mentions');
+
         return "${match.group(0)}";
       });
     }
