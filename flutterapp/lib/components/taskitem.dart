@@ -128,7 +128,7 @@ class TaskActions extends StatelessWidget {
           value: Menu.reschedule,
           child: ListTile(
             leading: Icon(Icons.calendar_today, color: customColors.dueToday),
-            title: const Text('Reschedule'),
+            title: const Text('Schedule'),
           ),
         ),
         PopupMenuItem<Menu>(

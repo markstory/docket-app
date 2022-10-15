@@ -117,7 +117,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
       items.add(ListTile(
           dense: true,
           leading: Icon(Icons.calendar_today, color: docketColors.dueFortnight),
-          title: const Text('Pick Date'),
+          title: const Text('Choose a day'),
           onTap: () async {
             var navigator = Navigator.of(context);
             final newValue = await showDatePicker(
@@ -125,14 +125,14 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
               initialDate: currentValue,
               firstDate: today,
               lastDate: today.add(const Duration(days: 365)),
-              helpText: 'Choose a Due Date',
+              helpText: 'Remind me on',
             );
             completer.complete(ChangeDueOnResult(dueOn: newValue, evening: evening));
             navigator.pop();
           }));
 
       return AlertDialog(
-          title: const Text('Set Date'),
+          title: const Text('Choose a day'),
           content: SingleChildScrollView(
             child: ListBody(
               children: items,

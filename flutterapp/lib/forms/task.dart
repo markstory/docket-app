@@ -36,7 +36,7 @@ class _TaskFormState extends State<TaskForm> {
 
   /// Create the subtasks section for task details. This is a bit
   /// at odds with how the rest of the page as subtasks update immediately
-  /// while other changes are deferred. Perhaps task updates should apply immediately 
+  /// while other changes are deferred. Perhaps task updates should apply immediately
   /// or as a time throttled async change?
   Widget _buildSubtasks(BuildContext context, Task task) {
     // No subtasks for unsaved tasks.
@@ -69,14 +69,15 @@ class _TaskFormState extends State<TaskForm> {
           await tasksProvider.moveSubtask(task, item);
         },
       ),
-      TextButton(
-        child: const Text('Add Subtask'),
-        onPressed: () {
-          setState(() {
-            task.subtasks.add(Subtask.blank());
-          });
-        }
-      )
+      Padding(
+          padding: EdgeInsets.fromLTRB(space(3), 0, 0, 0),
+          child: TextButton(
+              child: const Text('Add Subtask'),
+              onPressed: () {
+                setState(() {
+                  task.subtasks.add(Subtask.blank());
+                });
+              }))
     ]);
   }
 
@@ -105,65 +106,68 @@ class _TaskFormState extends State<TaskForm> {
                 Container(
                   padding: EdgeInsets.all(space(1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Padding(padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
-                      child: TaskCheckbox(task, onComplete: widget.onComplete)
-                    ),
-                    Expanded(child:
-                      TaskTitleInput(
-                        value: task.title,
-                        projects: projects,
-                        onChangeTitle: (title) {
-                          setState(() {
-                            task.title = title;
-                          });
-                        },
-                        onChangeDate: (date, evening) {
-                          setState(() {
-                            task.dueOn = date;
-                            task.evening = evening;
-                          });
-                        },
-                        onChangeProject: (projectId) {
-                          setState(() {
-                            task.projectId = projectId;
-                          });
-                        }))
-                      ]),
-                    ),
-                FormIconRow(
-                  icon: Icon(Icons.folder_outlined, size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Project'),
-                  child: DropdownButtonFormField(
-                      key: const ValueKey('project'),
-                      value: task.projectId,
-                      items: projects.map((item) {
-                        var color = getProjectColor(item.color);
-
-                        return DropdownMenuItem(
-                            value: item.id,
-                            child: Row(children: [
-                              Icon(Icons.circle, color: color, size: 12),
-                              SizedBox(width: space(1)),
-                              Text(
-                                item.name,
-                                style: const TextStyle(color: Colors.black54),
-                              ),
-                            ]));
-                      }).toList(),
-                      onChanged: (int? value) {
-                        if (value != null) {
-                          task.projectId = value;
-                        }
-                      },
-                      validator: (int? value) {
-                        if (value == null) {
-                          return 'Project is required';
-                        }
-                        return null;
-                      },
-                    ),
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
+                        child: TaskCheckbox(task, onComplete: widget.onComplete)),
+                    Expanded(
+                        child: TaskTitleInput(
+                            autoFocus: task.id == null,
+                            value: task.title,
+                            projects: projects,
+                            onChangeTitle: (title) {
+                              setState(() {
+                                task.title = title;
+                              });
+                            },
+                            onChangeDate: (date, evening) {
+                              setState(() {
+                                task.dueOn = date;
+                                task.evening = evening;
+                              });
+                            },
+                            onChangeProject: (projectId) {
+                              setState(() {
+                                task.projectId = projectId;
+                              });
+                            }))
+                  ]),
                 ),
                 FormIconRow(
-                  icon: Icon(Icons.calendar_today, size: DocketColors.iconSize, color: docketColors.dueTomorrow, semanticLabel: 'Due on'),
+                  icon: Icon(Icons.folder_outlined,
+                      size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Project'),
+                  child: DropdownButtonFormField(
+                    key: const ValueKey('project'),
+                    value: task.projectId,
+                    items: projects.map((item) {
+                      var color = getProjectColor(item.color);
+
+                      return DropdownMenuItem(
+                          value: item.id,
+                          child: Row(children: [
+                            Icon(Icons.circle, color: color, size: 12),
+                            SizedBox(width: space(1)),
+                            Text(
+                              item.name,
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                          ]));
+                    }).toList(),
+                    onChanged: (int? value) {
+                      if (value != null) {
+                        task.projectId = value;
+                      }
+                    },
+                    validator: (int? value) {
+                      if (value == null) {
+                        return 'Project is required';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                FormIconRow(
+                  icon: Icon(Icons.calendar_today,
+                      size: DocketColors.iconSize, color: docketColors.dueTomorrow, semanticLabel: 'Due on'),
                   child: DueOnInput(
                       dueOn: task.dueOn,
                       evening: task.evening,
@@ -176,7 +180,8 @@ class _TaskFormState extends State<TaskForm> {
                       }),
                 ),
                 FormIconRow(
-                    icon: Icon(Icons.description_outlined, size: DocketColors.iconSize, color: docketColors.dueFortnight, semanticLabel: 'Notes'),
+                    icon: Icon(Icons.description_outlined,
+                        size: DocketColors.iconSize, color: docketColors.dueFortnight, semanticLabel: 'Notes'),
                     child: MarkdownInput(
                         key: const ValueKey('body'),
                         value: task.body,

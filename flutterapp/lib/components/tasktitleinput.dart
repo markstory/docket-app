@@ -68,6 +68,7 @@ class TaskTitleInput extends StatelessWidget {
   final Function(int projectId) onChangeProject;
   final Function(String text) onChangeTitle;
   final String value;
+  final bool autoFocus;
 
   const TaskTitleInput(
       {required this.projects,
@@ -75,6 +76,7 @@ class TaskTitleInput extends StatelessWidget {
       required this.onChangeProject,
       required this.onChangeTitle,
       required this.value,
+      this.autoFocus = false,
       super.key});
 
   @override
@@ -82,7 +84,6 @@ class TaskTitleInput extends StatelessWidget {
     var theme = Theme.of(context);
     var today = DateUtils.dateOnly(DateTime.now());
 
-    // TODO These lists might need memoization
     List<MentionData> projectOptions = projects.map((project) {
       return {'id': 'p:${project.id}', 'display': project.name};
     }).toList();
@@ -98,7 +99,7 @@ class TaskTitleInput extends StatelessWidget {
     return FlutterMentions(
         key: const ValueKey('title'),
         appendSpaceOnAdd: true,
-        autofocus: true,
+        autofocus: autoFocus,
         enableInteractiveSelection: true,
         suggestionPosition: SuggestionPosition.Bottom,
         maxLines: 5,
