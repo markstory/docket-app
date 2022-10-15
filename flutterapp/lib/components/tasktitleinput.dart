@@ -110,7 +110,6 @@ class TaskTitleInput extends StatelessWidget {
           onChangeTitle(cleaned);
         },
         onMentionAdd: (item) {
-          // This could be done in onMarkupChange eventually.
           var parts = item['id'].toString().split(':');
           assert(parts.length == 2);
           var type = parts[0];
@@ -136,26 +135,31 @@ class TaskTitleInput extends StatelessWidget {
         },
         mentions: [
           Mention(
-              trigger: '#',
-              style: inputTextStyle,
-              data: projectOptions,
-              suggestionBuilder: (data) {
-                return Container(
-                  padding: EdgeInsets.all(space(3)),
-                  child: Text(data['display'], style: theme.textTheme.bodyMedium),
-                );
-              }),
+            trigger: '#',
+            style: inputTextStyle,
+            data: projectOptions,
+            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
+          ),
           Mention(
             trigger: '%',
             style: inputTextStyle,
             data: dateOptions,
+            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
           ),
           Mention(
             trigger: '&',
             style: inputTextStyle,
             data: eveningDateOptions,
+            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
           )
         ]);
+  }
+
+  Widget _suggestionBuilder(Map<String, dynamic> data, ThemeData theme) {
+    return Container(
+      padding: EdgeInsets.all(space(3)),
+      child: Text(data['display'], style: theme.textTheme.bodyMedium),
+    );
   }
 
   /// Remove markup text and trigger special actions based on mentions
