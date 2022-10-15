@@ -52,8 +52,6 @@ class _TaskFormState extends State<TaskForm> {
           return SubtaskItem(task: task, subtask: subtask);
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
-          dev.log('doing reorder $oldItemIndex, $newItemIndex', name: 'debug');
-          // assert(oldListIndex == newListIndex);
           var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
           var item = task.subtasks[oldItemIndex];
           item.ranking = newItemIndex;
@@ -63,14 +61,13 @@ class _TaskFormState extends State<TaskForm> {
             task.subtasks.removeAt(oldItemIndex);
             task.subtasks.insert(newItemIndex, item);
           });
-          dev.log('updated localstate', name: 'debug');
 
           // Update the moved task and reload from server async
           await tasksProvider.moveSubtask(task, item);
         },
       ),
       Padding(
-          padding: EdgeInsets.fromLTRB(space(3), 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(space(3), space(2), 0, 0),
           child: TextButton(
               child: const Text('Add Subtask'),
               onPressed: () {
