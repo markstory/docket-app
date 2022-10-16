@@ -1,68 +1,82 @@
 import 'package:flutter/material.dart';
 
-import 'package:docket/models/project.dart';
+import 'package:docket/models/userprofile.dart';
 import 'package:docket/theme.dart';
 
-class ProjectForm extends StatefulWidget {
-  final Project project;
-  final void Function(Project project) onSave;
+class ProfileSettingsForm extends StatefulWidget {
+  final UserProfile userprofile;
+  final void Function(UserProfile userprofile) onSave;
 
-  const ProjectForm({required this.project, required this.onSave, super.key});
+  const ProfileSettingsForm({super.key, required this.userprofile, required this.onSave});
 
   @override
-  State<ProjectForm> createState() => _ProjectFormState();
+  State<ProfileSettingsForm> createState() => _ProfileSettingsFormState();
 }
 
-class _ProjectFormState extends State<ProjectForm> {
+class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late final Project project;
+  late UserProfile userprofile;
 
   @override
   void initState() {
     super.initState();
-    project = widget.project.copy();
+    userprofile = UserProfile.fromMap(widget.userprofile.toMap());
   }
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context); var customColors = getCustomColors(context);
+
     return Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
-              decoration: const InputDecoration(
+            key: const ValueKey('name'),
+              decoration: InputDecoration(
                 labelText: 'Name',
+                icon: Icon(Icons.person_outlined, color: theme.colorScheme.primary),
               ),
               validator: (String? value) {
-                return (value != null && value.isNotEmpty) ? null : 'Project name required';
+                return (value != null && value.isNotEmpty) ? null : 'Name is required';
               },
-              initialValue: project.name,
+              initialValue: userprofile.name,
               onSaved: (value) {
                 if (value != null) {
-                  project.name = value;
+                  userprofile.name = value;
                 }
               }),
-          SizedBox(height: space(2)),
+          TextFormField(
+            key: const ValueKey('email'),
+              decoration: InputDecoration(
+                labelText: 'E-mail',
+                icon: Icon(Icons.mail_outlined, color: theme.colorScheme.secondary),
+              ),
+              validator: (String? value) {
+                return (value != null && value.isNotEmpty) ? null : 'E-mail is required';
+              },
+              initialValue: userprofile.email,
+              onSaved: (value) {
+                if (value != null) {
+                  userprofile.email = value;
+                }
+              }),
           DropdownButtonFormField(
-            key: const ValueKey('color'),
-            value: project.color,
-            decoration: const InputDecoration(labelText: 'Color'),
-            onChanged: (int? value) {
+              decoration: InputDecoration(
+                labelText: 'Theme',
+                icon: Icon(Icons.format_paint_outlined, color: customColors.actionComplete),
+              ),
+            key: const ValueKey('theme'),
+            value: userprofile.theme,
+            items: const [
+              DropdownMenuItem(value: 'light', child: Text('Light')),
+              DropdownMenuItem(value: 'dark', child: Text('Dark')),
+              DropdownMenuItem(value: 'system', child: Text('Follow system')),
+            ],
+            onChanged: (String? value) {
               if (value != null) {
-                project.color = value;
+                userprofile.theme = value;
               }
-            },
-            items: getProjectColors().map((item) {
-              return DropdownMenuItem(
-                  value: item.id,
-                  child: Row(children: [
-                    Icon(Icons.circle, color: item.color, size: 12),
-                    SizedBox(width: space(1)),
-                    Text(
-                      item.name,
-                      style: const TextStyle(color: Colors.black54),
-                    ),
-                  ]));
-            }).toList(),
+            }
           ),
           ButtonBar(children: [
             TextButton(
@@ -75,7 +89,7 @@ class _ProjectFormState extends State<ProjectForm> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    widget.onSave(project);
+                    widget.onSave(userprofile);
                   }
                 })
           ])

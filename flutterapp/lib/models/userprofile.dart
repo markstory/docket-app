@@ -1,9 +1,9 @@
 class UserProfile {
-  final String name;
-  final String email;
-  final String theme;
-  final String timezone;
-  final String avatarHash;
+  String name;
+  String email;
+  String theme;
+  String timezone;
+  String avatarHash;
 
   UserProfile({
     required this.name,

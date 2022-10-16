@@ -26,6 +26,7 @@ class UserProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Reload the profile from the server
   Future<UserProfile> refresh() async {
     if (loading) {
       return UserProfile.blank();
@@ -40,6 +41,7 @@ class UserProfileProvider extends ChangeNotifier {
     return profile;
   }
 
+  /// Fetch from local cache or the server if cache is empty.
   Future<UserProfile> get() async {
     var profile = await _database.profile.get();
     if (profile != null) {
