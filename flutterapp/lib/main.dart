@@ -9,6 +9,7 @@ import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
+import 'providers/userprofile.dart';
 import 'screens/login.dart';
 import 'screens/profilesettings.dart';
 import 'screens/projectdetails.dart';
@@ -56,6 +57,12 @@ class EntryPoint extends StatelessWidget {
             }),
         ChangeNotifierProxyProvider<SessionProvider, TasksProvider>(
             create: (_) => TasksProvider(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
+        ChangeNotifierProxyProvider<SessionProvider, UserProfileProvider>(
+            create: (_) => UserProfileProvider(database, null),
             update: (_, session, provider) {
               provider!.setSession(session);
               return provider;

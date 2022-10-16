@@ -6,6 +6,7 @@ import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
+import 'package:docket/models/userprofile.dart';
 
 class StaleDataError implements Exception {}
 
@@ -14,10 +15,6 @@ const isStale = '__is_stale__';
 class LocalDatabase {
   // Configuration
   static const String dbName = 'docket-localstorage';
-
-  // Storage keys.
-  static const String apiTokenKey = 'v1:apitoken';
-  static const String taskMapKey = 'v1:taskmap';
 
   /// Key used to lazily expire data.
   /// Contains a structure of `{key: timestamp}`
@@ -34,6 +31,8 @@ class LocalDatabase {
   late ProjectDetailsView projectDetails;
   late ProjectArchiveView projectArchive;
   late CompletedTasksView completedTasks;
+  late ApiTokenCache apiToken;
+  late ProfileCache profile;
 
   LocalDatabase() {
     var db = database();
@@ -44,6 +43,8 @@ class LocalDatabase {
     projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
     projectArchive = ProjectArchiveView(db, const Duration(hours: 1));
     completedTasks = CompletedTasksView(db, const Duration(hours: 1));
+    apiToken = ApiTokenCache(db, const Duration(hours: 1));
+    profile = ProfileCache(db, const Duration(hours: 1));
   }
 
   /// Lazily create the database.
@@ -114,22 +115,6 @@ class LocalDatabase {
   /// Directly set a key. Avoid use outside of tests.
   Future<void> set(String key, Map<String, Object?> value) async {
     await database().refresh(key, value);
-  }
-
-  // ApiToken methods. {{{
-  Future<ApiToken> createApiToken(ApiToken apiToken) async {
-    await database().refresh(apiTokenKey, apiToken.toMap());
-
-    return apiToken;
-  }
-
-  Future<ApiToken?> fetchApiToken() async {
-    final db = database();
-    var result = await db.value(apiTokenKey);
-    if (result != null) {
-      return ApiToken.fromMap(result);
-    }
-    return null;
   }
   // }}}
 
@@ -560,5 +545,55 @@ class CompletedTasksView extends ViewCache<ProjectWithTasks> {
     var data = await _get() ?? {};
     data.remove(slug);
     return _set(data);
+  }
+}
+
+class ApiTokenCache extends ViewCache<ApiToken> {
+  static const String name = 'apitoken';
+
+  ApiTokenCache(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Set completed tasks for a project into the lookup
+  @override
+  Future<void> set(ApiToken token) async {
+    return _set(token.toMap());
+  }
+
+  Future<ApiToken?> get() async {
+    var data = await _get();
+    if (data == null) {
+      return null;
+    }
+    return ApiToken.fromMap(data);
+  }
+}
+
+class ProfileCache extends ViewCache<UserProfile> {
+  static const String name = 'userprofile';
+
+  ProfileCache(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Set completed tasks for a project into the lookup
+  @override
+  Future<void> set(UserProfile token) async {
+    return _set(token.toMap());
+  }
+
+  Future<UserProfile?> get() async {
+    var data = await _get();
+    if (data == null) {
+      return null;
+    }
+    return UserProfile.fromMap(data);
   }
 }
