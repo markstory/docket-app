@@ -42,6 +42,7 @@ void main() {
       });
 
       var profile = await provider.get();
+      expect(listenerCallCount, equals(1));
       expect(profile.email, equals('mark@mark-story.com'));
       expect(profile.name, equals('Mark Story'));
 
