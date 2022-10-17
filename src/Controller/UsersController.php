@@ -7,6 +7,7 @@ use App\Model\Entity\User;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Mailer\MailerAwareTrait;
+use Cake\View\JsonView;
 use RuntimeException;
 
 /**
@@ -17,6 +18,11 @@ use RuntimeException;
 class UsersController extends AppController
 {
     use MailerAwareTrait;
+
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
 
     public function beforeFilter(EventInterface $event)
     {
@@ -69,6 +75,7 @@ class UsersController extends AppController
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
 
+        $redirect = null;
         $success = true;
         $serialize = ['user'];
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -86,6 +93,7 @@ class UsersController extends AppController
                 if ($emailChanged) {
                     $this->getMailer('Users')->send('verifyEmail', [$user]);
                 }
+                $redirect = $this->redirect($referer);
                 $success = true;
             } else {
                 $success = false;
@@ -98,7 +106,7 @@ class UsersController extends AppController
         $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'redirect' => $this->redirect($referer),
+            'redirect' => $redirect,
             'flashSuccess' => __('Your profile has been updated'),
             'flashError' => __('Your profile could not be saved'),
             'statusError' => 422,
