@@ -147,7 +147,7 @@ Future<UserProfile> fetchUser(String apiToken) async {
   var url = _makeUrl('/users/profile');
 
   return Future(() async {
-    var response = await httpGet(url, errorMessage: 'Failed to fetch user');
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Failed to fetch user');
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
       return UserProfile.fromMap(decoded['user']);
@@ -163,14 +163,9 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 
   return Future(() async {
     var body = profile.toMap();
-    var response = await httpPost(url, body: body, errorMessage: 'Failed to update user');
-    try {
-      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      return UserProfile.fromMap(decoded['user']);
-    } catch (e) {
-      developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
-      rethrow;
-    }
+    // TODO: Update the server to return the updated user.
+    await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Failed to update user');
+    return profile;
   });
 }
 // }}}

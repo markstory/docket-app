@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +54,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     userprofile: profile,
                     onSave: (profile) {
                       provider.update(profile);
-                    }
+                      AdaptiveTheme.of(context).setThemeMode(profile.themeMode);
+                      Navigator.of(context).pop();
+                    },
                   )
                 ]
               ));

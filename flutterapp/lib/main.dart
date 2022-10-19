@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -85,10 +86,11 @@ class DocketApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dev.log('theme $themeMode');
     return AdaptiveTheme(
         light: app_theme.lightTheme,
         dark: app_theme.darkTheme,
-        initial: AdaptiveThemeMode.dark, //themeMode ?? AdaptiveThemeMode.system,
+        initial: themeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) {
           if (child != null) {
             return MaterialApp(

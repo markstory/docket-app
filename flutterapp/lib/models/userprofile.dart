@@ -1,3 +1,5 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
+
 class UserProfile {
   String name;
   String email;
@@ -31,6 +33,16 @@ class UserProfile {
       timezone: '',
       avatarHash: '',
     );
+  }
+
+  get themeMode {
+    if (theme == 'light') {
+      return AdaptiveThemeMode.light;
+    }
+    if (theme == 'dark') {
+      return AdaptiveThemeMode.dark;
+    }
+    return AdaptiveThemeMode.system;
   }
 
   Map<String, Object?> toMap() {

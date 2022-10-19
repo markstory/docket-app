@@ -74,9 +74,13 @@ class _AppDrawerState extends State<AppDrawer> {
     if (snapshot.hasError || profile == null) {
       return const DrawerHeader(child: Text('Docket'));
     }
+    var theme = Theme.of(context);
     var gravatarurl = 'https://www.gravatar.com/avatar/${profile.avatarHash}?s=50&default=retro';
 
     return UserAccountsDrawerHeader(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primary,
+        ),
         accountEmail: Text(profile.email),
         accountName: Text(profile.name),
         currentAccountPicture: CircleAvatar(foregroundImage: NetworkImage(gravatarurl)),
