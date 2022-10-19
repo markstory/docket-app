@@ -156,7 +156,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open the due date picker.
-      await tester.tap(find.text('No due date'));
+      await tester.tap(find.text('Later'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Today').last);
