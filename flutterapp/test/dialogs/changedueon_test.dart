@@ -76,8 +76,8 @@ void main() {
 
       expect(find.text('This evening'), findsOneWidget);
       expect(find.text('Tomorrow'), findsOneWidget);
-      expect(find.text('No Due Date'), findsOneWidget);
-      expect(find.text('Pick Date'), findsOneWidget);
+      expect(find.text('Later'), findsOneWidget);
+      expect(find.text('Choose a day'), findsOneWidget);
       expect(find.text('Today'), findsNothing);
       expect(callCount, equals(0));
     });
@@ -94,8 +94,8 @@ void main() {
 
       expect(find.text('This evening'), findsOneWidget);
       expect(find.text('Today'), findsOneWidget);
-      expect(find.text('No Due Date'), findsOneWidget);
-      expect(find.text('Pick Date'), findsOneWidget);
+      expect(find.text('Later'), findsOneWidget);
+      expect(find.text('Choose a day'), findsOneWidget);
       expect(find.text('Tomorrow'), findsNothing);
       expect(callCount, equals(0));
     });

@@ -132,7 +132,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
           }));
 
       return AlertDialog(
-          title: const Text('Choose a day'),
+          title: const Text('Select a day'),
           content: SingleChildScrollView(
             child: ListBody(
               children: items,
