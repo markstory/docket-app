@@ -162,6 +162,8 @@ class UsersControllerTest extends TestCase
 
         $this->post('/users/profile');
         $this->assertResponseOk();
+        $this->assertHeader('Content-Type', 'application/json');
+
         $user = $this->viewVariable('user');
         $this->assertEquals('Mark', $user->name);
         $this->assertEquals('light', $user->theme);
@@ -179,6 +181,8 @@ class UsersControllerTest extends TestCase
             'theme' => 'dark',
         ]);
         $this->assertResponseOk();
+        $this->assertHeader('Content-Type', 'application/json');
+
         $user = $this->viewVariable('user');
         $this->assertEquals('tester mc testerson', $user->name);
         $this->assertEquals('dark', $user->theme);

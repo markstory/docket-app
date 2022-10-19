@@ -7,6 +7,7 @@ use App\Model\Entity\User;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Mailer\MailerAwareTrait;
+use Cake\View\JsonView;
 use RuntimeException;
 
 /**
@@ -17,6 +18,11 @@ use RuntimeException;
 class UsersController extends AppController
 {
     use MailerAwareTrait;
+
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
 
     public function beforeFilter(EventInterface $event)
     {
@@ -64,11 +70,12 @@ class UsersController extends AppController
      */
     public function edit()
     {
-        $referer = $this->getReferer();
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
+        $referer = $this->getReferer();
 
+        $redirect = $flashSuccess = $flashError = null;
         $success = true;
         $serialize = ['user'];
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -86,21 +93,25 @@ class UsersController extends AppController
                 if ($emailChanged) {
                     $this->getMailer('Users')->send('verifyEmail', [$user]);
                 }
+                $redirect = $referer;
                 $success = true;
+                $flashSuccess = __('Your profile has been updated');
             } else {
                 $success = false;
                 $serialize[] = 'errors';
+                $flashError = __('Your profile could not be saved');
                 $this->set('errors', $this->flattenErrors($user->getErrors()));
             }
         }
         $this->set('user', $user);
+        $this->set('referer', $referer);
 
         $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'redirect' => $this->redirect($referer),
-            'flashSuccess' => __('Your profile has been updated'),
-            'flashError' => __('Your profile could not be saved'),
+            'redirect' => $redirect,
+            'flashSuccess' => $flashSuccess,
+            'flashError' => $flashError,
             'statusError' => 422,
         ]);
     }
