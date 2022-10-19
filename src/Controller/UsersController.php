@@ -70,12 +70,12 @@ class UsersController extends AppController
      */
     public function edit()
     {
-        $referer = $this->getReferer();
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);
         $this->Authorization->authorize($user);
+        $referer = $this->getReferer();
 
-        $redirect = null;
+        $redirect = $flashSuccess = $flashError = null;
         $success = true;
         $serialize = ['user'];
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -93,22 +93,25 @@ class UsersController extends AppController
                 if ($emailChanged) {
                     $this->getMailer('Users')->send('verifyEmail', [$user]);
                 }
-                $redirect = $this->redirect($referer);
+                $redirect = $referer;
                 $success = true;
+                $flashSuccess = __('Your profile has been updated');
             } else {
                 $success = false;
                 $serialize[] = 'errors';
+                $flashError = __('Your profile could not be saved');
                 $this->set('errors', $this->flattenErrors($user->getErrors()));
             }
         }
         $this->set('user', $user);
+        $this->set('referer', $referer);
 
         $this->respond([
             'success' => $success,
             'serialize' => $serialize,
             'redirect' => $redirect,
-            'flashSuccess' => __('Your profile has been updated'),
-            'flashError' => __('Your profile could not be saved'),
+            'flashSuccess' => $flashSuccess,
+            'flashError' => $flashError,
             'statusError' => 422,
         ]);
     }
