@@ -118,12 +118,13 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('project value has a default', (tester) async {
+    testWidgets('project and date value has a default', (tester) async {
       var onSaveCalled = false;
       void onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
+        expect(task.dueOn, isNull);
       }
 
       final task = Task.blank();
