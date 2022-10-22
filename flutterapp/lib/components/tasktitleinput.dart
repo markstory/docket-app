@@ -157,6 +157,7 @@ class TaskTitleInput extends StatelessWidget {
   Widget _suggestionBuilder(Map<String, dynamic> data, ThemeData theme) {
     var display = data['display'] ?? '';
     return Container(
+      decoration: BoxDecoration(color: theme.colorScheme.background),
       key: ValueKey("mention:$display"),
       padding: EdgeInsets.all(space(3)),
       child: Text(display, style: theme.textTheme.bodyMedium),

@@ -250,7 +250,7 @@ final darkTheme = ThemeData(
   scaffoldBackgroundColor: DocketColors.gray900,
   dialogBackgroundColor: DocketColors.gray900,
   popupMenuTheme: const PopupMenuThemeData(
-    color: DocketColors.gray900,
+    color: DocketColors.gray800,
   ),
   drawerTheme: const DrawerThemeData(
     backgroundColor: DocketColors.gray900,
@@ -258,6 +258,7 @@ final darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple700,
   ),
+  canvasColor: DocketColors.gray900,
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
     primary: DocketColors.purple700,
@@ -278,7 +279,7 @@ final darkTheme = ThemeData(
     onSurface: DocketColors.white,
     // Used for high contrast backgrounds
     surfaceVariant: DocketColors.gray800,
-    surfaceTint: DocketColors.purple700,
+    surfaceTint: DocketColors.purple900,
   ),
   extensions: const [DocketColors.dark],
 );

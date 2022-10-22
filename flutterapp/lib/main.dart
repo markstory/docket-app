@@ -86,7 +86,6 @@ class DocketApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('theme $themeMode');
     return AdaptiveTheme(
         light: app_theme.lightTheme,
         dark: app_theme.darkTheme,
