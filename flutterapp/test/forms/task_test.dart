@@ -61,13 +61,13 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('can use mention for project', (tester) async {
+    testWidgets('can use mention for due date', (tester) async {
       var onSaveCalled = false;
       void onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
-        expect(task.dueOn, greaterThan(DateTime.now()));
+        expect(task.evening, isTrue);
       }
 
       final task = Task.blank();
@@ -78,18 +78,19 @@ void main() {
 
       // Fill out the title and use default project and notes
       var title = find.byKey(const ValueKey('title'));
-      await tester.enterText(title, 'Do dishes %Thurs');
+      await tester.enterText(title, 'Do dishes &Tod');
       await tester.pumpAndSettle();
 
-      var mention = find.text('Thursday').first;
+      var mention = find.text('Today').first;
       await tester.tap(mention);
+      await tester.pumpAndSettle();
 
       // Save onSaveCalled is mutated by callback.
       await tester.tap(find.text('Save'));
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('can use mention for due date', (tester) async {
+    testWidgets('can use mention for project', (tester) async {
       var onSaveCalled = false;
       void onSave(Task task) {
         onSaveCalled = true;
@@ -110,6 +111,7 @@ void main() {
 
       var mention = find.text('Work').first;
       await tester.tap(mention);
+      await tester.pumpAndSettle();
 
       // Save onSaveCalled is mutated by callback.
       await tester.tap(find.text('Save'));

@@ -113,7 +113,6 @@ class TaskTitleInput extends StatelessWidget {
           assert(parts.length == 2);
           var type = parts[0];
           var value = parts[1];
-
           switch (type) {
             case 'p':
               onChangeProject(int.parse(value));
@@ -122,13 +121,13 @@ class TaskTitleInput extends StatelessWidget {
             case 'r':
             case 'er':
               var dateValue = dateParser.parse(value);
-              onChangeDate(dateValue, type == 're');
+              onChangeDate(dateValue, type == 'er');
               break;
             // absolute dates
             case 'd':
             case 'ed':
               var dateValue = dateParser.parse(value);
-              onChangeDate(dateValue, type == 'de');
+              onChangeDate(dateValue, type == 'ed');
               break;
           }
         },
