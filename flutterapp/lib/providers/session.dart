@@ -31,7 +31,7 @@ class SessionProvider extends ChangeNotifier {
   void _loadApiToken() async {
     loading = true;
     try {
-      _apiToken = await _database.fetchApiToken();
+      _apiToken = await _database.apiToken.get();
       notifyListeners();
     } catch (e) {
       _apiToken = null;
@@ -42,7 +42,7 @@ class SessionProvider extends ChangeNotifier {
 
   /// Save an API token to the local database for future use.
   Future<void> saveToken(ApiToken token) async {
-    await _database.createApiToken(token);
+    await _database.apiToken.set(token);
     _apiToken = token;
     notifyListeners();
   }

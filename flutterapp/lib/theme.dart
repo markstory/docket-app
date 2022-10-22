@@ -202,7 +202,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
   static const dark = DocketColors(
     actionLock: ochre500,
     actionEdit: ochre300,
-    actionDelete: red300,
+    actionDelete: red500,
     actionComplete: green500,
     dueNone: gray500,
     dueOverdue: red500,
@@ -258,6 +258,7 @@ final darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple700,
   ),
+  canvasColor: DocketColors.gray900,
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
     primary: DocketColors.purple700,
@@ -277,8 +278,8 @@ final darkTheme = ThemeData(
     surface: DocketColors.gray800,
     onSurface: DocketColors.white,
     // Used for high contrast backgrounds
-    surfaceVariant: DocketColors.gray900,
-    surfaceTint: DocketColors.purple700,
+    surfaceVariant: DocketColors.gray800,
+    surfaceTint: DocketColors.purple900,
   ),
   extensions: const [DocketColors.dark],
 );

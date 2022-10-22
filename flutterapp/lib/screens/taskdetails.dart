@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
-import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';

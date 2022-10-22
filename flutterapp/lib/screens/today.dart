@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -30,6 +31,10 @@ class _TodayScreenState extends State<TodayScreen> {
   void initState() {
     super.initState();
     _refresh();
+
+    AdaptiveTheme.of(context).modeChangeNotifier.addListener(() {
+      AdaptiveTheme.of(context).toggleThemeMode();
+    });
   }
 
   Future<List<void>> _refresh() async {

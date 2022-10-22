@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -9,7 +10,9 @@ import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
+import 'providers/userprofile.dart';
 import 'screens/login.dart';
+import 'screens/profilesettings.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
 import 'screens/projectarchive.dart';
@@ -59,6 +62,12 @@ class EntryPoint extends StatelessWidget {
               provider!.setSession(session);
               return provider;
             }),
+        ChangeNotifierProxyProvider<SessionProvider, UserProfileProvider>(
+            create: (_) => UserProfileProvider(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );
@@ -80,7 +89,7 @@ class DocketApp extends StatelessWidget {
     return AdaptiveTheme(
         light: app_theme.lightTheme,
         dark: app_theme.darkTheme,
-        initial: AdaptiveThemeMode.dark, //themeMode ?? AdaptiveThemeMode.system,
+        initial: themeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) {
           if (child != null) {
             return MaterialApp(
@@ -146,6 +155,10 @@ class DocketApp extends StatelessWidget {
               // Login
               if (settings.name == Routes.login) {
                 return MaterialPageRoute(builder: (context) => const LoginScreen());
+              }
+              // Profile settings
+              if (settings.name == Routes.profileSettings) {
+                return MaterialPageRoute(builder: (context) => const ProfileSettingsScreen());
               }
 
               return unknownScreen(context);

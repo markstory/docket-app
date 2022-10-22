@@ -61,6 +61,61 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
+    testWidgets('can use mention for project', (tester) async {
+      var onSaveCalled = false;
+      void onSave(Task task) {
+        onSaveCalled = true;
+        expect(task.title, equals('Do dishes'));
+        expect(task.projectId, equals(1));
+        expect(task.dueOn, greaterThan(DateTime.now()));
+      }
+
+      final task = Task.blank();
+      expect(task.projectId, isNull);
+
+      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpAndSettle();
+
+      // Fill out the title and use default project and notes
+      var title = find.byKey(const ValueKey('title'));
+      await tester.enterText(title, 'Do dishes %Thurs');
+      await tester.pumpAndSettle();
+
+      var mention = find.text('Thursday').first;
+      await tester.tap(mention);
+
+      // Save onSaveCalled is mutated by callback.
+      await tester.tap(find.text('Save'));
+      expect(onSaveCalled, equals(true));
+    });
+
+    testWidgets('can use mention for due date', (tester) async {
+      var onSaveCalled = false;
+      void onSave(Task task) {
+        onSaveCalled = true;
+        expect(task.title, equals('Do dishes'));
+        expect(task.projectId, equals(2));
+      }
+
+      final task = Task.blank();
+      expect(task.projectId, isNull);
+
+      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpAndSettle();
+
+      // Fill out the title and use default project and notes
+      var title = find.byKey(const ValueKey('title'));
+      await tester.enterText(title, 'Do dishes #wo');
+      await tester.pumpAndSettle();
+
+      var mention = find.text('Work').first;
+      await tester.tap(mention);
+
+      // Save onSaveCalled is mutated by callback.
+      await tester.tap(find.text('Save'));
+      expect(onSaveCalled, equals(true));
+    });
+
     testWidgets('project value has a default', (tester) async {
       var onSaveCalled = false;
       void onSave(Task task) {

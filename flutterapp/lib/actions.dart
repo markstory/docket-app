@@ -6,6 +6,7 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
+import 'package:docket/models/userprofile.dart';
 
 /// This needs to come from a props/config file but I don't know
 /// how to do that yet.
@@ -140,6 +141,34 @@ Future<ApiToken> doLogin(String email, String password) async {
     }
   });
 }
+
+// Profile Methods {{{
+Future<UserProfile> fetchUser(String apiToken) async {
+  var url = _makeUrl('/users/profile');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Failed to fetch user');
+    try {
+      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      return UserProfile.fromMap(decoded['user']);
+    } catch (e) {
+      developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
+  var url = _makeUrl('/users/profile');
+
+  return Future(() async {
+    var body = profile.toMap();
+    // TODO: Update the server to return the updated user.
+    await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Failed to update user');
+    return profile;
+  });
+}
+// }}}
 
 // Task Methods {{{
 /// Fetch the tasks for the 'Today' view

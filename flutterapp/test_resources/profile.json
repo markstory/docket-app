@@ -1,0 +1,10 @@
+{
+    "user": {
+        "id": 1,
+        "name": "Mark Story",
+        "email": "mark@mark-story.com",
+        "theme": "system",
+        "timezone": "America/New York",
+        "avatar_hash": "669144d1ab0a861af5d54175371bc586"
+    }
+}

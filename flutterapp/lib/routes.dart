@@ -3,6 +3,8 @@ import 'package:docket/models/project.dart';
 
 class Routes {
   static const String login = '/login';
+  static const String profileSettings = '/settings/profile';
+
   static const String today = '/tasks/today';
   static const String upcoming = '/tasks/upcoming';
   static const String taskAdd = '/tasks/add';
