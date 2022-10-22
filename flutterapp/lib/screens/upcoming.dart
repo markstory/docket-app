@@ -77,6 +77,9 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       } else {
         var title = formatters.compactDate(dateVal);
         var subtitle = formatters.monthDay(dateVal);
+        if (title == subtitle) {
+          subtitle = '';
+        }
 
         metadata = TaskSortMetadata(
             title: title,
