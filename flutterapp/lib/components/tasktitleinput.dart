@@ -155,9 +155,11 @@ class TaskTitleInput extends StatelessWidget {
   }
 
   Widget _suggestionBuilder(Map<String, dynamic> data, ThemeData theme) {
+    var display = data['display'] ?? '';
     return Container(
+      key: ValueKey("mention:$display"),
       padding: EdgeInsets.all(space(3)),
-      child: Text(data['display'], style: theme.textTheme.bodyMedium),
+      child: Text(display, style: theme.textTheme.bodyMedium),
     );
   }
 
@@ -168,7 +170,6 @@ class TaskTitleInput extends StatelessWidget {
     var cleaned = value.replaceAllMapped(pattern, (match) {
       return "";
     });
-
-    return cleaned;
+    return cleaned.trimRight();
   }
 }
