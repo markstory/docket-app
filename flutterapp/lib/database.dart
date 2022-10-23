@@ -43,7 +43,7 @@ class LocalDatabase {
     projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
     projectArchive = ProjectArchiveView(db, const Duration(hours: 1));
     completedTasks = CompletedTasksView(db, const Duration(hours: 1));
-    apiToken = ApiTokenCache(db, const Duration(hours: 1));
+    apiToken = ApiTokenCache(db, null);
     profile = ProfileCache(db, const Duration(hours: 1));
   }
 
@@ -213,7 +213,7 @@ class LocalDatabase {
 /// Abstract class that will act as the base of the ViewCache based database implementation.
 abstract class ViewCache<T> {
   late JsonCache _database;
-  Duration duration;
+  Duration? duration;
 
   Map<String, dynamic>? _state;
 
@@ -221,18 +221,19 @@ abstract class ViewCache<T> {
     _database = database;
   }
 
-  Future<bool> isFresh() async {
-    var data = await _database.value(keyName()) ?? {};
-    var updated = data['updatedAt'];
+  bool isFresh() {
+    // Empty data is 'fresh'. This prevents loops
+    if (_state == null || duration == null) {
+      return true;
+    }
+    var updated = _state!['updatedAt'];
     if (updated == null) {
       return false;
     }
-    var timestamp = DateTime.parse(updated);
-    var expires = DateTime.now()..subtract(duration);
-    if (timestamp.isBefore(expires)) {
-      return false;
-    }
-    return true;
+    var updatedAt = DateTime.parse(updated);
+    var expires = DateTime.now()..subtract(duration!);
+
+    return updatedAt.isAfter(expires);
   }
 
   /// Refresh the data stored for the 'today' view.
@@ -244,7 +245,7 @@ abstract class ViewCache<T> {
 
   /// Refresh the data stored for the 'today' view.
   Future<Map<String, dynamic>?> _get() async {
-    if (_state != null) {
+    if (_state != null && isFresh()) {
       return _state;
     }
     var payload = await _database.value(keyName());
@@ -551,7 +552,7 @@ class CompletedTasksView extends ViewCache<ProjectWithTasks> {
 class ApiTokenCache extends ViewCache<ApiToken> {
   static const String name = 'apitoken';
 
-  ApiTokenCache(JsonCache database, Duration duration) : super(database, duration);
+  ApiTokenCache(JsonCache database, Duration? duration) : super(database, duration);
 
   @override
   String keyName() {
