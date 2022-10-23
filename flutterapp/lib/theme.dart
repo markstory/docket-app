@@ -203,7 +203,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
     actionLock: ochre500,
     actionEdit: ochre300,
     actionDelete: red500,
-    actionComplete: green500,
+    actionComplete: green700,
     dueNone: gray500,
     dueOverdue: red500,
     dueToday: purple500,
@@ -247,14 +247,6 @@ final lightTheme = ThemeData(
 );
 
 final darkTheme = ThemeData(
-  scaffoldBackgroundColor: DocketColors.gray900,
-  dialogBackgroundColor: DocketColors.gray900,
-  popupMenuTheme: const PopupMenuThemeData(
-    color: DocketColors.gray800,
-  ),
-  drawerTheme: const DrawerThemeData(
-    backgroundColor: DocketColors.gray900,
-  ),
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple700,
   ),
@@ -281,7 +273,18 @@ final darkTheme = ThemeData(
     surfaceVariant: DocketColors.gray800,
     surfaceTint: DocketColors.purple900,
   ),
+  dialogBackgroundColor: DocketColors.gray900,
+  drawerTheme: const DrawerThemeData(
+    backgroundColor: DocketColors.gray900,
+  ),
   extensions: const [DocketColors.dark],
+  popupMenuTheme: const PopupMenuThemeData(
+    color: DocketColors.gray800,
+  ),
+  scaffoldBackgroundColor: DocketColors.gray900,
+  snackBarTheme: const SnackBarThemeData(
+    backgroundColor: DocketColors.gray400,
+  ),
 );
 
 /// Return a value based on the sizing unit of 8px

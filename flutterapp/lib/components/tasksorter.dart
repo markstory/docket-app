@@ -118,7 +118,7 @@ class TaskSorter extends StatelessWidget {
     List<Widget> children = [];
     List<Widget> text = [];
 
-    children.add(SizedBox(width: space(3)));
+    children.add(SizedBox(width: space(2.5)));
 
     if (taskMeta.icon != null) {
       children

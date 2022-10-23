@@ -25,12 +25,14 @@ class _ProjectFormState extends State<ProjectForm> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Name',
+                icon: Icon(Icons.folder_outlined, color: theme.colorScheme.primary),
               ),
               validator: (String? value) {
                 return (value != null && value.isNotEmpty) ? null : 'Project name required';
@@ -45,7 +47,10 @@ class _ProjectFormState extends State<ProjectForm> {
           DropdownButtonFormField(
             key: const ValueKey('color'),
             value: project.color,
-            decoration: const InputDecoration(labelText: 'Color'),
+            decoration: InputDecoration(
+              labelText: 'Color',
+              icon: Icon(Icons.format_paint_outlined, color: theme.colorScheme.secondary),
+            ),
             onChanged: (int? value) {
               if (value != null) {
                 project.color = value;
@@ -57,10 +62,7 @@ class _ProjectFormState extends State<ProjectForm> {
                   child: Row(children: [
                     Icon(Icons.circle, color: item.color, size: 12),
                     SizedBox(width: space(1)),
-                    Text(
-                      item.name,
-                      style: const TextStyle(color: Colors.black54),
-                    ),
+                    Text(item.name),
                   ]));
             }).toList(),
           ),
