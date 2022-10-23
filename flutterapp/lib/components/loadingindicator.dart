@@ -7,7 +7,7 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: space(2)),
+      padding: EdgeInsets.only(top: space(4)),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
       SizedBox(
         width: 60,
