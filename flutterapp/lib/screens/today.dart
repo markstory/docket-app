@@ -31,10 +31,6 @@ class _TodayScreenState extends State<TodayScreen> {
   void initState() {
     super.initState();
     _refresh();
-
-    AdaptiveTheme.of(context).modeChangeNotifier.addListener(() {
-      AdaptiveTheme.of(context).toggleThemeMode();
-    });
   }
 
   Future<List<void>> _refresh() async {

@@ -98,6 +98,7 @@ class DocketApp extends StatelessWidget {
               home: child,
             );
           }
+
           return MaterialApp(
             // theme: theme,
             theme: darkTheme,
