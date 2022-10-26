@@ -171,8 +171,8 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         data-testid="not-due"
         onSelect={handleButtonClick(null, task.evening)}
       >
-        <InlineIcon icon="trash" />
-        {t('No Due Date')}
+        <InlineIcon icon="clock" />
+        {t('Later')}
       </MenuItem>
       <DayPicker
         disabledDays={{before: new Date()}}
