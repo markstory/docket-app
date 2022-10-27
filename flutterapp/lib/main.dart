@@ -100,8 +100,7 @@ class DocketApp extends StatelessWidget {
           }
 
           return MaterialApp(
-            // theme: theme,
-            theme: darkTheme,
+            theme: theme,
             darkTheme: darkTheme,
             navigatorObservers: [SentryNavigatorObserver()],
             onGenerateRoute: (settings) {
