@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProjectColor {
   final int id;
@@ -217,6 +218,13 @@ class DocketColors extends ThemeExtension<DocketColors> {
 }
 
 final lightTheme = ThemeData(
+  appBarTheme: const AppBarTheme(
+    backgroundColor: DocketColors.purple500,
+    systemOverlayStyle: SystemUiOverlayStyle(
+      systemNavigationBarColor: DocketColors.white,
+      systemNavigationBarIconBrightness: Brightness.dark
+    ),
+  ),
   scaffoldBackgroundColor: Colors.white,
   drawerTheme: const DrawerThemeData(
     backgroundColor: DocketColors.gray000,
@@ -249,6 +257,10 @@ final lightTheme = ThemeData(
 final darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple700,
+    systemOverlayStyle: SystemUiOverlayStyle(
+      systemNavigationBarColor: DocketColors.gray900,
+      systemNavigationBarIconBrightness: Brightness.light
+    ),
   ),
   canvasColor: DocketColors.gray900,
   colorScheme: const ColorScheme(

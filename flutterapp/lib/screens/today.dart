@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
@@ -107,6 +108,32 @@ class _TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Update the the theme based on device settings.
+    // This is a bit janky but I couldn't figure out why AdaptiveTheme
+    // wasn't taking care of this.
+    var window = WidgetsBinding.instance.window;
+    window.onPlatformBrightnessChanged = () async {
+      WidgetsBinding.instance.handlePlatformBrightnessChanged();
+
+      final mode = await AdaptiveTheme.getThemeMode();
+      late ThemeData theme;
+      switch (mode) {
+        case AdaptiveThemeMode.dark:
+          theme = darkTheme;
+          break;
+        case AdaptiveThemeMode.light:
+          theme = lightTheme;
+          break;
+        case AdaptiveThemeMode.system:
+          final brightness = window.platformBrightness;
+          theme = brightness == Brightness.light ? lightTheme : darkTheme;
+          break;
+        default:
+          throw "Invalid theme mode encountered";
+      }
+      SystemChrome.setSystemUIOverlayStyle(theme.appBarTheme.systemOverlayStyle!);
+    };
+
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
       return Scaffold(
         appBar: AppBar(
