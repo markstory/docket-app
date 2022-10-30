@@ -6,7 +6,7 @@
         "build": "vite build",
         "serve": "vite preview",
         "test": "jest",
-        "lint": "eslint 'assets/js/**.{js,ts,tsx}' 'tests/js/**.{js,ts,tsx}' --quiet --fix"
+        "lint": "eslint 'assets/js/*' 'tests/js/*' --quiet --fix"
     },
     "dependencies": {
         "@dnd-kit/core": "^1.0.1",
