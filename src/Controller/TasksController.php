@@ -57,6 +57,10 @@ class TasksController extends AppController
                 'start' => $start,
                 'end' => $start->modify('+1 days'),
             ]);
+        } elseif ($view === 'deleted') {
+            $query = $this->Tasks
+                ->find('all', ['deleted' => true])
+                ->contain('Projects');
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
 

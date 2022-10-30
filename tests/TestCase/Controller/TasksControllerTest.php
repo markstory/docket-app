@@ -249,6 +249,40 @@ class TasksControllerTest extends TestCase
     }
 
     /**
+     * Test index for deleted
+     *
+     * @return void
+     */
+    public function testIndexDeleted(): void
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $second = $this->makeTask('second', $project->id, 3, [
+            'due_on' => $tomorrow,
+            'deleted_at' => $tomorrow,
+        ]);
+        $third = $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow,
+            'deleted_at' => $tomorrow,
+        ]);
+
+        $this->login();
+        $this->get('/tasks/deleted');
+
+        $this->assertResponseOk();
+        $this->assertSame('deleted', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(2, $items);
+        $ids = array_map(function ($i) {
+            return $i->id;
+        }, $items);
+        $this->assertEquals([$second->id, $third->id], $ids);
+    }
+
+    /**
      * Test view method
      *
      * @return void
