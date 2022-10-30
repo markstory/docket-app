@@ -1,5 +1,3 @@
-import {InertiaLink, usePage} from '@inertiajs/inertia-react';
-
 import {t} from 'app/locale';
 import ProjectSorter from 'app/components/projectSorter';
 import NavLink from './navLink';
@@ -30,7 +28,12 @@ function ProjectFilter(): JSX.Element {
           {t('New Project')}
         </NavLink>
         <NavLink className="action-secondary" href="/projects/archived">
+          <InlineIcon icon="archive" />
           {t('Archived Projects')}
+        </NavLink>
+        <NavLink className="action-secondary" href="/tasks/deleted">
+          <InlineIcon icon="trash" />
+          {t('Trash Bin')}
         </NavLink>
       </div>
     </div>

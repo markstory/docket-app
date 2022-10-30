@@ -17,6 +17,7 @@ type Props = {
   defaultTaskValues?: DefaultTaskValues;
   showProject?: boolean;
   showDueOn?: boolean;
+  showRestore?: boolean;
 };
 
 export default function TaskGroup({
@@ -28,6 +29,7 @@ export default function TaskGroup({
   defaultTaskValues,
   showProject = false,
   showDueOn = false,
+  showRestore = false,
 }: Props): JSX.Element {
   const element = useRef<HTMLDivElement>(null);
   const {over, isOver, setNodeRef} = useDroppable({id: dropId});
@@ -95,6 +97,7 @@ export default function TaskGroup({
                 focused={focused}
                 showProject={showProject}
                 showDueOn={showDueOn}
+                showRestore={showRestore}
               />
             </SortableItem>
           );

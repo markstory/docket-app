@@ -61,6 +61,7 @@ class TasksController extends AppController
             $query = $this->Tasks
                 ->find('all', ['deleted' => true])
                 ->contain('Projects');
+            $this->set('component', 'Tasks/Deleted');
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
 

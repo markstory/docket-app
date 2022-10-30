@@ -23,6 +23,7 @@ type Props = {
   focused?: boolean;
   showDueOn?: boolean;
   showProject?: boolean;
+  showRestore?: boolean;
 };
 
 type InnerMenuState = 'project' | 'dueOn' | null;
@@ -30,8 +31,9 @@ type InnerMenuState = 'project' | 'dueOn' | null;
 export default function TaskRow({
   focused,
   task,
-  showDueOn,
-  showProject,
+  showDueOn = false,
+  showProject = false,
+  showRestore = false,
 }: Props): JSX.Element {
   const element = useRef<HTMLDivElement>(null);
   const [completed, setCompleted] = useState(task.completed);
@@ -73,19 +75,38 @@ export default function TaskRow({
 
   return (
     <div className={className} ref={element}>
-      <Checkbox name="complete" checked={completed} onChange={handleComplete} />
-      <InertiaLink href={`/tasks/${task.id}/view`}>
+      {showRestore === false && (
+        <Checkbox name="complete" checked={completed} onChange={handleComplete} />
+      )}
+      <TextWrapper task={task} showRestore={showRestore}>
         <span className="title">{task.title}</span>
         <div className="attributes">
           {showProject && <ProjectBadge project={task.project} />}
           <DueOn task={task} showDetailed={showDueOn} />
           <SubtaskSummary task={task} />
         </div>
-      </InertiaLink>
-      <TaskActions task={task} />
+      </TextWrapper>
+      <TaskActions task={task} showRestore={showRestore} />
     </div>
   );
 }
+
+type TextWrapperProps = React.PropsWithChildren<{
+  showRestore: boolean;
+  task: Task;
+}>;
+
+function TextWrapper({children, showRestore, task}: TextWrapperProps) {
+  if (showRestore) {
+    return <span>{children}</span>;
+  }
+  return (
+    <InertiaLink href={`/tasks/${task.id}/view`}>
+      {children}
+    </InertiaLink>
+  );
+}
+
 
 function SubtaskSummary({task}: Pick<Props, 'task'>) {
   if (task.subtask_count < 1) {
@@ -100,9 +121,9 @@ function SubtaskSummary({task}: Pick<Props, 'task'>) {
   );
 }
 
-type ActionsProps = Pick<Props, 'task'>;
+type ActionsProps = Pick<Props, 'task' | 'showRestore'>;
 
-function TaskActions({task}: ActionsProps) {
+function TaskActions({task, showRestore = false}: ActionsProps) {
   const [innerMenu, setInnerMenu] = useState<InnerMenuState>(null);
 
   async function handleDueOnChange(dueOn: string | null, evening: boolean) {
@@ -113,6 +134,10 @@ function TaskActions({task}: ActionsProps) {
 
   function handleDelete() {
     Inertia.post(`/tasks/${task.id}/delete`);
+  }
+
+  function handleRestore() {
+    Inertia.post(`/tasks/${task.id}/undelete`);
   }
 
   function handleItemMouseUp(menu: InnerMenuState) {
@@ -138,6 +163,16 @@ function TaskActions({task}: ActionsProps) {
   useOnClickOutside(menuRef, function () {
     setInnerMenu(null);
   });
+
+  if (showRestore) {
+    return (
+      <div className="actions visible">
+        <button onClick={handleRestore} className="button button-secondary">
+          {t('Restore')}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="actions" ref={menuRef}>
