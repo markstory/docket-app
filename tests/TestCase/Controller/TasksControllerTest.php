@@ -536,7 +536,9 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/delete");
 
         $this->assertRedirect(['_name' => 'tasks:today']);
-        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
+
+        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $this->assertNotNull($deleted->deleted_at);
     }
 
     public function testDeleteApiToken(): void
@@ -550,7 +552,8 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/delete");
         $this->assertResponseOk();
 
-        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
+        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $this->assertNotNull($deleted->deleted_at);
     }
 
     public function testDeletePermission(): void
@@ -562,7 +565,8 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/delete");
 
-        $this->assertTrue($this->Tasks->exists(['Tasks.id' => $first->id]));
+        $deleted = $this->Tasks->get($first->id);
+        $this->assertNull($deleted->deleted_at);
     }
 
     public function testCompletePermissions(): void

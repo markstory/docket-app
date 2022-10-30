@@ -326,7 +326,8 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         $success = false;
-        if ($this->Tasks->delete($task)) {
+        $task->softDelete();
+        if ($this->Tasks->saveOrFail($task)) {
             $success = true;
         }
 
