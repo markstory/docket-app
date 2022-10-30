@@ -54,6 +54,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['id']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'tasks:delete')
             ->setPass(['id']);
+        $builder->post('/{id}/undelete', ['action' => 'undelete'], 'tasks:undelete')
+            ->setPass(['id']);
         $builder->post('/{id}/edit', ['action' => 'edit'], 'tasks:edit')
             ->setPass(['id']);
         $builder->get('/{id}/view', ['action' => 'view'], 'tasks:view')

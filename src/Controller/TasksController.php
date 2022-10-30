@@ -339,4 +339,32 @@ class TasksController extends AppController
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
     }
+
+    /**
+     * Undelete method
+     *
+     * @param string|null $id Task id.
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function undelete($id = null)
+    {
+        $this->request->allowMethod('post');
+        $task = $this->Tasks->get($id, ['contain' => ['Projects'], 'deleted' => true]);
+        $this->Authorization->authorize($task);
+
+        $success = false;
+        $task->undelete();
+        if ($this->Tasks->saveOrFail($task)) {
+            $success = true;
+        }
+
+        $this->respond([
+            'success' => $success,
+            'serialize' => ['task'],
+            'flashSuccess' => __('The task has been restored.'),
+            'flashError' => __('The task could not be restored. Please, try again.'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
+    }
 }

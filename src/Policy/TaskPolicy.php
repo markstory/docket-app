@@ -25,6 +25,22 @@ class TaskPolicy
     }
 
     /**
+     * General check for project ownership
+     *
+     * @param \App\Model\Entity\User $user The user.
+     * @param \App\Model\Entity\Task $task
+     * @return bool
+     */
+    public function ownsProject(IdentityInterface $user, Task $task)
+    {
+        if (empty($task->project)) {
+            throw new RuntimeException('Cannot check todo item permission, no project is set.');
+        }
+
+        return $user->id === $task->project->user_id;
+    }
+
+    /**
      * Check if $user can edit Task
      *
      * @param \App\Model\Entity\User $user The user.
@@ -33,11 +49,7 @@ class TaskPolicy
      */
     public function canEdit(IdentityInterface $user, Task $task)
     {
-        if (empty($task->project)) {
-            throw new RuntimeException('Cannot check todo item permission, no project is set.');
-        }
-
-        return $user->id === $task->project->user_id;
+        return $this->ownsProject($user, $task);
     }
 
     /**
@@ -49,11 +61,19 @@ class TaskPolicy
      */
     public function canDelete(IdentityInterface $user, Task $task)
     {
-        if (empty($task->project)) {
-            throw new RuntimeException('Cannot check todo item permission, no project is set.');
-        }
+        return $this->ownsProject($user, $task) && $task->deleted == null;
+    }
 
-        return $user->id === $task->project->user_id;
+    /**
+     * Check if $user can undelete Task
+     *
+     * @param \App\Model\Entity\User $user The user.
+     * @param \App\Model\Entity\Task $task
+     * @return bool
+     */
+    public function canUndelete(IdentityInterface $user, Task $task)
+    {
+        return $this->ownsProject($user, $task) && $task->deleted_at != null;
     }
 
     /**
@@ -65,10 +85,6 @@ class TaskPolicy
      */
     public function canView(IdentityInterface $user, Task $task)
     {
-        if (empty($task->project)) {
-            throw new RuntimeException('Cannot check todo item permission, no project is set.');
-        }
-
-        return $user->id === $task->project->user_id;
+        return $this->ownsProject($user, $task);
     }
 }
