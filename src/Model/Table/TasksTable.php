@@ -157,7 +157,7 @@ class TasksTable extends Table
     public function find(string $type = 'all', array $options = []): Query
     {
         // Add the default deleted condition unless the `deleted` option is set.
-        $operator = empty($options['deleted']) ?  'IS' : 'IS NOT';
+        $operator = empty($options['deleted']) ? 'IS' : 'IS NOT';
         $query = $this->query()->select();
         $query->where(["Tasks.deleted_at {$operator}" => null]);
 
