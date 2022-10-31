@@ -152,6 +152,19 @@ class TasksTable extends Table
     }
 
     /**
+     * @inheritDoc
+     */
+    public function find(string $type = 'all', array $options = []): Query
+    {
+        // Add the default deleted condition unless the `deleted` option is set.
+        $operator = empty($options['deleted']) ? 'IS' : 'IS NOT';
+        $query = $this->query()->select();
+        $query->where(["Tasks.deleted_at {$operator}" => null]);
+
+        return $this->callFinder($type, $query, $options);
+    }
+
+    /**
      * Finder to fetch tasks in section order.
      */
     public function findForProjectDetails(Query $query, array $options): Query

@@ -57,6 +57,11 @@ class TasksController extends AppController
                 'start' => $start,
                 'end' => $start->modify('+1 days'),
             ]);
+        } elseif ($view === 'deleted') {
+            $query = $this->Tasks
+                ->find('all', ['deleted' => true])
+                ->contain('Projects');
+            $this->set('component', 'Tasks/Deleted');
         } elseif ($view === 'upcoming') {
             $end = $start->modify('+28 days');
 
@@ -326,7 +331,8 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         $success = false;
-        if ($this->Tasks->delete($task)) {
+        $task->softDelete();
+        if ($this->Tasks->saveOrFail($task)) {
             $success = true;
         }
 
@@ -335,6 +341,34 @@ class TasksController extends AppController
             'serialize' => ['task'],
             'flashSuccess' => __('The task has been deleted.'),
             'flashError' => __('The task could not be deleted. Please, try again.'),
+            'redirect' => $this->referer(['_name' => 'tasks:today']),
+        ]);
+    }
+
+    /**
+     * Undelete method
+     *
+     * @param string|null $id Task id.
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function undelete($id = null)
+    {
+        $this->request->allowMethod('post');
+        $task = $this->Tasks->get($id, ['contain' => ['Projects'], 'deleted' => true]);
+        $this->Authorization->authorize($task);
+
+        $success = false;
+        $task->undelete();
+        if ($this->Tasks->saveOrFail($task)) {
+            $success = true;
+        }
+
+        $this->respond([
+            'success' => $success,
+            'serialize' => ['task'],
+            'flashSuccess' => __('The task has been restored.'),
+            'flashError' => __('The task could not be restored. Please, try again.'),
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
     }

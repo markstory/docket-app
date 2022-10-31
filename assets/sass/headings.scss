@@ -25,6 +25,9 @@
   &.overdue svg {
     color: var(--color-due-overdue);
   }
+  &.trash svg {
+    color: var(--color-muted);
+  }
 }
 
 .heading-logo {

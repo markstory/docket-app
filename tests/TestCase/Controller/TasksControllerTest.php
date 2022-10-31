@@ -249,6 +249,40 @@ class TasksControllerTest extends TestCase
     }
 
     /**
+     * Test index for deleted
+     *
+     * @return void
+     */
+    public function testIndexDeleted(): void
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $second = $this->makeTask('second', $project->id, 3, [
+            'due_on' => $tomorrow,
+            'deleted_at' => $tomorrow,
+        ]);
+        $third = $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow,
+            'deleted_at' => $tomorrow,
+        ]);
+
+        $this->login();
+        $this->get('/tasks/deleted');
+
+        $this->assertResponseOk();
+        $this->assertSame('deleted', $this->viewVariable('view'));
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(2, $items);
+        $ids = array_map(function ($i) {
+            return $i->id;
+        }, $items);
+        $this->assertEquals([$second->id, $third->id], $ids);
+    }
+
+    /**
      * Test view method
      *
      * @return void
@@ -536,7 +570,20 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/delete");
 
         $this->assertRedirect(['_name' => 'tasks:today']);
-        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
+
+        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $this->assertNotNull($deleted->deleted_at);
+    }
+
+    public function testDeleteCannotDeleteAgain(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/delete");
+        $this->assertResponseCode(404);
     }
 
     public function testDeleteApiToken(): void
@@ -550,7 +597,8 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/delete");
         $this->assertResponseOk();
 
-        $this->assertFalse($this->Tasks->exists(['Tasks.id' => $first->id]));
+        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $this->assertNotNull($deleted->deleted_at);
     }
 
     public function testDeletePermission(): void
@@ -562,7 +610,51 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/delete");
 
-        $this->assertTrue($this->Tasks->exists(['Tasks.id' => $first->id]));
+        $deleted = $this->Tasks->get($first->id);
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testUndelete(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/undelete");
+
+        $this->assertRedirect(['_name' => 'tasks:today']);
+
+        $deleted = $this->Tasks->get($first->id);
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testUndeleteApiToken(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/undelete");
+        $this->assertResponseOk();
+
+        $deleted = $this->Tasks->get($first->id);
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testUndeletePermission(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/undelete");
+
+        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $this->assertNotNull($deleted->deleted_at);
     }
 
     public function testCompletePermissions(): void

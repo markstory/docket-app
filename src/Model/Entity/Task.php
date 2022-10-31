@@ -19,7 +19,8 @@ use Cake\ORM\Entity;
  * @property int $day_order
  * @property bool $evening
  * @property bool $completed
- * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $deleted_at
+ * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\Project $project
@@ -49,6 +50,7 @@ class Task extends Entity
         'day_order' => false,
         'created' => false,
         'modified' => false,
+        'deleted_at' => false,
         'project' => false,
         'subtasks' => false,
         'labels' => false,
@@ -64,5 +66,15 @@ class Task extends Entity
     {
         $this->completed = false;
         $this->due_on = new FrozenDate();
+    }
+
+    public function softDelete(): void
+    {
+        $this->deleted_at = new FrozenDate();
+    }
+
+    public function undelete(): void
+    {
+        $this->deleted_at = null;
     }
 }
