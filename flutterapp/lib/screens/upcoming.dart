@@ -34,13 +34,6 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
 
-    // TODO move link between actions + database into the ViewCache classes.
-    // Move the ViewCache classes out into their own files as they are getting
-    // big.
-    // With that done, there is a good abstraction point for
-    // the pending logic. This could be a good opportunity to hold onto futures
-    // and give out the same reference multiple times.
-    // It enables async reloading of related caches without flushing the render tree.
     return Future.wait([
       tasksProvider.fetchUpcoming(),
       projectsProvider.fetchProjects(),
@@ -155,7 +148,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
-                      tasksProvider.fetchToday();
+                      tasksProvider.fetchUpcoming();
                     },
                     onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
                       // Calculate position of adding to a end.

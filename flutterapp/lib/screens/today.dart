@@ -171,7 +171,7 @@ class _TodayScreenState extends State<TodayScreen> {
                       var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
                       // Get the changes that need to be made on the server.
-                      var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
+                      var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
 
                       // Update local state assuming server will be ok.
                       setState(() {
@@ -181,6 +181,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
+                      tasksProvider.fetchToday();
                     },
                     onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
                       if (_overdue == null) {
@@ -207,6 +208,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
+                      tasksProvider.fetchToday();
                     }));
           },
         ),
