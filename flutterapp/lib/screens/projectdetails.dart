@@ -153,6 +153,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
+                      projectsProvider.fetchBySlug(widget.project.slug);
                     },
                     onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
                       // Calculate position of adding to a end.
@@ -174,7 +175,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                       // Update the moved task and reload from server async
                       await tasksProvider.move(task, updates);
-                      tasksProvider.fetchToday();
+                      projectsProvider.fetchBySlug(widget.project.slug);
                     }));
           });
     });
