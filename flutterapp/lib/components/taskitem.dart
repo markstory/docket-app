@@ -23,7 +23,10 @@ class TaskItem extends StatelessWidget {
   /// Should the project badge be shown?
   final bool showProject;
 
-  const TaskItem({required this.task, this.showDate = false, this.showProject = false, super.key});
+  /// Should the restore button be shown?
+  final bool showRestore;
+
+  const TaskItem({required this.task, this.showDate = false, this.showProject = false, this.showRestore = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +52,7 @@ class TaskItem extends StatelessWidget {
         children: attributes,
       );
     }
+
     return ListTile(
         dense: true,
         contentPadding: EdgeInsets.fromLTRB(space(1), space(0.5), space(1), space(0.5)),
@@ -59,8 +63,8 @@ class TaskItem extends StatelessWidget {
           style: completedStyle(context, task.completed),
         ),
         subtitle: subtitle,
-        trailing: TaskActions(task),
-        onTap: () {
+        trailing: TaskActions(task, showRestore: showRestore),
+        onTap: showRestore ? null : () {
           Navigator.pushNamed(context, Routes.taskDetails, arguments: TaskDetailsArguments(task));
         });
   }
@@ -68,8 +72,9 @@ class TaskItem extends StatelessWidget {
 
 class TaskActions extends StatelessWidget {
   final Task task;
+  final bool showRestore;
 
-  const TaskActions(this.task, {super.key});
+  const TaskActions(this.task, {required this.showRestore, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +103,14 @@ class TaskActions extends StatelessWidget {
       task.evening = result.evening;
       tasksProvider.updateTask(task);
       messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
+    }
+
+    Future<void> _handleRestore() async {
+      return tasksProvider.undelete(task);
+    }
+
+    if (showRestore) {
+      return TextButton(onPressed: _handleRestore, child: const Text('Restore'));
     }
 
     var theme = Theme.of(context);

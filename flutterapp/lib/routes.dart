@@ -15,6 +15,8 @@ class Routes {
   static const String projectDetails = '/projects/view';
   static const String projectArchive = '/projects/archive';
   static const String projectCompleted = '/projects/completed';
+
+  static const String trashbin = '/trashbin';
 }
 
 // Route Parameter Classes {{{

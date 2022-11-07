@@ -11,6 +11,7 @@ enum ViewNames {
   today,
   upcoming,
   project,
+  trashbin,
 }
 
 /// I'm trying to keep the update methods have a 1:1
@@ -82,7 +83,7 @@ class TasksProvider extends ChangeNotifier {
   /// Will notifyListeners() on completion.
   Future<void> fetchToday() async {
     await _withPending(ViewNames.today, () async {
-      var taskViewData = await actions.loadTodayTasks(session!.apiToken);
+      var taskViewData = await actions.fetchTodayTasks(session!.apiToken);
       return _database.today.set(taskViewData);
     });
     notifyListeners();
@@ -103,7 +104,7 @@ class TasksProvider extends ChangeNotifier {
   /// Will notifyListeners() on completion.
   Future<void> fetchUpcoming() async {
     await _withPending(ViewNames.upcoming, () async {
-      var taskViewData = await actions.loadUpcomingTasks(session!.apiToken);
+      var taskViewData = await actions.fetchUpcomingTasks(session!.apiToken);
 
       return _database.upcoming.set(taskViewData);
     });
@@ -117,6 +118,28 @@ class TasksProvider extends ChangeNotifier {
       fetchUpcoming();
     }
     taskView.pending = _pending.contains(ViewNames.upcoming);
+    return taskView;
+  }
+
+  /// Fetch tasks in trashbin
+  /// Will notifyListeners() on completion.
+  Future<void> fetchTrashbin() async {
+    await _withPending(ViewNames.trashbin, () async {
+      var taskViewData = await actions.fetchTrashbin(session!.apiToken);
+      return _database.trashbin.set(taskViewData);
+    });
+
+    notifyListeners();
+  }
+
+  /// Get tasks in trashbin from local db
+  Future<TaskViewData> getTrashbin() async {
+    var taskView = await _database.trashbin.get();
+    if (taskView.missingData) {
+      fetchTrashbin();
+    }
+    taskView.pending = _pending.contains(ViewNames.trashbin);
+
     return taskView;
   }
 
@@ -145,6 +168,16 @@ class TasksProvider extends ChangeNotifier {
   Future<void> deleteTask(Task task) async {
     await actions.deleteTask(session!.apiToken, task);
     await _database.deleteTask(task);
+
+    notifyListeners();
+  }
+
+  /// Send an API request to move a task
+  /// Does not update the local database.
+  /// Assumption is that the calling view will refresh from server.
+  Future<void> undelete(Task task) async {
+    await actions.undeleteTask(session!.apiToken, task);
+    await _database.undeleteTask(task);
 
     notifyListeners();
   }

@@ -401,5 +401,22 @@ void main() {
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.ranking, equals(3));
     });
+
+    test('fetchTrashbin() and getTrashbin() work together', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/deleted'));
+
+        return Response(tasksTodayResponseFixture, 200);
+      });
+
+      await provider.fetchTrashbin();
+      var taskData = await provider.getTrashbin();
+
+      expect(taskData.pending, equals(false));
+      expect(taskData.tasks.length, equals(2));
+      expect(taskData.tasks[0].title, equals('clean dishes'));
+      expect(taskData.calendarItems.length, equals(0));
+      expect(listenerCallCount, greaterThanOrEqualTo(1));
+    });
   });
 }

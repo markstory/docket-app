@@ -172,7 +172,7 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 
 // Task Methods {{{
 /// Fetch the tasks for the 'Today' view
-Future<TaskViewData> loadTodayTasks(String apiToken) async {
+Future<TaskViewData> fetchTodayTasks(String apiToken) async {
   var url = _makeUrl('/tasks/today');
 
   return Future(() async {
@@ -197,7 +197,7 @@ Future<TaskViewData> loadTodayTasks(String apiToken) async {
 }
 
 /// Fetch the tasks and calendar items for the 'Upcoming' view
-Future<TaskViewData> loadUpcomingTasks(String apiToken) async {
+Future<TaskViewData> fetchUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
 
   return Future(() async {
@@ -230,7 +230,6 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
 
     try {
       var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      developer.log('completed tasks $decoded', name: 'debug');
       List<Task> tasks = [];
       if (decoded['completed'] != null) {
         for (var item in decoded['completed']) {
@@ -248,6 +247,34 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
     }
   });
 }
+
+/// Fetch deleted tasks for a project
+Future<TaskViewData> fetchTrashbin(String apiToken) async {
+  var url = _makeUrl('/tasks/deleted');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load trash bin');
+
+    try {
+      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      List<Task> tasks = [];
+      if (decoded['tasks'] != null) {
+        for (var item in decoded['tasks']) {
+          tasks.add(Task.fromMap(item));
+        }
+      }
+
+      return TaskViewData(
+        tasks: tasks,
+        calendarItems: [],
+      );
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
 
 /// Update a task complete/incomplete state..
 Future<void> toggleTask(String apiToken, Task task) async {
@@ -293,6 +320,15 @@ Future<void> deleteTask(String apiToken, Task task) async {
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete task');
+  });
+}
+
+/// Undelete a task
+Future<void> undeleteTask(String apiToken, Task task) async {
+  var url = _makeUrl('/tasks/${task.id}/undelete');
+
+  return Future(() async {
+    await httpPost(url, apiToken: apiToken, errorMessage: 'Could not undelete task');
   });
 }
 

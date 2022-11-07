@@ -54,14 +54,22 @@ class _AppDrawerState extends State<AppDrawer> {
                 ),
                 const ProjectSorter(),
                 ListTile(
+                    leading: Icon(Icons.add, color: theme.colorScheme.primary),
                     title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
                     onTap: () {
                       Navigator.pushNamed(context, Routes.projectAdd);
                     }),
                 ListTile(
+                    leading: Icon(Icons.archive, color: customColors.dueNone),
                     title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
                     onTap: () {
                       Navigator.pushNamed(context, Routes.projectArchive);
+                    }),
+                ListTile(
+                    leading: Icon(Icons.delete, color: customColors.dueNone),
+                    title: Text('Trash Bin', style: TextStyle(color: customColors.dueNone)),
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.trashbin);
                     }),
               ]));
             });

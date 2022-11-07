@@ -21,6 +21,7 @@ import 'screens/projectcompleted.dart';
 import 'screens/today.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
+import 'screens/trashbin.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
 
@@ -112,6 +113,10 @@ class DocketApp extends StatelessWidget {
               // Upcoming tasks in the next 28 days.
               if (settings.name == Routes.upcoming) {
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
+              }
+              // Trashbin
+              if (settings.name == Routes.trashbin) {
+                return MaterialPageRoute(builder: (context) => const TrashbinScreen());
               }
               // Task Add
               if (settings.name == Routes.taskAdd) {

@@ -31,6 +31,7 @@ class LocalDatabase {
   late ProjectDetailsView projectDetails;
   late ProjectArchiveView projectArchive;
   late CompletedTasksView completedTasks;
+  late TrashbinView trashbin;
   late ApiTokenCache apiToken;
   late ProfileCache profile;
 
@@ -43,6 +44,7 @@ class LocalDatabase {
     projectDetails = ProjectDetailsView(db, const Duration(hours: 1));
     projectArchive = ProjectArchiveView(db, const Duration(hours: 1));
     completedTasks = CompletedTasksView(db, const Duration(hours: 1));
+    trashbin = TrashbinView(db, const Duration(hours: 1));
     apiToken = ApiTokenCache(db, null);
     profile = ProfileCache(db, const Duration(hours: 1));
   }
@@ -78,6 +80,9 @@ class LocalDatabase {
       }
       views.add(UpcomingView.name);
     }
+    if (task.deletedAt != null) {
+      views.add(TrashbinView.name);
+    }
 
     return views;
   }
@@ -104,6 +109,9 @@ class LocalDatabase {
           break;
         case UpcomingView.name:
           futures.add(upcoming.clear());
+          break;
+        case TrashbinView.name:
+          futures.add(trashbin.clear());
           break;
         default:
           throw 'Unknown view key of $key';
@@ -167,6 +175,12 @@ class LocalDatabase {
     }
     await taskDetails.remove(id);
     await projectMap.decrement(task.projectSlug);
+
+    return _expireTaskViews(task);
+  }
+
+  Future<void> undeleteTask(Task task) async {
+    await trashbin.clear();
 
     return _expireTaskViews(task);
   }
@@ -309,6 +323,32 @@ class UpcomingView extends ViewCache<TaskViewData> {
   @override
   Future<void> set(TaskViewData data) async {
     return _set(data.toMap());
+  }
+
+  Future<TaskViewData> get() async {
+    var data = await _get();
+    // Likely loading.
+    if (data == null || data['tasks'] == null) {
+      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
+    }
+    return TaskViewData.fromMap(data);
+  }
+}
+
+class TrashbinView extends ViewCache<TaskViewData> {
+  static const String name = 'trashbin';
+
+  TrashbinView(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Refresh the data stored for the 'today' view.
+  @override
+  Future<void> set(TaskViewData todayData) async {
+    return _set(todayData.toMap());
   }
 
   Future<TaskViewData> get() async {

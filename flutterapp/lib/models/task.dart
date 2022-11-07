@@ -15,6 +15,7 @@ class Task {
   int dayOrder;
   bool evening;
   bool completed;
+  DateTime? deletedAt;
   List<Subtask> subtasks;
   int subtaskCount;
   int completeSubtaskCount;
@@ -33,6 +34,7 @@ class Task {
     required this.dayOrder,
     required this.evening,
     required this.completed,
+    this.deletedAt,
     this.subtasks = const [],
     this.subtaskCount = 0,
     this.completeSubtaskCount = 0,
@@ -53,6 +55,7 @@ class Task {
       dayOrder: 0,
       evening: evening,
       completed: false,
+      deletedAt: null,
       subtasks: [],
     );
   }
@@ -67,6 +70,7 @@ class Task {
     var projectName = json['project_name'];
     projectName ??= json['project']['name'];
 
+    // TODO extract casting behavior into reusable functions.
     var evening = json['evening'];
     if (evening is int) {
       evening = evening == 0 ? false : true;
@@ -78,6 +82,10 @@ class Task {
     DateTime? dueOn;
     if (json['due_on'] != null) {
       dueOn = formatters.parseToLocal(json['due_on']);
+    }
+    DateTime? deletedAt;
+    if (json['deleted_at'] != null) {
+      dueOn = formatters.parseToLocal(json['deleted_at']);
     }
     List<Subtask> subtasks = [];
     if (json['subtasks'] != null &&
@@ -103,6 +111,7 @@ class Task {
       dayOrder: json['day_order'] ?? 0,
       evening: evening ?? false,
       completed: completed ?? false,
+      deletedAt: deletedAt,
       subtasks: subtasks,
       subtaskCount: subtaskCount,
       completeSubtaskCount: completeSubtaskCount,
@@ -159,6 +168,7 @@ class Task {
       'day_order': dayOrder,
       'evening': evening,
       'completed': completed,
+      'deleted_at': null,
       // Filtering to exclude any pending subtasks that didn't get saved.
       'subtasks': subtasks.where((sub) => sub.id != null).map((sub) => sub.toMap()).toList(),
       'subtask_count': subtaskCount,
