@@ -55,7 +55,7 @@ class CleanupCommand extends Command
             ->delete()
             ->where([
                 'Tasks.deleted_at IS NOT' => null,
-                'Tasks.deleted_at <' => $expires
+                'Tasks.deleted_at <' => $expires,
             ]);
         $result = $query->execute();
         $io->out("{$result->rowCount()} tasks were deleted");
