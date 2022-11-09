@@ -41,6 +41,7 @@ dependencies:
   drag_and_drop_lists: ^0.3.2
   flutter_markdown: ^0.6.10
   sentry_flutter: ^6.9.1
+  url_launcher: ^6.1.0
 
 dev_dependencies:
   flutter_test:

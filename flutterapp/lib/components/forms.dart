@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:docket/theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:docket/components/dueon.dart';
 import 'package:docket/dialogs/changedueon.dart';
@@ -113,6 +114,7 @@ class _MarkdownInputState extends State<MarkdownInput> {
           key: const ValueKey('markdown-preview'),
           data: body,
           selectable: true,
+          onTapLink: _onTapLink,
           onTapText: () {
             setState(() {
               _editing = true;
@@ -139,5 +141,12 @@ class _MarkdownInputState extends State<MarkdownInput> {
             });
           }
         });
+  }
+
+  void _onTapLink(String url, String? x, String? y) async {
+    var uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 }
