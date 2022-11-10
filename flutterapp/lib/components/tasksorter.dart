@@ -151,6 +151,13 @@ class TaskSorter extends StatelessWidget {
   }
 }
 
+// Need to use this to set the icons instead of icon components.
+enum TaskSortIcon {
+  warning,
+  evening,
+  none,
+}
+
 /// Metadata container for building sortable task lists.
 class TaskSortMetadata<T> {
   /// Enable if a task group can be dragsorted as well.
@@ -161,6 +168,7 @@ class TaskSortMetadata<T> {
   final T? data;
 
   /// Icon to show on the left of the heading.
+  /// TODO make into TaskSortIcon
   final Widget? icon;
 
   /// Title shown in large bold type.
