@@ -9,7 +9,6 @@ import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/tasksorter.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 import 'package:docket/screens/today_view_model.dart';
@@ -30,12 +29,11 @@ class _TodayScreenState extends State<TodayScreen> {
   void initState() {
     super.initState();
 
-    var session = Provider.of<SessionProvider>(context, listen: false);
-    viewmodel = TodayViewModel(session.database, session);
-    _refresh();
+    viewmodel = Provider.of<TodayViewModel>(context, listen: false);
+    _refresh(viewmodel);
   }
 
-  Future<void> _refresh() async {
+  Future<void> _refresh(TodayViewModel viewmodel) async {
     var today = DateUtils.dateOnly(DateTime.now());
     _newTask = Task.blank(dueOn: today);
 
@@ -69,21 +67,18 @@ class _TodayScreenState extends State<TodayScreen> {
       }
       SystemChrome.setSystemUIOverlayStyle(theme.appBarTheme.systemOverlayStyle!);
     };
-
-    return ChangeNotifierProvider<TodayViewModel>.value(
-        value: viewmodel,
-        child: Consumer<TodayViewModel>(builder: (context, vm, child) {
-          return buildScreen(context);
-        }));
+    return Consumer<TodayViewModel>(
+      builder: buildScreen,
+    );
   }
 
-  Widget buildScreen(BuildContext context) {
+  Widget buildScreen(BuildContext context, TodayViewModel viewmodel, Widget? _) {
     Widget body;
     if (viewmodel.loading) {
       body = const LoadingIndicator();
     } else {
       body = RefreshIndicator(
-          onRefresh: _refresh,
+          onRefresh: () => _refresh(viewmodel),
           child: TaskSorter(
               taskLists: viewmodel.taskLists,
               overdue: viewmodel.overdue,

@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:json_cache/json_cache.dart';
+import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
 import 'package:docket/formatters.dart' as formatters;
@@ -156,7 +157,7 @@ class LocalDatabase {
         futures.add(projectDetails.remove(task.projectSlug));
       }
     }
-    // TODO this should increment the task totals.
+    // TODO this should increment the project task totals.
 
     await Future.wait(futures);
   }
@@ -225,7 +226,7 @@ class LocalDatabase {
 }
 
 /// Abstract class that will act as the base of the ViewCache based database implementation.
-abstract class ViewCache<T> {
+abstract class ViewCache<T> extends ChangeNotifier {
   late JsonCache _database;
   Duration? duration;
 
@@ -255,6 +256,8 @@ abstract class ViewCache<T> {
     var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
     _state = data;
     await _database.refresh(keyName(), payload);
+
+    notifyListeners();
   }
 
   /// Refresh the data stored for the 'today' view.
@@ -273,7 +276,8 @@ abstract class ViewCache<T> {
 
   Future<void> clear() async {
     _state = null;
-    return _database.remove(keyName());
+    await _database.remove(keyName());
+    notifyListeners();
   }
 
   /// Get the keyname for this viewcache,

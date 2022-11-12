@@ -122,7 +122,7 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 0, 1);
+      await viewmodel.reorderTask(0, 0, 1, 0);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));

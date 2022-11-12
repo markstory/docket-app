@@ -1,4 +1,5 @@
 import 'dart:developer' as dev;
+import 'package:docket/screens/today_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -69,6 +70,12 @@ class EntryPoint extends StatelessWidget {
               provider!.setSession(session);
               return provider;
             }),
+        ChangeNotifierProxyProvider<SessionProvider, TodayViewModel>(
+          create: (_) => TodayViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          })
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );

@@ -25,16 +25,17 @@ class TodayViewModel extends ChangeNotifier {
   TodayViewModel(LocalDatabase database, this.session) {
     _database = database;
     _taskLists = [];
+    _database.today.addListener(() async {
+      loadData();
+    });
   }
 
   bool get loading => _loading;
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
 
-  setLoading(bool loading) async {
-    _loading = loading;
-
-    notifyListeners();
+  setSession(SessionProvider value) {
+    session = value;
   }
 
   /// Load data. Should be called during initState()
@@ -49,7 +50,7 @@ class TodayViewModel extends ChangeNotifier {
   }
 
   /// Re-order a task
-  Future<void> reorderTask(int oldListIndex, int oldItemIndex, int newListIndex, int newItemIndex) async {
+  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.
@@ -58,10 +59,11 @@ class TodayViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
-    return actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(session!.apiToken, task, updates);
+
+    notifyListeners();
   }
 
   /// Move a task out of overdue into another section
@@ -82,14 +84,15 @@ class TodayViewModel extends ChangeNotifier {
     var updates = _taskLists[listIndex].onReceive(task, itemIndex);
     _overdue?.tasks.remove(task);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
-    return actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(session!.apiToken, task, updates);
+
+    notifyListeners();
   }
 
   Future<void> refresh() async {
-    setLoading(true);
+    _loading = true;
     var result = await Future.wait([
       actions.fetchTodayTasks(session!.apiToken),
       actions.fetchProjects(session!.apiToken),
@@ -99,12 +102,12 @@ class TodayViewModel extends ChangeNotifier {
 
     _database.projectMap.replace(projects);
     _buildTaskLists(tasksView);
-    setLoading(false);
   }
 
   void _buildTaskLists(TaskViewData data) {
     var today = DateUtils.dateOnly(DateTime.now());
 
+    _overdue = null;
     var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
     if (overdueTasks.isNotEmpty) {
       _overdue = TaskSortMetadata(
@@ -154,10 +157,8 @@ class TodayViewModel extends ChangeNotifier {
           return updates;
         });
 
-    _taskLists
-      ..add(todayTasks)
-      ..add(eveningTasks);
-
+    _taskLists = [todayTasks, eveningTasks];
+    _loading = false;
     notifyListeners();
   }
 }
