@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
+import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/models/calendaritem.dart';
@@ -120,11 +121,24 @@ class TaskSorter extends StatelessWidget {
 
     children.add(SizedBox(width: space(2.5)));
 
-    if (taskMeta.icon != null) {
+    var icon = taskMeta.icon;
+    switch (taskMeta.iconStyle) {
+      case TaskSortIcon.warning:
+        icon = Icon(Icons.warning_outlined, color: docketColors.actionDelete);
+      break;
+      case TaskSortIcon.evening:
+        icon = Icon(Icons.bedtime_outlined, color: docketColors.dueEvening);
+      break;
+      case TaskSortIcon.none:
+      default:
+    }
+
+    if (icon != null) {
       children
-        ..add(taskMeta.icon!)
+        ..add(icon)
         ..add(SizedBox(width: space(0.5)));
     }
+
     if (taskMeta.title != null) {
       text.add(Text(taskMeta.title ?? '', style: theme.textTheme.titleLarge));
       text.add(SizedBox(width: space(1)));
@@ -143,6 +157,15 @@ class TaskSorter extends StatelessWidget {
     if (taskMeta.button != null) {
       children.add(taskMeta.button!);
     }
+    if (taskMeta.showButton == true) {
+      var buttonArgs = taskMeta.buttonArgs ?? const TaskSortButtonArgs();
+      children.add(TaskAddButton(
+          projectId: buttonArgs.projectId,
+          sectionId: buttonArgs.sectionId,
+          dueOn: buttonArgs.dueOn,
+          evening: buttonArgs.evening,
+        ));
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,6 +179,15 @@ enum TaskSortIcon {
   warning,
   evening,
   none,
+}
+
+class TaskSortButtonArgs {
+  final DateTime? dueOn;
+  final bool? evening;
+  final int? projectId;
+  final int? sectionId;
+
+  const TaskSortButtonArgs({this.dueOn, this.evening, this.projectId, this.sectionId});
 }
 
 /// Metadata container for building sortable task lists.
@@ -187,7 +219,7 @@ class TaskSortMetadata<T> {
 
   final bool? showButton;
 
-  final Map<String, Object?>? buttonArgs;
+  final TaskSortButtonArgs? buttonArgs;
 
   final List<Task> tasks;
 

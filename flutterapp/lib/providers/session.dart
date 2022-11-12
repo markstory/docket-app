@@ -17,6 +17,8 @@ class SessionProvider extends ChangeNotifier {
     }
   }
 
+  LocalDatabase get database => _database;
+
   String get apiToken {
     if (_apiToken == null) {
       throw Exception('Cannot get token it is not set.');

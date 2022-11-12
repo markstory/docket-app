@@ -138,7 +138,7 @@ class TodayViewModel extends ChangeNotifier {
         iconStyle: TaskSortIcon.evening,
         title: 'This Evening',
         showButton: true,
-        buttonArgs: {"dueOn": today, "evening": true},
+        buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
         tasks: data.tasks.where((task) {
           return task.evening && !overdueTasks.contains(task);
         }).toList(),
