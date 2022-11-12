@@ -38,14 +38,13 @@ class TodayViewModel extends ChangeNotifier {
   }
 
   /// Load data. Should be called during initState()
-  void loadData() async {
-    setLoading(true);
+  Future<void> loadData() async {
     var taskView = await _database.today.get();
-    if (taskView.missingData && _loading == false) {
-      refresh();
-    }
     if (taskView.missingData == false) {
       _buildTaskLists(taskView);
+    }
+    if (taskView.missingData && _loading == false) {
+      return refresh();
     }
   }
 
@@ -105,13 +104,11 @@ class TodayViewModel extends ChangeNotifier {
 
   void _buildTaskLists(TaskViewData data) {
     var today = DateUtils.dateOnly(DateTime.now());
-    // TODO this needs to be cleaned up.
-    var customColors = getCustomColors(context);
 
     var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
     if (overdueTasks.isNotEmpty) {
       _overdue = TaskSortMetadata(
-          icon: Icon(Icons.warning_outlined, color: customColors.actionDelete),
+          iconStyle: TaskSortIcon.warning,
           title: 'Overdue',
           tasks: overdueTasks,
           onReceive: (Task task, int newIndex) {
@@ -138,9 +135,10 @@ class TodayViewModel extends ChangeNotifier {
         });
 
     var eveningTasks = TaskSortMetadata(
-        icon: Icon(Icons.bedtime_outlined, color: customColors.dueEvening),
+        iconStyle: TaskSortIcon.evening,
         title: 'This Evening',
-        button: TaskAddButton(dueOn: today, evening: true),
+        showButton: true,
+        buttonArgs: {"dueOn": today, "evening": true},
         tasks: data.tasks.where((task) {
           return task.evening && !overdueTasks.contains(task);
         }).toList(),

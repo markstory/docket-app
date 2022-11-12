@@ -167,8 +167,10 @@ class TaskSortMetadata<T> {
   /// Used for containing the Section on project details.
   final T? data;
 
-  /// Icon to show on the left of the heading.
-  /// TODO make into TaskSortIcon
+  /// The icon style to use.
+  final TaskSortIcon? iconStyle;
+
+  /// @deprecated Icon to show on the left of the heading.
   final Widget? icon;
 
   /// Title shown in large bold type.
@@ -180,7 +182,12 @@ class TaskSortMetadata<T> {
 
   /// Header button shown after title. Can also be a Row
   /// if more than one button is required.
+  /// @deprecated
   final Widget? button;
+
+  final bool? showButton;
+
+  final Map<String, Object?>? buttonArgs;
 
   final List<Task> tasks;
 
@@ -197,6 +204,9 @@ class TaskSortMetadata<T> {
     this.subtitle,
     this.button,
     this.data,
+    this.iconStyle,
+    this.showButton,
+    this.buttonArgs,
     this.tasks = const [],
     this.calendarItems = const [],
     this.canDrag = false,
