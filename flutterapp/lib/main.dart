@@ -1,5 +1,4 @@
 import 'dart:developer' as dev;
-import 'package:docket/screens/today_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -20,10 +19,12 @@ import 'screens/projectarchive.dart';
 import 'screens/projectedit.dart';
 import 'screens/projectcompleted.dart';
 import 'screens/today.dart';
+import 'screens/today_view_model.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
 import 'screens/trashbin.dart';
 import 'screens/upcoming.dart';
+import 'screens/upcoming_view_model.dart';
 import 'screens/unknown.dart';
 
 Future<void> main() async {
@@ -75,7 +76,13 @@ class EntryPoint extends StatelessWidget {
           update: (_, session, viewmodel) {
             viewmodel!.setSession(session);
             return viewmodel;
-          })
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
+          create: (_) => UpcomingViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );

@@ -1,3 +1,4 @@
+import 'package:docket/screens/upcoming_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -6,13 +7,9 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
-import 'package:docket/components/taskaddbutton.dart';
 import 'package:docket/components/tasksorter.dart';
-import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/projects.dart';
 import 'package:docket/providers/tasks.dart';
-import 'package:docket/grouping.dart' as grouping;
 
 class UpcomingScreen extends StatefulWidget {
   const UpcomingScreen({super.key});
@@ -22,158 +19,58 @@ class UpcomingScreen extends StatefulWidget {
 }
 
 class _UpcomingScreenState extends State<UpcomingScreen> {
-  List<TaskSortMetadata> _taskLists = [];
+  late UpcomingViewModel viewmodel;
 
   @override
   void initState() {
     super.initState();
-    _refresh();
+
+    viewmodel = Provider.of<UpcomingViewModel>(context, listen: false);
+    _refresh(viewmodel);
   }
 
-  Future<List<void>> _refresh() async {
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    return Future.wait([
-      tasksProvider.fetchUpcoming(),
-      projectsProvider.fetchProjects(),
-    ]);
-  }
-
-  void _buildTaskLists(TaskViewData data) {
-    var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
-    var grouped = grouperFunc(data.tasks);
-    var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
-
-    for (var group in grouped) {
-      var groupDate = group.key;
-      var isEvening = groupDate.contains('evening:');
-      if (isEvening) {
-        groupDate = groupDate.replaceFirst('evening:', '');
-      }
-      var dateVal = DateTime.parse('$groupDate 00:00:00');
-
-      late TaskSortMetadata metadata;
-
-      if (isEvening) {
-        // Evening sections only have a subtitle and no calendar items.
-        metadata = TaskSortMetadata(
-            subtitle: 'Evening',
-            tasks: group.items,
-            onReceive: (Task task, int newIndex) {
-              task.evening = true;
-              task.dayOrder = newIndex;
-              task.dueOn = dateVal;
-
-              return {'evening': true, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
-            });
-      } else {
-        var title = formatters.compactDate(dateVal);
-        var subtitle = formatters.monthDay(dateVal);
-        if (title == subtitle) {
-          subtitle = '';
-        }
-
-        metadata = TaskSortMetadata(
-            title: title,
-            subtitle: subtitle,
-            button: TaskAddButton(dueOn: dateVal),
-            tasks: group.items,
-            calendarItems: groupedCalendarItems.get(groupDate),
-            onReceive: (Task task, int newIndex) {
-              task.evening = false;
-              task.dayOrder = newIndex;
-              task.dueOn = dateVal;
-
-              return {'evening': false, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
-            });
-      }
-      _taskLists.add(metadata);
-    }
+  Future<void> _refresh(UpcomingViewModel viewmodel) async {
+    return viewmodel.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<UpcomingViewModel>(
+      builder: buildScreen,
+    );
+  }
+
+  Widget buildScreen(BuildContext context, UpcomingViewModel viewmodel, Widget? _) {
     return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var taskViewData = tasksProvider.getUpcoming();
       var theme = Theme.of(context);
+      Widget body;
+      if (viewmodel.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = RefreshIndicator(
+          onRefresh: () => _refresh(viewmodel),
+          child: TaskSorter(
+              taskLists: viewmodel.taskLists,
+              buildItem: (Task task) {
+                return TaskItem(task: task, showDate: false, showProject: true);
+              },
+              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+              },
+              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                var itemChild = newItem.child as TaskItem;
+                var task = itemChild.task;
+                await viewmodel.insertAt(task, listIndex, itemIndex);
+              }),
+        );
+      }
 
       return Scaffold(
         appBar: AppBar(backgroundColor: theme.colorScheme.secondary, title: const Text('Upcoming')),
         drawer: const AppDrawer(),
         // TODO add scroll tracking for sections and update add button.
         floatingActionButton: const FloatingCreateTaskButton(),
-        body: FutureBuilder<TaskViewData>(
-            future: taskViewData,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Card(child: Text("Something terrible happened"));
-              }
-              var data = snapshot.data;
-              // Loading state
-              if (data == null || data.pending || data.missingData) {
-                // Reset internal state but don't re-render
-                // as we will rebuild the state when the future resolves.
-                _taskLists = [];
-
-                // Reload if we were missing data and not an error
-                if (data?.missingData ?? false) {
-                  tasksProvider.fetchUpcoming();
-                }
-                return const LoadingIndicator();
-              }
-
-              if (_taskLists.isEmpty) {
-                _buildTaskLists(data);
-              }
-
-              return RefreshIndicator(
-                onRefresh: _refresh,
-                child: TaskSorter(
-                    taskLists: _taskLists,
-                    buildItem: (Task task) {
-                      return TaskItem(task: task, showDate: false, showProject: true);
-                    },
-                    onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                      var task = _taskLists[oldListIndex].tasks[oldItemIndex];
-
-                      // Get the changes that need to be made on the server.
-                      var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
-
-                      // Update local state assuming server will be ok.
-                      setState(() {
-                        _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                        _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                      });
-
-                      // Update the moved task and reload from server async
-                      await tasksProvider.move(task, updates);
-                      tasksProvider.fetchUpcoming();
-                    },
-                    onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                      // Calculate position of adding to a end.
-                      // Generally this will be zero but it is possible to add to the
-                      // bottom of a populated list too.
-                      var targetList = _taskLists[listIndex];
-                      if (itemIndex == -1) {
-                        itemIndex = targetList.tasks.length;
-                      }
-
-                      var itemChild = newItem.child as TaskItem;
-                      var task = itemChild.task;
-
-                      // Get the changes that need to be made on the server.
-                      var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                      setState(() {
-                        _taskLists[listIndex].tasks.insert(itemIndex, task);
-                      });
-
-                      // Update the moved task and reload from server async
-                      await tasksProvider.move(task, updates);
-                      tasksProvider.fetchUpcoming();
-                    }),
-              );
-            }),
+        body: body,
       );
     });
   }
