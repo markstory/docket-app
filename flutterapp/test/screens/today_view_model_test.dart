@@ -43,9 +43,6 @@ String extractTitle(Task task) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late TasksProvider provider;
-
-  int listenerCallCount = 0;
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
@@ -53,15 +50,6 @@ void main() {
 
   file = File('test_resources/project_list.json');
   final projectListResponseFixture = file.readAsStringSync();
-
-  file = File('test_resources/project_details.json');
-  final projectDetailsResponseFixture = file.readAsStringSync();
-
-  file = File('test_resources/task_create_today.json');
-  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
-
-  file = File('test_resources/subtask_update.json');
-  final subtaskUpdateResponse = file.readAsStringSync();
 
   Future<void> setTodayView(LocalDatabase db, List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
@@ -87,7 +75,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db, session, autoReload: false);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -118,7 +106,7 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       setTodayView(db, tasks);
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db, session, autoReload: false);
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
@@ -139,7 +127,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db, session, autoReload: false);
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
@@ -165,7 +153,7 @@ void main() {
       tasks.add(overdue);
       setTodayView(db, tasks);
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db, session, autoReload: false);
       await viewmodel.loadData();
 
       await viewmodel.moveOverdue(overdue, 0, 0);

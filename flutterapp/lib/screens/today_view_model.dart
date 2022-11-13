@@ -22,12 +22,15 @@ class TodayViewModel extends ChangeNotifier {
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
-  TodayViewModel(LocalDatabase database, this.session) {
+  TodayViewModel(LocalDatabase database, this.session, {autoReload=true}) {
     _database = database;
     _taskLists = [];
-    _database.today.addListener(() async {
-      loadData();
-    });
+
+    if (autoReload) {
+      _database.today.addListener(() async {
+        loadData();
+      });
+    }
   }
 
   bool get loading => _loading;
@@ -91,6 +94,7 @@ class TodayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
     var result = await Future.wait([
@@ -100,7 +104,10 @@ class TodayViewModel extends ChangeNotifier {
     var tasksView = result[0] as TaskViewData;
     var projects = result[1] as List<Project>;
 
-    _database.projectMap.replace(projects);
+    await Future.wait([
+      _database.projectMap.replace(projects),
+      _database.today.set(tasksView),
+    ]);
     _buildTaskLists(tasksView);
   }
 
