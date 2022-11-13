@@ -10,7 +10,7 @@ class Task {
   int? sectionId;
   String title;
   String body;
-  DateTime? dueOn;
+  DateTime? _dueOn;
   int childOrder;
   int dayOrder;
   bool evening;
@@ -31,7 +31,7 @@ class Task {
     this.sectionId,
     required this.title,
     required this.body,
-    this.dueOn,
+    dueOn,
     required this.childOrder,
     required this.dayOrder,
     required this.evening,
@@ -40,7 +40,7 @@ class Task {
     this.subtasks = const [],
     this.subtaskCount = 0,
     this.completeSubtaskCount = 0,
-  });
+  }) : _dueOn = dueOn;
 
   factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
     return Task(
@@ -154,7 +154,7 @@ class Task {
   Map<String, Object?> toMap() {
     String? dueOnDate;
     if (dueOn != null) {
-      dueOnDate = formatters.dateString(dueOn!);
+      dueOnDate = formatters.dateString(_dueOn!);
     }
     return {
       'id': id,
@@ -180,8 +180,9 @@ class Task {
 
   set dueOn(DateTime? value) {
     previousDueOn = dueOn;
-    dueOn = value;
+    _dueOn = value;
   }
+  DateTime? get dueOn => _dueOn;
 
   String get dateKey {
     if (dueOn == null) {
