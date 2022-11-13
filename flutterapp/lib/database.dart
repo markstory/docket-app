@@ -81,6 +81,15 @@ class LocalDatabase {
       }
       views.add(UpcomingView.name);
     }
+
+    if (task.previousDueOn != null) {
+      var delta = task.previousDueOn?.difference(now);
+      if (delta != null && delta.inDays <= 0) {
+        views.add(TodayView.name);
+      }
+      views.add(UpcomingView.name);
+    }
+
     if (task.deletedAt != null) {
       views.add(TrashbinView.name);
     }

@@ -20,6 +20,8 @@ class Task {
   int subtaskCount;
   int completeSubtaskCount;
 
+  DateTime? previousDueOn;
+
   Task({
     this.id,
     required this.projectId,
@@ -174,6 +176,11 @@ class Task {
       'subtask_count': subtaskCount,
       'complete_subtask_count': completeSubtaskCount,
     };
+  }
+
+  set dueOn(DateTime? value) {
+    previousDueOn = dueOn;
+    dueOn = value;
   }
 
   String get dateKey {
