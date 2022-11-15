@@ -14,7 +14,7 @@ class ProjectAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _saveProject(BuildContext context, Project project) async {
+    void saveProject(BuildContext context, Project project) async {
       var messenger = ScaffoldMessenger.of(context);
       var projects = Provider.of<ProjectsProvider>(context, listen: false);
 
@@ -41,7 +41,7 @@ class ProjectAddScreen extends StatelessWidget {
             padding: EdgeInsets.all(space(2)),
             child: ProjectForm(
               project: project,
-              onSave: (updated) => _saveProject(context, updated),
+              onSave: (updated) => saveProject(context, updated),
             )));
   }
 }

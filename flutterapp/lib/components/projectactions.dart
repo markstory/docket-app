@@ -25,20 +25,20 @@ class ProjectActions extends StatelessWidget {
     var projectProvider = Provider.of<ProjectsProvider>(context);
     var messenger = ScaffoldMessenger.of(context);
 
-    Future<void> _handleArchive() async {
+    Future<void> handleArchive() async {
       projectProvider.archive(project);
       messenger.showSnackBar(successSnackBar(context: context, text: 'Project Updated'));
     }
 
-    void _handleEdit() {
+    void handleEdit() {
       Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectDetailsArguments(project));
     }
 
-    void _handleViewCompleted() {
+    void handleViewCompleted() {
       Navigator.pushNamed(context, Routes.projectCompleted, arguments: ProjectDetailsArguments(project));
     }
 
-    void _handleAddSection() async {
+    void handleAddSection() async {
       try {
         await showCreateSectionDialog(context, project);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Section Created'));
@@ -51,10 +51,10 @@ class ProjectActions extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.edit: _handleEdit,
-        Menu.archive: _handleArchive,
-        Menu.addSection: _handleAddSection,
-        Menu.viewCompleted: _handleViewCompleted,
+        Menu.edit: handleEdit,
+        Menu.archive: handleArchive,
+        Menu.addSection: handleAddSection,
+        Menu.viewCompleted: handleViewCompleted,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {

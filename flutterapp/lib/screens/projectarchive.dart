@@ -82,7 +82,7 @@ class ArchivedProjectActions extends StatelessWidget {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
 
-    Future<void> _handleDelete() async {
+    Future<void> handleDelete() async {
       try {
         await projectsProvider.delete(project);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Project Deleted'));
@@ -91,7 +91,7 @@ class ArchivedProjectActions extends StatelessWidget {
       }
     }
 
-    Future<void> _handleUnarchive() async {
+    Future<void> handleUnarchive() async {
       try {
         await projectsProvider.unarchive(project);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Project Unarchived'));
@@ -102,8 +102,8 @@ class ArchivedProjectActions extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.unarchive: _handleUnarchive,
-        Menu.delete: _handleDelete,
+        Menu.unarchive: handleUnarchive,
+        Menu.delete: handleDelete,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {

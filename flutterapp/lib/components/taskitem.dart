@@ -81,14 +81,14 @@ class TaskActions extends StatelessWidget {
     var tasksProvider = Provider.of<TasksProvider>(context);
     var messenger = ScaffoldMessenger.of(context);
 
-    Future<void> _handleChangeProject() async {
+    Future<void> handleChangeProject() async {
       var projectId = await showChangeProjectDialog(context, task.projectId);
       task.projectId = projectId;
       tasksProvider.updateTask(task);
       messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     }
 
-    Future<void> _handleDelete() async {
+    Future<void> handleDelete() async {
       try {
         await tasksProvider.deleteTask(task);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Deleted'));
@@ -97,7 +97,7 @@ class TaskActions extends StatelessWidget {
       }
     }
 
-    Future<void> _handleReschedule() async {
+    Future<void> handleReschedule() async {
       var result = await showChangeDueOnDialog(context, task.dueOn, task.evening);
       task.dueOn = result.dueOn;
       task.evening = result.evening;
@@ -105,12 +105,12 @@ class TaskActions extends StatelessWidget {
       messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     }
 
-    Future<void> _handleRestore() async {
+    Future<void> handleRestore() async {
       return tasksProvider.undelete(task);
     }
 
     if (showRestore) {
-      return TextButton(onPressed: _handleRestore, child: const Text('Restore'));
+      return TextButton(onPressed: handleRestore, child: const Text('Restore'));
     }
 
     var theme = Theme.of(context);
@@ -118,9 +118,9 @@ class TaskActions extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.move: _handleChangeProject,
-        Menu.reschedule: _handleReschedule,
-        Menu.delete: _handleDelete,
+        Menu.move: handleChangeProject,
+        Menu.reschedule: handleReschedule,
+        Menu.delete: handleDelete,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {

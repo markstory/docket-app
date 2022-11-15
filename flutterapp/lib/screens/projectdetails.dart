@@ -215,7 +215,7 @@ class SectionActions extends StatelessWidget {
     var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
 
-    Future<void> _handleDelete() async {
+    Future<void> handleDelete() async {
       try {
         await projectsProvider.deleteSection(project, section);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Section Deleted'));
@@ -224,7 +224,7 @@ class SectionActions extends StatelessWidget {
       }
     }
 
-    Future<void> _handleEdit() async {
+    Future<void> handleEdit() async {
       try {
         await showRenameSectionDialog(context, project, section);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Section renamed'));
@@ -235,8 +235,8 @@ class SectionActions extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.edit: _handleEdit,
-        Menu.delete: _handleDelete,
+        Menu.edit: handleEdit,
+        Menu.delete: handleDelete,
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
