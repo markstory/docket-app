@@ -45,7 +45,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     if (slug != _slug) {
       _tasks = [];
       _slug = slug;
-      refresh();
+      _shouldReload = true;
     }
   }
 
@@ -58,6 +58,8 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
   /// Refresh from the server.
   Future<void> refresh() async {
+    assert(_slug.isNotEmpty, "A slug is required to load data");
+
     _loading = true;
     var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
     await _database.completedTasks.set(result);

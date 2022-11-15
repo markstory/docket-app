@@ -105,7 +105,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             }));
       }
 
-      if (dueOn != null) {
+      if (dueOn != null && !isToday) {
         var next = dueOn.add(const Duration(days: 1));
         items.add(ListTile(
             dense: true,

@@ -13,7 +13,7 @@ import 'package:docket/screens/projectcompleted_view_model.dart';
 ProjectWithTasks parseProjectDetails(String data) {
   var decoded = jsonDecode(data);
   if (!decoded.containsKey('project')) {
-    throw 'Cannot parse tasks without tasks key';
+    throw 'Cannot parse data without project key';
   }
 
   return ProjectWithTasks.fromMap(decoded);
@@ -35,30 +35,32 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home?completed=1') {
+        if (request.url.path == '/projects/home') {
           return Response(projectCompletedResponse, 200);
         }
-        throw "Unexpected request to ${request.url.path}";
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
       var viewmodel = ProjectCompletedViewModel(db, session);
       expect(viewmodel.tasks.length, equals(0));
 
+      viewmodel.setSlug('home');
       await viewmodel.loadData();
       expect(viewmodel.tasks.length, equals(2));
     });
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home?completed=1') {
+        if (request.url.path == '/projects/home') {
           return Response(projectCompletedResponse, 200);
         }
-        throw "Unexpected request to ${request.url.path}";
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
       var viewmodel = ProjectCompletedViewModel(db, session);
       expect(viewmodel.tasks.length, equals(0));
 
+      viewmodel.setSlug('home');
       await viewmodel.refresh();
       expect(viewmodel.tasks.length, equals(2));
     });
