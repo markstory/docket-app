@@ -48,6 +48,8 @@ class TrashbinViewModel extends ChangeNotifier {
     var result = await actions.fetchTrashbin(session!.apiToken);
     await _database.trashbin.set(result);
     _tasks = result.tasks;
+    _loading = false;
+
     notifyListeners();
   }
 }
