@@ -18,11 +18,13 @@ import 'screens/projectadd.dart';
 import 'screens/projectarchive.dart';
 import 'screens/projectedit.dart';
 import 'screens/projectcompleted.dart';
+import 'screens/projectcompleted_view_model.dart';
 import 'screens/today.dart';
 import 'screens/today_view_model.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
 import 'screens/trashbin.dart';
+import 'screens/trashbin_view_model.dart';
 import 'screens/upcoming.dart';
 import 'screens/upcoming_view_model.dart';
 import 'screens/unknown.dart';
@@ -79,6 +81,18 @@ class EntryPoint extends StatelessWidget {
           }),
         ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
           create: (_) => UpcomingViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, ProjectCompletedViewModel>(
+          create: (_) => ProjectCompletedViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, TrashbinViewModel>(
+          create: (_) => TrashbinViewModel(database, null),
           update: (_, session, viewmodel) {
             viewmodel!.setSession(session);
             return viewmodel;

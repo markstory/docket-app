@@ -235,6 +235,7 @@ class LocalDatabase {
 }
 
 /// Abstract class that will act as the base of the ViewCache based database implementation.
+/// Listeners will be notified when this view cache is cleared.
 abstract class ViewCache<T> extends ChangeNotifier {
   late JsonCache _database;
   Duration? duration;
@@ -265,8 +266,6 @@ abstract class ViewCache<T> extends ChangeNotifier {
     var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
     _state = data;
     await _database.refresh(keyName(), payload);
-
-    notifyListeners();
   }
 
   /// Refresh the data stored for the 'today' view.
@@ -279,10 +278,10 @@ abstract class ViewCache<T> extends ChangeNotifier {
       return null;
     }
     _state = payload['data'];
-
-    return payload['data'];
+    return _state;
   }
 
+  /// Clear the locally cached data. Will notify listeners as well.
   Future<void> clear() async {
     _state = null;
     await _database.remove(keyName());

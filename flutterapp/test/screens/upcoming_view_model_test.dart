@@ -11,7 +11,6 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/screens/upcoming_view_model.dart';
 
 // Parse a list response into a list of tasks.
@@ -68,7 +67,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = UpcomingViewModel(db, session, autoReload: false);
+      var viewmodel = UpcomingViewModel(db, session);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -95,7 +94,7 @@ void main() {
       var tasks = parseTaskList(tasksResponseFixture);
       setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db, session, autoReload: false);
+      var viewmodel = UpcomingViewModel(db, session);
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
@@ -113,7 +112,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = UpcomingViewModel(db, session, autoReload: false);
+      var viewmodel = UpcomingViewModel(db, session);
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
@@ -142,7 +141,7 @@ void main() {
       tasks.add(fresh);
       setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db, session, autoReload: false);
+      var viewmodel = UpcomingViewModel(db, session);
       await viewmodel.loadData();
       await viewmodel.insertAt(fresh, 0, 0);
       // We can't assert the list state afterwards, as data is refreshed

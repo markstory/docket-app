@@ -16,20 +16,21 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
+  /// Whether or not local data has been reset and we need to reload.
+  bool _shouldReload = false;
+
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
 
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
-  UpcomingViewModel(LocalDatabase database, this.session, {autoReload=true}) {
+  UpcomingViewModel(LocalDatabase database, this.session) {
     _database = database;
 
-    if (autoReload) {
-      _database.upcoming.addListener(() async {
-        loadData();
-      });
-    }
+    _database.upcoming.addListener(() async {
+      _shouldReload = true;
+    });
   }
 
   bool get loading => _loading;
@@ -46,7 +47,7 @@ class UpcomingViewModel extends ChangeNotifier {
     if (taskView.missingData == false) {
       _buildTaskLists(taskView);
     }
-    if (taskView.missingData && _loading == false) {
+    if (_shouldReload || (taskView.missingData && !_loading)) {
       return refresh();
     }
   }

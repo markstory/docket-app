@@ -6,9 +6,8 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/screens/projectcompleted_view_model.dart';
 
 class ProjectCompletedScreen extends StatefulWidget {
   final Project project;
@@ -20,50 +19,41 @@ class ProjectCompletedScreen extends StatefulWidget {
 }
 
 class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
+  late ProjectCompletedViewModel viewmodel;
+
   @override
   void initState() {
-    _refresh();
-
     super.initState();
+    viewmodel = Provider.of<ProjectCompletedViewModel>(context, listen: false);
+    viewmodel.setSlug(widget.project.slug);
+
+    _refresh(viewmodel);
   }
 
-  Future<List<void>> _refresh() {
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    return Future.wait([
-      projectsProvider.fetchCompletedTasks(widget.project.slug),
-    ]);
+  Future<void> _refresh(ProjectCompletedViewModel viewmodel) {
+    return viewmodel.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
-
-      projectsProvider.fetchCompletedTasks(widget.project.slug);
-      var projectFuture = projectsProvider.getCompletedTasks(widget.project.slug);
-
-      return FutureBuilder<ProjectWithTasks?>(
-          future: projectFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return buildWrapper(context: context, project: widget.project, child: const Card(child: Text("Something terrible happened")));
-            }
-            var data = snapshot.data;
-            if (data == null || data.pending || data.missingData) {
-              return buildWrapper(context: context, project: widget.project, child: const LoadingIndicator());
-            }
-
-            return buildWrapper(
-                context: context,
-                project: data.project,
-                child: ListView.builder(
-                    itemCount: data.tasks.length,
-                    prototypeItem: TaskItem(task: data.tasks.isNotEmpty ? data.tasks.first : Task.blank(), showDate: true),
-                    itemBuilder: (BuildContext context, int index) {
-                      return TaskItem(task: data.tasks[index], showDate: true);
-                    },
-                  ));
-          });
+    return Consumer<ProjectCompletedViewModel>(builder: (context, viewmodel, child) {
+      viewmodel.setSlug(widget.project.slug);
+      if (viewmodel.loading) {
+        return buildWrapper(context: context, project: widget.project, child: const LoadingIndicator());
+      }
+      return buildWrapper(
+          context: context,
+          project: widget.project,
+          child: ListView.builder(
+              itemCount: viewmodel.tasks.length,
+              prototypeItem: TaskItem(
+                task: viewmodel.tasks.isNotEmpty ? viewmodel.tasks.first : Task.blank(), 
+                showDate: true
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return TaskItem(task: viewmodel.tasks[index], showDate: true);
+              },
+            ));
     });
   }
 
@@ -78,7 +68,7 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
       ),
       drawer: const AppDrawer(),
       body: RefreshIndicator(
-        onRefresh: _refresh,
+        onRefresh: () => _refresh(viewmodel),
         child: child,
       ),
     );

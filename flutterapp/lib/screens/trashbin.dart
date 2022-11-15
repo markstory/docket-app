@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskitem.dart';
-import 'package:docket/models/task.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/screens/trashbin_view_model.dart';
 
 class TrashbinScreen extends StatefulWidget {
   const TrashbinScreen({super.key});
@@ -16,52 +15,47 @@ class TrashbinScreen extends StatefulWidget {
 }
 
 class _TrashbinScreenState extends State<TrashbinScreen> {
+  late TrashbinViewModel viewmodel;
+
   @override
   void initState() {
     super.initState();
+    viewmodel = Provider.of<TrashbinViewModel>(context, listen: false);
 
-    _refresh();
+    _refresh(viewmodel);
   }
 
-  Future<void> _refresh() {
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-
-    return tasksProvider.fetchTrashbin();
+  Future<void> _refresh(TrashbinViewModel viewmodel) {
+    return viewmodel.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var tasksFuture = tasksProvider.getTrashbin();
+    return Consumer<TrashbinViewModel>(builder: (context, viewmodel, child) {
       var colors = getCustomColors(context);
+      Widget body;
+      if (viewmodel.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = RefreshIndicator(
+            onRefresh: () => _refresh(viewmodel),
+            child: ListView(
+              children: viewmodel.tasks
+                  .map(
+                    (task) => TaskItem(task: task, showProject: true, showDate: true, showRestore: true),
+                  )
+                  .toList(),
+            ));
+      }
 
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: colors.disabledText,
-            title: const Text('Trash Bin'),
-          ),
-          drawer: const AppDrawer(),
-          body: FutureBuilder<TaskViewData?>(
-              future: tasksFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Card(child: Text("Something terrible happened"));
-                }
-                var data = snapshot.data;
-                if (data == null) {
-                  return const LoadingIndicator();
-                }
-                return RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: ListView(
-                    children: data.tasks
-                        .map(
-                          (task) => TaskItem(task: task, showProject: true, showDate: true, showRestore: true),
-                        )
-                        .toList(),
-                  ),
-                );
-              }));
+        appBar: AppBar(
+          backgroundColor: colors.disabledText,
+          title: const Text('Trash Bin'),
+        ),
+        drawer: const AppDrawer(),
+        body: body,
+      );
     });
   }
 }
