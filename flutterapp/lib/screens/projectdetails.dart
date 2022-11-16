@@ -12,11 +12,10 @@ import 'package:docket/components/taskitem.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/components/projectactions.dart';
 import 'package:docket/dialogs/renamesection.dart';
-import 'package:docket/grouping.dart' as grouping;
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/tasks.dart';
+import 'package:docket/screens/projectdetails_view_model.dart';
 import 'package:docket/theme.dart';
 
 class ProjectDetailsScreen extends StatefulWidget {
@@ -29,156 +28,66 @@ class ProjectDetailsScreen extends StatefulWidget {
 }
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
-  List<TaskSortMetadata<Section>> _taskLists = [];
   Task? _newTask;
+  late ProjectDetailsViewModel viewmodel;
 
   @override
   void initState() {
     super.initState();
-
-    _refresh();
+    viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
+    viewmodel.setSlug(widget.project.slug);
+    viewmodel.refresh();
   }
 
-  Future<List<void>> _refresh() {
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    _taskLists = [];
-    return Future.wait([
-      projectsProvider.fetchBySlug(widget.project.slug),
-      projectsProvider.fetchProjects(),
-    ]);
-  }
-
-  void _buildTaskLists(ProjectWithTasks data) {
-    _newTask = Task.blank(projectId: data.project.id);
-    _taskLists = [];
-
-    var grouped = grouping.groupTasksBySection(data.project.sections, data.tasks);
-    for (var group in grouped) {
-      late TaskSortMetadata<Section> metadata;
-      if (group.section == null) {
-        metadata = TaskSortMetadata(
-            title: group.section?.name ?? '',
-            tasks: group.tasks,
-            onReceive: (Task task, int newIndex) {
-              task.childOrder = newIndex;
-              task.sectionId = null;
-              return {'child_order': newIndex, 'section_id': null};
-            });
-      } else {
-        metadata = TaskSortMetadata(
-            canDrag: true,
-            title: group.section?.name ?? '',
-            tasks: group.tasks,
-            data: group.section,
-            onReceive: (Task task, int newIndex) {
-              task.childOrder = newIndex;
-              task.sectionId = group.section?.id;
-              return {'child_order': newIndex, 'section_id': task.sectionId};
-            });
-      }
-      _taskLists.add(metadata);
-    }
+  Future<void> _refresh(ProjectDetailsViewModel view) {
+    return view.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProjectsProvider, TasksProvider>(builder: (context, projectsProvider, tasksProvider, child) {
-      var projectFuture = projectsProvider.getBySlug(widget.project.slug);
+    return Consumer<ProjectDetailsViewModel>(builder: (context, viewmodel, child) {
+      if (viewmodel.loading) {
+        return buildWrapper(
+          project: widget.project,
+          child: const LoadingIndicator(),
+        );
+      }
 
-      return FutureBuilder<ProjectWithTasks?>(
-          future: projectFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return buildWrapper(project: widget.project, child: const Card(child: Text("Something terrible happened")));
-            }
-            var project = snapshot.data;
-            if (project == null || project.pending || project.missingData) {
-              _taskLists = [];
-              return buildWrapper(project: widget.project, child: const LoadingIndicator());
-            }
-            // See if this fixes sections dropping off.
-            if (_taskLists.isEmpty) {
-              _buildTaskLists(project);
-            }
+      return buildWrapper(
+          project: viewmodel.project,
+          child: TaskSorter(
+              taskLists: viewmodel.taskLists,
+              buildItem: (Task task) {
+                return TaskItem(task: task, showDate: true);
+              },
+              buildHeader: (TaskSortMetadata metadata) {
+                var data = metadata.data as Section?;
+                if (data == null) {
+                  return const SizedBox(width: 0, height: 0);
+                }
+                return Padding(
+                    padding: EdgeInsets.only(left: space(2.5), right: space(1)),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Row(children: [
+                        Text(metadata.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        TaskAddButton(projectId: viewmodel.project.id, sectionId: data.id),
+                      ]),
+                      SectionActions(viewmodel.project, data),
+                    ]));
+              },
+              onListReorder: (int oldIndex, int newIndex) async {
+                await viewmodel.moveSection(oldIndex, newIndex);
+              },
+              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+                await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+              },
+              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                var itemChild = newItem.child as TaskItem;
+                var task = itemChild.task;
 
-            return buildWrapper(
-                project: project.project,
-                child: TaskSorter(
-                    taskLists: _taskLists,
-                    buildItem: (Task task) {
-                      return TaskItem(task: task, showDate: true);
-                    },
-                    buildHeader: (TaskSortMetadata metadata) {
-                      var data = metadata.data as Section?;
-                      if (data == null) {
-                        return const SizedBox(width: 0, height: 0);
-                      }
-                      return Padding(
-                          padding: EdgeInsets.only(left: space(2.5), right: space(1)),
-                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                            Row(children: [
-                              Text(metadata.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              TaskAddButton(projectId: project.project.id, sectionId: data.id),
-                            ]),
-                            SectionActions(project.project, data),
-                          ]));
-                    },
-                    onListReorder: (int oldIndex, int newIndex) async {
-                      // Reduce by one as the 0th section is 'root'
-                      // which is not a proper section on the server.
-                      newIndex -= 1;
-                      var metadata = _taskLists[oldIndex];
-                      setState(() {
-                        _taskLists.removeAt(oldIndex);
-                        _taskLists.insert(newIndex, metadata);
-                      });
-                      var section = metadata.data;
-                      if (section == null) {
-                        return;
-                      }
-                      await projectsProvider.moveSection(project.project, section, newIndex);
-                    },
-                    onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                      var task = _taskLists[oldListIndex].tasks[oldItemIndex];
-
-                      // Get the changes that need to be made on the server.
-                      var updates = _taskLists[oldListIndex].onReceive(task, newItemIndex);
-
-                      // Update local state assuming server will be ok.
-                      setState(() {
-                        _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-                        _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-                      });
-
-                      // Update the moved task and reload from server async
-                      await tasksProvider.move(task, updates);
-                      projectsProvider.fetchBySlug(widget.project.slug);
-                    },
-                    onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                      // Calculate position of adding to a end.
-                      // Generally this will be zero but it is possible to add to the
-                      // bottom of a populated list too.
-                      var targetList = _taskLists[listIndex];
-                      if (itemIndex == -1) {
-                        itemIndex = targetList.tasks.length;
-                      }
-
-                      var itemChild = newItem.child as TaskItem;
-                      var task = itemChild.task;
-
-                      // Get the changes that need to be made on the server.
-                      var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-                      setState(() {
-                        _taskLists[listIndex].tasks.insert(itemIndex, task);
-                      });
-
-                      // Update the moved task and reload from server async
-                      await tasksProvider.move(task, updates);
-                      projectsProvider.fetchBySlug(widget.project.slug);
-                    }));
+                await viewmodel.moveInto(task, listIndex, itemIndex);
+              }));
           });
-    });
   }
 
   Widget buildWrapper({required Widget child, required Project project}) {
@@ -193,7 +102,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       // TODO add scroll tracking for sections and update add button.
       floatingActionButton: FloatingCreateTaskButton(task: _newTask),
       body: RefreshIndicator(
-        onRefresh: _refresh,
+        onRefresh: () => _refresh(viewmodel),
         child: child,
       ),
     );

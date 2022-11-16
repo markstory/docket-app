@@ -33,11 +33,11 @@ class _TodayScreenState extends State<TodayScreen> {
     _refresh(viewmodel);
   }
 
-  Future<void> _refresh(TodayViewModel viewmodel) async {
+  Future<void> _refresh(TodayViewModel view) async {
     var today = DateUtils.dateOnly(DateTime.now());
     _newTask = Task.blank(dueOn: today);
 
-    return viewmodel.refresh();
+    return view.refresh();
   }
 
   @override
