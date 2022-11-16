@@ -41,28 +41,27 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
         body = const LoadingIndicator();
       } else {
         body = RefreshIndicator(
-                  onRefresh: () => viewmodel.refresh(),
-                  child: ListView(
-                    children: viewmodel.projects
-                        .map((project) => ListTile(
-                              title: ProjectBadge(text: project.name, color: project.color),
-                              trailing: ArchivedProjectActions(project),
-                            ))
-                        .toList(),
-                  ),
-                );
-
+          onRefresh: () => viewmodel.refresh(),
+          child: ListView(
+            children: viewmodel.projects
+                .map((project) => ListTile(
+                      title: ProjectBadge(text: project.name, color: project.color),
+                      trailing: ArchivedProjectActions(project),
+                    ))
+                .toList(),
+          ),
+        );
       }
 
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: colors.disabledText,
-            title: const Text('Archived Projects'),
-          ),
-          drawer: const AppDrawer(),
-          body: body,
-        );
-      });
+        appBar: AppBar(
+          backgroundColor: colors.disabledText,
+          title: const Text('Archived Projects'),
+        ),
+        drawer: const AppDrawer(),
+        body: body,
+      );
+    });
   }
 }
 
