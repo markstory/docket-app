@@ -8,7 +8,6 @@ import 'package:docket/components/tasksorter.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/grouping.dart' as grouping;
 
-
 class ProjectDetailsViewModel extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
@@ -41,6 +40,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     }
     return p;
   }
+
   String get slug {
     var s = _slug;
     if (s == null) {
@@ -48,6 +48,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     }
     return s;
   }
+
   bool get loading => _loading;
   List<TaskSortMetadata> get taskLists => _taskLists;
 
@@ -112,7 +113,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
-
 
   /// Re-order a task
   Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
