@@ -8,6 +8,7 @@ import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/screens/projectarchive_view_model.dart';
 
 class ProjectArchiveScreen extends StatefulWidget {
   const ProjectArchiveScreen({super.key});
@@ -17,45 +18,32 @@ class ProjectArchiveScreen extends StatefulWidget {
 }
 
 class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
+  late ProjectArchiveViewModel viewmodel;
+
   @override
   void initState() {
     super.initState();
 
-    _refresh();
+    viewmodel = Provider.of<ProjectArchiveViewModel>(context, listen: false);
+    _refresh(viewmodel);
   }
 
-  Future<void> _refresh() {
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    return projectsProvider.fetchArchived();
+  Future<void> _refresh(ProjectArchiveViewModel view) {
+    return view.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectsProvider>(builder: (context, projectsProvider, child) {
-      var projectFuture = projectsProvider.getArchived();
+    return Consumer<ProjectArchiveViewModel>(builder: (context, viewmodel, child) {
       var colors = getCustomColors(context);
-
-      return Scaffold(
-          appBar: AppBar(
-            backgroundColor: colors.disabledText,
-            title: const Text('Archived Projects'),
-          ),
-          drawer: const AppDrawer(),
-          body: FutureBuilder<List<Project>?>(
-              future: projectFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Card(child: Text("Something terrible happened"));
-                }
-                var projects = snapshot.data;
-                if (projects == null) {
-                  return const LoadingIndicator();
-                }
-                return RefreshIndicator(
-                  onRefresh: _refresh,
+      Widget body;
+      if (viewmodel.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = RefreshIndicator(
+                  onRefresh: () => viewmodel.refresh(),
                   child: ListView(
-                    children: projects
+                    children: viewmodel.projects
                         .map((project) => ListTile(
                               title: ProjectBadge(text: project.name, color: project.color),
                               trailing: ArchivedProjectActions(project),
@@ -63,8 +51,18 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
                         .toList(),
                   ),
                 );
-              }));
-    });
+
+      }
+
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: colors.disabledText,
+            title: const Text('Archived Projects'),
+          ),
+          drawer: const AppDrawer(),
+          body: body,
+        );
+      });
   }
 }
 

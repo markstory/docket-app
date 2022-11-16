@@ -16,6 +16,7 @@ import 'screens/profilesettings.dart';
 import 'screens/projectdetails.dart';
 import 'screens/projectadd.dart';
 import 'screens/projectarchive.dart';
+import 'screens/projectarchive_view_model.dart';
 import 'screens/projectedit.dart';
 import 'screens/projectcompleted.dart';
 import 'screens/projectcompleted_view_model.dart';
@@ -81,6 +82,12 @@ class EntryPoint extends StatelessWidget {
           }),
         ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
           create: (_) => UpcomingViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, ProjectsArchivedViewModel>(
+          create: (_) => TrashbinViewModel(database, null),
           update: (_, session, viewmodel) {
             viewmodel!.setSession(session);
             return viewmodel;
