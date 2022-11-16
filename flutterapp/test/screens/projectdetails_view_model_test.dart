@@ -65,7 +65,7 @@ void main() {
 
       await viewmodel.loadData();
       expect(viewmodel.project, isNotNull);
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(3));
     });
 
     test('reorderTask() updates state', () async {
@@ -74,6 +74,7 @@ void main() {
           return Response(projectDetailsResponseFixture, 200);
         }
         if (request.url.path == '/tasks/1/move') {
+          expect(request.body, contains('child_order":1'));
           return Response('', 200);
         }
         throw "Unknown request to ${request.url.path}";
@@ -84,12 +85,7 @@ void main() {
 
       var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
       await viewmodel.loadData();
-
-      var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       await viewmodel.reorderTask(0, 0, 1, 0);
-
-      var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      expect(updated, isNot(equals(initialOrder)));
     });
 
     test('refresh() loads data from the server', () async {
