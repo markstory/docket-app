@@ -25,10 +25,9 @@ class TaskAddScreen extends StatelessWidget {
       }
 
       try {
-        messenger.showSnackBar(const SnackBar(content: Text('Saving')));
         await tasks.createTask(task);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
       } catch (e, stacktrace) {
         developer.log("Failed to create task ${e.toString()} $stacktrace");
         messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to create task.'));

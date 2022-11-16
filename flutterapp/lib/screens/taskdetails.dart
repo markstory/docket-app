@@ -41,8 +41,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
     try {
       await tasksProvider.updateTask(task);
-      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
       navigator.pop();
+      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
     }
