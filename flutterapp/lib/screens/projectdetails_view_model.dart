@@ -57,12 +57,14 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
+    return this;
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     var projectData = await _database.projectDetails.get(slug);
     if (projectData.missingData == false) {
+      _project = projectData.project;
       _buildTaskLists(projectData.tasks);
     }
     if (_shouldReload || (projectData.missingData && !_loading)) {
@@ -133,18 +135,11 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    var result = await Future.wait([
-      actions.fetchTodayTasks(session!.apiToken),
-      actions.fetchProjects(session!.apiToken),
-    ]);
-    var tasksView = result[0] as TaskViewData;
-    var projects = result[1] as List<Project>;
+    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+    await _database.projectDetails.set(result);
 
-    await Future.wait([
-      _database.projectMap.replace(projects),
-      _database.today.set(tasksView),
-    ]);
-    _buildTaskLists(tasksView.tasks);
+    _project = result.project;
+    _buildTaskLists(result.tasks);
   }
 
   void _buildTaskLists(List<Task> tasks) {
