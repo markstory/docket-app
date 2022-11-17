@@ -10,10 +10,10 @@ void main() {
   late SessionProvider provider;
   late ApiToken token;
   int listenerCallCount = 0;
+  var dbhandler = LocalDatabase.instance();
 
   group('$SessionProvider', () {
     setUp(() {
-      var dbhandler = LocalDatabase();
       listenerCallCount = 0;
       provider = SessionProvider(dbhandler)
         ..addListener(() {

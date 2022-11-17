@@ -14,6 +14,8 @@ class StaleDataError implements Exception {}
 const isStale = '__is_stale__';
 
 class LocalDatabase {
+  static final LocalDatabase _instance = LocalDatabase();
+
   // Configuration
   static const String dbName = 'docket-localstorage';
 
@@ -48,6 +50,10 @@ class LocalDatabase {
     trashbin = TrashbinView(db, const Duration(hours: 1));
     apiToken = ApiTokenCache(db, null);
     profile = ProfileCache(db, const Duration(hours: 1));
+  }
+
+  factory LocalDatabase.instance() {
+    return LocalDatabase._instance;
   }
 
   /// Lazily create the database.
@@ -246,39 +252,37 @@ abstract class ViewCache<T> extends ChangeNotifier {
     _database = database;
   }
 
-  bool isFresh() {
+  bool isFresh(String? updated) {
     // Empty data is 'fresh'. This prevents loops
-    if (_state == null || duration == null) {
-      return true;
-    }
-    var updated = _state!['updatedAt'];
-    if (updated == null) {
+    if (updated == null || duration == null) {
       return false;
     }
     var updatedAt = DateTime.parse(updated);
-    var expires = DateTime.now()..subtract(duration!);
+    var expires = DateTime.now();
+    expires = expires.subtract(duration!);
 
     return updatedAt.isAfter(expires);
   }
 
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
-    var payload = {'updatedAt': formatters.dateString(DateTime.now()), 'data': data};
-    _state = data;
+    var payload = {'updatedAt': DateTime.now().toIso8601String(), 'data': data};
+    _state = payload;
     await _database.refresh(keyName(), payload);
   }
 
   /// Refresh the data stored for the 'today' view.
   Future<Map<String, dynamic>?> _get() async {
-    if (_state != null && isFresh()) {
-      return _state;
+    var state = _state;
+    if (state != null && isFresh(state['updatedAt'])) {
+      return state['data'];
     }
     var payload = await _database.value(keyName());
-    if (payload == null) {
+    if (payload == null || !isFresh(payload['updatedAt'])) {
       return null;
     }
-    _state = payload['data'];
-    return _state;
+    _state = payload;
+    return payload['data'];
   }
 
   /// Clear the locally cached data. Will notify listeners as well.

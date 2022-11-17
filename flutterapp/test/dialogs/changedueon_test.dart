@@ -9,7 +9,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   Widget _buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
-    var database = LocalDatabase();
+    var database = LocalDatabase.instance();
     return EntryPoint(
         database: database,
         child: Builder(builder: (BuildContext context) {

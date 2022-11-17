@@ -41,7 +41,7 @@ void main() {
   }
 
   group('$ProjectDetailsViewModel', () {
-    var db = LocalDatabase();
+    var db = LocalDatabase.instance();
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {

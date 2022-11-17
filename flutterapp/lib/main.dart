@@ -34,7 +34,7 @@ import 'screens/unknown.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeMode = await AdaptiveTheme.getThemeMode();
-  final dbHandler = LocalDatabase();
+  final dbHandler = LocalDatabase.instance();
 
   await SentryFlutter.init(
     (options) => {

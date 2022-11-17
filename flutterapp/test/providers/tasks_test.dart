@@ -55,13 +55,12 @@ void main() {
   file = File('test_resources/subtask_update.json');
   final subtaskUpdateResponse = file.readAsStringSync();
 
+  var db = LocalDatabase.instance();
+
   Future<void> setTodayView(List<Task> tasks) async {
-    var db = LocalDatabase();
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
     await db.today.set(taskView);
   }
-
-  var db = LocalDatabase();
 
   group('$TasksProvider', () {
     var session = SessionProvider(db, token: 'api-token');

@@ -14,7 +14,7 @@ void main() {
 
   int listenerCallCount = 0;
 
-  var db = LocalDatabase();
+  var db = LocalDatabase.instance();
   late UserProfileProvider provider;
 
   var file = File('test_resources/profile.json');

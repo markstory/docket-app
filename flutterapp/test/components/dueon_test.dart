@@ -10,7 +10,7 @@ void main() {
 
   final today = DateUtils.dateOnly(DateTime.now());
   final tomorrow = today.add(const Duration(days: 1));
-  var database = LocalDatabase();
+  var database = LocalDatabase.instance();
 
   group('DueOn', () {
     testWidgets('Render for today', (tester) async {

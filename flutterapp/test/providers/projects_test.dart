@@ -22,13 +22,13 @@ void main() {
   final projectCompletedResponseFixture = file.readAsStringSync();
 
   group('$ProjectsProvider project methods', () {
+    var db = LocalDatabase.instance();
     late ProjectsProvider provider;
     late SessionProvider session;
     int listenerCallCount = 0;
 
     setUp(() async {
       listenerCallCount = 0;
-      var db = LocalDatabase();
       session = SessionProvider(db, token: 'api-token');
       provider = ProjectsProvider(db, session)
         ..addListener(() {

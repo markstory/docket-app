@@ -13,7 +13,7 @@ void main() {
 
   var home = Project(id: 1, slug: 'home', name: 'Home', color: 0, ranking: 0);
   var work = Project(id: 2, slug: 'work', name: 'Work', color: 1, ranking: 1);
-  var database = LocalDatabase();
+  var database = LocalDatabase.instance();
 
   // Rendering helper.
   Widget renderForm(Task task, Function(Task task) onSave) {
