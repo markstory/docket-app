@@ -25,6 +25,7 @@ class ProjectArchiveViewModel extends ChangeNotifier {
 
     _database.projectArchive.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 

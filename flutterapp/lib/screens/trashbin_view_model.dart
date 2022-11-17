@@ -25,6 +25,7 @@ class TrashbinViewModel extends ChangeNotifier {
 
     _database.trashbin.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 

@@ -99,6 +99,12 @@ class EntryPoint extends StatelessWidget {
             viewmodel!.setSession(session);
             return viewmodel;
           }),
+        ChangeNotifierProxyProvider<SessionProvider, ProjectDetailsViewModel>(
+          create: (_) => ProjectDetailsViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
         ChangeNotifierProxyProvider<SessionProvider, TrashbinViewModel>(
           create: (_) => TrashbinViewModel(database, null),
           update: (_, session, viewmodel) {

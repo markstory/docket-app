@@ -28,6 +28,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
     _database.completedTasks.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 

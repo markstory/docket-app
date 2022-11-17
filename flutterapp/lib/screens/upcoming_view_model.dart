@@ -30,6 +30,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     _database.upcoming.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 

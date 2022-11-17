@@ -15,12 +15,6 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  @override
-  void initState() {
-    super.initState();
-    var provider = Provider.of<UserProfileProvider>(context, listen: false);
-    provider.refresh();
-  }
 
   @override
   Widget build(BuildContext context) {

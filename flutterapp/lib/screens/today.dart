@@ -30,12 +30,13 @@ class _TodayScreenState extends State<TodayScreen> {
     super.initState();
 
     viewmodel = Provider.of<TodayViewModel>(context, listen: false);
-    _refresh(viewmodel);
+
+    viewmodel.loadData();
+    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
   }
 
   Future<void> _refresh(TodayViewModel view) async {
-    var today = DateUtils.dateOnly(DateTime.now());
-    _newTask = Task.blank(dueOn: today);
+    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
 
     return view.refresh();
   }

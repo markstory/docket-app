@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 import 'package:docket/actions.dart' as actions;
@@ -31,6 +32,7 @@ class TodayViewModel extends ChangeNotifier {
 
     _database.today.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 
@@ -43,6 +45,7 @@ class TodayViewModel extends ChangeNotifier {
   }
 
   /// Load data. Should be called during initState()
+  /// or when database events are received.
   Future<void> loadData() async {
     var taskView = await _database.today.get();
     if (taskView.missingData == false) {
