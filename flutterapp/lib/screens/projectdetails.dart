@@ -36,7 +36,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     super.initState();
     viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
     viewmodel.setSlug(widget.project.slug);
+
     viewmodel.loadData();
+    _newTask = Task.blank(projectId: widget.project.id);
   }
 
   Future<void> _refresh(ProjectDetailsViewModel view) {
