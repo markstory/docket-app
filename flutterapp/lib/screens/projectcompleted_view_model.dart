@@ -66,7 +66,9 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
     var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
     await _database.completedTasks.set(result);
+    _loading = false;
     _tasks = result.tasks;
+
     notifyListeners();
   }
 }

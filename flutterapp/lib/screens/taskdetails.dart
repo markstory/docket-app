@@ -1,3 +1,4 @@
+import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
@@ -51,19 +52,26 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskDetailsViewModel>(builder: (context, view, child) {
+      Widget body;
+      if (view.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = SingleChildScrollView(
+          padding: EdgeInsets.all(space(1)),
+          child: Column(children: [
+            TaskForm(
+              task: view.task,
+              onSave: (task) => _onSave(context, task),
+              onComplete: () => Navigator.of(context).pop(),
+            ),
+          ]),
+        );
+      }
       return Portal(
         child: Scaffold(
-            appBar: AppBar(title: const Text('Task Details')),
-            body: SingleChildScrollView(
-              padding: EdgeInsets.all(space(1)),
-              child: Column(children: [
-                TaskForm(
-                  task: view.task,
-                  onSave: (task) => _onSave(context, task),
-                  onComplete: () => Navigator.of(context).pop(),
-                ),
-              ]),
-            )),
+          appBar: AppBar(title: const Text('Task Details')),
+          body: body,
+        ),
       );
     });
   }

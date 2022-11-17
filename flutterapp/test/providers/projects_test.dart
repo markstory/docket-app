@@ -18,15 +18,76 @@ void main() {
   file = File('test_resources/project_details.json');
   final projectViewResponseFixture = file.readAsStringSync();
 
+  file = File('test_resources/project_completed.json');
+  final projectCompletedResponseFixture = file.readAsStringSync();
+
   group('$ProjectsProvider project methods', () {
-    var db = LocalDatabase.instance();
     late ProjectsProvider provider;
     late SessionProvider session;
+    int listenerCallCount = 0;
 
     setUp(() async {
+      listenerCallCount = 0;
+      var db = LocalDatabase();
       session = SessionProvider(db, token: 'api-token');
-      provider = ProjectsProvider(db, session);
+      provider = ProjectsProvider(db, session)
+        ..addListener(() {
+          listenerCallCount += 1;
+        });
       await provider.clear();
+    });
+
+    test('fetchProjects() and getAll() work together', () async {
+      int requestCounter = 0;
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects'));
+        requestCounter += 1;
+        return Response(projectsResponseFixture, 200);
+      });
+
+      await provider.fetchProjects();
+      expect(listenerCallCount, greaterThan(0));
+      expect(requestCounter, equals(1));
+
+      var projects = await provider.getAll();
+      expect(projects.length, equals(2));
+      expect(projects[0].slug, equals('work'));
+      expect(projects[1].slug, equals('home'));
+    });
+
+    test('fetchProjects() will remove stale projects', () async {
+      int requestCounter = 0;
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects'));
+        requestCounter += 1;
+        return Response(projectsResponseFixture, 200);
+      });
+
+      var stale = Project.blank();
+      stale.slug = 'stale';
+      stale.id = 99;
+      stale.name = 'Stale';
+
+      var db = LocalDatabase();
+      await db.projectMap.set(stale);
+
+      await provider.fetchProjects();
+      expect(listenerCallCount, greaterThan(0));
+      expect(requestCounter, equals(1));
+
+      var projects = await provider.getAll();
+      expect(projects.length, equals(2));
+      expect(projects[0].slug, equals('work'));
+      expect(projects[1].slug, equals('home'));
+    });
+
+    test('fetchProjects() handles error on server error', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects'));
+        return Response('{"errors": ["bad things"]}', 400);
+      });
+
+      expect(provider.fetchProjects(), throwsException);
     });
 
     test('move() makes API request and expires local db', () async {
