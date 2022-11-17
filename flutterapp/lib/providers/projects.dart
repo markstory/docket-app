@@ -14,28 +14,16 @@ enum ViewNames {
   completedTasks,
 }
 
+/// General purpose provider for performing side-effects on projects.
 class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
 
   Set<ViewNames> _pending = {};
-  Map<ViewNames, int> _retryCount = {};
 
   ProjectsProvider(LocalDatabase database, this.session) {
     _database = database;
     _pending = {};
-    _retryCount = {};
-  }
-
-  /// Record a retry and return an indication
-  bool _recordRetry(ViewNames name, int limit) {
-    var currentVal = _retryCount[name] ?? 0;
-    // Check threshold
-    if (currentVal >= limit) {
-      return false;
-    }
-    _retryCount[name] = currentVal + 1;
-    return true;
   }
 
   void setSession(SessionProvider session) {
@@ -45,47 +33,6 @@ class ProjectsProvider extends ChangeNotifier {
   Future<void> clear() async {
     await _database.clearProjects();
     notifyListeners();
-  }
-
-  /// Get the project list from the local database.
-  Future<List<Project>> getAll() async {
-    var projects = await _database.projectMap.all();
-    // We don't have a good indicator of an empty states.
-    if (projects.isEmpty && _recordRetry(ViewNames.projectMap, 5)) {
-      fetchProjects();
-    }
-    return projects;
-  }
-
-  /// Read a project from the local database by slug.
-  Future<ProjectWithTasks> getBySlug(String slug) async {
-    var projectData = await _database.projectDetails.get(slug);
-    if (projectData.missingData) {
-      fetchBySlug(slug);
-    }
-    projectData.pending = _pending.contains(ViewNames.projectDetails);
-
-    return projectData;
-  }
-
-  Future<ProjectWithTasks> getCompletedTasks(String slug) async {
-    var taskData = await _database.completedTasks.get(slug);
-    if (taskData.missingData) {
-      fetchCompletedTasks(slug);
-    }
-    taskData.pending = _pending.contains(ViewNames.projectDetails);
-
-    return taskData;
-  }
-
-  /// Get the list of archived projects
-  Future<List<Project>?> getArchived() async {
-    var projects = await _database.projectArchive.get();
-    if (projects == null) {
-      fetchArchived();
-    }
-
-    return projects;
   }
 
   /// Create a project on the server and notify listeners.
@@ -124,46 +71,6 @@ class ProjectsProvider extends ChangeNotifier {
     }
   }
 
-  /// Fetch a project from the API and notifyListeners.
-  Future<void> fetchBySlug(String slug) async {
-    await _withPending(ViewNames.projectDetails, () async {
-      var projectDetails = await actions.fetchProjectBySlug(session!.apiToken, slug);
-      return _database.projectDetails.set(projectDetails);
-    });
-
-    notifyListeners();
-  }
-
-  /// Fetch project list from the API and notifyListeners
-  Future<void> fetchProjects() async {
-    await _withPending(ViewNames.projectMap, () async {
-      var projects = await actions.fetchProjects(session!.apiToken);
-      return _database.projectMap.replace(projects);
-    });
-
-    notifyListeners();
-  }
-
-  /// Fetch a project from the API and notifyListeners.
-  Future<void> fetchCompletedTasks(String slug) async {
-    await _withPending(ViewNames.completedTasks, () async {
-      var completed = await actions.fetchCompletedTasks(session!.apiToken, slug);
-      return _database.completedTasks.set(completed);
-    });
-
-    notifyListeners();
-  }
-
-  /// Fetch project list from the API and notifyListeners
-  Future<void> fetchArchived() async {
-    await _withPending(ViewNames.projectArchive, () async {
-      var projects = await actions.fetchProjectArchive(session!.apiToken);
-      return _database.projectArchive.set(projects);
-    });
-
-    notifyListeners();
-  }
-
   /// Move a project on the server and locally
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
@@ -195,7 +102,6 @@ class ProjectsProvider extends ChangeNotifier {
       _database.projectMap.clear(),
       _database.projectArchive.clear(),
     ]);
-    await fetchProjects();
 
     notifyListeners();
   }

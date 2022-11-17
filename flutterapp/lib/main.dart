@@ -25,6 +25,7 @@ import 'screens/today.dart';
 import 'screens/today_view_model.dart';
 import 'screens/taskadd.dart';
 import 'screens/taskdetails.dart';
+import 'screens/taskdetails_view_model.dart';
 import 'screens/trashbin.dart';
 import 'screens/trashbin_view_model.dart';
 import 'screens/upcoming.dart';
@@ -63,30 +64,6 @@ class EntryPoint extends StatelessWidget {
               provider!.setSession(session);
               return provider;
             }),
-        ChangeNotifierProxyProvider<SessionProvider, TasksProvider>(
-            create: (_) => TasksProvider(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, UserProfileProvider>(
-            create: (_) => UserProfileProvider(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, TodayViewModel>(
-          create: (_) => TodayViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
-          create: (_) => UpcomingViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
         ChangeNotifierProxyProvider<SessionProvider, ProjectArchiveViewModel>(
           create: (_) => ProjectArchiveViewModel(database, null),
           update: (_, session, viewmodel) {
@@ -105,12 +82,42 @@ class EntryPoint extends StatelessWidget {
             viewmodel!.setSession(session);
             return viewmodel;
           }),
+        ChangeNotifierProxyProvider<SessionProvider, TaskDetailsViewModel>(
+          create: (_) => TaskDetailsViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, TasksProvider>(
+            create: (_) => TasksProvider(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
+        ChangeNotifierProxyProvider<SessionProvider, TodayViewModel>(
+          create: (_) => TodayViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
         ChangeNotifierProxyProvider<SessionProvider, TrashbinViewModel>(
           create: (_) => TrashbinViewModel(database, null),
           update: (_, session, viewmodel) {
             viewmodel!.setSession(session);
             return viewmodel;
           }),
+        ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
+          create: (_) => UpcomingViewModel(database, null),
+          update: (_, session, viewmodel) {
+            viewmodel!.setSession(session);
+            return viewmodel;
+          }),
+        ChangeNotifierProxyProvider<SessionProvider, UserProfileProvider>(
+            create: (_) => UserProfileProvider(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );

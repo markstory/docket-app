@@ -126,7 +126,7 @@ class TodayViewModel extends ChangeNotifier {
           title: 'Overdue',
           tasks: overdueTasks,
           onReceive: (Task task, int newIndex) {
-            throw 'Cannot move task to overdue';
+            throw Exception('Cannot move task to overdue');
           });
     }
 

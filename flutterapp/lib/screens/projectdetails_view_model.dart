@@ -36,7 +36,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Project get project {
     var p = _project;
     if (p == null) {
-      throw 'Cannot access project';
+      throw Exception('Cannot access project');
     }
     return p;
   }
@@ -44,7 +44,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   String get slug {
     var s = _slug;
     if (s == null) {
-      throw 'Cannot access slug';
+      throw Exception('Cannot access slug');
     }
     return s;
   }

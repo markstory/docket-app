@@ -64,7 +64,7 @@ class _TodayScreenState extends State<TodayScreen> {
           theme = brightness == Brightness.light ? lightTheme : darkTheme;
           break;
         default:
-          throw "Invalid theme mode encountered";
+          throw Exception("Invalid theme mode encountered");
       }
       SystemChrome.setSystemUIOverlayStyle(theme.appBarTheme.systemOverlayStyle!);
     };

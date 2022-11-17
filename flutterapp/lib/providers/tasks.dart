@@ -50,21 +50,6 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchById(int id) async {
-    var task = await actions.fetchTaskById(session!.apiToken, id);
-    // We don't expire other views here as fetching a task by id
-    // is usually because of a navigation.
-    await _database.addTasks([task], expire: false);
-
-    notifyListeners();
-  }
-
-  /// Get a task from the local database or server if
-  /// it doesn't exist locally.
-  Future<Task?> getById(int id) async {
-    return _database.taskDetails.get(id);
-  }
-
   /// Create a task on the server and notify listeners.
   Future<Task> createTask(Task task) async {
     task = await actions.createTask(session!.apiToken, task);
@@ -77,70 +62,6 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
 
     return task;
-  }
-
-  /// Fetch tasks for today view from the server.
-  /// Will notifyListeners() on completion.
-  Future<void> fetchToday() async {
-    await _withPending(ViewNames.today, () async {
-      var taskViewData = await actions.fetchTodayTasks(session!.apiToken);
-      return _database.today.set(taskViewData);
-    });
-    notifyListeners();
-  }
-
-  /// Get the local database state for today view.
-  Future<TaskViewData> getToday() async {
-    var taskView = await _database.today.get();
-    if (taskView.missingData) {
-      fetchToday();
-    }
-    taskView.pending = _pending.contains(ViewNames.today);
-
-    return taskView;
-  }
-
-  /// Fetch tasks for upcoming view from the server.
-  /// Will notifyListeners() on completion.
-  Future<void> fetchUpcoming() async {
-    await _withPending(ViewNames.upcoming, () async {
-      var taskViewData = await actions.fetchUpcomingTasks(session!.apiToken);
-
-      return _database.upcoming.set(taskViewData);
-    });
-    notifyListeners();
-  }
-
-  // Get the locally cached upcoming tasks.
-  Future<TaskViewData> getUpcoming() async {
-    var taskView = await _database.upcoming.get();
-    if (taskView.missingData) {
-      fetchUpcoming();
-    }
-    taskView.pending = _pending.contains(ViewNames.upcoming);
-    return taskView;
-  }
-
-  /// Fetch tasks in trashbin
-  /// Will notifyListeners() on completion.
-  Future<void> fetchTrashbin() async {
-    await _withPending(ViewNames.trashbin, () async {
-      var taskViewData = await actions.fetchTrashbin(session!.apiToken);
-      return _database.trashbin.set(taskViewData);
-    });
-
-    notifyListeners();
-  }
-
-  /// Get tasks in trashbin from local db
-  Future<TaskViewData> getTrashbin() async {
-    var taskView = await _database.trashbin.get();
-    if (taskView.missingData) {
-      fetchTrashbin();
-    }
-    taskView.pending = _pending.contains(ViewNames.trashbin);
-
-    return taskView;
   }
 
   /// Flip task.completed and persist to the server.

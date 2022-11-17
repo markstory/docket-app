@@ -46,7 +46,7 @@ class SubtaskSorter extends StatelessWidget {
       itemDecorationWhileDragging: itemDragBoxDecoration(theme),
       itemDragOnLongPress: true,
       onItemReorder: onItemReorder,
-      onListReorder: (oldListIndex, newListIndex) => throw "List ordering not supported.",
+      onListReorder: (oldListIndex, newListIndex) => throw Exception("List ordering not supported."),
       lastListTargetSize: 0,
     );
   }

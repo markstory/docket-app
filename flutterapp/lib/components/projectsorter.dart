@@ -68,7 +68,7 @@ class _ProjectSorterState extends State<ProjectSorter> {
               _onItemReorder(project, newItemIndex);
             },
             onListReorder: (int oldIndex, int newIndex) {
-              throw 'List reordering not supported';
+              throw Exception('List reordering not supported');
             },
             itemDecorationWhileDragging: itemDragBoxDecoration(theme),
           );

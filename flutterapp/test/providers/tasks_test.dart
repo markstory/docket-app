@@ -195,35 +195,6 @@ void main() {
       expect(updated?.incompleteTaskCount, lessThan(project.incompleteTaskCount));
     });
 
-    test('getById() reads tasks', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/view'));
-        return Response(taskCreateTodayResponseFixture, 200);
-      });
-
-      var db = LocalDatabase();
-      var provider = TasksProvider(db, session);
-
-      await provider.fetchById(1);
-
-      var task = await provider.getById(1);
-      expect(task, isNotNull);
-      expect(task!.id, equals(1));
-    });
-
-    test('fetchById() throws error on network failure', () async {
-      actions.client = MockClient((request) async {
-        return Response('error', 500);
-      });
-
-      try {
-        await provider.fetchById(1);
-        fail('Should not get here');
-      } catch (err) {
-        expect(err.toString(), contains('Could not load'));
-      }
-    });
-
     test('createTask() calls API, clears date views & project view', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/add'));
@@ -341,7 +312,7 @@ void main() {
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
-      var updated = await provider.getById(task.id!);
+      var updated = await db.taskDetails.get(task.id!);
 
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
@@ -369,7 +340,7 @@ void main() {
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
-      var updated = await provider.getById(task.id!);
+      var updated = await db.taskDetails.get(task.id!);
 
       expect(updated?.subtasks.length, equals(0));
     });
@@ -394,28 +365,11 @@ void main() {
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
-      var updated = await provider.getById(task.id!);
+      var updated = await db.taskDetails.get(task.id!);
 
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.ranking, equals(3));
-    });
-
-    test('fetchTrashbin() and getTrashbin() work together', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/deleted'));
-
-        return Response(tasksTodayResponseFixture, 200);
-      });
-
-      await provider.fetchTrashbin();
-      var taskData = await provider.getTrashbin();
-
-      expect(taskData.pending, equals(false));
-      expect(taskData.tasks.length, equals(2));
-      expect(taskData.tasks[0].title, equals('clean dishes'));
-      expect(taskData.calendarItems.length, equals(0));
-      expect(listenerCallCount, greaterThanOrEqualTo(1));
     });
   });
 }

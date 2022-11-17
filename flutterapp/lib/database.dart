@@ -131,7 +131,7 @@ class LocalDatabase {
           futures.add(trashbin.clear());
           break;
         default:
-          throw 'Unknown view key of $key';
+          throw Exception('Unknown view key of $key');
       }
     }
     await Future.wait(futures);
@@ -167,7 +167,7 @@ class LocalDatabase {
               futures.add(upcoming.clear());
               break;
             default:
-              throw 'Unknown view to clear "$view"';
+              throw Exception('Unknown view to clear "$view"');
           }
         }
         futures.add(projectDetails.remove(task.projectSlug));

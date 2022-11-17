@@ -91,6 +91,10 @@ void main() {
       expect(viewmodel.taskLists[1].showButton, isTrue);
     });
 
+    test('loadData() handles network errors', () async {
+      // TODO implement this.
+    });
+
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/today') {

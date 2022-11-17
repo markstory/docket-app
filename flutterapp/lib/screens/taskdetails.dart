@@ -5,9 +5,8 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
-
+import 'package:docket/screens/taskdetails_view_model.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final Task task;
@@ -19,28 +18,29 @@ class TaskDetailsScreen extends StatefulWidget {
 }
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
+  late TaskDetailsViewModel viewmodel;
   late Task task;
 
   @override
   void initState() {
     super.initState();
     task = widget.task;
+    viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+    viewmodel.setId(task.id!);
 
-    _refresh();
+    _refresh(viewmodel);
   }
 
-  Future<void> _refresh() async {
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-    await tasksProvider.fetchById(task.id!);
+  Future<void> _refresh(TaskDetailsViewModel view) async {
+    await view.refresh();
   }
 
   void _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
     try {
-      await tasksProvider.updateTask(task);
+      await viewmodel.update(task);
       navigator.pop();
       messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
     } catch (e) {
@@ -50,29 +50,20 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var id = widget.task.id!;
-      var pendingTask = tasksProvider.getById(id);
-
+    return Consumer<TaskDetailsViewModel>(builder: (context, view, child) {
       return Portal(
         child: Scaffold(
-          appBar: AppBar(title: const Text('Task Details')),
-          body: FutureBuilder<Task?>(
-              future: pendingTask,
-              builder: (context, snapshot) {
-                var task = snapshot.data ?? widget.task;
-
-                return SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
-                  child: Column(children: [
-                    TaskForm(
-                      task: task,
-                      onSave: (task) => _onSave(context, task),
-                      onComplete: () => Navigator.of(context).pop(),
-                    ),
-                  ]),
-                );
-              }),
-        ),
+            appBar: AppBar(title: const Text('Task Details')),
+            body: SingleChildScrollView(
+              padding: EdgeInsets.all(space(1)),
+              child: Column(children: [
+                TaskForm(
+                  task: view.task,
+                  onSave: (task) => _onSave(context, task),
+                  onComplete: () => Navigator.of(context).pop(),
+                ),
+              ]),
+            )),
       );
     });
   }
