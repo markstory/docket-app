@@ -96,6 +96,9 @@ void main() {
         if (request.url.path == '/tasks/today') {
           return Response(tasksTodayResponseFixture, 200);
         }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
         if (request.url.path == '/tasks/1/move') {
           return Response('', 200);
         }
@@ -137,6 +140,12 @@ void main() {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/99/move') {
           return Response('', 200);
+        }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        if (request.url.path == '/tasks/today') {
+          return Response(tasksTodayResponseFixture, 200);
         }
         throw "Unknown request to ${request.url.path}";
       });

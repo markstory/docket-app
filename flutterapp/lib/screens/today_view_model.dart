@@ -75,10 +75,6 @@ class TodayViewModel extends ChangeNotifier {
 
   /// Move a task out of overdue into another section
   Future<void> moveOverdue(Task task, int listIndex, int itemIndex) async {
-    if (_overdue == null) {
-      throw 'Should not receive items when _overdue is null';
-    }
-
     // Calculate position of adding to a end.
     // Generally this will be zero but it is possible to add to the
     // bottom of a populated list too.
