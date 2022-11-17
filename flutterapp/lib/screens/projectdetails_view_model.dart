@@ -30,6 +30,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     _database.projectDetails.addListener(() async {
       _shouldReload = true;
+      loadData();
     });
   }
 
