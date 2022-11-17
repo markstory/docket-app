@@ -1,6 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docket/database.dart';
+import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/project.dart';
 
 void main() {
@@ -30,6 +31,23 @@ void main() {
       withClock(Clock.fixed(expires), () async {
         var value = await database.projectMap.get('home');
         expect(value, isNull);
+      });
+    });
+
+    test('session data has no expiration', () async {
+      var token = ApiToken.fromMap({'token': 'abc123', 'lastUsed': null});
+      await database.apiToken.set(token);
+
+      var expires = DateTime.now().add(const Duration(hours: 2));
+      withClock(Clock.fixed(expires), () async {
+        var value = await database.apiToken.get();
+        expect(value, isNotNull);
+      });
+
+      expires = DateTime.now().add(const Duration(days: 2));
+      withClock(Clock.fixed(expires), () async {
+        var value = await database.apiToken.get();
+        expect(value, isNotNull);
       });
     });
   });

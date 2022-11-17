@@ -254,8 +254,12 @@ abstract class ViewCache<T> extends ChangeNotifier {
   }
 
   bool isFresh(String? updated) {
+    // No duration means always fresh.
+    if (duration == null) {
+      return true;
+    }
     // Empty data is 'fresh'. This prevents loops
-    if (updated == null || duration == null) {
+    if (updated == null) {
       return false;
     }
     var updatedAt = DateTime.parse(updated);
