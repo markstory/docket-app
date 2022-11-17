@@ -1,12 +1,10 @@
 import 'dart:developer' as developer;
-import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/project.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/projects.dart';
 import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
 import 'package:docket/screens/projectedit_view_model.dart';
