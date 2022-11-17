@@ -135,6 +135,8 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
+    _shouldReload = false;
+
     var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
     await _database.projectDetails.set(result);
 

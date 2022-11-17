@@ -46,6 +46,8 @@ class ProjectArchiveViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
+    _shouldReload = false;
+
     var result = await actions.fetchProjectArchive(session!.apiToken);
     await _database.projectArchive.set(result);
     _projects = result;

@@ -62,6 +62,8 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     assert(_slug.isNotEmpty, "A slug is required to load data");
 
     _loading = true;
+    _shouldReload = false;
+
     var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
     await _database.completedTasks.set(result);
     _tasks = result.tasks;

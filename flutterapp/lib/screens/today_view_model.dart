@@ -48,10 +48,12 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     var taskView = await _database.today.get();
+    developer.log('taskview missing ${taskView.missingData}', name: 'viewmodel');
     if (taskView.missingData == false) {
       _buildTaskLists(taskView);
     }
     if (_shouldReload || (taskView.missingData && !_loading)) {
+      developer.log('today reloading', name: 'viewmodel');
       return refresh();
     }
   }
@@ -97,6 +99,8 @@ class TodayViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
+    _shouldReload = false;
+
     var result = await Future.wait([
       actions.fetchTodayTasks(session!.apiToken),
       actions.fetchProjects(session!.apiToken),
@@ -165,7 +169,9 @@ class TodayViewModel extends ChangeNotifier {
         });
 
     _taskLists = [todayTasks, eveningTasks];
+
     _loading = false;
+
     notifyListeners();
   }
 }

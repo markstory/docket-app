@@ -91,6 +91,8 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
+    _shouldReload = false;
+
     var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
     await _database.upcoming.set(tasksView);
     _buildTaskLists(tasksView);
@@ -149,6 +151,7 @@ class UpcomingViewModel extends ChangeNotifier {
     }
 
     _loading = false;
+
     notifyListeners();
   }
 }

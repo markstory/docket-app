@@ -46,6 +46,8 @@ class TrashbinViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
+    _shouldReload = false;
+
     var result = await actions.fetchTrashbin(session!.apiToken);
     await _database.trashbin.set(result);
     _tasks = result.tasks;
