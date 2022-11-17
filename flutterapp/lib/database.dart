@@ -536,10 +536,13 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     return ProjectWithTasks.fromMap(data[slug]);
   }
 
+  /// Remove a project from the local data and update listeners.
   Future<void> remove(String slug) async {
     var data = await _get() ?? {};
     data.remove(slug);
-    return _set(data);
+    await _set(data);
+
+    notifyListeners();
   }
 }
 

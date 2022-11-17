@@ -21,7 +21,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   TaskDetailsViewModel(LocalDatabase database, this.session) {
     _database = database;
 
-    _database.trashbin.addListener(() async {
+    _database.taskDetails.addListener(() async {
       _shouldReload = true;
       loadData();
     });

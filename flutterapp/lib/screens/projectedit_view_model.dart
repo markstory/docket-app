@@ -20,7 +20,7 @@ class ProjectEditViewModel extends ChangeNotifier {
   ProjectEditViewModel(LocalDatabase database, this.session) {
     _database = database;
 
-    _database.trashbin.addListener(() async {
+    _database.projectDetails.addListener(() async {
       _shouldReload = true;
       loadData();
     });

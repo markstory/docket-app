@@ -28,7 +28,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _database = database;
     _taskLists = [];
 
-    _database.today.addListener(() async {
+    _database.projectDetails.addListener(() async {
       _shouldReload = true;
     });
   }
