@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
-import 'package:json_cache/json_cache.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
+import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
 import 'package:docket/formatters.dart' as formatters;
@@ -75,7 +76,7 @@ class LocalDatabase {
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
   List<String> _taskViews(Task task) {
-    var now = DateTime.now();
+    var now = clock.now();
     List<String> views = [];
 
     // If the task has a due date expire upcoming and possibly
@@ -258,7 +259,7 @@ abstract class ViewCache<T> extends ChangeNotifier {
       return false;
     }
     var updatedAt = DateTime.parse(updated);
-    var expires = DateTime.now();
+    var expires = clock.now();
     expires = expires.subtract(duration!);
 
     return updatedAt.isAfter(expires);
@@ -266,7 +267,7 @@ abstract class ViewCache<T> extends ChangeNotifier {
 
   /// Refresh the data stored for the 'today' view.
   Future<void> _set(Map<String, dynamic> data) async {
-    var payload = {'updatedAt': DateTime.now().toIso8601String(), 'data': data};
+    var payload = {'updatedAt': clock.now().toIso8601String(), 'data': data};
     _state = payload;
     await _database.refresh(keyName(), payload);
   }
