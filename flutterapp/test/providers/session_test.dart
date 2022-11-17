@@ -31,13 +31,11 @@ void main() {
     });
 
     test('clearing token', () async {
-      expect(() => provider.apiToken, throwsA(isA<Exception>()));
-
       await provider.saveToken(token);
       expect(provider.apiToken, equals('abc123'));
 
       provider.clear();
-      expect(() => provider.apiToken, throwsA(isA<Exception>()));
+      expect(provider.hasToken, isFalse);
     });
   });
 }

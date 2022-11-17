@@ -74,52 +74,6 @@ void main() {
       await provider.clear();
     });
 
-    test('getToday() and fetchToday() work together', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/today'));
-
-        return Response(tasksTodayResponseFixture, 200);
-      });
-
-      await provider.fetchToday();
-      var taskData = await provider.getToday();
-
-      expect(taskData.pending, equals(false));
-      expect(taskData.tasks.length, equals(2));
-      expect(taskData.tasks[0].title, equals('clean dishes'));
-      expect(taskData.calendarItems.length, equals(1));
-      expect(taskData.calendarItems[0].title, equals('Get haircut'));
-      expect(listenerCallCount, greaterThanOrEqualTo(1));
-    });
-
-    test('fetchToday() handles server errors', () async {
-      actions.client = MockClient((request) async {
-        return Response('{"errors": ["bad things"]}', 400);
-      });
-
-      try {
-        await provider.fetchToday();
-      } on actions.ValidationError catch (e) {
-        expect(e.toString(), contains('Could not load'));
-      }
-    });
-
-    test('getUpcoming() and fetchUpcoming() work together', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/upcoming'));
-
-        return Response(tasksTodayResponseFixture, 200);
-      });
-
-      await provider.fetchUpcoming();
-      var taskData = await provider.getUpcoming();
-      expect(taskData.tasks.length, equals(2));
-      expect(taskData.tasks[0].title, equals('clean dishes'));
-      expect(taskData.calendarItems.length, equals(1));
-      expect(taskData.calendarItems[0].title, equals('Get haircut'));
-      expect(listenerCallCount, greaterThanOrEqualTo(1));
-    });
-
     test('toggleComplete() sends complete request', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/complete'));
@@ -261,7 +215,7 @@ void main() {
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
-      var updated = await provider.getById(task.id!);
+      var updated = await db.taskDetails.get(task.id!);
       expect(updated, isNotNull);
       expect(updated!.subtasks[0].completed, isTrue);
     });
@@ -285,7 +239,7 @@ void main() {
 
       // Should notify listeners.
       expect(listenerCallCount, greaterThan(1));
-      var updated = await provider.getById(task.id!);
+      var updated = await db.taskDetails.get(task.id!);
 
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
