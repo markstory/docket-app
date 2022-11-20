@@ -28,6 +28,7 @@ void main() {
 
     test('task property throws without data', () async {
       var viewmodel = TaskDetailsViewModel(db, session);
+      viewmodel.setId(1);
       expect(() => viewmodel.task, throwsException);
     });
 
@@ -46,19 +47,29 @@ void main() {
       expect(viewmodel.task.id, equals(1));
     });
 
-    test('loadData() throws error on network failure', () async {
+    test('update() sends server request', () async {
       actions.client = MockClient((request) async {
-        return Response('error', 500);
+        if (request.url.path == '/tasks/1/view') {
+          return Response(taskResponseFixture, 200);
+        }
+        if (request.url.path == '/tasks/1/edit') {
+          return Response(taskResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
       });
+
       var viewmodel = TaskDetailsViewModel(db, session);
       viewmodel.setId(1);
+      var updateCount = 0;
+      viewmodel.addListener(() {
+        updateCount += 1;
+      });
 
-      try {
-        await viewmodel.refresh();
-        fail('Should not get here');
-      } catch (err) {
-        expect(err.toString(), contains('Could not load'));
-      }
+      await viewmodel.loadData();
+      var task = viewmodel.task;
+
+      await viewmodel.update(task);
+      expect(updateCount, greaterThan(0));
     });
   });
 }
