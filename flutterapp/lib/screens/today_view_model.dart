@@ -101,18 +101,22 @@ class TodayViewModel extends ChangeNotifier {
     _loading = true;
     _shouldReload = false;
 
-    var result = await Future.wait([
+    await Future.wait([
       actions.fetchTodayTasks(session!.apiToken),
       actions.fetchProjects(session!.apiToken),
-    ]);
-    var tasksView = result[0] as TaskViewData;
-    var projects = result[1] as List<Project>;
+    ]).then((results) {
+      var tasksView = results[0] as TaskViewData;
+      var projects = results[1] as List<Project>;
 
-    await Future.wait([
-      _database.projectMap.replace(projects),
-      _database.today.set(tasksView),
-    ]);
-    _buildTaskLists(tasksView);
+      return Future.wait([
+        _database.projectMap.replace(projects),
+        _database.today.set(tasksView),
+      ]).then((results) {
+        _buildTaskLists(tasksView);
+      });
+    }).onError((error, stack) {
+      // TODO implement error state handling.
+    });
   }
 
   void _buildTaskLists(TaskViewData data) {
@@ -133,6 +137,7 @@ class TodayViewModel extends ChangeNotifier {
     // No setState() as we don't want to re-render.
     var todayTasks = TaskSortMetadata(
         calendarItems: data.calendarItems,
+        title: _overdue != null ? 'Today' : null,
         tasks: data.tasks.where((task) {
           return !task.evening && !overdueTasks.contains(task);
         }).toList(),
