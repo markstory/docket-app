@@ -412,12 +412,15 @@ class TaskDetailsView extends ViewCache<Task> {
     return Task.fromMap(data[taskId]);
   }
 
+  /// Remove a task and notifyListeners.
   Future<void> remove(int id) async {
     var data = await _get() ?? {};
     var taskId = id.toString();
 
     data.remove(taskId);
-    return _set(data);
+    await _set(data);
+
+    notifyListeners();
   }
 }
 
