@@ -42,33 +42,38 @@ class TaskSorter extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    return DragAndDropLists(
-      children: taskLists.map((taskListMeta) {
-        var includeOverdue = (overdue?.tasks.isNotEmpty ?? false)  && taskLists.indexOf(taskListMeta) == 0;
+    return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: DragAndDropLists(
+              disableScrolling: true,
+              children: taskLists.map((taskListMeta) {
+                var includeOverdue = (overdue?.tasks.isNotEmpty ?? false) && taskLists.indexOf(taskListMeta) == 0;
 
-        late Widget header;
-        if (buildHeader != null) {
-          header = buildHeader!(taskListMeta);
-        } else {
-          header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
-        }
-        return DragAndDropList(
-          header: header,
-          contentsWhenEmpty: buildEmpty(theme),
-          canDrag: taskListMeta.canDrag,
-          children: taskListMeta.tasks.map((task) {
-            return DragAndDropItem(child: buildItem(task));
-          }).toList(),
-          lastTarget: SizedBox(height: space(3)),
-        );
-      }).toList(),
-      itemDecorationWhileDragging: itemDragBoxDecoration(theme),
-      itemDragOnLongPress: true,
-      onItemReorder: onItemReorder,
-      onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
-      onItemAdd: onItemAdd,
-      lastItemTargetHeight: space(3),
-    );
+                late Widget header;
+                if (buildHeader != null) {
+                  header = buildHeader!(taskListMeta);
+                } else {
+                  header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
+                }
+                return DragAndDropList(
+                  header: header,
+                  contentsWhenEmpty: buildEmpty(theme),
+                  canDrag: taskListMeta.canDrag,
+                  children: taskListMeta.tasks.map((task) {
+                    return DragAndDropItem(child: buildItem(task));
+                  }).toList(),
+                  lastTarget: SizedBox(height: space(3)),
+                );
+              }).toList(),
+              itemDecorationWhileDragging: itemDragBoxDecoration(theme),
+              itemDragOnLongPress: true,
+              onItemReorder: onItemReorder,
+              onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
+              onItemAdd: onItemAdd,
+              lastItemTargetHeight: space(3),
+            )));
   }
 
   Widget buildEmpty(ThemeData theme) {
@@ -125,10 +130,10 @@ class TaskSorter extends StatelessWidget {
     switch (taskMeta.iconStyle) {
       case TaskSortIcon.warning:
         icon = Icon(Icons.warning_outlined, color: docketColors.actionDelete);
-      break;
+        break;
       case TaskSortIcon.evening:
         icon = Icon(Icons.bedtime_outlined, color: docketColors.dueEvening);
-      break;
+        break;
       case TaskSortIcon.none:
       default:
     }
@@ -149,8 +154,8 @@ class TaskSorter extends StatelessWidget {
     }
     if (text.isNotEmpty) {
       children.add(Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: text,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: text,
       ));
     }
 
@@ -160,17 +165,14 @@ class TaskSorter extends StatelessWidget {
     if (taskMeta.showButton == true) {
       var buttonArgs = taskMeta.buttonArgs ?? const TaskSortButtonArgs();
       children.add(TaskAddButton(
-          projectId: buttonArgs.projectId,
-          sectionId: buttonArgs.sectionId,
-          dueOn: buttonArgs.dueOn,
-          evening: buttonArgs.evening,
-        ));
+        projectId: buttonArgs.projectId,
+        sectionId: buttonArgs.sectionId,
+        dueOn: buttonArgs.dueOn,
+        evening: buttonArgs.evening,
+      ));
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: children
-    );
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: children);
   }
 }
 

@@ -107,14 +107,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       floatingActionButton: FloatingCreateTaskButton(task: _newTask),
       body: RefreshIndicator(
         onRefresh: () => _refresh(viewmodel),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: child
-          ),
+        child: child,
       ),
-    ));
+    );
   }
 }
 

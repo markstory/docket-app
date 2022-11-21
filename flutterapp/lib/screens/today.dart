@@ -80,11 +80,7 @@ class _TodayScreenState extends State<TodayScreen> {
     } else {
       body = RefreshIndicator(
           onRefresh: () => _refresh(viewmodel),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              child: TaskSorter(
+          child: TaskSorter(
                 taskLists: viewmodel.taskLists,
                 overdue: viewmodel.overdue,
                 buildItem: (Task task) {
@@ -98,8 +94,7 @@ class _TodayScreenState extends State<TodayScreen> {
                   var task = itemChild.task;
 
                   await viewmodel.moveOverdue(task, listIndex, itemIndex);
-                }))
-            )
+                })
           );
     }
 
