@@ -71,7 +71,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
     var subtask = widget.subtask;
 
     return ListTile(
-      contentPadding: EdgeInsets.fromLTRB(space(1), space(0.5), space(1), space(0.5)),
+      contentPadding: EdgeInsets.fromLTRB(space(0.3), space(0.5), space(1), space(0.5)),
       dense: true,
       leading: Checkbox(
         activeColor: customColors.actionComplete,

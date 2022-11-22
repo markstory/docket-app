@@ -67,7 +67,7 @@ class _TaskFormState extends State<TaskForm> {
         },
       ),
       Padding(
-          padding: EdgeInsets.fromLTRB(12, space(0.75), 0, 0),
+          padding: EdgeInsets.fromLTRB(10, space(0.75), 0, 0),
           child: TextButton(
               child: const Text('Add Subtask'),
               onPressed: () {

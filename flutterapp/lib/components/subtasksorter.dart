@@ -30,7 +30,7 @@ class SubtaskSorter extends StatelessWidget {
           header: Column(
             children: [
               Row(children: [
-                const SizedBox(width: 18),
+                const SizedBox(width: 10),
                 Text('Subtasks', style: theme.textTheme.titleLarge),
               ]),
               SizedBox(height: space(1)),

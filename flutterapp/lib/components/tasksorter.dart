@@ -44,8 +44,7 @@ class TaskSorter extends StatelessWidget {
 
     return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(
-            height: MediaQuery.of(context).size.height,
+        child: Container(
             child: DragAndDropLists(
               disableScrolling: true,
               children: taskLists.map((taskListMeta) {
