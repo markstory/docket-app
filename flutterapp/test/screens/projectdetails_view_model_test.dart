@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
-import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';

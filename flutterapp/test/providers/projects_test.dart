@@ -18,9 +18,6 @@ void main() {
   file = File('test_resources/project_details.json');
   final projectViewResponseFixture = file.readAsStringSync();
 
-  file = File('test_resources/project_completed.json');
-  final projectCompletedResponseFixture = file.readAsStringSync();
-
   group('$ProjectsProvider project methods', () {
     late ProjectsProvider provider;
     late SessionProvider session;

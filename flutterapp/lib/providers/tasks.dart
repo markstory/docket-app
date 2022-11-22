@@ -21,23 +21,9 @@ enum ViewNames {
 class TasksProvider extends ChangeNotifier {
   late LocalDatabase _database;
   SessionProvider? session;
-  Set<ViewNames> _pending = {};
 
   TasksProvider(LocalDatabase database, this.session) {
     _database = database;
-    _pending = {};
-  }
-
-  Future<void> _withPending(ViewNames view, Future<void> Function() callback) {
-    if (_pending.contains(view)) {
-      return Future.value(null);
-    }
-    _pending.add(view);
-    try {
-      return callback();
-    } finally {
-      _pending.remove(view);
-    }
   }
 
   void setSession(SessionProvider session) {
