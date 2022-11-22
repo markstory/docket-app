@@ -37,7 +37,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Project get project {
     var p = _project;
     if (p == null) {
-      throw Exception('Cannot access project');
+      throw Exception('Cannot access project it has not been set');
     }
     return p;
   }
@@ -45,7 +45,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   String get slug {
     var s = _slug;
     if (s == null) {
-      throw Exception('Cannot access slug');
+      throw Exception('Cannot access slug it has not been set');
     }
     return s;
   }
@@ -139,9 +139,10 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _shouldReload = false;
 
     var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
-    await _database.projectDetails.set(result);
 
     _project = result.project;
+    await _database.projectDetails.set(result);
+
     _buildTaskLists(result.tasks);
   }
 
