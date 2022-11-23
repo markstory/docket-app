@@ -121,7 +121,7 @@ void main() {
       expect(projectMap!.slug, equals('home'));
 
       var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
+      expect(details.isEmpty, equals(true));
     });
 
     test('archive() makes API request and expires local db', () async {
@@ -140,7 +140,7 @@ void main() {
       expect(projectMap, isNull);
 
       var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
+      expect(details.isEmpty, equals(true));
     });
 
     test('unarchive() makes API request and expires local db', () async {
@@ -192,7 +192,7 @@ void main() {
       await provider.deleteSection(project, section);
 
       var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
+      expect(details.isEmpty, equals(true));
     });
 
     test('updateSection() makes API request and expires local db', () async {
@@ -212,7 +212,7 @@ void main() {
       expect(projectMap, isNull);
 
       var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
+      expect(details.isEmpty, equals(true));
     });
 
     test('moveSection() makes API request and expires local db', () async {
@@ -230,7 +230,7 @@ void main() {
 
       expect(section.ranking, equals(2));
       var details = await db.projectDetails.get('home');
-      expect(details.missingData, equals(true));
+      expect(details.isEmpty, equals(true));
     });
   });
 }

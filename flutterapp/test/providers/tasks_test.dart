@@ -126,7 +126,7 @@ void main() {
       expect(listenerCallCount, greaterThan(0));
 
       var todayData = await db.today.get();
-      expect(todayData.missingData, isTrue);
+      expect(todayData.isEmpty, isTrue);
       expect(todayData.tasks.length, equals(0));
     });
 

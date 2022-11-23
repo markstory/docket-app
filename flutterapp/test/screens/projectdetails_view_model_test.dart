@@ -62,6 +62,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
+      expect(viewmodel.loading, isFalse);
       expect(viewmodel.project, isNotNull);
       expect(viewmodel.taskLists.length, equals(3));
     });

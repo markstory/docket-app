@@ -324,7 +324,7 @@ class TodayView extends ViewCache<TaskViewData> {
     var data = await _get();
     // Likely loading.
     if (data == null || data['tasks'] == null) {
-      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
+      return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
   }
@@ -350,7 +350,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
     var data = await _get();
     // Likely loading.
     if (data == null || data['tasks'] == null) {
-      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
+      return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
   }
@@ -376,7 +376,7 @@ class TrashbinView extends ViewCache<TaskViewData> {
     var data = await _get();
     // Likely loading.
     if (data == null || data['tasks'] == null) {
-      return TaskViewData(missingData: true, tasks: [], calendarItems: []);
+      return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
   }
@@ -533,7 +533,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
       return ProjectWithTasks(
         project: Project.blank(),
         tasks: [],
-        missingData: true,
+        isEmpty: true,
       );
     }
     return ProjectWithTasks.fromMap(data[slug]);
@@ -603,7 +603,7 @@ class CompletedTasksView extends ViewCache<ProjectWithTasks> {
       return ProjectWithTasks(
         project: Project.blank(),
         tasks: [],
-        missingData: true,
+        isEmpty: true,
       );
     }
     return ProjectWithTasks.fromMap(data[slug]);

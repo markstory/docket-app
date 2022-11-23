@@ -45,10 +45,10 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     var taskView = await _database.upcoming.get();
-    if (taskView.missingData == false) {
+    if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (_shouldReload || (taskView.missingData && !_loading)) {
+    if (_shouldReload || (taskView.isEmpty && !_loading)) {
       return refresh();
     }
   }

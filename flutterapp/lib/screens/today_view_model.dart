@@ -48,11 +48,11 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     var taskView = await _database.today.get();
-    developer.log('taskview missing ${taskView.missingData}', name: 'viewmodel');
-    if (taskView.missingData == false) {
+    developer.log('taskview missing ${taskView.isEmpty}', name: 'viewmodel');
+    if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (_shouldReload || (taskView.missingData && !_loading)) {
+    if (_shouldReload || (taskView.isEmpty && !_loading)) {
       developer.log('today reloading', name: 'viewmodel');
       return refresh();
     }

@@ -64,15 +64,14 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    _loading = true;
     var projectData = await _database.projectDetails.get(slug);
 
-    if (projectData.missingData == false) {
+    if (!projectData.isEmpty) {
       _project = projectData.project;
       _buildTaskLists(projectData.tasks);
     }
-    if (_shouldReload || (projectData.missingData && !_loading)) {
-      return refresh();
+    if (_shouldReload || (projectData.isEmpty && !_loading)) {
+      return await refresh();
     }
   }
 

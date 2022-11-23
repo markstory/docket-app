@@ -241,13 +241,13 @@ class TaskViewData {
   bool pending;
 
   // True when the cache key could not be found.
-  final bool missingData;
+  final bool isEmpty;
 
   TaskViewData({
     required this.tasks,
     required this.calendarItems,
     this.pending = false,
-    this.missingData = false,
+    this.isEmpty = false,
   });
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
