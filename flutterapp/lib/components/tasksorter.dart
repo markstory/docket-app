@@ -8,7 +8,7 @@ import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
 
-class TaskSorter extends StatelessWidget {
+class TaskSorter extends StatefulWidget {
   final List<TaskSortMetadata> taskLists;
 
   final TaskSortMetadata? overdue;
@@ -39,6 +39,25 @@ class TaskSorter extends StatelessWidget {
       super.key});
 
   @override
+  State<TaskSorter> createState() => _TaskSorterState();
+}
+
+class _TaskSorterState extends State<TaskSorter> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController(keepScrollOffset: true);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
@@ -46,13 +65,12 @@ class TaskSorter extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
             child: DragAndDropLists(
-              disableScrolling: true,
-              children: taskLists.map((taskListMeta) {
-                var includeOverdue = (overdue?.tasks.isNotEmpty ?? false) && taskLists.indexOf(taskListMeta) == 0;
+              children: widget.taskLists.map((taskListMeta) {
+                var includeOverdue = (widget.overdue?.tasks.isNotEmpty ?? false) && widget.taskLists.indexOf(taskListMeta) == 0;
 
                 late Widget header;
-                if (buildHeader != null) {
-                  header = buildHeader!(taskListMeta);
+                if (widget.buildHeader != null) {
+                  header = widget.buildHeader!(taskListMeta);
                 } else {
                   header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
                 }
@@ -61,16 +79,16 @@ class TaskSorter extends StatelessWidget {
                   contentsWhenEmpty: buildEmpty(theme),
                   canDrag: taskListMeta.canDrag,
                   children: taskListMeta.tasks.map((task) {
-                    return DragAndDropItem(child: buildItem(task));
+                    return DragAndDropItem(child: widget.buildItem(task));
                   }).toList(),
                   lastTarget: SizedBox(height: space(3)),
                 );
               }).toList(),
               itemDecorationWhileDragging: itemDragBoxDecoration(theme),
               itemDragOnLongPress: true,
-              onItemReorder: onItemReorder,
-              onListReorder: onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
-              onItemAdd: onItemAdd,
+              onItemReorder: widget.onItemReorder,
+              onListReorder: widget.onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
+              onItemAdd: widget.onItemAdd,
               lastItemTargetHeight: space(3),
             )));
   }
@@ -106,8 +124,8 @@ class TaskSorter extends StatelessWidget {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
 
-    if (overdue != null && includeOverdue) {
-      children.add(buildOverdue(overdue!, theme, docketColors));
+    if (widget.overdue != null && includeOverdue) {
+      children.add(buildOverdue(widget.overdue!, theme, docketColors));
     }
     children.add(buildTitle(taskMeta, theme, docketColors));
 
