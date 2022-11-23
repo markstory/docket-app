@@ -61,36 +61,34 @@ class _TaskSorterState extends State<TaskSorter> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-            child: DragAndDropLists(
-              children: widget.taskLists.map((taskListMeta) {
-                var includeOverdue = (widget.overdue?.tasks.isNotEmpty ?? false) && widget.taskLists.indexOf(taskListMeta) == 0;
+    return DragAndDropLists(
+      children: widget.taskLists.map((taskListMeta) {
+        var includeOverdue = (widget.overdue?.tasks.isNotEmpty ?? false) && widget.taskLists.indexOf(taskListMeta) == 0;
 
-                late Widget header;
-                if (widget.buildHeader != null) {
-                  header = widget.buildHeader!(taskListMeta);
-                } else {
-                  header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
-                }
-                return DragAndDropList(
-                  header: header,
-                  contentsWhenEmpty: buildEmpty(theme),
-                  canDrag: taskListMeta.canDrag,
-                  children: taskListMeta.tasks.map((task) {
-                    return DragAndDropItem(child: widget.buildItem(task));
-                  }).toList(),
-                  lastTarget: SizedBox(height: space(3)),
-                );
-              }).toList(),
-              itemDecorationWhileDragging: itemDragBoxDecoration(theme),
-              itemDragOnLongPress: true,
-              onItemReorder: widget.onItemReorder,
-              onListReorder: widget.onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
-              onItemAdd: widget.onItemAdd,
-              lastItemTargetHeight: space(3),
-            )));
+        late Widget header;
+        if (widget.buildHeader != null) {
+          header = widget.buildHeader!(taskListMeta);
+        } else {
+          header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
+        }
+        return DragAndDropList(
+          header: header,
+          contentsWhenEmpty: buildEmpty(theme),
+          canDrag: taskListMeta.canDrag,
+          children: taskListMeta.tasks.map((task) {
+            return DragAndDropItem(child: widget.buildItem(task));
+          }).toList(),
+          lastTarget: SizedBox(height: space(3)),
+        );
+      }).toList(),
+      itemDecorationWhileDragging: itemDragBoxDecoration(theme),
+      itemDragOnLongPress: true,
+      onItemReorder: widget.onItemReorder,
+      onListReorder: widget.onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
+      onItemAdd: widget.onItemAdd,
+      lastItemTargetHeight: space(3),
+      scrollController: _scrollController,
+    );
   }
 
   Widget buildEmpty(ThemeData theme) {
@@ -141,7 +139,7 @@ class _TaskSorterState extends State<TaskSorter> {
     List<Widget> children = [];
     List<Widget> text = [];
 
-    children.add(SizedBox(width: space(2.5)));
+    children.add(SizedBox(width: space(2.3)));
 
     var icon = taskMeta.icon;
     switch (taskMeta.iconStyle) {
