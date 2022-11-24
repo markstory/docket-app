@@ -64,13 +64,13 @@ class Task {
 
   factory Task.fromMap(Map<String, dynamic> json) {
     var projectId = json['project_id'];
-    projectId ??= json['project']['id'];
+    projectId ??= json['project']?['id'];
     var projectSlug = json['project_slug'];
-    projectSlug ??= json['project']['slug'];
+    projectSlug ??= json['project']?['slug'];
     var projectColor = json['project_color'];
-    projectColor ??= json['project']['color'];
+    projectColor ??= json['project']?['color'];
     var projectName = json['project_name'];
-    projectName ??= json['project']['name'];
+    projectName ??= json['project']?['name'];
 
     // TODO extract casting behavior into reusable functions.
     var evening = json['evening'];
