@@ -102,10 +102,12 @@ packages:
   drag_and_drop_lists:
     dependency: "direct main"
     description:
-      name: drag_and_drop_lists
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.2+2"
+      path: "."
+      ref: scroll-physics
+      resolved-ref: fc258877c4b315bb934d014d4af88ca2fd76416f
+      url: "https://github.com/markstory/DragAndDropLists"
+    source: git
+    version: "0.3.3"
   encrypt:
     dependency: transitive
     description:

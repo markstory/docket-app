@@ -88,6 +88,7 @@ class _TaskSorterState extends State<TaskSorter> {
       onItemAdd: widget.onItemAdd,
       lastItemTargetHeight: space(3),
       scrollController: _scrollController,
+      scrollPhysics: const AlwaysScrollableScrollPhysics(),
     );
   }
 

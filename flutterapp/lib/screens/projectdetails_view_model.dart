@@ -65,7 +65,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     var projectData = await _database.projectDetails.get(slug);
-
     if (!projectData.isEmpty) {
       _project = projectData.project;
       _buildTaskLists(projectData.tasks);
