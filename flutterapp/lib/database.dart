@@ -134,6 +134,7 @@ class LocalDatabase {
           throw Exception('Unknown view key of $key');
       }
     }
+
     await Future.wait(futures);
   }
 
@@ -157,6 +158,8 @@ class LocalDatabase {
       futures.add(taskDetails.set(task));
 
       if (expire) {
+        taskDetails.notify();
+
         // Update the pending view updates.
         for (var view in _taskViews(task)) {
           switch (view) {
@@ -182,7 +185,7 @@ class LocalDatabase {
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
     await addTasks([task]);
-    return _expireTaskViews(task);
+    await _expireTaskViews(task);
   }
 
   Future<void> deleteTask(Task task) async {
@@ -393,12 +396,12 @@ class TaskDetailsView extends ViewCache<Task> {
     return 'v1:$name';
   }
 
+
   /// Set a task into the details view.
   @override
   Future<void> set(Task task) async {
     var current = await _get() ?? {};
     current[task.id.toString()] = task.toMap();
-
     return _set(current);
   }
 
@@ -420,6 +423,10 @@ class TaskDetailsView extends ViewCache<Task> {
     data.remove(taskId);
     await _set(data);
 
+    notifyListeners();
+  }
+
+  void notify() {
     notifyListeners();
   }
 }

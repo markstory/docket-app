@@ -20,14 +20,12 @@ class TaskDetailsScreen extends StatefulWidget {
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   late TaskDetailsViewModel viewmodel;
-  late Task task;
 
   @override
   void initState() {
     super.initState();
-    task = widget.task;
     viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
-    viewmodel.setId(task.id!);
+    viewmodel.setId(widget.task.id!);
 
     _refresh(viewmodel);
   }
@@ -60,7 +58,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           padding: EdgeInsets.all(space(1)),
           child: Column(children: [
             TaskForm(
-              task: view.task,
+              task: viewmodel.task,
               onSave: (task) => _onSave(context, task),
               onComplete: () => Navigator.of(context).pop(),
             ),
