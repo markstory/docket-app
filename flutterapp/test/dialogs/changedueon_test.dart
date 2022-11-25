@@ -8,7 +8,7 @@ import 'package:docket/dialogs/changedueon.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Widget _buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
+  Widget buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
     var database = LocalDatabase.instance();
     return EntryPoint(
         database: database,
@@ -34,7 +34,7 @@ void main() {
         callCount++;
       }
 
-      await tester.pumpWidget(_buildButton(today, false, onUpdate));
+      await tester.pumpWidget(buildButton(today, false, onUpdate));
 
       // Open dialog.
       await tester.tap(find.text('Open'));
@@ -53,7 +53,7 @@ void main() {
         callCount++;
       }
 
-      await tester.pumpWidget(_buildButton(today, false, onUpdate));
+      await tester.pumpWidget(buildButton(today, false, onUpdate));
 
       // Open dialog.
       await tester.tap(find.text('Open'));
@@ -70,7 +70,7 @@ void main() {
         callCount++;
       }
 
-      await tester.pumpWidget(_buildButton(today, false, onUpdate));
+      await tester.pumpWidget(buildButton(today, false, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
@@ -88,7 +88,24 @@ void main() {
         callCount++;
       }
 
-      await tester.pumpWidget(_buildButton(tomorrow, false, onUpdate));
+      await tester.pumpWidget(buildButton(tomorrow, false, onUpdate));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('This evening'), findsOneWidget);
+      expect(find.text('Today'), findsOneWidget);
+      expect(find.text('Later'), findsOneWidget);
+      expect(find.text('Choose a day'), findsOneWidget);
+      expect(find.text('Tomorrow'), findsNothing);
+      expect(callCount, equals(0));
+    });
+
+    testWidgets('displays options for friday', (tester) async {
+      var callCount = 0;
+      void onUpdate(DateTime? dueOn, bool evening) {
+        callCount++;
+      }
+      await tester.pumpWidget(buildButton(tomorrow, false, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 

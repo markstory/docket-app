@@ -98,14 +98,14 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
         items.add(ListTile(
             dense: true,
             leading: Icon(Icons.date_range_outlined, color: docketColors.dueFortnight),
-            title: Text(formatters.compactDate(currentValue)),
+            title: Text(formatters.compactDate(monday)),
             onTap: () {
               completer.complete(ChangeDueOnResult(dueOn: monday, evening: evening));
               Navigator.of(context).pop();
             }));
       }
 
-      if (dueOn != null && !isToday) {
+      if (dueOn != null && !isToday && !isTodayFriday) {
         var next = dueOn.add(const Duration(days: 1));
         items.add(ListTile(
             dense: true,
