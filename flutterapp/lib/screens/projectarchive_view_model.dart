@@ -13,9 +13,6 @@ class ProjectArchiveViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   /// Task list
   List<Project> _projects = [];
 
@@ -24,8 +21,7 @@ class ProjectArchiveViewModel extends ChangeNotifier {
     _projects = [];
 
     _database.projectArchive.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -38,7 +34,14 @@ class ProjectArchiveViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (_shouldReload || !_loading) {
+    var result = await _database.projectArchive.get();
+    if (result != null) {
+
+      _projects = result;
+      notifyListeners();
+    }
+
+    if (!_loading) {
       return refresh();
     }
   }
@@ -46,7 +49,6 @@ class ProjectArchiveViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     var result = await actions.fetchProjectArchive(session!.apiToken);
     await _database.projectArchive.set(result);

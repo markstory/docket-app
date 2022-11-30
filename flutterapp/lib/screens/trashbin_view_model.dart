@@ -13,9 +13,6 @@ class TrashbinViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   /// Task list
   List<Task> _tasks = [];
 
@@ -24,8 +21,7 @@ class TrashbinViewModel extends ChangeNotifier {
     _tasks = [];
 
     _database.trashbin.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -38,7 +34,11 @@ class TrashbinViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (_shouldReload || !_loading) {
+    var result = await _database.trashbin.get();
+    if (!result.isEmpty) {
+      _tasks = result.tasks;
+    }
+    if (!_loading) {
       return refresh();
     }
   }
@@ -46,7 +46,6 @@ class TrashbinViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     var result = await actions.fetchTrashbin(session!.apiToken);
     await _database.trashbin.set(result);

@@ -256,12 +256,20 @@ abstract class ViewCache<T> extends ChangeNotifier {
     _database = database;
   }
 
-  bool isFresh(String? updated) {
+  /// Check if the local data is within the cache duration.
+  /// Stale data will be returned by _get(). Use this method 
+  /// to see if a server refresh should be performed.
+  bool isFresh() {
+    var state = _state;
+    if (state == null) {
+      return false;
+    }
     // No duration means always fresh.
     if (duration == null) {
       return true;
     }
-    // Empty data is 'fresh'. This prevents loops
+    var updated = state['updatedAt'];
+    // No updatedAt means we need to refresh.
     if (updated == null) {
       return false;
     }
@@ -272,21 +280,21 @@ abstract class ViewCache<T> extends ChangeNotifier {
     return updatedAt.isAfter(expires);
   }
 
-  /// Refresh the data stored for the 'today' view.
+  /// Update local database and in-process state as well.
   Future<void> _set(Map<String, dynamic> data) async {
     var payload = {'updatedAt': clock.now().toIso8601String(), 'data': data};
     _state = payload;
     await _database.refresh(keyName(), payload);
   }
 
-  /// Refresh the data stored for the 'today' view.
+  /// Fetch data from the local store.
   Future<Map<String, dynamic>?> _get() async {
     var state = _state;
-    if (state != null && isFresh(state['updatedAt'])) {
+    if (state != null) {
       return state['data'];
     }
     var payload = await _database.value(keyName());
-    if (payload == null || !isFresh(payload['updatedAt'])) {
+    if (payload == null) {
       return null;
     }
     _state = payload;
@@ -351,7 +359,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
 
   Future<TaskViewData> get() async {
     var data = await _get();
-    // Likely loading.
+    // Empty local data
     if (data == null || data['tasks'] == null) {
       return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
     }

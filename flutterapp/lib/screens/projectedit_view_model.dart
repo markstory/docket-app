@@ -14,15 +14,11 @@ class ProjectEditViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   ProjectEditViewModel(LocalDatabase database, this.session) {
     _database = database;
 
     _database.projectDetails.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -50,12 +46,19 @@ class ProjectEditViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
-    _shouldReload = true;
+    fetchProject();
+  }
+
+  Future<void> fetchProject() async {
+    var result = await _database.projectDetails.get(slug);
+    _project = result.project;
+
+    notifyListeners();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (_shouldReload || !_loading) {
+    if (!_loading) {
       return refresh();
     }
   }
@@ -63,7 +66,6 @@ class ProjectEditViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
     await _database.projectDetails.set(result);

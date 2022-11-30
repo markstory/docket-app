@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -96,6 +97,11 @@ class _TodayScreenState extends State<TodayScreen> {
                   await viewmodel.moveOverdue(task, listIndex, itemIndex);
                 })
           );
+    }
+
+    if (viewmodel.loadError) {
+      errorSnackBar(context: context, text: 'Failed to load tasks');
+      viewmodel.clearLoadError();
     }
 
     return Scaffold(

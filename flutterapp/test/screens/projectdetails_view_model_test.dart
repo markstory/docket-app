@@ -58,7 +58,6 @@ void main() {
       });
 
       var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
-
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();

@@ -15,9 +15,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
 
@@ -29,8 +26,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _taskLists = [];
 
     _database.projectDetails.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -59,6 +55,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
+
     return this;
   }
 
@@ -69,9 +66,21 @@ class ProjectDetailsViewModel extends ChangeNotifier {
       _project = projectData.project;
       _buildTaskLists(projectData.tasks);
     }
-    if (_shouldReload || (projectData.isEmpty && !_loading)) {
-      return await refresh();
+    if (!_loading && projectData.isEmpty) {
+      await refresh();
     }
+  }
+
+  /// Refresh from the server.
+  Future<void> refresh() async {
+    _loading = true;
+
+    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+
+    _project = result.project;
+    await _database.projectDetails.set(result);
+
+    _buildTaskLists(result.tasks);
   }
 
   /// Move a section up or down.
@@ -96,6 +105,8 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   /// Move a task out of overdue into another section
   Future<void> moveInto(Task task, int listIndex, int itemIndex) async {
+    assert(_taskLists.isNotEmpty);
+
     // Calculate position of adding to a end.
     // Generally this will be zero but it is possible to add to the
     // bottom of a populated list too.
@@ -131,19 +142,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     await refresh();
 
     notifyListeners();
-  }
-
-  /// Refresh from the server.
-  Future<void> refresh() async {
-    _loading = true;
-    _shouldReload = false;
-
-    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
-
-    _project = result.project;
-    await _database.projectDetails.set(result);
-
-    _buildTaskLists(result.tasks);
   }
 
   void _buildTaskLists(List<Task> tasks) {

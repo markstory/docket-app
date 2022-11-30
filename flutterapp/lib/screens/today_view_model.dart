@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 import 'package:docket/actions.dart' as actions;
@@ -17,11 +16,11 @@ class TodayViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
+
+  /// Whether loading data failed.
+  bool _loadError = false;
 
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
@@ -31,12 +30,12 @@ class TodayViewModel extends ChangeNotifier {
     _taskLists = [];
 
     _database.today.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
   bool get loading => _loading;
+  bool get loadError => _loadError;
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
 
@@ -44,16 +43,18 @@ class TodayViewModel extends ChangeNotifier {
     session = value;
   }
 
+  clearLoadError() {
+    _loadError = false;
+  }
+
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
     var taskView = await _database.today.get();
-    developer.log('taskview missing ${taskView.isEmpty}', name: 'viewmodel');
-    if (taskView.isEmpty == false) {
+    if (!taskView.isEmpty) {
       _buildTaskLists(taskView);
     }
-    if (_shouldReload || (taskView.isEmpty && !_loading)) {
-      developer.log('today reloading', name: 'viewmodel');
+    if (!_loading && !_database.today.isFresh()) {
       return refresh();
     }
   }
@@ -99,7 +100,6 @@ class TodayViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     await Future.wait([
       actions.fetchTodayTasks(session!.apiToken),
@@ -115,7 +115,7 @@ class TodayViewModel extends ChangeNotifier {
         _buildTaskLists(tasksView);
       });
     }).onError((error, stack) {
-      // TODO implement error state handling.
+      _loadError = true;
     });
   }
 

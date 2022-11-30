@@ -15,15 +15,11 @@ class TaskDetailsViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   TaskDetailsViewModel(LocalDatabase database, this.session) {
     _database = database;
 
     _database.taskDetails.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -50,20 +46,29 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   setId(int id) {
     _id = id;
-    _shouldReload = true;
+    fetchTask();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (_shouldReload || !_loading) {
+    if (!_loading) {
       return refresh();
     }
+  }
+
+  /// Load data from the local database.
+  /// Avoids flash of empty content, makes the app feel more snappy
+  /// and provides a better offline experience.
+  Future<void> fetchTask() async {
+    var task = await _database.taskDetails.get(id);
+    _task = task;
+
+    notifyListeners();
   }
 
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     var result = await actions.fetchTaskById(session!.apiToken, id);
     await _database.addTasks([result], expire: false);

@@ -13,9 +13,6 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not data should be reloaded
-  bool _shouldReload = false;
-
   /// Task list
   List<Task> _tasks = [];
 
@@ -27,8 +24,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     _tasks = [];
 
     _database.completedTasks.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -46,13 +42,17 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     if (slug != _slug) {
       _tasks = [];
       _slug = slug;
-      _shouldReload = true;
     }
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (_shouldReload || !_loading) {
+    var result = await _database.completedTasks.get(slug);
+    if (!result.isEmpty) {
+      _tasks = result.tasks;
+    }
+
+    if (!_loading) {
       return refresh();
     }
   }
@@ -62,8 +62,6 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     assert(_slug.isNotEmpty, "A slug is required to load data");
 
     _loading = true;
-    _shouldReload = false;
-
     var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
     await _database.completedTasks.set(result);
     _loading = false;

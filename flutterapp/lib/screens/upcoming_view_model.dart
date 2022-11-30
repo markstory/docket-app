@@ -16,9 +16,6 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  /// Whether or not local data has been reset and we need to reload.
-  bool _shouldReload = false;
-
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
 
@@ -29,8 +26,7 @@ class UpcomingViewModel extends ChangeNotifier {
     _database = database;
 
     _database.upcoming.addListener(() async {
-      _shouldReload = true;
-      loadData();
+      refresh();
     });
   }
 
@@ -48,7 +44,7 @@ class UpcomingViewModel extends ChangeNotifier {
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (_shouldReload || (taskView.isEmpty && !_loading)) {
+    if (!_loading && (taskView.isEmpty || !_database.upcoming.isFresh())) {
       return refresh();
     }
   }
@@ -91,7 +87,6 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Refresh from the server.
   Future<void> refresh() async {
     _loading = true;
-    _shouldReload = false;
 
     var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
     await _database.upcoming.set(tasksView);
