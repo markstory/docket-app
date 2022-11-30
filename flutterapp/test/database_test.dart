@@ -26,11 +26,13 @@ void main() {
 
     test('data read when stale', () async {
       await database.projectMap.set(project);
+      expect(database.projectMap.isFresh(), isTrue, reason: 'Should be fresh');
       var expires = DateTime.now().add(const Duration(hours: 2));
 
       withClock(Clock.fixed(expires), () async {
         var value = await database.projectMap.get('home');
-        expect(value, isNull);
+        expect(value, isNotNull, reason: 'stale reads are ok');
+        expect(database.projectMap.isFresh(), isFalse, reason: 'no longer fresh.');
       });
     });
 
