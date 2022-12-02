@@ -142,7 +142,10 @@ jobs:
     - name: Run flutter test
       run: |
         cd flutterapp
-        flutter test
+        flutter test --coverage
+
+    - name: Submit code coverage
+      uses: codecov/codecov-action@v1
 
   cs-stan:
     name: Coding Standard & Static Analysis
