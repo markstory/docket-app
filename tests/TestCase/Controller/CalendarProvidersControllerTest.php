@@ -64,6 +64,29 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
+     * Test index method
+     *
+     * @vcr controller_calendarsources_add.yml
+     * @return void
+     */
+    public function testIndexApi(): void
+    {
+        $token = $this->makeApiToken();
+        // Owned by a different user.
+        $provider = $this->makeCalendarProvider(1, 'other@example.com');
+
+        $this->requestJson();
+        $this->useApiToken($token);
+
+        $this->get('/calendars');
+        $this->assertResponseOk();
+        $records = $this->viewVariable('calendarProviders');
+
+        $this->assertCount(1, $records);
+        $this->assertEquals($provider->id, $records[0]->id);
+    }
+
+    /**
      * @vcr controller_calendarsources_add.yml
      */
     public function testIndexIncludeLinkedAndUnlinked(): void
@@ -86,6 +109,44 @@ class CalendarProvidersControllerTest extends TestCase
         $unlinked = $this->viewVariable('unlinked');
         $this->assertCount(1, $unlinked);
         $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
+    }
+
+    /**
+     * Test view
+     *
+     * @vcr controller_calendarsources_add.yml
+     * @return void
+     */
+    public function testView(): void
+    {
+        // Owned by a different user.
+        $this->makeCalendarProvider(2, 'other@example.com');
+        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
+        $this->makeCalendarSource($ownProvider->id, 'primary', [
+            'provider_id' => $ownProvider->id,
+        ]);
+
+        $this->login();
+        $this->get("/calendars/{$ownProvider->id}/view");
+        $this->assertResponseOk();
+        $provider = $this->viewVariable('provider');
+
+        $this->assertEquals($ownProvider->id, $provider->id);
+        $this->assertNotEmpty($provider->calendar_sources);
+    }
+
+    /**
+     * Test view permissions
+     *
+     * @return void
+     */
+    public function testViewPermissions(): void
+    {
+        // Owned by a different user.
+        $provider = $this->makeCalendarProvider(2, 'other@example.com');
+        $this->login();
+        $this->get("/calendars/{$provider->id}/view");
+        $this->assertResponseError();
     }
 
     /**

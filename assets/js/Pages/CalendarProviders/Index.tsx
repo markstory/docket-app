@@ -15,18 +15,13 @@ import CalendarSources from './calendarSources';
 const REFERER_KEY = 'calendar-referer';
 
 type Props = {
-  calendarProviders: CalendarProviderDetailed[];
   activeProvider: CalendarProviderDetailed;
+  providers: CalendarProviderDetailed[];
   referer: string;
   unlinked: null | CalendarSource[];
 };
 
-function CalendarProvidersIndex({
-  activeProvider,
-  referer,
-  calendarProviders,
-  unlinked,
-}: Props) {
+function CalendarProvidersIndex({activeProvider, providers, referer, unlinked}: Props) {
   if (!localStorage.getItem(REFERER_KEY) && referer) {
     localStorage.setItem(REFERER_KEY, referer);
   }
@@ -55,13 +50,13 @@ function CalendarProvidersIndex({
 
         <h3>{t('Connected Calendar Accounts')}</h3>
         <ul className="list-items">
-          {calendarProviders.map(calendarProvider => {
-            const isActive = activeProvider && calendarProvider.id === activeProvider.id;
+          {providers.map(provider => {
+            const isActive = activeProvider && provider.id === activeProvider.id;
             return (
               <CalendarProviderItem
-                key={calendarProvider.id}
+                key={provider.id}
                 isActive={isActive}
-                provider={calendarProvider}
+                provider={provider}
                 unlinked={isActive ? unlinked : null}
               />
             );

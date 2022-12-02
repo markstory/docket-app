@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\CalendarService;
+use Cake\View\JsonView;
 
 /**
  * CalendarProviders Controller
@@ -12,6 +13,11 @@ use App\Service\CalendarService;
  */
 class CalendarProvidersController extends AppController
 {
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     /**
      * Index method
      *
@@ -46,7 +52,33 @@ class CalendarProvidersController extends AppController
         }
         $this->set('unlinked', $calendars);
 
-        $this->set(compact('activeProvider', 'calendarProviders', 'referer'));
+        $this->set(compact('activeProvider', 'providers', 'referer'));
+
+        $this->respond([
+            'success' => true,
+            'serialize' => ['providers'],
+        ]);
+    }
+
+    /**
+     * View method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function view(string $id, CalendarService $service)
+    {
+        $provider = $this->CalendarProviders->get($id, ['contain' => ['CalendarSources']]);
+        $this->Authorization->authorize($provider, 'view');
+
+        $service->setAccessToken($provider);
+        $calendars = $service->listUnlinkedCalendars($provider->calendar_sources ?? []);
+
+        $this->set(compact('provider', 'calendars'));
+
+        $this->respond([
+            'success' => true,
+            'serialize' => ['provider', 'calendars'],
+        ]);
     }
 
     /**
