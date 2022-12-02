@@ -29,23 +29,23 @@ class CalendarProvidersController extends AppController
         $query = $this->Authorization->applyScope($query);
 
         // There is no UI to go past 50 providers. I see no reasonable use case for this scenario.
-        $calendarProviders = $this->paginate($query)->toArray();
+        $providers = $this->paginate($query)->toArray();
         $referer = $this->getReferer('tasks:today');
 
         $calendars = [];
         $activeProvider = null;
-        if (!empty($calendarProviders)) {
+        if (!empty($providers)) {
             if ($this->request->getQuery('provider')) {
                 $id = (int)$this->request->getQuery('provider', null);
                 // Relying on the single page number of results to find the 'active' provider.
                 // The active provider is rendered with a calendar list.
-                $activeProvider = array_filter($calendarProviders, function ($item) use ($id) {
+                $activeProvider = array_filter($providers, function ($item) use ($id) {
                     return $item->id === $id;
                 });
                 $activeProvider = array_pop($activeProvider);
             }
             if (!$activeProvider) {
-                $activeProvider = $calendarProviders[0];
+                $activeProvider = $providers[0];
             }
             $service->setAccessToken($activeProvider);
             $calendars = $service->listUnlinkedCalendars($activeProvider->calendar_sources);

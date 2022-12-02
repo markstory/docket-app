@@ -39,7 +39,7 @@ class CalendarProvidersControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->CalendarProviders = TableRegistry::get('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
     }
 
     /**
@@ -57,7 +57,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->login();
         $this->get('/calendars');
         $this->assertResponseOk();
-        $records = $this->viewVariable('calendarProviders');
+        $records = $this->viewVariable('providers');
 
         $this->assertCount(1, $records);
         $this->assertEquals($ownProvider->id, $records[0]->id);
@@ -76,11 +76,11 @@ class CalendarProvidersControllerTest extends TestCase
         $provider = $this->makeCalendarProvider(1, 'other@example.com');
 
         $this->requestJson();
-        $this->useApiToken($token);
+        $this->useApiToken($token->token);
 
         $this->get('/calendars');
         $this->assertResponseOk();
-        $records = $this->viewVariable('calendarProviders');
+        $records = $this->viewVariable('providers');
 
         $this->assertCount(1, $records);
         $this->assertEquals($provider->id, $records[0]->id);
@@ -159,6 +159,23 @@ class CalendarProvidersControllerTest extends TestCase
         $provider = $this->makeCalendarProvider(1, 'owner@example.com');
 
         $this->login();
+        $this->enableCsrfToken();
+        $this->post("/calendars/{$provider->id}/delete");
+        $this->assertRedirect('/calendars');
+    }
+
+    /**
+     * Test delete api token
+     *
+     * @return void
+     */
+    public function testDeleteApi(): void
+    {
+        $token = $this->makeApiToken();
+        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/delete");
         $this->assertRedirect('/calendars');

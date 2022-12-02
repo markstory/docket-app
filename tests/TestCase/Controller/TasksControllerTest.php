@@ -124,7 +124,6 @@ class TasksControllerTest extends TestCase
         ]);
         $token = $this->makeApiToken(1);
 
-        $this->disableErrorHandlerMiddleware();
         $this->requestJson();
         $this->useApiToken($token->token);
         $this->get('/tasks');
