@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:docket/database.dart';
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/project.dart';
+import 'package:docket/models/task.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,17 @@ void main() {
         var value = await database.apiToken.get();
         expect(value, isNotNull);
       });
+    });
+
+    test('updateTask() notifies taskDetails', () async {
+      // This is important as it ensures that taskDetails refreshes.
+      var callCount = 0;
+      var task = Task.blank(projectId: project.id);
+      database.taskDetails.addListener(() {
+        callCount += 1;
+      });
+      await database.updateTask(task);
+      expect(callCount, greaterThan(0));
     });
   });
 }

@@ -184,8 +184,7 @@ class LocalDatabase {
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
-    await addTasks([task]);
-    await _expireTaskViews(task);
+    await addTasks([task], expire: true);
   }
 
   Future<void> deleteTask(Task task) async {
