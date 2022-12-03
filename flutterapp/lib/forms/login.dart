@@ -28,7 +28,8 @@ class LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
+    return AutofillGroup(
+        child: Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
@@ -43,6 +44,7 @@ class LoginFormState extends State<LoginForm> {
               return null;
             },
             onSaved: (value) => _email = value,
+            autofillHints: const [AutofillHints.username, AutofillHints.email],
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -55,6 +57,7 @@ class LoginFormState extends State<LoginForm> {
               }
               return null;
             },
+            autofillHints: const [AutofillHints.password],
             onSaved: (value) => _password = value,
           ),
           ElevatedButton(
@@ -67,9 +70,8 @@ class LoginFormState extends State<LoginForm> {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging in')));
                 widget.onSubmit(_email, _password);
               })
-          // Add TextFormFields and ElevatedButton here.
         ],
       ),
-    );
+    ));
   }
 }
