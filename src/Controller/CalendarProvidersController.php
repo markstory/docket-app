@@ -34,7 +34,9 @@ class CalendarProvidersController extends AppController
 
         $calendars = [];
         $activeProvider = null;
-        if (!empty($providers)) {
+
+        // API responses don't use activeProvider as the list and details views are separate.
+        if (!empty($providers) && !$this->request->is('json')) {
             if ($this->request->getQuery('provider')) {
                 $id = (int)$this->request->getQuery('provider', null);
                 // Relying on the single page number of results to find the 'active' provider.

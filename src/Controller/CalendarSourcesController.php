@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Model\Entity\CalendarSource;
 use App\Service\CalendarService;
+use Cake\View\JsonView;
 use RuntimeException;
 
 /**
@@ -14,6 +15,11 @@ use RuntimeException;
  */
 class CalendarSourcesController extends AppController
 {
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     protected function getSource(): CalendarSource
     {
         $query = $this->CalendarSources
