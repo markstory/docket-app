@@ -164,7 +164,7 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
-     * Test delete api token
+     * Test delete a calendar provider.
      *
      * @return void
      */
@@ -177,7 +177,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->useApiToken($token->token);
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/delete");
-        $this->assertRedirect('/calendars');
+        $this->assertResponseOk();
     }
 
     /**

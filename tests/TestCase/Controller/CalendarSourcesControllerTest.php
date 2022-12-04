@@ -109,6 +109,9 @@ class CalendarSourcesControllerTest extends TestCase
         $this->requestJson();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
 
+        $source = $this->viewVariable('source');
+        $this->assertNotEmpty($source);
+
         $result = $this->CalendarItems->find()->where([
             'CalendarItems.calendar_source_id' => $source->id,
         ])->toArray();
