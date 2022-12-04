@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f09284842770ed95f0c1e89f2e85a1d8",
+    "content-hash": "cf21d8da543a76e99870a467ed151364",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -6602,20 +6602,20 @@
         },
         {
             "name": "psalm/phar",
-            "version": "3.18.2",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "69279a55b228a07c1d3c71439880032ec1b75622"
+                "reference": "43a6cee76d19e9ddc2e39ef1f0ae7d12d351c85f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/69279a55b228a07c1d3c71439880032ec1b75622",
-                "reference": "69279a55b228a07c1d3c71439880032ec1b75622",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/43a6cee76d19e9ddc2e39ef1f0ae7d12d351c85f",
+                "reference": "43a6cee76d19e9ddc2e39ef1f0ae7d12d351c85f",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.1 || ^8.0"
             },
             "conflict": {
                 "vimeo/psalm": "*"
@@ -6631,9 +6631,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/3.18.2"
+                "source": "https://github.com/psalm/phar/tree/5.1.0"
             },
-            "time": "2020-10-20T14:18:13+00:00"
+            "time": "2022-12-02T21:23:59+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -8813,9 +8813,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "psy/psysh": 0
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
