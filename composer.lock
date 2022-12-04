@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bde47d9220b89abfaa389a478fcb191e",
+    "content-hash": "f09284842770ed95f0c1e89f2e85a1d8",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -142,16 +142,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "4.4.0-RC2",
+            "version": "4.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "0c7907e16760202695c2e52e3bd4fa4ce30e0029"
+                "reference": "ad188775dde89ad758dad9923ff558900914d59c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/0c7907e16760202695c2e52e3bd4fa4ce30e0029",
-                "reference": "0c7907e16760202695c2e52e3bd4fa4ce30e0029",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/ad188775dde89ad758dad9923ff558900914d59c",
+                "reference": "ad188775dde89ad758dad9923ff558900914d59c",
                 "shasum": ""
             },
             "require": {
@@ -161,7 +161,7 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "laminas/laminas-diactoros": "^2.2.2",
-                "laminas/laminas-httphandlerrunner": "^1.1",
+                "laminas/laminas-httphandlerrunner": "^1.1 || ^2.0",
                 "league/container": "^4.2.0",
                 "php": ">=7.4.0",
                 "psr/container": "^1.1 || ^2.0",
@@ -242,7 +242,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2022-05-15T01:37:08+00:00"
+            "time": "2022-12-02T02:29:42+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -4761,6 +4761,63 @@
             "time": "2022-11-26T08:47:15+00:00"
         },
         {
+            "name": "cakephp/repl",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/repl.git",
+                "reference": "6aa25db799a3bd062101b36f42a1ff0995654a56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/repl/zipball/6aa25db799a3bd062101b36f42a1ff0995654a56",
+                "reference": "6aa25db799a3bd062101b36f42a1ff0995654a56",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "^4.0",
+                "php": ">=7.2.0",
+                "psy/psysh": "@stable"
+            },
+            "require-dev": {
+                "cakephp/cakephp-codesniffer": "^4.0",
+                "phpunit/phpunit": "^8.5 || ^9.3"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Cake\\Repl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakePHP Community",
+                    "homepage": "https://github.com/cakephp/repl/graphs/contributors"
+                }
+            ],
+            "description": "REPL plugin for CakePHP",
+            "homepage": "https://github.com/cakephp/repl",
+            "keywords": [
+                "REPL",
+                "cakephp"
+            ],
+            "support": {
+                "forum": "https://discourse.cakephp.org/",
+                "irc": "irc://irc.freenode.org/cakephp",
+                "issues": "https://github.com/cakephp/repl/issues",
+                "slack": "https://cakesf.herokuapp.com/",
+                "source": "https://github.com/cakephp/repl/tree/0.1.0"
+            },
+            "time": "2020-11-18T09:26:29+00:00"
+        },
+        {
             "name": "cakephp/twig-view",
             "version": "1.3.0",
             "source": {
@@ -8757,7 +8814,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cakephp/cakephp": 5,
         "psy/psysh": 0
     },
     "prefer-stable": true,
