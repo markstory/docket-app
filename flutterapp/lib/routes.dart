@@ -1,3 +1,4 @@
+import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 
@@ -16,6 +17,8 @@ class Routes {
   static const String projectArchive = '/projects/archive';
   static const String projectCompleted = '/projects/completed';
 
+  static const String calendarSync = '/calendars';
+  static const String calendarDetails = '/calendars/view';
   static const String trashbin = '/trashbin';
 }
 
@@ -36,5 +39,11 @@ class ProjectDetailsArguments {
   final Project project;
 
   ProjectDetailsArguments(this.project);
+}
+
+class CalendarDetailsArguments {
+  final CalendarProvider calendarProvider;
+
+  CalendarDetailsArguments(this.calendarProvider);
 }
 // }}}

@@ -47,6 +47,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   title: Text('Projects', style: theme.textTheme.subtitle1),
                 ),
                 const ProjectSorter(),
+                const Divider(),
                 ListTile(
                     leading: Icon(Icons.add, color: theme.colorScheme.primary),
                     title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
@@ -58,6 +59,12 @@ class _AppDrawerState extends State<AppDrawer> {
                     title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
                     onTap: () {
                       Navigator.pushNamed(context, Routes.projectArchive);
+                    }),
+                ListTile(
+                    leading: Icon(Icons.sync, color: customColors.dueNone),
+                    title: Text('Calendar Sync', style: TextStyle(color: customColors.dueNone)),
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.calendarSync);
                     }),
                 ListTile(
                     leading: Icon(Icons.delete, color: customColors.dueNone),
