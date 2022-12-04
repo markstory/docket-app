@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendaritem.dart';
+import 'package:docket/models/calendarprovider.dart';
+import 'package:docket/models/calendarsource.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/userprofile.dart';
@@ -602,6 +604,81 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
+  });
+}
+// }}}
+
+// CalendarProviders
+/// Fetch a list of calendar providers.
+Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
+  var url = _makeUrl('/calendars/');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar settings');
+
+    try {
+      var respData = jsonDecode(utf8.decode(response.bodyBytes));
+      return respData['providers'].map((item) => CalendarProvider.fromMap(item));
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+/// Fetch a provider by details
+Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
+  var url = _makeUrl('/calendars/$id');
+
+  return Future(() async {
+    var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar provider');
+
+    try {
+      var respData = jsonDecode(utf8.decode(response.bodyBytes));
+      var provider = CalendarProvider.fromMap(respData['provider']);
+      var sources = respData['sources'];
+      if (sources != null) {
+        provider.sources.addAll(sources.map((item) => CalendarSource.fromMap(item)));
+      }
+      return provider;
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+/// Create a calendar source on the server.
+Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
+  var url = _makeUrl('/calendars/${source.providerId}/sources/');
+
+  return Future(() async {
+    var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
+
+    try {
+      var respData = jsonDecode(utf8.decode(response.bodyBytes));
+      return CalendarSource.fromMap(respData['source']);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+/// Update the settings on a source.
+Future<CalendarSource> updateSource(String apiToken, CalendarSource source) async {
+  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/edit');
+
+  return Future(() async {
+    var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
+
+    try {
+      var respData = jsonDecode(utf8.decode(response.bodyBytes));
+      return CalendarSource.fromMap(respData['source']);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
   });
 }
 // }}}

@@ -6,6 +6,7 @@ import 'package:localstorage/localstorage.dart';
 
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/apitoken.dart';
+import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/userprofile.dart';
@@ -38,6 +39,8 @@ class LocalDatabase {
   late TrashbinView trashbin;
   late ApiTokenCache apiToken;
   late ProfileCache profile;
+  late CalendarProviderListCache calendarList;
+  late CalendarProviderDetailsCache calendarDetails;
 
   LocalDatabase() {
     var db = database();
@@ -51,6 +54,8 @@ class LocalDatabase {
     trashbin = TrashbinView(db, const Duration(hours: 1));
     apiToken = ApiTokenCache(db, null);
     profile = ProfileCache(db, const Duration(hours: 1));
+    calendarList = CalendarProviderListCache(db, const Duration(days: 1));
+    calendarDetails = CalendarProviderDetailsCache(db, const Duration(days: 1));
   }
 
   factory LocalDatabase.instance() {
@@ -677,5 +682,62 @@ class ProfileCache extends ViewCache<UserProfile> {
       return null;
     }
     return UserProfile.fromMap(data);
+  }
+}
+
+class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
+  static const String name = 'calendarproviderlist';
+
+  CalendarProviderListCache(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Set completed tasks for a project into the lookup
+  @override
+  Future<void> set(List<CalendarProvider> providers) async {
+    return _set({"items": providers.map((p) => p.toMap())});
+  }
+
+  Future<List<CalendarProvider>?> get() async {
+    var data = await _get();
+    if (data == null) {
+      return null;
+    }
+    var items = data['items'];
+    if (items == null) {
+      return null;
+    }
+    return items.map((item) => CalendarProvider.fromMap(item));
+  }
+}
+
+class CalendarProviderDetailsCache extends ViewCache<CalendarProvider> {
+  static const String name = 'calendarproviderdetails';
+
+  CalendarProviderDetailsCache(JsonCache database, Duration duration) : super(database, duration);
+
+  @override
+  String keyName() {
+    return 'v1:$name';
+  }
+
+  /// Set a provider to the lookup map
+  @override
+  Future<void> set(CalendarProvider provider) async {
+    var data = await _get() ?? {};
+    data[provider.id] = provider.toMap();
+
+    return _set(data);
+  }
+
+  Future<CalendarProvider?> get() async {
+    var data = await _get();
+    if (data == null) {
+      return null;
+    }
+    return CalendarProvider.fromMap(data);
   }
 }

@@ -31,6 +31,11 @@ class CalendarSource {
     );
   }
 
+  /// Linked sources are those with ids or providers.
+  get isLinked {
+    return id.isNotEmpty || providerId != 0;
+  }
+
   Map<String, Object?> toMap() {
     return {
       'id': id,
