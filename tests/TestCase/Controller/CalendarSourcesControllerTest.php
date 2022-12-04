@@ -95,6 +95,38 @@ class CalendarSourcesControllerTest extends TestCase
     /**
      * @vcr controller_calendarsources_sync.yml
      */
+    public function testSyncApi(): void
+    {
+        FrozenTime::setTestNow('2021-07-11 12:13:14');
+
+        $token = $this->makeApiToken(1);
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+        ]);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
+
+        $result = $this->CalendarItems->find()->where([
+            'CalendarItems.calendar_source_id' => $source->id,
+        ])->toArray();
+        $this->assertCount(3, $result);
+        foreach ($result as $event) {
+            $this->assertNotEmpty($event->title);
+            $this->assertNotEmpty($event->html_link);
+            $this->assertNotEmpty($event->getStart());
+            $this->assertNotEmpty($event->getEnd());
+        }
+
+        $source = $this->CalendarSources->get($source->id);
+        $this->assertSame('next-sync-token', $source->sync_token);
+    }
+
+    /**
+     * @vcr controller_calendarsources_sync.yml
+     */
     public function testSyncUpdateExistingRemoveDeleted(): void
     {
         FrozenTime::setTestNow('2021-07-11 12:13:14');
