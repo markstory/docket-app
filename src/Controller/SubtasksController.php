@@ -89,6 +89,7 @@ class SubtasksController extends AppController
             'action' => 'view',
             'id' => $taskId,
         ]);
+
         return $this->respond([
             'success' => true,
             'redirect' => $redirect,
@@ -119,6 +120,7 @@ class SubtasksController extends AppController
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($subtask->getErrors()));
         }
+
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
