@@ -89,7 +89,7 @@ class SubtasksController extends AppController
             'action' => 'view',
             'id' => $taskId,
         ]);
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'redirect' => $redirect,
         ]);
@@ -119,7 +119,7 @@ class SubtasksController extends AppController
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($subtask->getErrors()));
         }
-        $this->respond([
+        return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
             'flashSuccess' => __('Subtask updated'),
@@ -148,7 +148,7 @@ class SubtasksController extends AppController
             'id' => $taskId,
         ];
 
-        $this->respond([
+        return $this->respond([
             'success' => $success,
             'serialize' => [],
             'redirect' => $redirect,

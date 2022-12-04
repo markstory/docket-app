@@ -56,7 +56,7 @@ class CalendarProvidersController extends AppController
 
         $this->set(compact('activeProvider', 'providers', 'referer'));
 
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => ['providers'],
         ]);
@@ -77,7 +77,7 @@ class CalendarProvidersController extends AppController
 
         $this->set(compact('provider', 'calendars'));
 
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => ['provider', 'calendars'],
         ]);
@@ -96,12 +96,16 @@ class CalendarProvidersController extends AppController
         $calendarProvider = $this->CalendarProviders->get($id);
         $this->Authorization->authorize($calendarProvider);
 
+        $success = false;
         if ($this->CalendarProviders->delete($calendarProvider)) {
-            $this->Flash->success(__('The calendar account has been deleted.'));
-        } else {
-            $this->Flash->error(__('The calendar account could not be deleted. Please, try again.'));
+            $success = true;
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('The calendar account has been deleted.'),
+            'flashError' => __('The calendar account could not be deleted. Please try again.'),
+            'redirect' => ['action' => 'index'],
+        ]);
     }
 }

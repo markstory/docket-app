@@ -164,5 +164,10 @@ class AppController extends Controller
         if ($config['redirect']) {
             return $this->redirect($config['redirect']);
         }
+
+        if ($config['success'] && !$this->request->is('json')) {
+            // This is necessary to get flash messages to show up for this action.
+            return $this->response;
+        }
     }
 }

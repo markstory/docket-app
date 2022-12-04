@@ -89,7 +89,7 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
         }
 
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => $serialize,
         ]);
@@ -281,17 +281,13 @@ class TasksController extends AppController
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
 
-        $this->respond([
+        return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),
             'flashError' => __('Task could not be updated.'),
             'statusError' => 422,
         ]);
-        if ($success && !$this->request->is('json')) {
-            // This is necessary to get flash messages to show up for this action.
-            return $this->response;
-        }
     }
 
     /**
@@ -311,7 +307,7 @@ class TasksController extends AppController
         $this->set('task', $task);
         $this->set('referer', $this->getReferer('tasks:today'));
 
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => ['task'],
         ]);
@@ -336,7 +332,7 @@ class TasksController extends AppController
             $success = true;
         }
 
-        $this->respond([
+        return $this->respond([
             'success' => $success,
             'serialize' => ['task'],
             'flashSuccess' => __('The task has been deleted.'),
@@ -364,7 +360,7 @@ class TasksController extends AppController
             $success = true;
         }
 
-        $this->respond([
+        return $this->respond([
             'success' => $success,
             'serialize' => ['task'],
             'flashSuccess' => __('The task has been restored.'),

@@ -35,16 +35,16 @@ class CalendarSourcesController extends AppController
         return $query->firstOrFail();
     }
 
-    protected function redirectToProvider($providerId = null)
+    protected function urlToProvider($providerId = null)
     {
         $providerId = $providerId ?? $this->request->getParam('providerId');
 
-        return $this->redirect([
+        return [
             '_name' => 'calendarproviders:index',
             '?' => [
                 'provider' => $providerId,
             ],
-        ]);
+        ];
     }
 
     /**
@@ -59,26 +59,36 @@ class CalendarSourcesController extends AppController
             'contain' => ['CalendarSources'],
         ]);
         $this->Authorization->authorize($provider, 'edit');
+        $serialize = [];
+        $success = false;
+        $error = '';
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
             $data['calendar_provider_id'] = $providerId;
 
             $source = $this->CalendarSources->newEntity($data);
+            $serialize = ['source'];
             if ($this->CalendarSources->save($source)) {
                 $service->setAccessToken($provider);
                 try {
                     $service->createSubscription($source);
-                    $msg = __('Your calendar was added and will be automatically synced.');
+                    $success = true;
                 } catch (RuntimeException $e) {
-                    $msg = __('Your calendar was added but will not automatically synchronize.');
+                    $error = __('Your calendar was added but will not automatically synchronize.');
                 }
-                $this->Flash->success($msg);
             } else {
-                $this->Flash->error(__('Could not add that calendar.'));
+                $error = __('Could not add that calendar.');
             }
         }
 
-        return $this->redirectToProvider($providerId);
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Your calendar was added and will be synced.'),
+            'flashError' => $error,
+            'serialize' => $serialize,
+            'redirect' => $this->urlToProvider($provider->id),
+        ]);
     }
 
     public function sync(CalendarService $service)
@@ -87,14 +97,19 @@ class CalendarSourcesController extends AppController
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
         $service->setAccessToken($source->calendar_provider);
+        $success = true;
         try {
             $service->syncEvents($source);
-            $this->Flash->success(__('Calendar events refreshed'));
         } catch (\Exception $e) {
-            $this->Flash->error(__('Calendar could not be refreshed.'));
+            $success = false;
         }
 
-        return $this->redirectToProvider();
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Calendar refreshed'),
+            'flashError' => __('Calendar not refreshed'),
+            'redirect' => $this->urlToProvider($source->calendar_provider_id),
+        ]);
     }
 
     /**
@@ -108,19 +123,23 @@ class CalendarSourcesController extends AppController
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
+        $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             // Only a subset of fields are user editable.
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
                 'fields' => ['color', 'name'],
             ]);
             if ($this->CalendarSources->save($calendarSource)) {
-                $this->Flash->success(__('The calendar has been updated.'));
-            } else {
-                $this->Flash->error(__('The calendar could not be modified. Please, try again.'));
+                $success = true;
             }
         }
 
-        return $this->redirectToProvider();
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('The calendar has been updated.'),
+            'flashError' => __('The calendar could not be modified. Please, try again.'),
+            'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
+        ]);
     }
 
     /**
@@ -138,12 +157,16 @@ class CalendarSourcesController extends AppController
         $service->setAccessToken($calendarSource->calendar_provider);
         $service->cancelSubscriptions($calendarSource);
 
-        if ($this->CalendarSources->delete($calendarSource)) {
-            $this->Flash->success(__('The calendar source has been deleted.'));
-        } else {
-            $this->Flash->error(__('The calendar source could not be deleted. Please, try again.'));
+        $success = true;
+        if (!$this->CalendarSources->delete($calendarSource)) {
+            $success = false;
         }
 
-        return $this->redirectToProvider();
+        return $this->respond([
+            'success' => $success,
+            'flashSuccess' => __('Calendar deleted'),
+            'flashError' => __('Calendar not deleted. Please try again.'),
+            'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
+        ]);
     }
 }

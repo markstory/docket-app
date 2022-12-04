@@ -65,6 +65,7 @@ class CalendarSourcesControllerTest extends TestCase
     {
         FrozenTime::setTestNow('2021-07-11 12:13:14');
 
+        $this->enableRetainFlashMessages();
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',

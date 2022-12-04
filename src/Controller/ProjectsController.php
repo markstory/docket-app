@@ -51,7 +51,7 @@ class ProjectsController extends AppController
         $projects = $this->paginate($projects);
 
         $this->set('projects', $projects);
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => ['projects'],
         ]);
@@ -85,7 +85,7 @@ class ProjectsController extends AppController
         }
 
         $this->set(compact('project', 'tasks', 'completed'));
-        $this->respond([
+        return $this->respond([
             'success' => true,
             'serialize' => ['project', 'tasks', 'completed'],
         ]);
