@@ -21,6 +21,7 @@
         "cakephp/bake": "^2.3",
         "cakephp/cakephp-codesniffer": "~4.2.0",
         "cakephp/debug_kit": "^4.4",
+        "cakephp/repl": "^0.1.0",
         "php-vcr/php-vcr": "^1.5",
         "php-vcr/phpunit-testlistener-vcr": "^3.2",
         "phpunit/phpunit": "~8.5.0",

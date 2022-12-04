@@ -87,6 +87,13 @@ Javascript tests can be run via `jest`:
 yarn test
 ```
 
+Flutter tests can be run via `flutter`:
+
+```sh
+cd flutterapp
+flutter test
+```
+
 ## Google Calendar Integration
 
 Docket offers a google calendar integration that will automatically sync calendar events into your 'today' and 'upcoming' views. This is a great way to have your meetings and appointments alongside your tasks.
