@@ -62,6 +62,9 @@ class _ProjectSorterState extends State<ProjectSorter> {
               )
             ],
             disableScrolling: true,
+            lastItemTargetHeight: 15,
+            lastListTargetSize: 10,
+            removeTopPadding: true,
             itemDragOnLongPress: true,
             onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
               var project = projects[oldItemIndex];

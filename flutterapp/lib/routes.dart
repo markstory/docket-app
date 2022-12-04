@@ -17,7 +17,7 @@ class Routes {
   static const String projectArchive = '/projects/archive';
   static const String projectCompleted = '/projects/completed';
 
-  static const String calendarSync = '/calendars';
+  static const String calendarList = '/calendars';
   static const String calendarDetails = '/calendars/view';
   static const String trashbin = '/trashbin';
 }

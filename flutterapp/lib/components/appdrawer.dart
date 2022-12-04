@@ -64,7 +64,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     leading: Icon(Icons.sync, color: customColors.dueNone),
                     title: Text('Calendar Sync', style: TextStyle(color: customColors.dueNone)),
                     onTap: () {
-                      Navigator.pushNamed(context, Routes.calendarSync);
+                      Navigator.pushNamed(context, Routes.calendarList);
                     }),
                 ListTile(
                     leading: Icon(Icons.delete, color: customColors.dueNone),

@@ -11,6 +11,8 @@ import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'providers/userprofile.dart';
+import 'screens/calendarproviderlist.dart';
+import 'screens/calendarproviderlist_view_model.dart';
 import 'screens/login.dart';
 import 'screens/profilesettings.dart';
 import 'screens/projectdetails.dart';
@@ -125,6 +127,12 @@ class EntryPoint extends StatelessWidget {
               provider!.setSession(session);
               return provider;
             }),
+        ChangeNotifierProxyProvider<SessionProvider, CalendarProviderListViewModel>(
+            create: (_) => CalendarProviderListViewModel(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );
@@ -220,6 +228,9 @@ class DocketApp extends StatelessWidget {
               // Profile settings
               if (settings.name == Routes.profileSettings) {
                 return MaterialPageRoute(builder: (context) => const ProfileSettingsScreen());
+              }
+              if (settings.name == Routes.calendarList) {
+                return MaterialPageRoute(builder: (context) => const CalendarProviderListScreen());
               }
 
               return unknownScreen(context);
