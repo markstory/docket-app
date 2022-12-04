@@ -261,14 +261,13 @@ class CalendarSourcesControllerTest extends TestCase
             'name' => 'Work Calendar',
         ]);
         $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
+        $this->assertFlashElement('flash/error');
 
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
         $this->assertSame('calendar-1', $source->provider_id);
 
         $subs = $this->fetchTable('CalendarSubscriptions');
-        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
-        $this->assertNotEmpty($sub->identifier);
+        $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
     }
 
     /**
