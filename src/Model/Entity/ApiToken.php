@@ -11,7 +11,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property int $user_id
  * @property string $token
- * @property \Cake\I18n\FrozenTime $last_used
+ * @property \Cake\I18n\FrozenTime|null $last_used
  * @property \Cake\I18n\FrozenTime $created
  *
  * @property \App\Model\Entity\User $user

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Policy;
 
 use App\Model\Entity\Project;
-use Authorization\IdentityInterface;
+use App\Model\Entity\User;
 
 /**
  * Project policy
@@ -18,7 +18,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canCreate(IdentityInterface $user, Project $project)
+    public function canCreate(User $user, Project $project)
     {
         return true;
     }
@@ -30,7 +30,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canEdit(IdentityInterface $user, Project $project)
+    public function canEdit(User $user, Project $project)
     {
         return $user->id === $project->user_id;
     }
@@ -42,7 +42,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canArchive(IdentityInterface $user, Project $project)
+    public function canArchive(User $user, Project $project)
     {
         return $user->id === $project->user_id;
     }
@@ -54,7 +54,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canDelete(IdentityInterface $user, Project $project)
+    public function canDelete(User $user, Project $project)
     {
         return $user->id === $project->user_id;
     }
@@ -66,7 +66,7 @@ class ProjectPolicy
      * @param \App\Model\Entity\Project $project
      * @return bool
      */
-    public function canView(IdentityInterface $user, Project $project)
+    public function canView(User $user, Project $project)
     {
         return $user->id === $project->user_id;
     }

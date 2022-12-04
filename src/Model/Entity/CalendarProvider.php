@@ -29,7 +29,7 @@ class CalendarProvider extends Entity
      * be mass assigned. For security purposes, it is advised to set '*' to false
      * (or remove it), and explicitly make individual fields accessible as needed.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_accessible = [
         'user_id' => true,
@@ -43,6 +43,9 @@ class CalendarProvider extends Entity
         'calendar_sources' => true,
     ];
 
+    /**
+     * @var array<array-key, string>
+     */
     protected $_hidden = [
         'user_id',
         'access_token',

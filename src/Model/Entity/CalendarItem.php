@@ -34,7 +34,7 @@ class CalendarItem extends Entity
      * be mass assigned. For security purposes, it is advised to set '*' to false
      * (or remove it), and explicitly make individual fields accessible as needed.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_accessible = [
         'calendar_source_id' => true,
@@ -52,8 +52,14 @@ class CalendarItem extends Entity
         'provider' => true,
     ];
 
+    /**
+     * @var array<array-key, string>
+     */
     protected $_hidden = ['calendar_source'];
 
+    /**
+     * @var array<array-key, string>
+     */
     protected $_virtual = ['color'];
 
     public function getStart(): ?DateTimeInterface

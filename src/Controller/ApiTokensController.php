@@ -10,7 +10,6 @@ use Cake\View\JsonView;
  * ApiTokens Controller
  *
  * @property \App\Model\Table\ApiTokensTable $ApiTokens
- * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class ApiTokensController extends AppController
 {
@@ -57,7 +56,7 @@ class ApiTokensController extends AppController
      * 200 - Created a new token. See the `apiToken.token` response attribute.
      * 401 - Incorrect credentials.
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
     public function add()
     {
@@ -66,12 +65,12 @@ class ApiTokensController extends AppController
 
         // This action is configured to perform a 'login'
         $result = $this->Authentication->getResult();
-        if (!$result->isValid()) {
+        if (!$result || !$result->isValid()) {
             $this->set('errors', ['Authentication required']);
             $this->viewBuilder()->setOption('serialize', ['errors']);
             $this->response = $this->response->withStatus(401);
 
-            return;
+            return null;
         }
 
         if ($this->request->is('post')) {
@@ -84,12 +83,13 @@ class ApiTokensController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $token Api Token token.
+     * @param string $token Api Token token.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($token = null)
+    public function delete(string $token)
     {
         $this->request->allowMethod(['post', 'delete']);
+        /** @var \App\Model\Entity\ApiToken $apiToken */
         $apiToken = $this->ApiTokens->find('byToken', [$token])->firstOrFail();
         $this->Authorization->authorize($apiToken, 'delete');
 

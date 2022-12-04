@@ -247,26 +247,30 @@ class TasksTable extends Table
     public function setNextOrderProperties(User $user, Task $item)
     {
         $query = $this->find();
-        $result = $query->select([
-            'max_child' => $query->func()->max('Tasks.child_order'),
-        ])
+        $result = $query
+            ->select([
+                'max_child' => $query->func()->max('Tasks.child_order'),
+            ])
             ->where([
                 'Tasks.project_id' => $item->project_id,
             ])->firstOrFail();
+        assert($result instanceof EntityInterface);
         $item->child_order = $result->max_child + 1;
         if (!$item->due_on) {
             return;
         }
 
         $query = $this->find();
-        $result = $query->select([
-            'max_day' => $query->func()->max('Tasks.day_order'),
-        ])
+        $result = $query
+            ->select([
+                'max_day' => $query->func()->max('Tasks.day_order'),
+            ])
             ->innerJoinWith('Projects')
             ->where([
                 'Projects.user_id' => $user->id,
                 'Tasks.due_on' => $item->due_on,
             ])->firstOrFail();
+        assert($result instanceof EntityInterface);
         $item->day_order = $result->max_day + 1;
     }
 
@@ -343,6 +347,7 @@ class TasksTable extends Table
                 ->select(['max' => $query->func()->max($property)])
                 ->where($conditions)
                 ->firstOrFail();
+            assert($result instanceof EntityInterface);
             $targetOffset = $result->max + 1;
         }
 

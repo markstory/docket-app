@@ -120,7 +120,7 @@ class AppController extends Controller
      * - serialize - The view variables to serialize into an API response.
      *
      * @TODO use this in other endpoints as well.
-     * @return void|\App\Controller\Cake\Http\Response Either a response or null if we're not skipping view rendering.
+     * @return null|\Cake\Http\Response Either a response or null if we're not skipping view rendering.
      */
     protected function respond(array $config)
     {

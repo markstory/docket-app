@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 
 /**
@@ -19,7 +20,7 @@ use Cake\ORM\Entity;
  * @property int $day_order
  * @property bool $evening
  * @property bool $completed
- * @property \Cake\I18n\FrozenTime $deleted_at
+ * @property \Cake\I18n\FrozenTime|null $deleted_at
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -36,7 +37,7 @@ class Task extends Entity
      * be mass assigned. For security purposes, it is advised to set '*' to false
      * (or remove it), and explicitly make individual fields accessible as needed.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_accessible = [
         'project_id' => true,
@@ -70,7 +71,7 @@ class Task extends Entity
 
     public function softDelete(): void
     {
-        $this->deleted_at = new FrozenDate();
+        $this->deleted_at = new FrozenTime();
     }
 
     public function undelete(): void

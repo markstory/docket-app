@@ -52,7 +52,7 @@ class SluggableBehavior extends Behavior
      * - scopeFields: (string[]) A list of fields that create 'scopes' for slugs.
      *   In your table's schema each scope + slug field should have a unique index.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'label' => ['title'],

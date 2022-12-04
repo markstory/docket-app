@@ -61,7 +61,7 @@ class TaskPolicy
      */
     public function canDelete(IdentityInterface $user, Task $task)
     {
-        return $this->ownsProject($user, $task) && $task->deleted == null;
+        return $this->ownsProject($user, $task) && $task->deleted_at == null;
     }
 
     /**

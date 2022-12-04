@@ -16,11 +16,13 @@ class ApiTokenIdentifier extends AbstractIdentifier
         if (!isset($credentials['token'])) {
             return null;
         }
-
         $apiTokens = $this->fetchTable('ApiTokens');
+
+        /** @var \App\Model\Entity\ApiToken|null $tokenUser */
         $tokenUser = $apiTokens->find()
             ->where(['ApiTokens.token' => $credentials['token']])
-            ->contain('Users')->first();
+            ->contain('Users')
+            ->first();
 
         if (!$tokenUser) {
             return null;

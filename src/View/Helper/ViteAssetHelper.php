@@ -12,10 +12,13 @@ use RuntimeException;
 class ViteAssetHelper extends Helper
 {
     /**
-     * @var string[]
+     * @var array<array-key, mixed>
      */
     protected $helpers = ['Html'];
 
+    /**
+     * @var array<string, mixed>
+     */
     protected $_defaultConfig = [
         'manifestFile' => WWW_ROOT . 'manifest.json',
     ];

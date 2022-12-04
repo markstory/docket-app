@@ -43,6 +43,10 @@ class GoogleOauthController extends AppController
         $this->loadModel('CalendarProviders');
 
         $code = $this->request->getQuery('code');
+        if (!is_string($code)) {
+            throw new BadRequestException('Missing authorization code.');
+        }
+
         $data = $client->fetchAccessTokenWithAuthCode($code);
         if (!$data || !isset($data['access_token'])) {
             throw new BadRequestException('Could not fetch OAuth Access token');

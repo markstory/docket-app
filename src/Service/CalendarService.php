@@ -18,6 +18,7 @@ use Google\Exception as GoogleException;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Channel as GoogleChannel;
 use Google\Service\Calendar\Event as GoogleEvent;
+use Google\Service\Calendar\Events as GoogleEvents;
 use RuntimeException;
 
 /**
@@ -237,6 +238,7 @@ class CalendarService
                         unset($options['timeMin']);
                     }
 
+                    $results = null;
                     try {
                         $results = $calendar->events->listEvents($source->provider_id, $options);
                     } catch (GoogleException $e) {
@@ -252,6 +254,7 @@ class CalendarService
                         'timeMin' => $time->format(FrozenTime::RFC3339),
                         'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
                     ];
+                    assert($results instanceof GoogleEvents);
                     foreach ($results as $event) {
                         $instances = [$event];
                         if (!empty($event->getRecurrence())) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\Subtask;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -99,14 +100,16 @@ class SubtasksTable extends Table
     public function getNextRanking(int $todoId)
     {
         $query = $this->find();
-        $result = $query->select([
-            'max' => $query->func()->max('Subtasks.ranking'),
-        ])
-        ->where([
-            'Subtasks.task_id' => $todoId,
-            'Subtasks.completed' => false,
-        ])
-        ->firstOrFail();
+        $result = $query
+            ->select([
+                'max' => $query->func()->max('Subtasks.ranking'),
+            ])
+            ->where([
+                'Subtasks.task_id' => $todoId,
+                'Subtasks.completed' => false,
+            ])
+            ->firstOrFail();
+        assert($result instanceof EntityInterface);
 
         return $result->max + 1;
     }

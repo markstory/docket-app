@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.18.2@19aa905f7c3c7350569999a93c40ae91ae4e1626">
+<files psalm-version="dev-master@">
+  <file src="src/Controller/ApiTokensController.php">
+    <InvalidArgument occurrences="1">
+      <code>[$token]</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Controller/CalendarProvidersController.php">
+    <RiskyCast occurrences="1">
+      <code>$this-&gt;request-&gt;getQuery('provider', null)</code>
+    </RiskyCast>
+  </file>
   <file src="src/Model/Table/ProjectSectionsTable.php">
     <NoInterfaceProperties occurrences="1">
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$query-&gt;firstOrFail()-&gt;count</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/ProjectsTable.php">
     <NoInterfaceProperties occurrences="1">
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$query-&gt;firstOrFail()-&gt;count</code>
+    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/SubtasksTable.php">
     <NoInterfaceProperties occurrences="1">
@@ -26,10 +42,5 @@
     <UndefinedMagicPropertyFetch occurrences="1">
       <code>$entity-&gt;current_password</code>
     </UndefinedMagicPropertyFetch>
-  </file>
-  <file src="src/View/Helper/ViteAssetHelper.php">
-    <UndefinedConstant occurrences="1">
-      <code>WWW_ROOT</code>
-    </UndefinedConstant>
   </file>
 </files>
