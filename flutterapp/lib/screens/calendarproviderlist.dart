@@ -50,7 +50,7 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
       return Scaffold(
         appBar: AppBar(
           backgroundColor: theme.colorScheme.primary,
-          title: const Text('Synced Calendar'),
+          title: const Text('Synced Calendars'),
         ),
         drawer: const AppDrawer(),
         body: body,

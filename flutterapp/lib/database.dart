@@ -733,11 +733,14 @@ class CalendarProviderDetailsCache extends ViewCache<CalendarProvider> {
     return _set(data);
   }
 
-  Future<CalendarProvider?> get() async {
+  Future<CalendarProvider?> get(String id) async {
     var data = await _get();
     if (data == null) {
       return null;
     }
-    return CalendarProvider.fromMap(data);
+    if (data[id] == null) {
+      return null;
+    }
+    return CalendarProvider.fromMap(data[id]);
   }
 }

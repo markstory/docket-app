@@ -11,6 +11,8 @@ import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'providers/userprofile.dart';
+import 'screens/calendarproviderdetails.dart';
+import 'screens/calendarproviderdetails_view_model.dart';
 import 'screens/calendarproviderlist.dart';
 import 'screens/calendarproviderlist_view_model.dart';
 import 'screens/login.dart';
@@ -133,6 +135,12 @@ class EntryPoint extends StatelessWidget {
               provider!.setSession(session);
               return provider;
             }),
+        ChangeNotifierProxyProvider<SessionProvider, CalendarProviderDetailsViewModel>(
+            create: (_) => CalendarProviderDetailsViewModel(database, null),
+            update: (_, session, provider) {
+              provider!.setSession(session);
+              return provider;
+            }),
       ],
       child: DocketApp(themeMode: themeMode, child: child),
     );
@@ -231,6 +239,10 @@ class DocketApp extends StatelessWidget {
               }
               if (settings.name == Routes.calendarList) {
                 return MaterialPageRoute(builder: (context) => const CalendarProviderListScreen());
+              }
+              if (settings.name == Routes.calendarDetails) {
+                var args = settings.arguments as CalendarDetailsArguments;
+                return MaterialPageRoute(builder: (context) => CalendarProviderDetailsScreen(args.provider));
               }
 
               return unknownScreen(context);

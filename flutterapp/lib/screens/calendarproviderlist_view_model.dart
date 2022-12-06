@@ -35,10 +35,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     var result = await _database.calendarList.get();
-    if (result == null) {
-      return;
-    }
-    if (result.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
       _providers = result;
     }
     if (!_loading) {
@@ -46,7 +43,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     }
   }
 
-  /// Refresh from the server.
+  /// Refresh from the server and notify.
   Future<void> refresh() async {
     _loading = true;
 
@@ -56,5 +53,10 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     _loading = false;
 
     notifyListeners();
+  }
+
+  /// Delete the provider from the server and notify.
+  Future<void>delete() async {
+    // TODO implement this
   }
 }

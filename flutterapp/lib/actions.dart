@@ -627,7 +627,7 @@ Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
 }
 
 /// Fetch a provider by details
-Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
+Future<CalendarProvider> fetchCalendarProvider(String apiToken, String id) async {
   var url = _makeUrl('/calendars/$id');
 
   return Future(() async {
@@ -679,6 +679,32 @@ Future<CalendarSource> updateSource(String apiToken, CalendarSource source) asyn
       developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;
     }
+  });
+}
+
+/// Sync events on a source.
+Future<CalendarSource> syncSource(String apiToken, CalendarSource source) async {
+  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/sync');
+
+  return Future(() async {
+    var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not refresh calendar events');
+
+    try {
+      var respData = jsonDecode(utf8.decode(response.bodyBytes));
+      return CalendarSource.fromMap(respData['source']);
+    } catch (e, stacktrace) {
+      developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+      rethrow;
+    }
+  });
+}
+
+/// Delete a source.
+Future<void> deleteSource(String apiToken, CalendarSource source) async {
+  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/delete');
+
+  return Future(() async {
+    await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete calendar');
   });
 }
 // }}}

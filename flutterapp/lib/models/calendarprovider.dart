@@ -30,6 +30,24 @@ class CalendarProvider {
     );
   }
 
+  int _findSource(CalendarSource source) {
+   return sources.indexWhere((item) => (
+    (item.id != '' && item.id == source.id) ||
+    item.providerId == source.providerId
+   ));
+  }
+
+  /// Replace or append a source to the provider.
+  void replaceSource(CalendarSource source) {
+    var index = _findSource(source);
+    sources.insert(index, source);
+  }
+
+  /// Remove a source from the provider
+  void removeSource(CalendarSource source) {
+    sources.remove(source);
+  }
+
   Map<String, Object?> toMap() {
     return {
       'id': id,

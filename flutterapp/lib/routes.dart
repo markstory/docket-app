@@ -42,8 +42,8 @@ class ProjectDetailsArguments {
 }
 
 class CalendarDetailsArguments {
-  final CalendarProvider calendarProvider;
+  final CalendarProvider provider;
 
-  CalendarDetailsArguments(this.calendarProvider);
+  CalendarDetailsArguments(this.provider);
 }
 // }}}

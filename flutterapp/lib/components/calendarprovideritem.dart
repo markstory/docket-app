@@ -33,6 +33,7 @@ class ProviderActions extends StatelessWidget {
 
   void handleDelete() {
     // TODO implement with confirm.
+    // see SubtaskItem for an example of confirm and delete.
   }
 
   @override
