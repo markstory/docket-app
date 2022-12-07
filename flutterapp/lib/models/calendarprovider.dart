@@ -13,12 +13,16 @@ class CalendarProvider {
     required this.identifier,
     this.displayName = '',
     sources = const [],
-  }); 
+  });
 
   factory CalendarProvider.fromMap(Map<String, dynamic> json) {
     List<CalendarSource> sources = [];
-    for (var item in json['calendar_sources'] ?? []) {
-      sources.add(CalendarSource.fromMap(item));
+    if (json['calendar_sources'] != null &&
+        (json['calendar_sources'].runtimeType == List ||
+            json['calendar_sources'].runtimeType == List<Map<String, Object?>>)) {
+      for (var item in json['calendar_sources']) {
+        sources.add(CalendarSource.fromMap(item));
+      }
     }
 
     return CalendarProvider(
@@ -31,10 +35,8 @@ class CalendarProvider {
   }
 
   int _findSource(CalendarSource source) {
-   return sources.indexWhere((item) => (
-    (item.id != '' && item.id == source.id) ||
-    item.providerId == source.providerId
-   ));
+    return sources
+        .indexWhere((item) => ((item.id != '' && item.id == source.id) || item.providerId == source.providerId));
   }
 
   /// Replace or append a source to the provider.
@@ -54,7 +56,7 @@ class CalendarProvider {
       'kind': kind,
       'identifier': identifier,
       'display_name': displayName,
-      'calendar_sources': sources.map((source) => source.toMap()),
+      'calendar_sources': sources.map((source) => source.toMap()).toList(),
     };
   }
 }

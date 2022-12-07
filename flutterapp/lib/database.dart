@@ -698,7 +698,7 @@ class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
   /// Set completed tasks for a project into the lookup
   @override
   Future<void> set(List<CalendarProvider> providers) async {
-    return _set({"items": providers.map((p) => p.toMap())});
+    return _set({"items": providers.map((p) => p.toMap()).toList()});
   }
 
   Future<List<CalendarProvider>?> get() async {

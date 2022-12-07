@@ -618,7 +618,11 @@ Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
 
     try {
       var respData = jsonDecode(utf8.decode(response.bodyBytes));
-      return respData['providers'].map((item) => CalendarProvider.fromMap(item));
+      List<CalendarProvider> providers = [];
+      for (var item in respData['providers']) {
+        providers.add(CalendarProvider.fromMap(item));
+      }
+      return providers;
     } catch (e, stacktrace) {
       developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
       rethrow;

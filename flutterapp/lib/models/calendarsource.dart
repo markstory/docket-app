@@ -40,13 +40,17 @@ class CalendarSource {
   }
 
   Map<String, Object?> toMap() {
+    String? syncStr;
+    if (lastSync != null) {
+      syncStr = formatters.dateString(lastSync!);
+    }
     return {
       'id': id,
       'calendar_provider_id': calendarProviderId,
       'provider_id': providerId,
       'name': name,
       'color': color,
-      'last_sync': lastSync?.toString(),
+      'last_sync': syncStr,
     };
   }
 }
