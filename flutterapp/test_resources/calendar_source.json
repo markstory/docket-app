@@ -1,0 +1,12 @@
+{
+    "source": {
+      "id":28,
+      "name":"mark@example.com",
+      "calendar_provider_id":5,
+      "provider_id":"mark@example.com",
+      "color":3,
+      "last_sync":null,
+      "created":"2022-09-25T14:53:13+00:00",
+      "modified":"2022-12-08T01:32:52+00:00"
+    }
+}

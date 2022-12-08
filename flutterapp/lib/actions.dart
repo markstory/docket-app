@@ -658,7 +658,7 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
 
 /// Create a calendar source on the server.
 Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.providerId}/sources/');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/');
 
   return Future(() async {
     var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
@@ -675,7 +675,7 @@ Future<CalendarSource> createSource(String apiToken, CalendarSource source) asyn
 
 /// Update the settings on a source.
 Future<CalendarSource> updateSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/edit');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
 
   return Future(() async {
     var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
@@ -692,7 +692,7 @@ Future<CalendarSource> updateSource(String apiToken, CalendarSource source) asyn
 
 /// Sync events on a source.
 Future<CalendarSource> syncSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/sync');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/sync');
 
   return Future(() async {
     var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not refresh calendar events');
@@ -709,7 +709,7 @@ Future<CalendarSource> syncSource(String apiToken, CalendarSource source) async 
 
 /// Delete a source.
 Future<void> deleteSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.providerId}/sources/${source.id}/delete');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/delete');
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete calendar');

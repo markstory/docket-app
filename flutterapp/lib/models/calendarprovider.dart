@@ -12,7 +12,7 @@ class CalendarProvider {
     required this.kind,
     required this.identifier,
     this.displayName = '',
-    sources = const [],
+    this.sources = const [],
   });
 
   factory CalendarProvider.fromMap(Map<String, dynamic> json) {
