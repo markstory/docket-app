@@ -1,7 +1,7 @@
 import 'package:docket/formatters.dart' as formatters;
 
 class CalendarSource {
-  String id = '';
+  int id = 0;
   String name;
   int calendarProviderId;
   String providerId;
@@ -9,7 +9,7 @@ class CalendarSource {
   DateTime? lastSync;
 
   CalendarSource({
-    this.id = '',
+    this.id = 0,
     required this.name,
     required this.calendarProviderId,
     required this.providerId,
@@ -25,18 +25,18 @@ class CalendarSource {
     }
 
     return CalendarSource(
-      id: json['id'].toString(),
+      id: json['id'] ?? 0,
       name: json['name'],
-      calendarProviderId: json['calendar_provider_id'],
+      calendarProviderId: json['calendar_provider_id'] ?? 0,
       providerId: json['provider_id'],
-      color: json['color'] ?? 0,
+      color: json['color'],
       lastSync: lastSync,
     );
   }
 
   /// Linked sources are those with ids or providers.
   get isLinked {
-    return id.isNotEmpty || calendarProviderId != 0;
+    return id != 0 || calendarProviderId != 0;
   }
 
   Map<String, Object?> toMap() {

@@ -611,7 +611,7 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
 // CalendarProviders
 /// Fetch a list of calendar providers.
 Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
-  var url = _makeUrl('/calendars/');
+  var url = _makeUrl('/calendars');
 
   return Future(() async {
     var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar settings');
@@ -631,8 +631,8 @@ Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
 }
 
 /// Fetch a provider by details
-Future<CalendarProvider> fetchCalendarProvider(String apiToken, String id) async {
-  var url = _makeUrl('/calendars/$id');
+Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
+  var url = _makeUrl('/calendars/$id/view');
 
   return Future(() async {
     var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar provider');
@@ -640,9 +640,13 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, String id) async
     try {
       var respData = jsonDecode(utf8.decode(response.bodyBytes));
       var provider = CalendarProvider.fromMap(respData['provider']);
-      var sources = respData['sources'];
-      if (sources != null) {
-        provider.sources.addAll(sources.map((item) => CalendarSource.fromMap(item)));
+
+      // Add un-linked calendars as well.
+      var calendars = respData['calendars'];
+      if (calendars != null && (calendars.runtimeType == List || calendars.runtimeType == List<Map<String, Object?>> )) {
+        for (var item in calendars) {
+          provider.sources.add(CalendarSource.fromMap(item));
+        }
       }
       return provider;
     } catch (e, stacktrace) {

@@ -14,7 +14,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  String? _id;
+  int? _id;
   CalendarProvider? _provider;
 
   CalendarProviderDetailsViewModel(LocalDatabase database, this.session) {
@@ -36,7 +36,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     return value;
   }
 
-  String get id {
+  int get id {
     var value = _id;
     if (value == null) {
       throw Exception("Cannot access id it is not set");
@@ -49,7 +49,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     session = value;
   }
 
-  setId(String value) {
+  setId(int value) {
     _id = value;
     fetchProvider();
   }

@@ -1,14 +1,14 @@
 import 'package:docket/models/calendarsource.dart';
 
 class CalendarProvider {
-  String id = '';
+  int id = 0;
   String kind;
   String identifier;
   String displayName;
   List<CalendarSource> sources = [];
 
   CalendarProvider({
-    this.id = '',
+    this.id = 0,
     required this.kind,
     required this.identifier,
     this.displayName = '',
@@ -26,7 +26,7 @@ class CalendarProvider {
     }
 
     return CalendarProvider(
-      id: json['id'].toString(),
+      id: json['id'],
       kind: json['kind'],
       identifier: json['identifier'],
       displayName: json['display_name'],
@@ -36,7 +36,7 @@ class CalendarProvider {
 
   int _findSource(CalendarSource source) {
     return sources
-        .indexWhere((item) => ((item.id != '' && item.id == source.id) || item.providerId == source.providerId));
+        .indexWhere((item) => ((item.id != 0 && item.id == source.id) || item.providerId == source.providerId));
   }
 
   /// Replace or append a source to the provider.

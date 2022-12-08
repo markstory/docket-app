@@ -1,0 +1,32 @@
+{
+  "provider": {
+    "id":5,
+    "kind":"google",
+    "identifier":"101495314857909884933",
+    "display_name":" (mark@example.com)",
+    "calendar_sources":[
+       {
+          "id":28,
+          "name":"mark@example.com",
+          "calendar_provider_id":5,
+          "provider_id":"mark@example.com",
+          "color":3,
+          "last_sync":null,
+          "created":"2022-09-25T14:53:13+00:00",
+          "modified":"2022-12-08T01:32:52+00:00"
+       }
+    ]
+  },
+  "calendars":[
+     {
+        "name":"Birthdays",
+        "provider_id":"addressbook#contacts@group.v.calendar.google.com",
+        "color":1
+     },
+     {
+        "name":"Holidays in United States",
+        "provider_id":"en.usa#holiday@group.v.calendar.google.com",
+        "color":1
+     }
+  ]
+}

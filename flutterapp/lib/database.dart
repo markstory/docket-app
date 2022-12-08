@@ -728,19 +728,20 @@ class CalendarProviderDetailsCache extends ViewCache<CalendarProvider> {
   @override
   Future<void> set(CalendarProvider provider) async {
     var data = await _get() ?? {};
-    data[provider.id] = provider.toMap();
+    data[provider.id.toString()] = provider.toMap();
 
     return _set(data);
   }
 
-  Future<CalendarProvider?> get(String id) async {
+  Future<CalendarProvider?> get(int id) async {
     var data = await _get();
     if (data == null) {
       return null;
     }
-    if (data[id] == null) {
+    var providerId = id.toString();
+    if (data[providerId] == null) {
       return null;
     }
-    return CalendarProvider.fromMap(data[id]);
+    return CalendarProvider.fromMap(data[providerId]);
   }
 }
