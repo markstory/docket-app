@@ -1,3 +1,4 @@
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/models/calendarsource.dart';
 import 'package:docket/theme.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,7 @@ class _CalendarProviderDetailsScreenState extends State<CalendarProviderDetailsS
   }
 }
 
-enum Menu { sync, delete }
+enum Menu { link, sync, delete }
 
 class CalendarSourceItem extends StatelessWidget {
   final CalendarSource source;
@@ -92,8 +93,21 @@ class CalendarSourceItem extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.sync: () => viewmodel.syncEvents(source),
-        Menu.delete: () => viewmodel.removeSource(source),
+        Menu.link: () async {
+          var messenger = ScaffoldMessenger.of(context);
+          await viewmodel.linkSource(source);
+          messenger.showSnackBar(successSnackBar(context: context, text: "Calendar linked"));
+        },
+        Menu.sync: () async {
+          var messenger = ScaffoldMessenger.of(context);
+          await viewmodel.syncEvents(source);
+          messenger.showSnackBar(successSnackBar(context: context, text: "Calendars refreshed"));
+        },
+        Menu.delete: () async {
+          var messenger = ScaffoldMessenger.of(context);
+          await viewmodel.removeSource(source);
+          messenger.showSnackBar(successSnackBar(context: context, text: "Calendar unlinked"));
+        }
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
@@ -105,13 +119,22 @@ class CalendarSourceItem extends StatelessWidget {
             title: const Text('Sync'),
           ),
         ),
-        PopupMenuItem<Menu>(
-          value: Menu.delete,
-          child: ListTile(
-            leading: Icon(Icons.delete, color: customColors.actionDelete),
-            title: const Text('Delete'),
-          ),
-        ),
+        source.isLinked ?
+          PopupMenuItem<Menu>(
+            value: Menu.delete,
+            child: ListTile(
+              leading: Icon(Icons.delete, color: customColors.actionDelete),
+              title: const Text('Delete'),
+            ),
+          )
+          :
+          PopupMenuItem<Menu>(
+            value: Menu.link,
+            child: ListTile(
+              leading: Icon(Icons.link, color: theme.colorScheme.primary),
+              title: const Text('Link'),
+            ),
+          )
       ];
     });
   }

@@ -658,7 +658,7 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
 
 /// Create a calendar source on the server.
 Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources');
 
   return Future(() async {
     var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');

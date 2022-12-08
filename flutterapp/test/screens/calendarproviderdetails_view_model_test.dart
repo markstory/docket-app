@@ -114,5 +114,25 @@ void main() {
       expect(viewmodel.loading, isFalse);
       expect(viewmodel.provider.sources.length, equals(2));
     });
+
+    test('linkSource() makes a request', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars/5/view') {
+          return Response(calendarDetailsResponse, 200);
+        }
+
+        if (request.url.path == '/calendars/5/sources') {
+          return Response(calendarSourceResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      viewmodel.setId(5);
+      await viewmodel.loadData();
+
+      await viewmodel.linkSource(viewmodel.provider.sources[1]);
+      expect(viewmodel.loading, isFalse);
+    });
   });
 }
