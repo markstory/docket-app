@@ -98,12 +98,14 @@ class CalendarSourcesController extends AppController
 
         $service->setAccessToken($source->calendar_provider);
         $success = true;
+        $error = '';
         $serialize = [];
         try {
             $service->syncEvents($source);
             $this->set('source', $source);
             $serialize[] = 'source';
         } catch (\Exception $e) {
+            $error = __('Calendar not refreshed. %s', $e->getMessage());
             $success = false;
         }
 
@@ -111,7 +113,7 @@ class CalendarSourcesController extends AppController
             'success' => $success,
             'serialize' => $serialize,
             'flashSuccess' => __('Calendar refreshed'),
-            'flashError' => __('Calendar not refreshed'),
+            'flashError' => $error,
             'redirect' => $this->urlToProvider($source->calendar_provider_id),
         ]);
     }
