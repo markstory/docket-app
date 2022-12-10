@@ -118,7 +118,6 @@ class CalendarServiceTest extends TestCase
             '2021-07-17',
             $allDay->end_date->toDateString()
         );
-
         $this->assertSame('Moving Day', $items[2]->title);
     }
 
@@ -139,6 +138,9 @@ class CalendarServiceTest extends TestCase
             'end_time' => '2019-01-01 13:13:14',
         ]);
         $this->calendar->syncEvents($source);
+        $updated = $this->fetchTable('CalendarSources')->get($source->id);
+        $this->assertNotNull($updated->last_sync);
+
         $items = $this->getItems($source);
         $this->assertCount(3, $items);
 

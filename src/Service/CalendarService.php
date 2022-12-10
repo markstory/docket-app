@@ -279,6 +279,7 @@ class CalendarService
 
                 // Save the nextSyncToken for our next sync.
                 $source->sync_token = $results->getNextSyncToken();
+                $source->last_sync = FrozenTime::now();
                 $this->CalendarSources->saveOrFail($source);
 
                 Log::info("Calendar sync complete. source={$source->id}");
