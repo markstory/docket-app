@@ -76,15 +76,21 @@ class CalendarSourceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var docketColors = getCustomColors(context);
-    var itemColor = getProjectColor(source.color);
+
     return ListTile(
-      // TODO make this an actionable button.
-      leading: Icon(Icons.circle, color: itemColor, size: 12),
-      title: Text(source.name),
-      subtitle:
-          Text('Last synced: ${source.lastSync ?? "Never Synced"}', style: TextStyle(color: docketColors.disabledText)),
-      trailing: buildMenu(context)
-    );
+        leading: CalendarColourPicker(
+            color: source.color,
+            onChanged: (color) async {
+              var messenger = ScaffoldMessenger.of(context);
+
+              source.color = color;
+              await viewmodel.updateSource(source);
+              messenger.showSnackBar(successSnackBar(context: context, text: "Calendar updated"));
+            }),
+        title: Text(source.name),
+        subtitle: Text('Last synced: ${source.lastSync ?? "Never Synced"}',
+            style: TextStyle(color: docketColors.disabledText)),
+        trailing: buildMenu(context));
   }
 
   Widget buildMenu(BuildContext context) {
@@ -119,23 +125,51 @@ class CalendarSourceItem extends StatelessWidget {
             title: const Text('Sync'),
           ),
         ),
-        source.isLinked ?
-          PopupMenuItem<Menu>(
-            value: Menu.delete,
-            child: ListTile(
-              leading: Icon(Icons.delete, color: customColors.actionDelete),
-              title: const Text('Delete'),
-            ),
-          )
-          :
-          PopupMenuItem<Menu>(
-            value: Menu.link,
-            child: ListTile(
-              leading: Icon(Icons.link, color: theme.colorScheme.primary),
-              title: const Text('Link'),
-            ),
-          )
+        source.isLinked
+            ? PopupMenuItem<Menu>(
+                value: Menu.delete,
+                child: ListTile(
+                  leading: Icon(Icons.delete, color: customColors.actionDelete),
+                  title: const Text('Delete'),
+                ),
+              )
+            : PopupMenuItem<Menu>(
+                value: Menu.link,
+                child: ListTile(
+                  leading: Icon(Icons.link, color: theme.colorScheme.primary),
+                  title: const Text('Link'),
+                ),
+              )
       ];
     });
+  }
+}
+
+class CalendarColourPicker extends StatelessWidget {
+  final int color;
+  final void Function(int color) onChanged;
+
+  const CalendarColourPicker({required this.color, required this.onChanged, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<int>(
+      value: color,
+      onChanged: (int? color) {
+        if (color == null) {
+          return;
+        }
+        onChanged(color);
+      },
+      items: getProjectColors().map((item) {
+        return DropdownMenuItem(
+            value: item.id,
+            child: Row(children: [
+              Icon(Icons.circle, color: item.color, size: 12),
+              SizedBox(width: space(1)),
+              Text(item.name),
+            ]));
+      }).toList(),
+    );
   }
 }

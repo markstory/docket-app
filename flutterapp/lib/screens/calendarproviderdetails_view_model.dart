@@ -123,4 +123,14 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Link a calendar that will be synced
+  Future<void> updateSource(source) async {
+    await actions.updateSource(session!.apiToken, source);
+
+    provider.replaceSource(source);
+    await _database.calendarDetails.set(provider);
+
+    notifyListeners();
+  }
 }
