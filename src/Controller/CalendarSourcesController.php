@@ -129,19 +129,23 @@ class CalendarSourcesController extends AppController
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
+        $serialize = [];
         $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             // Only a subset of fields are user editable.
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
                 'fields' => ['color', 'name'],
             ]);
+            $serialize = ['source'];
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
             }
+            $this->set('source', $calendarSource);
         }
 
         return $this->respond([
             'success' => $success,
+            'serialize' => $serialize,
             'flashSuccess' => __('The calendar has been updated.'),
             'flashError' => __('The calendar could not be modified. Please, try again.'),
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),

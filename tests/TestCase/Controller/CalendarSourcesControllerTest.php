@@ -293,6 +293,29 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
+     * Test edit with api token method
+     *
+     * @return void
+     */
+    public function testEditApi(): void
+    {
+        $token = $this->makeApiToken(1);
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'color' => 3,
+            'name' => 'new values',
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('new values');
+    }
+
+    /**
      * Test edit method
      *
      * @return void
