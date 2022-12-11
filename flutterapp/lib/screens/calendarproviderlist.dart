@@ -5,6 +5,7 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/calendarprovideritem.dart';
 import 'package:docket/screens/calendarproviderlist_view_model.dart';
+import 'package:docket/theme.dart';
 
 class CalendarProviderListScreen extends StatefulWidget {
   const CalendarProviderListScreen({super.key});
@@ -37,7 +38,7 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
         body = const LoadingIndicator();
       } else {
         List<Widget> children = [
-          const Text('Events from linked calendars will be displayed in "today" and "upcoming" views.'),
+          Padding(padding: EdgeInsets.all(space(1)), child: const Text('Events from linked calendars will be displayed in "today" and "upcoming" views.')),
         ];
         children.addAll(viewmodel.providers.map((provider) => CalendarProviderItem(provider: provider)).toList());
 

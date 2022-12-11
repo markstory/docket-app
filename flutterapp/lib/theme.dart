@@ -46,6 +46,16 @@ List<ProjectColor> getProjectColors() {
   return _projectColors;
 }
 
+/// Find a color or null
+ProjectColor? findProjectColor(int colorId) {
+  for (var color in _projectColors) {
+    if (color.id == colorId) {
+      return color;
+    }
+  }
+  return null;
+}
+
 @immutable
 class DocketColors extends ThemeExtension<DocketColors> {
   static const double iconSize = 24;

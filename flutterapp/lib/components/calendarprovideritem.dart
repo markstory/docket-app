@@ -13,7 +13,7 @@ class CalendarProviderItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget icon = const Icon(Icons.link);
     if (provider.kind == 'google') {
-      icon = const Image(image: AssetImage('google-calendar.png'));
+      icon = const Image(image: AssetImage('assets/google-calendar.png'));
     }
     return ListTile(
       dense: true,

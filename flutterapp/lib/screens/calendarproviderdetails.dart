@@ -162,12 +162,15 @@ class CalendarColourPicker extends StatelessWidget {
         onChanged(color);
       },
       items: getProjectColors().map((item) {
+        var selectedColor = findProjectColor(color);
+        var isSelected = selectedColor != null;
+        
         return DropdownMenuItem(
             value: item.id,
             child: Row(children: [
               Icon(Icons.circle, color: item.color, size: 12),
               SizedBox(width: space(1)),
-              Text(item.name),
+              isSelected ? const Text('') : Text(item.name),
             ]));
       }).toList(),
     );
