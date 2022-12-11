@@ -36,14 +36,15 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
       if (viewmodel.loading) {
         body = const LoadingIndicator();
       } else {
+        List<Widget> children = [
+          const Text('Events from linked calendars will be displayed in "today" and "upcoming" views.'),
+        ];
+        children.addAll(viewmodel.providers.map((provider) => CalendarProviderItem(provider: provider)).toList());
+
         body = RefreshIndicator(
             onRefresh: () => _refresh(viewmodel),
             child: ListView(
-              children: viewmodel.providers
-                  .map(
-                    (provider) => CalendarProviderItem(provider: provider),
-                  )
-                  .toList(),
+              children: children,
             ));
       }
 

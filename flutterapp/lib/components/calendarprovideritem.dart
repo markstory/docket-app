@@ -11,6 +11,10 @@ class CalendarProviderItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget icon = const Icon(Icons.link);
+    if (provider.kind == 'google') {
+      icon = const Image(image: AssetImage('google-calendar.png'));
+    }
     return ListTile(
       dense: true,
       contentPadding: EdgeInsets.all(space(1)),
@@ -18,7 +22,7 @@ class CalendarProviderItem extends StatelessWidget {
         Navigator.pushNamed(context, Routes.calendarDetails, arguments: CalendarDetailsArguments(provider));
       },
       title: Text(provider.displayName),
-      leading: const Icon(Icons.link),
+      leading: icon,
       trailing: ProviderActions(provider: provider),
     );
   }
