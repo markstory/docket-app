@@ -10,7 +10,7 @@ import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/screens/trashbin_view_model.dart';
+import 'package:docket/viewmodel/trashbin.dart';
 
 ProjectWithTasks parseProjectDetails(String data) {
   var decoded = jsonDecode(data);

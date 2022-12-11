@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/calendarprovider.dart';
-import 'package:docket/screens/calendarproviderdetails_view_model.dart';
+import 'package:docket/viewmodel/calendarproviderdetails.dart';
 
 class CalendarProviderDetailsScreen extends StatefulWidget {
   final CalendarProvider provider;

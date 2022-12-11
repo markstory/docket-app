@@ -8,7 +8,7 @@ import 'package:docket/components/projectbadge.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/screens/projectarchive_view_model.dart';
+import 'package:docket/viewmodel/projectarchive.dart';
 
 class ProjectArchiveScreen extends StatefulWidget {
   const ProjectArchiveScreen({super.key});

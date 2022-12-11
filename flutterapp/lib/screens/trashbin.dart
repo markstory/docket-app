@@ -5,7 +5,7 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/screens/trashbin_view_model.dart';
+import 'package:docket/viewmodel/trashbin.dart';
 
 class TrashbinScreen extends StatefulWidget {
   const TrashbinScreen({super.key});

@@ -6,7 +6,7 @@ import 'package:http/testing.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/screens/calendarproviderdetails_view_model.dart';
+import 'package:docket/viewmodel/calendarproviderdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

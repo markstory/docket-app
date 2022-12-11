@@ -7,7 +7,7 @@ import 'package:docket/forms/project.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/screens/projectedit_view_model.dart';
+import 'package:docket/viewmodel/projectedit.dart';
 
 class ProjectEditScreen extends StatefulWidget {
   final Project project;

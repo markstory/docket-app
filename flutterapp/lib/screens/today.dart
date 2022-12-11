@@ -12,7 +12,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/screens/today_view_model.dart';
+import 'package:docket/viewmodel/today.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});

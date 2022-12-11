@@ -9,7 +9,7 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/screens/projectdetails_view_model.dart';
+import 'package:docket/viewmodel/projectdetails.dart';
 
 // Parse a list response into a list of tasks.
 ProjectWithTasks parseData(String data) {

@@ -1,4 +1,3 @@
-import 'package:docket/screens/upcoming_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -10,6 +9,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
+import 'package:docket/viewmodel/upcoming.dart';
 
 class UpcomingScreen extends StatefulWidget {
   const UpcomingScreen({super.key});
