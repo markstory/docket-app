@@ -4,7 +4,6 @@ use App\Error\SentryErrorLogger;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
-use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 
@@ -166,7 +165,6 @@ return [
      */
     'Error' => [
         'errorLevel' => E_ALL,
-        'exceptionRenderer' => WebExceptionRenderer::class,
         'logger' => SentryErrorLogger::class,
         'skipLog' => [
             'Authorization\Exception\ForbiddenException',
