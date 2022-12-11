@@ -285,7 +285,6 @@ class Initial extends AbstractMigration
                 ]
             )
             ->update();
-        */
 
         $this->table('labels_tasks')
             ->addForeignKey(
@@ -343,6 +342,7 @@ class Initial extends AbstractMigration
                 ]
             )
             ->update();
+        */
     }
 
     /**
