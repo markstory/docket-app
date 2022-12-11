@@ -33,15 +33,17 @@ class ViteAssetHelper extends Helper
         parent::initialize($config);
 
         $manifestFile = $this->getConfig('manifestFile');
-        $contents = file_get_contents($manifestFile);
-        if (!$contents) {
-            throw new RuntimeException("Could not read manifest file `{$manifestFile}`");
+        if (file_exists($manifestFile)) {
+            $contents = file_get_contents($manifestFile);
+            if (!$contents) {
+                throw new RuntimeException("Could not read manifest file `{$manifestFile}`");
+            }
+            $data = json_decode($contents, true);
+            if (json_last_error()) {
+                throw new RuntimeException("Could not parse JSON in `{$manifestFile}`");
+            }
+            $this->manifest = $data;
         }
-        $data = json_decode($contents, true);
-        if (json_last_error()) {
-            throw new RuntimeException("Could not parse JSON in `{$manifestFile}`");
-        }
-        $this->manifest = $data;
     }
 
     public function script(string $name): string
