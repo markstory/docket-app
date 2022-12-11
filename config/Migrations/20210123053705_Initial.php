@@ -273,7 +273,6 @@ class Initial extends AbstractMigration
             ])
             ->create();
 
-        /*
         $this->table('labels')
             ->addForeignKey(
                 'project_id',
@@ -342,7 +341,6 @@ class Initial extends AbstractMigration
                 ]
             )
             ->update();
-        */
     }
 
     /**
