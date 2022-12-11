@@ -17,7 +17,6 @@ class Initial extends AbstractMigration
         $this->table('labels')
             ->addColumn('project_id', 'integer', [
                 'default' => null,
-                'limit' => null,
                 'null' => false,
             ])
             ->addColumn('label', 'string', [
