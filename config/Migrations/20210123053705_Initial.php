@@ -49,12 +49,10 @@ class Initial extends AbstractMigration
         $this->table('labels_tasks', ['id' => false, 'primary_key' => ['task_id', 'label_id']])
             ->addColumn('task_id', 'integer', [
                 'default' => null,
-                'limit' => null,
                 'null' => false,
             ])
             ->addColumn('label_id', 'integer', [
                 'default' => null,
-                'limit' => null,
                 'null' => false,
             ])
             ->addIndex(
@@ -72,7 +70,6 @@ class Initial extends AbstractMigration
         $this->table('projects')
             ->addColumn('user_id', 'integer', [
                 'default' => null,
-                'limit' => null,
                 'null' => false,
             ])
             ->addColumn('name', 'string', [
