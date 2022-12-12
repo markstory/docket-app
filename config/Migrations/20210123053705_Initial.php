@@ -10,6 +10,7 @@ class Initial extends AbstractMigration
      *
      * More information on this method is available here:
      * https://book.cakephp.org/phinx/0/en/migrations.html#the-up-method
+     *
      * @return void
      */
     public function up()
@@ -40,11 +41,7 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
-            ->addIndex(
-                [
-                    'project_id',
-                ]
-            )
+            ->addIndex(['project_id' ])
             ->create();
 
         $this->table('labels_tasks', ['id' => false, 'primary_key' => ['task_id', 'label_id']])
@@ -58,16 +55,8 @@ class Initial extends AbstractMigration
                 'null' => false,
                 'signed' => false,
             ])
-            ->addIndex(
-                [
-                    'label_id',
-                ]
-            )
-            ->addIndex(
-                [
-                    'task_id',
-                ]
-            )
+            ->addIndex(['label_id'])
+            ->addIndex(['task_id'])
             ->create();
 
         $this->table('projects')
@@ -129,6 +118,7 @@ class Initial extends AbstractMigration
                 'default' => null,
                 'limit' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('title', 'text', [
                 'default' => null,
@@ -160,11 +150,7 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
-            ->addIndex(
-                [
-                    'task_id',
-                ]
-            )
+            ->addIndex([ 'task_id'])
             ->create();
 
         $this->table('tasks')
@@ -172,6 +158,7 @@ class Initial extends AbstractMigration
                 'default' => null,
                 'limit' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('title', 'text', [
                 'default' => null,
@@ -344,6 +331,7 @@ class Initial extends AbstractMigration
      *
      * More information on this method is available here:
      * https://book.cakephp.org/phinx/0/en/migrations.html#the-down-method
+     *
      * @return void
      */
     public function down()
