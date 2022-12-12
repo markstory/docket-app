@@ -19,6 +19,7 @@ class AddProjectSections extends AbstractMigration
             ->addColumn('project_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('name', 'string', [
                 'limit' => 255,

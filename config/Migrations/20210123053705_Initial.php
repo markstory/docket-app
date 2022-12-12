@@ -18,6 +18,7 @@ class Initial extends AbstractMigration
             ->addColumn('project_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('label', 'string', [
                 'default' => null,
@@ -50,10 +51,12 @@ class Initial extends AbstractMigration
             ->addColumn('task_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('label_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addIndex(
                 [
@@ -71,6 +74,7 @@ class Initial extends AbstractMigration
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('name', 'string', [
                 'default' => null,
@@ -117,11 +121,7 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
-            ->addIndex(
-                [
-                    'user_id',
-                ]
-            )
+            ->addIndex(['user_id'])
             ->create();
 
         $this->table('subtasks')
@@ -223,11 +223,7 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
-            ->addIndex(
-                [
-                    'project_id',
-                ]
-            )
+            ->addIndex(['project_id'])
             ->create();
 
         $this->table('users')
@@ -353,32 +349,24 @@ class Initial extends AbstractMigration
     public function down()
     {
         $this->table('labels')
-            ->dropForeignKey(
-                'project_id'
-            )->save();
+            ->dropForeignKey('project_id')->save();
 
         $this->table('labels_tasks')
-            ->dropForeignKey(
-                'label_id'
-            )
-            ->dropForeignKey(
-                'task_id'
-            )->save();
+            ->dropForeignKey('label_id')
+            ->dropForeignKey('task_id')
+            ->save();
 
         $this->table('projects')
-            ->dropForeignKey(
-                'user_id'
-            )->save();
+            ->dropForeignKey('user_id')
+            ->save();
 
         $this->table('subtasks')
-            ->dropForeignKey(
-                'task_id'
-            )->save();
+            ->dropForeignKey('task_id')
+            ->save();
 
         $this->table('tasks')
-            ->dropForeignKey(
-                'project_id'
-            )->save();
+            ->dropForeignKey('project_id')
+            ->save();
 
         $this->table('labels')->drop()->save();
         $this->table('labels_tasks')->drop()->save();

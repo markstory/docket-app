@@ -17,6 +17,7 @@ class AddCalendarModels extends AbstractMigration
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('kind', 'string', [
                 'default' => null,
@@ -52,6 +53,7 @@ class AddCalendarModels extends AbstractMigration
             ->addColumn('calendar_provider_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('provider_id', 'string', [
                 'default' => null,
@@ -94,6 +96,7 @@ class AddCalendarModels extends AbstractMigration
              ->addColumn('calendar_source_id', 'integer', [
                 'default' => null,
                 'null' => false,
+                'signed' => false,
              ])
              ->addColumn('identifier', 'string', [
                  'default' => null,
@@ -113,6 +116,7 @@ class AddCalendarModels extends AbstractMigration
         $this->table('calendar_items')
             ->addColumn('calendar_source_id', 'integer', [
                 'null' => false,
+                'signed' => false,
             ])
             ->addColumn('provider_id', 'string', [
                 'default' => null,
