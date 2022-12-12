@@ -59,13 +59,13 @@ class AddProjectSections extends AbstractMigration
             )
             ->update();
 
-        $this->table('tasks')
-             ->addColumn('project_section_id', 'integer', [
-                 'null' => true,
-                 'default' => null,
-                 'after' => 'project_id',
-             ])
-             ->update();
+        $this->table('tasks')->addColumn('project_section_id', 'integer', [
+            'null' => true,
+            'default' => null,
+            'after' => 'project_id',
+            'signed' => false,
+         ])
+         ->update();
 
         $this->table('tasks')
             ->addForeignKey(
