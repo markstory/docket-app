@@ -1,4 +1,5 @@
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:docket/models/calendarsource.dart';
 import 'package:docket/theme.dart';
 import 'package:flutter/material.dart';
@@ -110,9 +111,14 @@ class CalendarSourceItem extends StatelessWidget {
           messenger.showSnackBar(successSnackBar(context: context, text: "Calendars refreshed"));
         },
         Menu.delete: () async {
-          var messenger = ScaffoldMessenger.of(context);
-          await viewmodel.removeSource(source);
-          messenger.showSnackBar(successSnackBar(context: context, text: "Calendar unlinked"));
+          showConfirmDelete(
+              content: "Are you sure you want stop syncing and unlink this calendar?",
+              context: context,
+              onConfirm: () async {
+                var messenger = ScaffoldMessenger.of(context);
+                await viewmodel.removeSource(source);
+                messenger.showSnackBar(successSnackBar(context: context, text: "Calendar unlinked"));
+              });
         }
       };
       actions[item]?.call();
@@ -164,7 +170,7 @@ class CalendarColourPicker extends StatelessWidget {
       items: getProjectColors().map((item) {
         var selectedColor = findProjectColor(color);
         var isSelected = selectedColor != null;
-        
+
         return DropdownMenuItem(
             value: item.id,
             child: Row(children: [

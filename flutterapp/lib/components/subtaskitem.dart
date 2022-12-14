@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
@@ -74,16 +75,16 @@ class _SubtaskItemState extends State<SubtaskItem> {
       contentPadding: EdgeInsets.fromLTRB(space(0.3), space(0.5), space(1), space(0.5)),
       dense: true,
       leading: Checkbox(
-        activeColor: customColors.actionComplete,
-        checkColor: Colors.white,
-        value: subtask.completed,
-        visualDensity: VisualDensity.compact,
-        onChanged: (bool? value) {
-          if (value == null) {
-            return;
-          }
-          handleSubtaskComplete(context, widget.task, subtask);
-        }),
+          activeColor: customColors.actionComplete,
+          checkColor: Colors.white,
+          value: subtask.completed,
+          visualDensity: VisualDensity.compact,
+          onChanged: (bool? value) {
+            if (value == null) {
+              return;
+            }
+            handleSubtaskComplete(context, widget.task, subtask);
+          }),
       title: itemContents(context, subtask, customColors),
     );
   }
@@ -97,11 +98,19 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
     return InputDecoration(
       suffixIcon: IconButton(
-        icon: Icon(Icons.delete, color: customColors.actionDelete),
-        onPressed: () {
-          _confirmDelete(context);
-        }
-      ),
+          icon: Icon(Icons.delete, color: customColors.actionDelete),
+          onPressed: () {
+            showConfirmDelete(
+                context: context,
+                content: "Are you sure you want to delete this subtask?",
+                onConfirm: () async {
+                  var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+                  var navigator = Navigator.of(context);
+
+                  await tasksProvider.deleteSubtask(widget.task, widget.subtask);
+                  navigator.pop();
+                });
+          }),
     );
   }
 
@@ -113,13 +122,12 @@ class _SubtaskItemState extends State<SubtaskItem> {
     if (!hasFocus) {
       var textStyle = titleStyle(subtask, textTheme, customColors);
       return GestureDetector(
-        child: Text(subtask.title, style: textStyle),
-        onTap: () {
-          setState(() {
-            hasFocus = !hasFocus;
+          child: Text(subtask.title, style: textStyle),
+          onTap: () {
+            setState(() {
+              hasFocus = !hasFocus;
+            });
           });
-        }
-      );
     }
 
     return TextField(
@@ -146,31 +154,5 @@ class _SubtaskItemState extends State<SubtaskItem> {
       );
     }
     return titleStyle;
-  }
-
-  void _confirmDelete(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Are you sure?"),
-          content: const Text("Are you sure you want to delete this subtask?"),
-          actions: [
-            TextButton(
-              child: const Text("Yes"),
-              onPressed: () async {
-                var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-                var navigator = Navigator.of(context);
-
-                await tasksProvider.deleteSubtask(widget.task, widget.subtask);
-                navigator.pop();
-              }),
-            ElevatedButton(child: const Text("No thanks"), onPressed: () {
-              Navigator.pop(context);
-            }),
-          ]
-        );
-      }
-    );
   }
 }
