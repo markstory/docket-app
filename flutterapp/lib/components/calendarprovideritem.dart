@@ -2,6 +2,7 @@ import 'package:docket/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/routes.dart';
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/models/calendarprovider.dart';
 
 class CalendarProviderItem extends StatelessWidget {
@@ -35,9 +36,11 @@ class ProviderActions extends StatelessWidget {
 
   const ProviderActions({required this.provider, super.key});
 
-  void handleDelete() {
+  void handleDelete(context) {
     // TODO implement with confirm.
     // see SubtaskItem for an example of confirm and delete.
+    var messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(successSnackBar(context: context, text: 'Task Deleted'));
   }
 
   @override
@@ -47,7 +50,7 @@ class ProviderActions extends StatelessWidget {
 
     return PopupMenuButton<Menu>(onSelected: (Menu item) {
       var actions = {
-        Menu.delete: handleDelete,
+        Menu.delete: () => handleDelete(context),
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {

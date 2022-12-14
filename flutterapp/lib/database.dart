@@ -707,10 +707,10 @@ class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
       return null;
     }
     var items = data['items'];
-    if (items == null) {
+    if (items == null || items.runtimeType != List<dynamic>) {
       return null;
     }
-    return items.map((item) => CalendarProvider.fromMap(item));
+    return (items as List).map<CalendarProvider>((item) => CalendarProvider.fromMap(item)).toList();
   }
 }
 
