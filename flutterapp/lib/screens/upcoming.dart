@@ -26,11 +26,11 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     super.initState();
 
     viewmodel = Provider.of<UpcomingViewModel>(context, listen: false);
-    _refresh(viewmodel);
+    viewmodel.loadData();
   }
 
-  Future<void> _refresh(UpcomingViewModel viewmodel) async {
-    return viewmodel.refresh();
+  Future<void> _refresh(UpcomingViewModel view) async {
+    return view.refresh();
   }
 
   @override

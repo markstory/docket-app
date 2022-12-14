@@ -13,6 +13,7 @@ class FloatingCreateTaskButton extends StatelessWidget {
     var theme = Theme.of(context);
 
     return FloatingActionButton(
+      key: const ValueKey("floating-task-add"),
       onPressed: () {
         Navigator.pushNamed(
           context,

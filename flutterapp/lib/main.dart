@@ -55,8 +55,9 @@ class EntryPoint extends StatelessWidget {
   final LocalDatabase database;
   final Widget? child;
   final AdaptiveThemeMode? themeMode;
+  final Map<String, WidgetBuilder>? routes;
 
-  const EntryPoint({required this.database, this.child, this.themeMode, super.key});
+  const EntryPoint({required this.database, this.child, this.routes, this.themeMode, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +143,7 @@ class EntryPoint extends StatelessWidget {
               return provider;
             }),
       ],
-      child: DocketApp(themeMode: themeMode, child: child),
+      child: DocketApp(themeMode: themeMode, child: child, routes: routes),
     );
   }
 }
@@ -150,8 +151,9 @@ class EntryPoint extends StatelessWidget {
 class DocketApp extends StatelessWidget {
   final AdaptiveThemeMode? themeMode;
   final Widget? child;
+  final Map<String, WidgetBuilder>? routes;
 
-  const DocketApp({this.child, this.themeMode, super.key});
+  const DocketApp({this.child, this.themeMode, this.routes, super.key});
 
   Route unknownScreen(BuildContext context) {
     return MaterialPageRoute(builder: (context) => const UnknownScreen());
@@ -169,6 +171,7 @@ class DocketApp extends StatelessWidget {
               theme: theme,
               darkTheme: darkTheme,
               home: child,
+              routes: routes ?? {},
             );
           }
 

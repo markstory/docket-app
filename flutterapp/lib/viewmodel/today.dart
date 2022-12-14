@@ -29,7 +29,7 @@ class TodayViewModel extends ChangeNotifier {
     _database = database;
     _taskLists = [];
 
-    _database.today.addListener(() async {
+    _database.today.addListener(() {
       refresh();
     });
   }
@@ -51,10 +51,10 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     var taskView = await _database.today.get();
-    if (!taskView.isEmpty) {
+    if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (!_loading && !_database.today.isFresh()) {
+    if (!_loading && (taskView.isEmpty || !_database.today.isFresh())) {
       return refresh();
     }
   }
