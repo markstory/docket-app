@@ -16,7 +16,7 @@ class TaskAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void saveTask(BuildContext context, Task task) async {
+    Future<void> saveTask(BuildContext context, Task task) async {
       var messenger = ScaffoldMessenger.of(context);
       var tasks = Provider.of<TasksProvider>(context, listen: false);
 
@@ -43,7 +43,7 @@ class TaskAddScreen extends StatelessWidget {
                 padding: EdgeInsets.all(space(2)),
                 child: TaskForm(
                   task: task,
-                  onSave: (updated) => saveTask(context, updated),
+                  onSave: (updated) async => await saveTask(context, updated),
                 ))));
   }
 }

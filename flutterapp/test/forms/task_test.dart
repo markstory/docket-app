@@ -16,7 +16,7 @@ void main() {
   var database = LocalDatabase.instance();
 
   // Rendering helper.
-  Widget renderForm(Task task, Function(Task task) onSave) {
+  Widget renderForm(Task task, Future<void> Function(Task task) onSave) {
     return EntryPoint(database: database, child: Scaffold(body: Portal(child: TaskForm(task: task, onSave: onSave))));
   }
 
@@ -28,11 +28,13 @@ void main() {
   group('$TaskForm', () {
     testWidgets('can edit blank task', (tester) async {
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
         expect(task.body, equals('Use lots of soap'));
+
+        return Future.value();
       }
 
       final task = Task.blank();
@@ -63,11 +65,13 @@ void main() {
 
     testWidgets('can use mention for due date', (tester) async {
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
         expect(task.evening, isTrue);
+
+        return Future.value();
       }
 
       final task = Task.blank();
@@ -92,10 +96,11 @@ void main() {
 
     testWidgets('can use mention for project', (tester) async {
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(2));
+        return Future.value();
       }
 
       final task = Task.blank();
@@ -120,11 +125,12 @@ void main() {
 
     testWidgets('project and date value has a default', (tester) async {
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
         expect(task.dueOn, isNull);
+        return Future.value();
       }
 
       final task = Task.blank();
@@ -142,7 +148,7 @@ void main() {
     });
 
     testWidgets('cancel does not apply changes', (tester) async {
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         throw "Should not be called";
       }
 
@@ -160,12 +166,13 @@ void main() {
 
     testWidgets('can edit task with contents', (tester) async {
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
 
         expect(task.title, equals('Do dishes'));
         expect(task.projectId, equals(1));
         expect(task.body, equals('Use lots of soap'));
+        return Future.value();
       }
 
       var task = Task.blank();
@@ -203,10 +210,11 @@ void main() {
     testWidgets('can update due on date', (tester) async {
       var today = DateUtils.dateOnly(DateTime.now());
       var onSaveCalled = false;
-      void onSave(Task task) {
+      Future<void> onSave(Task task) {
         onSaveCalled = true;
 
         expect(task.dueOn, equals(today));
+        return Future.value();
       }
 
       var task = Task.blank();

@@ -29,7 +29,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     viewmodel.loadData();
   }
 
-  void _onSave(BuildContext context, Task task) async {
+  Future<void> _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
 
@@ -54,7 +54,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           child: Column(children: [
             TaskForm(
               task: viewmodel.task,
-              onSave: (task) => _onSave(context, task),
+              onSave: (task) async => await _onSave(context, task),
               onComplete: () => Navigator.of(context).pop(),
             ),
           ]),

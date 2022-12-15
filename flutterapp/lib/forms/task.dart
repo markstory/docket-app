@@ -15,7 +15,7 @@ import 'package:docket/theme.dart';
 
 class TaskForm extends StatefulWidget {
   final Task task;
-  final void Function(Task task) onSave;
+  final Future<void> Function(Task task) onSave;
   final void Function()? onComplete;
 
   const TaskForm({required this.task, required this.onSave, this.onComplete, super.key});
@@ -195,7 +195,7 @@ class _TaskFormState extends State<TaskForm> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          widget.onSave(task);
+                          await widget.onSave(task);
                         }
                       })
                 ])
