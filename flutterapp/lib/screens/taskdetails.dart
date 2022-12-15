@@ -29,10 +29,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     viewmodel.loadData();
   }
 
-  Future<void> _refresh(TaskDetailsViewModel view) async {
-    await view.refresh();
-  }
-
   void _onSave(BuildContext context, Task task) async {
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
