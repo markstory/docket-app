@@ -46,11 +46,14 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   setId(int id) {
     _id = id;
+    fetchTask();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (!_loading) {
+    await fetchTask();
+
+    if (!_loading || _task == null) {
       return refresh();
     }
   }
@@ -59,8 +62,10 @@ class TaskDetailsViewModel extends ChangeNotifier {
   /// Avoids flash of empty content, makes the app feel more snappy
   /// and provides a better offline experience.
   Future<void> fetchTask() async {
+    _loading = true;
     var task = await _database.taskDetails.get(id);
     _task = task;
+    _loading = false;
 
     notifyListeners();
   }
