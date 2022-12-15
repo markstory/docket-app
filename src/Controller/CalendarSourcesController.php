@@ -140,6 +140,9 @@ class CalendarSourcesController extends AppController
                 $success = true;
                 $serialize = ['source'];
                 $this->set('source', $calendarSource);
+            } else {
+                $serialize = ['errors'];
+                $this->set('errors', $this->flattenErrors($calendarSource->getErrors()));
             }
         }
 
