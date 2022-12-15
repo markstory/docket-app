@@ -135,7 +135,7 @@ void main() {
       expect(viewmodel.loading, isFalse);
     });
 
-    test('updateSource() makes a request', () async {
+    test('updateSource() makes a request, and updates local state', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);

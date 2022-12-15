@@ -676,9 +676,10 @@ Future<CalendarSource> createSource(String apiToken, CalendarSource source) asyn
 /// Update the settings on a source.
 Future<CalendarSource> updateSource(String apiToken, CalendarSource source) async {
   var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
+  var body = {'color': source.color, 'name': source.name};
 
   return Future(() async {
-    var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
+    var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
 
     try {
       var respData = jsonDecode(utf8.decode(response.bodyBytes));
