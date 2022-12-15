@@ -114,7 +114,7 @@ class CalendarSourceItem extends StatelessWidget {
         Menu.sync: () async {
           var messenger = ScaffoldMessenger.of(context);
           await viewmodel.syncEvents(source);
-          messenger.showSnackBar(successSnackBar(context: context, text: "Calendars refreshed"));
+          messenger.showSnackBar(successSnackBar(context: context, text: "Calendar refreshed"));
         },
         Menu.delete: () async {
           showConfirmDelete(
