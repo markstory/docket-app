@@ -55,18 +55,28 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
+    fetchProject();
 
     return this;
   }
 
-  /// Load data. Should be called during initState()
-  Future<void> loadData() async {
+  Future<void> fetchProject() async {
+    _loading = true;
     var projectData = await _database.projectDetails.get(slug);
     if (!projectData.isEmpty) {
       _project = projectData.project;
       _buildTaskLists(projectData.tasks);
     }
-    if (!_loading && projectData.isEmpty) {
+    _loading = false;
+
+    notifyListeners();
+  }
+
+  /// Load data. Should be called during initState()
+  Future<void> loadData() async {
+    await fetchProject();
+
+    if (!_loading && _project == null) {
       await refresh();
     }
   }

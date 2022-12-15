@@ -26,8 +26,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     super.initState();
     viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
     viewmodel.setId(widget.task.id!);
-
-    _refresh(viewmodel);
+    viewmodel.loadData();
   }
 
   Future<void> _refresh(TaskDetailsViewModel view) async {

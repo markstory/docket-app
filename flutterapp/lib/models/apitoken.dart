@@ -3,7 +3,7 @@ class ApiToken {
   final String token;
   final String? lastUsed;
 
-  ApiToken({this.id, required this.token, required this.lastUsed});
+  ApiToken({this.id, required this.token, this.lastUsed});
 
   factory ApiToken.fromMap(Map<String, dynamic> json) {
     return ApiToken(

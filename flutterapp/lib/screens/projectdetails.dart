@@ -34,12 +34,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _newTask = Task.blank(projectId: widget.project.id);
+
     viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
     viewmodel.setSlug(widget.project.slug);
     viewmodel.loadData();
-
-    _newTask = Task.blank(projectId: widget.project.id);
-    _refresh(viewmodel);
   }
 
   Future<void> _refresh(ProjectDetailsViewModel view) {

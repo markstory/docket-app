@@ -31,7 +31,6 @@ class _TodayScreenState extends State<TodayScreen> {
     super.initState();
 
     viewmodel = Provider.of<TodayViewModel>(context, listen: false);
-
     viewmodel.loadData();
     _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
   }
