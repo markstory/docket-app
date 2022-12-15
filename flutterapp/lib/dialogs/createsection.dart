@@ -17,6 +17,7 @@ Future<void> showCreateSectionDialog(BuildContext context, Project project) {
         key: formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
+            key: const ValueKey("section-name"),
             decoration: const InputDecoration(
               labelText: 'Name',
             ),

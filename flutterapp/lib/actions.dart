@@ -573,7 +573,7 @@ Future<void> deleteProject(String apiToken, Project project) async {
 // {{{ Section Methods
 /// Create a project section
 Future<void> createSection(String apiToken, Project project, Section section) async {
-  var url = _makeUrl('/projects/${project.slug}/sections/');
+  var url = _makeUrl('/projects/${project.slug}/sections');
 
   return Future(() async {
     await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not create section');
