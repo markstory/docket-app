@@ -16,6 +16,7 @@ Future<void> showRenameSectionDialog(BuildContext context, Project project, Sect
         key: formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
+            key: const ValueKey('section-name'),
             decoration: const InputDecoration(
               labelText: 'Name',
             ),
