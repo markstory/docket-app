@@ -45,14 +45,21 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     }
   }
 
-  /// Load data. Should be called during initState()
-  Future<void> loadData() async {
+  Future<void> fetchData() async {
+    _loading = true;
     var result = await _database.completedTasks.get(slug);
     if (!result.isEmpty) {
       _tasks = result.tasks;
     }
+    _loading = false;
 
-    if (!_loading) {
+    notifyListeners();
+  }
+
+  /// Load data. Should be called during initState()
+  Future<void> loadData() async {
+    await fetchData();
+    if (!_loading && (_tasks.isEmpty || !_database.completedTasks.isFresh())) {
       return refresh();
     }
   }

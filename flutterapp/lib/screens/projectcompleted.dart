@@ -26,8 +26,7 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
     super.initState();
     viewmodel = Provider.of<ProjectCompletedViewModel>(context, listen: false);
     viewmodel.setSlug(widget.project.slug);
-
-    _refresh(viewmodel);
+    viewmodel.loadData();
   }
 
   Future<void> _refresh(ProjectCompletedViewModel viewmodel) {
@@ -37,7 +36,6 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectCompletedViewModel>(builder: (context, viewmodel, child) {
-      viewmodel.setSlug(widget.project.slug);
       if (viewmodel.loading) {
         return buildWrapper(context: context, project: widget.project, child: const LoadingIndicator());
       }
