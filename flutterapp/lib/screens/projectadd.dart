@@ -14,7 +14,7 @@ class ProjectAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void saveProject(BuildContext context, Project project) async {
+    Future<void> saveProject(BuildContext context, Project project) async {
       var messenger = ScaffoldMessenger.of(context);
       var projects = Provider.of<ProjectsProvider>(context, listen: false);
 

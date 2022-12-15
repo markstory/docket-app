@@ -10,7 +10,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   var database = LocalDatabase.instance();
 
-  Widget renderForm(Project project, Function(Project project) onSave) {
+  Widget renderForm(Project project, Future<void> Function(Project project) onSave) {
     return EntryPoint(database: database, child: Scaffold(body: ProjectForm(project: project, onSave: onSave)));
   }
 
@@ -21,10 +21,12 @@ void main() {
 
     testWidgets('Can update and save a new project', (tester) async {
       var onSaveCalled = false;
-      void onSave(Project project) {
+      Future<void> onSave(Project project) {
         onSaveCalled = true;
         expect(project.name, equals('Home'));
         expect(project.color, equals(8));
+
+        return Future.value();
       }
 
       final project = Project.blank();
@@ -45,7 +47,9 @@ void main() {
     });
 
     testWidgets('can display existing data and update a project', (tester) async {
-      void onSave(Project project) {}
+      Future<void> onSave(Project project) {
+        return Future.value();
+      }
       final project = Project.blank();
       project.name = 'Hobbies';
       project.color = 8;
@@ -58,8 +62,9 @@ void main() {
 
     testWidgets('name is required', (tester) async {
       var onSaveCalled = false;
-      void onSave(Project project) {
+      Future<void> onSave(Project project) {
         onSaveCalled = true;
+        return Future.value();
       }
 
       final project = Project.blank();

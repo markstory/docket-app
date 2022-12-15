@@ -50,15 +50,18 @@ class ProjectEditViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchProject() async {
+    _loading = true;
     var result = await _database.projectDetails.get(slug);
     _project = result.project;
+    _loading = false;
 
     notifyListeners();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (!_loading) {
+    await fetchProject();
+    if (!_loading && (_project == null || !_database.projectDetails.isFresh())) {
       return refresh();
     }
   }

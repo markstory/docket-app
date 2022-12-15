@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:docket/components/loadingindicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +33,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void _saveProject(BuildContext context, Project project) async {
+    Future<void> _saveProject(BuildContext context, Project project) async {
       var messenger = ScaffoldMessenger.of(context);
 
       void complete(proj) {
@@ -45,7 +46,6 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
       }
 
       try {
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Saving'));
         await viewmodel.update(project);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Project updated'));
         complete(viewmodel.project);
@@ -56,14 +56,20 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
     }
 
     return Consumer<ProjectEditViewModel>(builder: (context, viewmodel, child) {
+      Widget body;
+      if (viewmodel.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = ProjectForm(
+          project: viewmodel.project,
+          onSave: (updated) async => await _saveProject(context, updated),
+        );
+      }
       return Scaffold(
         appBar: AppBar(title: const Text('Update Project')),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(space(2)),
-          child: ProjectForm(
-            project: viewmodel.project,
-            onSave: (updated) => _saveProject(context, updated),
-          )
+          child: body,
         ),
       );
     });

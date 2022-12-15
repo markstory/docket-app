@@ -5,7 +5,7 @@ import 'package:docket/theme.dart';
 
 class ProjectForm extends StatefulWidget {
   final Project project;
-  final void Function(Project project) onSave;
+  final Future<void> Function(Project project) onSave;
 
   const ProjectForm({required this.project, required this.onSave, super.key});
 
@@ -30,6 +30,7 @@ class _ProjectFormState extends State<ProjectForm> {
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
+              key: const ValueKey("project-name"),
               decoration: InputDecoration(
                 labelText: 'Name',
                 icon: Icon(Icons.folder_outlined, color: theme.colorScheme.primary),
@@ -77,7 +78,7 @@ class _ProjectFormState extends State<ProjectForm> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    widget.onSave(project);
+                    await widget.onSave(project);
                   }
                 })
           ])
