@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/viewmodel/calendarproviderdetails.dart';
 
@@ -77,6 +78,11 @@ class CalendarSourceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var docketColors = getCustomColors(context);
+    var lastSync = 'Never synced';
+    var syncTime = source.lastSync;
+    if (syncTime != null) {
+      lastSync = formatters.timeAgo(syncTime);
+    }
 
     return ListTile(
         leading: CalendarColourPicker(
@@ -89,7 +95,7 @@ class CalendarSourceItem extends StatelessWidget {
               messenger.showSnackBar(successSnackBar(context: context, text: "Calendar updated"));
             }),
         title: Text(source.name),
-        subtitle: Text('Last synced: ${source.lastSync ?? "Never Synced"}',
+        subtitle: Text('Last synced: $lastSync',
             style: TextStyle(color: docketColors.disabledText)),
         trailing: buildMenu(context));
   }
