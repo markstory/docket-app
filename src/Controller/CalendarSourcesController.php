@@ -136,11 +136,11 @@ class CalendarSourcesController extends AppController
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
                 'fields' => ['color', 'name'],
             ]);
-            $serialize = ['source'];
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
+                $serialize = ['source'];
+                $this->set('source', $calendarSource);
             }
-            $this->set('source', $calendarSource);
         }
 
         return $this->respond([
