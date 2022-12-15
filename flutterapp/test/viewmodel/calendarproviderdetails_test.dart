@@ -55,7 +55,7 @@ void main() {
       expect(viewmodel.provider.sources.length, equals(3));
       var source = viewmodel.provider.sources[0];
       expect(source.name, equals('mark@example.com'));
-      expect(source.color, equals(3));
+      expect(source.color, equals(2));
     });
 
     test('refresh() loads data from the server', () async {
@@ -133,6 +133,29 @@ void main() {
 
       await viewmodel.linkSource(viewmodel.provider.sources[1]);
       expect(viewmodel.loading, isFalse);
+    });
+
+    test('updateSource() makes a request', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars/5/view') {
+          return Response(calendarDetailsResponse, 200);
+        }
+        if (request.url.path == '/calendars/5/sources/28/edit') {
+          return Response(calendarSourceResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      viewmodel.setId(5);
+      await viewmodel.loadData();
+
+      var source = viewmodel.provider.sources[0];
+      source.color = 3;
+
+      await viewmodel.updateSource(source);
+      expect(viewmodel.loading, isFalse);
+      expect(viewmodel.provider.sources.length, equals(3));
     });
   });
 }

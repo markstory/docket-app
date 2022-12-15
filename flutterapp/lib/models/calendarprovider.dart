@@ -42,7 +42,11 @@ class CalendarProvider {
   /// Replace or append a source to the provider.
   void replaceSource(CalendarSource source) {
     var index = _findSource(source);
-    sources.insert(index, source);
+    if (index >= 0) {
+      sources[index] = source;
+    } else {
+      sources.insert(0, source);
+    }
   }
 
   /// Remove a source from the provider
