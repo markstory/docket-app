@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
-import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/task.dart';
@@ -707,7 +706,10 @@ class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
       return null;
     }
     var items = data['items'];
-    if (items == null || items.runtimeType != List<dynamic>) {
+    if (items == null) {
+      return null;
+    }
+    if (items.runtimeType != List && items.runtimeType != List<Map<String, Object?>>) {
       return null;
     }
     return (items as List).map<CalendarProvider>((item) => CalendarProvider.fromMap(item)).toList();

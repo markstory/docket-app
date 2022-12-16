@@ -40,7 +40,7 @@ class ProviderActions extends StatelessWidget {
     // TODO implement with confirm.
     // see SubtaskItem for an example of confirm and delete.
     var messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(successSnackBar(context: context, text: 'Task Deleted'));
+    messenger.showSnackBar(successSnackBar(context: context, text: 'Calendar provider deleted'));
   }
 
   @override

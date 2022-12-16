@@ -4,13 +4,13 @@
         "id":5,
         "kind":"google",
         "identifier":"101495314857909884933",
-        "display_name":" (mark@sentry.io)",
+        "display_name":"(mark@example.io)",
         "calendar_sources":[
            {
               "id":28,
-              "name":"mark@sentry.io",
+              "name":"mark@example.io",
               "calendar_provider_id":5,
-              "provider_id":"mark@sentry.io",
+              "provider_id":"mark@example.io",
               "color":3,
               "last_sync":null,
               "created":"2022-09-25T14:53:13+00:00",
@@ -22,13 +22,13 @@
         "id":6,
         "kind":"google",
         "identifier":"111227948605885180960",
-        "display_name":" (mark.story@gmail.com)",
+        "display_name":"(mark.story@example.com)",
         "calendar_sources":[
            {
               "id":30,
-              "name":"mark.story@gmail.com",
+              "name":"mark.story@example.com",
               "calendar_provider_id":6,
-              "provider_id":"mark.story@gmail.com",
+              "provider_id":"mark.story@example.com",
               "color":4,
               "last_sync":null,
               "created":"2022-11-10T15:32:39+00:00",

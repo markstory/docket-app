@@ -20,9 +20,9 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
   @override
   void initState() {
     super.initState();
-    viewmodel = Provider.of<CalendarProviderListViewModel>(context, listen: false);
 
-    _refresh(viewmodel);
+    viewmodel = Provider.of<CalendarProviderListViewModel>(context, listen: false);
+    viewmodel.loadData();
   }
 
   Future<void> _refresh(CalendarProviderListViewModel viewmodel) {
@@ -38,7 +38,9 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
         body = const LoadingIndicator();
       } else {
         List<Widget> children = [
-          Padding(padding: EdgeInsets.all(space(2)), child: const Text('Events from linked calendars will be displayed in "today" and "upcoming" views.')),
+          Padding(
+              padding: EdgeInsets.all(space(2)),
+              child: const Text('Events from linked calendars will be displayed in "today" and "upcoming" views.')),
         ];
         children.addAll(viewmodel.providers.map((provider) => CalendarProviderItem(provider: provider)).toList());
 

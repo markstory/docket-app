@@ -35,13 +35,22 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
+    await fetchData();
+
+    if (!_loading && (_providers.isEmpty || !_database.calendarList.isFresh())) {
+      return refresh();
+    }
+  }
+
+  Future<void> fetchData() async {
+    _loading = true;
     var result = await _database.calendarList.get();
     if (result != null && result.isNotEmpty) {
       _providers = result;
     }
-    if (!_loading) {
-      return refresh();
-    }
+    _loading = false;
+
+    notifyListeners();
   }
 
   /// Refresh from the server and notify.
