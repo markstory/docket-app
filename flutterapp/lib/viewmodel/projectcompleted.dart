@@ -39,10 +39,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// Set the slug
   /// If the slug changes data will be refreshed.
   setSlug(String slug) {
-    if (slug != _slug) {
-      _tasks = [];
-      _slug = slug;
-    }
+    _slug = slug;
   }
 
   Future<void> fetchData() async {

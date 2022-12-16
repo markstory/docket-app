@@ -46,7 +46,6 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   setId(int id) {
     _id = id;
-    fetchTask();
   }
 
   /// Load data. Should be called during initState()

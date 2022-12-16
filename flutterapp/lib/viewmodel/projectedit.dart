@@ -46,7 +46,6 @@ class ProjectEditViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
-    fetchProject();
   }
 
   Future<void> fetchProject() async {
