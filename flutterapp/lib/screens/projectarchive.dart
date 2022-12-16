@@ -25,11 +25,7 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
     super.initState();
 
     viewmodel = Provider.of<ProjectArchiveViewModel>(context, listen: false);
-    _refresh(viewmodel);
-  }
-
-  Future<void> _refresh(ProjectArchiveViewModel view) {
-    return view.refresh();
+    viewmodel.loadData();
   }
 
   @override
@@ -97,29 +93,32 @@ class ArchivedProjectActions extends StatelessWidget {
       }
     }
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
-      var actions = {
-        Menu.unarchive: handleUnarchive,
-        Menu.delete: handleDelete,
-      };
-      actions[item]?.call();
-    }, itemBuilder: (BuildContext context) {
-      return <PopupMenuEntry<Menu>>[
-        PopupMenuItem<Menu>(
-          value: Menu.unarchive,
-          child: ListTile(
-            leading: Icon(Icons.edit, color: customColors.actionEdit),
-            title: const Text('Un-archive'),
-          ),
-        ),
-        PopupMenuItem<Menu>(
-          value: Menu.delete,
-          child: ListTile(
-            leading: Icon(Icons.delete, color: customColors.actionDelete),
-            title: const Text('Delete'),
-          ),
-        ),
-      ];
-    });
+    return PopupMenuButton<Menu>(
+        key: const ValueKey('archive-actions'),
+        onSelected: (Menu item) {
+          var actions = {
+            Menu.unarchive: handleUnarchive,
+            Menu.delete: handleDelete,
+          };
+          actions[item]?.call();
+        },
+        itemBuilder: (BuildContext context) {
+          return <PopupMenuEntry<Menu>>[
+            PopupMenuItem<Menu>(
+              value: Menu.unarchive,
+              child: ListTile(
+                leading: Icon(Icons.edit, color: customColors.actionEdit),
+                title: const Text('Un-archive'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.delete,
+              child: ListTile(
+                leading: Icon(Icons.delete, color: customColors.actionDelete),
+                title: const Text('Delete'),
+              ),
+            ),
+          ];
+        });
   }
 }

@@ -34,15 +34,18 @@ class ProjectArchiveViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
+    await fetchData();
+    if (!_loading && (_projects.isEmpty || !_database.projectArchive.isFresh())) {
+      return refresh();
+    }
+  }
+
+  Future<void> fetchData() async {
     var result = await _database.projectArchive.get();
     if (result != null) {
-
       _projects = result;
-      notifyListeners();
-    }
 
-    if (!_loading) {
-      return refresh();
+      notifyListeners();
     }
   }
 
