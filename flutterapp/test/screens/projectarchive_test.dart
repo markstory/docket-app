@@ -63,7 +63,7 @@ void main() {
       await tester.tap(menu);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Unarchive'));
+      await tester.tap(find.text('Un-archive'));
       await tester.pumpAndSettle();
       expect(callCount, equals(1));
     });
