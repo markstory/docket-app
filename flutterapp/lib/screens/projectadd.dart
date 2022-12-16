@@ -14,16 +14,16 @@ class ProjectAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var messenger = ScaffoldMessenger.of(context);
+    var projects = Provider.of<ProjectsProvider>(context, listen: false);
+
     Future<void> saveProject(BuildContext context, Project project) async {
-      var messenger = ScaffoldMessenger.of(context);
-      var projects = Provider.of<ProjectsProvider>(context, listen: false);
 
       void complete() {
         Navigator.pop(context);
       }
 
       try {
-        messenger.showSnackBar(const SnackBar(content: Text('Saving')));
         await projects.createProject(project);
         messenger.showSnackBar(const SnackBar(content: Text('Project Created')));
         complete();
@@ -41,7 +41,7 @@ class ProjectAddScreen extends StatelessWidget {
             padding: EdgeInsets.all(space(2)),
             child: ProjectForm(
               project: project,
-              onSave: (updated) => saveProject(context, updated),
+              onSave: (updated) async => await saveProject(context, updated),
             )));
   }
 }
