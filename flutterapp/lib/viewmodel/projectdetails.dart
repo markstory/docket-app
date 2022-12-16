@@ -55,7 +55,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   setSlug(String slug) {
     _slug = slug;
-    fetchProject();
 
     return this;
   }
@@ -76,7 +75,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await fetchProject();
 
-    if (!_loading && _project == null) {
+    if (!_loading && (_project == null || project.slug != _slug)) {
       await refresh();
     }
   }
