@@ -143,7 +143,7 @@ class EntryPoint extends StatelessWidget {
               return provider;
             }),
       ],
-      child: DocketApp(themeMode: themeMode, child: child, routes: routes),
+      child: DocketApp(themeMode: themeMode, routes: routes, child: child),
     );
   }
 }
