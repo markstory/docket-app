@@ -22,7 +22,7 @@ void main() {
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      await db.calendarList.clear();
+      await db.calendarDetails.clear();
     });
 
     test('provider property throws without data', () async {
