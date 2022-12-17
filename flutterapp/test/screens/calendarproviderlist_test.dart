@@ -4,10 +4,7 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
-import 'package:http/testing.dart';
 
-import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 import 'package:docket/screens/calendarproviderlist.dart';

@@ -28,8 +28,7 @@ class _CalendarProviderDetailsScreenState extends State<CalendarProviderDetailsS
     super.initState();
     viewmodel = Provider.of<CalendarProviderDetailsViewModel>(context, listen: false);
     viewmodel.setId(widget.provider.id);
-
-    _refresh(viewmodel);
+    viewmodel.loadData();
   }
 
   Future<void> _refresh(CalendarProviderDetailsViewModel viewmodel) {
@@ -86,6 +85,7 @@ class CalendarSourceItem extends StatelessWidget {
 
     return ListTile(
         leading: CalendarColourPicker(
+            key: const ValueKey("source-color"),
             color: source.color,
             onChanged: (color) async {
               var messenger = ScaffoldMessenger.of(context);
@@ -104,7 +104,9 @@ class CalendarSourceItem extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
+    return PopupMenuButton<Menu>(
+      key: const ValueKey('source-actions'),
+      onSelected: (Menu item) {
       var actions = {
         Menu.link: () async {
           var messenger = ScaffoldMessenger.of(context);

@@ -51,22 +51,24 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   setId(int value) {
     _id = value;
-    fetchProvider();
   }
 
   /// Load data from the local database.
   /// Avoids flash of empty content, makes the app feel more snappy
   /// and provides a better offline experience.
   Future<void> fetchProvider() async {
+    _loading = true;
     var provider = await _database.calendarDetails.get(id);
     _provider = provider;
+    _loading = false;
 
     notifyListeners();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    if (!_loading) {
+    await fetchProvider();
+    if (!_loading && _provider == null) {
       return refresh();
     }
   }
