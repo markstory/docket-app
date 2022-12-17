@@ -12,7 +12,7 @@ import 'package:docket/main.dart';
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/screens/taskadd.dart';
+import 'package:docket/screens/taskdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,35 +23,37 @@ void main() {
 
   file = File('test_resources/project_list.json');
   final projectListResponse = file.readAsStringSync();
-  var decoded = jsonDecode(projectListResponse);
 
-  group('$TaskAddScreen', () {
+  group('$TaskDetailsScreen', () {
     var db = LocalDatabase.instance();
+    var decoded = jsonDecode(projectListResponse);
     var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+
+    decoded = jsonDecode(taskDetails);
+    var task = Task.fromMap(decoded['task']);
 
     setUp(() async {
       await db.apiToken.set(ApiToken(token: 'abc123'));
       await db.projectMap.addMany(projects);
+      await db.taskDetails.set(task);
     });
 
     testWidgets('saves task', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
-          return Response(projectListResponse, 200);
+        if (request.url.path == '/tasks/1/view') {
+          return Response(taskDetails, 200);
         }
-        if (request.url.path == '/tasks/add') {
+        if (request.url.path == '/tasks/1/edit') {
           callCount += 1;
-          expect(request.body.contains("Rake leaves"), isTrue);
           return Response(taskDetails, 200);
         }
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var task = Task.blank(projectId: 1);
       await tester.pumpWidget(EntryPoint(
           database: db,
-          child: TaskAddScreen(task: task),
+          child: TaskDetailsScreen(task),
       ));
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
