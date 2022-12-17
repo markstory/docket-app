@@ -19,7 +19,7 @@ void main() {
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      await db.completedTasks.clear();
+      await db.calendarList.clear();
     });
 
     test('loadData() refreshes from server', () async {
