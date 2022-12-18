@@ -97,8 +97,8 @@ class TaskDetailsViewModel extends ChangeNotifier {
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
   Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-    assert(oldListIndex != newListIndex,
-      "Cannot move subtasks between lists, as there is only a single subtask collection on a task.");
+    assert(oldListIndex == newListIndex,
+      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
     var item = task.subtasks[oldItemIndex];
     item.ranking = newItemIndex;
 

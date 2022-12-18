@@ -25,7 +25,7 @@ class TaskAddScreen extends StatelessWidget {
       }
 
       try {
-        await viewmodel.createTask(task);
+        await viewmodel.create(task);
         complete();
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
       } catch (e, stacktrace) {
