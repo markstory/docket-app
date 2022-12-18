@@ -488,10 +488,16 @@ class TaskDetailsView extends ViewCache<Task> {
   }
 
   /// Set a task into the details view.
+  ///
+  /// We store a per task expiration time
+  /// in addition to the task data.
   @override
   Future<void> set(Task task) async {
      var current = await _get() ?? {};
-     current[task.id.toString()] = task.toMap();
+     var taskId = task.id.toString();
+     current[taskId] = task.toMap();
+     current[taskId]['updatedAt'] = clock.now().toIso8601String();
+
      await _set(current);
 
      notifyListeners();
@@ -516,6 +522,31 @@ class TaskDetailsView extends ViewCache<Task> {
     await _set(data);
 
     notifyListeners();
+  }
+
+  bool isTaskFresh(int id) {
+    var state = _state;
+    if (state == null) {
+      return false;
+    }
+    if (duration == null) {
+      return true;
+    }
+    var taskId = id.toString();
+    var taskData = state['data'][taskId];
+    if (taskData == null) {
+      return false;
+    }
+    var updated = taskData["updatedAt"];
+    // No updatedAt means we need to refresh.
+    if (updated == null) {
+      return false;
+    }
+    var updatedAt = DateTime.parse(updated);
+    var expires = clock.now();
+    expires = expires.subtract(duration!);
+
+    return updatedAt.isAfter(expires);
   }
 
   void notify() {

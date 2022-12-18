@@ -53,7 +53,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await fetchTask();
 
-    if (!_loading && (_task == null || !_database.taskDetails.isFresh())) {
+    if (!_loading && (_task == null || !_database.taskDetails.isTaskFresh(id))) {
       return refresh();
     }
   }
