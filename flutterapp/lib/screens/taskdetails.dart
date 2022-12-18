@@ -49,16 +49,19 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       if (view.loading) {
         body = const LoadingIndicator();
       } else {
-        body = SingleChildScrollView(
-          padding: EdgeInsets.all(space(1)),
-          child: Column(children: [
-            TaskForm(
-              task: viewmodel.task,
-              onSave: (task) async => await _onSave(context, task),
-              onComplete: () => Navigator.of(context).pop(),
-            ),
-          ]),
-        );
+        body = RefreshIndicator(
+          onRefresh: () => view.refresh(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(space(1)),
+            child: Column(children: [
+              TaskForm(
+                task: viewmodel.task,
+                onSave: (task) async => await _onSave(context, task),
+                onComplete: () => Navigator.of(context).pop(),
+              ),
+            ]),
+          ));
       }
       return Portal(
         child: Scaffold(
