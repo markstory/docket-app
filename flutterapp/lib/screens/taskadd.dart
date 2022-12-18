@@ -6,7 +6,7 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/tasks.dart';
+import 'package:docket/viewmodel/taskdetails.dart';
 import 'package:docket/theme.dart';
 
 class TaskAddScreen extends StatelessWidget {
@@ -18,14 +18,14 @@ class TaskAddScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> saveTask(BuildContext context, Task task) async {
       var messenger = ScaffoldMessenger.of(context);
-      var tasks = Provider.of<TasksProvider>(context, listen: false);
+      var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
 
       void complete() {
         Navigator.pop(context);
       }
 
       try {
-        await tasks.createTask(task);
+        await viewmodel.createTask(task);
         complete();
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
       } catch (e, stacktrace) {

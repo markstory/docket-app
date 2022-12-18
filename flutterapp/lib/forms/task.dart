@@ -10,9 +10,10 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/tasks.dart';
+import 'package:docket/viewmodel/taskdetails.dart';
 import 'package:docket/theme.dart';
 
+// Depends on TaskDetailsViewModel.
 class TaskForm extends StatefulWidget {
   final Task task;
   final Future<void> Function(Task task) onSave;
@@ -52,18 +53,8 @@ class _TaskFormState extends State<TaskForm> {
           return SubtaskItem(task: task, subtask: subtask);
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
-          var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
-          var item = task.subtasks[oldItemIndex];
-          item.ranking = newItemIndex;
-
-          // Update local state assuming server will be ok.
-          setState(() {
-            task.subtasks.removeAt(oldItemIndex);
-            task.subtasks.insert(newItemIndex, item);
-          });
-
-          // Update the moved task and reload from server async
-          await tasksProvider.moveSubtask(task, item);
+          var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+          viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
         },
       ),
       Padding(

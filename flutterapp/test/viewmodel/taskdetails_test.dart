@@ -7,6 +7,7 @@ import 'package:http/testing.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
+import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodel/taskdetails.dart';
 
@@ -18,18 +19,15 @@ void main() {
   var file = File('test_resources/task_create_today.json');
   final taskResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
+  file = File('test_resources/task_create_today.json');
+  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+
   group('$TaskDetailsViewModel', () {
     var db = LocalDatabase.instance();
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      await db.taskDetails.clear();
-    });
-
-    test('task property throws without data', () async {
-      var viewmodel = TaskDetailsViewModel(db, session);
-      viewmodel.setId(1);
-      expect(() => viewmodel.task, throwsException);
+      await db.taskDetails.clearSilent();
     });
 
     test('loadData() refreshes from server', () async {
@@ -70,6 +68,29 @@ void main() {
 
       await viewmodel.update(task);
       expect(updateCount, greaterThan(0));
+    });
+
+    test('create() sends request, updates local', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/add'));
+
+        return Response(taskCreateTodayResponseFixture, 200);
+      });
+
+      var viewmodel = TaskDetailsViewModel(db, session);
+      viewmodel.setId(0);
+      var task = Task.blank();
+
+      // This data has to match the fixture file.
+      task.title = "fold the towels";
+      task.projectId = 1;
+      task.dueOn = today;
+
+      var created = await viewmodel.create(task);
+      expect(created.id, equals(1));
+    });
+
+    test('reorderSubtask() sends request, updates local', () async {
     });
   });
 }

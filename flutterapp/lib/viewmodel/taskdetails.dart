@@ -19,7 +19,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     _database = database;
 
     _database.taskDetails.addListener(() async {
-      refresh();
+      fetchTask();
     });
   }
 
@@ -27,25 +27,26 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   int get id {
     var value = _id;
-    if (value == null) {
-      throw Exception("Cannot read id it has not been set.");
-    }
-    return value;
+    assert(value != null, "Cannot read id it has not been set.");
+
+    return value!;
   }
   Task get task {
     var value = _task;
-    if (value == null) {
-      throw Exception("Cannot read task as it has not been set");
-    }
-    return value;
+    assert(value != null, "Cannot read task it has not been set.");
+
+    return value!;
   }
 
   setSession(SessionProvider value) {
     session = value;
   }
 
-  setId(int id) {
-    _id = id;
+  setId(int value) {
+    if (value < 0) {
+      throw Exception('task id should not be below 0');
+    }
+    _id = value;
   }
 
   /// Load data. Should be called during initState()
@@ -74,7 +75,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     _loading = true;
 
     var result = await actions.fetchTaskById(session!.apiToken, id);
-    await _database.addTasks([result], expire: false);
+    await _database.addTasks([result]);
     _task = result;
     _loading = false;
 
@@ -83,10 +84,39 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   /// Update a task.
   Future<void> update(Task task) async {
+    assert(task.id != 0,
+      'Cannot update new task. Use create() instead.');
     task = await actions.updateTask(session!.apiToken, task);
     await _database.updateTask(task);
     _task = task;
+    _id = task.id;
 
     notifyListeners();
+  }
+
+  /// Reorder a subtask based on the protocol defined by
+  /// the drag_and_drop_lists package.
+  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+    assert(oldListIndex != newListIndex,
+      "Cannot move subtasks between lists, as there is only a single subtask collection on a task.");
+    var item = task.subtasks[oldItemIndex];
+    item.ranking = newItemIndex;
+
+    task.subtasks.removeAt(oldItemIndex);
+    task.subtasks.insert(newItemIndex, item);
+    await actions.moveSubtask(session!.apiToken, task, item);
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
+
+  /// Create a task on the server and notify listeners.
+  Future<Task> create(Task task) async {
+    task = await actions.createTask(session!.apiToken, task);
+    await _database.addTasks([task], create: true);
+
+    notifyListeners();
+
+    return task;
   }
 }

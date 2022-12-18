@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docket/database.dart';
 import 'package:docket/models/apitoken.dart';
@@ -9,12 +10,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var database = LocalDatabase.instance();
+  var today = DateUtils.dateOnly(DateTime.now());
+
   var project = Project.blank();
   project.id = 1;
   project.slug = 'home';
   project.name = 'Home';
 
   group('database.LocalViewCache', () {
+    setUp(() async {
+      await database.clearSilent();
+    });
+
     test('data read when fresh', () async {
       await database.projectMap.set(project);
       var value = await database.projectMap.get('not-there');
@@ -58,11 +65,92 @@ void main() {
       // This is important as it ensures that taskDetails refreshes.
       var callCount = 0;
       var task = Task.blank(projectId: project.id);
+      task.id = 1;
       database.taskDetails.addListener(() {
         callCount += 1;
       });
       await database.updateTask(task);
       expect(callCount, greaterThan(0));
+    });
+
+    test('addTasks() with update, adds task to today view', () async {
+      var task = Task.blank(projectId: project.id);
+      task.id = 7;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+
+      await database.addTasks([task], update: true);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(1));
+      expect(todayData.tasks[0].title, equals(task.title));
+    });
+
+    test('addTasks() with update, modifies today view', () async {
+      var other = Task.blank();
+      other.id = 2;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+
+      await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
+
+      task.title = 'Updated pay bills';
+      await database.addTasks([task], update: true);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(2));
+      expect(todayData.tasks[1].title, equals(task.title));
+    });
+
+    test('addTasks() with update, adds task to upcoming view', () async {
+      var tomorrow = today.add(const Duration(days: 1));
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectSlug = 'home';
+
+      await database.addTasks([task], update: true);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
+    });
+
+    test('addTasks() with create, adds task to upcoming view', () async {
+      var tomorrow = today.add(const Duration(days: 1));
+      var task = Task.blank(projectId: project.id);
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectSlug = 'home';
+
+      await database.addTasks([task], create: true);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
+    });
+
+    test('addTasks() with create, adds task to projectDetails view', () async {
+      var project = Project.blank();
+      project.id = 4;
+      project.slug = 'home';
+      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+
+      var task = Task.blank(projectId: project.id);
+      task.title = 'Dig up potatoes';
+      task.projectSlug = 'home';
+
+      await database.addTasks([task], create: true);
+
+      var details = await database.projectDetails.get(task.projectSlug);
+      expect(details.tasks.length, equals(1));
+      expect(details.tasks[0].title, equals(task.title));
     });
   });
 }

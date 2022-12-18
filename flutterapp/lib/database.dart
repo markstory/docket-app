@@ -155,32 +155,52 @@ class LocalDatabase {
   /// Each task will added to the relevant date/project
   /// views as well as the task lookup map
   /// Mostly used in tests.
-  Future<void> addTasks(List<Task> tasks, {bool expire = false}) async {
+  ///
+  /// If `update` or `creates` is set, the local caches will be updated.
+  Future<void> addTasks(List<Task> tasks, {bool update = false, bool create = false}) async {
+    assert(!(create && update), "You can't use create=true and expire=true together.");
+
     List<Future> futures = [];
     for (var task in tasks) {
-      // Refresh task in taskDetails lookup.
       futures.add(taskDetails.set(task));
 
-      if (expire) {
-        taskDetails.notify();
+      if (create) {
 
-        // Update the pending view updates.
+        // Update the views our new task will be in.
         for (var view in _taskViews(task)) {
           switch (view) {
             case TodayView.name:
-              futures.add(today.clear());
+              futures.add(today.append(task));
               break;
             case UpcomingView.name:
-              futures.add(upcoming.clear());
+              futures.add(upcoming.append(task));
               break;
             default:
               throw Exception('Unknown view to clear "$view"');
           }
         }
-        futures.add(projectDetails.remove(task.projectSlug));
+        futures.add(projectDetails.append(task));
+        futures.add(projectMap.increment(task.projectSlug));
+      }
+
+      if (update) {
+        futures.add(projectDetails.replaceTask(task));
+
+        // Update the views our new task will be in.
+        for (var view in _taskViews(task)) {
+          switch (view) {
+            case TodayView.name:
+              futures.add(today.replaceTask(task));
+              break;
+            case UpcomingView.name:
+              futures.add(upcoming.replaceTask(task));
+              break;
+            default:
+              throw Exception('Unknown view to clear "$view"');
+          }
+        }
       }
     }
-    // TODO this should increment the project task totals.
 
     await Future.wait(futures);
   }
@@ -188,7 +208,7 @@ class LocalDatabase {
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
   Future<void> updateTask(Task task) async {
-    await addTasks([task], expire: true);
+    await addTasks([task], update: true);
   }
 
   Future<void> deleteTask(Task task) async {
@@ -226,6 +246,22 @@ class LocalDatabase {
   // }}}
 
   // Clearing methods {{{
+  Future<List<void>> clearSilent() async {
+    return Future.wait([
+      today.clearSilent(),
+      upcoming.clearSilent(),
+      taskDetails.clearSilent(),
+      projectMap.clearSilent(),
+      projectDetails.clearSilent(),
+      projectArchive.clearSilent(),
+      completedTasks.clearSilent(),
+      trashbin.clearSilent(),
+      profile.clearSilent(),
+      calendarList.clearSilent(),
+      calendarDetails.clearSilent(),
+    ]);
+  }
+
   Future<List<void>> clearTasks() async {
     return Future.wait([
       taskDetails.clear(),
@@ -311,6 +347,12 @@ abstract class ViewCache<T> extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Clear locally cached data. Will *not* notify
+  Future<void> clearSilent() async {
+    _state = null;
+    return _database.remove(keyName());
+  }
+
   /// Get the keyname for this viewcache,
   String keyName();
 
@@ -332,6 +374,25 @@ class TodayView extends ViewCache<TaskViewData> {
   @override
   Future<void> set(TaskViewData todayData) async {
     return _set(todayData.toMap());
+  }
+
+  /// Add a task to the end of the today view.
+  Future<void> append(Task task) async {
+    var data = await get();
+    data.tasks.add(task);
+    return set(data);
+  }
+
+  Future<void> replaceTask(Task task) async {
+    var data = await get();
+    var index = data.tasks.indexWhere((item) => item.id == task.id);
+    if (index == -1) {
+      data.tasks.add(task);
+    } else {
+      data.tasks.removeAt(index);
+      data.tasks.insert(index, task);
+    }
+    return set(data);
   }
 
   Future<TaskViewData> get() async {
@@ -367,6 +428,25 @@ class UpcomingView extends ViewCache<TaskViewData> {
       return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
     }
     return TaskViewData.fromMap(data);
+  }
+
+  /// Add a task to the collection
+  Future<void> append(Task task) async {
+    var data = await get();
+    data.tasks.add(task);
+    return set(data);
+  }
+
+  Future<void> replaceTask(Task task) async {
+    var data = await get();
+    var index = data.tasks.indexWhere((item) => item.id == task.id);
+    if (index == -1) {
+      data.tasks.add(task);
+    } else {
+      data.tasks.removeAt(index);
+      data.tasks.insert(index, task);
+    }
+    return set(data);
   }
 }
 
@@ -407,13 +487,14 @@ class TaskDetailsView extends ViewCache<Task> {
     return 'v1:$name';
   }
 
-
   /// Set a task into the details view.
   @override
   Future<void> set(Task task) async {
-    var current = await _get() ?? {};
-    current[task.id.toString()] = task.toMap();
-    return _set(current);
+     var current = await _get() ?? {};
+     current[task.id.toString()] = task.toMap();
+     await _set(current);
+
+     notifyListeners();
   }
 
   Future<Task?> get(int id) async {
@@ -500,6 +581,7 @@ class ProjectMapView extends ViewCache<Project> {
     return projects;
   }
 
+  // Decrement the incomplete task count for a project.
   Future<void> decrement(String slug) async {
     var data = await _get() ?? {};
     if (data[slug] == null) {
@@ -511,12 +593,25 @@ class ProjectMapView extends ViewCache<Project> {
     return set(project);
   }
 
+  // Increment the incomplete task count for a project.
+  Future<void> increment(String slug) async {
+    var data = await _get() ?? {};
+    if (data[slug] == null) {
+      return;
+    }
+    var project = Project.fromMap(data[slug]);
+    project.incompleteTaskCount += 1;
+    return set(project);
+  }
+
+  // Remove a project by slug.
   Future<void> remove(String slug) async {
     var data = await _get() ?? {};
     data.remove(slug);
     return _set(data);
   }
 
+  // Remove a project by id.
   Future<void> removeById(int id) async {
     var data = await _get() ?? {};
     data.removeWhere((key, value) => value['id'] == id);
@@ -542,6 +637,25 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     current[view.project.slug] = view.toMap();
 
     return _set(current);
+  }
+
+  /// Add a task to the collection
+  Future<void> append(Task task) async {
+    var data = await get(task.projectSlug);
+    data.tasks.add(task);
+    return set(data);
+  }
+
+  Future<void> replaceTask(Task task) async {
+    var data = await get(task.projectSlug);
+    var index = data.tasks.indexWhere((item) => item.id == task.id);
+    if (index == -1) {
+      data.tasks.add(task);
+    } else {
+      data.tasks.removeAt(index);
+      data.tasks.insert(index, task);
+    }
+    return set(data);
   }
 
   Future<ProjectWithTasks> get(String slug) async {

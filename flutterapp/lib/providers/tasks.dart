@@ -39,11 +39,7 @@ class TasksProvider extends ChangeNotifier {
   /// Create a task on the server and notify listeners.
   Future<Task> createTask(Task task) async {
     task = await actions.createTask(session!.apiToken, task);
-
-    // Force expire related views so that we read our write.
-    // Ideally long term addTasks() becomes clever enough to
-    // insert items into the various view caches.
-    await _database.addTasks([task], expire: true);
+    await _database.addTasks([task], create: true);
 
     notifyListeners();
 

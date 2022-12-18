@@ -59,7 +59,8 @@ class TodayViewModel extends ChangeNotifier {
     }
   }
 
-  /// Re-order a task
+  /// Reorder a task based on the protocol defined by
+  /// the drag_and_drop_lists package.
   Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
