@@ -149,28 +149,7 @@ void main() {
       expect(updated?.incompleteTaskCount, lessThan(project.incompleteTaskCount));
     });
 
-    test('createTask() calls API, clears date views & project view', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/add'));
-
-        return Response(taskCreateTodayResponseFixture, 200);
-      });
-
-      // Seed the today view
-      var tasks = parseTaskList(tasksTodayResponseFixture);
-      await setTodayView(tasks);
-
-      var task = Task.blank();
-      // This data has to match the fixture file.
-      task.title = "fold the towels";
-      task.projectId = 1;
-      task.dueOn = today;
-
-      var created = await provider.createTask(task);
-      expect(created.id, equals(1));
-    });
-
-    test('updateTask() call API, and clears today view', () async {
+    test('updateTask() call API and updates today view', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/1/edit'));
 
@@ -193,7 +172,7 @@ void main() {
       expect(updated.title, equals('fold the towels'));
 
       var todayData = await db.today.get();
-      expect(todayData.tasks.length, equals(0));
+      expect(todayData.tasks.length, equals(2));
     });
 
     test('toggleSubtask() call API and update local task', () async {

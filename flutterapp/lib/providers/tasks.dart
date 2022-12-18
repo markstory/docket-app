@@ -36,16 +36,6 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Create a task on the server and notify listeners.
-  Future<Task> createTask(Task task) async {
-    task = await actions.createTask(session!.apiToken, task);
-    await _database.addTasks([task], create: true);
-
-    notifyListeners();
-
-    return task;
-  }
-
   /// Flip task.completed and persist to the server.
   Future<void> toggleComplete(Task task) async {
     // Update the completed state
