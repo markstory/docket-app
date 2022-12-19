@@ -82,5 +82,45 @@ void main() {
 
       expect(navigated, isTrue);
     });
+
+    testWidgets('edit menu action navigates', (tester) async {
+      var navigated = false;
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          routes: {
+            "/projects/edit": (context) {
+              navigated = true;
+              return const Text("Project Edit");
+            }
+          },
+          child: ProjectDetailsScreen(viewdata.project),
+      ));
+      await tester.pumpAndSettle();
+
+      // open menu
+      await tester.tap(find.byKey(const ValueKey('project-actions')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Edit Project'));
+      await tester.pumpAndSettle();
+      expect(navigated, isTrue);
+    });
+
+    testWidgets('add section shows dialog', (tester) async {
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: ProjectDetailsScreen(viewdata.project),
+      ));
+      await tester.pumpAndSettle();
+
+      // open menu
+      await tester.tap(find.byKey(const ValueKey('project-actions')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Add Section'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('section-name')), findsOneWidget);
+    });
   });
 }

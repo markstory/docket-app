@@ -49,7 +49,9 @@ class ProjectActions extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
+    return PopupMenuButton<Menu>(
+      key: const ValueKey('project-actions'),
+      onSelected: (Menu item) {
       var actions = {
         Menu.edit: handleEdit,
         Menu.archive: handleArchive,
