@@ -26,7 +26,7 @@ class UpcomingViewModel extends ChangeNotifier {
     _database = database;
 
     _database.upcoming.addListener(() async {
-      refresh();
+      loadData();
     });
   }
 

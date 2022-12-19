@@ -30,7 +30,7 @@ class TodayViewModel extends ChangeNotifier {
     _taskLists = [];
 
     _database.today.addListener(() {
-      refresh();
+      loadData();
     });
   }
 

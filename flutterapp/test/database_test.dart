@@ -17,8 +17,15 @@ void main() {
   project.slug = 'home';
   project.name = 'Home';
 
+
   group('database.LocalViewCache', () {
+    var callCount = 0;
+    void callListener() {
+      callCount += 1;
+    }
+
     setUp(() async {
+      callCount = 0;
       await database.clearSilent();
     });
 
@@ -63,14 +70,13 @@ void main() {
 
     test('updateTask() notifies taskDetails', () async {
       // This is important as it ensures that taskDetails refreshes.
-      var callCount = 0;
       var task = Task.blank(projectId: project.id);
       task.id = 1;
-      database.taskDetails.addListener(() {
-        callCount += 1;
-      });
+      database.taskDetails.addListener(callListener);
       await database.updateTask(task);
+
       expect(callCount, greaterThan(0));
+      database.taskDetails.removeListener(callListener);
     });
 
     test('addTasks() with update, adds task to today view', () async {
@@ -80,11 +86,14 @@ void main() {
       task.dueOn = today;
       task.projectSlug = 'home';
 
+      database.today.addListener(callListener);
       await database.addTasks([task], update: true);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(task.title));
+      expect(callCount, greaterThan(0));
+      database.today.removeListener(callListener);
     });
 
     test('addTasks() with update, modifies today view', () async {
@@ -115,11 +124,14 @@ void main() {
       task.dueOn = tomorrow;
       task.projectSlug = 'home';
 
+      database.upcoming.addListener(callListener);
       await database.addTasks([task], update: true);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
+      expect(callCount, greaterThan(0));
+      database.upcoming.removeListener(callListener);
     });
 
     test('addTasks() with create, adds task to upcoming view', () async {
@@ -146,11 +158,14 @@ void main() {
       task.title = 'Dig up potatoes';
       task.projectSlug = 'home';
 
+      database.projectDetails.addListener(callListener);
       await database.addTasks([task], create: true);
 
       var details = await database.projectDetails.get(task.projectSlug);
       expect(details.tasks.length, equals(1));
       expect(details.tasks[0].title, equals(task.title));
+      expect(callCount, greaterThan(0));
+      database.projectDetails.removeListener(callListener);
     });
   });
 }

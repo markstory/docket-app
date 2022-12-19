@@ -165,8 +165,6 @@ class LocalDatabase {
       futures.add(taskDetails.set(task));
 
       if (create) {
-
-        // Update the views our new task will be in.
         for (var view in _taskViews(task)) {
           switch (view) {
             case TodayView.name:
@@ -186,7 +184,6 @@ class LocalDatabase {
       if (update) {
         futures.add(projectDetails.replaceTask(task));
 
-        // Update the views our new task will be in.
         for (var view in _taskViews(task)) {
           switch (view) {
             case TodayView.name:
@@ -376,13 +373,16 @@ class TodayView extends ViewCache<TaskViewData> {
     return _set(todayData.toMap());
   }
 
-  /// Add a task to the end of the today view.
+  /// Add a task to the end of the today view. Will notify
   Future<void> append(Task task) async {
     var data = await get();
     data.tasks.add(task);
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 
+  /// Replace a task by id. Will notify
   Future<void> replaceTask(Task task) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
@@ -392,7 +392,9 @@ class TodayView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
       data.tasks.insert(index, task);
     }
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 
   Future<TaskViewData> get() async {
@@ -434,9 +436,12 @@ class UpcomingView extends ViewCache<TaskViewData> {
   Future<void> append(Task task) async {
     var data = await get();
     data.tasks.add(task);
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 
+  // Replace a task by id. Will notify.
   Future<void> replaceTask(Task task) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
@@ -446,7 +451,9 @@ class UpcomingView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
       data.tasks.insert(index, task);
     }
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 }
 
@@ -670,13 +677,16 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     return _set(current);
   }
 
-  /// Add a task to the collection
+  /// Add a task to the collection. Will notify
   Future<void> append(Task task) async {
     var data = await get(task.projectSlug);
     data.tasks.add(task);
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 
+  /// Replace a task by id. Will notify.
   Future<void> replaceTask(Task task) async {
     var data = await get(task.projectSlug);
     var index = data.tasks.indexWhere((item) => item.id == task.id);
@@ -686,7 +696,9 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
       data.tasks.removeAt(index);
       data.tasks.insert(index, task);
     }
-    return set(data);
+    await set(data);
+
+    notifyListeners();
   }
 
   Future<ProjectWithTasks> get(String slug) async {
