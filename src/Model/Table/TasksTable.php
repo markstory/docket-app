@@ -321,7 +321,8 @@ class TasksTable extends Table
         } else {
             throw new InvalidArgumentException('Invalid request. Provide either day_order or child_order');
         }
-        if ($operation[$property] < 0) {
+        $value = $operation[$property] ?? -1;
+        if ($value < 0) {
             throw new InvalidArgumentException('Invalid request. Order values must be 0 or greater.');
         }
 
@@ -332,7 +333,7 @@ class TasksTable extends Table
             ->where($conditions)
             ->orderAsc($property)
             ->orderAsc('title')
-            ->offset($operation[$property])
+            ->offset($value)
             ->first();
 
         $appendToBottom = false;

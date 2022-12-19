@@ -317,6 +317,7 @@ class CalendarService
                 $datetimes[$i] = $time;
             }
         }
+        assert(count($datetimes) == 4, 'Should have 4 datetime values');
 
         /** @var \Cake\Datasource\EntityInterface $record */
         $record = $this->CalendarItems->find()
