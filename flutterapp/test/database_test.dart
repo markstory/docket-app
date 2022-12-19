@@ -11,6 +11,7 @@ void main() {
 
   var database = LocalDatabase.instance();
   var today = DateUtils.dateOnly(DateTime.now());
+  var tomorrow = today.add(const Duration(days: 1));
 
   var project = Project.blank();
   project.id = 1;
@@ -116,6 +117,26 @@ void main() {
       expect(todayData.tasks[1].title, equals(task.title));
     });
 
+    test('addTasks() with update, removes from today view', () async {
+      var other = Task.blank();
+      other.id = 2;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+
+      await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
+
+      task.dueOn = tomorrow;
+      await database.addTasks([task], update: true);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(1));
+      expect(todayData.tasks[0].title, equals(other.title));
+    });
+
     test('addTasks() with update, adds task to upcoming view', () async {
       var tomorrow = today.add(const Duration(days: 1));
       var task = Task.blank(projectId: project.id);
@@ -130,6 +151,25 @@ void main() {
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
+      expect(callCount, greaterThan(0));
+      database.upcoming.removeListener(callListener);
+    });
+
+    test('addTasks() with update, removes task from upcoming', () async {
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectSlug = 'home';
+
+      // Simulate an update
+      task.dueOn = null;
+
+      database.upcoming.addListener(callListener);
+      await database.addTasks([task], update: true);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(0));
       expect(callCount, greaterThan(0));
       database.upcoming.removeListener(callListener);
     });

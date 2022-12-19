@@ -156,7 +156,7 @@ class LocalDatabase {
   /// views as well as the task lookup map
   /// Mostly used in tests.
   ///
-  /// If `update` or `creates` is set, the local caches will be updated.
+  /// If `update` or `create` is set, the local caches will be updated.
   Future<void> addTasks(List<Task> tasks, {bool update = false, bool create = false}) async {
     assert(!(create && update), "You can't use create=true and expire=true together.");
 
@@ -187,10 +187,10 @@ class LocalDatabase {
         for (var view in _taskViews(task)) {
           switch (view) {
             case TodayView.name:
-              futures.add(today.replaceTask(task));
+              futures.add(today.updateTask(task));
               break;
             case UpcomingView.name:
-              futures.add(upcoming.replaceTask(task));
+              futures.add(upcoming.updateTask(task));
               break;
             default:
               throw Exception('Unknown view to clear "$view"');
@@ -204,8 +204,8 @@ class LocalDatabase {
 
   /// Replace a task in the local database.
   /// This will update all task views with the new data.
-  Future<void> updateTask(Task task) async {
-    await addTasks([task], update: true);
+  Future<void> updateTask(Task task) {
+    return addTasks([task], update: true);
   }
 
   Future<void> deleteTask(Task task) async {
@@ -382,15 +382,23 @@ class TodayView extends ViewCache<TaskViewData> {
     notifyListeners();
   }
 
-  /// Replace a task by id. Will notify
-  Future<void> replaceTask(Task task) async {
+  /// Update a task. Will either add/update or remove 
+  /// a task from the Today view depending on the task details.
+  /// Will notify on changes.
+  Future<void> updateTask(Task task) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
-    if (index == -1) {
-      data.tasks.add(task);
-    } else {
+    if (task.isToday) {
+      // Add or replace depending
+      if (index == -1) {
+        data.tasks.add(task);
+      } else {
+        data.tasks.removeAt(index);
+        data.tasks.insert(index, task);
+      }
+    } else if (index != -1) {
+      // Task is no longer in today view remove it.
       data.tasks.removeAt(index);
-      data.tasks.insert(index, task);
     }
     await set(data);
 
@@ -441,15 +449,20 @@ class UpcomingView extends ViewCache<TaskViewData> {
     notifyListeners();
   }
 
-  // Replace a task by id. Will notify.
-  Future<void> replaceTask(Task task) async {
+  // Update a task. Will either add/remove/update the
+  // task based on its state. Will notify on changes.
+  Future<void> updateTask(Task task) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
-    if (index == -1) {
-      data.tasks.add(task);
-    } else {
+    if (task.hasDueDate) {
+      if (index == -1) {
+        data.tasks.add(task);
+      } else {
+        data.tasks.removeAt(index);
+        data.tasks.insert(index, task);
+      }
+    } else if (index != -1){
       data.tasks.removeAt(index);
-      data.tasks.insert(index, task);
     }
     await set(data);
 

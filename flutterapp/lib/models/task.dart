@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendaritem.dart';
 
 class Task {
   int? id;
-  int? projectId;
+  int? _projectId;
   String projectSlug;
   String projectName;
   int projectColor;
@@ -21,10 +23,11 @@ class Task {
   int completeSubtaskCount;
 
   DateTime? previousDueOn;
+  int? previousProjectId;
 
   Task({
     this.id,
-    required this.projectId,
+    required projectId,
     required this.projectSlug,
     required this.projectName,
     required this.projectColor,
@@ -40,7 +43,7 @@ class Task {
     this.subtasks = const [],
     this.subtaskCount = 0,
     this.completeSubtaskCount = 0,
-  }) : _dueOn = dueOn;
+  }) : _dueOn = dueOn, _projectId = projectId;
 
   factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
     return Task(
@@ -87,7 +90,7 @@ class Task {
     }
     DateTime? deletedAt;
     if (json['deleted_at'] != null) {
-      dueOn = formatters.parseToLocal(json['deleted_at']);
+      deletedAt = formatters.parseToLocal(json['deleted_at']);
     }
     List<Subtask> subtasks = [];
     if (json['subtasks'] != null &&
@@ -157,6 +160,12 @@ class Task {
   }
   DateTime? get dueOn => _dueOn;
 
+  set projectId(int? value) {
+    previousProjectId = projectId;
+    _projectId = value;
+  }
+  int? get projectId => _projectId;
+
   String get dateKey {
     if (dueOn == null) {
       return 'No Due Date';
@@ -166,6 +175,15 @@ class Task {
       return 'evening:$date';
     }
     return date;
+  }
+
+  bool get isToday {
+    var today = DateUtils.dateOnly(DateTime.now());
+    return _dueOn == today;
+  }
+
+  bool get hasDueDate {
+    return _dueOn != null;
   }
 }
 
