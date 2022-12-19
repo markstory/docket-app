@@ -462,8 +462,8 @@ class TrashbinView extends ViewCache<TaskViewData> {
 
   /// Refresh the data stored for the 'today' view.
   @override
-  Future<void> set(TaskViewData todayData) async {
-    return _set(todayData.toMap());
+  Future<void> set(TaskViewData tasks) async {
+    return _set(tasks.toMap());
   }
 
   Future<TaskViewData> get() async {

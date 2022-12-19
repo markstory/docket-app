@@ -21,8 +21,7 @@ class _TrashbinScreenState extends State<TrashbinScreen> {
   void initState() {
     super.initState();
     viewmodel = Provider.of<TrashbinViewModel>(context, listen: false);
-
-    _refresh(viewmodel);
+    viewmodel.loadData();
   }
 
   Future<void> _refresh(TrashbinViewModel viewmodel) {

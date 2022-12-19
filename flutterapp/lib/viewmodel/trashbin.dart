@@ -34,13 +34,21 @@ class TrashbinViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
+    await fetchData();
+    if (!_loading && (_tasks.isEmpty || !_database.trashbin.isFresh())) {
+      return refresh();
+    }
+  }
+
+  Future<void> fetchData() async {
+    _loading = true;
     var result = await _database.trashbin.get();
     if (!result.isEmpty) {
       _tasks = result.tasks;
     }
-    if (!_loading) {
-      return refresh();
-    }
+    _loading = false;
+
+    notifyListeners();
   }
 
   /// Refresh from the server.
