@@ -86,8 +86,9 @@ class TaskDetailsViewModel extends ChangeNotifier {
   Future<void> update(Task task) async {
     assert(task.id != 0,
       'Cannot update new task. Use create() instead.');
+    var previousProject = task.projectSlug;
     task = await actions.updateTask(session!.apiToken, task);
-    await _database.createTask(task);
+    await _database.updateTask(task, previousProject: previousProject);
     _task = task;
     _id = task.id;
 

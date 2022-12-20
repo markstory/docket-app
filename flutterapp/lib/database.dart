@@ -181,10 +181,10 @@ class LocalDatabase {
   /// Update a task in the local database.
   ///
   /// This will update all task views with the new data.
-  Future<void> updateTask(Task task) async {
+  Future<void> updateTask(Task task, {String? previousProject}) async {
     List<Future> futures = [];
     futures.add(taskDetails.set(task));
-    futures.add(projectDetails.updateTask(task));
+    futures.add(projectDetails.updateTask(task, previousProject: previousProject));
 
     for (var view in _taskViews(task)) {
       switch (view) {
@@ -704,45 +704,40 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   ///
   /// Uses `task.projectId` and `task.previousProjectId` to find
   /// projects that need to be updated. Will notify.
-  Future<void> updateTask(Task task) async {
-    var projectData = await _get() ?? {};
-
-    ProjectWithTasks? target;
-    ProjectWithTasks? source;
-    // Hopefully users don't have lots of projects.
-    for (var option in projectData.values) {
-      if (option['project']['id'] == task.projectId) {
-        target = ProjectWithTasks.fromMap(option);
-      }
-      if (option['project']['id'] == task.previousProjectId) {
-        source = ProjectWithTasks.fromMap(option);
-      }
-    }
-
-    if (target != null && source != null && source.project.id != target.project.id) {
-      // Remove the task from the previous project.
+  Future<void> updateTask(Task task, {String? previousProject}) async {
+    developer.log("updating task $previousProject, ${task.projectSlug}", name: 'debug');
+    // The task was moved between projects.
+    if (previousProject != null && previousProject != task.projectSlug) {
+      var source = await get(previousProject);
       var index = source.tasks.indexWhere((item) => item.id == task.id);
-      if (index >= 0) {
+      if (index > -1) {
         source.tasks.removeAt(index);
+        await set(source);
       }
-      projectData[source.project.slug] = source.toMap();
     }
 
-    if (target != null) {
-      // Add the task to the target project.
-      var index = target.tasks.indexWhere((item) => item.id == task.id);
-      if (index == -1) {
-        target.tasks.add(task);
-      } else {
-        target.tasks.removeAt(index);
-        target.tasks.insert(index, task);
-      }
-      projectData[target.project.slug] = target.toMap();
+    // Replace/Insert the task into the current project.
+    var projectData = await get(task.projectSlug);
+    var index = projectData.tasks.indexWhere((item) => item.id == task.id);
+    if (index > -1) {
+      projectData.tasks.removeAt(index);
+      projectData.tasks.insert(index, task);
+    } else {
+      projectData.tasks.add(task);
     }
-
-    await _set(projectData);
+    await set(projectData);
 
     notifyListeners();
+  }
+
+  /// Remove a task from the project with `slug`.
+  /// Does not notify.
+  Future<void> removeTask(String slug, Task task) async {
+    var projectData = await get(slug);
+    var index = projectData.tasks.indexWhere((item) => item.id == task.id);
+    if (index > -1) {
+      projectData.tasks.removeAt(index);
+    }
   }
 
   Future<ProjectWithTasks> get(String slug) async {

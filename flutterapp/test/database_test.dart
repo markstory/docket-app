@@ -185,12 +185,34 @@ void main() {
       expect(todayData.tasks.length, equals(0));
     });
 
+    test('updateTask() inserts tasks into projectDetails', () async {
+      await database.projectDetails
+          .set(ProjectWithTasks(
+            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+            tasks: []
+          ));
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+
+      await database.updateTask(task);
+
+      var home = await database.projectDetails.get('home');
+      expect(home.tasks.length, equals(1));
+      expect(home.tasks[0].title, equals('Dig up potatoes'));
+    });
+
     test('updateTask() moves tasks between projects', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 1;
       task.title = 'Dig up potatoes';
       task.dueOn = tomorrow;
       task.projectId = 1;
+      task.projectSlug = 'home';
 
       await database.projectDetails
           .set(ProjectWithTasks(
@@ -203,16 +225,19 @@ void main() {
             tasks: []
           ));
 
+      // Simulate response data changes from update request.
       task.projectId = 2;
-      task.title = 'Cut potatoes';
-      await database.updateTask(task);
+      task.projectSlug = 'work';
+      task.title = 'Do accounting';
+
+      await database.updateTask(task, previousProject: 'home');
 
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(0));
 
       var work = await database.projectDetails.get('work');
       expect(work.tasks.length, equals(1));
-      expect(work.tasks[0].title, equals('Cut potatoes'));
+      expect(work.tasks[0].title, equals('Do accounting'));
     });
 
     test('createTask() adds task to today view', () async {
