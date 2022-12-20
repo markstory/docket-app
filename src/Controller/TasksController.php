@@ -268,6 +268,7 @@ class TasksController extends AppController
             $project = $this->Tasks->Projects->get($task->project_id);
             $this->Authorization->authorize($project, 'edit');
             $task->section_id = null;
+            $task->project = $project;
         }
 
         $success = false;

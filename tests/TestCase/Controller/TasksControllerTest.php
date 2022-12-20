@@ -476,6 +476,25 @@ class TasksControllerTest extends TestCase
         $this->assertSame('work', $updated->project->slug);
     }
 
+    public function testEditProject(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $home = $this->makeProject('home', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/edit", [
+            'project_id' => $home->id,
+        ]);
+        $this->assertResponseOk();
+
+        $updated = $this->viewVariable('task');
+        $this->assertEquals($updated->project_id, $home->id);
+        $this->assertEquals($updated->project->id, $home->id);
+    }
+
     public function testEditValidation(): void
     {
         $project = $this->makeProject('work', 1);

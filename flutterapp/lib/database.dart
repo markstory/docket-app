@@ -150,39 +150,6 @@ class LocalDatabase {
 
   // Task Methods. {{{
 
-  /// Store a list of Tasks.
-  ///
-  /// Each task will added to the relevant date/project
-  /// views as well as the task lookup map
-  /// Mostly used in tests.
-  ///
-  /// If `update` is set, the local caches will be updated.
-  Future<void> addTasks(List<Task> tasks, {bool update = false}) async {
-    List<Future> futures = [];
-    for (var task in tasks) {
-      futures.add(taskDetails.set(task));
-
-      if (update) {
-        futures.add(projectDetails.updateTask(task));
-
-        for (var view in _taskViews(task)) {
-          switch (view) {
-            case TodayView.name:
-              futures.add(today.updateTask(task));
-              break;
-            case UpcomingView.name:
-              futures.add(upcoming.updateTask(task));
-              break;
-            default:
-              throw Exception('Unknown view to clear "$view"');
-          }
-        }
-      }
-    }
-
-    await Future.wait(futures);
-  }
-
   /// Create a task in the local database.
   ///
   /// Each task will added to the relevant date/project
@@ -231,6 +198,7 @@ class LocalDatabase {
           throw Exception('Unknown view to clear "$view"');
       }
     }
+    // TODO update project counters
 
     await Future.wait(futures);
   }
