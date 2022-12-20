@@ -77,8 +77,8 @@ class Project {
       id: json['id'],
       slug: json['slug'],
       name: json['name'],
-      color: json['color'],
-      ranking: json['ranking'],
+      color: json['color'] ?? 0,
+      ranking: json['ranking'] ?? 0,
       sections: sections,
       incompleteTaskCount: json['incomplete_task_count'] ?? 0,
     );

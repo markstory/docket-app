@@ -18,7 +18,6 @@ void main() {
   project.slug = 'home';
   project.name = 'Home';
 
-
   group('database.LocalViewCache', () {
     var callCount = 0;
     void callListener() {
@@ -80,7 +79,7 @@ void main() {
       database.taskDetails.removeListener(callListener);
     });
 
-    test('addTasks() with update, adds task to today view', () async {
+    test('updateTask() adds task to today view', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 7;
       task.title = 'Pay bills';
@@ -88,7 +87,7 @@ void main() {
       task.projectSlug = 'home';
 
       database.today.addListener(callListener);
-      await database.addTasks([task], update: true);
+      await database.updateTask(task);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
@@ -97,7 +96,7 @@ void main() {
       database.today.removeListener(callListener);
     });
 
-    test('addTasks() with update, modifies today view', () async {
+    test('updateTask() modifies today view', () async {
       var other = Task.blank();
       other.id = 2;
 
@@ -110,14 +109,14 @@ void main() {
       await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
 
       task.title = 'Updated pay bills';
-      await database.addTasks([task], update: true);
+      await database.updateTask(task);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(2));
       expect(todayData.tasks[1].title, equals(task.title));
     });
 
-    test('addTasks() with update, removes from today view', () async {
+    test('updateTask() removes from today view', () async {
       var other = Task.blank();
       other.id = 2;
 
@@ -130,14 +129,18 @@ void main() {
       await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
 
       task.dueOn = tomorrow;
-      await database.addTasks([task], update: true);
+      await database.updateTask(task);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(other.title));
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
     });
 
-    test('addTasks() with update, adds task to upcoming view', () async {
+    test('updateTask() adds task to upcoming view', () async {
       var tomorrow = today.add(const Duration(days: 1));
       var task = Task.blank(projectId: project.id);
       task.id = 1;
@@ -146,16 +149,20 @@ void main() {
       task.projectSlug = 'home';
 
       database.upcoming.addListener(callListener);
-      await database.addTasks([task], update: true);
+      await database.updateTask(task);
+
+      expect(callCount, greaterThan(0));
+      database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
-      expect(callCount, greaterThan(0));
-      database.upcoming.removeListener(callListener);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(0));
     });
 
-    test('addTasks() with update, removes task from upcoming', () async {
+    test('updateTask() removes task from upcoming', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 1;
       task.title = 'Dig up potatoes';
@@ -166,29 +173,94 @@ void main() {
       task.dueOn = null;
 
       database.upcoming.addListener(callListener);
-      await database.addTasks([task], update: true);
+      await database.updateTask(task);
+
+      expect(callCount, greaterThan(0));
+      database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(0));
-      expect(callCount, greaterThan(0));
-      database.upcoming.removeListener(callListener);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(0));
     });
 
-    test('addTasks() with create, adds task to upcoming view', () async {
+    test('updateTask() moves tasks between projects', () async {
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectId = 1;
+
+      await database.projectDetails
+          .set(ProjectWithTasks(
+            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+            tasks: [task]
+          ));
+      await database.projectDetails
+          .set(ProjectWithTasks(
+            project: Project.fromMap({'slug': 'work', 'id': 2, 'name': 'work'}),
+            tasks: []
+          ));
+
+      task.projectId = 2;
+      task.title = 'Cut potatoes';
+      await database.updateTask(task);
+
+      var home = await database.projectDetails.get('home');
+      expect(home.tasks.length, equals(0));
+
+      var work = await database.projectDetails.get('work');
+      expect(work.tasks.length, equals(1));
+      expect(work.tasks[0].title, equals('Cut potatoes'));
+    });
+
+    test('createTask() adds task to today view', () async {
+      var task = Task.blank(projectId: project.id);
+      task.title = 'Dig up potatoes';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+
+      await database.createTask(task);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+
+      var todayTasks = await database.today.get();
+      expect(todayTasks.tasks.length, equals(1));
+      expect(todayTasks.tasks[0].title, equals(task.title));
+    });
+
+    test('createTask() adds task to upcoming view', () async {
       var tomorrow = today.add(const Duration(days: 1));
       var task = Task.blank(projectId: project.id);
       task.title = 'Dig up potatoes';
       task.dueOn = tomorrow;
       task.projectSlug = 'home';
 
-      await database.addTasks([task], create: true);
+      await database.createTask(task);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
     });
 
-    test('addTasks() with create, adds task to projectDetails view', () async {
+    test('createTask() with no date', () async {
+      var task = Task.blank(projectId: project.id);
+      task.title = 'Dig up potatoes';
+      task.dueOn = null;
+      task.projectSlug = 'home';
+
+      await database.createTask(task);
+
+      var taskData = await database.upcoming.get();
+      expect(taskData.tasks.length, equals(0));
+
+      taskData = await database.today.get();
+      expect(taskData.tasks.length, equals(0));
+    });
+
+    test('createTask() adds task to projectDetails view', () async {
       var project = Project.blank();
       project.id = 4;
       project.slug = 'home';
@@ -199,7 +271,7 @@ void main() {
       task.projectSlug = 'home';
 
       database.projectDetails.addListener(callListener);
-      await database.addTasks([task], create: true);
+      await database.createTask(task);
 
       var details = await database.projectDetails.get(task.projectSlug);
       expect(details.tasks.length, equals(1));

@@ -75,7 +75,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     _loading = true;
 
     var result = await actions.fetchTaskById(session!.apiToken, id);
-    await _database.addTasks([result]);
+    await _database.updateTask(result);
     _task = result;
     _loading = false;
 
@@ -87,7 +87,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     assert(task.id != 0,
       'Cannot update new task. Use create() instead.');
     task = await actions.updateTask(session!.apiToken, task);
-    await _database.updateTask(task);
+    await _database.createTask(task);
     _task = task;
     _id = task.id;
 
@@ -113,7 +113,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   /// Create a task on the server and notify listeners.
   Future<Task> create(Task task) async {
     task = await actions.createTask(session!.apiToken, task);
-    await _database.addTasks([task], create: true);
+    await _database.createTask(task);
 
     notifyListeners();
 

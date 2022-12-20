@@ -83,7 +83,9 @@ void main() {
       var db = LocalDatabase();
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
-      await db.addTasks(tasks);
+      for (var task in tasks) {
+        await db.createTask(task);
+      }
       var provider = TasksProvider(db, session);
 
       await provider.toggleComplete(tasks[0]);

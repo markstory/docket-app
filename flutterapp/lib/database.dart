@@ -156,33 +156,14 @@ class LocalDatabase {
   /// views as well as the task lookup map
   /// Mostly used in tests.
   ///
-  /// If `update` or `create` is set, the local caches will be updated.
-  Future<void> addTasks(List<Task> tasks, {bool update = false, bool create = false}) async {
-    assert(!(create && update), "You can't use create=true and expire=true together.");
-
+  /// If `update` is set, the local caches will be updated.
+  Future<void> addTasks(List<Task> tasks, {bool update = false}) async {
     List<Future> futures = [];
     for (var task in tasks) {
       futures.add(taskDetails.set(task));
 
-      if (create) {
-        for (var view in _taskViews(task)) {
-          switch (view) {
-            case TodayView.name:
-              futures.add(today.append(task));
-              break;
-            case UpcomingView.name:
-              futures.add(upcoming.append(task));
-              break;
-            default:
-              throw Exception('Unknown view to clear "$view"');
-          }
-        }
-        futures.add(projectDetails.append(task));
-        futures.add(projectMap.increment(task.projectSlug));
-      }
-
       if (update) {
-        futures.add(projectDetails.replaceTask(task));
+        futures.add(projectDetails.updateTask(task));
 
         for (var view in _taskViews(task)) {
           switch (view) {
@@ -202,12 +183,60 @@ class LocalDatabase {
     await Future.wait(futures);
   }
 
-  /// Replace a task in the local database.
-  /// This will update all task views with the new data.
-  Future<void> updateTask(Task task) {
-    return addTasks([task], update: true);
+  /// Create a task in the local database.
+  ///
+  /// Each task will added to the relevant date/project
+  /// views as well as the task lookup map
+  ///
+  Future<void> createTask(Task task) async {
+    List<Future> futures = [];
+
+    futures.add(taskDetails.set(task));
+    futures.add(projectDetails.append(task));
+    futures.add(projectMap.increment(task.projectSlug));
+
+    for (var view in _taskViews(task)) {
+      switch (view) {
+        case TodayView.name:
+          futures.add(today.append(task));
+          break;
+        case UpcomingView.name:
+          futures.add(upcoming.append(task));
+          break;
+        default:
+          throw Exception('Unknown view to clear "$view"');
+      }
+    }
+
+    await Future.wait(futures);
   }
 
+  /// Update a task in the local database.
+  ///
+  /// This will update all task views with the new data.
+  Future<void> updateTask(Task task) async {
+    List<Future> futures = [];
+    futures.add(taskDetails.set(task));
+    futures.add(projectDetails.updateTask(task));
+
+    for (var view in _taskViews(task)) {
+      switch (view) {
+        case TodayView.name:
+          futures.add(today.updateTask(task));
+          break;
+        case UpcomingView.name:
+          futures.add(upcoming.updateTask(task));
+          break;
+        default:
+          throw Exception('Unknown view to clear "$view"');
+      }
+    }
+
+    await Future.wait(futures);
+  }
+
+  /// Remove a task from the local database
+  /// Will expire the relevant view caches.
   Future<void> deleteTask(Task task) async {
     var id = task.id;
     if (id == null) {
@@ -216,6 +245,7 @@ class LocalDatabase {
     await taskDetails.remove(id);
     await projectMap.decrement(task.projectSlug);
 
+    // TODO make this update local DB instead of forcing a refresh.
     return _expireTaskViews(task);
   }
 
@@ -670,7 +700,10 @@ class ProjectMapView extends ViewCache<Project> {
   }
 }
 
-// A map based view data provider
+// Store projects + task lists by slug.
+// Data is stored by slug to make fetching consistent
+// with API endpoints. Some operations search by id, and these
+// changes run at O(n).
 class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   static const String name = 'projectdetails';
 
@@ -699,17 +732,47 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     notifyListeners();
   }
 
-  /// Replace a task by id. Will notify.
-  Future<void> replaceTask(Task task) async {
-    var data = await get(task.projectSlug);
-    var index = data.tasks.indexWhere((item) => item.id == task.id);
-    if (index == -1) {
-      data.tasks.add(task);
-    } else {
-      data.tasks.removeAt(index);
-      data.tasks.insert(index, task);
+  /// Replace a task in both the current and previous projects.
+  ///
+  /// Uses `task.projectId` and `task.previousProjectId` to find
+  /// projects that need to be updated. Will notify.
+  Future<void> updateTask(Task task) async {
+    var projectData = await _get() ?? {};
+
+    ProjectWithTasks? target;
+    ProjectWithTasks? source;
+    // Hopefully users don't have lots of projects.
+    for (var option in projectData.values) {
+      if (option['project']['id'] == task.projectId) {
+        target = ProjectWithTasks.fromMap(option);
+      }
+      if (option['project']['id'] == task.previousProjectId) {
+        source = ProjectWithTasks.fromMap(option);
+      }
     }
-    await set(data);
+
+    if (target != null && source != null && source.project.id != target.project.id) {
+      // Remove the task from the previous project.
+      var index = source.tasks.indexWhere((item) => item.id == task.id);
+      if (index >= 0) {
+        source.tasks.removeAt(index);
+      }
+      projectData[source.project.slug] = source.toMap();
+    }
+
+    if (target != null) {
+      // Add the task to the target project.
+      var index = target.tasks.indexWhere((item) => item.id == task.id);
+      if (index == -1) {
+        target.tasks.add(task);
+      } else {
+        target.tasks.removeAt(index);
+        target.tasks.insert(index, task);
+      }
+      projectData[target.project.slug] = target.toMap();
+    }
+
+    await _set(projectData);
 
     notifyListeners();
   }
