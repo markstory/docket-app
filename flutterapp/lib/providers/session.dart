@@ -44,8 +44,8 @@ class SessionProvider extends ChangeNotifier {
 
   /// Save an API token to the local database for future use.
   Future<void> saveToken(ApiToken token) async {
-    await _database.apiToken.set(token);
     _apiToken = token;
+    await _database.apiToken.set(token);
     notifyListeners();
   }
 

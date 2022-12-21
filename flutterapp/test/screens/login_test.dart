@@ -36,22 +36,17 @@ void main() {
       expect(find.text('Password'), findsOneWidget);
     });
 
-    testWidgets('request made updates database', (tester) async {
+    testWidgets('request made on submit', (tester) async {
+      var requestCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/mobile/login') {
+          requestCount += 1;
           return Response(loginResponse, 200);
         }
         throw Exception('Unmocked URL ${request.url.path}');
       });
-      var navigated = false;
       await tester.pumpWidget(EntryPoint(
           database: db,
-          routes: {
-            '/tasks/today': (context) {
-              navigated = true;
-              return const Text('Today tasks');
-            }
-          },
           child: const LoginScreen(),
       ));
       await tester.runAsync(() async {
@@ -62,14 +57,9 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('password')), 'password12');
       await tester.runAsync(() async {
         await tester.tap(find.text('Log in'));
-      });
-      /*
-      // This doesn't result in a navigation which is what I expected.
-      await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
-      expect(navigated, isTrue, reason: 'Should navigate');
-      */
+      expect(requestCount, equals(1));
     });
   });
 }

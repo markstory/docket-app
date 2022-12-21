@@ -130,18 +130,16 @@ Future<ApiToken> doLogin(String email, String password) async {
 
   var body = {'email': email, 'password': password};
 
-  return Future(() async {
-    var response = await httpPost(url, body: body, errorMessage: 'Login Failed');
-    developer.log('login complete', name: 'docket.actions');
+  var response = await httpPost(url, body: body, errorMessage: 'Login Failed');
+  developer.log('login complete', name: 'docket.actions');
 
-    try {
-      var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      return ApiToken.fromMap(decoded['apiToken']);
-    } catch (e) {
-      developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
-      rethrow;
-    }
-  });
+  try {
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    return ApiToken.fromMap(decoded['apiToken']);
+  } catch (e) {
+    developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
+    rethrow;
+  }
 }
 
 // Profile Methods {{{
