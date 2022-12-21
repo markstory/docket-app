@@ -10,7 +10,6 @@ import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
 import 'providers/session.dart';
 import 'providers/tasks.dart';
-import 'providers/userprofile.dart';
 import 'screens/calendarproviderdetails.dart';
 import 'screens/calendarproviderlist.dart';
 import 'screens/login.dart';
@@ -36,6 +35,7 @@ import 'viewmodel/trashbin.dart';
 import 'viewmodel/upcoming.dart';
 import 'viewmodel/calendarproviderdetails.dart';
 import 'viewmodel/calendarproviderlist.dart';
+import 'viewmodel/userprofile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -124,8 +124,8 @@ class EntryPoint extends StatelessWidget {
             viewmodel!.setSession(session);
             return viewmodel;
           }),
-        ChangeNotifierProxyProvider<SessionProvider, UserProfileProvider>(
-            create: (_) => UserProfileProvider(database, null),
+        ChangeNotifierProxyProvider<SessionProvider, UserProfileViewModel>(
+            create: (_) => UserProfileViewModel(database, null),
             update: (_, session, provider) {
               provider!.setSession(session);
               return provider;

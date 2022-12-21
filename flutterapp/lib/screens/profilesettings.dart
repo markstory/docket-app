@@ -6,8 +6,8 @@ import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/theme.dart';
 import 'package:docket/models/userprofile.dart';
-import 'package:docket/providers/userprofile.dart';
 import 'package:docket/forms/profilesettings.dart';
+import 'package:docket/viewmodel/userprofile.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({Key? key}) : super(key: key);
@@ -22,46 +22,37 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _refresh();
-  }
-
-  Future<UserProfile> _refresh() async {
-    var provider = Provider.of<UserProfileProvider>(context, listen: false);
-    return provider.refresh();
+    var viewmodel = Provider.of<UserProfileViewModel>(context, listen: false);
+    viewmodel.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProfileProvider>(builder: (context, provider, child) {
+    return Consumer<UserProfileViewModel>(builder: (context, viewmodel, child) {
+      Widget body;
+      if (viewmodel.loading) {
+        body = const LoadingIndicator();
+      } else {
+        body = SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
+          child: Column(children: [
+            ProfileSettingsForm(
+              userprofile: viewmodel.profile,
+              onSave: (profile) {
+                viewmodel.update(profile);
+                AdaptiveTheme.of(context).setThemeMode(profile.themeMode);
+                Navigator.of(context).pop();
+              },
+            )
+          ]
+        ));
+      }
+
       return Scaffold(
           appBar: AppBar(
             title: const Text('Profile Settings'),
           ),
           drawer: const AppDrawer(),
-          body: FutureBuilder<UserProfile>(
-            future: provider.get(),
-            builder: (BuildContext context, snapshot) {
-              if (snapshot.hasError) {
-                return const Card(child: Text('Something terrible has happened.'));
-              }
-              var profile = snapshot.data;
-              if (profile == null) {
-                return const LoadingIndicator();
-              }
-              return SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
-                child: Column(children: [
-                  ProfileSettingsForm(
-                    userprofile: profile,
-                    onSave: (profile) {
-                      provider.update(profile);
-                      AdaptiveTheme.of(context).setThemeMode(profile.themeMode);
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ]
-              ));
-            }
-          ),
+          body: body,
         );
     });
   }

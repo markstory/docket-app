@@ -7,32 +7,29 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/userprofile.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/providers/userprofile.dart';
+import 'package:docket/viewmodel/userprofile.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  int listenerCallCount = 0;
-
-  var db = LocalDatabase.instance();
-  late UserProfileProvider provider;
-
   var file = File('test_resources/profile.json');
   final profileResponseFixture = file.readAsStringSync();
 
-  group('$UserProfileProvider', () {
+  group('$UserProfileViewModel', () {
+    var db = LocalDatabase.instance();
     var session = SessionProvider(db, token: 'api-token');
+    var notifyCount = 0;
+
+    void mockListener() {
+      notifyCount += 1;
+    }
 
     setUp(() async {
-      listenerCallCount = 0;
-      provider = UserProfileProvider(db, session)
-        ..addListener(() {
-          listenerCallCount += 1;
-        });
-      await provider.clear();
+      await db.profile.clear();
+      notifyCount = 0;
     });
 
-    test('get() fetches from server', () async {
+    test('loadData() fetches from server', () async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/users/profile'));
@@ -40,16 +37,16 @@ void main() {
 
         return Response(profileResponseFixture, 200);
       });
+      var viewmodel = UserProfileViewModel(db, session);
+      viewmodel.addListener(mockListener);
 
-      var profile = await provider.get();
-      expect(listenerCallCount, equals(1));
+      await viewmodel.loadData();
+      var profile = viewmodel.profile;
+
+      expect(requestCount, equals(1));
+      expect(notifyCount, greaterThan(0));
       expect(profile.email, equals('mark@mark-story.com'));
       expect(profile.name, equals('Mark Story'));
-
-      // Should get the same data.
-      profile = await provider.get();
-      expect(profile.email, equals('mark@mark-story.com'));
-      expect(requestCount, equals(1), reason: 'Only one request should be made');
     });
 
     test('refresh() loads from server', () async {
@@ -60,10 +57,11 @@ void main() {
 
         return Response(profileResponseFixture, 200);
       });
+      var viewmodel = UserProfileViewModel(db, session);
 
-      await provider.refresh();
-      await provider.refresh();
-      expect(requestCount, equals(2), reason: 'Only one request should be made');
+      await viewmodel.refresh();
+      await viewmodel.refresh();
+      expect(requestCount, equals(2), reason: 'Each refresh sends a request');
     });
 
     test('update() sends request to server', () async {
@@ -78,7 +76,9 @@ void main() {
 
       var profile = UserProfile(
           name: 'mark', email: 'mark@example.com', timezone: 'America/New_York', theme: 'system', avatarHash: '');
-      await provider.update(profile);
+      var viewmodel = UserProfileViewModel(db, session);
+
+      await viewmodel.update(profile);
       expect(requestCount, equals(1), reason: 'One request should be made');
     });
   });
