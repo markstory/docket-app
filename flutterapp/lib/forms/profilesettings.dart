@@ -25,13 +25,14 @@ class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context); var customColors = getCustomColors(context);
+    var theme = Theme.of(context);
+    var customColors = getCustomColors(context);
 
     return Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextFormField(
-            key: const ValueKey('name'),
+              key: const ValueKey('name'),
               decoration: InputDecoration(
                 labelText: 'Name',
                 icon: Icon(Icons.person_outlined, color: theme.colorScheme.primary),
@@ -46,7 +47,7 @@ class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
                 }
               }),
           TextFormField(
-            key: const ValueKey('email'),
+              key: const ValueKey('email'),
               decoration: InputDecoration(
                 labelText: 'E-mail',
                 icon: Icon(Icons.mail_outlined, color: theme.colorScheme.secondary),
@@ -65,19 +66,18 @@ class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
                 labelText: 'Theme',
                 icon: Icon(Icons.format_paint_outlined, color: customColors.actionComplete),
               ),
-            key: const ValueKey('theme'),
-            value: userprofile.theme,
-            items: const [
-              DropdownMenuItem(value: 'light', child: Text('Light')),
-              DropdownMenuItem(value: 'dark', child: Text('Dark')),
-              DropdownMenuItem(value: 'system', child: Text('Follow system')),
-            ],
-            onChanged: (String? value) {
-              if (value != null) {
-                userprofile.theme = value;
-              }
-            }
-          ),
+              key: const ValueKey('theme'),
+              value: userprofile.theme,
+              items: const [
+                DropdownMenuItem(value: 'light', child: Text('Light')),
+                DropdownMenuItem(value: 'dark', child: Text('Dark')),
+                DropdownMenuItem(value: 'system', child: Text('Follow system')),
+              ],
+              onChanged: (String? value) {
+                if (value != null) {
+                  userprofile.theme = value;
+                }
+              }),
           ButtonBar(children: [
             TextButton(
                 child: const Text('Cancel'),
