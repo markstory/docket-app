@@ -1,0 +1,6 @@
+{
+  "apiToken": {
+    "token": "some-long-uuid",
+    "last_used": null
+  }
+}

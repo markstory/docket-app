@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
     try {
       // Do the login request and set the token to application state.
       var apiToken = await actions.doLogin(email, password);
-      session.saveToken(apiToken);
+      await session.saveToken(apiToken);
     } catch (e) {
       // Raise an error to the UI State
       throw Exception('Could not login');
@@ -34,13 +34,10 @@ class LoginScreen extends StatelessWidget {
                 const Text('Login to your Docket instance'),
                 LoginForm(onSubmit: (String? email, String? password) async {
                   if (email != null && password != null) {
+                    var navigator = Navigator.of(context);
                     try {
-                      void complete() {
-                        Navigator.pushNamed(context, Routes.today);
-                      }
-
                       await _handleSubmit(email, password, session);
-                      complete();
+                      await navigator.pushNamed(Routes.today);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
                     }

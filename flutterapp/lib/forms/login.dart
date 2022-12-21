@@ -34,6 +34,7 @@ class LoginFormState extends State<LoginForm> {
       child: Column(
         children: <Widget>[
           TextFormField(
+            key: const ValueKey('email'),
             decoration: const InputDecoration(
               labelText: 'E-Mail',
             ),
@@ -47,6 +48,7 @@ class LoginFormState extends State<LoginForm> {
             autofillHints: const [AutofillHints.username, AutofillHints.email],
           ),
           TextFormField(
+            key: const ValueKey('password'),
             decoration: const InputDecoration(
               labelText: 'Password',
             ),
@@ -62,13 +64,13 @@ class LoginFormState extends State<LoginForm> {
           ),
           ElevatedButton(
               child: const Text('Log in'),
-              onPressed: () {
+              onPressed: () async {
                 if (!_formKey.currentState!.validate()) {
                   return;
                 }
                 _formKey.currentState!.save();
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging in')));
-                widget.onSubmit(_email, _password);
+                await widget.onSubmit(_email, _password);
               })
         ],
       ),
