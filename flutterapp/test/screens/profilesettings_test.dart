@@ -7,7 +7,6 @@ import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
-import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/main.dart';
 import 'package:docket/models/userprofile.dart';
 import 'package:docket/screens/profilesettings.dart';
