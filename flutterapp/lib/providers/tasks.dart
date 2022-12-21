@@ -76,14 +76,6 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Send an API request to move a task
-  /// Does not update the local database.
-  /// Assumption is that the calling view will refresh from server.
-  Future<void> move(Task task, Map<String, dynamic> updates) async {
-    await actions.moveTask(session!.apiToken, task, updates);
-  }
-
-
   // {{{ Subtask methods
   /// Create or Update a subtask and persist to the server.
   Future<void> saveSubtask(Task task, Subtask subtask) async {
