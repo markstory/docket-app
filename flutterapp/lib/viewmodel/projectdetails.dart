@@ -75,7 +75,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await fetchProject();
 
-    if (!_loading && (_project == null || project.slug != _slug)) {
+    if (!_loading && (_project == null || project.slug != _slug || _database.projectDetails.isExpiredSlug(_slug))) {
       await refresh();
     }
   }

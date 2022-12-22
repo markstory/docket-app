@@ -80,7 +80,7 @@ class LocalDatabase {
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
   List<String> _taskViews(Task task) {
-    var now = clock.now();
+    var now = DateUtils.dateOnly(clock.now());
     List<String> views = [];
 
     // If the task has a due date expire upcoming and possibly
@@ -126,13 +126,13 @@ class LocalDatabase {
     for (var key in _taskViews(task)) {
       switch (key) {
         case TodayView.name:
-          futures.add(today.clear());
+          today.expire();
           break;
         case UpcomingView.name:
-          futures.add(upcoming.clear());
+          upcoming.expire();
           break;
         case TrashbinView.name:
-          futures.add(trashbin.clear());
+          trashbin.expire();
           break;
         default:
           throw Exception('Unknown view key of $key');
@@ -213,7 +213,6 @@ class LocalDatabase {
     await taskDetails.remove(id);
     await projectMap.decrement(task.projectSlug);
 
-    // TODO make this update local DB instead of forcing a refresh.
     return _expireTaskViews(task);
   }
 
@@ -284,7 +283,12 @@ abstract class ViewCache<T> extends ChangeNotifier {
   late JsonCache _database;
   Duration? duration;
 
+  /// In memory copy of raw data. Helps save overhead
+  /// of reading from JsonCache repeatedly.
   Map<String, dynamic>? _state;
+
+  /// The time data in this store was expired.
+  DateTime? _expiredAt;
 
   ViewCache(JsonCache database, this.duration) {
     _database = database;
@@ -302,6 +306,10 @@ abstract class ViewCache<T> extends ChangeNotifier {
     if (duration == null) {
       return true;
     }
+    // Expired views are not fresh.
+    if (_expiredAt != null) {
+      return false;
+    }
     var updated = state['updatedAt'];
     // No updatedAt means we need to refresh.
     if (updated == null) {
@@ -314,10 +322,24 @@ abstract class ViewCache<T> extends ChangeNotifier {
     return updatedAt.isAfter(expires);
   }
 
+  /// Mark the local data as expired/stale.
+  ///
+  /// This doesn't remove the data but does flag it as expired.
+  /// Does not notify.
+  void expire() {
+    _expiredAt = clock.now();
+  }
+
+  /// Whether or not this view cache has been expired.
+  bool get isExpired {
+    return _expiredAt != null;
+  }
+
   /// Update local database and in-process state as well.
   Future<void> _set(Map<String, dynamic> data) async {
     var payload = {'updatedAt': clock.now().toIso8601String(), 'data': data};
     _state = payload;
+    _expiredAt = null;
     await _database.refresh(keyName(), payload);
   }
 
@@ -338,6 +360,7 @@ abstract class ViewCache<T> extends ChangeNotifier {
   /// Clear the locally cached data. Will notify listeners as well.
   Future<void> clear() async {
     _state = null;
+    _expiredAt = null;
     await _database.remove(keyName());
     notifyListeners();
   }
@@ -345,6 +368,7 @@ abstract class ViewCache<T> extends ChangeNotifier {
   // Clear locally cached data. Will *not* notify
   Future<void> clearSilent() async {
     _state = null;
+    _expiredAt = null;
     return _database.remove(keyName());
   }
 
@@ -376,6 +400,7 @@ class TodayView extends ViewCache<TaskViewData> {
     var data = await get();
     data.tasks.add(task);
     await set(data);
+    expire();
 
     notifyListeners();
   }
@@ -399,6 +424,7 @@ class TodayView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
     }
     await set(data);
+    expire();
 
     notifyListeners();
   }
@@ -443,6 +469,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
     var data = await get();
     data.tasks.add(task);
     await set(data);
+    expire();
 
     notifyListeners();
   }
@@ -463,6 +490,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
     }
     await set(data);
+    expire();
 
     notifyListeners();
   }
@@ -674,6 +702,7 @@ class ProjectMapView extends ViewCache<Project> {
 // changes run at O(n).
 class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   static const String name = 'projectdetails';
+  final Map<String, DateTime> _expired = {};
 
   ProjectDetailsView(JsonCache database, Duration duration) : super(database, duration);
 
@@ -687,6 +716,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   Future<void> set(ProjectWithTasks view) async {
     var current = await _get() ?? {};
     current[view.project.slug] = view.toMap();
+    _expired.remove(view.project.slug);
 
     return _set(current);
   }
@@ -695,7 +725,9 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   Future<void> append(Task task) async {
     var data = await get(task.projectSlug);
     data.tasks.add(task);
+
     await set(data);
+    _expired[task.projectSlug] = clock.now();
 
     notifyListeners();
   }
@@ -713,6 +745,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
       if (index > -1) {
         source.tasks.removeAt(index);
         await set(source);
+        _expired[previousProject] = clock.now();
       }
     }
 
@@ -725,7 +758,9 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     } else {
       projectData.tasks.add(task);
     }
+
     await set(projectData);
+    _expired[task.projectSlug] = clock.now();
 
     notifyListeners();
   }
@@ -738,6 +773,15 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     if (index > -1) {
       projectData.tasks.removeAt(index);
     }
+    _expired[slug] = clock.now();
+  }
+
+  /// Check if the project of slug has been expired.
+  bool isExpiredSlug(String? slug) {
+    if (slug == null) {
+      return false;
+    }
+    return _expired[slug] != null;
   }
 
   Future<ProjectWithTasks> get(String slug) async {

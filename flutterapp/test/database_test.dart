@@ -79,7 +79,7 @@ void main() {
       database.taskDetails.removeListener(callListener);
     });
 
-    test('updateTask() adds task to today view', () async {
+    test('updateTask() with new task, updates today & upcoming view', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 7;
       task.title = 'Pay bills';
@@ -89,14 +89,24 @@ void main() {
       database.today.addListener(callListener);
       await database.updateTask(task);
 
+      database.today.removeListener(callListener);
+      expect(callCount, greaterThan(0));
+
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(task.title));
-      expect(callCount, greaterThan(0));
-      database.today.removeListener(callListener);
+
+      // While create is generally safe we should refetch
+      // to ensure dayOrder/childOrder are synced.
+      expect(database.today.isExpired, isTrue);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(database.upcoming.isExpired, isTrue);
     });
 
-    test('updateTask() modifies today view', () async {
+    test('updateTask() with existing updates today & upcoming', () async {
       var other = Task.blank();
       other.id = 2;
 
@@ -114,6 +124,14 @@ void main() {
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(2));
       expect(todayData.tasks[1].title, equals(task.title));
+      // View should be expired so that we refetch
+      expect(database.today.isExpired, isTrue);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
+      // View should be expired so that we refetch
+      expect(database.upcoming.isExpired, isTrue);
     });
 
     test('updateTask() removes from today view', () async {
@@ -134,10 +152,12 @@ void main() {
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(other.title));
+      expect(database.today.isExpired, isTrue);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
+      expect(database.upcoming.isExpired, isTrue);
     });
 
     test('updateTask() adds task to upcoming view', () async {
@@ -157,9 +177,11 @@ void main() {
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
+      expect(database.upcoming.isExpired, isTrue);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(0));
+      expect(database.today.isExpired, isFalse);
     });
 
     test('updateTask() removes task from upcoming', () async {
@@ -180,6 +202,7 @@ void main() {
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(0));
+      expect(database.upcoming.isExpired, isTrue);
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(0));
@@ -204,6 +227,7 @@ void main() {
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(1));
       expect(home.tasks[0].title, equals('Dig up potatoes'));
+      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
     });
 
     test('updateTask() moves tasks between projects', () async {
@@ -234,10 +258,12 @@ void main() {
 
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(0));
+      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
 
       var work = await database.projectDetails.get('work');
       expect(work.tasks.length, equals(1));
       expect(work.tasks[0].title, equals('Do accounting'));
+      expect(database.projectDetails.isExpiredSlug('work'), isTrue);
     });
 
     test('createTask() adds task to today view', () async {
@@ -254,6 +280,7 @@ void main() {
       var todayTasks = await database.today.get();
       expect(todayTasks.tasks.length, equals(1));
       expect(todayTasks.tasks[0].title, equals(task.title));
+      expect(database.today.isExpired, isTrue);
     });
 
     test('createTask() adds task to upcoming view', () async {
@@ -268,6 +295,7 @@ void main() {
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
+      expect(database.upcoming.isExpired, isTrue);
     });
 
     test('createTask() with no date', () async {
@@ -280,9 +308,11 @@ void main() {
 
       var taskData = await database.upcoming.get();
       expect(taskData.tasks.length, equals(0));
+      expect(database.upcoming.isExpired, isFalse);
 
       taskData = await database.today.get();
       expect(taskData.tasks.length, equals(0));
+      expect(database.today.isExpired, isFalse);
     });
 
     test('createTask() adds task to projectDetails view', () async {
@@ -298,11 +328,13 @@ void main() {
       database.projectDetails.addListener(callListener);
       await database.createTask(task);
 
+      expect(callCount, greaterThan(0));
+      database.projectDetails.removeListener(callListener);
+
       var details = await database.projectDetails.get(task.projectSlug);
       expect(details.tasks.length, equals(1));
       expect(details.tasks[0].title, equals(task.title));
-      expect(callCount, greaterThan(0));
-      database.projectDetails.removeListener(callListener);
+      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
     });
   });
 }
