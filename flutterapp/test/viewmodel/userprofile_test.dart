@@ -45,7 +45,7 @@ void main() {
 
       expect(requestCount, equals(1));
       expect(notifyCount, greaterThan(0));
-      expect(profile.email, equals('mark@mark-story.com'));
+      expect(profile.email, equals('mark@example.com'));
       expect(profile.name, equals('Mark Story'));
     });
 

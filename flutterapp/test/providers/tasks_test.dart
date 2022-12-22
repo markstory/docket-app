@@ -35,12 +35,20 @@ Project parseProjectDetails(String data) {
   return Project.fromMap(decoded['project']);
 }
 
+class CallCounter {
+  int callCount = 0;
+  CallCounter(): callCount = 0;
+
+  void call() {
+    callCount += 1;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late TasksProvider provider;
 
-  int listenerCallCount = 0;
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
@@ -61,17 +69,19 @@ void main() {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
     await db.today.set(taskView);
   }
+  late CallCounter listener;
 
   group('$TasksProvider', () {
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      listenerCallCount = 0;
-      provider = TasksProvider(db, session)
-        ..addListener(() {
-          listenerCallCount += 1;
-        });
+      listener = CallCounter();
+      provider = TasksProvider(db, session);
       await provider.clear();
+    });
+
+    tearDown(() {
+      db.today.removeListener(listener);
     });
 
     test('toggleComplete() sends complete request', () async {
@@ -80,21 +90,16 @@ void main() {
         return Response('', 204);
       });
 
-      var db = LocalDatabase();
-
       var tasks = parseTaskList(tasksTodayResponseFixture);
-      for (var task in tasks) {
-        await db.createTask(task);
-      }
+      setTodayView(tasks);
+
+      db.today.addListener(listener);
       var provider = TasksProvider(db, session);
 
       await provider.toggleComplete(tasks[0]);
 
-      expect(listenerCallCount, greaterThan(0));
-
-      var updated = await db.today.get();
-      expect(updated.tasks.length, equals(0));
-      expect(updated.calendarItems.length, equals(0));
+      expect(listener.callCount, equals(1));
+      expect(db.today.isExpired, isTrue);
     });
 
     test('toggleComplete() expires local data', () async {
@@ -108,9 +113,7 @@ void main() {
       var provider = TasksProvider(db, session);
       await provider.toggleComplete(tasks[0]);
 
-      // Data should be expired as task was from today.
-      var updated = await db.today.get();
-      expect(updated.tasks.length, equals(0));
+      expect(db.today.isExpired, isTrue);
     });
 
     test('deleteTask() removes task and clears local db', () async {
@@ -123,13 +126,12 @@ void main() {
       await setTodayView(tasks);
 
       var provider = TasksProvider(db, session);
+      db.today.addListener(listener);
+
       await provider.deleteTask(tasks[0]);
 
-      expect(listenerCallCount, greaterThan(0));
-
-      var todayData = await db.today.get();
-      expect(todayData.isEmpty, isTrue);
-      expect(todayData.tasks.length, equals(0));
+      expect(listener.callCount, equals(1));
+      expect(db.today.isExpired, isTrue);
     });
 
     test('deleteTask() reduces the local project incomplete task count', () async {
@@ -194,8 +196,6 @@ void main() {
 
       await provider.toggleSubtask(task, subtask);
 
-      // Should notify listeners.
-      expect(listenerCallCount, greaterThan(1));
       var updated = await db.taskDetails.get(task.id!);
       expect(updated, isNotNull);
       expect(updated!.subtasks[0].completed, isTrue);
@@ -218,10 +218,7 @@ void main() {
 
       await provider.saveSubtask(task, subtask);
 
-      // Should notify listeners.
-      expect(listenerCallCount, greaterThan(1));
       var updated = await db.taskDetails.get(task.id!);
-
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.completed, isFalse);
@@ -245,10 +242,7 @@ void main() {
 
       await provider.saveSubtask(task, subtask);
 
-      // Should notify listeners.
-      expect(listenerCallCount, greaterThan(1));
       var updated = await db.taskDetails.get(task.id!);
-
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.id, equals(1));
@@ -273,10 +267,7 @@ void main() {
 
       await provider.deleteSubtask(task, subtask);
 
-      // Should notify listeners.
-      expect(listenerCallCount, greaterThan(1));
       var updated = await db.taskDetails.get(task.id!);
-
       expect(updated?.subtasks.length, equals(0));
     });
 
@@ -298,10 +289,7 @@ void main() {
 
       await provider.moveSubtask(task, subtask);
 
-      // Should notify listeners.
-      expect(listenerCallCount, greaterThan(1));
       var updated = await db.taskDetails.get(task.id!);
-
       var updatedSubtask = updated!.subtasks[0];
       expect(updatedSubtask, isNotNull);
       expect(updatedSubtask.ranking, equals(3));
