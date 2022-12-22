@@ -184,6 +184,31 @@ void main() {
       expect(database.today.isExpired, isFalse);
     });
 
+    test('updateTask() can skip expiration', () async {
+      var tomorrow = today.add(const Duration(days: 1));
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = tomorrow;
+      task.projectSlug = 'home';
+
+      database.upcoming.addListener(callListener);
+      await database.updateTask(task, expire: false);
+
+      expect(callCount, greaterThan(0));
+      database.upcoming.removeListener(callListener);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(database.upcoming.isExpired, isTrue);
+
+      var todayData = await database.today.get();
+      expect(todayData.tasks.length, equals(0));
+      expect(database.today.isExpired, isFalse);
+    });
+
+
     test('updateTask() removes task from upcoming', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 1;

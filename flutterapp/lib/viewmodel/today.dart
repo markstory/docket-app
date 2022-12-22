@@ -15,6 +15,7 @@ class TodayViewModel extends ChangeNotifier {
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
+  bool _taskRefreshLoading = false;
 
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
@@ -29,7 +30,7 @@ class TodayViewModel extends ChangeNotifier {
     _database = database;
     _taskLists = [];
 
-    _database.today.addListener(() {
+    _database.today.addListener(() async {
       loadData();
     });
   }
@@ -54,54 +55,28 @@ class TodayViewModel extends ChangeNotifier {
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (!_loading && (taskView.isEmpty || !_database.today.isFresh())) {
+    if (!_loading && taskView.isEmpty) {
       return refresh();
     }
-  }
-
-  /// Reorder a task based on the protocol defined by
-  /// the drag_and_drop_lists package.
-  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-    var task = _taskLists[oldListIndex].tasks[oldItemIndex];
-
-    // Get the changes that need to be made on the server.
-    var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
-
-    // Update local state assuming server will be ok.
-    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
-    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-
-    // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
-
-    notifyListeners();
-  }
-
-  /// Move a task out of overdue into another section
-  Future<void> moveOverdue(Task task, int listIndex, int itemIndex) async {
-    // Calculate position of adding to a end.
-    // Generally this will be zero but it is possible to add to the
-    // bottom of a populated list too.
-    var targetList = _taskLists[listIndex];
-    if (itemIndex == -1) {
-      itemIndex = targetList.tasks.length;
+    if ((!_loading || !_taskRefreshLoading) && !_database.today.isFresh()) {
+      await refreshTasks();
     }
+  }
 
-    // Get the changes that need to be made on the server.
-    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-    _overdue?.tasks.remove(task);
-    _taskLists[listIndex].tasks.insert(itemIndex, task);
-
-    // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+  /// Refresh tasks from server state. Does not use loading
+  /// state.
+  Future<void> refreshTasks() async {
+    _taskRefreshLoading = true;
+    var tasksView = await actions.fetchTodayTasks(session!.apiToken);
+    _database.today.set(tasksView);
+    _taskRefreshLoading = false;
 
     notifyListeners();
   }
 
-  /// Refresh from the server.
+  /// Refresh from the server with loading state
   Future<void> refresh() async {
     _loading = true;
-
     await Future.wait([
       actions.fetchTodayTasks(session!.apiToken),
       actions.fetchProjects(session!.apiToken),
@@ -179,5 +154,44 @@ class TodayViewModel extends ChangeNotifier {
     _loading = false;
 
     notifyListeners();
+  }
+
+  /// Move a task out of overdue into another section
+  Future<void> moveOverdue(Task task, int listIndex, int itemIndex) async {
+    // Calculate position of adding to a end.
+    // Generally this will be zero but it is possible to add to the
+    // bottom of a populated list too.
+    var targetList = _taskLists[listIndex];
+    if (itemIndex == -1) {
+      itemIndex = targetList.tasks.length;
+    }
+
+    // Get the changes that need to be made on the server.
+    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+    _overdue?.tasks.remove(task);
+    _taskLists[listIndex].tasks.insert(itemIndex, task);
+    notifyListeners();
+
+    // Update the moved task and reload from server async
+    await actions.moveTask(session!.apiToken, task, updates);
+    await _database.expireTask(task);
+  }
+
+  /// Reorder a task based on the protocol defined by
+  /// the drag_and_drop_lists package.
+  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+    var task = _taskLists[oldListIndex].tasks[oldItemIndex];
+
+    // Get the changes that need to be made on the server.
+    var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+
+    // Update local state assuming server will be ok.
+    _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
+    _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+    notifyListeners();
+
+    // Update the moved task and reload from server async
+    await actions.moveTask(session!.apiToken, task, updates);
+    await _database.expireTask(task);
   }
 }

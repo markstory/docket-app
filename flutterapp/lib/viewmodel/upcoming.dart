@@ -15,6 +15,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
+  bool _taskRefreshLoading = false;
 
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
@@ -44,8 +45,11 @@ class UpcomingViewModel extends ChangeNotifier {
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
-    if (!_loading && (taskView.isEmpty || !_database.upcoming.isFresh())) {
+    if (!_loading && taskView.isEmpty) {
       return refresh();
+    }
+    if ((!_loading || !_taskRefreshLoading) && !_database.upcoming.isFresh()) {
+      return refreshTasks();
     }
   }
 
@@ -59,11 +63,11 @@ class UpcomingViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-
-    notifyListeners();
+    await _database.expireTask(task);
   }
 
   Future<void> insertAt(Task task, int listIndex, int itemIndex) async {
@@ -77,11 +81,11 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var updates = _taskLists[listIndex].onReceive(task, itemIndex);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
+    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-
-    notifyListeners();
+    await _database.expireTask(task);
   }
 
   /// Refresh from the server.
@@ -91,6 +95,15 @@ class UpcomingViewModel extends ChangeNotifier {
     var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
     await _database.upcoming.set(tasksView);
     _buildTaskLists(tasksView);
+  }
+
+  /// Refresh tasks from server state. Does not use loading
+  /// state.
+  Future<void> refreshTasks() async {
+    _taskRefreshLoading = true;
+    var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
+    _database.upcoming.set(tasksView);
+    _taskRefreshLoading = false;
   }
 
   void _buildTaskLists(TaskViewData data) {

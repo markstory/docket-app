@@ -14,6 +14,10 @@ class StaleDataError implements Exception {}
 
 const isStale = '__is_stale__';
 
+enum TaskCollections {
+  today, upcoming, projectDetails, trashBin
+}
+
 class LocalDatabase {
   static final LocalDatabase _instance = LocalDatabase();
 
@@ -79,30 +83,30 @@ class LocalDatabase {
   /// In a SQL based storage you'd be able to remove/update the row
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
-  List<String> _taskViews(Task task) {
+  List<TaskCollections> _taskViews(Task task) {
     var now = DateUtils.dateOnly(clock.now());
-    List<String> views = [];
+    List<TaskCollections> views = [];
 
     // If the task has a due date expire upcoming and possibly
     // today views.
     if (task.dueOn != null) {
       var delta = task.dueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
-        views.add(TodayView.name);
+        views.add(TaskCollections.today);
       }
-      views.add(UpcomingView.name);
+      views.add(TaskCollections.upcoming);
     }
 
     if (task.previousDueOn != null) {
       var delta = task.previousDueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
-        views.add(TodayView.name);
+        views.add(TaskCollections.today);
       }
-      views.add(UpcomingView.name);
+      views.add(TaskCollections.upcoming);
     }
 
     if (task.deletedAt != null) {
-      views.add(TrashbinView.name);
+      views.add(TaskCollections.trashBin);
     }
 
     return views;
@@ -125,14 +129,14 @@ class LocalDatabase {
 
     for (var key in _taskViews(task)) {
       switch (key) {
-        case TodayView.name:
-          today.expire();
+        case TaskCollections.today:
+          today.expire(notify: true);
           break;
-        case UpcomingView.name:
-          upcoming.expire();
+        case TaskCollections.upcoming:
+          upcoming.expire(notify: true);
           break;
-        case TrashbinView.name:
-          trashbin.expire();
+        case TaskCollections.trashBin:
+          trashbin.expire(notify: true);
           break;
         default:
           throw Exception('Unknown view key of $key');
@@ -164,10 +168,10 @@ class LocalDatabase {
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TodayView.name:
+        case TaskCollections.today:
           futures.add(today.append(task));
           break;
-        case UpcomingView.name:
+        case TaskCollections.upcoming:
           futures.add(upcoming.append(task));
           break;
         default:
@@ -181,18 +185,18 @@ class LocalDatabase {
   /// Update a task in the local database.
   ///
   /// This will update all task views with the new data.
-  Future<void> updateTask(Task task, {String? previousProject}) async {
+  Future<void> updateTask(Task task, {bool expire = true, String? previousProject}) async {
     List<Future> futures = [];
     futures.add(taskDetails.set(task));
     futures.add(projectDetails.updateTask(task, previousProject: previousProject));
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TodayView.name:
-          futures.add(today.updateTask(task));
+        case TaskCollections.today:
+          futures.add(today.updateTask(task, expire: expire));
           break;
-        case UpcomingView.name:
-          futures.add(upcoming.updateTask(task));
+        case TaskCollections.upcoming:
+          futures.add(upcoming.updateTask(task, expire: expire));
           break;
         default:
           throw Exception('Unknown view to clear "$view"');
@@ -204,7 +208,7 @@ class LocalDatabase {
   }
 
   /// Remove a task from the local database
-  /// Will expire the relevant view caches.
+  /// Will expire and notify the relevant view caches.
   Future<void> deleteTask(Task task) async {
     var id = task.id;
     if (id == null) {
@@ -221,6 +225,30 @@ class LocalDatabase {
 
     return _expireTaskViews(task);
   }
+
+  /// Expire the views for the relevant task
+  /// Will notify each view.
+  Future<void> expireTask(Task task, {TaskCollections? skip}) async {
+    for (var view in _taskViews(task)) {
+      if (skip == view) {
+        continue;
+      }
+      switch (view) {
+        case TaskCollections.today:
+          today.expire(notify: true);
+          break;
+        case TaskCollections.upcoming:
+          upcoming.expire(notify: true);
+          break;
+        case TaskCollections.trashBin:
+          trashbin.expire(notify: true);
+          break;
+        default:
+          throw Exception('Cannot expire view of $view');
+      }
+    }
+  }
+
   // }}}
 
   // Project methods {{{
@@ -325,9 +353,13 @@ abstract class ViewCache<T> extends ChangeNotifier {
   /// Mark the local data as expired/stale.
   ///
   /// This doesn't remove the data but does flag it as expired.
-  /// Does not notify.
-  void expire() {
+  /// Can notify if `notify` is set to true.
+  void expire({bool notify = false}) {
     _expiredAt = clock.now();
+
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   /// Whether or not this view cache has been expired.
@@ -408,7 +440,7 @@ class TodayView extends ViewCache<TaskViewData> {
   /// Update a task. Will either add/update or remove 
   /// a task from the Today view depending on the task details.
   /// Will notify on changes.
-  Future<void> updateTask(Task task) async {
+  Future<void> updateTask(Task task, {bool expire = true}) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
     if (task.isToday) {
@@ -424,7 +456,9 @@ class TodayView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
     }
     await set(data);
-    expire();
+    if (expire) {
+      this.expire();
+    }
 
     notifyListeners();
   }
@@ -476,7 +510,7 @@ class UpcomingView extends ViewCache<TaskViewData> {
 
   // Update a task. Will either add/remove/update the
   // task based on its state. Will notify on changes.
-  Future<void> updateTask(Task task) async {
+  Future<void> updateTask(Task task, {expire = true}) async {
     var data = await get();
     var index = data.tasks.indexWhere((item) => item.id == task.id);
     if (task.hasDueDate) {
@@ -490,7 +524,9 @@ class UpcomingView extends ViewCache<TaskViewData> {
       data.tasks.removeAt(index);
     }
     await set(data);
-    expire();
+    if (expire) {
+      this.expire();
+    }
 
     notifyListeners();
   }
