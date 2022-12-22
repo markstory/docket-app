@@ -41,37 +41,35 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
   }
 
   Widget buildScreen(BuildContext context, UpcomingViewModel viewmodel, Widget? _) {
-    return Consumer<TasksProvider>(builder: (context, tasksProvider, child) {
-      var theme = Theme.of(context);
-      Widget body;
-      if (viewmodel.loading) {
-        body = const LoadingIndicator();
-      } else {
-        body = RefreshIndicator(
-          onRefresh: () => _refresh(viewmodel),
-          child: TaskSorter(
-              taskLists: viewmodel.taskLists,
-              buildItem: (Task task) {
-                return TaskItem(task: task, showDate: false, showProject: true);
-              },
-              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
-              },
-              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                var itemChild = newItem.child as TaskItem;
-                var task = itemChild.task;
-                await viewmodel.insertAt(task, listIndex, itemIndex);
-              }),
-        );
-      }
-
-      return Scaffold(
-        appBar: AppBar(backgroundColor: theme.colorScheme.secondary, title: const Text('Upcoming')),
-        drawer: const AppDrawer(),
-        // TODO add scroll tracking for sections and update add button.
-        floatingActionButton: const FloatingCreateTaskButton(),
-        body: body,
+    var theme = Theme.of(context);
+    Widget body;
+    if (viewmodel.loading) {
+      body = const LoadingIndicator();
+    } else {
+      body = RefreshIndicator(
+        onRefresh: () => _refresh(viewmodel),
+        child: TaskSorter(
+            taskLists: viewmodel.taskLists,
+            buildItem: (Task task) {
+              return TaskItem(task: task, showDate: false, showProject: true);
+            },
+            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+              await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+            },
+            onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+              var itemChild = newItem.child as TaskItem;
+              var task = itemChild.task;
+              await viewmodel.insertAt(task, listIndex, itemIndex);
+            }),
       );
-    });
+    }
+
+    return Scaffold(
+      appBar: AppBar(backgroundColor: theme.colorScheme.secondary, title: const Text('Upcoming')),
+      drawer: const AppDrawer(),
+      // TODO add scroll tracking for sections and update add button.
+      floatingActionButton: const FloatingCreateTaskButton(),
+      body: body,
+    );
   }
 }

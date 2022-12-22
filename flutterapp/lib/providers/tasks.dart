@@ -43,16 +43,24 @@ class TasksProvider extends ChangeNotifier {
 
     // Update local db and server
     await actions.toggleTask(session!.apiToken, task);
-    await _database.deleteTask(task);
+    if (task.completed) {
+      await _database.deleteTask(task);
+    } else {
+      await _database.updateTask(task);
+      _database.completedTasks.expire();
+    }
 
     notifyListeners();
   }
 
   /// Create or Update a task on the server and local state.
   Future<Task> updateTask(Task task) async {
-    var previousProject = task.projectSlug;
     var updated = await actions.updateTask(session!.apiToken, task);
-    await _database.updateTask(updated, previousProject: previousProject);
+
+    updated.previousDueOn = task.previousDueOn;
+    updated.previousProjectSlug = task.projectSlug;
+
+    await _database.updateTask(updated);
 
     notifyListeners();
     return updated;

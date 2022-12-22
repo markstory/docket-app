@@ -84,7 +84,7 @@ void main() {
       db.today.removeListener(listener);
     });
 
-    test('toggleComplete() sends complete request', () async {
+    test('toggleComplete() sends request and removes local data', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, contains('/tasks/1/complete'));
         return Response('', 204);
@@ -98,22 +98,35 @@ void main() {
 
       await provider.toggleComplete(tasks[0]);
 
-      expect(listener.callCount, equals(1));
+      expect(listener.callCount, greaterThan(0));
       expect(db.today.isExpired, isTrue);
+      var today = await db.today.get();
+      expect(today.tasks.length, equals(1));
     });
 
-    test('toggleComplete() expires local data', () async {
+    test('toggleComplete() sends request to incomplete and expires data', () async {
       actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/tasks/1/incomplete'));
         return Response('', 204);
       });
 
-      var tasks = parseTaskList(tasksTodayResponseFixture);
-      await setTodayView(tasks);
+      var task = Task.blank();
+      task.id = 1;
+      task.title = "fold the towels";
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.dueOn = today;
+      task.completed = true;
 
       var provider = TasksProvider(db, session);
-      await provider.toggleComplete(tasks[0]);
+      await provider.toggleComplete(task);
 
       expect(db.today.isExpired, isTrue);
+      expect(db.upcoming.isExpired, isTrue);
+      expect(db.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+
+      var todayData = await db.today.get();
+      expect(todayData.tasks.length, equals(1));
     });
 
     test('deleteTask() removes task and clears local db', () async {
@@ -130,7 +143,7 @@ void main() {
 
       await provider.deleteTask(tasks[0]);
 
-      expect(listener.callCount, equals(1));
+      expect(listener.callCount, greaterThan(0));
       expect(db.today.isExpired, isTrue);
     });
 

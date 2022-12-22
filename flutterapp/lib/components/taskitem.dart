@@ -79,7 +79,7 @@ class TaskActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var tasksProvider = Provider.of<TasksProvider>(context);
+    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> handleChangeProject() async {
@@ -105,6 +105,12 @@ class TaskActions extends StatelessWidget {
 
     Future<void> handleReschedule() async {
       var result = await showChangeDueOnDialog(context, task.dueOn, task.evening);
+      // TODO Setting previous values like this is error prone. Perhaps
+      // Task should have snapshotting features? or have this be model level logic.
+      // The tricky part has been that doing an API request builds a new task instead
+      // of updating the existing one. Perhaps solving that would be better?
+      task.previousDueOn = task.dueOn;
+
       task.dueOn = result.dueOn;
       task.evening = result.evening;
       tasksProvider.updateTask(task);

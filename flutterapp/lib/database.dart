@@ -175,8 +175,23 @@ class LocalDatabase {
     if (id == null) {
       return;
     }
+    // TODO convert this to Future.wait(...)
     await taskDetails.remove(id);
+    await projectDetails.removeTask(task.projectSlug, task);
     await projectMap.decrement(task.projectSlug);
+
+    for (var view in _taskViews(task)) {
+      switch (view) {
+        case TaskCollections.today:
+          await today.removeTask(task);
+          break;
+        case TaskCollections.upcoming:
+          await upcoming.removeTask(task);
+          break;
+        default:
+          throw Exception('Cannot expire view of $view');
+      }
+    }
 
     return expireTask(task);
   }
@@ -184,7 +199,7 @@ class LocalDatabase {
   Future<void> undeleteTask(Task task) async {
     trashbin.expire();
 
-    return expireTask(task);
+    return updateTask(task);
   }
 
   /// Expire the views for the relevant task
@@ -423,6 +438,17 @@ class TodayView extends ViewCache<TaskViewData> {
     notifyListeners();
   }
 
+  /// Remove a task from this view if it exists.
+  Future<void> removeTask(Task task) async {
+    var data = await get();
+    var index = data.tasks.indexWhere((item) => item.id == task.id);
+    if (index > -1) {
+      data.tasks.removeAt(index);
+      await set(data);
+      expire(notify: true);
+    }
+  }
+
   Future<TaskViewData> get() async {
     var data = await _get();
     // Likely loading.
@@ -489,6 +515,18 @@ class UpcomingView extends ViewCache<TaskViewData> {
     }
 
     notifyListeners();
+  }
+
+  /// Remove a task from this view if it exists.
+  Future<void> removeTask(Task task) async {
+    var data = await get();
+    var index = data.tasks.indexWhere((item) => item.id == task.id);
+    if (index > -1) {
+      data.tasks.removeAt(index);
+      await set(data);
+
+      expire(notify: true);
+    }
   }
 }
 
@@ -765,8 +803,9 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     var index = projectData.tasks.indexWhere((item) => item.id == task.id);
     if (index > -1) {
       projectData.tasks.removeAt(index);
+      await set(projectData);
+      expireSlug(slug, notify: true);
     }
-    expireSlug(slug, notify: true);
   }
 
   /// Expire a project by slug

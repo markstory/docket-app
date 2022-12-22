@@ -126,6 +126,7 @@ class UpcomingViewModel extends ChangeNotifier {
             subtitle: 'Evening',
             tasks: group.items,
             onReceive: (Task task, int newIndex) {
+              task.previousDueOn = task.dueOn;
               task.evening = true;
               task.dayOrder = newIndex;
               task.dueOn = dateVal;
@@ -149,6 +150,7 @@ class UpcomingViewModel extends ChangeNotifier {
             onReceive: (Task task, int newIndex) {
               task.evening = false;
               task.dayOrder = newIndex;
+              task.previousDueOn = task.dueOn;
               task.dueOn = dateVal;
 
               return {'evening': false, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
