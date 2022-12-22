@@ -63,11 +63,10 @@ class UpcomingViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await _database.expireTask(task);
+    _database.expireTask(task);
   }
 
   Future<void> insertAt(Task task, int listIndex, int itemIndex) async {
@@ -81,11 +80,10 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var updates = _taskLists[listIndex].onReceive(task, itemIndex);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await _database.expireTask(task);
+    _database.expireTask(task);
   }
 
   /// Refresh from the server.
@@ -101,9 +99,10 @@ class UpcomingViewModel extends ChangeNotifier {
   /// state.
   Future<void> refreshTasks() async {
     _taskRefreshLoading = true;
-    var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
-    _database.upcoming.set(tasksView);
+    var taskView = await actions.fetchUpcomingTasks(session!.apiToken);
+    _database.upcoming.set(taskView);
     _taskRefreshLoading = false;
+    _buildTaskLists(taskView);
   }
 
   void _buildTaskLists(TaskViewData data) {

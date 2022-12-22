@@ -6,6 +6,15 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 
+class CallCounter {
+  int callCount = 0;
+  CallCounter(): callCount = 0;
+
+  void call() {
+    callCount += 1;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -19,13 +28,7 @@ void main() {
   project.name = 'Home';
 
   group('database.LocalViewCache', () {
-    var callCount = 0;
-    void callListener() {
-      callCount += 1;
-    }
-
     setUp(() async {
-      callCount = 0;
       await database.clearSilent();
     });
 
@@ -68,29 +71,75 @@ void main() {
       });
     });
 
+    test('expireTask() expires all views for today task', () async {
+      var todayCounter = CallCounter();
+      var upcomingCounter = CallCounter();
+      var detailsCounter = CallCounter();
+      database.today.addListener(todayCounter);
+      database.upcoming.addListener(upcomingCounter);
+      database.projectDetails.addListener(detailsCounter);
+      var task = Task.blank();
+      task.id = 1;
+      task.projectSlug = 'home';
+      task.dueOn = today;
+
+      database.expireTask(task);
+      database.today.removeListener(todayCounter);
+      database.upcoming.removeListener(upcomingCounter);
+      database.projectDetails.removeListener(detailsCounter);
+
+      expect(todayCounter.callCount, equals(1));
+      expect(upcomingCounter.callCount, equals(1));
+      expect(detailsCounter.callCount, equals(1));
+    });
+
+    test('expireTask() expires only upcoming', () async {
+      var todayCounter = CallCounter();
+      var upcomingCounter = CallCounter();
+      database.today.addListener(todayCounter);
+      database.upcoming.addListener(upcomingCounter);
+      var task = Task.blank();
+      task.id = 1;
+      task.projectSlug = 'home';
+      task.dueOn = tomorrow;
+
+      database.expireTask(task);
+      database.today.removeListener(todayCounter);
+      database.upcoming.removeListener(upcomingCounter);
+
+      expect(todayCounter.callCount, equals(0));
+      expect(upcomingCounter.callCount, equals(1));
+    });
+
     test('updateTask() notifies taskDetails', () async {
+      var listener = CallCounter();
       // This is important as it ensures that taskDetails refreshes.
       var task = Task.blank(projectId: project.id);
       task.id = 1;
-      database.taskDetails.addListener(callListener);
+      database.taskDetails.addListener(listener);
       await database.updateTask(task);
 
-      expect(callCount, greaterThan(0));
-      database.taskDetails.removeListener(callListener);
+      expect(listener.callCount, greaterThan(0));
+      database.taskDetails.removeListener(listener);
     });
 
     test('updateTask() with new task, updates today & upcoming view', () async {
+      var todayListener = CallCounter();
+      var upcomingListener = CallCounter();
       var task = Task.blank(projectId: project.id);
       task.id = 7;
       task.title = 'Pay bills';
       task.dueOn = today;
       task.projectSlug = 'home';
 
-      database.today.addListener(callListener);
+      database.upcoming.addListener(upcomingListener);
+      database.today.addListener(todayListener);
       await database.updateTask(task);
 
-      database.today.removeListener(callListener);
-      expect(callCount, greaterThan(0));
+      database.today.removeListener(todayListener);
+      database.today.removeListener(upcomingListener);
+      expect(todayListener.callCount, greaterThan(0));
+      expect(upcomingListener.callCount, greaterThan(0));
 
       var todayData = await database.today.get();
       expect(todayData.tasks.length, equals(1));
@@ -99,6 +148,7 @@ void main() {
       // While create is generally safe we should refetch
       // to ensure dayOrder/childOrder are synced.
       expect(database.today.isExpired, isTrue);
+      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
@@ -161,6 +211,7 @@ void main() {
     });
 
     test('updateTask() adds task to upcoming view', () async {
+      var callListener = CallCounter();
       var tomorrow = today.add(const Duration(days: 1));
       var task = Task.blank(projectId: project.id);
       task.id = 1;
@@ -171,7 +222,7 @@ void main() {
       database.upcoming.addListener(callListener);
       await database.updateTask(task);
 
-      expect(callCount, greaterThan(0));
+      expect(callListener.callCount, greaterThan(0));
       database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
@@ -183,33 +234,9 @@ void main() {
       expect(todayData.tasks.length, equals(0));
       expect(database.today.isExpired, isFalse);
     });
-
-    test('updateTask() can skip expiration', () async {
-      var tomorrow = today.add(const Duration(days: 1));
-      var task = Task.blank(projectId: project.id);
-      task.id = 1;
-      task.title = 'Dig up potatoes';
-      task.dueOn = tomorrow;
-      task.projectSlug = 'home';
-
-      database.upcoming.addListener(callListener);
-      await database.updateTask(task, expire: false);
-
-      expect(callCount, greaterThan(0));
-      database.upcoming.removeListener(callListener);
-
-      var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
-      expect(database.upcoming.isExpired, isTrue);
-
-      var todayData = await database.today.get();
-      expect(todayData.tasks.length, equals(0));
-      expect(database.today.isExpired, isFalse);
-    });
-
 
     test('updateTask() removes task from upcoming', () async {
+      var callListener = CallCounter();
       var task = Task.blank(projectId: project.id);
       task.id = 1;
       task.title = 'Dig up potatoes';
@@ -222,7 +249,7 @@ void main() {
       database.upcoming.addListener(callListener);
       await database.updateTask(task);
 
-      expect(callCount, greaterThan(0));
+      expect(callListener.callCount, greaterThan(0));
       database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
@@ -341,6 +368,7 @@ void main() {
     });
 
     test('createTask() adds task to projectDetails view', () async {
+      var callListener = CallCounter();
       var project = Project.blank();
       project.id = 4;
       project.slug = 'home';
@@ -353,7 +381,7 @@ void main() {
       database.projectDetails.addListener(callListener);
       await database.createTask(task);
 
-      expect(callCount, greaterThan(0));
+      expect(callListener.callCount, greaterThan(0));
       database.projectDetails.removeListener(callListener);
 
       var details = await database.projectDetails.get(task.projectSlug);

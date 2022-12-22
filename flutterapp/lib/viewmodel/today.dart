@@ -67,11 +67,10 @@ class TodayViewModel extends ChangeNotifier {
   /// state.
   Future<void> refreshTasks() async {
     _taskRefreshLoading = true;
-    var tasksView = await actions.fetchTodayTasks(session!.apiToken);
-    _database.today.set(tasksView);
+    var taskView = await actions.fetchTodayTasks(session!.apiToken);
+    _database.today.set(taskView);
     _taskRefreshLoading = false;
-
-    notifyListeners();
+    _buildTaskLists(taskView);
   }
 
   /// Refresh from the server with loading state
@@ -170,11 +169,10 @@ class TodayViewModel extends ChangeNotifier {
     var updates = _taskLists[listIndex].onReceive(task, itemIndex);
     _overdue?.tasks.remove(task);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await _database.expireTask(task);
+    _database.expireTask(task);
   }
 
   /// Reorder a task based on the protocol defined by
@@ -188,10 +186,9 @@ class TodayViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-    notifyListeners();
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await _database.expireTask(task);
+    _database.expireTask(task);
   }
 }

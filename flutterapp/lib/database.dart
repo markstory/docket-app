@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:json_cache/json_cache.dart';
@@ -9,10 +8,6 @@ import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/userprofile.dart';
-
-class StaleDataError implements Exception {}
-
-const isStale = '__is_stale__';
 
 enum TaskCollections {
   today, upcoming, projectDetails, trashBin
@@ -112,40 +107,6 @@ class LocalDatabase {
     return views;
   }
 
-  /// Expire task views for a task.
-  /// When a task is updated or created we need to
-  /// clear the local cache so that the new item is visible.
-  ///
-  /// In a SQL based storage you'd be able to remove/update the row
-  /// individually. Because our local database is view-based. We need
-  /// custom logic to remove cached data for the impacted views.
-  /// This ensures that we don't provide stale state to the Provider
-  /// layer and instead Providers fetch fresh data from the Server.
-  Future<void> _expireTaskViews(Task task) async {
-    List<Future> futures = [];
-
-    // Remove the project key so we read fresh data next time.
-    futures.add(projectDetails.remove(task.projectSlug));
-
-    for (var key in _taskViews(task)) {
-      switch (key) {
-        case TaskCollections.today:
-          today.expire(notify: true);
-          break;
-        case TaskCollections.upcoming:
-          upcoming.expire(notify: true);
-          break;
-        case TaskCollections.trashBin:
-          trashbin.expire(notify: true);
-          break;
-        default:
-          throw Exception('Unknown view key of $key');
-      }
-    }
-
-    await Future.wait(futures);
-  }
-
   /// Directly set a key. Avoid use outside of tests.
   Future<void> set(String key, Map<String, Object?> value) async {
     await database().refresh(key, value);
@@ -185,7 +146,7 @@ class LocalDatabase {
   /// Update a task in the local database.
   ///
   /// This will update all task views with the new data.
-  Future<void> updateTask(Task task, {bool expire = true, String? previousProject}) async {
+  Future<void> updateTask(Task task, {String? previousProject}) async {
     List<Future> futures = [];
     futures.add(taskDetails.set(task));
     futures.add(projectDetails.updateTask(task, previousProject: previousProject));
@@ -193,10 +154,10 @@ class LocalDatabase {
     for (var view in _taskViews(task)) {
       switch (view) {
         case TaskCollections.today:
-          futures.add(today.updateTask(task, expire: expire));
+          futures.add(today.updateTask(task, expire: true));
           break;
         case TaskCollections.upcoming:
-          futures.add(upcoming.updateTask(task, expire: expire));
+          futures.add(upcoming.updateTask(task, expire: true));
           break;
         default:
           throw Exception('Unknown view to clear "$view"');
@@ -217,22 +178,21 @@ class LocalDatabase {
     await taskDetails.remove(id);
     await projectMap.decrement(task.projectSlug);
 
-    return _expireTaskViews(task);
+    return expireTask(task);
   }
 
   Future<void> undeleteTask(Task task) async {
     await trashbin.clear();
 
-    return _expireTaskViews(task);
+    return expireTask(task);
   }
 
   /// Expire the views for the relevant task
   /// Will notify each view.
-  Future<void> expireTask(Task task, {TaskCollections? skip}) async {
+  void expireTask(Task task) {
+    projectDetails.expireSlug(task.projectSlug, notify: true);
+
     for (var view in _taskViews(task)) {
-      if (skip == view) {
-        continue;
-      }
       switch (view) {
         case TaskCollections.today:
           today.expire(notify: true);
@@ -757,15 +717,14 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     return _set(current);
   }
 
-  /// Add a task to the collection. Will notify
+  /// Add a task to the relevant project collecction
+  /// Will expire the modified project and notify
   Future<void> append(Task task) async {
     var data = await get(task.projectSlug);
     data.tasks.add(task);
 
     await set(data);
-    _expired[task.projectSlug] = clock.now();
-
-    notifyListeners();
+    expireSlug(task.projectSlug, notify: true);
   }
 
   /// Replace a task in both the current and previous projects.
@@ -773,7 +732,6 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
   /// Uses `task.projectId` and `task.previousProjectId` to find
   /// projects that need to be updated. Will notify.
   Future<void> updateTask(Task task, {String? previousProject}) async {
-    developer.log("updating task $previousProject, ${task.projectSlug}", name: 'debug');
     // The task was moved between projects.
     if (previousProject != null && previousProject != task.projectSlug) {
       var source = await get(previousProject);
@@ -796,9 +754,7 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     }
 
     await set(projectData);
-    _expired[task.projectSlug] = clock.now();
-
-    notifyListeners();
+    expireSlug(task.projectSlug, notify: true);
   }
 
   /// Remove a task from the project with `slug`.
@@ -809,7 +765,15 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
     if (index > -1) {
       projectData.tasks.removeAt(index);
     }
+    expireSlug(slug, notify: true);
+  }
+
+  /// Expire a project by slug
+  void expireSlug(String slug, {bool notify = false}) {
     _expired[slug] = clock.now();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   /// Check if the project of slug has been expired.
