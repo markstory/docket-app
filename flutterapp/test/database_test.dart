@@ -468,5 +468,26 @@ void main() {
       expect(result.tasks.length, equals(0));
       expect(database.projectDetails.isExpiredSlug(project.slug), isTrue);
     });
+
+    test('undeleteTask() adds task to view and expires trash', () async {
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = today;
+      task.projectId = 1;
+      task.projectSlug = project.slug;
+      task.deletedAt = DateTime.now();
+
+      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+
+      await database.undeleteTask(task);
+      expect(database.trashbin.isExpired, isTrue);
+      expect(database.today.isExpired, isTrue);
+      expect(database.projectDetails.isExpiredSlug(project.slug), isTrue);
+
+      var result = await database.projectDetails.get(project.slug);
+      expect(result.tasks.length, equals(1));
+      expect(result.tasks[0].deletedAt, isNull);
+    });
   });
 }

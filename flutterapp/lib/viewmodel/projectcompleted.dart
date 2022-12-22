@@ -56,6 +56,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     await fetchData();
+    // TODO implement better background refresh.
     if (!_loading && (_tasks.isEmpty || !_database.completedTasks.isFresh())) {
       return refresh();
     }

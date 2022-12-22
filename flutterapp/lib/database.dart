@@ -197,7 +197,8 @@ class LocalDatabase {
   }
 
   Future<void> undeleteTask(Task task) async {
-    trashbin.expire();
+    task.deletedAt = null;
+    trashbin.expire(notify: true);
 
     return updateTask(task);
   }
