@@ -78,9 +78,9 @@ class LocalDatabase {
   /// In a SQL based storage you'd be able to remove/update the row
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
-  List<TaskCollections> _taskViews(Task task) {
+  Set<TaskCollections> _taskViews(Task task) {
     var now = DateUtils.dateOnly(clock.now());
-    List<TaskCollections> views = [];
+    Set<TaskCollections> views = {};
 
     // If the task has a due date expire upcoming and possibly
     // today views.
@@ -146,10 +146,10 @@ class LocalDatabase {
   /// Update a task in the local database.
   ///
   /// This will update all task views with the new data.
-  Future<void> updateTask(Task task, {String? previousProject}) async {
+  Future<void> updateTask(Task task) async {
     List<Future> futures = [];
     futures.add(taskDetails.set(task));
-    futures.add(projectDetails.updateTask(task, previousProject: previousProject));
+    futures.add(projectDetails.updateTask(task));
 
     for (var view in _taskViews(task)) {
       switch (view) {
@@ -182,7 +182,7 @@ class LocalDatabase {
   }
 
   Future<void> undeleteTask(Task task) async {
-    await trashbin.clear();
+    trashbin.expire();
 
     return expireTask(task);
   }
@@ -729,10 +729,11 @@ class ProjectDetailsView extends ViewCache<ProjectWithTasks> {
 
   /// Replace a task in both the current and previous projects.
   ///
-  /// Uses `task.projectId` and `task.previousProjectId` to find
+  /// Uses `task.projectSlug` and `previousProject` to find
   /// projects that need to be updated. Will notify.
-  Future<void> updateTask(Task task, {String? previousProject}) async {
+  Future<void> updateTask(Task task) async {
     // The task was moved between projects.
+    var previousProject = task.previousProjectSlug;
     if (previousProject != null && previousProject != task.projectSlug) {
       var source = await get(previousProject);
       var index = source.tasks.indexWhere((item) => item.id == task.id);

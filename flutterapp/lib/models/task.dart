@@ -5,14 +5,14 @@ import 'package:docket/models/calendaritem.dart';
 
 class Task {
   int? id;
-  int? _projectId;
+  int? projectId;
   String projectSlug;
   String projectName;
   int projectColor;
   int? sectionId;
   String title;
   String body;
-  DateTime? _dueOn;
+  DateTime? dueOn;
   int childOrder;
   int dayOrder;
   bool evening;
@@ -23,18 +23,18 @@ class Task {
   int completeSubtaskCount;
 
   DateTime? previousDueOn;
-  int? previousProjectId;
+  String? previousProjectSlug;
 
   Task({
     this.id,
-    required projectId,
+    required this.projectId,
     required this.projectSlug,
     required this.projectName,
     required this.projectColor,
     this.sectionId,
     required this.title,
     required this.body,
-    dueOn,
+    this.dueOn,
     required this.childOrder,
     required this.dayOrder,
     required this.evening,
@@ -43,7 +43,7 @@ class Task {
     this.subtasks = const [],
     this.subtaskCount = 0,
     this.completeSubtaskCount = 0,
-  }) : _dueOn = dueOn, _projectId = projectId;
+  });
 
   factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
     return Task(
@@ -130,7 +130,7 @@ class Task {
   Map<String, Object?> toMap() {
     String? dueOnDate;
     if (dueOn != null) {
-      dueOnDate = formatters.dateString(_dueOn!);
+      dueOnDate = formatters.dateString(dueOn!);
     }
     return {
       'id': id,
@@ -154,18 +154,6 @@ class Task {
     };
   }
 
-  set dueOn(DateTime? value) {
-    previousDueOn = dueOn;
-    _dueOn = value;
-  }
-  DateTime? get dueOn => _dueOn;
-
-  set projectId(int? value) {
-    previousProjectId = projectId;
-    _projectId = value;
-  }
-  int? get projectId => _projectId;
-
   String get dateKey {
     if (dueOn == null) {
       return 'No Due Date';
@@ -179,11 +167,11 @@ class Task {
 
   bool get isToday {
     var today = DateUtils.dateOnly(DateTime.now());
-    return _dueOn == today;
+    return dueOn == today;
   }
 
   bool get hasDueDate {
-    return _dueOn != null;
+    return dueOn != null;
   }
 }
 

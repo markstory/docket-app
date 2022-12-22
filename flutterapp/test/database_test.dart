@@ -84,6 +84,7 @@ void main() {
       task.dueOn = today;
 
       database.expireTask(task);
+
       database.today.removeListener(todayCounter);
       database.upcoming.removeListener(upcomingCounter);
       database.projectDetails.removeListener(detailsCounter);
@@ -91,6 +92,9 @@ void main() {
       expect(todayCounter.callCount, equals(1));
       expect(upcomingCounter.callCount, equals(1));
       expect(detailsCounter.callCount, equals(1));
+      expect(database.today.isExpired, isTrue);
+      expect(database.upcoming.isExpired, isTrue);
+      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
     });
 
     test('expireTask() expires only upcoming', () async {
@@ -108,6 +112,30 @@ void main() {
       database.upcoming.removeListener(upcomingCounter);
 
       expect(todayCounter.callCount, equals(0));
+      expect(upcomingCounter.callCount, equals(1));
+
+      expect(database.today.isExpired, isFalse);
+      expect(database.upcoming.isExpired, isTrue);
+      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+    });
+
+    test('expireTask() removes from today when moving out', () async {
+      var todayCounter = CallCounter();
+      var upcomingCounter = CallCounter();
+      database.today.addListener(todayCounter);
+      database.upcoming.addListener(upcomingCounter);
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectSlug = 'home';
+      task.previousDueOn = today;
+      task.dueOn = tomorrow;
+
+      database.expireTask(task);
+      database.today.removeListener(todayCounter);
+      database.upcoming.removeListener(upcomingCounter);
+
+      expect(todayCounter.callCount, equals(1));
       expect(upcomingCounter.callCount, equals(1));
     });
 
@@ -196,6 +224,7 @@ void main() {
 
       await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
 
+      task.previousDueOn = task.dueOn;
       task.dueOn = tomorrow;
       await database.updateTask(task);
 
@@ -240,11 +269,11 @@ void main() {
       var task = Task.blank(projectId: project.id);
       task.id = 1;
       task.title = 'Dig up potatoes';
-      task.dueOn = tomorrow;
       task.projectSlug = 'home';
-
-      // Simulate an update
       task.dueOn = null;
+
+      // Simulate moving from upcoming -> none
+      task.previousDueOn = tomorrow;
 
       database.upcoming.addListener(callListener);
       await database.updateTask(task);
@@ -305,8 +334,9 @@ void main() {
       task.projectId = 2;
       task.projectSlug = 'work';
       task.title = 'Do accounting';
+      task.previousProjectSlug = 'home';
 
-      await database.updateTask(task, previousProject: 'home');
+      await database.updateTask(task);
 
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(0));
