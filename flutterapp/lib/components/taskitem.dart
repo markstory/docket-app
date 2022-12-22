@@ -94,9 +94,11 @@ class TaskActions extends StatelessWidget {
         context: context, 
         content: "Are you sure you want to delete this task?",
         onConfirm: () async {
+          var navigator = Navigator.of(context);
           try {
             await tasksProvider.deleteTask(task);
             messenger.showSnackBar(successSnackBar(context: context, text: 'Task Deleted'));
+            navigator.pop();
           } catch (e) {
             messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete task'));
           }
