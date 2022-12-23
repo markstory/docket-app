@@ -9,26 +9,21 @@ void main() {
 
   late SessionProvider provider;
   late ApiToken token;
-  int listenerCallCount = 0;
   var dbhandler = LocalDatabase.instance();
 
   group('$SessionProvider', () {
     setUp(() {
-      listenerCallCount = 0;
-      provider = SessionProvider(dbhandler)
-        ..addListener(() {
-          listenerCallCount += 1;
-        });
+      provider = SessionProvider(dbhandler, token: 'old-value');
       token = ApiToken.fromMap({'token': 'abc123', 'lastUsed': null});
     });
 
-    test('saveToken()', skip: true, () async {
-      // For some reason this fails in CI
-      expect(() => provider.apiToken, throwsA(isA<Exception>()));
+    test('saveToken()', () async {
+      var counter = CallCounter();
+      provider.addListener(counter);
 
       await provider.saveToken(token);
       expect(provider.apiToken, equals('abc123'));
-      expect(listenerCallCount, greaterThan(0));
+      expect(counter.callCount, equals(1));
     });
 
     test('clearing token', () async {
@@ -37,6 +32,7 @@ void main() {
 
       provider.clear();
       expect(provider.hasToken, isFalse);
+      expect(() => provider.apiToken, throwsA(isA<Exception>()));
     });
   });
 }
