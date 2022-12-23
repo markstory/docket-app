@@ -89,7 +89,7 @@ void main() {
       var created = await viewmodel.create(task);
       expect(created.id, equals(1));
       expect(viewmodel.id, equals(created.id));
-      expect(viewmodel.task, equals(created));
+      expect(viewmodel.task.id, equals(created.id));
     });
 
     test('reorderSubtask() sends request, updates local', () async {
