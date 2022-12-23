@@ -419,6 +419,7 @@ void main() {
       task.projectId = 1;
       task.projectSlug = 'home';
 
+      await database.taskDetails.set(task);
       await database.today.set(TaskViewData(tasks: [task], calendarItems: []));
       await database.upcoming.set(TaskViewData(calendarItems: [], tasks: [task]));
 
@@ -427,21 +428,8 @@ void main() {
       expect(todayData.tasks.length, equals(0));
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(0));
-    });
-
-    test('deleteTask() removes from task details', () async {
-      var task = Task.blank(projectId: project.id);
-      task.id = 1;
-      task.title = 'Dig up potatoes';
-      task.dueOn = today;
-      task.projectId = 1;
-      task.projectSlug = 'home';
-
-      await database.taskDetails.set(task);
-
-      await database.deleteTask(task);
-      var result = await database.taskDetails.get(task.id!);
-      expect(result, isNull);
+      var details = await database.taskDetails.get(task.id!);
+      expect(details, isNotNull);
     });
 
     test('deleteTask() removes from project details', () async {

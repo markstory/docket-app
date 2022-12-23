@@ -186,23 +186,26 @@ class LocalDatabase {
     if (id == null) {
       return;
     }
-    // TODO convert this to Future.wait(...)
-    await taskDetails.remove(id);
-    await projectDetails.removeTask(task.projectSlug, task);
-    await projectMap.decrement(task.projectSlug);
+    // We intentionally don't delete from task details as
+    // completed tasks (which are roughly deleted) still
+    // exist.
+    List<Future> futures = [];
+    futures.add(projectDetails.removeTask(task.projectSlug, task));
+    futures.add(projectMap.decrement(task.projectSlug));
 
     for (var view in _taskViews(task)) {
       switch (view) {
         case TaskCollections.today:
-          await today.removeTask(task);
+          futures.add(today.removeTask(task));
           break;
         case TaskCollections.upcoming:
-          await upcoming.removeTask(task);
+          futures.add(upcoming.removeTask(task));
           break;
         default:
           throw Exception('Cannot expire view of $view');
       }
     }
+    await Future.wait(futures);
 
     return expireTask(task);
   }
