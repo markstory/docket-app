@@ -1,0 +1,17 @@
+{
+  "task": {
+    "id": 1,
+    "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
+    "title": "clean the house",
+    "body": "",
+    "evening": false,
+    "completed": false,
+    "due_on": "__TODAY__",
+    "child_order": 0,
+    "day_order": 0,
+    "subtasks": [
+      {"id": 1, "title": "vacuum", "ranking": 0, "completed": false},
+      {"id": 2, "title": "clean bathrooms", "ranking": 0, "completed": true}
+    ]
+  }
+}

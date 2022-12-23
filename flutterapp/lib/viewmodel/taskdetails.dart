@@ -17,10 +17,17 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   TaskDetailsViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.taskDetails.addListener(listener);
+  }
 
-    _database.taskDetails.addListener(() async {
-      fetchTask();
-    });
+  @override
+  void dispose() {
+    _database.taskDetails.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    fetchTask();
   }
 
   bool get loading => _loading;

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:json_cache/json_cache.dart';
@@ -51,8 +53,8 @@ class LocalDatabase {
   late CalendarProviderListCache calendarList;
   late CalendarProviderDetailsCache calendarDetails;
 
-  LocalDatabase() {
-    var db = database();
+  LocalDatabase({bool inTest = false}) {
+    var db = database(inTest: inTest);
     today = TodayView(db, const Duration(hours: 1));
     upcoming = UpcomingView(db, const Duration(hours: 1));
     taskDetails = TaskDetailsView(db, const Duration(hours: 1));
@@ -72,12 +74,21 @@ class LocalDatabase {
   }
 
   /// Lazily create the database.
-  JsonCache database() {
+  JsonCache database({bool inTest = false}) {
     if (_database != null) {
       return _database!;
     }
-    final LocalStorage storage = LocalStorage(dbName);
-    _database = JsonCacheMem(JsonCacheLocalStorage(storage));
+
+
+    JsonCache adapter;
+    if (inTest) {
+      developer.log("! Using fake json_cache backend.");
+      adapter = JsonCacheFake();
+    } else {
+      final LocalStorage storage = LocalStorage(dbName);
+      adapter = JsonCacheLocalStorage(storage);
+    }
+    _database = JsonCacheMem(adapter);
     return _database!;
   }
 

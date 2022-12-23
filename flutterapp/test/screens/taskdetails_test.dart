@@ -18,14 +18,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var today = DateUtils.dateOnly(DateTime.now());
-  var file = File('test_resources/task_create_today.json');
+  var file = File('test_resources/task_details.json');
   final taskDetails = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
   file = File('test_resources/project_list.json');
   final projectListResponse = file.readAsStringSync();
 
   group('$TaskDetailsScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var decoded = jsonDecode(projectListResponse);
     var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
 
@@ -46,6 +46,7 @@ void main() {
         }
         if (request.url.path == '/tasks/1/edit') {
           callCount += 1;
+          expect(request.body.contains("Rake leaves"), isTrue);
           return Response(taskDetails, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -55,18 +56,32 @@ void main() {
           database: db,
           child: TaskDetailsScreen(task),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       await tester.enterText(find.byKey(const ValueKey('title')), "Rake leaves");
-
       await tester.tap(find.text('Save'));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(callCount, equals(1));
+    });
+
+    testWidgets('renders notes & subtasks', (tester) async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/view') {
+          return Response(taskDetails, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: TaskDetailsScreen(task),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('clean the house'), findsOneWidget);
+      expect(find.text('vacuum'), findsOneWidget);
+      expect(find.text('clean bathrooms'), findsOneWidget);
     });
   });
 }
