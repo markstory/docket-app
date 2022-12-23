@@ -26,11 +26,11 @@ void main() {
   var decoded = jsonDecode(projectListResponse);
 
   group('$TaskAddScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
       await db.projectMap.addMany(projects);
     });
 
@@ -60,9 +60,7 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('title')), "Rake leaves");
 
       await tester.tap(find.text('Save'));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(callCount, equals(1));
     });

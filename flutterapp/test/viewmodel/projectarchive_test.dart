@@ -15,7 +15,7 @@ void main() {
   final projectListResponse = file.readAsStringSync();
 
   group('$ProjectArchiveViewModel', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {

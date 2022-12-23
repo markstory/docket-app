@@ -20,9 +20,17 @@ class TrashbinViewModel extends ChangeNotifier {
     _database = database;
     _tasks = [];
 
-    _database.trashbin.addListener(() async {
-      loadData();
-    });
+    _database.trashbin.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    _database.trashbin.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    loadData();
   }
 
   bool get loading => _loading;

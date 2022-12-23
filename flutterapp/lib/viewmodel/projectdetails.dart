@@ -22,12 +22,20 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   String? _slug;
 
   ProjectDetailsViewModel(LocalDatabase database, this.session) {
-    _database = database;
     _taskLists = [];
 
-    _database.projectDetails.addListener(() async {
-      loadData();
-    });
+    _database = database;
+    _database.projectDetails.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    _database.projectDetails.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    loadData();
   }
 
   Project get project {

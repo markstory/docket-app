@@ -23,7 +23,7 @@ void main() {
   final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
   group('$TaskDetailsViewModel', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
@@ -91,6 +91,7 @@ void main() {
     });
 
     test('reorderSubtask() sends request, updates local', () async {
+      // TODO
     });
   });
 }

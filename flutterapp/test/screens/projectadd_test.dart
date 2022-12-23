@@ -17,10 +17,10 @@ void main() {
   final projectDetails = file.readAsStringSync();
 
   group('$ProjectAddScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
     });
 
     testWidgets('set name and send request', (tester) async {
@@ -45,10 +45,7 @@ void main() {
 
       await tester.enterText(find.byKey(const ValueKey('project-name')), "New name");
       await tester.tap(find.text('Save'));
-
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(callCount, equals(1));
     });

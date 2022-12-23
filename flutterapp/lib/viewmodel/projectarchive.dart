@@ -18,11 +18,18 @@ class ProjectArchiveViewModel extends ChangeNotifier {
 
   ProjectArchiveViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.projectArchive.addListener(listener);
     _projects = [];
+  }
 
-    _database.projectArchive.addListener(() async {
-      refresh();
-    });
+  @override
+  void dispose() {
+    _database.projectArchive.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    refresh();
   }
 
   bool get loading => _loading;

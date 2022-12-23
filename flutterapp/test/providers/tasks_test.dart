@@ -54,7 +54,7 @@ void main() {
   file = File('test_resources/subtask_update.json');
   final subtaskUpdateResponse = file.readAsStringSync();
 
-  var db = LocalDatabase.instance();
+  var db = LocalDatabase(inTest: true);
 
   Future<void> setTodayView(List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);

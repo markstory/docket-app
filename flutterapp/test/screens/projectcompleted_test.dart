@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,10 +17,11 @@ void main() {
   var decoded = jsonDecode(projectDetails) as Map<String, dynamic>;
 
   group('$ProjectCompletedScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var viewdata = ProjectWithTasks.fromMap(decoded);
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.completedTasks.set(viewdata);
     });
 
@@ -28,9 +30,7 @@ void main() {
           database: db,
           child: ProjectCompletedScreen(viewdata.project),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(find.text('clean dishes'), findsOneWidget);
       expect(find.text('cut grass'), findsOneWidget);
@@ -48,9 +48,7 @@ void main() {
           },
           child: ProjectCompletedScreen(viewdata.project),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('clean dishes'));
       await tester.pumpAndSettle();

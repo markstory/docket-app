@@ -11,6 +11,9 @@ class ApiToken {
       lastUsed: json['last_used'],
     );
   }
+  factory ApiToken.fake() {
+    return ApiToken(token: 'abc123');
+  }
 
   ApiToken copy({
     String? token,

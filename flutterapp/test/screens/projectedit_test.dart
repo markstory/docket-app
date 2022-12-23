@@ -20,11 +20,11 @@ void main() {
   var decoded = jsonDecode(projectDetails) as Map<String, dynamic>;
 
   group('$ProjectEditScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var viewdata = ProjectWithTasks.fromMap(decoded);
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
       await db.projectDetails.set(viewdata);
     });
 

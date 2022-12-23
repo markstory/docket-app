@@ -38,6 +38,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
     return value!;
   }
+
   Task get task {
     var value = _task;
     assert(value != null, "Cannot read task it has not been set.");
@@ -123,8 +124,10 @@ class TaskDetailsViewModel extends ChangeNotifier {
   /// Create a task on the server and notify listeners.
   Future<Task> create(Task task) async {
     task = await actions.createTask(session!.apiToken, task);
-    await _database.createTask(task);
+    _id = task.id;
+    _task = task;
 
+    await _database.createTask(task);
     notifyListeners();
 
     return task;

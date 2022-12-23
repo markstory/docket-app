@@ -8,7 +8,7 @@ import 'package:docket/forms/project.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
 
   Widget renderForm(Project project, Future<void> Function(Project project) onSave) {
     return EntryPoint(database: database, child: Scaffold(body: ProjectForm(project: project, onSave: onSave)));

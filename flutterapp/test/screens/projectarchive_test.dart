@@ -20,11 +20,11 @@ void main() {
   var decoded = jsonDecode(projectList) as Map<String, dynamic>;
 
   group('$ProjectArchiveScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
       await db.projectArchive.set(projects);
     });
 

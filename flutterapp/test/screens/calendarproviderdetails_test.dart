@@ -24,7 +24,7 @@ void main() {
   CalendarProvider provider = CalendarProvider.fromMap(decoded["provider"]);
 
   group('$CalendarProviderDetailsScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
       await db.apiToken.set(ApiToken(token: 'abc123'));

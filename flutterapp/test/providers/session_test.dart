@@ -9,7 +9,7 @@ void main() {
 
   late SessionProvider provider;
   late ApiToken token;
-  var dbhandler = LocalDatabase.instance();
+  var dbhandler = LocalDatabase(inTest: true);
 
   group('$SessionProvider', () {
     setUp(() {

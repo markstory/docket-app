@@ -26,7 +26,7 @@ void main() {
   final projectCompletedResponse = file.readAsStringSync();
 
   group('$ProjectCompletedViewModel', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {

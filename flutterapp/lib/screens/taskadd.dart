@@ -26,8 +26,8 @@ class TaskAddScreen extends StatelessWidget {
 
       try {
         await viewmodel.create(task);
-        complete();
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
+        complete();
       } catch (e, stacktrace) {
         developer.log("Failed to create task ${e.toString()} $stacktrace");
         messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to create task.'));

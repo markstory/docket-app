@@ -25,10 +25,17 @@ class UpcomingViewModel extends ChangeNotifier {
 
   UpcomingViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.upcoming.addListener(listener);
+  }
 
-    _database.upcoming.addListener(() async {
-      loadData();
-    });
+  @override
+  void dispose() {
+    _database.upcoming.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    loadData();
   }
 
   bool get loading => (_loading && !_silentLoading);

@@ -16,7 +16,7 @@ void main() {
   final profileResponseFixture = file.readAsStringSync();
 
   group('$UserProfileViewModel', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var session = SessionProvider(db, token: 'api-token');
     var notifyCount = 0;
 

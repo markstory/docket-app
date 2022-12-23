@@ -14,7 +14,7 @@ import 'package:docket/dialogs/renamesection.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
   var file = File('test_resources/project_details.json');
 
   final projectDetails = file.readAsStringSync();

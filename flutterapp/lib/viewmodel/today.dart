@@ -27,12 +27,19 @@ class TodayViewModel extends ChangeNotifier {
   TaskSortMetadata? _overdue;
 
   TodayViewModel(LocalDatabase database, this.session) {
-    _database = database;
     _taskLists = [];
+    _database = database;
+    _database.today.addListener(listener);
+  }
 
-    _database.today.addListener(() async {
-      loadData();
-    });
+  @override
+  void dispose() {
+    _database.today.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    loadData();
   }
 
   bool get loading => _loading && !_silentLoading;

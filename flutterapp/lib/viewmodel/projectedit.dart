@@ -16,10 +16,17 @@ class ProjectEditViewModel extends ChangeNotifier {
 
   ProjectEditViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.projectDetails.addListener(listener);
+  }
 
-    _database.projectDetails.addListener(() async {
-      refresh();
-    });
+  @override
+  void dispose() {
+    _database.projectDetails.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    refresh();
   }
 
   bool get loading => _loading;

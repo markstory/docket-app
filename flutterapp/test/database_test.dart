@@ -9,7 +9,7 @@ import 'package:docket/models/task.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
 

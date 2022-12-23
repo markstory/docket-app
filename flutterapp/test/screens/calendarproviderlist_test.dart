@@ -19,10 +19,10 @@ void main() {
       (decoded["providers"] as List).map<CalendarProvider>((item) => CalendarProvider.fromMap(item)).toList();
 
   group('$CalendarProviderListScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
       await db.calendarList.set(providers);
     });
 

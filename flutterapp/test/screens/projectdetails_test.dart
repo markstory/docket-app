@@ -19,11 +19,11 @@ void main() {
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$ProjectDetailsScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var viewdata = ProjectWithTasks.fromMap(decoded);
 
     setUp(() async {
-      await db.apiToken.set(ApiToken(token: 'abc123'));
+      await db.apiToken.set(ApiToken.fake());
       await db.projectDetails.set(viewdata);
     });
 
@@ -41,11 +41,9 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        // tap the floating add button. Should go to task add
-        await tester.tap(find.byKey(const ValueKey('floating-task-add')));
-        await tester.pumpAndSettle();
-      });
+      // tap the floating add button. Should go to task add
+      await tester.tap(find.byKey(const ValueKey('floating-task-add')));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
     });
@@ -75,10 +73,8 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        await tester.tap(find.text('clean dishes'));
-        await tester.pumpAndSettle();
-      });
+      await tester.tap(find.text('clean dishes'));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
     });

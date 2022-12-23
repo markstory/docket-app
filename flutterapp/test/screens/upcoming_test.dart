@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,11 +19,12 @@ void main() {
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$UpcomingScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
       var viewdata = TaskViewData.fromMap(decoded);
       await db.upcoming.set(viewdata);
+      await db.apiToken.set(ApiToken.fake());
     });
 
     testWidgets('floating add button navigates to task add', (tester) async {
@@ -38,11 +40,9 @@ void main() {
           child: const UpcomingScreen(),
       ));
 
-      await tester.runAsync(() async {
-        // tap the floating add button. Should go to task add
-        await tester.tap(find.byKey(const ValueKey('floating-task-add')));
-        await tester.pumpAndSettle();
-      });
+      // tap the floating add button. Should go to task add
+      await tester.tap(find.byKey(const ValueKey('floating-task-add')));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
     });
@@ -72,10 +72,8 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        await tester.tap(find.text('clean dishes'));
-        await tester.pumpAndSettle();
-      });
+      await tester.tap(find.text('clean dishes'));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
     });

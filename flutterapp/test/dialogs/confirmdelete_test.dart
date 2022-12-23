@@ -7,7 +7,7 @@ import 'package:docket/dialogs/confirmdelete.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
 
   Widget buildButton(void Function() onConfirm) {
     return EntryPoint(

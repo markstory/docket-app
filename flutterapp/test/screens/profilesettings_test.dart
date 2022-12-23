@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -18,13 +19,15 @@ void main() {
   final profileResponseFixture = file.readAsStringSync();
 
   group('$ProfileSettingsScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
       await db.profile.clearSilent();
+
       var decoded = jsonDecode(profileResponseFixture);
       var profile = UserProfile.fromMap(decoded['user']);
       await db.profile.set(profile);
+      await db.apiToken.set(ApiToken.fake());
     });
 
     testWidgets('shows form', (tester) async {
@@ -32,9 +35,7 @@ void main() {
           database: db,
           child: const ProfileSettingsScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(find.text('Profile Settings'), findsOneWidget);
       expect(find.text('Mark Story'), findsOneWidget);
@@ -56,16 +57,12 @@ void main() {
           database: db,
           child: const ProfileSettingsScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       await tester.enterText(find.byKey(const ValueKey('name')), 'New Name!');
       await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
       expect(callCount, equals(1));
     });
   });

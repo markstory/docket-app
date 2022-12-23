@@ -17,7 +17,7 @@ void main() {
   var loginResponse = file.readAsStringSync();
 
   group('$LoginScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
       await db.apiToken.clearSilent();

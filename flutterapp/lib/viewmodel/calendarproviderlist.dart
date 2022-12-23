@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 import 'package:docket/actions.dart' as actions;
@@ -19,11 +18,18 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   CalendarProviderListViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.calendarList.addListener(listener);
     _providers = [];
+  }
 
-    _database.calendarList.addListener(() async {
-      refresh();
-    });
+  @override
+  void dispose() {
+    _database.calendarList.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    refresh();
   }
 
   bool get loading => _loading;

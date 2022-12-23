@@ -19,10 +19,17 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   CalendarProviderDetailsViewModel(LocalDatabase database, this.session) {
     _database = database;
+    _database.calendarList.addListener(listener);
+  }
 
-    _database.calendarList.addListener(() async {
-      refresh();
-    });
+  @override
+  void dispose() {
+    _database.calendarList.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    refresh();
   }
 
   bool get loading => _loading;

@@ -18,7 +18,7 @@ void main() {
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$TodayScreen', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
 
     setUp(() async {
       await db.today.clear();

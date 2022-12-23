@@ -22,12 +22,20 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   String _slug = '';
 
   ProjectCompletedViewModel(LocalDatabase database, this.session) {
-    _database = database;
     _tasks = [];
 
-    _database.completedTasks.addListener(() async {
-      loadData();
-    });
+    _database = database;
+    _database.completedTasks.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    _database.completedTasks.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    loadData();
   }
 
   bool get loading => (_loading && !_silentLoading);

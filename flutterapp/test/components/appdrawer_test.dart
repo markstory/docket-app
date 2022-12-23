@@ -20,7 +20,7 @@ void main() {
   file = File('test_resources/project_list.json');
   final projectListResponse = file.readAsStringSync();
 
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
 
   group('$AppDrawer', () {
     var decoded = jsonDecode(profileResponse);

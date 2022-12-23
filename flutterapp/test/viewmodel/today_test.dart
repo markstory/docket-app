@@ -56,7 +56,7 @@ void main() {
   }
 
   group('$TodayViewModel', () {
-    var db = LocalDatabase.instance();
+    var db = LocalDatabase(inTest: true);
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {

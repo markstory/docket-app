@@ -10,7 +10,7 @@ import 'package:docket/dialogs/changeproject.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  var database = LocalDatabase.instance();
+  var database = LocalDatabase(inTest: true);
   var file = File('test_resources/project_list.json');
 
   final projectList = file.readAsStringSync();
