@@ -57,12 +57,34 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
+      var counter = CallCounter();
       var viewmodel = ProjectCompletedViewModel(db, session);
+      viewmodel.addListener(counter);
       expect(viewmodel.tasks.length, equals(0));
 
       viewmodel.setSlug('home');
       await viewmodel.refresh();
       expect(viewmodel.tasks.length, equals(2));
+      expect(counter.callCount, equals(1));
+    });
+
+    test('refreshSilent() loads data from the server', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          return Response(projectCompletedResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = ProjectCompletedViewModel(db, session);
+      var counter = CallCounter();
+      viewmodel.addListener(counter);
+      expect(viewmodel.tasks.length, equals(0));
+
+      viewmodel.setSlug('home');
+      await viewmodel.refreshSilent();
+      expect(viewmodel.tasks.length, equals(2));
+      expect(counter.callCount, equals(0));
     });
   });
 }

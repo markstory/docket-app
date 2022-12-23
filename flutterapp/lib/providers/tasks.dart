@@ -47,7 +47,7 @@ class TasksProvider extends ChangeNotifier {
       await _database.deleteTask(task);
     } else {
       await _database.updateTask(task);
-      _database.completedTasks.expire();
+      _database.completedTasks.expire(notify: true);
     }
 
     notifyListeners();

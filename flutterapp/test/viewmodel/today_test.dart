@@ -133,11 +133,35 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
+      var counter = CallCounter();
       var viewmodel = TodayViewModel(db, session);
+      viewmodel.addListener(counter);
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
       expect(viewmodel.taskLists[0].tasks.length, equals(2));
+      expect(counter.callCount, equals(1));
+    });
+
+    test('refreshTasks() loads data from the server', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/today') {
+          return Response(tasksTodayResponseFixture, 200);
+        }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var counter = CallCounter();
+      var viewmodel = TodayViewModel(db, session);
+      viewmodel.addListener(counter);
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.refreshTasks();
+      expect(viewmodel.taskLists[0].tasks.length, equals(2));
+      expect(counter.callCount, equals(1));
     });
 
     test('moveOverdue() can add tasks', () async {

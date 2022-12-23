@@ -12,6 +12,8 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
+  /// Are we reloading without a spinner?
+  bool _silentLoading = false;
 
   /// Task list
   List<Task> _tasks = [];
@@ -28,7 +30,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     });
   }
 
-  bool get loading => _loading;
+  bool get loading => (_loading && !_silentLoading);
   List<Task> get tasks => _tasks;
   String get slug => _slug;
 
@@ -56,9 +58,11 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     await fetchData();
-    // TODO implement better background refresh.
-    if (!_loading && (_tasks.isEmpty || !_database.completedTasks.isFresh())) {
+    if (!_loading && _tasks.isEmpty) {
       return refresh();
+    }
+    if (!_loading && !_database.completedTasks.isFresh()) {
+      return refreshSilent();
     }
   }
 
@@ -73,5 +77,19 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     _tasks = result.tasks;
 
     notifyListeners();
+  }
+
+  /// Refresh from the server without a loading indicator
+  Future<void> refreshSilent() async {
+    assert(_slug.isNotEmpty, "A slug is required to load data");
+
+    _loading = _silentLoading = true;
+
+    var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
+    await _database.completedTasks.set(result);
+
+    _loading = _silentLoading = false;
+
+    _tasks = result.tasks;
   }
 }

@@ -15,7 +15,7 @@ class TodayViewModel extends ChangeNotifier {
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
-  bool _taskRefreshLoading = false;
+  bool _silentLoading = false;
 
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
@@ -35,7 +35,7 @@ class TodayViewModel extends ChangeNotifier {
     });
   }
 
-  bool get loading => _loading;
+  bool get loading => _loading && !_silentLoading;
   bool get loadError => _loadError;
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
@@ -58,7 +58,7 @@ class TodayViewModel extends ChangeNotifier {
     if (!_loading && taskView.isEmpty) {
       return refresh();
     }
-    if ((!_loading || !_taskRefreshLoading) && !_database.today.isFresh()) {
+    if (!_loading && !_database.today.isFresh()) {
       await refreshTasks();
     }
   }
@@ -66,10 +66,12 @@ class TodayViewModel extends ChangeNotifier {
   /// Refresh tasks from server state. Does not use loading
   /// state.
   Future<void> refreshTasks() async {
-    _taskRefreshLoading = true;
+    _loading = _silentLoading = true;
+
     var taskView = await actions.fetchTodayTasks(session!.apiToken);
     _database.today.set(taskView);
-    _taskRefreshLoading = false;
+
+    _loading = _silentLoading = false;
     _buildTaskLists(taskView);
   }
 
