@@ -6,15 +6,6 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 
-class CallCounter {
-  int callCount = 0;
-  CallCounter(): callCount = 0;
-
-  void call() {
-    callCount += 1;
-  }
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -35,15 +35,6 @@ Project parseProjectDetails(String data) {
   return Project.fromMap(decoded['project']);
 }
 
-class CallCounter {
-  int callCount = 0;
-  CallCounter(): callCount = 0;
-
-  void call() {
-    callCount += 1;
-  }
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -13,6 +13,17 @@ enum TaskCollections {
   today, upcoming, projectDetails, trashBin
 }
 
+/// Utility class that makes testing listeners easier.
+class CallCounter {
+  int callCount = 0;
+  CallCounter(): callCount = 0;
+
+  void call() {
+    callCount += 1;
+  }
+}
+
+
 class LocalDatabase {
   static final LocalDatabase _instance = LocalDatabase();
 
