@@ -90,7 +90,7 @@ void main() {
         if (request.url.path == '/tasks/1/view') {
           return Response(taskDetails, 200);
         }
-        if (request.url.path == '/tasks/1/subtasks/1/complete') {
+        if (request.url.path == '/tasks/1/subtasks/1/toggle') {
           callCount += 1;
           return Response(taskDetails, 200);
         }
@@ -107,7 +107,8 @@ void main() {
       expect(find.text('vacuum'), findsOneWidget);
 
       // Tap checkbox.
-      await tester.tap(find.byKey(const ValueKey('subtask-complete')).first);
+      var checkbox =find.descendant(of: find.byKey(const ValueKey('subtask-1')), matching: find.byType(Checkbox));
+      await tester.tap(checkbox);
       await tester.pumpAndSettle();
 
       expect(callCount, equals(1));

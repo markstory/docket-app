@@ -72,10 +72,10 @@ class _SubtaskItemState extends State<SubtaskItem> {
     var subtask = widget.subtask;
 
     return ListTile(
+      key: ValueKey('subtask-${subtask.id}'),
       contentPadding: EdgeInsets.fromLTRB(space(0.3), space(0.5), space(1), space(0.5)),
       dense: true,
       leading: Checkbox(
-          key: const ValueKey('subtask-checkbox'),
           activeColor: customColors.actionComplete,
           checkColor: Colors.white,
           value: subtask.completed,
