@@ -62,4 +62,31 @@ void main() {
       expect(requestCount, equals(1));
     });
   });
+
+  group('$LoginRequired', () {
+    var db = LocalDatabase(inTest: true);
+
+    setUp(() async {
+      await db.apiToken.clearSilent();
+    });
+
+    testWidgets('show child with session', (tester) async {
+      await db.apiToken.set(ApiToken.fake());
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const LoginRequired(child: Text('Content Text'))
+        ));
+      await tester.pumpAndSettle();
+      expect(find.text('Content Text'), findsOneWidget);
+    });
+
+    testWidgets('show Login without session', (tester) async {
+      await db.apiToken.set(ApiToken.fake());
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const LoginRequired(child: Text('Content Text'))
+        ));
+      expect(find.text('Content Text'), findsNothing);
+    });
+  });
 }
