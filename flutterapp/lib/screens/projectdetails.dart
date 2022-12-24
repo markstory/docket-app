@@ -1,4 +1,5 @@
 import 'package:docket/components/loadingindicator.dart';
+import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
@@ -128,12 +129,17 @@ class SectionActions extends StatelessWidget {
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> handleDelete() async {
-      try {
-        await projectsProvider.deleteSection(project, section);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Section Deleted'));
-      } catch (e) {
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete section task'));
-      }
+      showConfirmDelete(
+        context: context, 
+        content: "Are you sure you want to delete this section?",
+        onConfirm: () async {
+          try {
+            await projectsProvider.deleteSection(project, section);
+            messenger.showSnackBar(successSnackBar(context: context, text: 'Section Deleted'));
+          } catch (e) {
+            messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete section task'));
+          }
+        });
     }
 
     Future<void> handleEdit() async {
@@ -145,29 +151,32 @@ class SectionActions extends StatelessWidget {
       }
     }
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
-      var actions = {
-        Menu.edit: handleEdit,
-        Menu.delete: handleDelete,
-      };
-      actions[item]?.call();
-    }, itemBuilder: (BuildContext context) {
-      return <PopupMenuEntry<Menu>>[
-        PopupMenuItem<Menu>(
-          value: Menu.edit,
-          child: ListTile(
-            leading: Icon(Icons.edit, color: customColors.actionEdit),
-            title: const Text('Rename'),
+    return PopupMenuButton<Menu>(
+      key: const ValueKey('section-actions'),
+      onSelected: (Menu item) {
+        var actions = {
+          Menu.edit: handleEdit,
+          Menu.delete: handleDelete,
+        };
+        actions[item]?.call();
+      },
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<Menu>>[
+          PopupMenuItem<Menu>(
+            value: Menu.edit,
+            child: ListTile(
+              leading: Icon(Icons.edit, color: customColors.actionEdit),
+              title: const Text('Rename'),
+            ),
           ),
-        ),
-        PopupMenuItem<Menu>(
-          value: Menu.delete,
-          child: ListTile(
-            leading: Icon(Icons.delete, color: customColors.actionDelete),
-            title: const Text('Delete'),
+          PopupMenuItem<Menu>(
+            value: Menu.delete,
+            child: ListTile(
+              leading: Icon(Icons.delete, color: customColors.actionDelete),
+              title: const Text('Delete'),
+            ),
           ),
-        ),
-      ];
-    });
+        ];
+      });
   }
 }

@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:docket/database.dart';
+import 'package:docket/actions.dart' as actions;
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/main.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/screens/projectdetails.dart';
+import 'package:http/http.dart';
+import 'package:http/testing.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -117,6 +120,72 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('section-name')), findsOneWidget);
+    });
+
+    testWidgets('rename section sends requests', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home/sections/1/edit') {
+          expect(request.body.contains('Renamed section'), isTrue);
+          callCount += 1;
+
+          return Response('', 200);
+        }
+        throw Exception('Unmocked request to ${request.url.path} made');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: ProjectDetailsScreen(viewdata.project),
+      ));
+      await tester.pumpAndSettle();
+
+      // open menu
+      await tester.tap(find.byKey(const ValueKey('section-actions')).first);
+      await tester.pumpAndSettle();
+
+      // Open rename dialog
+      await tester.tap(find.text('Rename'));
+      await tester.pumpAndSettle();
+
+      // Fill out dialog
+      await tester.enterText(find.byKey(const ValueKey('section-name')), 'Renamed section');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('delete section sends requests', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home/sections/1/delete') {
+          callCount += 1;
+
+          return Response('', 200);
+        }
+        throw Exception('Unmocked request to ${request.url.path} made');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: ProjectDetailsScreen(viewdata.project),
+      ));
+      await tester.pumpAndSettle();
+
+      // open menu
+      await tester.tap(find.byKey(const ValueKey('section-actions')).first);
+      await tester.pumpAndSettle();
+
+      // Open Delete dialog
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      // Confirm dialog
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
     });
   });
 }
