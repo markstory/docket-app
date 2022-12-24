@@ -83,5 +83,34 @@ void main() {
       expect(find.text('vacuum'), findsOneWidget);
       expect(find.text('clean bathrooms'), findsOneWidget);
     });
+
+    testWidgets('can complete subtask', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/view') {
+          return Response(taskDetails, 200);
+        }
+        if (request.url.path == '/tasks/1/subtasks/1/complete') {
+          callCount += 1;
+          return Response(taskDetails, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: TaskDetailsScreen(task),
+      ));
+      await tester.pumpAndSettle();
+
+      // Ensure task is there.
+      expect(find.text('vacuum'), findsOneWidget);
+
+      // Tap checkbox.
+      await tester.tap(find.byKey(const ValueKey('subtask-complete')).first);
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
   });
 }
