@@ -4,7 +4,7 @@
     Docket App
 </h1>
 
-[![Build Status](https://img.shields.io/github/workflow/status/markstory/docket-app/CI)](https://github.com/markstory/docket-app/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/markstory/docket-app/ci.yml?branch=master)](https://github.com/markstory/docket-app/actions)
 [![codecov](https://codecov.io/gh/markstory/docket-app/branch/master/graph/badge.svg?token=0dPEbBPsQ3)](https://codecov.io/gh/markstory/docket-app)
 
 A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/) (along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
