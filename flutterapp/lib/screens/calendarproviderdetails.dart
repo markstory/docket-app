@@ -168,6 +168,7 @@ class CalendarColourPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<int>(
+      key: const ValueKey('source-color'),
       value: color,
       onChanged: (int? color) {
         if (color == null) {
@@ -176,10 +177,10 @@ class CalendarColourPicker extends StatelessWidget {
         onChanged(color);
       },
       items: getProjectColors().map((item) {
-        var selectedColor = findProjectColor(color);
-        var isSelected = selectedColor != null;
+        var isSelected = findProjectColor(color) != null;
 
         return DropdownMenuItem(
+            key: ValueKey('color-${item.name}'),
             value: item.id,
             child: Row(children: [
               Icon(Icons.circle, color: item.color, size: 12),

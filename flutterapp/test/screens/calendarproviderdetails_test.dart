@@ -43,12 +43,39 @@ void main() {
       expect(find.text("mark@example.com"), findsOneWidget);
     });
 
-    testWidgets('sync makes request', (tester) async {
+    testWidgets('sync action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/calendars/5/sources/28/sync') {
           callCount += 1;
           return Response(calendarSourceResponse, 200);
+        }
+        throw Exception('Request made to ${request.url.path} has no response');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: CalendarProviderDetailsScreen(provider),
+      ));
+      await tester.pumpAndSettle();
+
+      // Open menu
+      var menu = find.byKey(const ValueKey('source-actions')).first;
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Sync'));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('delete action makes request', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars/5/sources/28/delete') {
+          callCount += 1;
+          return Response('', 200);
         }
         throw Exception('Request made to ${request.url.path} has no response');
       });
@@ -66,10 +93,46 @@ void main() {
       await tester.tap(menu);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Sync'));
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Are you sure?'), findsOneWidget);
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('change color makes request', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars/5/sources/28/edit') {
+          callCount += 1;
+          expect(request.body.contains('color":2'), isTrue);
+          return Response(calendarSourceResponse, 200);
+        }
+        throw Exception('Request made to ${request.url.path} has no response');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: CalendarProviderDetailsScreen(provider),
+      ));
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
+
+      // Open color menu
+      var menu = find.byKey(const ValueKey('source-color')).first;
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+
+      // Choose a color option.
+      // TODO figure out why warnings need to be disabled here.
+      var menuOption = find.byKey(const ValueKey('color-green')).first;
+      await tester.ensureVisible(menuOption);
+      await tester.tap(menuOption, warnIfMissed: false);
+      await tester.pumpAndSettle();
 
       expect(callCount, equals(1));
     });
