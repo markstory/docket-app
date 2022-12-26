@@ -26,10 +26,11 @@ void main() {
   var db = LocalDatabase(inTest: true);
 
   group("$SubtaskItem", () {
+    late Task task;
     var decoded = jsonDecode(taskDetails);
-    var task = Task.fromMap(decoded['task']);
 
     setUp(() async {
+      task = Task.fromMap(decoded['task']);
       await db.apiToken.set(ApiToken.fake());
     });
 
