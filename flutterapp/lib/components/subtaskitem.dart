@@ -31,6 +31,9 @@ class _SubtaskItemState extends State<SubtaskItem> {
         hasFocus = inputFocus.hasFocus;
       });
     });
+
+    // Forces provider to initialize early making tests pass more easily.
+    Provider.of<TasksProvider>(context, listen: false);
   }
 
   @override
@@ -132,6 +135,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
     }
 
     return TextField(
+      key: const ValueKey('subtask-title'),
       focusNode: inputFocus,
       style: completedStyle(context, subtask.completed),
       controller: _controller,
