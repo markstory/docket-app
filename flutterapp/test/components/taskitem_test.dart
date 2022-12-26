@@ -96,6 +96,23 @@ void main() {
       expect(find.byType(Checkbox), findsOneWidget);
     });
 
+    testWidgets('checkbox sends request', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/complete') {
+          callCount += 1;
+          return Response(taskDetails, 200);
+        }
+        throw Exception("Request received for ${request.url.path} but no mock was set");
+      });
+      await renderWidget(tester, task);
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
     testWidgets('delete action confirms and sends request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
