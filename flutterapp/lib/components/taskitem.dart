@@ -130,7 +130,9 @@ class TaskActions extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
+    return PopupMenuButton<Menu>(
+      key: const ValueKey('task-actions'),
+      onSelected: (Menu item) {
       var actions = {
         Menu.move: handleChangeProject,
         Menu.reschedule: handleReschedule,

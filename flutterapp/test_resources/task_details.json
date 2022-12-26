@@ -12,6 +12,8 @@
     "subtasks": [
       {"id": 1, "title": "vacuum", "ranking": 0, "completed": false},
       {"id": 2, "title": "clean bathrooms", "ranking": 0, "completed": true}
-    ]
+    ],
+    "subtask_count": 2,
+    "complete_subtask_count": 1
   }
 }
