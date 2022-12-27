@@ -27,7 +27,6 @@ String extractTitle(Task task) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-
   var file = File('test_resources/project_details.json');
   final projectDetailsResponseFixture = file.readAsStringSync();
 
@@ -67,11 +66,13 @@ void main() {
     });
 
     test('reorderTask() updates state', () async {
+      var callCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
         if (request.url.path == '/tasks/1/move') {
+          callCount += 1;
           expect(request.body, contains('child_order":1'));
           return Response('', 200);
         }
@@ -84,11 +85,14 @@ void main() {
       var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
       await viewmodel.loadData();
       await viewmodel.reorderTask(0, 0, 1, 0);
+      expect(callCount, equals(1));
     });
 
     test('refresh() loads data from the server', () async {
+      var callCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/projects/home') {
+          callCount += 1;
           return Response(projectDetailsResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
@@ -102,6 +106,7 @@ void main() {
 
       await viewmodel.refresh();
       expect(viewmodel.taskLists[0].tasks.length, equals(2));
+      expect(callCount, equals(1));
     });
 
     test('moveInto() can add tasks', () async {
@@ -133,6 +138,29 @@ void main() {
       await viewmodel.moveInto(overdue, 0, 0);
       // The added task gets wiped by the fixture being reloaded.
       expect(viewmodel.taskLists.length, equals(3));
+    });
+
+    test('moveSection() sends a request', () async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        if (request.url.path == '/projects/home/sections/1/move') {
+          callCount += 1;
+          expect(request.body, contains('ranking":1'));
+          return Response('', 200);
+        }
+        throw "Unknown request to ${request.url.path}";
+      });
+
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      await viewmodel.loadData();
+      await viewmodel.moveSection(1, 2);
+      expect(callCount, equals(1));
     });
   });
 }

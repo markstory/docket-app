@@ -16,7 +16,7 @@ void main() {
 
   var today = DateUtils.dateOnly(DateTime.now());
 
-  var file = File('test_resources/task_create_today.json');
+  var file = File('test_resources/task_details.json');
   final taskResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
   file = File('test_resources/task_create_today.json');
@@ -58,16 +58,14 @@ void main() {
 
       var viewmodel = TaskDetailsViewModel(db, session);
       viewmodel.setId(1);
-      var updateCount = 0;
-      viewmodel.addListener(() {
-        updateCount += 1;
-      });
+      var callCounter = CallCounter();
+      viewmodel.addListener(callCounter);
 
       await viewmodel.loadData();
       var task = viewmodel.task;
 
       await viewmodel.update(task);
-      expect(updateCount, greaterThan(0));
+      expect(callCounter.callCount, greaterThan(0));
     });
 
     test('create() sends request, updates local', () async {
@@ -93,7 +91,27 @@ void main() {
     });
 
     test('reorderSubtask() sends request, updates local', () async {
-      // TODO
+      var requestCounter = CallCounter();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/view') {
+          requestCounter();
+          return Response(taskResponseFixture, 200);
+        }
+        if (request.url.path == '/tasks/1/subtasks/1/move') {
+          return Response('', 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var viewmodel = TaskDetailsViewModel(db, session);
+      viewmodel.setId(1);
+      var callCounter = CallCounter();
+      viewmodel.addListener(callCounter);
+
+      await viewmodel.loadData();
+      await viewmodel.reorderSubtask(0, 0, 1, 0);
+      expect(requestCounter.callCount, equals(1));
+      expect(callCounter.callCount, greaterThan(0));
     });
   });
 }
