@@ -45,6 +45,40 @@ void main() {
       await db.projectDetails.clear();
     });
 
+    test('loadData() reads from local db', () async {
+      actions.client = MockClient((request) async {
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.loading, isFalse);
+      expect(viewmodel.project, isNotNull);
+    });
+
+    test('loadData() refreshes on stale local db', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.loading, isFalse);
+      expect(viewmodel.project, isNotNull);
+    });
+
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/projects/home') {
@@ -81,6 +115,7 @@ void main() {
 
       var data = parseData(projectDetailsResponseFixture);
       await setViewdata(db, data);
+      db.projectDetails.expireSlug('home');
 
       var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
       await viewmodel.loadData();

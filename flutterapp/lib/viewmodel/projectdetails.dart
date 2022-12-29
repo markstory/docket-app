@@ -14,6 +14,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
+  bool _silentLoading = false;
 
   /// Task list for the day/evening
   List<TaskSortMetadata> _taskLists = [];
@@ -40,21 +41,19 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   Project get project {
     var p = _project;
-    if (p == null) {
-      throw Exception('Cannot access project it has not been set');
-    }
-    return p;
+    assert(p != null, 'Cannot access project it has not been set');
+
+    return p!;
   }
 
   String get slug {
     var s = _slug;
-    if (s == null) {
-      throw Exception('Cannot access slug it has not been set');
-    }
-    return s;
+    assert(s != null, 'Cannot access slug it has not been set.');
+
+    return s!;
   }
 
-  bool get loading => _loading;
+  bool get loading => _loading && !_silentLoading;
   List<TaskSortMetadata> get taskLists => _taskLists;
 
   setSession(SessionProvider value) {
@@ -83,9 +82,11 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await fetchProject();
 
-    // TODO implement background reloads.
-    if (!_loading && (_project == null || project.slug != _slug || _database.projectDetails.isExpiredSlug(_slug))) {
-      await refresh();
+    if (!_loading && (_project == null || project.slug != _slug)) {
+      return refresh();
+    }
+    if (!_loading && _database.projectDetails.isExpiredSlug(_slug)) {
+      await silentRefresh();
     }
   }
 
@@ -97,6 +98,19 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     _project = result.project;
     await _database.projectDetails.set(result);
+
+    _buildTaskLists(result.tasks);
+  }
+
+  Future<void> silentRefresh() async {
+    _loading = _silentLoading = true;
+
+    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+
+    _project = result.project;
+    await _database.projectDetails.set(result);
+
+    _loading = _silentLoading = false;
 
     _buildTaskLists(result.tasks);
   }
@@ -114,9 +128,9 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     if (section == null) {
       return;
     }
-    await actions.moveSection(session!.apiToken, project, section, newIndex);
     section.ranking = newIndex;
-    await _database.projectDetails.remove(project.slug);
+    await actions.moveSection(session!.apiToken, project, section, newIndex);
+    _database.projectDetails.expireSlug(project.slug);
 
     notifyListeners();
   }
@@ -139,7 +153,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await refresh();
+    _database.expireTask(task);
 
     notifyListeners();
   }
@@ -157,9 +171,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(session!.apiToken, task, updates);
-    await refresh();
-
-    notifyListeners();
+    _database.expireTask(task);
   }
 
   void _buildTaskLists(List<Task> tasks) {
@@ -191,7 +203,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
       _taskLists.add(metadata);
     }
 
-    _loading = false;
+    _loading = _silentLoading = false;
     notifyListeners();
   }
 }
