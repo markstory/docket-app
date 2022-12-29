@@ -91,8 +91,41 @@ void main() {
       expect(viewmodel.taskLists[1].showButton, isTrue);
     });
 
-    test('loadData() handles network errors', () async {
-      // TODO implement this.
+    test('loadData() reads local data', () async {
+      actions.client = MockClient((request) async {
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await setTodayView(db, tasks);
+
+      var viewmodel = TodayViewModel(db, session);
+
+      expect(viewmodel.taskLists.length, equals(0));
+      expect(viewmodel.overdue, isNull);
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(2));
+    });
+
+    test('loadData() refresh from server when expired', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/today') {
+          return Response(tasksTodayResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var tasks = parseTaskList(tasksTodayResponseFixture);
+      await setTodayView(db, tasks);
+      db.today.expire();
+
+      var viewmodel = TodayViewModel(db, session);
+
+      expect(viewmodel.taskLists.length, equals(0));
+      expect(viewmodel.overdue, isNull);
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(2));
     });
 
     test('reorderTask() updates state', () async {

@@ -78,7 +78,6 @@ class TodayViewModel extends ChangeNotifier {
     var taskView = await actions.fetchTodayTasks(session!.apiToken);
     _database.today.set(taskView);
 
-    _loading = _silentLoading = false;
     _buildTaskLists(taskView);
   }
 
@@ -159,7 +158,7 @@ class TodayViewModel extends ChangeNotifier {
 
     _taskLists = [todayTasks, eveningTasks];
 
-    _loading = false;
+    _loading = _silentLoading = false;
 
     notifyListeners();
   }
