@@ -1006,6 +1006,7 @@ class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
     return _set({"items": providers.map((p) => p.toMap()).toList()});
   }
 
+  /// Get the list of providers.
   Future<List<CalendarProvider>?> get() async {
     var data = await _get();
     if (data == null) {
@@ -1019,6 +1020,15 @@ class CalendarProviderListCache extends ViewCache<List<CalendarProvider>> {
       return null;
     }
     return (items as List).map<CalendarProvider>((item) => CalendarProvider.fromMap(item)).toList();
+  }
+
+  /// Remove a provider by id and notify.
+  Future<void> remove(int id) async {
+    var items = await get() ?? [];
+    items.removeWhere((item) => item.id == id);
+    await set(items);
+
+    notifyListeners();
   }
 }
 
@@ -1051,5 +1061,14 @@ class CalendarProviderDetailsCache extends ViewCache<CalendarProvider> {
       return null;
     }
     return CalendarProvider.fromMap(data[providerId]);
+  }
+
+  /// Remove a provider by id and notify.
+  Future<void> remove(int id) async {
+    var data = await _get() ?? {};
+    data.remove(id.toString());
+    await _set(data);
+
+    notifyListeners();
   }
 }

@@ -576,6 +576,13 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
   }
 }
 
+/// Delete a Calendar Provider
+Future<void> deleteCalendarProvider(String apiToken, CalendarProvider provider) async {
+  var url = _makeUrl('/calendars/${provider.id}/delete');
+
+  await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete calendar account');
+}
+
 /// Create a calendar source on the server.
 Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
   var url = _makeUrl('/calendars/${source.calendarProviderId}/sources');

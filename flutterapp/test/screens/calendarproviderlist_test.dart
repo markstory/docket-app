@@ -4,7 +4,10 @@ import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
+import 'package:http/testing.dart';
 
+import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 import 'package:docket/screens/calendarproviderlist.dart';
@@ -31,9 +34,7 @@ void main() {
         database: db,
         child: const CalendarProviderListScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(find.text("(mark@example.io)"), findsOneWidget);
       expect(find.text("(mark.story@example.com)"), findsOneWidget);
@@ -51,13 +52,44 @@ void main() {
         },
         child: const CalendarProviderListScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text("(mark.story@example.com)"));
       await tester.pumpAndSettle();
       expect(navigated, isTrue);
+    });
+
+    testWidgets('delete action confirms and sends request', (tester) async {
+      var deleted = CallCounter();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars') {
+          return Response(calendarsResponse, 200);
+        }
+        if (request.url.path == '/calendars/5/delete') {
+          deleted();
+          return Response('', 200);
+        }
+        throw Exception('Request to unmocked ${request.url.path}');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: const CalendarProviderListScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      // open actions menu
+      await tester.tap(find.byKey(const ValueKey('provider-actions')).first);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Are you sure?'), findsOneWidget);
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(deleted.callCount, equals(1));
     });
   });
 }

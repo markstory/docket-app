@@ -51,5 +51,30 @@ void main() {
       await viewmodel.refresh();
       expect(viewmodel.providers.length, equals(2));
     });
+
+    test('remove() send request to server, and remove from db', () async {
+      var deleted = CallCounter();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars') {
+          return Response(calendarListResponse, 200);
+        }
+        if (request.url.path == '/calendars/5/delete') {
+          deleted();
+          return Response('', 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = CalendarProviderListViewModel(db, session);
+
+      await viewmodel.loadData();
+      var provider = viewmodel.providers[0];
+
+      await db.calendarDetails.set(provider);
+      await viewmodel.delete(provider);
+
+      expect(deleted.callCount, equals(1));
+      expect(await db.calendarDetails.get(provider.id), isNull);
+    });
   });
 }

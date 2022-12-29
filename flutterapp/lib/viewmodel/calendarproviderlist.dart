@@ -72,7 +72,11 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   }
 
   /// Delete the provider from the server and notify.
-  Future<void>delete() async {
-    // TODO implement this
+  Future<void> delete(CalendarProvider provider) async {
+    await actions.deleteCalendarProvider(session!.apiToken, provider);
+    await _database.calendarList.remove(provider.id);
+    await _database.calendarDetails.remove(provider.id);
+
+    notifyListeners();
   }
 }

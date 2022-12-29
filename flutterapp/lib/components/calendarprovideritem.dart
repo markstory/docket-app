@@ -1,9 +1,12 @@
-import 'package:docket/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:docket/routes.dart';
 import 'package:docket/components/iconsnackbar.dart';
+import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:docket/models/calendarprovider.dart';
+import 'package:docket/routes.dart';
+import 'package:docket/theme.dart';
+import 'package:docket/viewmodel/calendarproviderlist.dart';
 
 class CalendarProviderItem extends StatelessWidget {
   final CalendarProvider provider;
@@ -37,10 +40,15 @@ class ProviderActions extends StatelessWidget {
   const ProviderActions({required this.provider, super.key});
 
   void handleDelete(context) {
-    // TODO implement with confirm.
-    // see SubtaskItem for an example of confirm and delete.
+    var viewmodel = Provider.of<CalendarProviderListViewModel>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(successSnackBar(context: context, text: 'Calendar provider deleted'));
+    showConfirmDelete(
+      context: context,
+      content: 'Deleting this calendar account will remove all linked calendars.',
+      onConfirm: () async {
+        await viewmodel.delete(provider);
+        messenger.showSnackBar(successSnackBar(context: context, text: 'Calendar provider deleted'));
+      });
   }
 
   @override
@@ -48,21 +56,24 @@ class ProviderActions extends StatelessWidget {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
 
-    return PopupMenuButton<Menu>(onSelected: (Menu item) {
-      var actions = {
-        Menu.delete: () => handleDelete(context),
-      };
-      actions[item]?.call();
-    }, itemBuilder: (BuildContext context) {
-      return <PopupMenuEntry<Menu>>[
-        PopupMenuItem<Menu>(
-          value: Menu.delete,
-          child: ListTile(
-            leading: Icon(Icons.delete, color: customColors.actionDelete),
-            title: const Text('Delete'),
+    return PopupMenuButton<Menu>(
+      key: const ValueKey('provider-actions'),
+      onSelected: (Menu item) {
+        var actions = {
+          Menu.delete: () => handleDelete(context),
+        };
+        actions[item]?.call();
+      },
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<Menu>>[
+          PopupMenuItem<Menu>(
+            value: Menu.delete,
+            child: ListTile(
+              leading: Icon(Icons.delete, color: customColors.actionDelete),
+              title: const Text('Delete'),
+            ),
           ),
-        ),
-      ];
-    });
+        ];
+      });
   }
 }
