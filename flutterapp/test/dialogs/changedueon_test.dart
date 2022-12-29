@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
+import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/dialogs/changedueon.dart';
 
 void main() {
@@ -22,9 +23,10 @@ void main() {
         }));
   }
 
-  group('ChangeDueOnDialog', () {
+  group('changeDueOnDialog()', () {
     final today = DateUtils.dateOnly(DateTime.now());
     final tomorrow = today.add(const Duration(days: 1));
+    final futureDay = today.add(const Duration(days: 5));
 
     testWidgets('select tomorrow value', (tester) async {
       var callCount = 0;
@@ -61,6 +63,70 @@ void main() {
 
       await tester.tap(find.text('This evening'));
       await tester.pumpAndSettle();
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('select future day', (tester) async {
+      var callCount = 0;
+      void onUpdate(DateTime? dueOn, bool evening) { 
+        expect(evening, isFalse);
+        expect(dueOn, equals(futureDay));
+        callCount += 1;
+      }
+      await tester.pumpWidget(buildButton(futureDay, true, onUpdate));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      var option = find.text('${formatters.compactDate(futureDay)} day');
+      expect(option, findsOneWidget);
+      await tester.tap(option);
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('select future evening', (tester) async {
+      var callCount = 0;
+      void onUpdate(DateTime? dueOn, bool evening) { 
+        expect(evening, isTrue);
+        expect(dueOn, equals(futureDay));
+        callCount += 1;
+      }
+      await tester.pumpWidget(buildButton(futureDay, false, onUpdate));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      var option = find.text('${formatters.compactDate(futureDay)} evening');
+      expect(option, findsOneWidget);
+      await tester.tap(option);
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('select choose a day', (tester) async {
+      var selectedDay = tomorrow;
+      if (selectedDay.month != today.month) {
+        selectedDay = today;
+      }
+
+      var callCount = 0;
+      void onUpdate(DateTime? dueOn, bool evening) { 
+        expect(evening, isFalse);
+        expect(dueOn, equals(selectedDay));
+        callCount += 1;
+      }
+      await tester.pumpWidget(buildButton(today, false, onUpdate));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Choose a day'));
+      await tester.pumpAndSettle();
+
+      // Date picker modal is shown and date selected.
+      expect(find.text('Remind me on'), findsOneWidget);
+      await tester.tap(find.text('${selectedDay.day}'));
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
       expect(callCount, equals(1));
     });
 
