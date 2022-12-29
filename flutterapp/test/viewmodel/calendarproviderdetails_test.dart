@@ -74,7 +74,7 @@ void main() {
       expect(viewmodel.loading, isFalse);
     });
 
-    test('syncEvent() makes a request', () async {
+    test('syncEvents() makes a request', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
@@ -92,6 +92,8 @@ void main() {
 
       await viewmodel.syncEvents(viewmodel.provider.sources[0]);
       expect(viewmodel.loading, isFalse);
+      expect(db.today.isExpired, isTrue);
+      expect(db.upcoming.isExpired, isTrue);
     });
 
     test('removeSource() makes a request', () async {

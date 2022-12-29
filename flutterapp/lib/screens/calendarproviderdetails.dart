@@ -95,7 +95,8 @@ class CalendarSourceItem extends StatelessWidget {
               messenger.showSnackBar(successSnackBar(context: context, text: "Calendar updated"));
             }),
         title: Text(source.name),
-        subtitle: Text('Last synced: $lastSync',
+        subtitle: Text(
+            'Last synced: $lastSync',
             style: TextStyle(color: docketColors.disabledText)),
         trailing: buildMenu(context));
   }
