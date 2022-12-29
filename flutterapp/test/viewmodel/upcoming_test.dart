@@ -56,7 +56,7 @@ void main() {
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      await db.upcoming.clear();
+      await db.upcoming.clearSilent();
     });
 
     test('loadData() refreshes from server', () async {
@@ -80,6 +80,39 @@ void main() {
       expect(viewmodel.taskLists[0].showButton, isTrue);
     });
 
+    test('loadData() reads local data', () async {
+      actions.client = MockClient((request) async {
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+
+      var viewmodel = UpcomingViewModel(db, session);
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(1));
+    });
+
+    test('loadData() refresh from server when expired', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/upcoming') {
+          return Response(tasksResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+      db.upcoming.expire();
+
+      var viewmodel = UpcomingViewModel(db, session);
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(1));
+    });
+
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/upcoming') {
@@ -92,7 +125,7 @@ void main() {
       });
 
       var tasks = parseTaskList(tasksResponseFixture);
-      setUpcomingView(db, tasks);
+      await setUpcomingView(db, tasks);
 
       var viewmodel = UpcomingViewModel(db, session);
       await viewmodel.loadData();
@@ -160,7 +193,7 @@ void main() {
 
       var tasks = parseTaskList(tasksResponseFixture);
       tasks.add(fresh);
-      setUpcomingView(db, tasks);
+      await setUpcomingView(db, tasks);
 
       var viewmodel = UpcomingViewModel(db, session);
       await viewmodel.loadData();

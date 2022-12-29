@@ -60,7 +60,7 @@ void main() {
     var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
-      await db.today.clear();
+      await db.today.clearSilent();
     });
 
     test('loadData() refreshes from server', () async {
