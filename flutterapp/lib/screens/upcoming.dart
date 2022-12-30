@@ -8,7 +8,6 @@ import 'package:docket/components/floatingcreatetaskbutton.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/viewmodels/upcoming.dart';
 
 class UpcomingScreen extends StatefulWidget {
