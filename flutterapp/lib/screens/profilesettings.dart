@@ -7,7 +7,7 @@ import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/theme.dart';
 import 'package:docket/models/userprofile.dart';
 import 'package:docket/forms/profilesettings.dart';
-import 'package:docket/viewmodel/userprofile.dart';
+import 'package:docket/viewmodels/userprofile.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({Key? key}) : super(key: key);

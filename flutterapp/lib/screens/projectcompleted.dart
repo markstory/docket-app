@@ -7,7 +7,7 @@ import 'package:docket/components/taskitem.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/viewmodel/projectcompleted.dart';
+import 'package:docket/viewmodels/projectcompleted.dart';
 
 class ProjectCompletedScreen extends StatefulWidget {
   final Project project;

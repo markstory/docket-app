@@ -15,7 +15,7 @@ import 'package:docket/dialogs/renamesection.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/viewmodel/projectdetails.dart';
+import 'package:docket/viewmodels/projectdetails.dart';
 import 'package:docket/theme.dart';
 
 class ProjectDetailsScreen extends StatefulWidget {

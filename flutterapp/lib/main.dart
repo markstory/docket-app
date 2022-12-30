@@ -25,17 +25,17 @@ import 'screens/taskdetails.dart';
 import 'screens/trashbin.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
-import 'viewmodel/projectdetails.dart';
-import 'viewmodel/projectarchive.dart';
-import 'viewmodel/projectedit.dart';
-import 'viewmodel/projectcompleted.dart';
-import 'viewmodel/today.dart';
-import 'viewmodel/taskdetails.dart';
-import 'viewmodel/trashbin.dart';
-import 'viewmodel/upcoming.dart';
-import 'viewmodel/calendarproviderdetails.dart';
-import 'viewmodel/calendarproviderlist.dart';
-import 'viewmodel/userprofile.dart';
+import 'viewmodels/projectdetails.dart';
+import 'viewmodels/projectarchive.dart';
+import 'viewmodels/projectedit.dart';
+import 'viewmodels/projectcompleted.dart';
+import 'viewmodels/today.dart';
+import 'viewmodels/taskdetails.dart';
+import 'viewmodels/trashbin.dart';
+import 'viewmodels/upcoming.dart';
+import 'viewmodels/calendarproviderdetails.dart';
+import 'viewmodels/calendarproviderlist.dart';
+import 'viewmodels/userprofile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

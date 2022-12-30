@@ -8,7 +8,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/viewmodel/projectcompleted.dart';
+import 'package:docket/viewmodels/projectcompleted.dart';
 
 ProjectWithTasks parseProjectDetails(String data) {
   var decoded = jsonDecode(data);

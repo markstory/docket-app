@@ -9,7 +9,7 @@ import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/viewmodel/taskdetails.dart';
+import 'package:docket/viewmodels/taskdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

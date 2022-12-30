@@ -6,7 +6,7 @@ import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/viewmodel/calendarproviderlist.dart';
+import 'package:docket/viewmodels/calendarproviderlist.dart';
 
 class CalendarProviderItem extends StatelessWidget {
   final CalendarProvider provider;

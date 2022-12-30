@@ -6,7 +6,7 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/viewmodel/taskdetails.dart';
+import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
 class TaskAddScreen extends StatelessWidget {

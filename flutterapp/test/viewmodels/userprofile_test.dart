@@ -7,7 +7,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/userprofile.dart';
 import 'package:docket/providers/session.dart';
-import 'package:docket/viewmodel/userprofile.dart';
+import 'package:docket/viewmodels/userprofile.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:docket/components/projectsorter.dart';
 import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/viewmodel/userprofile.dart';
+import 'package:docket/viewmodels/userprofile.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);

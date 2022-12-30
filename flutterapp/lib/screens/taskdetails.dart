@@ -7,7 +7,7 @@ import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
-import 'package:docket/viewmodel/taskdetails.dart';
+import 'package:docket/viewmodels/taskdetails.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final Task task;

@@ -10,7 +10,7 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/viewmodel/taskdetails.dart';
+import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
 // Depends on TaskDetailsViewModel.
