@@ -13,7 +13,22 @@ class ApiTokenRepo extends Repository<ApiToken> {
     return 'v1:$name';
   }
 
-  /// Set completed tasks for a project into the lookup
+  bool get hasToken {
+    var current = state;
+
+    return !(current == null || current['data']['token'] == null);
+  }
+
+  /// Get the current token. Requires that a token be loaded with get() or set() first.
+  String get token {
+    var current = state;
+    if (current == null || current['data']['token'] == null) {
+      throw Exception('Cannot access `token` as it has not been loaded.');
+    }
+    return current['data']['token'];
+  }
+
+  /// Set a new API token into the database.
   @override
   Future<void> set(ApiToken token) async {
     return setMap(token.toMap());

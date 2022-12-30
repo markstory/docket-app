@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/calendarproviderdetails.dart';
 
 void main() {
@@ -19,14 +19,14 @@ void main() {
 
   group('$CalendarProviderDetailsViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.calendarDetails.clear();
     });
 
     test('provider property throws without data', () async {
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
       expect(() => viewmodel.provider, throwsException);
     });
@@ -39,7 +39,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       var updateCount = 0;
       viewmodel.addListener(() {
         updateCount += 1;
@@ -66,7 +66,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
 
       await viewmodel.refresh();
@@ -86,7 +86,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
       await viewmodel.loadData();
 
@@ -108,7 +108,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
       await viewmodel.loadData();
 
@@ -129,7 +129,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
       await viewmodel.loadData();
 
@@ -148,7 +148,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderDetailsViewModel(db, session);
+      var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
       await viewmodel.loadData();
 

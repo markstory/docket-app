@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -7,7 +8,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/session.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,18 +20,12 @@ void main() {
 
   group('$ProjectsProvider project methods', () {
     late ProjectsProvider provider;
-    late SessionProvider session;
-    int listenerCallCount = 0;
 
     setUp(() async {
-      listenerCallCount = 0;
       var db = LocalDatabase();
-      session = SessionProvider(db, token: 'api-token');
-      provider = ProjectsProvider(db, session)
-        ..addListener(() {
-          listenerCallCount += 1;
-        });
+      provider = ProjectsProvider(db);
       await provider.clear();
+      await db.apiToken.set(ApiToken.fake());
     });
 
     test('fetchProjects() and getAll() work together', () async {
@@ -42,8 +36,13 @@ void main() {
         return Response(projectsResponseFixture, 200);
       });
 
+      var listener = CallCounter();
+      provider.addListener(listener);
+
       await provider.fetchProjects();
-      expect(listenerCallCount, greaterThan(0));
+      provider.removeListener(listener);
+
+      expect(listener.callCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
       var projects = await provider.getAll();
@@ -65,11 +64,13 @@ void main() {
       stale.id = 99;
       stale.name = 'Stale';
 
+      var listener = CallCounter();
       var db = LocalDatabase();
       await db.projectMap.set(stale);
+      provider.addListener(listener);
 
       await provider.fetchProjects();
-      expect(listenerCallCount, greaterThan(0));
+      expect(listener.callCount, greaterThan(0));
       expect(requestCounter, equals(1));
 
       var projects = await provider.getAll();
@@ -157,25 +158,17 @@ void main() {
       await db.projectArchive.set([project]);
 
       await provider.unarchive(project);
-
-      // TODO This should pass but doesn't currently.
-      // var archived = await db.projectArchive.get();
-      // expect(archived, isNull);
-
-      // var projectMap = await db.projectMap.get('home');
-      // expect(projectMap, isNull);
     });
   });
 
   group("$ProjectsProvider section methods", () {
     late ProjectsProvider provider;
-    late SessionProvider session;
 
     setUp(() async {
       var db = LocalDatabase();
-      session = SessionProvider(db, token: 'api-token');
-      provider = ProjectsProvider(db, session);
+      provider = ProjectsProvider(db);
       await provider.clear();
+      await db.apiToken.set(ApiToken.fake());
     });
 
     test('deleteSection() makes API request and expires local db', () async {

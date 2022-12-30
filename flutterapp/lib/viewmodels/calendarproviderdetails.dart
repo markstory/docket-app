@@ -4,12 +4,10 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/calendarsource.dart';
-import 'package:docket/providers/session.dart';
 
 
 class CalendarProviderDetailsViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -17,7 +15,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   int? _id;
   CalendarProvider? _provider;
 
-  CalendarProviderDetailsViewModel(LocalDatabase database, this.session) {
+  CalendarProviderDetailsViewModel(LocalDatabase database) {
     _database = database;
     _database.calendarList.addListener(listener);
   }
@@ -52,10 +50,6 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     return value;
   }
 
-  setSession(SessionProvider value) {
-    session = value;
-  }
-
   setId(int value) {
     _id = value;
   }
@@ -84,7 +78,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchCalendarProvider(session!.apiToken, id);
+    var result = await actions.fetchCalendarProvider(_database.apiToken.token, id);
     await _database.calendarDetails.set(result);
     _provider = result;
     _loading = false;
@@ -94,7 +88,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   /// Create a calendar that will be synced
   Future<void> addCalendar(CalendarSource source) async {
-    var updated = await actions.createSource(session!.apiToken, source);
+    var updated = await actions.createSource(_database.apiToken.token, source);
 
     provider.replaceSource(updated);
     await _database.calendarDetails.set(provider);
@@ -104,7 +98,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   /// Have the server refresh calendar events for a given synced calendar.
   Future<void> syncEvents(CalendarSource source) async {
-    var updated = await actions.syncSource(session!.apiToken, source);
+    var updated = await actions.syncSource(_database.apiToken.token, source);
 
     provider.replaceSource(updated);
     await _database.calendarDetails.set(provider);
@@ -116,7 +110,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   /// Remove a calendar that will be synced
   Future<void> removeSource(CalendarSource source) async {
-    await actions.deleteSource(session!.apiToken, source);
+    await actions.deleteSource(_database.apiToken.token, source);
 
     provider.removeSource(source);
     await _database.calendarDetails.set(provider);
@@ -127,7 +121,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   /// Link a calendar that will be synced
   Future<void> linkSource(source) async {
     source.calendarProviderId = provider.id;
-    await actions.createSource(session!.apiToken, source);
+    await actions.createSource(_database.apiToken.token, source);
 
     provider.replaceSource(source);
     await _database.calendarDetails.set(provider);
@@ -137,7 +131,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   /// Update properties on a calendar source
   Future<void> updateSource(source) async {
-    await actions.updateSource(session!.apiToken, source);
+    await actions.updateSource(_database.apiToken.token, source);
 
     provider.replaceSource(source);
     await _database.calendarDetails.set(provider);

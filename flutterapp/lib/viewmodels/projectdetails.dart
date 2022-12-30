@@ -5,12 +5,10 @@ import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/grouping.dart' as grouping;
 
 class ProjectDetailsViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -22,7 +20,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Project? _project;
   String? _slug;
 
-  ProjectDetailsViewModel(LocalDatabase database, this.session) {
+  ProjectDetailsViewModel(LocalDatabase database) {
     _taskLists = [];
 
     _database = database;
@@ -55,10 +53,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
   bool get loading => _loading && !_silentLoading;
   List<TaskSortMetadata> get taskLists => _taskLists;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   setSlug(String slug) {
     _slug = slug;
@@ -94,7 +88,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
 
     _project = result.project;
     await _database.projectDetails.set(result);
@@ -105,7 +99,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> silentRefresh() async {
     _loading = _silentLoading = true;
 
-    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
 
     _project = result.project;
     await _database.projectDetails.set(result);
@@ -129,7 +123,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
       return;
     }
     section.ranking = newIndex;
-    await actions.moveSection(session!.apiToken, project, section, newIndex);
+    await actions.moveSection(_database.apiToken.token, project, section, newIndex);
     _database.projectDetails.expireSlug(project.slug);
 
     notifyListeners();
@@ -152,7 +146,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _taskLists[listIndex].tasks.insert(itemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
 
     notifyListeners();
@@ -170,7 +164,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
   }
 

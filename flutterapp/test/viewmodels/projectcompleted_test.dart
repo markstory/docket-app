@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -7,7 +8,6 @@ import 'package:http/testing.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/projectcompleted.dart';
 
 ProjectWithTasks parseProjectDetails(String data) {
@@ -27,9 +27,9 @@ void main() {
 
   group('$ProjectCompletedViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.completedTasks.clear();
     });
 
@@ -41,7 +41,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = ProjectCompletedViewModel(db, session);
+      var viewmodel = ProjectCompletedViewModel(db);
       expect(viewmodel.tasks.length, equals(0));
 
       viewmodel.setSlug('home');
@@ -58,7 +58,7 @@ void main() {
       });
 
       var counter = CallCounter();
-      var viewmodel = ProjectCompletedViewModel(db, session);
+      var viewmodel = ProjectCompletedViewModel(db);
       viewmodel.addListener(counter);
       expect(viewmodel.tasks.length, equals(0));
 
@@ -76,7 +76,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = ProjectCompletedViewModel(db, session);
+      var viewmodel = ProjectCompletedViewModel(db);
       var counter = CallCounter();
       viewmodel.addListener(counter);
       expect(viewmodel.tasks.length, equals(0));

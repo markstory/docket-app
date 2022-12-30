@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -9,7 +10,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/trashbin.dart';
 
 ProjectWithTasks parseProjectDetails(String data) {
@@ -31,9 +31,9 @@ void main() {
 
   group('$TrashbinViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.trashbin.clear();
     });
 
@@ -45,7 +45,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TrashbinViewModel(db, session);
+      var viewmodel = TrashbinViewModel(db);
       expect(viewmodel.tasks.length, equals(0));
 
       await viewmodel.loadData();
@@ -60,7 +60,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TrashbinViewModel(db, session);
+      var viewmodel = TrashbinViewModel(db);
       expect(viewmodel.tasks.length, equals(0));
 
       await viewmodel.refresh();

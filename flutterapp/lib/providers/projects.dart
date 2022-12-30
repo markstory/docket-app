@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/models/project.dart';
 
 enum ViewNames {
@@ -16,12 +15,11 @@ enum ViewNames {
 
 class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   Set<ViewNames> _pending = {};
   Map<ViewNames, int> _retryCount = {};
 
-  ProjectsProvider(LocalDatabase database, this.session) {
+  ProjectsProvider(LocalDatabase database) {
     _database = database;
     _pending = {};
     _retryCount = {};
@@ -36,10 +34,6 @@ class ProjectsProvider extends ChangeNotifier {
     }
     _retryCount[name] = currentVal + 1;
     return true;
-  }
-
-  void setSession(SessionProvider session) {
-    this.session = session;
   }
 
   Future<void> clear() async {
@@ -59,7 +53,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Create a project on the server and notify listeners.
   Future<Project> createProject(Project project) async {
-    project = await actions.createProject(session!.apiToken, project);
+    project = await actions.createProject(_database.apiToken.token, project);
 
     await _database.projectMap.set(project);
     notifyListeners();
@@ -69,7 +63,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Update the project map and clear local data for project details.
   Future<Project> update(Project project) async {
-    project = await actions.updateProject(session!.apiToken, project);
+    project = await actions.updateProject(_database.apiToken.token, project);
 
     // Remove the old entry by id as the slug could have been changed.
     // Remove the projectDetails view cache as well.
@@ -96,7 +90,7 @@ class ProjectsProvider extends ChangeNotifier {
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
     await _withPending(ViewNames.projectMap, () async {
-      var projects = await actions.fetchProjects(session!.apiToken);
+      var projects = await actions.fetchProjects(_database.apiToken.token);
       return _database.projectMap.replace(projects);
     });
 
@@ -107,7 +101,7 @@ class ProjectsProvider extends ChangeNotifier {
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
     await _withPending(ViewNames.projectArchive, () async {
-      project = await actions.moveProject(session!.apiToken, project, newRank);
+      project = await actions.moveProject(_database.apiToken.token, project, newRank);
       return _database.projectMap.set(project);
     });
 
@@ -116,7 +110,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Archive a project and remove the project the project and project details.
   Future<Project> archive(Project project) async {
-    await actions.archiveProject(session!.apiToken, project);
+    await actions.archiveProject(_database.apiToken.token, project);
     await Future.wait([
       _database.projectMap.remove(project.slug),
       _database.projectDetails.remove(project.slug),
@@ -129,7 +123,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Un-archive a project
   Future<void> unarchive(Project project) async {
-    await actions.unarchiveProject(session!.apiToken, project);
+    await actions.unarchiveProject(_database.apiToken.token, project);
     await Future.wait([
       _database.projectMap.clear(),
       _database.projectArchive.clear(),
@@ -141,7 +135,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Delete a project and remove the project the project and project details.
   Future<void> delete(Project project) async {
-    await actions.deleteProject(session!.apiToken, project);
+    await actions.deleteProject(_database.apiToken.token, project);
     await Future.wait([
       _database.projectMap.remove(project.slug),
       _database.projectDetails.remove(project.slug),
@@ -153,7 +147,7 @@ class ProjectsProvider extends ChangeNotifier {
   // Section Methods {{{
   // Remove a section and clear the project details view cache
   Future<void> createSection(Project project, Section section) async {
-    await actions.createSection(session!.apiToken, project, section);
+    await actions.createSection(_database.apiToken.token, project, section);
     await _database.projectDetails.remove(project.slug);
 
     notifyListeners();
@@ -161,7 +155,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   // Remove a section and clear the project details view cache
   Future<void> deleteSection(Project project, Section section) async {
-    await actions.deleteSection(session!.apiToken, project, section);
+    await actions.deleteSection(_database.apiToken.token, project, section);
     await _database.projectDetails.remove(project.slug);
 
     notifyListeners();
@@ -169,7 +163,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Read a project from the local database by slug.
   Future<void> updateSection(Project project, Section section) async {
-    await actions.updateSection(session!.apiToken, project, section);
+    await actions.updateSection(_database.apiToken.token, project, section);
     await _database.projectDetails.remove(project.slug);
 
     notifyListeners();
@@ -177,7 +171,7 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Read a project from the local database by slug.
   Future<void> moveSection(Project project, Section section, int newIndex) async {
-    await actions.moveSection(session!.apiToken, project, section, newIndex);
+    await actions.moveSection(_database.apiToken.token, project, section, newIndex);
     section.ranking = newIndex;
     await _database.projectDetails.remove(project.slug);
 

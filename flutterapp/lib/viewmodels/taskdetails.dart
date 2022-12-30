@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 
 
 class TaskDetailsViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
   int? _id;
   Task? _task;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  TaskDetailsViewModel(LocalDatabase database, this.session) {
+  TaskDetailsViewModel(LocalDatabase database) {
     _database = database;
     _database.taskDetails.addListener(listener);
   }
@@ -44,10 +42,6 @@ class TaskDetailsViewModel extends ChangeNotifier {
     assert(value != null, "Cannot read task it has not been set.");
 
     return value!;
-  }
-
-  setSession(SessionProvider value) {
-    session = value;
   }
 
   setId(int value) {
@@ -82,7 +76,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchTaskById(session!.apiToken, id);
+    var result = await actions.fetchTaskById(_database.apiToken.token, id);
     await _database.updateTask(result);
     _task = result;
     _loading = false;
@@ -94,7 +88,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   Future<void> update(Task task) async {
     assert(task.id != 0,
       'Cannot update new task. Use create() instead.');
-    var updated = await actions.updateTask(session!.apiToken, task);
+    var updated = await actions.updateTask(_database.apiToken.token, task);
     updated.previousDueOn = task.dueOn;
     updated.previousProjectSlug = task.projectSlug;
 
@@ -115,7 +109,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
     task.subtasks.removeAt(oldItemIndex);
     task.subtasks.insert(newItemIndex, item);
-    await actions.moveSubtask(session!.apiToken, task, item);
+    await actions.moveSubtask(_database.apiToken.token, task, item);
     await _database.updateTask(task);
 
     notifyListeners();
@@ -123,7 +117,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   /// Create a task on the server and notify listeners.
   Future<Task> create(Task task) async {
-    task = await actions.createTask(session!.apiToken, task);
+    task = await actions.createTask(_database.apiToken.token, task);
     _id = task.id;
     _task = task;
 

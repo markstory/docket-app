@@ -3,18 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 
 class ProjectEditViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
   String? _slug;
   Project? _project;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
 
-  ProjectEditViewModel(LocalDatabase database, this.session) {
+  ProjectEditViewModel(LocalDatabase database) {
     _database = database;
     _database.projectDetails.addListener(listener);
   }
@@ -47,10 +45,6 @@ class ProjectEditViewModel extends ChangeNotifier {
     return value;
   }
 
-  setSession(SessionProvider value) {
-    session = value;
-  }
-
   setSlug(String slug) {
     _slug = slug;
   }
@@ -76,7 +70,7 @@ class ProjectEditViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchProjectBySlug(session!.apiToken, slug);
+    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
     await _database.projectDetails.set(result);
     _project = result.project;
     _loading = false;
@@ -86,7 +80,7 @@ class ProjectEditViewModel extends ChangeNotifier {
 
   /// Update a project.
   Future<void> update(Project project) async {
-    project = await actions.updateProject(session!.apiToken, project);
+    project = await actions.updateProject(_database.apiToken.token, project);
 
     // Remove the old entry by id as the slug could have been changed.
     // Remove the projectDetails view cache as well.

@@ -1,11 +1,9 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 
 enum ViewNames {
   today,
@@ -20,14 +18,9 @@ enum ViewNames {
 /// remote API buffering or retries.
 class TasksProvider extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
-  TasksProvider(LocalDatabase database, this.session) {
+  TasksProvider(LocalDatabase database) {
     _database = database;
-  }
-
-  void setSession(SessionProvider session) {
-    this.session = session;
   }
 
   Future<void> clear() async {
@@ -42,7 +35,7 @@ class TasksProvider extends ChangeNotifier {
     task.completed = !task.completed;
 
     // Update local db and server
-    await actions.toggleTask(session!.apiToken, task);
+    await actions.toggleTask(_database.apiToken.token, task);
     if (task.completed) {
       await _database.deleteTask(task);
     } else {
@@ -55,7 +48,7 @@ class TasksProvider extends ChangeNotifier {
 
   /// Create or Update a task on the server and local state.
   Future<Task> updateTask(Task task) async {
-    var updated = await actions.updateTask(session!.apiToken, task);
+    var updated = await actions.updateTask(_database.apiToken.token, task);
 
     updated.previousDueOn = task.previousDueOn;
     updated.previousProjectSlug = task.projectSlug;
@@ -68,7 +61,7 @@ class TasksProvider extends ChangeNotifier {
 
   /// Delete a task from local database and the server.
   Future<void> deleteTask(Task task) async {
-    await actions.deleteTask(session!.apiToken, task);
+    await actions.deleteTask(_database.apiToken.token, task);
     await _database.deleteTask(task);
 
     notifyListeners();
@@ -78,7 +71,7 @@ class TasksProvider extends ChangeNotifier {
   /// Does not update the local database.
   /// Assumption is that the calling view will refresh from server.
   Future<void> undelete(Task task) async {
-    await actions.undeleteTask(session!.apiToken, task);
+    await actions.undeleteTask(_database.apiToken.token, task);
     await _database.undeleteTask(task);
 
     notifyListeners();
@@ -93,9 +86,9 @@ class TasksProvider extends ChangeNotifier {
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
 
     if (subtask.id == null) {
-      subtask = await actions.createSubtask(session!.apiToken, task, subtask);
+      subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
     } else {
-      subtask = await actions.updateSubtask(session!.apiToken, task, subtask);
+      subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
     }
 
     task.subtasks[index] = subtask;
@@ -107,7 +100,7 @@ class TasksProvider extends ChangeNotifier {
   /// Flip subtask.completed and persist to the server.
   Future<void> toggleSubtask(Task task, Subtask subtask) async {
     subtask.completed = !subtask.completed;
-    await actions.toggleSubtask(session!.apiToken, task, subtask);
+    await actions.toggleSubtask(_database.apiToken.token, task, subtask);
 
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
     task.subtasks[index] = subtask;
@@ -121,7 +114,7 @@ class TasksProvider extends ChangeNotifier {
   /// Assumption is that the calling view will refresh from server.
   Future<void> moveSubtask(Task task, Subtask subtask) async {
     await Future.wait([
-      actions.moveSubtask(session!.apiToken, task, subtask),
+      actions.moveSubtask(_database.apiToken.token, task, subtask),
       _database.updateTask(task),
     ]);
 
@@ -132,7 +125,7 @@ class TasksProvider extends ChangeNotifier {
     task.subtasks.remove(subtask);
 
     await Future.wait([
-      actions.deleteSubtask(session!.apiToken, task, subtask),
+      actions.deleteSubtask(_database.apiToken.token, task, subtask),
       _database.updateTask(task),
     ]);
 

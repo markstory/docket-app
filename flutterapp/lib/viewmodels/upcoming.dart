@@ -4,14 +4,12 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/grouping.dart' as grouping;
 
 
 class UpcomingViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -23,7 +21,7 @@ class UpcomingViewModel extends ChangeNotifier {
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
-  UpcomingViewModel(LocalDatabase database, this.session) {
+  UpcomingViewModel(LocalDatabase database) {
     _database = database;
     _database.upcoming.addListener(listener);
   }
@@ -41,10 +39,6 @@ class UpcomingViewModel extends ChangeNotifier {
   bool get loading => (_loading && !_silentLoading);
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
@@ -64,7 +58,7 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var tasksView = await actions.fetchUpcomingTasks(session!.apiToken);
+    var tasksView = await actions.fetchUpcomingTasks(_database.apiToken.token);
     await _database.upcoming.set(tasksView);
     _buildTaskLists(tasksView);
   }
@@ -74,7 +68,7 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskView = await actions.fetchUpcomingTasks(session!.apiToken);
+    var taskView = await actions.fetchUpcomingTasks(_database.apiToken.token);
     _database.upcoming.set(taskView);
 
     _loading = _silentLoading = false;
@@ -152,7 +146,7 @@ class UpcomingViewModel extends ChangeNotifier {
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
   }
 
@@ -169,7 +163,7 @@ class UpcomingViewModel extends ChangeNotifier {
     _taskLists[listIndex].tasks.insert(itemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
   }
 }

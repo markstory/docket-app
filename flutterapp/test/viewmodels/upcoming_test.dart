@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -10,7 +11,6 @@ import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/upcoming.dart';
 
 // Parse a list response into a list of tasks.
@@ -53,9 +53,9 @@ void main() {
 
   group('$UpcomingViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.upcoming.clearSilent();
     });
 
@@ -67,7 +67,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -87,7 +87,7 @@ void main() {
       var tasks = parseTaskList(tasksResponseFixture);
       await setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
@@ -106,7 +106,7 @@ void main() {
       await setUpcomingView(db, tasks);
       db.upcoming.expire();
 
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
@@ -127,7 +127,7 @@ void main() {
       var tasks = parseTaskList(tasksResponseFixture);
       await setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
@@ -146,7 +146,7 @@ void main() {
       });
 
       var counter = CallCounter();
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       viewmodel.addListener(counter);
       expect(viewmodel.taskLists.length, equals(0));
 
@@ -164,7 +164,7 @@ void main() {
       });
 
       var counter = CallCounter();
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       viewmodel.addListener(counter);
       expect(viewmodel.taskLists.length, equals(0));
 
@@ -195,7 +195,7 @@ void main() {
       tasks.add(fresh);
       await setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db, session);
+      var viewmodel = UpcomingViewModel(db);
       await viewmodel.loadData();
       await viewmodel.insertAt(fresh, 0, 0);
       // We can't assert the list state afterwards, as data is refreshed

@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:docket/actions.dart' as actions;
-import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/forms/login.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/routes.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/viewmodels/login.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  Future<void> _handleSubmit(String email, String password, SessionProvider session) async {
-    try {
-      // Do the login request and set the token to application state.
-      var apiToken = await actions.doLogin(email, password);
-      await session.saveToken(apiToken);
-    } catch (e) {
-      // Raise an error to the UI State
-      throw Exception('Could not login');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Consumer<SessionProvider>(builder: (context, session, child) {
+    return Consumer<LoginViewModel>(builder: (context, viewmodel, child) {
       return Scaffold(
           appBar: AppBar(),
           body: Padding(
@@ -33,14 +20,16 @@ class LoginScreen extends StatelessWidget {
               child: Column(children: [
                 const Text('Login to your Docket instance'),
                 LoginForm(onSubmit: (String? email, String? password) async {
-                  if (email != null && password != null) {
-                    var navigator = Navigator.of(context);
-                    try {
-                      await _handleSubmit(email, password, session);
-                      await navigator.pushNamed(Routes.today);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                    }
+                  var navigator = Navigator.of(context);
+                  var messenger = ScaffoldMessenger.of(context);
+
+                  await viewmodel.login(email, password);
+
+                  var error = viewmodel.loginError;
+                  if (error != null) {
+                    messenger.showSnackBar(SnackBar(content: Text(error)));
+                  } else {
+                    await navigator.pushNamed(Routes.today);
                   }
                 }),
               ])));
@@ -62,11 +51,8 @@ class LoginRequired extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SessionProvider>(builder: (context, session, _) {
-      if (session.loading) {
-        return const LoadingIndicator();
-      }
-      if (session.hasToken) {
+    return Consumer<LoginViewModel>(builder: (context, viewmodel, _) {
+      if (viewmodel.hasToken) {
         return child;
       }
       return const LoginScreen();

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -10,7 +11,6 @@ import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/providers/tasks.dart';
 
 // Parse a list response into a list of tasks.
@@ -63,12 +63,11 @@ void main() {
   late CallCounter listener;
 
   group('$TasksProvider', () {
-    var session = SessionProvider(db, token: 'api-token');
-
     setUp(() async {
       listener = CallCounter();
-      provider = TasksProvider(db, session);
+      provider = TasksProvider(db);
       await provider.clear();
+      await db.apiToken.set(ApiToken.fake());
     });
 
     tearDown(() {
@@ -85,7 +84,7 @@ void main() {
       setTodayView(tasks);
 
       db.today.addListener(listener);
-      var provider = TasksProvider(db, session);
+      var provider = TasksProvider(db);
 
       await provider.toggleComplete(tasks[0]);
 
@@ -109,7 +108,7 @@ void main() {
       task.dueOn = today;
       task.completed = true;
 
-      var provider = TasksProvider(db, session);
+      var provider = TasksProvider(db);
       await provider.toggleComplete(task);
 
       expect(db.today.isExpired, isTrue);
@@ -130,7 +129,7 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(tasks);
 
-      var provider = TasksProvider(db, session);
+      var provider = TasksProvider(db);
       db.today.addListener(listener);
 
       await provider.deleteTask(tasks[0]);
@@ -146,13 +145,12 @@ void main() {
       });
 
       var project = parseProjectDetails(projectDetailsResponseFixture);
-      var db = LocalDatabase();
       db.projectMap.set(project);
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(tasks);
 
-      var provider = TasksProvider(db, session);
+      var provider = TasksProvider(db);
       await provider.deleteTask(tasks[0]);
       var updated = await db.projectMap.get(project.slug);
       expect(updated?.incompleteTaskCount, lessThan(project.incompleteTaskCount));

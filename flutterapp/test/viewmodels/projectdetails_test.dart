@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -8,7 +9,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/projectdetails.dart';
 
 // Parse a list response into a list of tasks.
@@ -39,9 +39,9 @@ void main() {
 
   group('$ProjectDetailsViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.projectDetails.clear();
     });
 
@@ -52,7 +52,7 @@ void main() {
       var data = parseData(projectDetailsResponseFixture);
       await setViewdata(db, data);
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
@@ -71,7 +71,7 @@ void main() {
       var data = parseData(projectDetailsResponseFixture);
       await setViewdata(db, data);
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
@@ -90,7 +90,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
@@ -117,7 +117,7 @@ void main() {
       await setViewdata(db, data);
       db.projectDetails.expireSlug('home');
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       await viewmodel.loadData();
       await viewmodel.reorderTask(0, 0, 1, 0);
       expect(callCount, equals(1));
@@ -136,7 +136,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
@@ -168,7 +168,7 @@ void main() {
       data.tasks.add(overdue);
       setViewdata(db, data);
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       await viewmodel.loadData();
       await viewmodel.moveInto(overdue, 0, 0);
       // The added task gets wiped by the fixture being reloaded.
@@ -192,7 +192,7 @@ void main() {
       var data = parseData(projectDetailsResponseFixture);
       await setViewdata(db, data);
 
-      var viewmodel = ProjectDetailsViewModel(db, session)..setSlug('home');
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       await viewmodel.loadData();
       await viewmodel.moveSection(1, 2);
       expect(callCount, equals(1));

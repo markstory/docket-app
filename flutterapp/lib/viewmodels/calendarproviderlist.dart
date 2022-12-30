@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/calendarprovider.dart';
-import 'package:docket/providers/session.dart';
 
 
 class CalendarProviderListViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -16,7 +14,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   /// Calendar providers list
   List<CalendarProvider> _providers = [];
 
-  CalendarProviderListViewModel(LocalDatabase database, this.session) {
+  CalendarProviderListViewModel(LocalDatabase database) {
     _database = database;
     _database.calendarList.addListener(listener);
     _providers = [];
@@ -34,10 +32,6 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   bool get loading => _loading;
   List<CalendarProvider> get providers => _providers;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
@@ -63,7 +57,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchCalendarProviders(session!.apiToken);
+    var result = await actions.fetchCalendarProviders(_database.apiToken.token);
     await _database.calendarList.set(result);
     _providers = result;
     _loading = false;
@@ -73,7 +67,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   /// Delete the provider from the server and notify.
   Future<void> delete(CalendarProvider provider) async {
-    await actions.deleteCalendarProvider(session!.apiToken, provider);
+    await actions.deleteCalendarProvider(_database.apiToken.token, provider);
     await _database.calendarList.remove(provider.id);
     await _database.calendarDetails.remove(provider.id);
 

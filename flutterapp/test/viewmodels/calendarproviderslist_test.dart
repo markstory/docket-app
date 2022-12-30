@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/calendarproviderlist.dart';
 
 void main() {
@@ -16,9 +16,9 @@ void main() {
 
   group('$CalendarProviderListViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.calendarList.clear();
     });
 
@@ -30,7 +30,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderListViewModel(db, session);
+      var viewmodel = CalendarProviderListViewModel(db);
       expect(viewmodel.providers.length, equals(0));
 
       await viewmodel.loadData();
@@ -45,7 +45,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderListViewModel(db, session);
+      var viewmodel = CalendarProviderListViewModel(db);
       expect(viewmodel.providers.length, equals(0));
 
       await viewmodel.refresh();
@@ -65,7 +65,7 @@ void main() {
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
       });
 
-      var viewmodel = CalendarProviderListViewModel(db, session);
+      var viewmodel = CalendarProviderListViewModel(db);
 
       await viewmodel.loadData();
       var provider = viewmodel.providers[0];

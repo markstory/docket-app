@@ -8,7 +8,6 @@ import 'database.dart';
 import 'routes.dart';
 import 'theme.dart' as app_theme;
 import 'providers/projects.dart';
-import 'providers/session.dart';
 import 'providers/tasks.dart';
 import 'screens/calendarproviderdetails.dart';
 import 'screens/calendarproviderlist.dart';
@@ -25,6 +24,7 @@ import 'screens/taskdetails.dart';
 import 'screens/trashbin.dart';
 import 'screens/upcoming.dart';
 import 'screens/unknown.dart';
+import 'viewmodels/login.dart';
 import 'viewmodels/projectdetails.dart';
 import 'viewmodels/projectarchive.dart';
 import 'viewmodels/projectedit.dart';
@@ -40,14 +40,17 @@ import 'viewmodels/userprofile.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeMode = await AdaptiveTheme.getThemeMode();
-  final dbHandler = LocalDatabase.instance();
+  final database = LocalDatabase.instance();
+
+  // Load the access token if available.
+  await database.apiToken.get();
 
   await SentryFlutter.init(
     (options) => {
       options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
       options.tracesSampleRate = 0.2,
     },
-    appRunner: () => runApp(EntryPoint(database: dbHandler, themeMode: themeMode)),
+    appRunner: () => runApp(EntryPoint(database: database, themeMode: themeMode)),
   );
 }
 
@@ -63,85 +66,48 @@ class EntryPoint extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider(database)),
-        ChangeNotifierProxyProvider<SessionProvider, ProjectsProvider>(
-            create: (_) => ProjectsProvider(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, ProjectArchiveViewModel>(
-          create: (_) => ProjectArchiveViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, ProjectCompletedViewModel>(
-          create: (_) => ProjectCompletedViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, ProjectDetailsViewModel>(
-          create: (_) => ProjectDetailsViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, ProjectEditViewModel>(
-          create: (_) => ProjectEditViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, TaskDetailsViewModel>(
-          create: (_) => TaskDetailsViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, TasksProvider>(
-            create: (_) => TasksProvider(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, TodayViewModel>(
-          create: (_) => TodayViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, TrashbinViewModel>(
-          create: (_) => TrashbinViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, UpcomingViewModel>(
-          create: (_) => UpcomingViewModel(database, null),
-          update: (_, session, viewmodel) {
-            viewmodel!.setSession(session);
-            return viewmodel;
-          }),
-        ChangeNotifierProxyProvider<SessionProvider, UserProfileViewModel>(
-            create: (_) => UserProfileViewModel(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, CalendarProviderListViewModel>(
-            create: (_) => CalendarProviderListViewModel(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
-        ChangeNotifierProxyProvider<SessionProvider, CalendarProviderDetailsViewModel>(
-            create: (_) => CalendarProviderDetailsViewModel(database, null),
-            update: (_, session, provider) {
-              provider!.setSession(session);
-              return provider;
-            }),
+        ChangeNotifierProvider<ProjectsProvider>(
+            create: (_) => ProjectsProvider(database),
+        ),
+        ChangeNotifierProvider<LoginViewModel>(
+            create: (_) => LoginViewModel(database),
+        ),
+        ChangeNotifierProvider<ProjectArchiveViewModel>(
+          create: (_) => ProjectArchiveViewModel(database),
+        ),
+        ChangeNotifierProvider<ProjectCompletedViewModel>(
+          create: (_) => ProjectCompletedViewModel(database),
+        ),
+        ChangeNotifierProvider<ProjectDetailsViewModel>(
+          create: (_) => ProjectDetailsViewModel(database),
+        ),
+        ChangeNotifierProvider<ProjectEditViewModel>(
+          create: (_) => ProjectEditViewModel(database),
+        ),
+        ChangeNotifierProvider<TaskDetailsViewModel>(
+          create: (_) => TaskDetailsViewModel(database),
+        ),
+        ChangeNotifierProvider<TasksProvider>(
+          create: (_) => TasksProvider(database),
+        ),
+        ChangeNotifierProvider<TodayViewModel>(
+          create: (_) => TodayViewModel(database),
+        ),
+        ChangeNotifierProvider<TrashbinViewModel>(
+          create: (_) => TrashbinViewModel(database),
+        ),
+        ChangeNotifierProvider<UpcomingViewModel>(
+          create: (_) => UpcomingViewModel(database),
+        ),
+        ChangeNotifierProvider<UserProfileViewModel>(
+          create: (_) => UserProfileViewModel(database),
+        ),
+        ChangeNotifierProvider<CalendarProviderListViewModel>(
+          create: (_) => CalendarProviderListViewModel(database),
+        ),
+        ChangeNotifierProvider<CalendarProviderDetailsViewModel>(
+          create: (_) => CalendarProviderDetailsViewModel(database),
+        ),
       ],
       child: DocketApp(themeMode: themeMode, routes: routes, child: child),
     );

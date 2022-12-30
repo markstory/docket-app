@@ -3,21 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/userprofile.dart';
-import 'package:docket/providers/session.dart';
 
 class UserProfileViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
   bool _loading = false;
 
   UserProfile? _profile;
 
-  UserProfileViewModel(LocalDatabase database, this.session) {
+  UserProfileViewModel(LocalDatabase database) {
     _database = database;
-  }
-
-  void setSession(SessionProvider session) {
-    this.session = session;
   }
 
   bool get loading => _loading;
@@ -48,7 +42,7 @@ class UserProfileViewModel extends ChangeNotifier {
 
   /// Update the user on the server
   Future<void> update(UserProfile profile) async {
-    profile = await actions.updateUser(session!.apiToken, profile);
+    profile = await actions.updateUser(_database.apiToken.token, profile);
     await _database.profile.set(profile);
     _profile = profile;
 
@@ -58,7 +52,7 @@ class UserProfileViewModel extends ChangeNotifier {
   /// Reload the profile from the server
   Future<void> refresh() async {
     _loading = true;
-    _profile = await actions.fetchUser(session!.apiToken);
+    _profile = await actions.fetchUser(_database.apiToken.token);
     await _database.profile.set(profile);
     _loading = false;
 

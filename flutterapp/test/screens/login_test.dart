@@ -27,9 +27,7 @@ void main() {
           database: db,
           child: const LoginScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       expect(find.text('E-Mail'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
@@ -37,6 +35,7 @@ void main() {
 
     testWidgets('request made on submit', (tester) async {
       var requestCount = 0;
+      var navigated = false;
       actions.client = MockClient((request) async {
         if (request.url.path == '/mobile/login') {
           requestCount += 1;
@@ -46,19 +45,24 @@ void main() {
       });
       await tester.pumpWidget(EntryPoint(
           database: db,
+          routes: {
+            "/tasks/today": (context) {
+              navigated = true;
+              return const Text('Today screen');
+            }
+          },
           child: const LoginScreen(),
       ));
-      await tester.runAsync(() async {
-        await tester.pumpAndSettle();
-      });
+      await tester.pumpAndSettle();
 
       await tester.enterText(find.byKey(const ValueKey('email')), 'mark@example.com');
       await tester.enterText(find.byKey(const ValueKey('password')), 'password12');
-      await tester.runAsync(() async {
-        await tester.tap(find.text('Log in'));
-        await tester.pumpAndSettle();
-      });
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Today screen'), findsOneWidget);
       expect(requestCount, equals(1));
+      expect(navigated, isTrue);
     });
   });
 
@@ -80,7 +84,6 @@ void main() {
     });
 
     testWidgets('show Login without session', (tester) async {
-      await db.apiToken.set(ApiToken.fake());
       await tester.pumpWidget(EntryPoint(
           database: db,
           child: const LoginRequired(child: Text('Content Text'))

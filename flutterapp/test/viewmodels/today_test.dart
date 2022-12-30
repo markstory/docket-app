@@ -8,9 +8,9 @@ import 'package:http/testing.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
+import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/today.dart';
 
 // Parse a list response into a list of tasks.
@@ -57,10 +57,10 @@ void main() {
 
   group('$TodayViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
       await db.today.clearSilent();
+      await db.apiToken.set(ApiToken.fake());
     });
 
     test('loadData() refreshes from server', () async {
@@ -74,7 +74,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -98,7 +98,7 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(db, tasks);
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -119,7 +119,7 @@ void main() {
       await setTodayView(db, tasks);
       db.today.expire();
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
 
       expect(viewmodel.taskLists.length, equals(0));
       expect(viewmodel.overdue, isNull);
@@ -145,7 +145,7 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       setTodayView(db, tasks);
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
@@ -167,7 +167,7 @@ void main() {
       });
 
       var counter = CallCounter();
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
       viewmodel.addListener(counter);
       expect(viewmodel.taskLists.length, equals(0));
 
@@ -188,7 +188,7 @@ void main() {
       });
 
       var counter = CallCounter();
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
       viewmodel.addListener(counter);
       expect(viewmodel.taskLists.length, equals(0));
 
@@ -222,7 +222,7 @@ void main() {
       tasks.add(overdue);
       setTodayView(db, tasks);
 
-      var viewmodel = TodayViewModel(db, session);
+      var viewmodel = TodayViewModel(db);
       await viewmodel.loadData();
 
       await viewmodel.moveOverdue(overdue, 0, 0);

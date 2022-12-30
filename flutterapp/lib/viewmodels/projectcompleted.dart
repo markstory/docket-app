@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 
 
 class ProjectCompletedViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -21,7 +19,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// The project slug being viewed.
   String _slug = '';
 
-  ProjectCompletedViewModel(LocalDatabase database, this.session) {
+  ProjectCompletedViewModel(LocalDatabase database) {
     _tasks = [];
 
     _database = database;
@@ -41,10 +39,6 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   bool get loading => (_loading && !_silentLoading);
   List<Task> get tasks => _tasks;
   String get slug => _slug;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   /// Set the slug
   /// If the slug changes data will be refreshed.
@@ -79,7 +73,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     assert(_slug.isNotEmpty, "A slug is required to load data");
 
     _loading = true;
-    var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
+    var result = await actions.fetchCompletedTasks(_database.apiToken.token, _slug);
     await _database.completedTasks.set(result);
     _loading = false;
     _tasks = result.tasks;
@@ -93,7 +87,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
     _loading = _silentLoading = true;
 
-    var result = await actions.fetchCompletedTasks(session!.apiToken, _slug);
+    var result = await actions.fetchCompletedTasks(_database.apiToken.token, _slug);
     await _database.completedTasks.set(result);
 
     _loading = _silentLoading = false;

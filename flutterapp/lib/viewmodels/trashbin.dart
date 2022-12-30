@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 
 
 class TrashbinViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -16,7 +14,7 @@ class TrashbinViewModel extends ChangeNotifier {
   /// Task list
   List<Task> _tasks = [];
 
-  TrashbinViewModel(LocalDatabase database, this.session) {
+  TrashbinViewModel(LocalDatabase database) {
     _database = database;
     _tasks = [];
 
@@ -35,10 +33,6 @@ class TrashbinViewModel extends ChangeNotifier {
 
   bool get loading => _loading;
   List<Task> get tasks => _tasks;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
@@ -63,7 +57,7 @@ class TrashbinViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchTrashbin(session!.apiToken);
+    var result = await actions.fetchTrashbin(_database.apiToken.token);
     await _database.trashbin.set(result);
     _tasks = result.tasks;
     _loading = false;

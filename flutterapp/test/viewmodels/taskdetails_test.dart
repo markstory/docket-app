@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -8,7 +9,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/taskdetails.dart';
 
 void main() {
@@ -24,9 +24,9 @@ void main() {
 
   group('$TaskDetailsViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.taskDetails.clearSilent();
     });
 
@@ -38,7 +38,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TaskDetailsViewModel(db, session);
+      var viewmodel = TaskDetailsViewModel(db);
       viewmodel.setId(1);
 
       await viewmodel.loadData();
@@ -56,7 +56,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TaskDetailsViewModel(db, session);
+      var viewmodel = TaskDetailsViewModel(db);
       viewmodel.setId(1);
       var callCounter = CallCounter();
       viewmodel.addListener(callCounter);
@@ -75,7 +75,7 @@ void main() {
         return Response(taskCreateTodayResponseFixture, 200);
       });
 
-      var viewmodel = TaskDetailsViewModel(db, session);
+      var viewmodel = TaskDetailsViewModel(db);
       viewmodel.setId(0);
       var task = Task.blank();
 
@@ -103,7 +103,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var viewmodel = TaskDetailsViewModel(db, session);
+      var viewmodel = TaskDetailsViewModel(db);
       viewmodel.setId(1);
       var callCounter = CallCounter();
       viewmodel.addListener(callCounter);

@@ -5,13 +5,11 @@ import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/formatters.dart' as formatters;
 
 
 class TodayViewModel extends ChangeNotifier {
   late LocalDatabase _database;
-  SessionProvider? session;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
@@ -26,7 +24,7 @@ class TodayViewModel extends ChangeNotifier {
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
-  TodayViewModel(LocalDatabase database, this.session) {
+  TodayViewModel(LocalDatabase database) {
     _taskLists = [];
     _database = database;
     _database.today.addListener(listener);
@@ -46,10 +44,6 @@ class TodayViewModel extends ChangeNotifier {
   bool get loadError => _loadError;
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
-
-  setSession(SessionProvider value) {
-    session = value;
-  }
 
   clearLoadError() {
     _loadError = false;
@@ -75,7 +69,7 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskView = await actions.fetchTodayTasks(session!.apiToken);
+    var taskView = await actions.fetchTodayTasks(_database.apiToken.token);
     _database.today.set(taskView);
 
     _buildTaskLists(taskView);
@@ -85,8 +79,8 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
     await Future.wait([
-      actions.fetchTodayTasks(session!.apiToken),
-      actions.fetchProjects(session!.apiToken),
+      actions.fetchTodayTasks(_database.apiToken.token),
+      actions.fetchProjects(_database.apiToken.token),
     ]).then((results) {
       var tasksView = results[0] as TaskViewData;
       var projects = results[1] as List<Project>;
@@ -179,7 +173,7 @@ class TodayViewModel extends ChangeNotifier {
     _taskLists[listIndex].tasks.insert(itemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
   }
 
@@ -196,7 +190,7 @@ class TodayViewModel extends ChangeNotifier {
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
 
     // Update the moved task and reload from server async
-    await actions.moveTask(session!.apiToken, task, updates);
+    await actions.moveTask(_database.apiToken.token, task, updates);
     _database.expireTask(task);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:docket/models/apitoken.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -6,7 +7,6 @@ import 'package:http/testing.dart';
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/userprofile.dart';
-import 'package:docket/providers/session.dart';
 import 'package:docket/viewmodels/userprofile.dart';
 
 void main() {
@@ -17,16 +17,10 @@ void main() {
 
   group('$UserProfileViewModel', () {
     var db = LocalDatabase(inTest: true);
-    var session = SessionProvider(db, token: 'api-token');
-    var notifyCount = 0;
-
-    void mockListener() {
-      notifyCount += 1;
-    }
 
     setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
       await db.profile.clear();
-      notifyCount = 0;
     });
 
     test('loadData() fetches from server', () async {
@@ -37,14 +31,15 @@ void main() {
 
         return Response(profileResponseFixture, 200);
       });
-      var viewmodel = UserProfileViewModel(db, session);
+      var mockListener = CallCounter();
+      var viewmodel = UserProfileViewModel(db);
       viewmodel.addListener(mockListener);
 
       await viewmodel.loadData();
       var profile = viewmodel.profile;
 
       expect(requestCount, equals(1));
-      expect(notifyCount, greaterThan(0));
+      expect(mockListener.callCount, greaterThan(0));
       expect(profile.email, equals('mark@example.com'));
       expect(profile.name, equals('Mark Story'));
     });
@@ -57,7 +52,7 @@ void main() {
 
         return Response(profileResponseFixture, 200);
       });
-      var viewmodel = UserProfileViewModel(db, session);
+      var viewmodel = UserProfileViewModel(db);
 
       await viewmodel.refresh();
       await viewmodel.refresh();
@@ -76,7 +71,7 @@ void main() {
 
       var profile = UserProfile(
           name: 'mark', email: 'mark@example.com', timezone: 'America/New_York', theme: 'system', avatarHash: '');
-      var viewmodel = UserProfileViewModel(db, session);
+      var viewmodel = UserProfileViewModel(db);
 
       await viewmodel.update(profile);
       expect(requestCount, equals(1), reason: 'One request should be made');
