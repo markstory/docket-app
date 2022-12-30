@@ -15,16 +15,6 @@ class ApiToken {
     return ApiToken(token: 'abc123');
   }
 
-  ApiToken copy({
-    String? token,
-    String? lastUsed,
-  }) {
-    return ApiToken(
-      token: token ?? this.token,
-      lastUsed: lastUsed ?? this.lastUsed,
-    );
-  }
-
   Map<String, Object?> toMap() {
     return {
       'token': token,

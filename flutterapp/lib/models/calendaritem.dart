@@ -61,34 +61,6 @@ class CalendarItem {
     );
   }
 
-  CalendarItem copy({
-    String? id,
-    int? calendarSourceId,
-    String? providerId,
-    String? title,
-    int? color,
-    DateTime? startTime,
-    DateTime? endTime,
-    DateTime? startDate,
-    DateTime? endDate,
-    bool? allDay,
-    String? htmlLink,
-  }) {
-    return CalendarItem(
-      id: id ?? this.id,
-      calendarSourceId: calendarSourceId ?? this.calendarSourceId,
-      providerId: providerId ?? this.providerId,
-      title: title ?? this.title,
-      color: color ?? this.color,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      allDay: allDay ?? this.allDay,
-      htmlLink: htmlLink ?? this.htmlLink,
-    );
-  }
-
   Map<String, Object?> toMap() {
     return {
       'id': id,
