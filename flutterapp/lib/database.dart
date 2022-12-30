@@ -135,11 +135,6 @@ class LocalDatabase {
 
     return views;
   }
-
-  /// Directly set a key. Avoid use outside of tests.
-  Future<void> set(String key, Map<String, Object?> value) async {
-    await database().refresh(key, value);
-  }
   // }}}
 
   // Task Methods. {{{
@@ -255,23 +250,6 @@ class LocalDatabase {
           throw Exception('Cannot expire view of $view');
       }
     }
-  }
-
-  // }}}
-
-  // Project methods {{{
-
-  /// Add a list of projects to the local database.
-  Future<void> addProjects(List<Project> projects) async {
-    await Future.wait(projects.map((item) => projectMap.set(item)).toList());
-  }
-
-  /// Update a project in the project list state.
-  Future<void> updateProject(Project project) async {
-    await Future.wait([
-      projectMap.set(project),
-      projectDetails.remove(project.slug),
-    ]);
   }
   // }}}
 
