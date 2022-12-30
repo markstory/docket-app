@@ -130,6 +130,26 @@ void main() {
       expect(upcomingCounter.callCount, equals(1));
     });
 
+    test('expireTask() removes from trashbin', () async {
+      var todayCounter = CallCounter();
+      var trashCounter = CallCounter();
+      database.today.addListener(todayCounter);
+      database.trashbin.addListener(trashCounter);
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectSlug = 'home';
+      task.dueOn = today;
+      task.deletedAt = clock.now();
+
+      database.expireTask(task);
+      database.today.removeListener(todayCounter);
+      database.trashbin.removeListener(trashCounter);
+
+      expect(todayCounter.callCount, equals(1));
+      expect(trashCounter.callCount, equals(1));
+    });
+
     test('updateTask() notifies taskDetails', () async {
       var listener = CallCounter();
       // This is important as it ensures that taskDetails refreshes.
