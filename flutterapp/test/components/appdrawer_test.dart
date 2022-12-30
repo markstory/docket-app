@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:docket/models/project.dart';
-import 'package:docket/models/userprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
+import 'package:docket/components/appdrawer.dart';
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
-import 'package:docket/components/appdrawer.dart';
+import 'package:docket/models/project.dart';
+import 'package:docket/models/userprofile.dart';
+import 'package:docket/routes.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +63,33 @@ void main() {
       expect(find.text('mark@example.com'), findsOneWidget);
     });
 
-    // TODO add tests for moving projects
+    testWidgets('project items navigate on tap', (tester) async {
+      var navigated = false;
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+      await tester.pumpWidget(EntryPoint(
+          database: database,
+          routes: {
+            '/projects/view': (context) {
+              navigated = true;
+              var arguments = ModalRoute.of(context)!.settings.arguments as ProjectDetailsArguments;
+              expect(arguments.project.slug, equals('work'));
+
+              return const Text('Project View');
+            }
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            body: const AppDrawer(),
+          )));
+
+      await mockNetworkImagesFor(() async {
+        scaffoldKey.currentState!.openDrawer();
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+      });
+      await tester.tap(find.text('Work'));
+      await tester.pumpAndSettle();
+      expect(navigated, isTrue);
+    });
   });
 }
