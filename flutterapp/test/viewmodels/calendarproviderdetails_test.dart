@@ -25,12 +25,6 @@ void main() {
       await db.calendarDetails.clear();
     });
 
-    test('provider property throws without data', () async {
-      var viewmodel = CalendarProviderDetailsViewModel(db);
-      viewmodel.setId(5);
-      expect(() => viewmodel.provider, throwsException);
-    });
-
     test('loadData() fetches from server', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/calendars/5/view') {

@@ -34,20 +34,16 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
   CalendarProvider get provider {
     var value = _provider;
-    if (value == null) {
-      throw Exception("Cannot access provider it is not set.");
-    }
+    assert(value != null, "Cannot access provider it is not set.");
 
-    return value;
+    return value!;
   }
 
   int get id {
     var value = _id;
-    if (value == null) {
-      throw Exception("Cannot access id it is not set");
-    }
+    assert(value != null, "Cannot access id it is not set");
 
-    return value;
+    return value!;
   }
 
   setId(int value) {
@@ -82,16 +78,6 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     await _database.calendarDetails.set(result);
     _provider = result;
     _loading = false;
-
-    notifyListeners();
-  }
-
-  /// Create a calendar that will be synced
-  Future<void> addCalendar(CalendarSource source) async {
-    var updated = await actions.createSource(_database.apiToken.token, source);
-
-    provider.replaceSource(updated);
-    await _database.calendarDetails.set(provider);
 
     notifyListeners();
   }
