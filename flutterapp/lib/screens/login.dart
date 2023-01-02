@@ -14,13 +14,24 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Consumer<LoginViewModel>(builder: (context, viewmodel, child) {
+      var theme = Theme.of(context);
       return Scaffold(
-          appBar: AppBar(),
-          body: Padding(
-              padding: EdgeInsets.all(space(2)),
-              child: Column(children: [
-                const Text('Login to your Docket instance'),
-                LoginForm(onSubmit: (String? email, String? password) async {
+        body: Column(
+          children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(space(2), space(4), space(2), space(2)),
+                alignment: Alignment.centerLeft,
+                color: theme.colorScheme.primary,
+                child: Row(
+                  children: [
+                    const Image(image: AssetImage('assets/docket-logo.png'), width: 64, height: 64),
+                    SizedBox(width: space(2)),
+                    Text('Login', style: theme.textTheme.headline5!.copyWith(color: theme.colorScheme.onPrimary)),
+                  ])
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: space(2), vertical: space(2)),
+                child: LoginForm(onSubmit: (String? email, String? password) async {
                   var navigator = Navigator.of(context);
                   var messenger = ScaffoldMessenger.of(context);
                   var theme = Theme.of(context);
@@ -29,13 +40,14 @@ class LoginScreen extends StatelessWidget {
 
                   var error = viewmodel.loginError;
                   if (error != null) {
-                    messenger.showSnackBar(
-                      errorSnackBar(text: error.toString(), theme: theme));
+                    messenger.showSnackBar(errorSnackBar(text: error.toString(), theme: theme));
                   } else {
                     await navigator.pushNamed(Routes.today);
                   }
                 }),
-              ])));
+              )
+          ])
+        );
     });
   }
 }

@@ -1,3 +1,4 @@
+import 'package:docket/theme.dart';
 import 'package:flutter/material.dart';
 
 // Login Form Wrapper
@@ -61,6 +62,7 @@ class LoginFormState extends State<LoginForm> {
               autofillHints: const [AutofillHints.password],
               onSaved: (value) => _password = value,
             ),
+            SizedBox(height: space(2)),
             ElevatedButton(
                 child: const Text('Log in'),
                 onPressed: () async {
