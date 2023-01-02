@@ -8,6 +8,8 @@ import 'package:docket/theme.dart';
 
 class TaskCheckbox extends StatelessWidget {
   final Task task;
+
+  /// Fired when the task state is changed on the server.
   final void Function()? onComplete;
 
   const TaskCheckbox(this.task, {this.onComplete, super.key});
@@ -17,21 +19,19 @@ class TaskCheckbox extends StatelessWidget {
     void _handleCompleted() async {
       var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
       var messenger = ScaffoldMessenger.of(context);
+      var theme = Theme.of(context);
+
       try {
-        await tasksProvider.toggleComplete(task);
+        await tasksProvider.toggleComplete(task, wait: const Duration(seconds: 1));
         var text = task.completed ? 'Task Complete' : 'Task Incomplete';
-        messenger.showSnackBar(successSnackBar(context: context, text: text));
-        if (onComplete != null) {
-          onComplete!();
-        }
+        messenger.showSnackBar(successSnackBar(theme: theme, text: text));
+        onComplete?.call();
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
+        messenger.showSnackBar(errorSnackBar(theme: theme, text: 'Could not update task'));
       }
     }
 
-    var theme = Theme.of(context);
-    var customColors = theme.extension<DocketColors>()!;
-
+    var customColors = getCustomColors(context);
     Function(bool?)? onChanged;
     if (task.id != null) {
       onChanged = (bool? value) => _handleCompleted();

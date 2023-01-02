@@ -27,7 +27,13 @@ class TaskItem extends StatelessWidget {
   /// Should the restore button be shown?
   final bool showRestore;
 
-  const TaskItem({required this.task, this.showDate = false, this.showProject = false, this.showRestore = false, super.key});
+  const TaskItem({
+    required this.task,
+    this.showDate = false,
+    this.showProject = false,
+    this.showRestore = false,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +59,26 @@ class TaskItem extends StatelessWidget {
         children: attributes,
       );
     }
+    var theme = Theme.of(context);
+    var customColors = getCustomColors(context);
+
+    var textStyle = theme.textTheme.bodyText2!;
+    if (task.completed) {
+      textStyle = textStyle.copyWith(
+        decoration: TextDecoration.lineThrough,
+        color: customColors.disabledText
+      );
+    }
 
     return ListTile(
         dense: true,
         contentPadding: EdgeInsets.fromLTRB(space(1), space(0.5), space(1), space(0.5)),
         leading: TaskCheckbox(task),
-        title: Text(
-          task.title,
+        title: AnimatedDefaultTextStyle(
+          duration: const Duration(seconds: 1),
           overflow: TextOverflow.ellipsis,
-          style: completedStyle(context, task.completed),
+          style: textStyle,
+          child: Text(task.title),
         ),
         subtitle: subtitle,
         trailing: TaskActions(task, showRestore: showRestore),

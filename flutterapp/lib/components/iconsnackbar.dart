@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:docket/theme.dart';
 
-SnackBar successSnackBar({required BuildContext context, required String text}) {
-  var customColors = Theme.of(context).extension<DocketColors>()!;
+SnackBar successSnackBar({BuildContext? context, ThemeData? theme, required String text}) {
+  assert(context != null || theme != null, "one of theme or context is required");
+
+  theme = theme ?? Theme.of(context!);
+  var colors = theme.extension<DocketColors>()!;
+
   return SnackBar(
       content: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
     Padding(
       padding: const EdgeInsets.only(left: 4, right: 4),
-      child: Icon(Icons.check_circle, color: customColors.actionComplete),
+      child: Icon(Icons.check_circle, color: colors.actionComplete),
     ),
     Text(text),
   ]));
 }
 
-SnackBar errorSnackBar({required BuildContext context, required String text}) {
-  var theme = Theme.of(context);
+SnackBar errorSnackBar({BuildContext? context, ThemeData? theme, required String text}) {
+  assert(context != null || theme != null, "one of theme or context is required");
+  theme = theme ?? Theme.of(context!);
+
   return SnackBar(
       content: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
     Padding(

@@ -108,6 +108,7 @@ void main() {
       await renderWidget(tester, task);
 
       await tester.tap(find.byType(Checkbox));
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       expect(callCount, equals(1));

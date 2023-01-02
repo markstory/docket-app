@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
+import 'package:http/testing.dart';
 
+import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/main.dart';
@@ -39,11 +42,9 @@ void main() {
           child: const TodayScreen(),
       ));
 
-      await tester.runAsync(() async {
-        // tap the floating add button. Should go to task add
-        await tester.tap(find.byKey(const ValueKey('floating-task-add')));
-        await tester.pumpAndSettle();
-      });
+      // tap the floating add button. Should go to task add
+      await tester.tap(find.byKey(const ValueKey('floating-task-add')));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
     });
@@ -73,12 +74,42 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        await tester.tap(find.text('clean dishes'));
-        await tester.pumpAndSettle();
-      });
+      await tester.tap(find.text('clean dishes'));
+      await tester.pumpAndSettle();
 
       expect(navigated, isTrue);
+    });
+
+    testWidgets('task item can be completed', (tester) async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/complete') {
+          return Response('', 200);
+        }
+        if (request.url.path == '/tasks/today') {
+          return Response(todayResponse, 200);
+        }
+        throw Exception('Unmocked request to ${request.url.path}');
+      });
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const TodayScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(
+        tester.getSemantics(find.byType(Checkbox).first),
+        matchesSemantics(
+          hasTapAction: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasCheckedState: true,
+          hasEnabledState: true,
+        )
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
     });
   });
 }

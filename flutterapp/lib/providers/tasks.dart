@@ -30,20 +30,26 @@ class TasksProvider extends ChangeNotifier {
   }
 
   /// Flip task.completed and persist to the server.
-  Future<void> toggleComplete(Task task) async {
+  /// The wait param controls how long between local updates.
+  Future<void> toggleComplete(Task task, {Duration? wait}) async {
     // Update the completed state
     task.completed = !task.completed;
 
     // Update local db and server
+    await _database.updateTask(task);
     await actions.toggleTask(_database.apiToken.token, task);
-    if (task.completed) {
-      await _database.deleteTask(task);
-    } else {
-      await _database.updateTask(task);
-      _database.completedTasks.expire(notify: true);
-    }
 
-    notifyListeners();
+    wait = wait ?? const Duration(seconds: 0);
+    await Future.delayed(wait, () async {
+      if (task.completed) {
+        await _database.deleteTask(task);
+      } else {
+        await _database.updateTask(task);
+        _database.completedTasks.expire(notify: true);
+      }
+
+      notifyListeners();
+    });
   }
 
   /// Create or Update a task on the server and local state.
