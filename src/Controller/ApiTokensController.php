@@ -44,7 +44,7 @@ class ApiTokensController extends AppController
 
     /**
      * Add a new API token. Currently the only use case we have for creating
-     * API tokens is for the login in the future mobile app.
+     * API tokens is for login in the mobile app.
      *
      * ## Parameters
      *

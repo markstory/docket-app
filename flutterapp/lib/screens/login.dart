@@ -1,3 +1,4 @@
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,12 +23,14 @@ class LoginScreen extends StatelessWidget {
                 LoginForm(onSubmit: (String? email, String? password) async {
                   var navigator = Navigator.of(context);
                   var messenger = ScaffoldMessenger.of(context);
+                  var theme = Theme.of(context);
 
                   await viewmodel.login(email, password);
 
                   var error = viewmodel.loginError;
                   if (error != null) {
-                    messenger.showSnackBar(SnackBar(content: Text(error)));
+                    messenger.showSnackBar(
+                      errorSnackBar(text: error.toString(), theme: theme));
                   } else {
                     await navigator.pushNamed(Routes.today);
                   }

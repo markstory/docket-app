@@ -26,7 +26,7 @@ class LoginViewModel extends ChangeNotifier {
       var apiToken = await actions.doLogin(email, password);
       await _database.apiToken.set(apiToken);
     } catch (e) {
-      _loginError = 'Failed to login. Check e-mail and password.';
+      _loginError = 'Authentication failed.';
     }
 
     notifyListeners();

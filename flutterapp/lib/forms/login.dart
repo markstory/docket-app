@@ -27,53 +27,52 @@ class LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return AutofillGroup(
-        child: Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            key: const ValueKey('email'),
-            decoration: const InputDecoration(
-              labelText: 'E-Mail',
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Email is required';
-              }
-              return null;
-            },
-            onSaved: (value) => _email = value,
-            autofillHints: const [AutofillHints.username, AutofillHints.email],
-          ),
-          TextFormField(
-            key: const ValueKey('password'),
-            decoration: const InputDecoration(
-              labelText: 'Password',
-            ),
-            obscureText: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Password is required';
-              }
-              return null;
-            },
-            autofillHints: const [AutofillHints.password],
-            onSaved: (value) => _password = value,
-          ),
-          ElevatedButton(
-              child: const Text('Log in'),
-              onPressed: () async {
-                if (!_formKey.currentState!.validate()) {
-                  return;
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              key: const ValueKey('email'),
+              decoration: const InputDecoration(
+                labelText: 'E-Mail',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'E-mail is required';
                 }
-                _formKey.currentState!.save();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging in')));
-                await widget.onSubmit(_email, _password);
-              })
-        ],
-      ),
-    ));
+                return null;
+              },
+              onSaved: (value) => _email = value,
+              autofillHints: const [AutofillHints.username, AutofillHints.email],
+            ),
+            TextFormField(
+              key: const ValueKey('password'),
+              decoration: const InputDecoration(
+                labelText: 'Password',
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                }
+                return null;
+              },
+              autofillHints: const [AutofillHints.password],
+              onSaved: (value) => _password = value,
+            ),
+            ElevatedButton(
+                child: const Text('Log in'),
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) {
+                    return;
+                  }
+                  _formKey.currentState!.save();
+                  await widget.onSubmit(_email, _password);
+                })
+          ],
+        ),
+      )
+    );
   }
 }

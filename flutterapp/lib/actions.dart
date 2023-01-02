@@ -133,7 +133,7 @@ Future<ApiToken> doLogin(String email, String password) async {
 
   var body = {'email': email, 'password': password};
 
-  var response = await httpPost(url, body: body, errorMessage: 'Login Failed');
+  var response = await httpPost(url, body: body, errorMessage: 'Login failed: ');
   developer.log('login complete', name: 'docket.actions');
 
   try {

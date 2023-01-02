@@ -22,7 +22,7 @@ void main() {
       await db.apiToken.clearSilent();
     });
 
-    testWidgets('shows form with empty database', (tester) async {
+    testWidgets('shows form with no session', (tester) async {
       await tester.pumpWidget(EntryPoint(
           database: db,
           child: const LoginScreen(),
@@ -31,6 +31,41 @@ void main() {
 
       expect(find.text('E-Mail'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
+    });
+
+    testWidgets('shows validation errors on blank data', (tester) async {
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const LoginScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+      expect(find.text('E-mail is required'), findsOneWidget);
+      expect(find.text('Password is required'), findsOneWidget);
+    });
+
+    testWidgets('shows error on login failure', (tester) async {
+      actions.client = MockClient((request) async {
+        return Response('{"errors": ["Authentication required"]}', 401);
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const LoginScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byKey(const ValueKey('email')), 'mark@example.com');
+      await tester.enterText(find.byKey(const ValueKey('password')), 'password12');
+      await tester.tap(find.text('Log in'));
+
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('Authentication failed.'), findsOneWidget);
     });
 
     testWidgets('request made on submit', (tester) async {
