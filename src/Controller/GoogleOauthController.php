@@ -14,6 +14,8 @@ use Google\Service\Oauth2 as GoogleOauth2;
 
 class GoogleOauthController extends AppController
 {
+    public const MOBILE_KEY = 'oauth-mobile';
+
     /**
      * @var \App\Model\Table\CalendarProvidersTable
      */
@@ -33,8 +35,16 @@ class GoogleOauthController extends AppController
         return null;
     }
 
+    protected function useInertia()
+    {
+        return false;
+    }
+
     public function authorize(GoogleClient $client)
     {
+        if ($this->request->getQuery('mobile')) {
+            $this->request->getSession()->write(self::MOBILE_KEY, true);
+        }
         $this->redirect($client->createAuthUrl());
     }
 
@@ -81,6 +91,11 @@ class GoogleOauthController extends AppController
             $this->Flash->error(
                 __('Could not link google account. Try removing authorization in google and re-connecting')
             );
+        }
+        if ($this->request->getSession()->read(self::MOBILE_KEY)) {
+            $this->request->getSession()->delete(self::MOBILE_KEY);
+
+            return $this->render('complete');
         }
 
         $this->redirect(['_name' => 'calendarproviders:index']);
