@@ -65,6 +65,32 @@ void main() {
       expect(callCount, equals(1));
     });
 
+    testWidgets('can mark task complete', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/view') {
+          return Response(taskDetails, 200);
+        }
+        if (request.url.path == '/tasks/1/complete') {
+          callCount += 1;
+          return Response('', 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: TaskDetailsScreen(task),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
     testWidgets('renders notes & subtasks', (tester) async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/1/view') {
