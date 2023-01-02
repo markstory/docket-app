@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'package:docket/actions.dart' as actions;
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/calendarprovideritem.dart';
@@ -55,6 +57,17 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
         appBar: AppBar(
           backgroundColor: theme.colorScheme.primary,
           title: const Text('Synced Calendars'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                var uri = actions.googleAuthorizeUri();
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
+              },
+              icon: const Icon(Icons.add)
+            )
+          ]
         ),
         drawer: const AppDrawer(),
         body: body,
