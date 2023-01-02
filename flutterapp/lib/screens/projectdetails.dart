@@ -62,7 +62,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           child: TaskSorter(
               taskLists: viewmodel.taskLists,
               buildItem: (Task task) {
-                return TaskItem(task: task, showDate: true);
+                return TaskItem(key: ValueKey(task.id), task: task, showDate: true);
               },
               buildHeader: (TaskSortMetadata metadata) {
                 var data = metadata.data as Section?;

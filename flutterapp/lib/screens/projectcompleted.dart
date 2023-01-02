@@ -45,11 +45,13 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
           child: ListView.builder(
               itemCount: viewmodel.tasks.length,
               prototypeItem: TaskItem(
+                key: const ValueKey('proto'),
                 task: viewmodel.tasks.isNotEmpty ? viewmodel.tasks.first : Task.blank(), 
                 showDate: true
               ),
               itemBuilder: (BuildContext context, int index) {
-                return TaskItem(task: viewmodel.tasks[index], showDate: true);
+                var task = viewmodel.tasks[index];
+                return TaskItem(key: ValueKey(task.id), task: task, showDate: true);
               },
             ));
     });

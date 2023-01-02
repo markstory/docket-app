@@ -15,7 +15,7 @@ import 'package:docket/theme.dart';
 
 enum Menu { move, reschedule, delete }
 
-class TaskItem extends StatelessWidget {
+class TaskItem extends StatefulWidget {
   final Task task;
 
   /// Should the date + evening icon be shown?
@@ -36,18 +36,31 @@ class TaskItem extends StatelessWidget {
   });
 
   @override
+  State<TaskItem> createState() => _TaskItemState();
+}
+
+class _TaskItemState extends State<TaskItem> {
+  late bool completed;
+
+  @override
+  void initState() {
+    super.initState();
+    completed = widget.task.completed;
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> attributes = [];
-    if (showProject) {
-      attributes.add(ProjectBadge(text: task.projectName, color: task.projectColor));
+    if (widget.showProject) {
+      attributes.add(ProjectBadge(text: widget.task.projectName, color: widget.task.projectColor));
     }
-    if (showDate && task.dueOn != null) {
-      attributes.add(DueOn(dueOn: task.dueOn, evening: task.evening, showIcon: true));
+    if (widget.showDate && widget.task.dueOn != null) {
+      attributes.add(DueOn(dueOn: widget.task.dueOn, evening: widget.task.evening, showIcon: true));
     }
-    if (task.subtaskCount > 0) {
+    if (widget.task.subtaskCount > 0) {
       attributes.add(Wrap(spacing: space(0.25), children: [
         const Icon(Icons.done, color: Colors.grey, size: 14),
-        Text("${task.completeSubtaskCount}/${task.subtaskCount}"),
+        Text("${widget.task.completeSubtaskCount}/${widget.task.subtaskCount}"),
       ]));
     }
 
@@ -63,7 +76,7 @@ class TaskItem extends StatelessWidget {
     var customColors = getCustomColors(context);
 
     var textStyle = theme.textTheme.bodyText2!;
-    if (task.completed) {
+    if (completed) {
       textStyle = textStyle.copyWith(
         decoration: TextDecoration.lineThrough,
         color: customColors.disabledText
@@ -73,17 +86,25 @@ class TaskItem extends StatelessWidget {
     return ListTile(
         dense: true,
         contentPadding: EdgeInsets.fromLTRB(space(1), space(0.5), space(1), space(0.5)),
-        leading: TaskCheckbox(task),
+        leading: TaskCheckbox(
+          task: widget.task,
+          value: completed,
+          onToggle: (value) {
+            setState(() {
+              completed = value;
+            });
+          }
+        ),
         title: AnimatedDefaultTextStyle(
-          duration: const Duration(seconds: 1),
+          duration: const Duration(milliseconds: 500),
           overflow: TextOverflow.ellipsis,
           style: textStyle,
-          child: Text(task.title),
+          child: Text(widget.task.title),
         ),
         subtitle: subtitle,
-        trailing: TaskActions(task, showRestore: showRestore),
-        onTap: showRestore ? null : () {
-          Navigator.pushNamed(context, Routes.taskDetails, arguments: TaskDetailsArguments(task));
+        trailing: TaskActions(widget.task, showRestore: widget.showRestore),
+        onTap: widget.showRestore ? null : () {
+          Navigator.pushNamed(context, Routes.taskDetails, arguments: TaskDetailsArguments(widget.task));
         });
   }
 }

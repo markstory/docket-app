@@ -1,8 +1,8 @@
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/forms.dart';
+import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/tasktitleinput.dart';
@@ -10,6 +10,7 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
+import 'package:docket/providers/tasks.dart';
 import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
@@ -28,11 +29,13 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final Task task;
+  late bool completed;
 
   @override
   void initState() {
     super.initState();
     task = widget.task.copy();
+    completed = task.completed;
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -94,7 +97,19 @@ class _TaskFormState extends State<TaskForm> {
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(
                       padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
-                      child: TaskCheckbox(task, onComplete: widget.onComplete)),
+                      child: TaskCheckbox(
+                        value: completed,
+                        task: widget.task,
+                        disabled: task.id == null,
+                        onToggle: (value) {
+                          setState(() {
+                            completed = value;
+                          });
+                        },
+                        onChange: (value) {
+                          Navigator.of(context).pop();
+                        }
+                      )),
                   Expanded(
                       child: TaskTitleInput(
                           autoFocus: task.id == null,

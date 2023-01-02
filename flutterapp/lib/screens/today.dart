@@ -84,7 +84,7 @@ class _TodayScreenState extends State<TodayScreen> {
                 taskLists: viewmodel.taskLists,
                 overdue: viewmodel.overdue,
                 buildItem: (Task task) {
-                  return TaskItem(task: task, showProject: true);
+                  return TaskItem(key: ValueKey(task.id), task: task, showProject: true);
                 },
                 onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
                   await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);

@@ -50,7 +50,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
         child: TaskSorter(
             taskLists: viewmodel.taskLists,
             buildItem: (Task task) {
-              return TaskItem(task: task, showDate: false, showProject: true);
+              return TaskItem(key: ValueKey(task.id), task: task, showDate: false, showProject: true);
             },
             onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
               await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);

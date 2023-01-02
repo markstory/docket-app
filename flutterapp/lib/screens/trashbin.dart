@@ -41,7 +41,8 @@ class _TrashbinScreenState extends State<TrashbinScreen> {
             child: ListView(
               children: viewmodel.tasks
                   .map(
-                    (task) => TaskItem(task: task, showProject: true, showDate: true, showRestore: true),
+                    (task) =>
+                        TaskItem(key: ValueKey(task), task: task, showProject: true, showDate: true, showRestore: true),
                   )
                   .toList(),
             ));
