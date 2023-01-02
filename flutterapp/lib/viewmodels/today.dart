@@ -93,6 +93,7 @@ class TodayViewModel extends ChangeNotifier {
       });
     }).onError((error, stack) {
       _loadError = true;
+      notifyListeners();
     });
   }
 

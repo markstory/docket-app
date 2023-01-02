@@ -68,6 +68,7 @@ class _TodayScreenState extends State<TodayScreen> {
       }
       SystemChrome.setSystemUIOverlayStyle(theme.appBarTheme.systemOverlayStyle!);
     };
+
     return Consumer<TodayViewModel>(
       builder: buildScreen,
     );
@@ -99,8 +100,12 @@ class _TodayScreenState extends State<TodayScreen> {
     }
 
     if (viewmodel.loadError) {
-      errorSnackBar(context: context, text: 'Failed to load tasks');
       viewmodel.clearLoadError();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          errorSnackBar(context: context, text: 'Could not load data from server.')
+        );
+      });
     }
 
     return Scaffold(

@@ -51,6 +51,22 @@ void main() {
       expect(navigated, isTrue);
     });
 
+    testWidgets('shows loading error', (tester) async {
+      await db.today.clearSilent();
+      actions.client = MockClient((request) async {
+        return Response('{"error": "Server unavailable"}', 500);
+      });
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const TodayScreen(),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.text('Could not load data from server.'), findsOneWidget);
+    });
+
     testWidgets('shows today tasks', (tester) async {
       await tester.pumpWidget(EntryPoint(
           database: db,

@@ -30,8 +30,11 @@ class ValidationError implements Exception {
       developer.log('$message. Response: $bodyData', name: 'docket.actions');
 
       var decoded = jsonDecode(bodyData);
-      if (decoded == null || decoded['errors'] == null) {
+      if (decoded == null || (decoded['error'] == null && decoded['errors'] == null)) {
         throw Exception('Could not parse response, or find `errors` key.');
+      }
+      if (decoded['error'] is String) {
+        errors.add(decoded['error']);
       }
       if (decoded['errors'] is List) {
         for (var line in decoded['errors']) {
