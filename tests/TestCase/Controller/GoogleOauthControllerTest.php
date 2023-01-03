@@ -48,10 +48,13 @@ class GoogleOauthControllerTest extends TestCase
 
     public function testAuthorizeMobile(): void
     {
-        $this->login();
-        $this->get('/auth/google/authorize?mobile=1');
+        $token = $this->makeApiToken(1);
+        $this->useApiToken($token->token);
+
+        $this->post('/auth/google/authorize?mobile=1');
         $this->assertRedirectContains('accounts.google.com');
-        $this->assertSessionHasKey(GoogleOauthController::MOBILE_KEY);
+        $this->assertSessionHasKey('Auth');
+        $this->assertSessionHasKey(GoogleOauthController::MOBILE_VIEW);
     }
 
     public function testAuthorizeRequireLogin(): void
@@ -89,8 +92,11 @@ class GoogleOauthControllerTest extends TestCase
      */
     public function testCallbackSuccessMobile(): void
     {
-        $this->login();
-        $this->session([GoogleOauthController::MOBILE_KEY => true]);
+        $user = $this->fetchTable('Users')->get(1);
+        $this->session([
+            'Auth' => $user,
+            GoogleOauthController::MOBILE_VIEW => true,
+        ]);
         $this->get('/auth/google/callback?code=auth-code');
 
         $this->assertResponseOk();

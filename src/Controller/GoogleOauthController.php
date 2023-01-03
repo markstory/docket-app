@@ -14,7 +14,7 @@ use Google\Service\Oauth2 as GoogleOauth2;
 
 class GoogleOauthController extends AppController
 {
-    public const MOBILE_KEY = 'oauth-mobile';
+    public const MOBILE_VIEW = 'oauth-mobile';
 
     /**
      * @var \App\Model\Table\CalendarProvidersTable
@@ -42,9 +42,17 @@ class GoogleOauthController extends AppController
 
     public function authorize(GoogleClient $client)
     {
+        $session = $this->request->getSession();
+
+        // Ensure that the user is stored in the session even
+        // if the original request came in via an API token.
+        $user = $this->request->getAttribute('identity');
+        $session->write('Auth', $user);
+
         if ($this->request->getQuery('mobile')) {
-            $this->request->getSession()->write(self::MOBILE_KEY, true);
+            $session->write(self::MOBILE_VIEW, true);
         }
+
         $this->redirect($client->createAuthUrl());
     }
 
@@ -92,8 +100,10 @@ class GoogleOauthController extends AppController
                 __('Could not link google account. Try removing authorization in google and re-connecting')
             );
         }
-        if ($this->request->getSession()->read(self::MOBILE_KEY)) {
-            $this->request->getSession()->delete(self::MOBILE_KEY);
+
+        $session = $this->request->getSession();
+        if ($session->read(self::MOBILE_VIEW)) {
+            $session->delete(self::MOBILE_VIEW);
 
             return $this->render('complete');
         }
