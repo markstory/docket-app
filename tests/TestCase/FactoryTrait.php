@@ -30,7 +30,7 @@ trait FactoryTrait
         ]);
     }
 
-    protected function useApiToken($token)
+    protected function useApiToken(string $token)
     {
         $headers = $this->_request['headers'] ?? [];
         $headers['Authorization'] = 'bearer ' . $token;
