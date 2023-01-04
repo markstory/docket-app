@@ -60,10 +60,16 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
           actions: [
             IconButton(
               onPressed: () async {
+                // Might want to use https://pub.dev/packages/flutter_inappwebview
+                // This would make it easier for this flutter application to read
+                // state out of the webview. Going down this path would also
+                // require adding small amount of JS to the 'complete' template
+                // to call the reload method on the viewmodel.
                 var uri = actions.googleAuthorizeUri();
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri);
                 }
+                viewmodel.expire();
               },
               icon: const Icon(Icons.add)
             )

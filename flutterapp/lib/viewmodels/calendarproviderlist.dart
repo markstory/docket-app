@@ -73,4 +73,9 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Expire the list view so that on the next rebuild
+  void expire() {
+    _database.calendarList.expire();
+  }
 }
