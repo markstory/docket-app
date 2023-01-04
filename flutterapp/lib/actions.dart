@@ -68,7 +68,7 @@ Uri _makeUrl(String pathAndQuery) {
 
 Uri googleAuthorizeUri(String apiToken) {
   var uri = Uri.parse("$baseUrl/auth/google/authorize");
-  uri = uri.replace(queryParameters: {'mobile': 1, 'token': apiToken});
+  uri = uri.replace(queryParameters: {'mobile': '1', 'token': apiToken});
   return uri;
 }
 
