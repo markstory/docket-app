@@ -66,8 +66,10 @@ Uri _makeUrl(String pathAndQuery) {
   return Uri.parse('$baseUrl$pathAndQuery');
 }
 
-Uri googleAuthorizeUri() {
-  return Uri.parse("$baseUrl/auth/google/authorize?mobile=1");
+Uri googleAuthorizeUri(String apiToken) {
+  var uri = Uri.parse("$baseUrl/auth/google/authorize");
+  uri = uri.replace(queryParameters: {'mobile': 1, 'token': apiToken});
+  return uri;
 }
 
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {

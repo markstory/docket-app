@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:docket/actions.dart' as actions;
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/calendarprovideritem.dart';
@@ -65,7 +64,7 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
                 // state out of the webview. Going down this path would also
                 // require adding small amount of JS to the 'complete' template
                 // to call the reload method on the viewmodel.
-                var uri = actions.googleAuthorizeUri();
+                var uri = viewmodel.googleAuthorizeUri();
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri);
                 }

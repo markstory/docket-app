@@ -78,4 +78,11 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   void expire() {
     _database.calendarList.expire();
   }
+
+  /// Get a URI that will start the google auth flow.
+  /// The URL includes the account API token as a temporary solution.
+  Uri googleAuthorizeUri() {
+    // TODO Don't include api tokens in URLs.
+    return actions.googleAuthorizeUri(_database.apiToken.token);
+  }
 }
