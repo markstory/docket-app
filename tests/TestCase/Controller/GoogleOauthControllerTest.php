@@ -54,6 +54,7 @@ class GoogleOauthControllerTest extends TestCase
         $this->post('/auth/google/authorize?mobile=1');
         $this->assertRedirectContains('accounts.google.com');
         $this->assertSessionHasKey('Auth');
+        $this->assertSession(1, 'Auth.id');
         $this->assertSessionHasKey(GoogleOauthController::MOBILE_VIEW);
     }
 

@@ -42,11 +42,12 @@ class GoogleOauthController extends AppController
 
     public function authorize(GoogleClient $client)
     {
-        $session = $this->request->getSession();
-
         // Ensure that the user is stored in the session even
         // if the original request came in via an API token.
+        // We force a session here so that we can handle the oauth
+        // callback without passing google our API token.
         $user = $this->request->getAttribute('identity');
+        $session = $this->request->getSession();
         $session->write('Auth', $user);
 
         if ($this->request->getQuery('mobile')) {
