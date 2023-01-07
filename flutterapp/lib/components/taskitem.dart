@@ -128,6 +128,7 @@ class TaskActions extends StatelessWidget {
     }
 
     Future<void> handleDelete() async {
+      var theme = Theme.of(context);
       showConfirmDelete(
         context: context, 
         content: "Are you sure you want to delete this task?",
@@ -135,10 +136,10 @@ class TaskActions extends StatelessWidget {
           var navigator = Navigator.of(context);
           try {
             await tasksProvider.deleteTask(task);
-            messenger.showSnackBar(successSnackBar(context: context, text: 'Task Deleted'));
+            messenger.showSnackBar(successSnackBar(theme: theme, text: 'Task Deleted'));
             navigator.pop();
           } catch (e) {
-            messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete task'));
+            messenger.showSnackBar(errorSnackBar(theme: theme, text: 'Could not delete task'));
           }
         });
     }
