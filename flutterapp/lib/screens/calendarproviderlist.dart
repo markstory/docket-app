@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/components/loadingindicator.dart';
@@ -55,6 +56,23 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
         appBar: AppBar(
           backgroundColor: theme.colorScheme.primary,
           title: const Text('Synced Calendars'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                // Might want to use https://pub.dev/packages/flutter_inappwebview
+                // This would make it easier for this flutter application to read
+                // state out of the webview. Going down this path would also
+                // require adding small amount of JS to the 'complete' template
+                // to call the reload method on the viewmodel.
+                var uri = viewmodel.googleAuthorizeUri();
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
+                viewmodel.expire();
+              },
+              icon: const Icon(Icons.add)
+            )
+          ]
         ),
         drawer: const AppDrawer(),
         body: body,

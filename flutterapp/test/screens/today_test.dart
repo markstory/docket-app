@@ -133,5 +133,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(requestCount, equals(1));
     });
+
+    testWidgets('task item can be deleted', (tester) async {
+      var requestCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/1/delete') {
+          requestCount += 1;
+          return Response('', 200);
+        }
+        if (request.url.path == '/tasks/today') {
+          return Response(todayResponse, 200);
+        }
+        throw Exception('Unmocked request to ${request.url.path}');
+      });
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const TodayScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      // open action menu
+      await tester.tap(find.byKey(const ValueKey('task-actions')).first);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Are you sure?'), findsOneWidget);
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(requestCount, equals(1));
+    });
   });
 }

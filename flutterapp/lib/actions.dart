@@ -66,6 +66,12 @@ Uri _makeUrl(String pathAndQuery) {
   return Uri.parse('$baseUrl$pathAndQuery');
 }
 
+Uri googleAuthorizeUri(String apiToken) {
+  var uri = Uri.parse("$baseUrl/auth/google/authorize");
+  uri = uri.replace(queryParameters: {'mobile': '1', 'token': apiToken});
+  return uri;
+}
+
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
   var headers = {
     'User-Agent': 'docket-flutter',
