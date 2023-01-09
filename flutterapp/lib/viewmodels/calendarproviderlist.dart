@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
@@ -79,10 +83,29 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     _database.calendarList.expire();
   }
 
-  /// Get a URI that will start the google auth flow.
-  /// The URL includes the account API token as a temporary solution.
-  Uri googleAuthorizeUri() {
-    // TODO Don't include api tokens in URLs.
-    return actions.googleAuthorizeUri(_database.apiToken.token);
+  Future<Map<String, String>> _getConfig() async {
+    Map<String, String> config = {};
+    // TODO need to get prod google-auth.json
+    var file = await rootBundle.loadString('assets/google-services.json');
+    var decoded = jsonDecode(file);
+    config['clientId'] = decoded['client_id'];
+    config['serverClientId'] = decoded['server_client_id'];
+
+    return config;
+  }
+
+  Future<void> addGoogleAccount() async {
+    var clientConfig = await _getConfig();
+    var googleService = GoogleSignIn(
+      clientId: clientConfig['clientId'],
+      serverClientId: clientConfig['serverClientId'],
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/calendar.events.readonly',
+        'https://www.googleapis.com/auth/calendar.readonly',
+      ],
+    );
+    var account = await googleService.signIn();
+    print(account);
   }
 }

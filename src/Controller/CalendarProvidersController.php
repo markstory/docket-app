@@ -4,7 +4,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\CalendarService;
+use Cake\Http\Exception\BadRequestException;
+use Cake\I18n\FrozenTime;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\View\JsonView;
+use Google\Client as GoogleClient;
+use Google\Exception as GoogleException;
+use Google\Service\Oauth2 as GoogleOauth2;
 
 /**
  * CalendarProviders Controller
@@ -16,6 +22,50 @@ class CalendarProvidersController extends AppController
     public function viewClasses(): array
     {
         return [JsonView::class];
+    }
+
+    public function create(GoogleClient $client)
+    {
+        $token = $this->request->getData('accessToken');
+        $client->setAccessToken($token);
+
+        try {
+            $oauth2 = new GoogleOauth2($client);
+            $googleUser = $oauth2->userinfo->get();
+        } catch (GoogleException $e) {
+            throw new BadRequestException('Could not fetch user profile data.');
+        }
+        $user = $this->request->getAttribute('identity');
+
+        $serialize = [];
+        $success = false;
+        try {
+            $provider = $this->CalendarProviders->findOrCreate([
+                'user_id' => $user->id,
+                'kind' => 'google',
+                'identifier' => $googleUser->id,
+            ], function ($entity) use ($token, $googleUser) {
+                $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
+                $entity->access_token = $token;
+                // TODO how do we get a refresh token?
+                $entity->token_expiry = FrozenTime::parse('+3600 seconds');
+            });
+            $this->CalendarProviders->saveOrFail($provider);
+
+            $success = true;
+            $serialize[] = 'provider';
+            $this->set('provider', $provider);
+        } catch (PersistenceFailedException $e) {
+            $this->set('error', __('Could not link google account. Try removing authorization in google and re-connecting'));
+            $serialize[] = 'error';
+        }
+
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'flashSuccess' => __('Provider created'),
+            'flashError' => __('Provider not created.'),
+        ]);
     }
 
     /**

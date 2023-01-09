@@ -42,6 +42,27 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
+     * Test create from mobile
+     *
+     * @vcr googleoauth_callback.yml
+     */
+    public function testCreate(): void
+    {
+        $token = $this->makeApiToken(1);
+        $this->useApiToken($token->token);
+        $this->requestJson();
+
+        $this->post('/calendars', [
+            'accessToken' => 'goog-access-token',
+        ]);
+        $this->assertResponseOk();
+
+        $provider = $this->viewVariable('provider');
+        $this->assertNotEmpty($provider);
+        $this->assertNotEmpty($provider->identifier);
+    }
+
+    /**
      * Test index method
      *
      * @vcr controller_calendarsources_add.yml

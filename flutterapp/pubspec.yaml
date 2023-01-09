@@ -46,6 +46,7 @@ dependencies:
   flutter_markdown: ^0.6.10
   sentry_flutter: ^6.9.1
   url_launcher: ^6.1.0
+  google_sign_in: ^5.4.2
 
 dev_dependencies:
   flutter_test:
