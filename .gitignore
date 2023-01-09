@@ -3,7 +3,6 @@
 /config/Migrations/*.lock
 /config/app_local.php
 /config/.env
-/config/google-auth.json
 /logs/*
 /tmp/*
 /vendor/*
@@ -18,6 +17,10 @@
 /webroot/manifest.json
 /webroot/assets/
 /docket.sqlite
+
+# application config
+google-auth.json
+google-services.json
 
 # OS generated files #
 ######################
