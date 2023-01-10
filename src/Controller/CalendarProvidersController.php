@@ -26,8 +26,15 @@ class CalendarProvidersController extends AppController
 
     public function create(GoogleClient $client)
     {
-        $token = $this->request->getData('accessToken');
-        $client->setAccessToken($token);
+        $code = $this->request->getData('authCode');
+
+        // TODO have a service for this flow
+        // Share code with GoogleOauthController
+        $data = $client->fetchAccessTokenWithAuthCode($code);
+        if (!$data || !isset($data['access_token'])) {
+            throw new BadRequestException('Could not fetch OAuth Access token');
+        }
+        $client->setAccessToken($data['access_token']);
 
         try {
             $oauth2 = new GoogleOauth2($client);
@@ -44,11 +51,11 @@ class CalendarProvidersController extends AppController
                 'user_id' => $user->id,
                 'kind' => 'google',
                 'identifier' => $googleUser->id,
-            ], function ($entity) use ($token, $googleUser) {
+            ], function ($entity) use ($data, $googleUser) {
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
-                $entity->access_token = $token;
-                // TODO how do we get a refresh token?
-                $entity->token_expiry = FrozenTime::parse('+3600 seconds');
+                $entity->access_token = $data['access_token'];
+                $entity->refresh_token = $data['refresh_token'];
+                $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
             });
             $this->CalendarProviders->saveOrFail($provider);
 
@@ -59,6 +66,7 @@ class CalendarProvidersController extends AppController
             $this->set('error', __('Could not link google account. Try removing authorization in google and re-connecting'));
             $serialize[] = 'error';
         }
+        // end service block.
 
         return $this->respond([
             'success' => $success,

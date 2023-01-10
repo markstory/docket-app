@@ -66,12 +66,6 @@ Uri _makeUrl(String pathAndQuery) {
   return Uri.parse('$baseUrl$pathAndQuery');
 }
 
-Uri googleAuthorizeUri(String apiToken) {
-  var uri = Uri.parse("$baseUrl/auth/google/authorize");
-  uri = uri.replace(queryParameters: {'mobile': '1', 'token': apiToken});
-  return uri;
-}
-
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
   var headers = {
     'User-Agent': 'docket-flutter',
@@ -544,6 +538,28 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
 // }}}
 
 // CalendarProviders
+
+/// Create a calendar provider from credentials
+Future<CalendarProvider> createCalendarProvider(
+  String apiToken,
+  {required String idToken, required String accessToken, required String serverAuthCode}
+) async {
+  var url = _makeUrl('/calendars');
+  var body = {
+    'idToken': idToken,
+    'authCode': serverAuthCode,
+    'accessToken': accessToken,
+  };
+  print('Sending $body to create access token for provider.');
+  var response = await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Could not create calendar account');
+  try {
+    var respData = jsonDecode(utf8.decode(response.bodyBytes));
+    return CalendarProvider.fromMap(respData);
+  } catch (e, stacktrace) {
+    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
+    rethrow;
+  }
+}
 /// Fetch a list of calendar providers.
 Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
   var url = _makeUrl('/calendars');
