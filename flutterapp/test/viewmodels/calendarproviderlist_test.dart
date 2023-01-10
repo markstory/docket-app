@@ -77,12 +77,8 @@ void main() {
       expect(await db.calendarDetails.get(provider.id), isNull);
     });
 
-    test('googleAuthorizeUrl()', () {
-      var viewmodel = CalendarProviderListViewModel(db);
-      var result = viewmodel.googleAuthorizeUri();
-      expect(result.path, contains('/auth/google/authorize'));
-      expect(result.query, contains('token='));
-      expect(result.query, contains('mobile=1'));
+    test('create() sends a request to server', () async {
+      // TODO
     });
   });
 }

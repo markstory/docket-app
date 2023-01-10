@@ -542,7 +542,7 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
 /// Create a calendar provider from credentials
 Future<CalendarProvider> createCalendarProvider(
   String apiToken,
-  {required String idToken, required String accessToken, required String serverAuthCode}
+  {String? idToken, String? accessToken, String? serverAuthCode}
 ) async {
   var url = _makeUrl('/calendars');
   var body = {

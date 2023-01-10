@@ -123,3 +123,11 @@ bin/cake calendar_subscription_renew
 ```
 
 This command will iterate all the subscriptions that will expire in the next day and create a new subscription for those calendar sources.
+
+## Flutter + Google Auth
+
+When building the flutter application you need another OAuth Client ID for
+the flutter application. First setup a keystore file. I [followed this tutorial](https://docs.flutter.dev/deployment/android#create-an-upload-keystore).
+
+This [video](https://www.youtube.com/watch?app=desktop&v=E5WgU6ERZzA) was fantastic and helped me
+get through the setup pain of this integration.

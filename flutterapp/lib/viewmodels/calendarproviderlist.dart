@@ -91,7 +91,12 @@ class CalendarProviderListViewModel extends ChangeNotifier {
         'https://www.googleapis.com/auth/calendar.readonly',
       ],
     );
+    // TODO find a way to stub this. Could use a global value?
     var account = await googleService.signIn();
+    if (account == null) {
+      print('login failed');
+      return;
+    }
     var authentication = await account.authentication;
 
     var provider = await actions.createCalendarProvider(
@@ -101,6 +106,6 @@ class CalendarProviderListViewModel extends ChangeNotifier {
       serverAuthCode: account.serverAuthCode,
     );
 
-    print(account);
+    print("provider created ${provider.toMap()}");
   }
 }
