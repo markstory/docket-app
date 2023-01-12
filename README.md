@@ -131,3 +131,6 @@ the flutter application. First setup a keystore file. I [followed this tutorial]
 
 This [video](https://www.youtube.com/watch?app=desktop&v=E5WgU6ERZzA) was fantastic and helped me
 get through the setup pain of this integration.
+
+Take the server applications Client ID, and add it to `assets/google-auth.json` with the key `serverClientId`.
+This id is used to get idTokens and link the mobile and server oauth clients together (I think).
