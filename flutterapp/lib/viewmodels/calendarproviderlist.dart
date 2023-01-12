@@ -83,8 +83,16 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     _database.calendarList.expire();
   }
 
+  Future<String> serverClientId() async {
+    var jsonData = await rootBundle.loadString('assets/google-auth.json');
+    var data = jsonDecode(jsonData);
+
+    return data['serverClientId'];
+  }
+
   Future<void> addGoogleAccount() async {
     var googleService = GoogleSignIn(
+      serverClientId: await serverClientId(),
       scopes: [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/calendar.events.readonly',
@@ -98,7 +106,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
       return;
     }
     var auth = await account.authentication;
-    print("account authCode=${auth.serverAuthCode} id=${auth.idToken} accessToken=${auth.accessToken}");
+    print("account name=${account.displayName} authCode=${auth.serverAuthCode} id_len=${auth.idToken?.length ?? 0} accessToken=${auth.accessToken}");
 
     var provider = await actions.createCalendarProvider(
       _database.apiToken.token,
