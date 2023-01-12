@@ -97,12 +97,13 @@ class CalendarProviderListViewModel extends ChangeNotifier {
       print('login failed');
       return;
     }
-    var authentication = await account.authentication;
+    var auth = await account.authentication;
+    print("account authCode=${auth.serverAuthCode} id=${auth.idToken} accessToken=${auth.accessToken}");
 
     var provider = await actions.createCalendarProvider(
       _database.apiToken.token,
-      idToken: authentication.idToken,
-      accessToken: authentication.accessToken,
+      idToken: auth.idToken,
+      accessToken: auth.accessToken,
       serverAuthCode: account.serverAuthCode,
     );
 
