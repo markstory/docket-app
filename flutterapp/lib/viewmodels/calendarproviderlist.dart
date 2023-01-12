@@ -112,7 +112,6 @@ class CalendarProviderListViewModel extends ChangeNotifier {
       _database.apiToken.token,
       idToken: auth.idToken,
       accessToken: auth.accessToken,
-      serverAuthCode: account.serverAuthCode,
     );
 
     print("provider created ${provider.toMap()}");
