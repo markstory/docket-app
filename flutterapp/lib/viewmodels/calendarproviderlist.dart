@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -90,9 +91,48 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     return data['serverClientId'];
   }
 
+  Future<String> clientId() async {
+    var jsonData = await rootBundle.loadString('assets/google-auth.json');
+    var data = jsonDecode(jsonData);
+
+    return data['clientId'];
+  }
+
   Future<void> addGoogleAccount() async {
+    var id = await clientId();
+
+    const appAuth = FlutterAppAuth();
+    var result = await appAuth.authorizeAndExchangeCode(
+      AuthorizationTokenRequest(
+        id,
+        'com.docket.flutterapp://',
+        discoveryUrl: 'https://accounts.google.com/.well-known/openid-configuration',
+        scopes: [
+          'https://www.googleapis.com/auth/userinfo.email',
+          'https://www.googleapis.com/auth/calendar.events.readonly',
+          'https://www.googleapis.com/auth/calendar.readonly',
+        ]
+      )
+    );
+    if (result == null) {
+      print('Authentication failed');
+      return;
+    }
+
+    print('result token=${result.accessToken} refresh=${result.refreshToken}');
+    var provider = await actions.createCalendarProvider(
+      _database.apiToken.token,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    );
+
+    print("provider created ${provider.toMap()}");
+  }
+
+  Future<void> addGoogleAccountGoogleSignIn() async {
     var googleService = GoogleSignIn(
       serverClientId: await serverClientId(),
+      forceCodeForRefreshToken: true,
       scopes: [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/calendar.events.readonly',
@@ -107,13 +147,16 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     }
     var auth = await account.authentication;
     print("account name=${account.displayName} authCode=${auth.serverAuthCode} id_len=${auth.idToken?.length ?? 0} accessToken=${auth.accessToken}");
+    print("id=${auth.idToken}");
 
+    /*
     var provider = await actions.createCalendarProvider(
       _database.apiToken.token,
-      idToken: auth.idToken,
+      // idToken: auth.idToken,
       accessToken: auth.accessToken,
     );
 
     print("provider created ${provider.toMap()}");
+    */
   }
 }

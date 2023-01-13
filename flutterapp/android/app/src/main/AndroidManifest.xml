@@ -5,6 +5,18 @@
         android:name="${applicationName}"
         android:label="Docket"
         android:icon="@mipmap/ic_launcher">
+
+   <activity 
+       android:name="com.docket.flutterapp.CallbackActivity"
+       android:exported="true">
+            <intent-filter android:name="flutter_web_auth">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.docket.flutterapp" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,10 +44,16 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.APP_BROWSER" />
             <data android:scheme="https" />
         </intent>
     </queries>

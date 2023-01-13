@@ -45,5 +45,8 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+    <!-- TODO add appauth configuration
+        https://pub.dev/packages/flutter_appauth#iosmacos-setup
+    -->
 </dict>
 </plist>

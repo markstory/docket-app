@@ -47,6 +47,7 @@ dependencies:
   sentry_flutter: ^6.9.1
   url_launcher: ^6.1.0
   google_sign_in: ^5.4.2
+  flutter_appauth: ^4.2.1
 
 dev_dependencies:
   flutter_test:
