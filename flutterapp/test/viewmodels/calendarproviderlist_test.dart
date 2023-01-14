@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:docket/models/apitoken.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -13,6 +14,9 @@ void main() {
 
   var file = File('test_resources/calendar_provider_list.json');
   final calendarListResponse = file.readAsStringSync();
+
+  file = File('test_resources/calendar_provider_details.json');
+  final calendarDetailsResponse = file.readAsStringSync();
 
   group('$CalendarProviderListViewModel', () {
     var db = LocalDatabase(inTest: true);
@@ -77,8 +81,36 @@ void main() {
       expect(await db.calendarDetails.get(provider.id), isNull);
     });
 
-    test('create() sends a request to server', () async {
-      // TODO
+    test('createFromGoogle() ', () async {
+      var token = AuthorizationTokenResponse(
+        'access-token',
+        'refresh-token',
+        DateTime.now().add(const Duration(hours: 2)),
+        'id-token',
+        'type',
+        [],
+        {},
+        {}
+      );
+
+      var created = CallCounter();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars/google/new') {
+          created();
+          return Response(calendarDetailsResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+      var updated = CallCounter();
+      var viewmodel = CalendarProviderListViewModel(db);
+      viewmodel.addListener(updated);
+
+      await viewmodel.createFromGoogle(token);
+      var provider = viewmodel.providers[0];
+      expect(provider.id, equals(1));
+
+      expect(created.callCount, equals(1));
+      expect(updated.callCount, equals(1));
     });
   });
 }

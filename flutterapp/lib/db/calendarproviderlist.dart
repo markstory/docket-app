@@ -19,6 +19,15 @@ class CalendarProviderListRepo extends Repository<List<CalendarProvider>> {
     return setMap({"items": providers.map((p) => p.toMap()).toList()});
   }
 
+  /// Add a provider to the calendar list.
+  Future<void> add(CalendarProvider provider) async {
+    var items = await get() ?? [];
+    items.add(provider);
+    await set(items);
+
+    notifyListeners();
+  }
+
   /// Get the list of providers.
   Future<List<CalendarProvider>?> get() async {
     var data = await getMap();

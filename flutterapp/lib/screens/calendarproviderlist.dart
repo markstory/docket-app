@@ -59,8 +59,8 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
           actions: [
             IconButton(
               onPressed: () async {
-                await viewmodel.addGoogleAccount();
-                viewmodel.expire();
+                var result = await viewmodel.addGoogleAccount();
+                await viewmodel.createFromGoogle(result);
               },
               icon: const Icon(Icons.add)
             )

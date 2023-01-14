@@ -540,11 +540,11 @@ Future<void> updateSection(String apiToken, Project project, Section section) as
 // CalendarProviders
 
 /// Create a calendar provider from credentials
-Future<CalendarProvider> createCalendarProvider(
+Future<CalendarProvider> createCalendarProviderFromGoogle(
   String apiToken,
   {String? refreshToken, String? accessToken}
 ) async {
-  var url = _makeUrl('/calendars');
+  var url = _makeUrl('/calendars/google/new');
   var body = {
     'refreshToken': refreshToken,
     'accessToken': accessToken,
