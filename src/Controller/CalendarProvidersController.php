@@ -24,7 +24,7 @@ class CalendarProvidersController extends AppController
         return [JsonView::class];
     }
 
-    public function create(GoogleClient $client)
+    public function createFromGoogle(GoogleClient $client)
     {
         $token = $this->request->getData('accessToken');
         $refresh = $this->request->getData('refreshToken');
@@ -51,6 +51,8 @@ class CalendarProvidersController extends AppController
                 $entity->refresh_token = $refresh;
                 $entity->token_expiry = FrozenTime::parse('+1800 seconds');
             });
+            $this->Authorization->authorize($provider, 'edit');
+
             $this->CalendarProviders->saveOrFail($provider);
 
             $success = true;

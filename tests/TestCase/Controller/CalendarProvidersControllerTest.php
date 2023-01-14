@@ -46,20 +46,41 @@ class CalendarProvidersControllerTest extends TestCase
      *
      * @vcr googleoauth_callback.yml
      */
-    public function testCreate(): void
+    public function testCreateFromGoogle(): void
     {
         $token = $this->makeApiToken(1);
         $this->useApiToken($token->token);
         $this->requestJson();
 
-        $this->post('/calendars', [
+        $this->post('/calendars/google/new', [
             'accessToken' => 'goog-access-token',
+            'refreshToken' => 'goog-refresh-token',
         ]);
         $this->assertResponseOk();
 
         $provider = $this->viewVariable('provider');
         $this->assertNotEmpty($provider);
         $this->assertNotEmpty($provider->identifier);
+        $this->assertEquals($provider->access_token, 'goog-access-token');
+        $this->assertEquals($provider->refresh_token, 'goog-refresh-token');
+    }
+
+    /**
+     * Test create from mobile
+     *
+     * @vcr googleoauth_callback_invalid.yml
+     */
+    public function testCreateFromGoogleInvalidCredential(): void
+    {
+        $token = $this->makeApiToken(1);
+        $this->useApiToken($token->token);
+        $this->requestJson();
+
+        $this->post('/calendars/google/new', [
+            'accessToken' => 'goog-access-token',
+            'refreshToken' => 'goog-refresh-token',
+        ]);
+        $this->assertResponseCode(400);
     }
 
     /**
