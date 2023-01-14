@@ -134,6 +134,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
 
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
+        $builder->connect('/google/new', ['action' => 'createFromGoogle'], ['_name' => 'calendarproviders:createfromgoogle']);
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
         $builder->connect('/{id}/view', ['action' => 'view'], ['_name' => 'calendarproviders:view'])
             ->setPass(['id']);
