@@ -95,6 +95,9 @@ void main() {
 
       var created = CallCounter();
       actions.client = MockClient((request) async {
+        if (request.url.path == '/calendars') {
+          return Response(calendarListResponse, 200);
+        }
         if (request.url.path == '/calendars/google/new') {
           created();
           return Response(calendarDetailsResponse, 200);
@@ -105,9 +108,8 @@ void main() {
       var viewmodel = CalendarProviderListViewModel(db);
       viewmodel.addListener(updated);
 
-      await viewmodel.createFromGoogle(token);
-      var provider = viewmodel.providers[0];
-      expect(provider.id, equals(1));
+      var provider = await viewmodel.createFromGoogle(token);
+      expect(provider.id, equals(5));
 
       expect(created.callCount, equals(1));
       expect(updated.callCount, equals(1));

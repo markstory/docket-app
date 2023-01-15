@@ -553,7 +553,7 @@ Future<CalendarProvider> createCalendarProviderFromGoogle(
   var response = await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Could not create calendar account');
   try {
     var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    return CalendarProvider.fromMap(respData);
+    return CalendarProvider.fromMap(respData['provider']);
   } catch (e, stacktrace) {
     developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
     rethrow;

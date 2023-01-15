@@ -71,6 +71,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   /// Delete the provider from the server and notify.
   Future<void> delete(CalendarProvider provider) async {
+
     await actions.deleteCalendarProvider(_database.apiToken.token, provider);
     await _database.calendarList.remove(provider.id);
     await _database.calendarDetails.remove(provider.id);
@@ -113,9 +114,9 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<void> createFromGoogle(AuthorizationTokenResponse token) async {
+  Future<CalendarProvider> createFromGoogle(AuthorizationTokenResponse token) async {
     print('result token=${token.accessToken} refresh=${token.refreshToken}');
-    var provider = await actions.createCalendarProvider(
+    var provider = await actions.createCalendarProviderFromGoogle(
       _database.apiToken.token,
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
@@ -124,6 +125,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     _database.calendarList.add(provider);
 
     notifyListeners();
+    return provider;
   }
 
   /*
