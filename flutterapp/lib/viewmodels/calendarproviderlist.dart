@@ -115,49 +115,16 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   }
 
   Future<CalendarProvider> createFromGoogle(AuthorizationTokenResponse token) async {
-    print('result token=${token.accessToken} refresh=${token.refreshToken}');
     var provider = await actions.createCalendarProviderFromGoogle(
       _database.apiToken.token,
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
     );
-    print("provider created ${provider.toMap()}");
     _database.calendarList.add(provider);
 
     notifyListeners();
     return provider;
   }
-
-  /*
-  Future<void> addGoogleAccountGoogleSignIn() async {
-    var googleService = GoogleSignIn(
-      serverClientId: await serverClientId(),
-      forceCodeForRefreshToken: true,
-      scopes: [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/calendar.events.readonly',
-        'https://www.googleapis.com/auth/calendar.readonly',
-      ],
-    );
-    // TODO find a way to stub this. Could use a global value?
-    var account = await googleService.signIn();
-    if (account == null) {
-      print('login failed');
-      return;
-    }
-    var auth = await account.authentication;
-    print("account name=${account.displayName} authCode=${auth.serverAuthCode} id_len=${auth.idToken?.length ?? 0} accessToken=${auth.accessToken}");
-    print("id=${auth.idToken}");
-
-    var provider = await actions.createCalendarProvider(
-      _database.apiToken.token,
-      // idToken: auth.idToken,
-      accessToken: auth.accessToken,
-    );
-
-    print("provider created ${provider.toMap()}");
-  }
-  */
 }
 
 class ClientCredentials {

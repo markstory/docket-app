@@ -549,7 +549,6 @@ Future<CalendarProvider> createCalendarProviderFromGoogle(
     'refreshToken': refreshToken,
     'accessToken': accessToken,
   };
-  print('Sending $body to create access token for provider.');
   var response = await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Could not create calendar account');
   try {
     var respData = jsonDecode(utf8.decode(response.bodyBytes));
