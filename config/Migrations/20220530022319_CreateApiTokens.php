@@ -20,7 +20,6 @@ class CreateApiTokens extends AbstractMigration
             'default' => null,
             'limit' => 11,
             'null' => false,
-            'signed' => false,
         ]);
         $table->addColumn('token', 'string', [
             'default' => null,
