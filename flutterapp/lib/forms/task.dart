@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/forms.dart';
-import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/subtaskitem.dart';
 import 'package:docket/components/taskcheckbox.dart';
 import 'package:docket/components/tasktitleinput.dart';
@@ -10,7 +9,6 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/providers/tasks.dart';
 import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
@@ -30,6 +28,7 @@ class _TaskFormState extends State<TaskForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final Task task;
   late bool completed;
+  late bool saving = false;
 
   @override
   void initState() {
@@ -199,9 +198,11 @@ class _TaskFormState extends State<TaskForm> {
                   ElevatedButton(
                       child: const Text('Save'),
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
+                        if (_formKey.currentState!.validate() && saving == false) {
+                          saving = true;
                           _formKey.currentState!.save();
                           await widget.onSave(task);
+                          saving = false;
                         }
                       })
                 ])
