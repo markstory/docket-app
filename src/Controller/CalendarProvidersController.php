@@ -59,7 +59,10 @@ class CalendarProvidersController extends AppController
             $serialize[] = 'provider';
             $this->set('provider', $provider);
         } catch (PersistenceFailedException $e) {
-            $this->set('error', __('Could not link google account. Try removing authorization in google and re-connecting'));
+            $this->set(
+                'error',
+                __('Could not link google account. Try removing authorization in google and re-connecting')
+            );
             $serialize[] = 'error';
         }
         // end service block.
