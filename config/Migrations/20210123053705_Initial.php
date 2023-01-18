@@ -19,7 +19,6 @@ class Initial extends AbstractMigration
             ->addColumn('project_id', 'integer', [
                 'default' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addColumn('label', 'string', [
                 'default' => null,
@@ -48,12 +47,10 @@ class Initial extends AbstractMigration
             ->addColumn('task_id', 'integer', [
                 'default' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addColumn('label_id', 'integer', [
                 'default' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addIndex(['label_id'])
             ->addIndex(['task_id'])
@@ -63,7 +60,6 @@ class Initial extends AbstractMigration
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addColumn('name', 'string', [
                 'default' => null,
@@ -118,7 +114,6 @@ class Initial extends AbstractMigration
                 'default' => null,
                 'limit' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addColumn('title', 'text', [
                 'default' => null,
@@ -158,7 +153,6 @@ class Initial extends AbstractMigration
                 'default' => null,
                 'limit' => null,
                 'null' => false,
-                'signed' => false,
             ])
             ->addColumn('title', 'text', [
                 'default' => null,
