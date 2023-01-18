@@ -50,8 +50,5 @@ class CalendarServiceProvider extends ServiceProvider
 
         $container->add(CalendarSubscriptionRenewCommand::class)
             ->addArgument(CalendarService::class);
-
-        $container->add(DebugCommand::class)
-            ->addArgument(GoogleClient::class);
     }
 }
