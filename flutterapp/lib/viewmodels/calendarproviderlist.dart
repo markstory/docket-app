@@ -109,6 +109,7 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     if (result == null) {
       // TODO set an error?
       print('Authentication failed');
+      return null;
     }
 
     return result;

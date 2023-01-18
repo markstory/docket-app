@@ -60,7 +60,9 @@ class _CalendarProviderListScreenState extends State<CalendarProviderListScreen>
             IconButton(
               onPressed: () async {
                 var result = await viewmodel.addGoogleAccount();
-                await viewmodel.createFromGoogle(result);
+                if (result != null) {
+                  await viewmodel.createFromGoogle(result);
+                }
               },
               icon: const Icon(Icons.add)
             )
