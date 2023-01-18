@@ -5,7 +5,6 @@ namespace App\Service;
 
 use App\Command\CalendarSourceSyncCommand;
 use App\Command\CalendarSubscriptionRenewCommand;
-use App\Command\DebugCommand;
 use Cake\Core\ContainerInterface;
 use Cake\Core\ServiceProvider;
 use Cake\Routing\Router;
