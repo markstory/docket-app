@@ -68,8 +68,10 @@ class CalendarSourcesController extends AppController
             $data['calendar_provider_id'] = $providerId;
 
             $source = $this->CalendarSources->newEntity($data);
-            $serialize = ['source'];
             if ($this->CalendarSources->save($source)) {
+                $serialize = ['source'];
+                $this->set('source', $source);
+
                 $service->setAccessToken($provider);
                 try {
                     $service->createSubscription($source);
@@ -80,6 +82,10 @@ class CalendarSourcesController extends AppController
             } else {
                 $error = __('Could not add that calendar.');
             }
+        }
+        if ($error) {
+            $serialize[] = 'error';
+            $this->set('error', $error);
         }
 
         return $this->respond([

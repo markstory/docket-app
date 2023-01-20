@@ -245,6 +245,32 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
+     * @vcr controller_calendarsources_add_post.yml
+     */
+    public function testAddApiToken()
+    {
+        $token = $this->makeApiToken(1);
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+
+        $this->post("/calendars/{$provider->id}/sources/add", [
+            'provider_id' => 'calendar-1',
+            'color' => 1,
+            'name' => 'Work Calendar',
+        ]);
+        $this->assertResponseSuccess();
+
+        $source = $this->viewVariable('source');
+        $this->assertSame('calendar-1', $source->provider_id);
+
+        $subs = $this->fetchTable('CalendarSubscriptions');
+        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
+        $this->assertNotEmpty($sub->identifier);
+    }
+
+    /**
      * @vcr controller_calendarsources_add_post_fail.yml
      */
     public function testAddPostSubscriptionFail()
