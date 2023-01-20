@@ -127,10 +127,27 @@ This command will iterate all the subscriptions that will expire in the next day
 ## Flutter + Google Auth
 
 When building the flutter application you need another OAuth Client ID for
-the flutter application. First setup a keystore file. I [followed this tutorial](https://docs.flutter.dev/deployment/android#create-an-upload-keystore).
+the flutter application. 
+
+1. Setup a keystore file. I [followed this tutorial](https://docs.flutter.dev/deployment/android#create-an-upload-keystore).
+2. Fill out `key.properties`. It should look like
+   ```
+   keyAlias=upload
+   keyPassword=androidpassword
+   storeFile=/Users/markstory/code/docket-app/flutterapp/upload-keystore.jks
+   storePassword=androidpassword
+   ```
+3. Populate `assets/google-auth.json`. It should look like
+   ```
+   {
+    "clientId": "a-big-number.apps.googleusercontent.com",
+    "redirectUrl": "com.docket.flutterapp"
+   }
+   ```
+
+You should now be able to generate an android build.
 
 This [video](https://www.youtube.com/watch?app=desktop&v=E5WgU6ERZzA) was fantastic and helped me
 get through the setup pain of this integration.
 
-Take the server applications Client ID, and add it to `assets/google-auth.json` with the key `serverClientId`.
-This id is used to get idTokens and link the mobile and server oauth clients together (I think).
+
