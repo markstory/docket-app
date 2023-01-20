@@ -608,8 +608,12 @@ Future<void> deleteCalendarProvider(String apiToken, CalendarProvider provider) 
 
 /// Create a calendar source on the server.
 Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources');
-  var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not update calendar settings');
+  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/add');
+
+  var body = source.toMap();
+  body.remove('id');
+
+  var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
 
   try {
     var respData = jsonDecode(utf8.decode(response.bodyBytes));

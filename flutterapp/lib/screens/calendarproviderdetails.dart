@@ -132,30 +132,39 @@ class CalendarSourceItem extends StatelessWidget {
       };
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
-      return <PopupMenuEntry<Menu>>[
-        PopupMenuItem<Menu>(
-          value: Menu.sync,
-          child: ListTile(
-            leading: Icon(Icons.sync, color: customColors.actionComplete),
-            title: const Text('Sync'),
-          ),
-        ),
-        source.isLinked
-            ? PopupMenuItem<Menu>(
-                value: Menu.delete,
-                child: ListTile(
-                  leading: Icon(Icons.delete, color: customColors.actionDelete),
-                  title: const Text('Delete'),
-                ),
-              )
-            : PopupMenuItem<Menu>(
-                value: Menu.link,
-                child: ListTile(
-                  leading: Icon(Icons.link, color: theme.colorScheme.primary),
-                  title: const Text('Link'),
-                ),
-              )
-      ];
+      List<PopupMenuEntry<Menu>> items = [];
+      print("${source.toMap()}");
+      if (source.isLinked) {
+        items.add(
+          PopupMenuItem<Menu>(
+            value: Menu.sync,
+            child: ListTile(
+              leading: Icon(Icons.sync, color: customColors.actionComplete),
+              title: const Text('Sync'),
+            ),
+          )
+        );
+        items.add(
+          PopupMenuItem<Menu>(
+            value: Menu.delete,
+            child: ListTile(
+              leading: Icon(Icons.delete, color: customColors.actionDelete),
+              title: const Text('Delete'),
+            ),
+          )
+        );
+      } else {
+        items.add(
+          PopupMenuItem<Menu>(
+            value: Menu.link,
+            child: ListTile(
+              leading: Icon(Icons.link, color: theme.colorScheme.primary),
+              title: const Text('Link'),
+            ),
+          )
+        );
+      }
+      return items;
     });
   }
 }

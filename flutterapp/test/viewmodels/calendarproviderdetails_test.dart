@@ -117,7 +117,7 @@ void main() {
           return Response(calendarDetailsResponse, 200);
         }
 
-        if (request.url.path == '/calendars/5/sources') {
+        if (request.url.path == '/calendars/5/sources/add') {
           return Response(calendarSourceResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
