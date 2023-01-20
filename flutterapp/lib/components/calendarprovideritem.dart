@@ -42,12 +42,14 @@ class ProviderActions extends StatelessWidget {
   void handleDelete(context) {
     var viewmodel = Provider.of<CalendarProviderListViewModel>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
+    var navigator = Navigator.of(context);
     showConfirmDelete(
       context: context,
       content: 'Deleting this calendar account will remove all linked calendars.',
       onConfirm: () async {
         await viewmodel.delete(provider);
         messenger.showSnackBar(successSnackBar(context: context, text: 'Calendar provider deleted'));
+        navigator.pop();
       });
   }
 
