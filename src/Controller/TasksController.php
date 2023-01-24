@@ -38,7 +38,12 @@ class TasksController extends AppController
             // Single day view
             $overdue = (bool)$this->request->getQuery('overdue', false);
             try {
-                $date = new FrozenDate($this->request->getQuery('date', 'today'));
+                if ($this->request->getQuery('date')) {
+                    $date = new FrozenDate($this->request->getQuery('date'));
+                } else {
+                    $identity = $this->request->getAttribute('identity');
+                    $date = new FrozenDate('today', $identity->timezone);
+                }
             } catch (\Exception $e) {
                 throw new BadRequestException('Invalid date value provided.');
             }
@@ -84,7 +89,6 @@ class TasksController extends AppController
             $serialize = array_merge($serialize, ['start', 'nextStart']);
         }
 
-        $identity = $this->request->getAttribute('identity');
         $query = $this->Authorization->applyScope($query);
 
         $tasks = $query->all();
