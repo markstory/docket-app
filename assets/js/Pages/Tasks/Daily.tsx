@@ -12,9 +12,10 @@ import TaskGroup from 'app/components/taskGroup';
 import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
-import {toDateString} from 'app/utils/dates';
+import {parseDate, toDateString} from 'app/utils/dates';
 
 type Props = {
+  date: string;
   tasks: Task[];
   projects: Project[];
   calendarItems: CalendarItem[];
@@ -57,10 +58,10 @@ function grouper(items: Task[]): GroupedItems {
   return output;
 }
 
-export default function TasksToday({calendarItems, tasks, projects}: Props): JSX.Element {
-  const today = new Date();
-  const defaultDate = toDateString(today);
-  const title = t("Today's Tasks");
+export default function TasksDaily({calendarItems, date, tasks, projects}: Props): JSX.Element {
+  const date = parseDate(date);
+  const dateName = toDateString(today);
+  const title = t("%s Tasks", dateName);
   if (!projects.length) {
     return (
       <LoggedIn title={title}>
@@ -111,18 +112,18 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
               <SortableContext items={today.ids} strategy={verticalListSortingStrategy}>
                 <h2 className="heading-icon today">
                   <Icon icon="clippy" />
-                  {t('Today')}
-                  <AddTaskButton defaultValues={{due_on: defaultDate}} />
+                  {dateName}
+                  <AddTaskButton defaultValues={{due_on: date}} />
                 </h2>
                 {calendarItems.length > 0 && (
-                  <CalendarItemList date={defaultDate} items={calendarItems} />
+                  <CalendarItemList date={date} items={calendarItems} />
                 )}
                 <TaskGroup
                   dataTestId="today-group"
                   dropId={today.key}
                   tasks={today.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{due_on: defaultDate}}
+                  defaultTaskValues={{due_on: date}}
                   focusedTask={focused}
                   showProject
                 />
@@ -131,13 +132,13 @@ export default function TasksToday({calendarItems, tasks, projects}: Props): JSX
                 <h2 className="heading-icon evening" data-testid="evening-group">
                   <Icon icon="moon" />
                   {t('This Evening')}
-                  <AddTaskButton defaultValues={{evening: true, due_on: defaultDate}} />
+                  <AddTaskButton defaultValues={{evening: true, due_on: date}} />
                 </h2>
                 <TaskGroup
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{evening: true, due_on: defaultDate}}
+                  defaultTaskValues={{evening: true, due_on: date}}
                   focusedTask={focused}
                   showProject
                 />
