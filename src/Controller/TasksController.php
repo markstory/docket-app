@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\View\JsonView;
 use InvalidArgumentException;
@@ -32,55 +33,66 @@ class TasksController extends AppController
     {
         $this->loadModel('CalendarItems');
 
-        $identity = $this->request->getAttribute('identity');
-        try {
-            $startVal = $this->request->getQuery('start', 'today');
-            if (!is_string($startVal)) {
-                throw new BadRequestException(__('Invalid start value provided.'));
+        $serialize = ['projects', 'tasks', 'calendarItems'];
+        if ($this->request->getQuery('date') || $view === 'today') {
+            // Single day view
+            $overdue = (bool)$this->request->getQuery('overdue', false);
+            try {
+                $date = new FrozenDate($this->request->getQuery('date', 'today'));
+            } catch (\Exception $e) {
+                throw new BadRequestException('Invalid date value provided.');
             }
-            $start = new FrozenTime($startVal, $identity->timezone);
-        } catch (\Exception $e) {
-            throw new NotFoundException();
-        }
+            $query = $this->Tasks
+                ->find('incomplete')
+                ->find('forDate', ['date' => $date, 'overdue' => $overdue])
+                ->contain('Projects');
 
-        $query = $this->Tasks
-            ->find('incomplete')
-            ->contain('Projects');
-
-        $query = $this->Authorization->applyScope($query);
-        if ($view === 'today') {
-            $this->set('component', 'Tasks/Today');
-            $start = new FrozenTime('today', $identity->timezone);
-
-            $query = $query->find('dueToday', ['timezone' => $identity->timezone]);
             $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $start,
-                'end' => $start->modify('+1 days'),
+                'start' => $date,
+                'end' => $date->modify('+1 days'),
             ]);
+
+            $this->set('component', 'Tasks/Today');
+            $this->set('start', $date);
+            $serialize[] = 'start';
         } elseif ($view === 'deleted') {
+            // Recently deleted
             $query = $this->Tasks
                 ->find('all', ['deleted' => true])
                 ->contain('Projects');
+
             $this->set('component', 'Tasks/Deleted');
-        } elseif ($view === 'upcoming') {
+        } else {
+            // Multiple day view
+            try {
+                $start = new FrozenDate($this->request->getQuery('start', 'today'));
+            } catch (\Exception $e) {
+                throw new BadRequestException('Invalid date value provided.');
+            }
             $end = $start->modify('+28 days');
 
-            $query = $query->find('upcoming', ['start' => $start, 'end' => $end]);
+            $query = $this->Tasks
+                ->find('incomplete')
+                ->find('upcoming', ['start' => $start, 'end' => $end])
+                ->contain('Projects');
             $eventsQuery = $this->CalendarItems->find('upcoming', [
                 'start' => $start,
                 'end' => $end,
             ]);
+            $this->set('start', $start->format('Y-m-d'));
+            $this->set('nextStart', $end->format('Y-m-d'));
+            $serialize = array_merge($serialize, ['start', 'nextStart']);
         }
+
+        $identity = $this->request->getAttribute('identity');
+        $query = $this->Authorization->applyScope($query);
+
         $tasks = $query->all();
         $calendarItems = [];
         if (isset($eventsQuery)) {
             $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
         }
-
-        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
-        $this->set(compact('tasks', 'view', 'calendarItems'));
-        $this->set('start', $start->format('Y-m-d'));
-        $this->set('nextStart', isset($end) ? $end->format('Y-m-d') : null);
+        $this->set(compact('tasks', 'calendarItems'));
         $this->set('generation', uniqid());
 
         // Work around for errors from inline add.

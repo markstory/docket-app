@@ -207,6 +207,25 @@ class TasksTable extends Table
             ->orderAsc('Tasks.title');
     }
 
+    public function findForDate(Query $query, array $options): Query
+    {
+        if (empty($options['date'])) {
+            throw new RuntimeException('Missing required `date` option');
+        }
+        $query = $query->where(['Tasks.due_on IS NOT' => null]);
+        if (!empty($options['overdue'])) {
+            $query = $query->where(['Tasks.due_on <=' => $options['date']]);
+        } else {
+            $query = $query->where(['Tasks.due_on =' => $options['date']]);
+        }
+
+        return $query
+            ->orderAsc('Tasks.due_on')
+            ->orderAsc('Tasks.evening')
+            ->orderAsc('Tasks.day_order')
+            ->orderAsc('Tasks.title');
+    }
+
     public function findUpcoming(Query $query, array $options): Query
     {
         if (empty($options['start'])) {
