@@ -6,7 +6,6 @@ namespace App\Controller;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -25,71 +24,91 @@ class TasksController extends AppController
     }
 
     /**
+     * Fetch tasks for a single day
+     */
+    public function daily(string $date)
+    {
+        $calendarItems = $this->fetchTable('CalendarItems');
+
+        try {
+            if ($date == 'today' || $date == 'tomorrow') {
+                $identity = $this->request->getAttribute('identity');
+                $date = new FrozenDate($date, $identity->timezone);
+            } else {
+                $date = new FrozenDate($date);
+            }
+        } catch (\Exception $e) {
+            throw new BadRequestException('Invalid date value provided');
+        }
+        $overdue = (bool)$this->request->getQuery('overdue', false);
+
+        $query = $this->Tasks
+            ->find('incomplete')
+            ->find('forDate', ['date' => $date, 'overdue' => $overdue])
+            ->contain('Projects');
+        $query = $this->Authorization->applyScope($query, 'index');
+
+        $eventsQuery = $calendarItems->find('upcoming', [
+            'start' => $date,
+            'end' => $date->modify('+1 days'),
+        ]);
+
+        $this->set('component', 'Tasks/Daily');
+        $this->set('date', $date->format('Y-m-d'));
+
+        $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
+
+        $tasks = $query->all();
+        $calendarItems = [];
+        if (isset($eventsQuery)) {
+            $calendarItems = $this->Authorization
+                ->applyScope($eventsQuery, 'index')
+                ->all();
+        }
+        $this->set(compact('tasks', 'calendarItems'));
+        $this->set('generation', uniqid());
+
+        // Work around for errors from inline add.
+        $session = $this->request->getSession();
+        if ($session->check('errors')) {
+            $this->set('errors', $session->consume('errors'));
+        }
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => $serialize,
+        ]);
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function index(string $view = 'upcoming')
     {
-        $this->loadModel('CalendarItems');
+        $calendarItemsTable = $this->fetchTable('CalendarItems');
 
-        $serialize = ['projects', 'tasks', 'calendarItems'];
-        if ($this->request->getQuery('date') || $view === 'today') {
-            // Single day view
-            $overdue = (bool)$this->request->getQuery('overdue', false);
-            try {
-                if ($this->request->getQuery('date')) {
-                    $date = new FrozenDate($this->request->getQuery('date'));
-                } else {
-                    $identity = $this->request->getAttribute('identity');
-                    $date = new FrozenDate('today', $identity->timezone);
-                }
-            } catch (\Exception $e) {
-                throw new BadRequestException('Invalid date value provided.');
-            }
-            $query = $this->Tasks
-                ->find('incomplete')
-                ->find('forDate', ['date' => $date, 'overdue' => $overdue])
-                ->contain('Projects');
-
-            $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $date,
-                'end' => $date->modify('+1 days'),
-            ]);
-
-            $this->set('component', 'Tasks/Today');
-            $this->set('start', $date);
-            $serialize[] = 'start';
-        } elseif ($view === 'deleted') {
-            // Recently deleted
-            $query = $this->Tasks
-                ->find('all', ['deleted' => true])
-                ->contain('Projects');
-
-            $this->set('component', 'Tasks/Deleted');
-        } else {
-            // Multiple day view
-            try {
-                $start = new FrozenDate($this->request->getQuery('start', 'today'));
-            } catch (\Exception $e) {
-                throw new BadRequestException('Invalid date value provided.');
-            }
-            $end = $start->modify('+28 days');
-
-            $query = $this->Tasks
-                ->find('incomplete')
-                ->find('upcoming', ['start' => $start, 'end' => $end])
-                ->contain('Projects');
-            $eventsQuery = $this->CalendarItems->find('upcoming', [
-                'start' => $start,
-                'end' => $end,
-            ]);
-            $this->set('start', $start->format('Y-m-d'));
-            $this->set('nextStart', $end->format('Y-m-d'));
-            $serialize = array_merge($serialize, ['start', 'nextStart']);
+        // Multiple day view
+        try {
+            $start = new FrozenDate($this->request->getQuery('start', 'today'));
+        } catch (\Exception $e) {
+            throw new BadRequestException('Invalid date value provided.');
         }
+        $end = $start->modify('+28 days');
 
+        $query = $this->Tasks
+            ->find('incomplete')
+            ->find('upcoming', ['start' => $start, 'end' => $end])
+            ->contain('Projects');
         $query = $this->Authorization->applyScope($query);
+
+        $eventsQuery = $calendarItemsTable->find('upcoming', [
+            'start' => $start,
+            'end' => $end,
+        ]);
+        $this->set('start', $start->format('Y-m-d'));
+        $this->set('nextStart', $end->format('Y-m-d'));
 
         $tasks = $query->all();
         $calendarItems = [];
@@ -105,6 +124,35 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
         }
 
+        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => $serialize,
+        ]);
+    }
+
+    /**
+     * Fetch tasks that are soft-deleted
+     */
+    public function deleted()
+    {
+        $query = $this->Tasks
+            ->find('all', ['deleted' => true])
+            ->contain('Projects');
+        $query = $this->Authorization->applyScope($query, 'index');
+
+        $tasks = $query->all();
+        $calendarItems = [];
+        if (isset($eventsQuery)) {
+            $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
+        }
+
+        $this->set(compact('tasks', 'calendarItems'));
+        $this->set('generation', uniqid());
+        $this->set('component', 'Tasks/Deleted');
+
+        $serialize = ['projects', 'tasks'];
         return $this->respond([
             'success' => true,
             'serialize' => $serialize,

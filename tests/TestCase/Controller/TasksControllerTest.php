@@ -136,11 +136,11 @@ class TasksControllerTest extends TestCase
     }
 
     /**
-     * Test index method with date param
+     * Test today route
      *
      * @return void
      */
-    public function testIndexDateParam(): void
+    public function testTodayRoute(): void
     {
         $today = new FrozenDate('today');
         $tomorrow = $today->modify('+1 day');
@@ -158,18 +158,52 @@ class TasksControllerTest extends TestCase
 
         $this->requestJson();
         $this->useApiToken($token->token);
-        $this->get("/tasks?date={$today->format('Y-m-d')}");
+        $this->get('/tasks/today');
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
         $this->assertCount(1, $tasks);
-        $this->assertEquals($today, $this->viewVariable('start'));
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
 
         $ids = collection($tasks)->extract('id')->toList();
         $this->assertEquals([$first->id], $ids);
     }
 
-    public function testIndexDateParamOverdue(): void
+    /**
+     * Test day method with date param
+     *
+     * @return void
+     */
+    public function testDayDateParam(): void
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = $today->modify('+1 day');
+        $yesterday = $today->modify('-1 day');
+
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('nope', $project->id, 3, ['due_on' => $yesterday]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $today,
+        ]);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get("/tasks/day/{$today->format('Y-m-d')}");
+
+        $this->assertResponseOk();
+        $tasks = $this->viewVariable('tasks');
+        $this->assertCount(1, $tasks);
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+
+        $ids = collection($tasks)->extract('id')->toList();
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    public function testDayParamOverdue(): void
     {
         $today = new FrozenDate('today');
         $yesterday = $today->modify('-1 day');
@@ -187,7 +221,7 @@ class TasksControllerTest extends TestCase
         $this->useApiToken($token->token);
         $this->requestJson();
         $this->useApiToken($token->token);
-        $this->get("/tasks?date={$today->format('Y-m-d')}&overdue=1");
+        $this->get("/tasks/day/{$today->format('Y-m-d')}?overdue=1");
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');

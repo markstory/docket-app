@@ -44,9 +44,13 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->scope('/tasks', ['controller' => 'Tasks'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'tasks:index');
-        $builder->get('/today', ['action' => 'index', 'today'], 'tasks:today');
+
+        $builder->get('/today', ['action' => 'daily', 'today'], 'tasks:today');
+        $builder->get('/day/{date}', ['action' => 'daily'], 'tasks:daily')
+            ->setPass(['date']);
+
         $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'tasks:upcoming');
-        $builder->get('/deleted', ['action' => 'index', 'deleted'], 'tasks:deleted');
+        $builder->get('/deleted', ['action' => 'deleted'], 'tasks:deleted');
 
         $builder->post('/add', ['action' => 'add'], 'tasks:add');
         $builder->post('/{id}/complete', ['action' => 'complete'], 'tasks:complete')
