@@ -229,6 +229,10 @@ class TaskViewData {
     this.isEmpty = false,
   });
 
+  factory TaskViewData.blank({isEmpty = false}) {
+    return TaskViewData(tasks: [], calendarItems: [], isEmpty: isEmpty);
+  }
+
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
     List<CalendarItem> calendarItems =

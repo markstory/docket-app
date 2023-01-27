@@ -17,12 +17,13 @@ import 'package:docket/db/projectarchive.dart';
 import 'package:docket/db/projectdetails.dart';
 import 'package:docket/db/projectmap.dart';
 import 'package:docket/db/taskdetails.dart';
+import 'package:docket/db/tasksdaily.dart';
 import 'package:docket/db/today.dart';
 import 'package:docket/db/trashbin.dart';
 import 'package:docket/db/upcoming.dart';
 
 enum TaskCollections {
-  today, upcoming, projectDetails, trashBin
+  today, upcoming, projectDetails, trashBin, tasksDaily
 }
 
 /// Utility class that makes testing listeners easier.
@@ -52,6 +53,7 @@ class LocalDatabase {
   late TodayRepo today;
   late UpcomingRepo upcoming;
   late TaskDetailsRepo taskDetails;
+  late TasksDailyRepo tasksDaily;
   late ProjectMapRepo projectMap;
   late ProjectDetailsRepo projectDetails;
   late ProjectArchiveRepo projectArchive;
@@ -67,6 +69,7 @@ class LocalDatabase {
     today = TodayRepo(db, const Duration(hours: 1));
     upcoming = UpcomingRepo(db, const Duration(hours: 1));
     taskDetails = TaskDetailsRepo(db, const Duration(hours: 1));
+    tasksDaily = TasksDailyRepo(db, const Duration(hours: 1));
     projectMap = ProjectMapRepo(db, const Duration(hours: 1));
     projectDetails = ProjectDetailsRepo(db, const Duration(hours: 1));
     projectArchive = ProjectArchiveRepo(db, const Duration(hours: 1));
@@ -117,6 +120,7 @@ class LocalDatabase {
       var delta = task.dueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
         views.add(TaskCollections.today);
+        views.add(TaskCollections.tasksDaily);
       }
       views.add(TaskCollections.upcoming);
     }
@@ -125,6 +129,7 @@ class LocalDatabase {
       var delta = task.previousDueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
         views.add(TaskCollections.today);
+        views.add(TaskCollections.tasksDaily);
       }
       views.add(TaskCollections.upcoming);
     }
@@ -159,6 +164,9 @@ class LocalDatabase {
         case TaskCollections.upcoming:
           futures.add(upcoming.append(task));
           break;
+        case TaskCollections.tasksDaily:
+          futures.add(tasksDaily.append(task));
+          break;
         default:
           throw Exception('Unknown view to clear "$view"');
       }
@@ -182,6 +190,9 @@ class LocalDatabase {
           break;
         case TaskCollections.upcoming:
           futures.add(upcoming.updateTask(task, expire: true));
+          break;
+        case TaskCollections.tasksDaily:
+          futures.add(tasksDaily.updateTask(task, expire: true));
           break;
         default:
           throw Exception('Unknown view to clear "$view"');
@@ -213,6 +224,9 @@ class LocalDatabase {
           break;
         case TaskCollections.upcoming:
           futures.add(upcoming.removeTask(task));
+          break;
+        case TaskCollections.tasksDaily:
+          futures.add(tasksDaily.removeTask(task));
           break;
         default:
           throw Exception('Cannot expire view of $view');
@@ -246,6 +260,9 @@ class LocalDatabase {
         case TaskCollections.trashBin:
           trashbin.expire(notify: true);
           break;
+        case TaskCollections.tasksDaily:
+          tasksDaily.expireDay(task.dueOn, notify: true);
+          break;
         default:
           throw Exception('Cannot expire view of $view');
       }
@@ -259,6 +276,7 @@ class LocalDatabase {
       today.clearSilent(),
       upcoming.clearSilent(),
       taskDetails.clearSilent(),
+      tasksDaily.clear(),
       projectMap.clearSilent(),
       projectDetails.clearSilent(),
       projectArchive.clearSilent(),
@@ -274,8 +292,8 @@ class LocalDatabase {
     return Future.wait([
       taskDetails.clear(),
       today.clear(),
-      upcoming.clear(),
-      projectDetails.clear(),
+      tasksDaily.clear(),
+      upcoming.clear(), projectDetails.clear(),
       completedTasks.clear(),
     ]);
   }

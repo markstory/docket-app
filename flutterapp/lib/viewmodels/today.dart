@@ -52,14 +52,15 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
-    var taskView = await _database.today.get();
+    var today = DateUtils.dateOnly(DateTime.now());
+    var taskView = await _database.tasksDaily.get(today);
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
     if (!_loading && taskView.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.today.isFresh()) {
+    if (!_loading && !_database.tasksDaily.isDayFresh(today)) {
       await refreshTasks();
     }
   }
@@ -70,7 +71,7 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     var taskView = await actions.fetchTodayTasks(_database.apiToken.token);
-    _database.today.set(taskView);
+    _database.tasksDaily.set(taskView);
 
     _buildTaskLists(taskView);
   }
@@ -88,6 +89,7 @@ class TodayViewModel extends ChangeNotifier {
       return Future.wait([
         _database.projectMap.replace(projects),
         _database.today.set(tasksView),
+        _database.tasksDaily.set(tasksView),
       ]).then((results) {
         _buildTaskLists(tasksView);
       });
