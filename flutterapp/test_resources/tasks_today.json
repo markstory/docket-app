@@ -32,8 +32,8 @@
       "title": "Get haircut",
       "start_time": null,
       "end_time": null,
-      "start_date": "2022-07-09",
-      "end_date": "2022-07-09",
+      "start_date": "__TODAY__",
+      "end_date": "__TODAY__",
       "all_day": true,
       "html_link": ""
     }

@@ -27,12 +27,12 @@ class TodayViewModel extends ChangeNotifier {
   TodayViewModel(LocalDatabase database) {
     _taskLists = [];
     _database = database;
-    _database.today.addListener(listener);
+    _database.tasksDaily.addListener(listener);
   }
 
   @override
   void dispose() {
-    _database.today.removeListener(listener);
+    _database.tasksDaily.removeListener(listener);
     super.dispose();
   }
 
@@ -53,15 +53,15 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     var today = DateUtils.dateOnly(DateTime.now());
+    if (!_loading && !_database.tasksDaily.isDayFresh(today)) {
+      await refreshTasks();
+    }
     var taskView = await _database.tasksDaily.get(today);
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
     if (!_loading && taskView.isEmpty) {
       return refresh();
-    }
-    if (!_loading && !_database.tasksDaily.isDayFresh(today)) {
-      await refreshTasks();
     }
   }
 
@@ -191,9 +191,14 @@ class TodayViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
+    task.dayOrder = newItemIndex;
+
+    // TODO the sequencing of these actions results in some
+    // render jank. It would be good to solve that.
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
+    await _database.tasksDaily.updateTask(task);
     _database.expireTask(task);
   }
 }

@@ -8,6 +8,7 @@ import 'package:docket/formatters.dart' as formatters;
 
 class TasksDailyRepo extends Repository<TaskViewData> {
   static const String name = 'today';
+  final Map<String, DateTime> _expired = {};
 
   TasksDailyRepo(JsonCache database, Duration duration) : super(database, duration);
 
@@ -26,13 +27,14 @@ class TasksDailyRepo extends Repository<TaskViewData> {
   @override
   Future<void> set(TaskViewData viewData) async {
     var current = await getMap() ?? {};
-    late DateTime? date;
+    var date = DateUtils.dateOnly(clock.now());
     if (viewData.tasks.isNotEmpty) {
-      date = viewData.tasks.first.dueOn;
+      var dueOn = viewData.tasks.first.dueOn;
+      date = dueOn ?? date;
     }
-    var key = dateKey(date ?? DateUtils.dateOnly(clock.now()));
+    var key = dateKey(date);
     current[key] = viewData.toMap();
-    current[key]['updatedAt'] = clock.now().toIso8601String();
+    _expired.remove(key);
 
     return setMap(current);
   }
@@ -57,20 +59,8 @@ class TasksDailyRepo extends Repository<TaskViewData> {
       return true;
     }
     var key = dateKey(date);
-    var taskData = state['data'][key];
-    if (taskData == null) {
-      return false;
-    }
-    var updated = taskData["updatedAt"];
-    // No updatedAt means we need to refresh.
-    if (updated == null) {
-      return false;
-    }
-    var updatedAt = DateTime.parse(updated);
-    var expires = clock.now();
-    expires = expires.subtract(duration!);
 
-    return updatedAt.isAfter(expires);
+    return _expired[key] == null;
   }
 
   Future<TaskViewData> getOrCreate(DateTime? date) async {
@@ -85,7 +75,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
     var data = await getOrCreate(task.dueOn);
     data.tasks.add(task);
     await set(data);
-    expire();
+    expireDay(task.dueOn);
 
     notifyListeners();
   }
@@ -96,13 +86,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
       return;
     }
     var key = dateKey(date);
-    var current = await getMap();
-    if (current == null || current[key] == null) {
-      return;
-    }
-    current[key]['updatedAt'] = clock.now().subtract(duration!);
-    await setMap(current);
-
+    _expired[key] = clock.now();
     if (notify) {
       notifyListeners();
     }
@@ -128,7 +112,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
     }
     await set(data);
     if (expire) {
-      this.expire();
+      expireDay(task.dueOn);
     }
 
     notifyListeners();
@@ -141,7 +125,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
     if (index > -1) {
       data.tasks.removeAt(index);
       await set(data);
-      expire(notify: true);
+      expireDay(task.dueOn, notify: true);
     }
   }
 }
