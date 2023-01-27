@@ -25,11 +25,9 @@ void main() {
     var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.today.clear();
       await db.tasksDaily.clear();
 
       var viewdata = TaskViewData.fromMap(decoded);
-      await db.today.set(viewdata);
       await db.tasksDaily.set(viewdata);
       await db.apiToken.set(ApiToken.fake());
     });
@@ -55,7 +53,6 @@ void main() {
     });
 
     testWidgets('shows loading error', (tester) async {
-      await db.today.clearSilent();
       await db.tasksDaily.clearSilent();
 
       actions.client = MockClient((request) async {

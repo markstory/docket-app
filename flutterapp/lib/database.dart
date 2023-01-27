@@ -18,12 +18,11 @@ import 'package:docket/db/projectdetails.dart';
 import 'package:docket/db/projectmap.dart';
 import 'package:docket/db/taskdetails.dart';
 import 'package:docket/db/tasksdaily.dart';
-import 'package:docket/db/today.dart';
 import 'package:docket/db/trashbin.dart';
 import 'package:docket/db/upcoming.dart';
 
 enum TaskCollections {
-  today, upcoming, projectDetails, trashBin, tasksDaily
+  upcoming, projectDetails, trashBin, tasksDaily
 }
 
 /// Utility class that makes testing listeners easier.
@@ -50,7 +49,6 @@ class LocalDatabase {
 
   JsonCache? _database;
 
-  late TodayRepo today;
   late UpcomingRepo upcoming;
   late TaskDetailsRepo taskDetails;
   late TasksDailyRepo tasksDaily;
@@ -66,7 +64,6 @@ class LocalDatabase {
 
   LocalDatabase({bool inTest = false}) {
     var db = database(inTest: inTest);
-    today = TodayRepo(db, const Duration(hours: 1));
     upcoming = UpcomingRepo(db, const Duration(hours: 1));
     taskDetails = TaskDetailsRepo(db, const Duration(hours: 1));
     tasksDaily = TasksDailyRepo(db, const Duration(hours: 1));
@@ -115,11 +112,10 @@ class LocalDatabase {
     Set<TaskCollections> views = {};
 
     // If the task has a due date expire upcoming and possibly
-    // today views.
+    // taskDaily views.
     if (task.dueOn != null) {
       var delta = task.dueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
-        views.add(TaskCollections.today);
         views.add(TaskCollections.tasksDaily);
       }
       views.add(TaskCollections.upcoming);
@@ -128,7 +124,6 @@ class LocalDatabase {
     if (task.previousDueOn != null) {
       var delta = task.previousDueOn?.difference(now);
       if (delta != null && delta.inDays <= 0) {
-        views.add(TaskCollections.today);
         views.add(TaskCollections.tasksDaily);
       }
       views.add(TaskCollections.upcoming);
@@ -158,9 +153,6 @@ class LocalDatabase {
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TaskCollections.today:
-          futures.add(today.append(task));
-          break;
         case TaskCollections.upcoming:
           futures.add(upcoming.append(task));
           break;
@@ -185,9 +177,6 @@ class LocalDatabase {
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TaskCollections.today:
-          futures.add(today.updateTask(task, expire: true));
-          break;
         case TaskCollections.upcoming:
           futures.add(upcoming.updateTask(task, expire: true));
           break;
@@ -219,9 +208,6 @@ class LocalDatabase {
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TaskCollections.today:
-          futures.add(today.removeTask(task));
-          break;
         case TaskCollections.upcoming:
           futures.add(upcoming.removeTask(task));
           break;
@@ -251,9 +237,6 @@ class LocalDatabase {
 
     for (var view in _taskViews(task)) {
       switch (view) {
-        case TaskCollections.today:
-          today.expire(notify: true);
-          break;
         case TaskCollections.upcoming:
           upcoming.expire(notify: true);
           break;
@@ -273,7 +256,6 @@ class LocalDatabase {
   // Clearing methods {{{
   Future<List<void>> clearSilent() async {
     return Future.wait([
-      today.clearSilent(),
       upcoming.clearSilent(),
       taskDetails.clearSilent(),
       tasksDaily.clear(),
@@ -291,7 +273,6 @@ class LocalDatabase {
   Future<List<void>> clearTasks() async {
     return Future.wait([
       taskDetails.clear(),
-      today.clear(),
       tasksDaily.clear(),
       upcoming.clear(), projectDetails.clear(),
       completedTasks.clear(),

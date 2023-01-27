@@ -51,7 +51,6 @@ class TasksDailyRepo extends Repository<TaskViewData> {
 
   /// Check if a daily view is fresh.
   bool isDayFresh(DateTime date) {
-    var state = this.state;
     if (state == null) {
       return false;
     }
@@ -61,6 +60,11 @@ class TasksDailyRepo extends Repository<TaskViewData> {
     var key = dateKey(date);
 
     return _expired[key] == null;
+  }
+
+  /// Check if a daily view is expired
+  bool isDayExpired(DateTime date) {
+    return !isDayFresh(date);
   }
 
   Future<TaskViewData> getOrCreate(DateTime? date) async {

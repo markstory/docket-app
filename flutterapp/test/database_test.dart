@@ -63,10 +63,10 @@ void main() {
     });
 
     test('expireTask() expires all views for today task', () async {
-      var todayCounter = CallCounter();
+      var dailyCounter = CallCounter();
       var upcomingCounter = CallCounter();
       var detailsCounter = CallCounter();
-      database.today.addListener(todayCounter);
+      database.tasksDaily.addListener(dailyCounter);
       database.upcoming.addListener(upcomingCounter);
       database.projectDetails.addListener(detailsCounter);
       var task = Task.blank();
@@ -76,22 +76,22 @@ void main() {
 
       database.expireTask(task);
 
-      database.today.removeListener(todayCounter);
+      database.tasksDaily.removeListener(dailyCounter);
       database.upcoming.removeListener(upcomingCounter);
       database.projectDetails.removeListener(detailsCounter);
 
-      expect(todayCounter.callCount, equals(1));
+      expect(dailyCounter.callCount, equals(1));
       expect(upcomingCounter.callCount, equals(1));
       expect(detailsCounter.callCount, equals(1));
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.upcoming.isExpired, isTrue);
       expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
     });
 
     test('expireTask() expires only upcoming', () async {
-      var todayCounter = CallCounter();
+      var dailyCounter = CallCounter();
       var upcomingCounter = CallCounter();
-      database.today.addListener(todayCounter);
+      database.tasksDaily.addListener(dailyCounter);
       database.upcoming.addListener(upcomingCounter);
       var task = Task.blank();
       task.id = 1;
@@ -99,13 +99,13 @@ void main() {
       task.dueOn = tomorrow;
 
       database.expireTask(task);
-      database.today.removeListener(todayCounter);
+      database.tasksDaily.removeListener(dailyCounter);
       database.upcoming.removeListener(upcomingCounter);
 
-      expect(todayCounter.callCount, equals(0));
+      expect(dailyCounter.callCount, equals(0));
       expect(upcomingCounter.callCount, equals(1));
 
-      expect(database.today.isExpired, isFalse);
+      expect(database.tasksDaily.isDayExpired(today), isFalse);
       expect(database.upcoming.isExpired, isTrue);
       expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
     });
@@ -113,7 +113,7 @@ void main() {
     test('expireTask() removes from today when moving out', () async {
       var todayCounter = CallCounter();
       var upcomingCounter = CallCounter();
-      database.today.addListener(todayCounter);
+      database.tasksDaily.addListener(todayCounter);
       database.upcoming.addListener(upcomingCounter);
 
       var task = Task.blank();
@@ -123,7 +123,7 @@ void main() {
       task.dueOn = tomorrow;
 
       database.expireTask(task);
-      database.today.removeListener(todayCounter);
+      database.tasksDaily.removeListener(todayCounter);
       database.upcoming.removeListener(upcomingCounter);
 
       expect(todayCounter.callCount, equals(1));
@@ -133,7 +133,7 @@ void main() {
     test('expireTask() removes from trashbin', () async {
       var todayCounter = CallCounter();
       var trashCounter = CallCounter();
-      database.today.addListener(todayCounter);
+      database.tasksDaily.addListener(todayCounter);
       database.trashbin.addListener(trashCounter);
 
       var task = Task.blank();
@@ -143,7 +143,7 @@ void main() {
       task.deletedAt = clock.now();
 
       database.expireTask(task);
-      database.today.removeListener(todayCounter);
+      database.tasksDaily.removeListener(todayCounter);
       database.trashbin.removeListener(trashCounter);
 
       expect(todayCounter.callCount, equals(1));
@@ -172,21 +172,21 @@ void main() {
       task.projectSlug = 'home';
 
       database.upcoming.addListener(upcomingListener);
-      database.today.addListener(todayListener);
+      database.tasksDaily.addListener(todayListener);
       await database.updateTask(task);
 
-      database.today.removeListener(todayListener);
-      database.today.removeListener(upcomingListener);
+      database.tasksDaily.removeListener(todayListener);
+      database.tasksDaily.removeListener(upcomingListener);
       expect(todayListener.callCount, greaterThan(0));
       expect(upcomingListener.callCount, greaterThan(0));
 
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(task.title));
 
       // While create is generally safe we should refetch
       // to ensure dayOrder/childOrder are synced.
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
 
       var upcoming = await database.upcoming.get();
@@ -205,16 +205,16 @@ void main() {
       task.dueOn = today;
       task.projectSlug = 'home';
 
-      await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
+      await database.tasksDaily.set(TaskViewData(tasks: [other, task], calendarItems: []));
 
       task.title = 'Updated pay bills';
       await database.updateTask(task);
 
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(2));
       expect(todayData.tasks[1].title, equals(task.title));
       // View should be expired so that we refetch
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
@@ -233,16 +233,16 @@ void main() {
       task.dueOn = today;
       task.projectSlug = 'home';
 
-      await database.today.set(TaskViewData(tasks: [other, task], calendarItems: []));
+      await database.tasksDaily.set(TaskViewData(tasks: [other, task], calendarItems: []));
 
       task.previousDueOn = task.dueOn;
       task.dueOn = tomorrow;
       await database.updateTask(task);
 
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(1));
       expect(todayData.tasks[0].title, equals(other.title));
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
@@ -270,9 +270,9 @@ void main() {
       expect(upcoming.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
 
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(0));
-      expect(database.today.isExpired, isFalse);
+      expect(database.tasksDaily.isDayExpired(today), isFalse);
     });
 
     test('updateTask() removes task from upcoming', () async {
@@ -296,7 +296,7 @@ void main() {
       expect(upcoming.tasks.length, equals(0));
       expect(database.upcoming.isExpired, isTrue);
 
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(0));
     });
 
@@ -370,10 +370,10 @@ void main() {
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
 
-      var todayTasks = await database.today.get();
+      var todayTasks = await database.tasksDaily.get(today);
       expect(todayTasks.tasks.length, equals(1));
       expect(todayTasks.tasks[0].title, equals(task.title));
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
     });
 
     test('createTask() adds task to upcoming view', () async {
@@ -403,9 +403,9 @@ void main() {
       expect(taskData.tasks.length, equals(0));
       expect(database.upcoming.isExpired, isFalse);
 
-      taskData = await database.today.get();
+      taskData = await database.tasksDaily.get(today);
       expect(taskData.tasks.length, equals(0));
-      expect(database.today.isExpired, isFalse);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
     });
 
     test('createTask() adds task to projectDetails view', () async {
@@ -440,11 +440,11 @@ void main() {
       task.projectSlug = 'home';
 
       await database.taskDetails.set(task);
-      await database.today.set(TaskViewData(tasks: [task], calendarItems: []));
+      await database.tasksDaily.set(TaskViewData(tasks: [task], calendarItems: []));
       await database.upcoming.set(TaskViewData(calendarItems: [], tasks: [task]));
 
       await database.deleteTask(task);
-      var todayData = await database.today.get();
+      var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(0));
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(0));
@@ -481,7 +481,7 @@ void main() {
 
       await database.undeleteTask(task);
       expect(database.trashbin.isExpired, isTrue);
-      expect(database.today.isExpired, isTrue);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.projectDetails.isExpiredSlug(project.slug), isTrue);
 
       var result = await database.projectDetails.get(project.slug);
