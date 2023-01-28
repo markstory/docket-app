@@ -52,7 +52,6 @@ void main() {
 
   Future<void> setTodayView(LocalDatabase db, List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.today.set(taskView);
     await db.tasksDaily.set(taskView);
   }
 
@@ -60,7 +59,6 @@ void main() {
     var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.today.clearSilent();
       await db.tasksDaily.clearSilent();
       await db.apiToken.set(ApiToken.fake());
     });
@@ -119,7 +117,7 @@ void main() {
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(db, tasks);
-      db.today.expire();
+      db.tasksDaily.expire();
 
       var viewmodel = TodayViewModel(db);
 

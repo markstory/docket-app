@@ -70,10 +70,14 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskView = await actions.fetchTodayTasks(_database.apiToken.token);
-    _database.tasksDaily.set(taskView);
-
-    _buildTaskLists(taskView);
+    try {
+      var taskView = await actions.fetchTodayTasks(_database.apiToken.token);
+      _database.tasksDaily.set(taskView);
+      _buildTaskLists(taskView);
+    } catch (err) {
+      _loadError = true;
+      notifyListeners();
+    }
   }
 
   /// Refresh from the server with loading state
