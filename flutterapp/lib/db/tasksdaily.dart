@@ -100,22 +100,34 @@ class TasksDailyRepo extends Repository<TaskViewData> {
   /// a task from the TasksDaily view depending on the task details.
   /// Will notify on changes.
   Future<void> updateTask(Task task, {bool expire = true}) async {
+
+    var previousDueOn = task.previousDueOn;
+    if (previousDueOn != null) {
+      // Remove from the previous view if the task is there.
+      // It might not be because the view is new/empty.
+      var data = await getOrCreate(previousDueOn);
+      var index = data.tasks.indexWhere((item) => item.id == task.id);
+      if (index > -1) {
+        data.tasks.removeAt(index);
+        await set(data);
+      }
+    }
+
+    // Update or add to the new view.
     var data = await getOrCreate(task.dueOn);
     var index = data.tasks.indexWhere((item) => item.id == task.id);
-    if (task.isToday) {
-      // Add or replace depending
-      if (index == -1) {
-        data.tasks.add(task);
-      } else {
-        data.tasks.removeAt(index);
-        data.tasks.insert(index, task);
-      }
-    } else if (index != -1) {
-      // Task is no longer in today view remove it.
+    // Add or replace depending
+    if (index == -1) {
+      data.tasks.add(task);
+    } else {
       data.tasks.removeAt(index);
+      data.tasks.insert(index, task);
     }
     await set(data);
     if (expire) {
+      if (previousDueOn != null) {
+        expireDay(previousDueOn);
+      }
       expireDay(task.dueOn);
     }
 

@@ -18,7 +18,7 @@ void main() {
   project.slug = 'home';
   project.name = 'Home';
 
-  group('database.LocalViewCache', () {
+  group('LocalDatabase', () {
     setUp(() async {
       await database.clearSilent();
     });
@@ -105,7 +105,8 @@ void main() {
       expect(dailyCounter.callCount, equals(0));
       expect(upcomingCounter.callCount, equals(1));
 
-      expect(database.tasksDaily.isDayExpired(today), isFalse);
+      // Day is empty and empty ~= expired
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.upcoming.isExpired, isTrue);
       expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
     });
@@ -226,6 +227,7 @@ void main() {
     test('updateTask() removes from today view', () async {
       var other = Task.blank();
       other.id = 2;
+      other.dueOn = today;
 
       var task = Task.blank(projectId: project.id);
       task.id = 1;
@@ -272,7 +274,7 @@ void main() {
 
       var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(0));
-      expect(database.tasksDaily.isDayExpired(today), isFalse);
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
     });
 
     test('updateTask() removes task from upcoming', () async {

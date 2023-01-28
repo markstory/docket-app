@@ -244,7 +244,7 @@ class LocalDatabase {
           trashbin.expire(notify: true);
           break;
         case TaskCollections.tasksDaily:
-          tasksDaily.expireDay(task.dueOn);
+          tasksDaily.expireDay(task.dueOn, notify: true);
           break;
         default:
           throw Exception('Cannot expire view of $view');
