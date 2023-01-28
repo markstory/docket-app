@@ -89,7 +89,7 @@ void main() {
       await provider.toggleComplete(tasks[0]);
 
       expect(listener.callCount, greaterThan(0));
-      expect(db.tasksDaily.isExpired, isTrue);
+      expect(db.tasksDaily.isDayExpired(tasks[0].dueOn!), isTrue);
       var viewData = await db.tasksDaily.get(today);
       expect(viewData.tasks.length, equals(1));
     });
@@ -111,7 +111,7 @@ void main() {
       var provider = TasksProvider(db);
       await provider.toggleComplete(task);
 
-      expect(db.tasksDaily.isExpired, isTrue);
+      expect(db.tasksDaily.isDayExpired(today), isTrue);
       expect(db.upcoming.isExpired, isTrue);
       expect(db.completedTasks.isExpired, isTrue);
       expect(db.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
@@ -135,7 +135,7 @@ void main() {
       await provider.deleteTask(tasks[0]);
 
       expect(listener.callCount, greaterThan(0));
-      expect(db.tasksDaily.isExpired, isTrue);
+      expect(db.tasksDaily.isDayExpired(tasks[0].dueOn!), isTrue);
     });
 
     test('deleteTask() reduces the local project incomplete task count', () async {
