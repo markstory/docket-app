@@ -133,7 +133,6 @@ class CalendarSourceItem extends StatelessWidget {
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
       List<PopupMenuEntry<Menu>> items = [];
-      print("${source.toMap()}");
       if (source.isLinked) {
         items.add(
           PopupMenuItem<Menu>(
