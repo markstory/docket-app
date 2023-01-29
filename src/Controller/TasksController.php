@@ -153,6 +153,7 @@ class TasksController extends AppController
         $this->set('component', 'Tasks/Deleted');
 
         $serialize = ['projects', 'tasks'];
+
         return $this->respond([
             'success' => true,
             'serialize' => $serialize,
