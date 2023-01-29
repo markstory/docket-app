@@ -58,10 +58,15 @@ function grouper(items: Task[]): GroupedItems {
   return output;
 }
 
-export default function TasksDaily({calendarItems, date, tasks, projects}: Props): JSX.Element {
-  const date = parseDate(date);
-  const dateName = toDateString(today);
-  const title = t("%s Tasks", dateName);
+export default function TasksDaily({
+  calendarItems,
+  date,
+  tasks,
+  projects,
+}: Props): JSX.Element {
+  const parsedDate = parseDate(date);
+  const dateName = toDateString(parsedDate);
+  const title = t('{date} Tasks', {date: dateName});
   if (!projects.length) {
     return (
       <LoggedIn title={title}>
@@ -113,17 +118,17 @@ export default function TasksDaily({calendarItems, date, tasks, projects}: Props
                 <h2 className="heading-icon today">
                   <Icon icon="clippy" />
                   {dateName}
-                  <AddTaskButton defaultValues={{due_on: date}} />
+                  <AddTaskButton defaultValues={{due_on: parsedDate}} />
                 </h2>
                 {calendarItems.length > 0 && (
-                  <CalendarItemList date={date} items={calendarItems} />
+                  <CalendarItemList date={parsedDate} items={calendarItems} />
                 )}
                 <TaskGroup
                   dataTestId="today-group"
                   dropId={today.key}
                   tasks={today.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{due_on: date}}
+                  defaultTaskValues={{due_on: parsedDate}}
                   focusedTask={focused}
                   showProject
                 />
@@ -132,13 +137,13 @@ export default function TasksDaily({calendarItems, date, tasks, projects}: Props
                 <h2 className="heading-icon evening" data-testid="evening-group">
                   <Icon icon="moon" />
                   {t('This Evening')}
-                  <AddTaskButton defaultValues={{evening: true, due_on: date}} />
+                  <AddTaskButton defaultValues={{evening: true, due_on: parsedDate}} />
                 </h2>
                 <TaskGroup
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{evening: true, due_on: date}}
+                  defaultTaskValues={{evening: true, due_on: parsedDate}}
                   focusedTask={focused}
                   showProject
                 />
