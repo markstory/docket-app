@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
-use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\FrozenDate;
 use Cake\View\JsonView;
 use InvalidArgumentException;
@@ -59,12 +58,9 @@ class TasksController extends AppController
         $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
         $tasks = $query->all();
-        $calendarItems = [];
-        if (isset($eventsQuery)) {
-            $calendarItems = $this->Authorization
-                ->applyScope($eventsQuery, 'index')
-                ->all();
-        }
+        $calendarItems = $this->Authorization
+            ->applyScope($eventsQuery, 'index')
+            ->all();
         $this->set(compact('tasks', 'calendarItems'));
         $this->set('generation', uniqid());
 
@@ -95,6 +91,7 @@ class TasksController extends AppController
         } catch (\Exception $e) {
             throw new BadRequestException('Invalid date value provided.');
         }
+        /** @var \Cake\I18n\FrozenDate $start */
         $end = $start->modify('+28 days');
 
         $query = $this->Tasks
@@ -109,14 +106,9 @@ class TasksController extends AppController
         ]);
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', $end->format('Y-m-d'));
-
-        $tasks = $query->all();
-        $calendarItems = [];
-        if (isset($eventsQuery)) {
-            $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
-        }
-        $this->set(compact('tasks', 'calendarItems'));
         $this->set('generation', uniqid());
+        $this->set('tasks', $query->all());
+        $this->set('calendarItems', $this->Authorization->applyScope($eventsQuery)->all());
 
         // Work around for errors from inline add.
         $session = $this->request->getSession();
@@ -142,13 +134,7 @@ class TasksController extends AppController
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
-        $tasks = $query->all();
-        $calendarItems = [];
-        if (isset($eventsQuery)) {
-            $calendarItems = $this->Authorization->applyScope($eventsQuery)->all();
-        }
-
-        $this->set(compact('tasks', 'calendarItems'));
+        $this->set('tasks', $query->all());
         $this->set('generation', uniqid());
         $this->set('component', 'Tasks/Deleted');
 
