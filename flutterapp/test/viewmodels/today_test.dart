@@ -43,9 +43,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var today = DateUtils.dateOnly(DateTime.now());
+  var urlDate = formatters.dateString(today);
 
   var file = File('test_resources/tasks_today.json');
-  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
 
   file = File('test_resources/project_list.json');
   final projectListResponseFixture = file.readAsStringSync();
@@ -65,7 +66,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
@@ -109,7 +110,7 @@ void main() {
 
     test('loadData() refresh from server when expired', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -130,7 +131,7 @@ void main() {
 
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
@@ -157,7 +158,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
@@ -178,7 +179,7 @@ void main() {
 
     test('refreshTasks() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
@@ -205,7 +206,7 @@ void main() {
         if (request.url.path == '/projects') {
           return Response(projectListResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         throw "Unknown request to ${request.url.path}";

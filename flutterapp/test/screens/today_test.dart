@@ -16,9 +16,10 @@ import 'package:docket/screens/today.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   var today = DateUtils.dateOnly(DateTime.now());
+  var urlDate = formatters.dateString(today);
 
   var file = File('test_resources/tasks_today.json');
-  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$TodayScreen', () {
@@ -107,7 +108,7 @@ void main() {
           requestCount += 1;
           return Response('', 200);
         }
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(todayResponse, 200);
         }
         throw Exception('Unmocked request to ${request.url.path}');
@@ -143,7 +144,7 @@ void main() {
           requestCount += 1;
           return Response('', 200);
         }
-        if (request.url.path == '/tasks/today') {
+        if (request.url.path == '/tasks/day/$urlDate') {
           return Response(todayResponse, 200);
         }
         throw Exception('Unmocked request to ${request.url.path}');

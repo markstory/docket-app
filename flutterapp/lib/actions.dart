@@ -9,6 +9,7 @@ import 'package:docket/models/calendarsource.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/userprofile.dart';
+import 'package:docket/formatters.dart' as formatters;
 
 /// This needs to come from a props/config file but I don't know
 /// how to do that yet.
@@ -188,6 +189,29 @@ Future<TaskViewData> fetchTodayTasks(String apiToken) async {
     return TaskViewData(tasks: tasks, calendarItems: calendarItems);
   } catch (e, stacktrace) {
     developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions.today');
+    rethrow;
+  }
+}
+
+/// Fetch tasks for a single day
+Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
+  var urlDate = formatters.dateString(date);
+  var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
+  var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
+
+  try {
+    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    List<Task> tasks = [];
+    List<CalendarItem> calendarItems = [];
+    for (var item in decoded['tasks']) {
+      tasks.add(Task.fromMap(item));
+    }
+    for (var item in decoded['calendarItems']) {
+      calendarItems.add(CalendarItem.fromMap(item));
+    }
+    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
+  } catch (e, stacktrace) {
+    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
     rethrow;
   }
 }
