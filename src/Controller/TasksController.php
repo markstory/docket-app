@@ -87,7 +87,11 @@ class TasksController extends AppController
 
         // Multiple day view
         try {
-            $start = new FrozenDate((string)$this->request->getQuery('start', 'today'));
+            $param = $this->request->getQuery('start', 'today');
+            if (!is_string($param)) {
+                throw new InvalidArgumentException('not a string');
+            }
+            $start = new FrozenDate($param);
         } catch (\Exception $e) {
             throw new BadRequestException('Invalid date value provided.');
         }
