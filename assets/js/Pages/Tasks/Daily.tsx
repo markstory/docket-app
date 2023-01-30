@@ -12,7 +12,7 @@ import TaskGroup from 'app/components/taskGroup';
 import useKeyboardListNav from 'app/hooks/useKeyboardListNav';
 import LoggedIn from 'app/layouts/loggedIn';
 import TaskGroupedSorter, {GroupedItems} from 'app/components/taskGroupedSorter';
-import {parseDate, toDateString} from 'app/utils/dates';
+import {parseDate, formatCompactDate, toDateString} from 'app/utils/dates';
 
 type Props = {
   date: string;
@@ -65,8 +65,8 @@ export default function TasksDaily({
   projects,
 }: Props): JSX.Element {
   const parsedDate = parseDate(date);
-  const dateName = toDateString(parsedDate);
-  const title = t('{date} Tasks', {date: dateName});
+  const dateLabel = formatCompactDate(parsedDate);
+  const title = t('{date} Tasks', {date: dateLabel});
   if (!projects.length) {
     return (
       <LoggedIn title={title}>
@@ -117,8 +117,8 @@ export default function TasksDaily({
               <SortableContext items={today.ids} strategy={verticalListSortingStrategy}>
                 <h2 className="heading-icon today">
                   <Icon icon="clippy" />
-                  {dateName}
-                  <AddTaskButton defaultValues={{due_on: parsedDate}} />
+                  {dateLabel}
+                  <AddTaskButton defaultValues={{due_on: date}} />
                 </h2>
                 {calendarItems.length > 0 && (
                   <CalendarItemList date={parsedDate} items={calendarItems} />
@@ -128,7 +128,7 @@ export default function TasksDaily({
                   dropId={today.key}
                   tasks={today.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{due_on: parsedDate}}
+                  defaultTaskValues={{due_on: date}}
                   focusedTask={focused}
                   showProject
                 />
@@ -137,13 +137,13 @@ export default function TasksDaily({
                 <h2 className="heading-icon evening" data-testid="evening-group">
                   <Icon icon="moon" />
                   {t('This Evening')}
-                  <AddTaskButton defaultValues={{evening: true, due_on: parsedDate}} />
+                  <AddTaskButton defaultValues={{evening: true, due_on: date}} />
                 </h2>
                 <TaskGroup
                   dropId={evening.key}
                   tasks={evening.items}
                   activeTask={activeTask}
-                  defaultTaskValues={{evening: true, due_on: parsedDate}}
+                  defaultTaskValues={{evening: true, due_on: date}}
                   focusedTask={focused}
                   showProject
                 />
