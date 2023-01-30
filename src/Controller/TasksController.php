@@ -87,11 +87,10 @@ class TasksController extends AppController
 
         // Multiple day view
         try {
-            $start = new FrozenDate($this->request->getQuery('start', 'today'));
+            $start = new FrozenDate((string)$this->request->getQuery('start', 'today'));
         } catch (\Exception $e) {
             throw new BadRequestException('Invalid date value provided.');
         }
-        /** @var \Cake\I18n\FrozenDate $start */
         $end = $start->modify('+28 days');
 
         $query = $this->Tasks
