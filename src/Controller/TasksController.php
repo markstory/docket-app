@@ -93,7 +93,7 @@ class TasksController extends AppController
             }
             $start = new FrozenDate($param);
         } catch (\Exception $e) {
-            throw new BadRequestException('Invalid date value provided.');
+            throw new BadRequestException('Invalid date value provided.', null, $e);
         }
         $end = $start->modify('+28 days');
 

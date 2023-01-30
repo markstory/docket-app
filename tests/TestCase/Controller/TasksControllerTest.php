@@ -174,7 +174,7 @@ class TasksControllerTest extends TestCase
      *
      * @return void
      */
-    public function testDayDateParamInvalid(): void
+    public function testDailyInvalidParam(): void
     {
         $this->makeProject('work', 1);
         $token = $this->makeApiToken(1);
@@ -185,12 +185,56 @@ class TasksControllerTest extends TestCase
         $this->assertResponseError();
     }
 
+    public function testDailyPermissions()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $other = $this->makeProject('work', 2);
+        $project = $this->makeProject('work', 1);
+
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get("/tasks/day/{$tomorrow->format('Y-m-d')}");
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(1, $items);
+        $ids = array_map(function ($i) {
+
+            return $i->id;
+        }, $items);
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    public function testDailyToday()
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow,
+        ]);
+
+        $this->login();
+        $this->get('/tasks/today');
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(1, $items);
+        $ids = collection($items)->extract('id')->toList();
+        $this->assertEquals([$first->id], $ids);
+    }
+
     /**
      * Test day method with date param
      *
      * @return void
      */
-    public function testDayDateParam(): void
+    public function testDailyParam(): void
     {
         $today = new FrozenDate('today');
         $tomorrow = $today->modify('+1 day');
@@ -219,7 +263,7 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id], $ids);
     }
 
-    public function testDayParamOverdue(): void
+    public function testDailyOverdueParam(): void
     {
         $today = new FrozenDate('today');
         $yesterday = $today->modify('-1 day');
@@ -301,28 +345,6 @@ class TasksControllerTest extends TestCase
         $this->assertArrayHasKey('title', $errors);
     }
 
-    public function testIndexToday()
-    {
-        $today = new FrozenDate('today');
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
-        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeTask('complete', $project->id, 0, [
-            'completed' => true,
-            'due_on' => $tomorrow,
-        ]);
-
-        $this->login();
-        $this->get('/tasks/today');
-        $this->assertResponseOk();
-
-        $items = $this->viewVariable('tasks')->toArray();
-        $this->assertCount(1, $items);
-        $ids = collection($items)->extract('id')->toList();
-        $this->assertEquals([$first->id], $ids);
-    }
-
     public function testIndexPermissions()
     {
         $tomorrow = new FrozenDate('tomorrow');
@@ -345,12 +367,23 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id], $ids);
     }
 
+    public function testIndexInvalidParameter()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get('/tasks?start=nope');
+        $this->assertResponseCode(400);
+    }
+
     /**
-     * Test index for deleted
+     * Test deleted listing
      *
      * @return void
      */
-    public function testIndexDeleted(): void
+    public function testDeleted(): void
     {
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('work', 1);
