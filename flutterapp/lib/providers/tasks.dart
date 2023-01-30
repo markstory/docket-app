@@ -6,7 +6,6 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
 enum ViewNames {
-  today,
   upcoming,
   project,
   trashbin,

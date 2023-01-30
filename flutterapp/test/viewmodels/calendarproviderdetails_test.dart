@@ -86,7 +86,7 @@ void main() {
 
       await viewmodel.syncEvents(viewmodel.provider.sources[0]);
       expect(viewmodel.loading, isFalse);
-      expect(db.today.isExpired, isTrue);
+      expect(db.tasksDaily.isExpired, isTrue);
       expect(db.upcoming.isExpired, isTrue);
     });
 

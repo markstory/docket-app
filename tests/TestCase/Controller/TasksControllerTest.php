@@ -96,14 +96,10 @@ class TasksControllerTest extends TestCase
         $this->get('/tasks');
 
         $this->assertResponseOk();
-        $this->assertSame('upcoming', $this->viewVariable('view'));
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(2, $items);
-        $ids = array_map(function ($i) {
-
-            return $i->id;
-        }, $items);
+        $ids = collection($items)->extract('id')->toList();
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
@@ -135,11 +131,163 @@ class TasksControllerTest extends TestCase
         $this->assertArrayHasKey('calendarItems', $response);
 
         $this->assertCount(2, $response['tasks']);
+        $ids = collection($response['tasks'])->extract('id')->toList();
+        $this->assertEquals([$first->id, $second->id], $ids);
+    }
+
+    /**
+     * Test today route
+     *
+     * @return void
+     */
+    public function testTodayRoute(): void
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = $today->modify('+1 day');
+        $yesterday = $today->modify('-1 day');
+
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('nope', $project->id, 3, ['due_on' => $yesterday]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $today,
+        ]);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get('/tasks/today');
+
+        $this->assertResponseOk();
+        $tasks = $this->viewVariable('tasks');
+        $this->assertCount(1, $tasks);
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+
+        $ids = collection($tasks)->extract('id')->toList();
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    /**
+     * Test day method with date param
+     *
+     * @return void
+     */
+    public function testDailyInvalidParam(): void
+    {
+        $this->makeProject('work', 1);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get('/tasks/day/nope');
+        $this->assertResponseError();
+    }
+
+    public function testDailyPermissions()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $other = $this->makeProject('work', 2);
+        $project = $this->makeProject('work', 1);
+
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get("/tasks/day/{$tomorrow->format('Y-m-d')}");
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(1, $items);
         $ids = array_map(function ($i) {
 
-            return $i['id'];
-        }, $response['tasks']);
-        $this->assertEquals([$first->id, $second->id], $ids);
+            return $i->id;
+        }, $items);
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    public function testDailyToday()
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $tomorrow,
+        ]);
+
+        $this->login();
+        $this->get('/tasks/today');
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(1, $items);
+        $ids = collection($items)->extract('id')->toList();
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    /**
+     * Test day method with date param
+     *
+     * @return void
+     */
+    public function testDailyParam(): void
+    {
+        $today = new FrozenDate('today');
+        $tomorrow = $today->modify('+1 day');
+        $yesterday = $today->modify('-1 day');
+
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
+        $this->makeTask('nope', $project->id, 3, ['due_on' => $yesterday]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $today,
+        ]);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get("/tasks/day/{$today->format('Y-m-d')}");
+
+        $this->assertResponseOk();
+        $tasks = $this->viewVariable('tasks');
+        $this->assertCount(1, $tasks);
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+
+        $ids = collection($tasks)->extract('id')->toList();
+        $this->assertEquals([$first->id], $ids);
+    }
+
+    public function testDailyOverdueParam(): void
+    {
+        $today = new FrozenDate('today');
+        $yesterday = $today->modify('-1 day');
+
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
+        $overdue = $this->makeTask('nope', $project->id, 3, ['due_on' => $yesterday]);
+        $this->makeTask('complete', $project->id, 0, [
+            'completed' => true,
+            'due_on' => $today,
+        ]);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get("/tasks/day/{$today->format('Y-m-d')}?overdue=1");
+
+        $this->assertResponseOk();
+        $tasks = $this->viewVariable('tasks');
+        $this->assertCount(2, $tasks);
+        $ids = collection($tasks)->extract('id')->toList();
+        $this->assertEquals([$overdue->id, $first->id], $ids);
     }
 
     public function testIndexCalendarItems(): void
@@ -172,7 +320,6 @@ class TasksControllerTest extends TestCase
         $this->get('/tasks');
 
         $this->assertResponseOk();
-        $this->assertSame('upcoming', $this->viewVariable('view'));
 
         $items = $this->viewVariable('calendarItems')->toArray();
         $this->assertCount(2, $items);
@@ -198,32 +345,6 @@ class TasksControllerTest extends TestCase
         $this->assertArrayHasKey('title', $errors);
     }
 
-    public function testIndexToday()
-    {
-        $today = new FrozenDate('today');
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
-        $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeTask('complete', $project->id, 0, [
-            'completed' => true,
-            'due_on' => $tomorrow,
-        ]);
-
-        $this->login();
-        $this->get('/tasks/today');
-        $this->assertResponseOk();
-        $this->assertSame('today', $this->viewVariable('view'));
-
-        $items = $this->viewVariable('tasks')->toArray();
-        $this->assertCount(1, $items);
-        $ids = array_map(function ($i) {
-
-            return $i->id;
-        }, $items);
-        $this->assertEquals([$first->id], $ids);
-    }
-
     public function testIndexPermissions()
     {
         $tomorrow = new FrozenDate('tomorrow');
@@ -236,7 +357,6 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->get('/tasks/upcoming');
         $this->assertResponseOk();
-        $this->assertSame('upcoming', $this->viewVariable('view'));
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
@@ -247,12 +367,23 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id], $ids);
     }
 
+    public function testIndexInvalidParameter()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $project = $this->makeProject('work', 1);
+        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+
+        $this->login();
+        $this->get('/tasks?start=nope');
+        $this->assertResponseCode(400);
+    }
+
     /**
-     * Test index for deleted
+     * Test deleted listing
      *
      * @return void
      */
-    public function testIndexDeleted(): void
+    public function testDeleted(): void
     {
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('work', 1);
@@ -271,7 +402,6 @@ class TasksControllerTest extends TestCase
         $this->get('/tasks/deleted');
 
         $this->assertResponseOk();
-        $this->assertSame('deleted', $this->viewVariable('view'));
 
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(2, $items);

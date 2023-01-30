@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendaritem.dart';
 
@@ -165,11 +163,6 @@ class Task {
     return date;
   }
 
-  bool get isToday {
-    var today = DateUtils.dateOnly(DateTime.now());
-    return dueOn == today;
-  }
-
   bool get hasDueDate {
     return dueOn != null;
   }
@@ -228,6 +221,10 @@ class TaskViewData {
     this.pending = false,
     this.isEmpty = false,
   });
+
+  factory TaskViewData.blank({isEmpty = false}) {
+    return TaskViewData(tasks: [], calendarItems: [], isEmpty: isEmpty);
+  }
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
     List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
