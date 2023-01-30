@@ -174,6 +174,22 @@ class TasksControllerTest extends TestCase
      *
      * @return void
      */
+    public function testDayDateParamInvalid(): void
+    {
+        $this->makeProject('work', 1);
+        $token = $this->makeApiToken(1);
+
+        $this->requestJson();
+        $this->useApiToken($token->token);
+        $this->get('/tasks/day/nope');
+        $this->assertResponseError();
+    }
+
+    /**
+     * Test day method with date param
+     *
+     * @return void
+     */
     public function testDayDateParam(): void
     {
         $today = new FrozenDate('today');

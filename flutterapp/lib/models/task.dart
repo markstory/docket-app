@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendaritem.dart';
 
@@ -163,11 +161,6 @@ class Task {
       return 'evening:$date';
     }
     return date;
-  }
-
-  bool get isToday {
-    var today = DateUtils.dateOnly(DateTime.now());
-    return dueOn == today;
   }
 
   bool get hasDueDate {

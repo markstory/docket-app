@@ -193,20 +193,6 @@ class TasksTable extends Table
         return $query->where(['Tasks.completed' => false]);
     }
 
-    public function findDueToday(Query $query, array $options): Query
-    {
-        $timezone = $options['timezone'] ?: 'UTC';
-
-        return $query->where([
-            'Tasks.due_on IS NOT' => null,
-            'Tasks.due_on <=' => new FrozenDate('today', $timezone),
-        ])
-            ->orderAsc('Tasks.due_on')
-            ->orderAsc('Tasks.evening')
-            ->orderAsc('Tasks.day_order')
-            ->orderAsc('Tasks.title');
-    }
-
     public function findForDate(Query $query, array $options): Query
     {
         if (empty($options['date'])) {
