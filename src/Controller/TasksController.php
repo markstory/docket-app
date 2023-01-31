@@ -91,7 +91,8 @@ class TasksController extends AppController
             if (!is_string($param)) {
                 throw new InvalidArgumentException('not a string');
             }
-            $start = new FrozenDate($param);
+            $identity = $this->request->getAttribute('identity');
+            $start = new FrozenDate($param, $identity->timezone);
         } catch (\Exception $e) {
             throw new BadRequestException('Invalid date value provided.', null, $e);
         }
