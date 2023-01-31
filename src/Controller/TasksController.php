@@ -108,8 +108,8 @@ class TasksController extends AppController
             } catch (\Exception $e) {
                 throw new BadRequestException('Invalid end date provided.', null, $e);
             }
-            if ($end->diffInDays($start) >= 32) {
-                throw new BadRequestException('Maximum duration exceeded. Choose a range smaller than 32 days.');
+            if ($end->diffInDays($start) > 60) {
+                throw new BadRequestException('Maximum duration exceeded. Choose a range smaller than 60 days.');
             }
         }
 

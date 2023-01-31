@@ -176,7 +176,7 @@ class TasksControllerTest extends TestCase
     public function testIndexInvalidRange()
     {
         $start = new FrozenDate('tomorrow');
-        $end = $start->modify('+32 days');
+        $end = $start->modify('+61 days');
         $this->login();
         $this->get("/tasks/?start={$start->format('Y-m-d')}&end={$end->format('Y-m-d')}");
         $this->assertResponseCode(400);
