@@ -5,7 +5,6 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
-use Cake\Validation\Validation;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -23,7 +22,7 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
-    protected function getDateParam(mixed $value, ?string $default = null, ?string $timezone = null): FrozenDate
+    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
     {
         if ($value !== null && !is_string($value)) {
             throw new BadRequestException('Invalid date. Value must be a string.');
