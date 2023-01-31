@@ -79,6 +79,9 @@ class TasksController extends AppController
     /**
      * Index method
      *
+     * Supports two query string parameters. `start` indicates the start of the range.
+     * `end` indicates the end. You cannot query more than 31 days at time.
+     *
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function index(string $view = 'upcoming')
@@ -94,9 +97,21 @@ class TasksController extends AppController
             $identity = $this->request->getAttribute('identity');
             $start = new FrozenDate($param, $identity->timezone);
         } catch (\Exception $e) {
-            throw new BadRequestException('Invalid date value provided.', null, $e);
+            throw new BadRequestException('Invalid start date provided.', null, $e);
         }
-        $end = $start->modify('+28 days');
+        $endValue = $this->request->getQuery('end');
+        if (!$endValue) {
+            $end = $start->modify('+28 days');
+        } else {
+            try {
+                $end = new FrozenDate($endValue);
+            } catch (\Exception $e) {
+                throw new BadRequestException('Invalid end date provided.', null, $e);
+            }
+            if ($end->diffInDays($start) >= 32) {
+                throw new BadRequestException('Maximum duration exceeded. Choose a range smaller than 32 days.');
+            }
+        }
 
         $query = $this->Tasks
             ->find('incomplete')
