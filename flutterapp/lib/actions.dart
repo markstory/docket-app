@@ -171,28 +171,6 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 // }}}
 
 // Task Methods {{{
-/// Fetch the tasks for the 'Today' view
-Future<TaskViewData> fetchTodayTasks(String apiToken) async {
-  var url = _makeUrl('/tasks/today');
-  var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
-
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    List<Task> tasks = [];
-    List<CalendarItem> calendarItems = [];
-    for (var item in decoded['tasks']) {
-      tasks.add(Task.fromMap(item));
-    }
-    for (var item in decoded['calendarItems']) {
-      calendarItems.add(CalendarItem.fromMap(item));
-    }
-    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions.today');
-    rethrow;
-  }
-}
-
 /// Fetch tasks for a single day
 Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
   var urlDate = formatters.dateString(date);
