@@ -42,6 +42,8 @@ class TodayViewModel extends ChangeNotifier {
 
   bool get loading => _loading && !_silentLoading;
   bool get loadError => _loadError;
+  DateTime get today => DateUtils.dateOnly(DateTime.now());
+
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
 
@@ -71,7 +73,7 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
-      var taskView = await actions.fetchTodayTasks(_database.apiToken.token);
+      var taskView = await actions.fetchTasksDaily(_database.apiToken.token, today);
       _database.tasksDaily.set(taskView);
       _buildTaskLists(taskView);
     } catch (err) {
@@ -84,7 +86,7 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
     await Future.wait([
-      actions.fetchTodayTasks(_database.apiToken.token),
+      actions.fetchTasksDaily(_database.apiToken.token, today),
       actions.fetchProjects(_database.apiToken.token),
     ]).then((results) {
       var tasksView = results[0] as TaskViewData;

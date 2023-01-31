@@ -22,6 +22,21 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
+    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
+    {
+        if ($value !== null && !is_string($value)) {
+            throw new BadRequestException('Invalid date. Value must be a string.');
+        }
+        if (empty($value) && $default) {
+            return $this->getDateParam($default, null, $timezone);
+        }
+        try {
+            return new FrozenDate($value, $timezone);
+        } catch (\Exception $e) {
+            throw new BadRequestException("Invalid date value of {$value}.");
+        }
+    }
+
     /**
      * Fetch tasks for a single day
      */
@@ -29,16 +44,12 @@ class TasksController extends AppController
     {
         $calendarItems = $this->fetchTable('CalendarItems');
 
-        try {
-            if ($date == 'today' || $date == 'tomorrow') {
-                $identity = $this->request->getAttribute('identity');
-                $date = new FrozenDate($date, $identity->timezone);
-            } else {
-                $date = new FrozenDate($date);
-            }
-        } catch (\Exception $e) {
-            throw new BadRequestException('Invalid date value provided');
+        $timezone = null;
+        if ($date == 'today' || $date == 'tomorrow') {
+            $identity = $this->request->getAttribute('identity');
+            $timezone = $identity->timezone;
         }
+        $date = $this->getDateParam($date, null, $timezone);
         $overdue = (bool)$this->request->getQuery('overdue', false);
 
         $query = $this->Tasks
@@ -79,23 +90,28 @@ class TasksController extends AppController
     /**
      * Index method
      *
+     * Supports two query string parameters. `start` indicates the start of the range.
+     * `end` indicates the end. You cannot query more than 31 days at time.
+     *
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function index(string $view = 'upcoming')
     {
         $calendarItemsTable = $this->fetchTable('CalendarItems');
 
-        // Multiple day view
-        try {
-            $param = $this->request->getQuery('start', 'today');
-            if (!is_string($param)) {
-                throw new InvalidArgumentException('not a string');
-            }
-            $start = new FrozenDate($param);
-        } catch (\Exception $e) {
-            throw new BadRequestException('Invalid date value provided.', null, $e);
+        $timezone = null;
+        $startParam = $this->request->getQuery('start', 'today');
+        if ($startParam == 'today' || $startParam == 'tomorrow') {
+            $identity = $this->request->getAttribute('identity');
+            $timezone = $identity->timezone;
         }
-        $end = $start->modify('+28 days');
+        $start = $this->getDateParam($startParam, 'today', $timezone);
+
+        $endParam = $this->request->getQuery('end');
+        $end = $this->getDateParam($endParam, '+28 days', $timezone);
+        if ($start->diffInDays($end) > 60) {
+            throw new BadRequestException('Invalid date range. Choose a range that is less than 60 days.');
+        }
 
         $query = $this->Tasks
             ->find('incomplete')

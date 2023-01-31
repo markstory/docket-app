@@ -135,6 +135,53 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
+    public function testIndexStartAndEnd(): void
+    {
+        $sixDays = new FrozenDate('+6 days');
+        $eightDays = $sixDays->modify('+2 days');
+        $tenDays = $eightDays->modify('+2 days');
+
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $sixDays]);
+        $second = $this->makeTask('second', $project->id, 1, ['due_on' => $eightDays]);
+        $this->makeTask('third', $project->id, 2, ['due_on' => $tenDays]);
+
+        $this->login();
+        // End range is not inclusive, but start is.
+        $this->get("/tasks?start={$sixDays->format('Y-m-d')}&end={$tenDays->format('Y-m-d')}");
+
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('tasks')->toArray();
+        $this->assertCount(2, $items);
+        $ids = collection($items)->extract('id')->toList();
+        $this->assertEquals([$first->id, $second->id], $ids);
+    }
+
+    public function testIndexInvalidStart()
+    {
+        $this->login();
+        $this->get('/tasks/?start=nope');
+        $this->assertResponseCode(400);
+    }
+
+    public function testIndexInvalidEnd()
+    {
+        $tomorrow = new FrozenDate('tomorrow');
+        $this->login();
+        $this->get("/tasks/?start={$tomorrow->format('Y-m-d')}&end=nope");
+        $this->assertResponseCode(400);
+    }
+
+    public function testIndexInvalidRange()
+    {
+        $start = new FrozenDate('tomorrow');
+        $end = $start->modify('+61 days');
+        $this->login();
+        $this->get("/tasks/?start={$start->format('Y-m-d')}&end={$end->format('Y-m-d')}");
+        $this->assertResponseCode(400);
+    }
+
     /**
      * Test today route
      *

@@ -9,6 +9,7 @@ import 'package:docket/models/calendarsource.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/userprofile.dart';
+import 'package:docket/formatters.dart' as formatters;
 
 /// This needs to come from a props/config file but I don't know
 /// how to do that yet.
@@ -170,9 +171,10 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 // }}}
 
 // Task Methods {{{
-/// Fetch the tasks for the 'Today' view
-Future<TaskViewData> fetchTodayTasks(String apiToken) async {
-  var url = _makeUrl('/tasks/today');
+/// Fetch tasks for a single day
+Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
+  var urlDate = formatters.dateString(date);
+  var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
   try {
@@ -187,7 +189,7 @@ Future<TaskViewData> fetchTodayTasks(String apiToken) async {
     }
     return TaskViewData(tasks: tasks, calendarItems: calendarItems);
   } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions.today');
+    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
     rethrow;
   }
 }
