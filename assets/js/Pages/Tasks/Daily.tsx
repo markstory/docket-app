@@ -121,7 +121,7 @@ export default function TasksDaily({
                   <AddTaskButton defaultValues={{due_on: date}} />
                 </h2>
                 {calendarItems.length > 0 && (
-                  <CalendarItemList date={parsedDate} items={calendarItems} />
+                  <CalendarItemList date={date} items={calendarItems} />
                 )}
                 <TaskGroup
                   dataTestId="today-group"

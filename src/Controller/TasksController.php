@@ -45,12 +45,15 @@ class TasksController extends AppController
         $calendarItems = $this->fetchTable('CalendarItems');
 
         $timezone = null;
-        if ($date == 'today' || $date == 'tomorrow') {
+        if ($date === 'today' || $date === 'tomorrow') {
             $identity = $this->request->getAttribute('identity');
             $timezone = $identity->timezone;
         }
-        $date = $this->getDateParam($date, null, $timezone);
         $overdue = (bool)$this->request->getQuery('overdue', false);
+        if ($date === 'today') {
+            $overdue = true;
+        }
+        $date = $this->getDateParam($date, null, $timezone);
 
         $query = $this->Tasks
             ->find('incomplete')

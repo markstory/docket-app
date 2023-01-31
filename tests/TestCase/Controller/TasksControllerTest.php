@@ -194,9 +194,9 @@ class TasksControllerTest extends TestCase
         $yesterday = $today->modify('-1 day');
 
         $project = $this->makeProject('work', 1);
+        $overdue = $this->makeTask('overdue', $project->id, 0, ['due_on' => $yesterday]);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
         $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeTask('nope', $project->id, 3, ['due_on' => $yesterday]);
         $this->makeTask('complete', $project->id, 0, [
             'completed' => true,
             'due_on' => $today,
@@ -209,11 +209,11 @@ class TasksControllerTest extends TestCase
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
-        $this->assertCount(1, $tasks);
+        $this->assertCount(2, $tasks);
         $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
 
         $ids = collection($tasks)->extract('id')->toList();
-        $this->assertEquals([$first->id], $ids);
+        $this->assertEquals([$overdue->id, $first->id], $ids);
     }
 
     /**
