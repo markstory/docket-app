@@ -55,7 +55,7 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     var today = DateUtils.dateOnly(DateTime.now());
-    if (!_loading && !_database.tasksDaily.isDayFresh(today)) {
+    if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
       await refreshTasks();
     }
     var taskView = await _database.tasksDaily.get(today);
