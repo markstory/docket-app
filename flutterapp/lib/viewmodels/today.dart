@@ -95,6 +95,7 @@ class TodayViewModel extends ChangeNotifier {
       return Future.wait([
         _database.projectMap.replace(projects),
         _database.tasksDaily.set(tasksView),
+        _database.tasksDaily.removeOlderThan(today),
       ]).then((results) {
         _buildTaskLists(tasksView);
       });

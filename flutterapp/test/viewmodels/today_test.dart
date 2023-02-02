@@ -177,6 +177,28 @@ void main() {
       expect(counter.callCount, equals(1));
     });
 
+    test('refresh() expires old data', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/day/$urlDate') {
+          return Response(tasksTodayResponseFixture, 200);
+        }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var twoDays = today.subtract(const Duration(days: 2));
+      var view = TaskViewData.blank();
+      view.tasks.add(Task.blank(dueOn: twoDays));
+      await db.tasksDaily.set(view);
+
+      var viewmodel = TodayViewModel(db);
+      await viewmodel.refresh();
+
+      var removed = await db.tasksDaily.get(twoDays);
+      expect(removed.isEmpty, isTrue);
+    });
+
     test('refreshTasks() loads data from the server', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/day/$urlDate') {
