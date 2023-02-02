@@ -58,6 +58,34 @@ void main() {
       expect(find.text('cut grass'), findsOneWidget);
     });
 
+    testWidgets('shows upcoming tasks in evening', (tester) async {
+      var viewdata = TaskViewData.fromMap(decoded);
+      viewdata.tasks.add(Task(
+          id: 4,
+          projectId: 1,
+          projectColor: 1,
+          projectSlug: 'home',
+          projectName: 'Home',
+          title: 'evening item',
+          body: '',
+          dueOn: today,
+          evening: true,
+          dayOrder: 0,
+          childOrder: 10,
+          completed: false));
+      await db.upcoming.set(viewdata);
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const UpcomingScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('evening item'), findsOneWidget);
+      expect(find.text('clean dishes'), findsOneWidget);
+      expect(find.text('cut grass'), findsOneWidget);
+    });
+
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
       await tester.pumpWidget(EntryPoint(

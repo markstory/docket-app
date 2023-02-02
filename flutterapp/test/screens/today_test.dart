@@ -36,14 +36,14 @@ void main() {
     testWidgets('floating add button navigates to task add', (tester) async {
       var navigated = false;
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          routes: {
-            "/tasks/add": (context) {
-              navigated = true;
-              return const Text('Task add');
-            }
-          },
-          child: const TodayScreen(),
+        database: db,
+        routes: {
+          "/tasks/add": (context) {
+            navigated = true;
+            return const Text('Task add');
+          }
+        },
+        child: const TodayScreen(),
       ));
 
       // tap the floating add button. Should go to task add
@@ -61,8 +61,8 @@ void main() {
       });
 
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TodayScreen(),
+        database: db,
+        child: const TodayScreen(),
       ));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -72,8 +72,8 @@ void main() {
 
     testWidgets('shows today tasks', (tester) async {
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TodayScreen(),
+        database: db,
+        child: const TodayScreen(),
       ));
       await tester.pumpAndSettle();
 
@@ -81,17 +81,46 @@ void main() {
       expect(find.text('cut grass'), findsOneWidget);
     });
 
+    testWidgets('shows overdue tasks', (tester) async {
+      var yesterday = today.subtract(const Duration(days: 2));
+      var viewdata = TaskViewData.fromMap(decoded);
+      viewdata.tasks.add(Task(
+          id: 3,
+          projectId: 1,
+          projectColor: 1,
+          projectSlug: 'home',
+          projectName: 'Home',
+          title: 'overdue item',
+          body: '',
+          dueOn: yesterday,
+          evening: false,
+          dayOrder: 0,
+          childOrder: 10,
+          completed: false));
+      await db.tasksDaily.set(viewdata);
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: const TodayScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('overdue item'), findsOneWidget);
+      expect(find.text('clean dishes'), findsOneWidget);
+      expect(find.text('cut grass'), findsOneWidget);
+    });
+
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          routes: {
-            "/tasks/view": (context) {
-              navigated = true;
-              return const Text("Task Details");
-            }
-          },
-          child: const TodayScreen(),
+        database: db,
+        routes: {
+          "/tasks/view": (context) {
+            navigated = true;
+            return const Text("Task Details");
+          }
+        },
+        child: const TodayScreen(),
       ));
       await tester.pumpAndSettle();
 
@@ -114,24 +143,23 @@ void main() {
         throw Exception('Unmocked request to ${request.url.path}');
       });
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TodayScreen(),
+        database: db,
+        child: const TodayScreen(),
       ));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(Checkbox).first);
       await tester.pump(const Duration(milliseconds: 250));
       expect(
-        tester.getSemantics(find.byType(Checkbox).first),
-        matchesSemantics(
-          hasTapAction: true,
-          isChecked: true,
-          isEnabled: true,
-          isFocusable: true,
-          hasCheckedState: true,
-          hasEnabledState: true,
-        )
-      );
+          tester.getSemantics(find.byType(Checkbox).first),
+          matchesSemantics(
+            hasTapAction: true,
+            isChecked: true,
+            isEnabled: true,
+            isFocusable: true,
+            hasCheckedState: true,
+            hasEnabledState: true,
+          ));
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       expect(requestCount, equals(1));
@@ -150,8 +178,8 @@ void main() {
         throw Exception('Unmocked request to ${request.url.path}');
       });
       await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TodayScreen(),
+        database: db,
+        child: const TodayScreen(),
       ));
       await tester.pumpAndSettle();
 

@@ -66,6 +66,25 @@ void main() {
       expect(callCount, equals(1));
     });
 
+    testWidgets('select later value', (tester) async {
+      var callCount = 0;
+      void onUpdate(DateTime? dueOn, bool evening) {
+        expect(dueOn, isNull);
+        expect(evening, equals(false));
+        callCount++;
+      }
+
+      await tester.pumpWidget(buildButton(today, false, onUpdate));
+
+      // Open dialog.
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Later'));
+      await tester.pumpAndSettle();
+      expect(callCount, equals(1));
+    });
+
     testWidgets('select future day', (tester) async {
       var callCount = 0;
       void onUpdate(DateTime? dueOn, bool evening) { 
