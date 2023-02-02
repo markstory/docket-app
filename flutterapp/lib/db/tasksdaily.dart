@@ -149,12 +149,16 @@ class TasksDailyRepo extends Repository<TaskViewData> {
   /// Used to garbage collect old data.
   Future<void> removeOlderThan(DateTime date) async {
     var data = await getMap() ?? {};
+    var update = false;
     for (var key in data.keys) {
       var keyDate = formatters.parseToLocal(key);
       if (keyDate.isBefore(date)) {
         data.remove(key);
+        update = true;
       }
     }
-    await setMap(data);
+    if (update) {
+      await setMap(data);
+    }
   }
 }
