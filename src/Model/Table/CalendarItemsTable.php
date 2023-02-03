@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -125,22 +126,28 @@ class CalendarItemsTable extends Table
         if (empty($options['start'])) {
             throw new RuntimeException('Missing required `start` option.');
         }
+
+        $start = $options['start'];
         if (empty($options['end'])) {
             $options['end'] = $options['start']->modify('+28 days');
         }
+        $end = $options['end'];
 
-        return $query->where(function ($exp) use ($options) {
+        return $query->where(function ($exp) use ($start, $end) {
             $tz = Configure::read('App.defaultTimezone');
 
-            // Dates are in without timezones so we use user timezone.
+            // Date values don't need times or timezones
             $date = $exp->and([
-                'CalendarItems.start_date >=' => $options['start'],
-                'CalendarItems.end_date <=' => $options['end'],
+                'CalendarItems.start_date >=' => $start,
+                'CalendarItems.end_date <=' => $end,
             ]);
-            // datetimes are stored in utc.
+
+            // Create datetimes and set timezones to UTC to match storage.
+            $startTime = (new FrozenTime($start))->setTime(0, 0, 0)->setTimezone($tz);
+            $endTime = (new FrozenTime($end))->setTime(23, 59, 59)->setTimezone($tz);
             $dateTime = $exp->and([
-                'CalendarItems.start_time >=' => $options['start']->setTimezone($tz),
-                'CalendarItems.end_time <' => $options['end']->setTimezone($tz),
+                'CalendarItems.start_time >=' => $startTime,
+                'CalendarItems.end_time <' => $endTime,
             ]);
 
             return $exp->or([$date, $dateTime]);
