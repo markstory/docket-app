@@ -337,6 +337,78 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$overdue->id, $first->id], $ids);
     }
 
+    public function testDailyCalendarItems(): void
+    {
+        $timezone = 'America/New_York';
+
+        $users = $this->fetchTable('Users');
+        $user = $users->get(1);
+        $user->timezone = $timezone;
+        $users->saveOrFail($user);
+
+        $now = new FrozenTime('now', $timezone);
+        $startOfDay = $now->setTime(0, 0, 1);
+        $endOfDay = $now->setTime(23, 59, 58);
+
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary');
+        $early = $this->makeCalendarItem($source->id, [
+            'title' => 'early event',
+            'provider_id' => 'event-1',
+            'start_time' => $startOfDay->setTimezone('UTC'),
+            'end_time' => $startOfDay->modify('+1 hour')->setTimezone('UTC'),
+            'start_date' => null,
+            'end_date' => null,
+        ]);
+        $late = $this->makeCalendarItem($source->id, [
+            'title' => 'late event',
+            'provider_id' => 'event-2',
+            'start_time' => $endOfDay->modify('-1 hour')->setTimezone('UTC'),
+            'end_time' => $endOfDay->setTimezone('UTC'),
+            'start_date' => null,
+            'end_date' => null,
+        ]);
+        $allDay = $this->makeCalendarItem($source->id, [
+            'title' => 'Bob birthday',
+            'provider_id' => 'event-3',
+            'start_date' => new FrozenDate($startOfDay),
+            'end_date' => new FrozenDate($startOfDay),
+            'start_time' => null,
+            'end_time' => null,
+            'all_day' => true,
+        ]);
+
+        // Events not included.
+        $this->makeCalendarItem($source->id, [
+            'title' => 'Tomorrow day event',
+            'provider_id' => 'event-4',
+            'start_date' => (new FrozenDate($startOfDay))->modify('+1 day'),
+            'end_date' => (new FrozenDate($startOfDay))->modify('+1 day'),
+            'start_time' => null,
+            'end_time' => null,
+            'all_day' => true,
+        ]);
+        $this->makeCalendarItem($source->id, [
+            'title' => 'Tomorrow time event',
+            'provider_id' => 'event-5',
+            'start_time' => $endOfDay->modify('+1 hour')->setTimezone('UTC'),
+            'end_time' => $endOfDay->modify('+2 hours')->setTimezone('UTC'),
+            'start_date' => null,
+            'end_date' => null,
+        ]);
+
+        $this->login();
+        $this->disableErrorHandlerMiddleware();
+        $this->get("/tasks/day/{$startOfDay->format('Y-m-d')}");
+
+        $this->assertResponseOk();
+
+        $items = $this->viewVariable('calendarItems')->toArray();
+        $this->assertCount(3, $items);
+        $itemIds = collection($items)->extract('id')->toList();
+        $this->assertEquals([$allDay->id, $early->id, $late->id], $itemIds);
+    }
+
     public function testIndexCalendarItems(): void
     {
         $tomorrow = new FrozenDate('tomorrow');

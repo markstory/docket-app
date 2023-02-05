@@ -123,28 +123,35 @@ class CalendarItemsTable extends Table
      */
     public function findUpcoming(Query $query, array $options): Query
     {
-        if (empty($options['start'])) {
-            throw new RuntimeException('Missing required `start` option.');
-        }
+        assert(!empty($options['start']), 'Missing required `start` option');
+        assert(!empty($options['timezone']), 'Missing required `timezone` option');
 
         $start = $options['start'];
+        $userTimezone = $options['timezone'];
         if (empty($options['end'])) {
             $options['end'] = $options['start']->modify('+28 days');
         }
         $end = $options['end'];
 
-        return $query->where(function ($exp) use ($start, $end) {
-            $tz = Configure::read('App.defaultTimezone');
+        return $query->where(function ($exp) use ($start, $end, $userTimezone) {
+            $serverTz = Configure::read('App.defaultTimezone');
+
+            $startDate = $start->format('Y-m-d');
+            $endDate = $end->format('Y-m-d');
 
             // Date values don't need times or timezones
             $date = $exp->and([
-                'CalendarItems.start_date >=' => $start,
-                'CalendarItems.end_date <=' => $end,
+                'CalendarItems.start_date >=' => $startDate,
+                'CalendarItems.end_date <=' => $endDate,
             ]);
 
             // Create datetimes and set timezones to UTC to match storage.
-            $startTime = (new FrozenTime($start))->setTime(0, 0, 0)->setTimezone($tz);
-            $endTime = (new FrozenTime($end))->setTime(23, 59, 59)->setTimezone($tz);
+            $startTime = (new FrozenTime($startDate, $userTimezone))
+                ->setTime(0, 0, 0)
+                ->setTimezone($serverTz);
+            $endTime = (new FrozenTime($endDate, $userTimezone))
+                ->setTime(23, 59, 59)
+                ->setTimezone($serverTz);
             $dateTime = $exp->and([
                 'CalendarItems.start_time >=' => $startTime,
                 'CalendarItems.end_time <' => $endTime,

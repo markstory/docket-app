@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -43,16 +44,13 @@ class TasksController extends AppController
     public function daily(string $date)
     {
         $calendarItems = $this->fetchTable('CalendarItems');
-
-        $timezone = null;
-        if ($date === 'today' || $date === 'tomorrow') {
-            $identity = $this->request->getAttribute('identity');
-            $timezone = $identity->timezone;
-        }
         $overdue = (bool)$this->request->getQuery('overdue', false);
         if ($date === 'today') {
             $overdue = true;
         }
+
+        $identity = $this->request->getAttribute('identity');
+        $timezone = $identity->timezone;
         $date = $this->getDateParam($date, null, $timezone);
 
         $query = $this->Tasks
@@ -63,7 +61,8 @@ class TasksController extends AppController
 
         $eventsQuery = $calendarItems->find('upcoming', [
             'start' => $date,
-            'end' => $date->modify('+1 days'),
+            'end' => $date,
+            'timezone' => $timezone,
         ]);
 
         $this->set('component', 'Tasks/Daily');
@@ -102,12 +101,10 @@ class TasksController extends AppController
     {
         $calendarItemsTable = $this->fetchTable('CalendarItems');
 
-        $timezone = null;
+        $identity = $this->request->getAttribute('identity');
+        $timezone = $identity->timezone;
+
         $startParam = $this->request->getQuery('start', 'today');
-        if ($startParam == 'today' || $startParam == 'tomorrow') {
-            $identity = $this->request->getAttribute('identity');
-            $timezone = $identity->timezone;
-        }
         $start = $this->getDateParam($startParam, 'today', $timezone);
 
         $endParam = $this->request->getQuery('end');
@@ -125,6 +122,7 @@ class TasksController extends AppController
         $eventsQuery = $calendarItemsTable->find('upcoming', [
             'start' => $start,
             'end' => $end,
+            'timezone' => $timezone,
         ]);
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', $end->format('Y-m-d'));
