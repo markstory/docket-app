@@ -10,7 +10,7 @@ on:
 
 jobs:
   phpunit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -75,7 +75,7 @@ jobs:
         flags: phpunit
 
   jest:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v1
       with:
@@ -91,7 +91,7 @@ jobs:
 
   acceptance:
     name: Browser Acceptance
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     env:
       DATABASE_TEST_URL: mysql://root:root@127.0.0.1/docket
@@ -128,7 +128,7 @@ jobs:
         vendor/bin/phpunit tests/Acceptance/UpcomingTest.php
 
   flutter-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v1
       with:
@@ -153,7 +153,7 @@ jobs:
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       DATABASE_TEST_URL: sqlite://./docket.db
 
@@ -168,13 +168,17 @@ jobs:
         php-version: '8.0'
         extensions: mbstring, intl
         coverage: none
+        tools: phive
 
     - name: composer install
       run: composer update --no-progress
+
+    - name: Install PHP tools with phive.
+      run: phive install --trust-gpg-keys '12CE0F1D262429A5'
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --ignore=tests/js src/ tests/
 
     - name: Run psalm
       if: success() || failure()
-      run: vendor/bin/psalm.phar --output-format=github
+      run: tools/psalm --output-format=github

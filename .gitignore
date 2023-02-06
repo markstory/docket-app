@@ -5,6 +5,7 @@
 /config/.env
 /logs/*
 /tmp/*
+/tools/*
 /vendor/*
 
 # Node packages
