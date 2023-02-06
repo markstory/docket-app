@@ -12,18 +12,6 @@ use Authorization\IdentityInterface;
 class UserPolicy
 {
     /**
-     * Check if $user can create Task
-     *
-     * @param \App\Model\Entity\User  $identity The user.
-     * @param \App\Model\Entity\User $user
-     * @return bool
-     */
-    public function canAdd(IdentityInterface $identity, User $user)
-    {
-        return true;
-    }
-
-    /**
      * Check if $user can edit Task
      *
      * @param \App\Model\Entity\User  $identity The user.
