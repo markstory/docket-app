@@ -214,12 +214,8 @@ class TasksTable extends Table
 
     public function findUpcoming(Query $query, array $options): Query
     {
-        if (empty($options['start'])) {
-            throw new RuntimeException('Missing required `start` option.');
-        }
-        if (empty($options['end'])) {
-            $options['end'] = $options['start']->modify('+28 days');
-        }
+        assert(!empty($options['start']), 'Missing required `start` option.');
+        assert(!empty($options['start']), 'Missing required `end` option.');
 
         return $query->where([
             'Tasks.due_on IS NOT' => null,

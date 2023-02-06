@@ -124,14 +124,12 @@ class CalendarItemsTable extends Table
     public function findUpcoming(Query $query, array $options): Query
     {
         assert(!empty($options['start']), 'Missing required `start` option');
+        assert(!empty($options['end']), 'Missing required `end` option');
         assert(!empty($options['timezone']), 'Missing required `timezone` option');
 
         $start = $options['start'];
-        $userTimezone = $options['timezone'];
-        if (empty($options['end'])) {
-            $options['end'] = $options['start']->modify('+28 days');
-        }
         $end = $options['end'];
+        $userTimezone = $options['timezone'];
 
         return $query->where(function ($exp) use ($start, $end, $userTimezone) {
             $serverTz = Configure::read('App.defaultTimezone');
@@ -140,9 +138,11 @@ class CalendarItemsTable extends Table
             $endDate = $end->format('Y-m-d');
 
             // Date values don't need times or timezones
+            // All day calendar events from google last until the
+            // next day so we add a date to the end date.
             $date = $exp->and([
                 'CalendarItems.start_date >=' => $startDate,
-                'CalendarItems.end_date <=' => $endDate,
+                'CalendarItems.end_date <=' => $end->modify('+1 day')->format('Y-m-d'),
             ]);
 
             // Create datetimes and set timezones to UTC to match storage.
