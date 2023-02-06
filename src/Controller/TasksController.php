@@ -5,7 +5,6 @@ namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
