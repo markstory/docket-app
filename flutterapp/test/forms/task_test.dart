@@ -12,17 +12,38 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var home = Project(id: 1, slug: 'home', name: 'Home', color: 0, ranking: 0);
-  var work = Project(id: 2, slug: 'work', name: 'Work', color: 1, ranking: 1);
+  var work = Project(
+    id: 2, 
+    slug: 'work',
+    name: 'Work',
+    color: 1,
+    ranking: 1,
+    sections: [
+      Section(id: 1, name: 'Soon', ranking: 0),
+      Section(id: 2, name: 'Eventually', ranking: 1),
+    ],
+  );
   var database = LocalDatabase(inTest: true);
 
   // Rendering helper.
   Widget renderForm(Task task, Future<void> Function(Task task) onSave) {
-    return EntryPoint(database: database, child: Scaffold(body: Portal(child: TaskForm(task: task, onSave: onSave))));
+    return EntryPoint(
+      database: database, 
+      child: Scaffold(
+        body: Portal(
+          child: SingleChildScrollView(
+            child: TaskForm(task: task, onSave: onSave)
+          )
+        )
+      )
+    );
   }
 
   setUpAll(() async {
     await database.clearProjects();
     await database.projectMap.addMany([home, work]);
+    await database.projectDetails.set(ProjectWithTasks(project: home, tasks: []));
+    await database.projectDetails.set(ProjectWithTasks(project: work, tasks: []));
   });
 
   group('$TaskForm', () {
@@ -147,23 +168,6 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('cancel does not apply changes', (tester) async {
-      Future<void> onSave(Task task) {
-        throw "Should not be called";
-      }
-
-      final task = Task.blank();
-      await tester.pumpWidget(renderForm(task, onSave));
-      await tester.pumpAndSettle();
-
-      // Fill out the title
-      await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
-
-      // Cancel creation, no changes made
-      await tester.tap(find.text('Cancel'));
-      expect(task.title, equals(''));
-    });
-
     testWidgets('can edit task with contents', (tester) async {
       var onSaveCalled = false;
       Future<void> onSave(Task task) {
@@ -231,5 +235,72 @@ void main() {
       await tester.tap(find.text('Save'));
       expect(onSaveCalled, equals(true));
     });
+
+    testWidgets('can set section', (tester) async {
+      var onSaveCalled = false;
+      Future<void> onSave(Task task) {
+        onSaveCalled = true;
+
+        expect(task.sectionId, equals(work.sections[1].id));
+        return Future.value();
+      }
+
+      var task = Task.blank();
+      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpAndSettle();
+
+      // Select a project
+      await tester.tap(find.byKey(const ValueKey('project')));
+      await tester.pumpAndSettle();
+
+      // Choose the project
+      await tester.tap(find.text('Work').last);
+      await tester.pumpAndSettle();
+
+      // Select a section
+      await tester.tap(find.byKey(const ValueKey('section')));
+      await tester.pumpAndSettle();
+
+      // Choose the section
+      await tester.tap(find.text('Eventually').last);
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      expect(onSaveCalled, equals(true));
+    });
+
+    testWidgets('change project clears section', (tester) async {
+      var onSaveCalled = false;
+      Future<void> onSave(Task task) {
+        onSaveCalled = true;
+
+        expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
+        return Future.value();
+      }
+
+      var task = Task.blank();
+      task.projectId = 2;
+      task.projectSlug = 'work';
+      task.sectionId = 1;
+
+      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpAndSettle();
+
+      // Open project selector
+      await tester.tap(find.byKey(const ValueKey('project')));
+      await tester.pumpAndSettle();
+
+      // Choose a new project
+      await tester.tap(find.text('Home').last);
+      await tester.pumpAndSettle();
+
+      // Section input should hide.
+      expect(find.byKey(const ValueKey('section')), findsNothing);
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      expect(onSaveCalled, equals(true));
+     });
   });
 }

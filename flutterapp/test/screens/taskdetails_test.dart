@@ -59,7 +59,11 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byKey(const ValueKey('title')), "Rake leaves");
-      await tester.tap(find.text('Save'));
+
+      var saveFinder = find.text('Save');
+      await tester.ensureVisible(saveFinder);
+
+      await tester.tap(saveFinder);
       await tester.pumpAndSettle();
 
       expect(callCount, equals(1));

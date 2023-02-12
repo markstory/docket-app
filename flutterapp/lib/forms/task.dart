@@ -83,10 +83,11 @@ class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     var projectProvider = Provider.of<ProjectsProvider>(context);
-    var projectPromise = projectProvider.getAll();
+
+    var projectList = projectProvider.getAll();
 
     return FutureBuilder<List<Project>>(
-        future: projectPromise,
+        future: projectList,
         builder: (context, snapshot) {
           List<Project> projects = [];
           if (snapshot.hasData) {
@@ -135,8 +136,11 @@ class _TaskFormState extends State<TaskForm> {
                             });
                           },
                           onChangeProject: (projectId) {
+                            var project = projects.firstWhere((element) => element.id == projectId);
                             setState(() {
-                              task.projectId = projectId;
+                              task.projectId = project.id;
+                              task.projectSlug = project.slug;
+                              task.sectionId = null;
                             });
                           }))
                 ]),
@@ -161,7 +165,12 @@ class _TaskFormState extends State<TaskForm> {
                     }).toList(),
                     onChanged: (int? value) {
                       if (value != null) {
-                        task.projectId = value;
+                        var project = projects.firstWhere((element) => element.id == value);
+                        setState(() {
+                          task.projectId = project.id;
+                          task.projectSlug = project.slug;
+                          task.sectionId = null;
+                        });
                       }
                     },
                     validator: (int? value) {
@@ -172,6 +181,41 @@ class _TaskFormState extends State<TaskForm> {
                     },
                   ),
                 ),
+
+                // Section Input. Conditionally shown based on the project.
+                Builder(
+                  builder: (context) {
+                    Project? selectedProject;
+                    try {
+                      selectedProject = projects.firstWhere((element) => element.id == task.projectId);
+                    } catch (err) {
+                      selectedProject = null;
+                    }
+                    if (selectedProject == null || selectedProject.sections.isEmpty) {
+                      return const SizedBox(width: 0, height: 0);
+                    }
+
+                    return FormIconRow(
+                      icon: Icon(Icons.topic_outlined,
+                          size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Section'),
+                      child: DropdownButtonFormField<int?>(
+                        key: const ValueKey('section'),
+                        value: task.sectionId,
+                        items: selectedProject.sections.map((item) {
+                          return DropdownMenuItem(
+                              value: item.id,
+                              child: Row(children: [
+                                Text(item.name),
+                              ]));
+                        }).toList(),
+                        onChanged: (int? value) {
+                          task.sectionId = value;
+                        },
+                      ),
+                    );
+                  }
+                ),
+
                 FormIconRow(
                   icon: Icon(Icons.calendar_today,
                       size: DocketColors.iconSize, color: docketColors.dueTomorrow, semanticLabel: 'Due on'),
@@ -186,6 +230,7 @@ class _TaskFormState extends State<TaskForm> {
                         });
                       }),
                 ),
+
                 FormIconRow(
                     icon: Icon(Icons.description_outlined,
                         size: DocketColors.iconSize, color: docketColors.dueFortnight, semanticLabel: 'Notes'),
@@ -197,13 +242,10 @@ class _TaskFormState extends State<TaskForm> {
                             task.body = value;
                           });
                         })),
+
                 _buildSubtasks(context, widget.task),
+
                 ButtonBar(children: [
-                  TextButton(
-                      child: const Text('Cancel'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
                   ElevatedButton(
                       child: const Text('Save'),
                       onPressed: () async {
