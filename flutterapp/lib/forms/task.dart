@@ -26,7 +26,7 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late final Task task;
+  late Task task;
   late bool completed;
   late bool saving = false;
 
@@ -35,6 +35,15 @@ class _TaskFormState extends State<TaskForm> {
     super.initState();
     task = widget.task.copy();
     completed = task.completed;
+  }
+
+  @override
+  void didUpdateWidget(TaskForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync changes for deleted subtasks.
+    if (task.subtasks.length != widget.task.subtasks.length) {
+      task = widget.task;
+    }
   }
 
   /// Create the subtasks section for task details. This is a bit
