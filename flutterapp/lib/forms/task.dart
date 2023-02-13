@@ -208,6 +208,17 @@ class _TaskFormState extends State<TaskForm> {
                                 Text(item.name),
                               ]));
                         }).toList(),
+                        decoration: InputDecoration(
+                          hintText: "Select",
+                          suffixIcon: task.sectionId == null
+                            ? null
+                            : IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () => setState(() {
+                                task.sectionId = null;
+                              }),
+                            ),
+                        ),
                         onChanged: (int? value) {
                           task.sectionId = value;
                         },

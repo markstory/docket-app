@@ -68,11 +68,6 @@ class _ProjectFormState extends State<ProjectForm> {
             }).toList(),
           ),
           ButtonBar(children: [
-            TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
             ElevatedButton(
                 child: const Text('Save'),
                 onPressed: () async {
