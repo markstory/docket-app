@@ -69,7 +69,7 @@ void main() {
       await tester.pumpWidget(EntryPoint(
           database: database,
           routes: {
-            '/projects/view': (context) {
+            Routes.projectDetails: (context) {
               navigated = true;
               var arguments = ModalRoute.of(context)!.settings.arguments as ProjectDetailsArguments;
               expect(arguments.project.slug, equals('work'));
@@ -88,6 +88,33 @@ void main() {
         await tester.pump(const Duration(seconds: 1));
       });
       await tester.tap(find.text('Work'));
+      await tester.pumpAndSettle();
+      expect(navigated, isTrue);
+    });
+
+    testWidgets('profile navigates on tap', (tester) async {
+      var navigated = false;
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+      await tester.pumpWidget(EntryPoint(
+          database: database,
+          routes: {
+            Routes.profileSettings: (context) {
+              navigated = true;
+              return const Text('Profile settings');
+            }
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            body: const AppDrawer(),
+          )));
+
+      await mockNetworkImagesFor(() async {
+        scaffoldKey.currentState!.openDrawer();
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+      });
+
+      await tester.tap(find.text('mark@example.com'));
       await tester.pumpAndSettle();
       expect(navigated, isTrue);
     });
