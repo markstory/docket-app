@@ -197,7 +197,7 @@ class _TaskFormState extends State<TaskForm> {
 
                     return FormIconRow(
                       icon: Icon(Icons.topic_outlined,
-                          size: DocketColors.iconSize, color: theme.colorScheme.primary, semanticLabel: 'Section'),
+                          size: DocketColors.iconSize, color: docketColors.dueEvening, semanticLabel: 'Section'),
                       child: DropdownButtonFormField<int?>(
                         key: const ValueKey('section'),
                         value: task.sectionId,
@@ -209,7 +209,7 @@ class _TaskFormState extends State<TaskForm> {
                               ]));
                         }).toList(),
                         decoration: InputDecoration(
-                          hintText: "Select",
+                          hintText: "No section",
                           suffixIcon: task.sectionId == null
                             ? null
                             : IconButton(
@@ -220,7 +220,9 @@ class _TaskFormState extends State<TaskForm> {
                             ),
                         ),
                         onChanged: (int? value) {
-                          task.sectionId = value;
+                          setState(() {
+                            task.sectionId = value;
+                          });
                         },
                       ),
                     );
