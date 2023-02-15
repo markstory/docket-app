@@ -79,11 +79,6 @@ class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
                 }
               }),
           ButtonBar(children: [
-            TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
             ElevatedButton(
                 child: const Text('Save'),
                 onPressed: () async {
