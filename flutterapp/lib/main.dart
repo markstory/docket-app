@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'actions.dart' as actions;
 import 'database.dart';
 import 'routes.dart';
 import 'theme.dart' as app_theme;
@@ -44,6 +45,9 @@ Future<void> main() async {
 
   // Load the access token if available.
   await database.apiToken.get();
+  if (database.apiToken.hasToken) {
+    await actions.updateTimezone(database.apiToken.token);
+  } 
 
   await SentryFlutter.init(
     (options) => {

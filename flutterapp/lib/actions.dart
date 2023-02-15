@@ -147,6 +147,21 @@ Future<ApiToken> doLogin(String email, String password) async {
 }
 
 // Profile Methods {{{
+
+/// Update the timezone. Fired during application startup to automatically 
+/// sync the account timezone to where the user is.
+Future<void> updateTimezone(String apiToken) async {
+  var url = _makeUrl('/users/profile');
+  try {
+    var date = DateTime.now();
+    var body = {'timezone': date.timeZoneName};
+    await httpPost(url, body: body);
+  } catch (err) {
+    developer.log('failed to update timezone. $err');
+  }
+}
+
+/// Get the current user's profile
 Future<UserProfile> fetchUser(String apiToken) async {
   var url = _makeUrl('/users/profile');
 
@@ -160,6 +175,7 @@ Future<UserProfile> fetchUser(String apiToken) async {
   }
 }
 
+/// Update a user's profile
 Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
   var url = _makeUrl('/users/profile');
 
@@ -168,9 +184,11 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
   await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Failed to update user');
   return profile;
 }
+
 // }}}
 
 // Task Methods {{{
+
 /// Fetch tasks for a single day
 Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
   var urlDate = formatters.dateString(date);
