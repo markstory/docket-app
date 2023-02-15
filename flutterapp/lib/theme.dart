@@ -255,6 +255,9 @@ final lightTheme = ThemeData(
     errorContainer: DocketColors.red100,
     background: DocketColors.white,
     onBackground: DocketColors.gray000,
+    // TODO I think this should be purple300 or purple100.
+    // This might be why additional styling was required
+    // for the calendar picker and some other elements.
     surface: DocketColors.gray200,
     onSurface: DocketColors.black,
     // Used for high contrast backgrounds
