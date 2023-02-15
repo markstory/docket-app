@@ -92,7 +92,10 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         accountEmail: Text(profile.email),
         accountName: Text(profile.name),
-        currentAccountPicture: CircleAvatar(foregroundImage: NetworkImage(gravatarurl)),
+        currentAccountPicture: CircleAvatar(
+          foregroundImage: NetworkImage(gravatarurl),
+          backgroundColor: theme.colorScheme.surface,
+        ),
         onDetailsPressed: () {
           Navigator.pushNamed(context, Routes.profileSettings);
         });
