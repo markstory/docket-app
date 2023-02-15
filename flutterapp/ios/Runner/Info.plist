@@ -48,5 +48,7 @@
     <!-- TODO add appauth configuration
         https://pub.dev/packages/flutter_appauth#iosmacos-setup
     -->
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>
