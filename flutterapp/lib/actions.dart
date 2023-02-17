@@ -26,6 +26,10 @@ class ValidationError implements Exception {
   /// in `err.errors`.
   factory ValidationError.fromResponseBody(String message, List<int> body) {
     List<String> errors = [];
+    if (body.isEmpty) {
+      return ValidationError(message, errors);
+    }
+
     try {
       var bodyData = utf8.decode(body);
       developer.log('$message. Response: $bodyData', name: 'docket.actions');
@@ -52,12 +56,15 @@ class ValidationError implements Exception {
       errors = [e.toString()];
     }
 
-    throw ValidationError(message, errors);
+    return ValidationError(message, errors);
   }
 
   @override
   String toString() {
-    var details = errors.reduce((error, built) => "$built $error");
+    var details = '';
+    if (errors.isNotEmpty) {
+      details = errors.reduce((error, built) => "$built $error");
+    }
 
     return "$message $details";
   }
