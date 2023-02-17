@@ -70,10 +70,32 @@ class ValidationError implements Exception {
   }
 }
 
+/// Thrown when response data cannot be decoded as JSON.
+/// Likely culprits are failure modes where an HTML page
+/// is returned. The `responseData` attribute contains
+/// the string value of the response data if available.
+class DecodeError implements Exception {
+  final String message;
+  final String? responseData; 
+  final StackTrace? stack;
+
+  const DecodeError(this.message, {this.responseData, this.stack});
+
+  @override
+  String toString() {
+    return "DecodeError<message=$message responseData=$responseData stack=$stack>";
+  }
+}
+
+// {{{ Client basics
+
+var client = http.Client();
+
 Uri _makeUrl(String pathAndQuery) {
   return Uri.parse('$baseUrl$pathAndQuery');
 }
 
+/// Do an HTTP GET request.
 Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage}) async {
   var headers = {
     'User-Agent': 'docket-flutter',
@@ -96,6 +118,7 @@ Future<http.Response> httpGet(Uri url, {String? apiToken, String? errorMessage})
   return response;
 }
 
+/// Do an HTTP POST request.
 Future<http.Response> httpPost(
   Uri url, {
   String? apiToken,
@@ -126,12 +149,35 @@ Future<http.Response> httpPost(
   return response;
 }
 
-var client = http.Client();
-
 /// Reset the HTTP client to a new instance
 void resetClient() {
   client = http.Client();
 }
+
+/// Decode the response as utf-8 JSON. If either the utf8
+/// or json decoding fail an `DecodeError` exception will be raised.
+T _decodeResponse<T>(
+  List<int> responseBody,
+  T Function(Map<dynamic, dynamic> decoded) decoder
+) {
+  String responseString;
+  try {
+    responseString = utf8.decode(responseBody);
+  } catch (err) {
+    throw const DecodeError('Could not decode unicode');
+  }
+  try {
+    var mapData = jsonDecode(responseString) as Map;
+    return decoder(mapData);
+  } catch (err, stack) {
+    developer.log('Failed to decode: $err', name: 'docket.actions.decodeResponse');
+    throw DecodeError('Failed to decode $err', responseData: responseString, stack: stack);
+  }
+}
+
+
+
+// }}}
 
 /// Perform a login request.
 /// The entity returned contains an API token
@@ -144,13 +190,7 @@ Future<ApiToken> doLogin(String email, String password) async {
   var response = await httpPost(url, body: body, errorMessage: 'Login failed: ');
   developer.log('login complete', name: 'docket.actions');
 
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    return ApiToken.fromMap(decoded['apiToken']);
-  } catch (e) {
-    developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => ApiToken.fromMap(mapData['apiToken']));
 }
 
 // Profile Methods {{{
@@ -173,13 +213,7 @@ Future<UserProfile> fetchUser(String apiToken) async {
   var url = _makeUrl('/users/profile');
 
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Failed to fetch user');
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    return UserProfile.fromMap(decoded['user']);
-  } catch (e) {
-    developer.log('failed to decode ${e.toString()}', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => UserProfile.fromMap(mapData['user']));
 }
 
 /// Update a user's profile
@@ -202,21 +236,17 @@ Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overd
   var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Task> tasks = [];
     List<CalendarItem> calendarItems = [];
-    for (var item in decoded['tasks']) {
+    for (var item in mapData['tasks']) {
       tasks.add(Task.fromMap(item));
     }
-    for (var item in decoded['calendarItems']) {
+    for (var item in mapData['calendarItems']) {
       calendarItems.add(CalendarItem.fromMap(item));
     }
     return TaskViewData(tasks: tasks, calendarItems: calendarItems);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Fetch the tasks and calendar items for the 'Upcoming' view
@@ -224,21 +254,17 @@ Future<TaskViewData> fetchUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Task> tasks = [];
     List<CalendarItem> calendarItems = [];
-    for (var item in decoded['tasks']) {
+    for (var item in mapData['tasks']) {
       tasks.add(Task.fromMap(item));
     }
-    for (var item in decoded['calendarItems']) {
+    for (var item in mapData['calendarItems']) {
       calendarItems.add(CalendarItem.fromMap(item));
     }
     return TaskViewData(tasks: tasks, calendarItems: calendarItems);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Fetch completed tasks for a project
@@ -246,23 +272,19 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
   var url = _makeUrl('/projects/$slug?completed=1');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load completed tasks');
 
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Task> tasks = [];
-    if (decoded['completed'] != null) {
-      for (var item in decoded['completed']) {
+    if (mapData['completed'] != null) {
+      for (var item in mapData['completed']) {
         tasks.add(Task.fromMap(item));
       }
     }
 
     return ProjectWithTasks(
       tasks: tasks,
-      project: Project.fromMap(decoded['project']),
+      project: Project.fromMap(mapData['project']),
     );
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Fetch deleted tasks for a project
@@ -270,11 +292,10 @@ Future<TaskViewData> fetchTrashbin(String apiToken) async {
   var url = _makeUrl('/tasks/deleted');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load trash bin');
 
-  try {
-    var decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Task> tasks = [];
-    if (decoded['tasks'] != null) {
-      for (var item in decoded['tasks']) {
+    if (mapData['tasks'] != null) {
+      for (var item in mapData['tasks']) {
         tasks.add(Task.fromMap(item));
       }
     }
@@ -283,10 +304,7 @@ Future<TaskViewData> fetchTrashbin(String apiToken) async {
       tasks: tasks,
       calendarItems: [],
     );
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 
@@ -302,10 +320,13 @@ Future<void> toggleTask(String apiToken, Task task) async {
 Future<Task> createTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/add');
 
-  var response = await httpPost(url, apiToken: apiToken, body: task.toMap(), errorMessage: 'Could not create task');
-  var decoded = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return Task.fromMap(decoded['task']);
+  var response = await httpPost(
+    url, 
+    apiToken: apiToken, 
+    body: task.toMap(), 
+    errorMessage: 'Could not create task'
+  );
+  return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
 }
 
 /// Update a task
@@ -316,9 +337,7 @@ Future<Task> updateTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/${task.id}/edit');
 
   var response = await httpPost(url, apiToken: apiToken, body: task.toMap(), errorMessage: 'Could not update task');
-  var decoded = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return Task.fromMap(decoded['task']);
+  return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
 }
 
 /// Delete a task
@@ -347,14 +366,7 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
   var url = _makeUrl('/tasks/$id/view');
 
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
-
-  try {
-    var taskData = jsonDecode(utf8.decode(response.bodyBytes));
-    return Task.fromMap(taskData['task']);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
 }
 // }}}
 
@@ -379,32 +391,14 @@ Future<void> moveSubtask(String apiToken, Task task, Subtask subtask) async {
 Future<Subtask> updateSubtask(String apiToken, Task task, Subtask subtask) async {
   var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/edit');
   var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
-  try {
-    var data = jsonDecode(utf8.decode(response.bodyBytes));
-    if (data['subtask'] != null) { 
-      return Subtask.fromMap(data['subtask']);
-    }
-    throw Exception('Invalid response data received');
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => Subtask.fromMap(mapData['subtask']));
 }
 
 /// Create a subtask
 Future<Subtask> createSubtask(String apiToken, Task task, Subtask subtask) async {
   var url = _makeUrl('/tasks/${task.id}/subtasks');
   var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
-  try {
-    var data = jsonDecode(utf8.decode(response.bodyBytes));
-    if (data['subtask'] != null) { 
-      return Subtask.fromMap(data['subtask']);
-    }
-    throw Exception('Invalid response data received');
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => Subtask.fromMap(mapData['subtask']));
 }
 
 /// Delete a subtask
@@ -420,45 +414,33 @@ Future<void> deleteSubtask(String apiToken, Task task, Subtask subtask) async {
 Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
   var url = _makeUrl('/projects/$slug');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load project');
+  return _decodeResponse(response.bodyBytes, (mapData) {
+    var project = Project.fromMap(mapData['project']);
+    List<Task> tasks = [];
+    for (var item in mapData['tasks']) {
+      // TODO do this on the server so that tasks are serialized consistently.
+      item['project'] = {'id': project.id, 'slug': project.slug, 'name': project.name, 'color': project.color};
 
-  try {
-    var data = jsonDecode(utf8.decode(response.bodyBytes));
-    if (data['project'] != null && data['tasks'] != null) {
-      var project = Project.fromMap(data['project']);
-      List<Task> tasks = [];
-      for (var item in data['tasks']) {
-        // TODO do this on the server so that tasks are serialized consistently.
-        item['project'] = {'id': project.id, 'slug': project.slug, 'name': project.name, 'color': project.color};
-
-        tasks.add(Task.fromMap(item));
-      }
-      return ProjectWithTasks(
-        project: project,
-        tasks: tasks,
-      );
+      tasks.add(Task.fromMap(item));
     }
-    throw Exception('Invalid response data received');
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+    return ProjectWithTasks(
+      project: project,
+      tasks: tasks,
+    );
+  });
 }
 
 Future<List<Project>> fetchProjects(String apiToken) async {
   var url = _makeUrl('/projects');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
 
-  try {
-    var projectData = jsonDecode(utf8.decode(response.bodyBytes));
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Project> projects = [];
-    for (var item in projectData['projects']) {
+    for (var item in mapData['projects']) {
       projects.add(Project.fromMap(item));
     }
     return projects;
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Fetch archived projects
@@ -466,17 +448,13 @@ Future<List<Project>> fetchProjectArchive(String apiToken) async {
   var url = _makeUrl('/projects/archived');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
 
-  try {
-    var projectData = jsonDecode(utf8.decode(response.bodyBytes));
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<Project> projects = [];
-    for (var item in projectData['projects']) {
+    for (var item in mapData['projects']) {
       projects.add(Project.fromMap(item));
     }
     return projects;
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Create a project
@@ -487,29 +465,31 @@ Future<Project> createProject(String apiToken, Project project) async {
     apiToken: apiToken, 
     body: project.toMap(), 
     errorMessage: 'Could not create project');
-  var decoded = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return Project.fromMap(decoded['project']);
+  return _decodeResponse(response.bodyBytes, (mapData) => Project.fromMap(mapData['project']));
 }
 
 /// Update a project
 Future<Project> updateProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/${project.slug}/edit');
-  var response =
-      await httpPost(url, apiToken: apiToken, body: project.toMap(), errorMessage: 'Could not update project');
-  var decoded = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return Project.fromMap(decoded['project']);
+  var response = await httpPost(
+    url,
+    apiToken: apiToken,
+    body: project.toMap(),
+    errorMessage: 'Could not update project'
+  );
+  return _decodeResponse(response.bodyBytes, (mapData) => Project.fromMap(mapData['project']));
 }
 
 /// Move a project
 Future<Project> moveProject(String apiToken, Project project, int newRank) async {
   var url = _makeUrl('/projects/${project.slug}/move');
-  var response =
-      await httpPost(url, apiToken: apiToken, body: {'ranking': newRank}, errorMessage: 'Could not move project');
-  var decoded = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return Project.fromMap(decoded['project']);
+  var response = await httpPost(
+    url,
+    apiToken: apiToken,
+    body: {'ranking': newRank},
+    errorMessage: 'Could not move project'
+  );
+  return _decodeResponse(response.bodyBytes, (mapData) => Project.fromMap(mapData['project']));
 }
 
 /// Archive a project
@@ -577,30 +557,21 @@ Future<CalendarProvider> createCalendarProviderFromGoogle(
     'accessToken': accessToken,
   };
   var response = await httpPost(url, apiToken: apiToken, body: body, errorMessage: 'Could not create calendar account');
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    return CalendarProvider.fromMap(respData['provider']);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => CalendarProvider.fromMap(mapData['provider']));
 }
+
 /// Fetch a list of calendar providers.
 Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
   var url = _makeUrl('/calendars');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar settings');
 
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
+  return _decodeResponse(response.bodyBytes, (mapData) {
     List<CalendarProvider> providers = [];
-    for (var item in respData['providers']) {
+    for (var item in mapData['providers']) {
       providers.add(CalendarProvider.fromMap(item));
     }
     return providers;
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Fetch a provider by details
@@ -608,22 +579,18 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
   var url = _makeUrl('/calendars/$id/view');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar provider');
 
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    var provider = CalendarProvider.fromMap(respData['provider']);
+  return _decodeResponse(response.bodyBytes, (mapData) {
+    var provider = CalendarProvider.fromMap(mapData['provider']);
 
     // Add un-linked calendars as well.
-    var calendars = respData['calendars'];
+    var calendars = mapData['calendars'];
     if (calendars != null && (calendars.runtimeType == List || calendars.runtimeType == List<Map<String, Object?>> )) {
       for (var item in calendars) {
         provider.sources.add(CalendarSource.fromMap(item));
       }
     }
     return provider;
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  });
 }
 
 /// Delete a Calendar Provider
@@ -641,14 +608,7 @@ Future<CalendarSource> createSource(String apiToken, CalendarSource source) asyn
   body.remove('id');
 
   var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
-
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    return CalendarSource.fromMap(respData['source']);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
 }
 
 /// Update the settings on a source.
@@ -656,28 +616,14 @@ Future<CalendarSource> updateSource(String apiToken, CalendarSource source) asyn
   var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
   var body = {'color': source.color, 'name': source.name};
   var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
-
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    return CalendarSource.fromMap(respData['source']);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
 }
 
 /// Sync events on a source.
 Future<CalendarSource> syncSource(String apiToken, CalendarSource source) async {
   var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/sync');
   var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not refresh calendar events');
-
-  try {
-    var respData = jsonDecode(utf8.decode(response.bodyBytes));
-    return CalendarSource.fromMap(respData['source']);
-  } catch (e, stacktrace) {
-    developer.log('Failed to decode ${e.toString()} $stacktrace', name: 'docket.actions');
-    rethrow;
-  }
+  return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
 }
 
 /// Delete a source.

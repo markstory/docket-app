@@ -15,7 +15,7 @@ class CalendarProvider {
     this.sources = const [],
   });
 
-  factory CalendarProvider.fromMap(Map<String, dynamic> json) {
+  factory CalendarProvider.fromMap(Map<dynamic, dynamic> json) {
     List<CalendarSource> sources = [];
     if (json['calendar_sources'] != null &&
         (json['calendar_sources'].runtimeType == List ||

@@ -28,8 +28,8 @@ class CalendarSource {
       id: json['id'] ?? 0,
       name: json['name'],
       calendarProviderId: json['calendar_provider_id'] ?? 0,
-      providerId: json['provider_id'],
-      color: json['color'],
+      providerId: json['provider_id'] ?? '',
+      color: json['color'] ?? 0,
       lastSync: lastSync,
     );
   }
