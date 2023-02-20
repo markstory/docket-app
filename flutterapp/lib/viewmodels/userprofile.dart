@@ -58,4 +58,13 @@ class UserProfileViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Logout the current user and remove all data.
+  Future<void> logout() async {
+    _loading = true;
+    await _database.clearSilent();
+    _loading = false;
+
+    notifyListeners();
+  }
 }

@@ -39,9 +39,15 @@ void main() {
       final scaffoldKey = GlobalKey<ScaffoldState>();
       await tester.pumpWidget(EntryPoint(
           database: database,
+          routes: {
+            Routes.projectDetails: (context) {
+              return const Text('Project View');
+            }
+          },
           child: Scaffold(
             key: scaffoldKey,
-            body: const AppDrawer(),
+            body: const Text('Body'),
+            drawer: const AppDrawer(),
           )));
 
       await mockNetworkImagesFor(() async {
@@ -61,6 +67,18 @@ void main() {
 
       // User profile
       expect(find.text('mark@example.com'), findsOneWidget);
+
+      // Other navigation
+      var archived = find.text('Archived Projects');
+      expect(archived, findsOneWidget);
+
+      // Move the view up.
+      await tester.drag(archived, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Calendar Sync'), findsOneWidget);
+      expect(find.text('Trash Bin'), findsOneWidget);
+      expect(find.text('Logout'), findsOneWidget);
     });
 
     testWidgets('project items navigate on tap', (tester) async {
@@ -79,7 +97,8 @@ void main() {
           },
           child: Scaffold(
             key: scaffoldKey,
-            body: const AppDrawer(),
+            body: const Text('Body'),
+            drawer: const AppDrawer(),
           )));
 
       await mockNetworkImagesFor(() async {
@@ -105,7 +124,8 @@ void main() {
           },
           child: Scaffold(
             key: scaffoldKey,
-            body: const AppDrawer(),
+            body: const Text('Body'),
+            drawer: const AppDrawer(),
           )));
 
       await mockNetworkImagesFor(() async {
@@ -117,6 +137,48 @@ void main() {
       await tester.tap(find.text('mark@example.com'));
       await tester.pumpAndSettle();
       expect(navigated, isTrue);
+    });
+
+    testWidgets('logout removes all local data', (tester) async {
+      // await database.projectMap.clearSilent();
+
+      var navigated = false;
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+
+      await tester.pumpWidget(EntryPoint(
+          database: database,
+          routes: {
+            Routes.login: (context) {
+              navigated = true;
+              return const Text('Login');
+            }
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            body: const AppDrawer(),
+          )));
+
+      await mockNetworkImagesFor(() async {
+        scaffoldKey.currentState!.openDrawer();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+      });
+
+      // Move the view up.
+      await tester.drag(find.text('Archived Projects'), const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      var logout = find.text('Logout', skipOffstage: false);
+      await tester.tap(logout);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Are you sure?'), findsOneWidget);
+
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(navigated, isTrue);
+      expect(database.apiToken.hasToken, isFalse);
     });
   });
 }

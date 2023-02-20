@@ -1,3 +1,4 @@
+import 'package:docket/dialogs/confirmdelete.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,23 @@ class _AppDrawerState extends State<AppDrawer> {
             title: Text('Trash Bin', style: TextStyle(color: customColors.dueNone)),
             onTap: () {
               Navigator.pushNamed(context, Routes.trashbin);
+            }),
+        const Divider(),
+        ListTile(
+            leading: Icon(Icons.logout, color: customColors.dueNone),
+            title: Text('Logout', style: TextStyle(color: customColors.dueNone)),
+            onTap: () {
+              showConfirmDelete(
+                context: context,
+                content: (
+                  'Logging out will remove all data from this device. '
+                  'Your data will still be stored in your docket account.'
+                ),
+                onConfirm: () async {
+                  var navigator = Navigator.of(context);
+                  await viewmodel.logout();
+                  navigator.pushNamed(Routes.login);
+                });
             }),
       ]));
     });
