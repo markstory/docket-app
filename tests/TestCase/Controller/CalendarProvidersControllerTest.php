@@ -191,6 +191,31 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
+     * Test view with broken auth
+     *
+     * @vcr controller_calendarsources_add_auth_fail.yml
+     * @return void
+     */
+    public function testViewBrokenGoogleAuth(): void
+    {
+        // Owned by a different user.
+        $this->makeCalendarProvider(2, 'other@example.com');
+        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
+        $this->makeCalendarSource($ownProvider->id, 'primary', [
+            'provider_id' => $ownProvider->id,
+        ]);
+
+        $this->login();
+        $this->get("/calendars/{$ownProvider->id}/view");
+        $this->assertResponseOk();
+        $provider = $this->viewVariable('provider');
+
+        $this->assertEquals($ownProvider->id, $provider->id);
+        $this->assertTrue($provider->broken_auth);
+        $this->assertEquals([], $this->viewVariable('calendars'));
+    }
+
+    /**
      * Test delete method
      *
      * @return void

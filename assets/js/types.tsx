@@ -15,6 +15,7 @@ export interface CalendarProvider {
   kind: string;
   identifier: string;
   display_name: string;
+  broken_auth?: boolean;
 }
 
 export interface CalendarProviderDetailed extends CalendarProvider {

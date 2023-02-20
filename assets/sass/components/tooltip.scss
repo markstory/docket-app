@@ -4,7 +4,7 @@
   border-radius: $border-radius;
   padding: $space / 2 $space;
 
-  z-index: $z-active-ui;
+  z-index: $z-modal;
   pointer-events: none;
   position: absolute;
   white-space: nowrap;

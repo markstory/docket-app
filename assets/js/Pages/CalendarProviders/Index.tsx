@@ -1,14 +1,15 @@
 import {Inertia} from '@inertiajs/inertia';
 import {InertiaLink} from '@inertiajs/inertia-react';
-import {useRef} from 'react';
+import {Fragment, useRef} from 'react';
 
 import {t} from 'app/locale';
 import {deleteProvider} from 'app/actions/calendars';
 import LoggedIn from 'app/layouts/loggedIn';
 import Modal from 'app/components/modal';
 import OverflowActionBar from 'app/components/overflowActionBar';
-import {CalendarProvider, CalendarProviderDetailed, CalendarSource} from 'app/types';
-import {InlineIcon} from 'app/components/icon';
+import {CalendarProviderDetailed, CalendarSource} from 'app/types';
+import {Icon, InlineIcon} from 'app/components/icon';
+import Tooltip from 'app/components/tooltip';
 
 import CalendarSources from './calendarSources';
 
@@ -69,7 +70,7 @@ function CalendarProvidersIndex({activeProvider, providers, referer, unlinked}: 
 export default CalendarProvidersIndex;
 
 type ProviderProps = {
-  provider: CalendarProvider;
+  provider: CalendarProviderDetailed;
   isActive: boolean;
   unlinked: Props['unlinked'];
 };
@@ -84,7 +85,7 @@ function CalendarProviderItem({isActive, provider, unlinked}: ProviderProps) {
       <div className="list-item-panel-header">
         {isActive && (
           <span className="list-item-block">
-            <ProviderIcon provider={provider} /> {provider.display_name}
+            <CalendarProviderTile provider={provider} />
           </span>
         )}
         {!isActive && (
@@ -92,7 +93,7 @@ function CalendarProviderItem({isActive, provider, unlinked}: ProviderProps) {
             href={`/calendars?provider=${provider.id}`}
             className="list-item-block"
           >
-            <ProviderIcon provider={provider} /> {provider.display_name}
+            <CalendarProviderTile provider={provider} />
           </InertiaLink>
         )}
         <div className="list-item-block">
@@ -120,10 +121,28 @@ function CalendarProviderItem({isActive, provider, unlinked}: ProviderProps) {
   );
 }
 
-type ProviderIconProps = {
-  provider: CalendarProvider;
+type CalendarProviderTileProps = {
+  provider: CalendarProviderDetailed;
 };
-function ProviderIcon({provider}: ProviderIconProps) {
+
+function CalendarProviderTile({provider}: CalendarProviderTileProps) {
+  console.log(provider);
+  return (
+    <Fragment>
+      <ProviderIcon provider={provider} />
+      {provider.display_name}
+      {provider.broken_auth ? (
+        <Tooltip label={t('Unable to load calendar data. Reconnect this provider')}>
+          <span className="list-item-block">
+            <Icon icon="alert" className="icon-error" />
+          </span>
+        </Tooltip>
+      ) : null}
+    </Fragment>
+  );
+}
+
+function ProviderIcon({provider}: CalendarProviderTileProps) {
   if (provider.kind === 'google') {
     return (
       <img

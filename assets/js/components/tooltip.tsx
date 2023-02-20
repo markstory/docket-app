@@ -1,4 +1,4 @@
-import { isValidElement } from 'react';
+import {isValidElement} from 'react';
 import ReachTooltip, {TooltipProps} from '@reach/tooltip';
 
 function Tooltip({children, ...props}: TooltipProps): JSX.Element | null {

@@ -1,0 +1,29 @@
+
+-
+    request:
+        method: GET
+        url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        headers:
+            Host: www.googleapis.com
+            Content-Type: application/json
+            User-Agent: 'Docket Calendar Sync google-api-php-client/2.10.1'
+            Authorization: 'Bearer calendar-access-token'
+    response:
+        status:
+            http_version: '1.1'
+            code: '401'
+            message: Ok
+        headers:
+            Vary: [Origin, X-Origin, Referer]
+            Content-Type: 'application/json; charset=UTF-8'
+            Date: 'Mon, 12 Jul 2021 02:54:22 GMT'
+        body: >
+          {
+            "error": {
+              "code": 401,
+              "message": "Authentication failed",
+              "errors": [
+                {"domain": "calendar", "reason": "invalid", "message": "Not good"}
+              ]
+            }
+          }

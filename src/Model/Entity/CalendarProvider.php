@@ -43,6 +43,8 @@ class CalendarProvider extends Entity
         'calendar_sources' => true,
     ];
 
+    protected $_virtual = ['broken_auth'];
+
     /**
      * @var array<array-key, string>
      */
