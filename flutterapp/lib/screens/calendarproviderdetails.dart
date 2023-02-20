@@ -39,18 +39,30 @@ class _CalendarProviderDetailsScreenState extends State<CalendarProviderDetailsS
   Widget build(BuildContext context) {
     return Consumer<CalendarProviderDetailsViewModel>(builder: (context, viewmodel, child) {
       var theme = Theme.of(context);
+      var customColors = getCustomColors(context);
+
       Widget body;
       if (viewmodel.loading) {
         body = const LoadingIndicator();
       } else {
+        List<Widget> items = [];
+        for (var source in viewmodel.provider.sources) {
+          items.add(CalendarSourceItem(source: source, viewmodel: viewmodel));
+        }
+        if (viewmodel.provider.brokenAuth) {
+          items.insert(0, ListTile(
+            leading: Icon(Icons.warning_outlined, color: customColors.actionDelete),
+            title: const Text(
+              'This calendar account has been disconnected in the provider. '
+              'Re-link this account to sync calendar data.'
+            ),
+          ));
+        }
+
         body = RefreshIndicator(
             onRefresh: () => _refresh(viewmodel),
             child: ListView(
-              children: viewmodel.provider.sources
-                  .map(
-                    (source) => CalendarSourceItem(source: source, viewmodel: viewmodel),
-                  )
-                  .toList(),
+              children: items,
             ));
       }
 

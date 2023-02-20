@@ -49,6 +49,26 @@ void main() {
       expect(find.text("mark@example.com"), findsOneWidget);
     });
 
+    testWidgets('render broken auth warning', (tester) async {
+      var broken = CalendarProvider.fromMap(decoded["provider"]);
+      broken.id = 2;
+      broken.brokenAuth = true;
+      await db.calendarDetails.set(broken);
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: CalendarProviderDetailsScreen(broken),
+      ));
+      await tester.runAsync(() async {
+        await tester.pumpAndSettle();
+      });
+
+      expect(
+        find.textContaining("This calendar account has been disconnected"),
+        findsOneWidget
+      );
+    });
+
     testWidgets('sync action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {

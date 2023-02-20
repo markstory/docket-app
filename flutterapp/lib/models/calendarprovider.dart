@@ -6,6 +6,7 @@ class CalendarProvider {
   String identifier;
   String displayName;
   List<CalendarSource> sources = [];
+  bool brokenAuth;
 
   CalendarProvider({
     this.id = 0,
@@ -13,6 +14,7 @@ class CalendarProvider {
     required this.identifier,
     this.displayName = '',
     this.sources = const [],
+    this.brokenAuth = false,
   });
 
   factory CalendarProvider.fromMap(Map<dynamic, dynamic> json) {
@@ -31,6 +33,7 @@ class CalendarProvider {
       identifier: json['identifier'],
       displayName: json['display_name'],
       sources: sources,
+      brokenAuth: json['broken_auth'] ?? false,
     );
   }
 
@@ -61,6 +64,7 @@ class CalendarProvider {
       'identifier': identifier,
       'display_name': displayName,
       'calendar_sources': sources.map((source) => source.toMap()).toList(),
+      'broken_auth': brokenAuth,
     };
   }
 }
