@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string $display_name
  * @property string $access_token
  * @property string $refresh_token
+ * @property ?bool $broken_auth
  * @property \Cake\I18n\FrozenTime $token_expiry
  *
  * @property \App\Model\Entity\User $user

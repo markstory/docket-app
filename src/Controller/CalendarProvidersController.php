@@ -8,7 +8,6 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\View\JsonView;
-use Exception;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
 use Google\Service\Oauth2 as GoogleOauth2;
