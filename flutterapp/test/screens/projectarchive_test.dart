@@ -28,6 +28,23 @@ void main() {
       await db.projectArchive.set(projects);
     });
 
+    testWidgets('shows empty state', (tester) async {
+      await db.projectArchive.clearSilent();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/archived') {
+          return Response('{"projects":[]}', 200);
+        }
+        throw Exception('Request made to unmocked ${request.url.path}');
+      });
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const ProjectArchiveScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No archived projects'), findsOneWidget);
+    });
+
     testWidgets('shows projects', (tester) async {
       await tester.pumpWidget(EntryPoint(
           database: db,

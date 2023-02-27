@@ -31,6 +31,25 @@ void main() {
       await db.trashbin.set(viewdata);
     });
 
+    testWidgets('shows empty state', (tester) async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/deleted') {
+          return Response('{"tasks":[]}', 200);
+        }
+        throw Exception('Request made to unmocked ${request.url.path}');
+      });
+      await db.trashbin.clearSilent();
+
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const TrashbinScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Trash Bin'), findsOneWidget);
+      expect(find.text('No items in trash'), findsOneWidget);
+    });
+
     testWidgets('shows items', (tester) async {
       await tester.pumpWidget(EntryPoint(
           database: db,

@@ -28,6 +28,32 @@ class _TrashbinScreenState extends State<TrashbinScreen> {
     return viewmodel.refresh();
   }
 
+  Widget itemList(BuildContext context) {
+    var theme = Theme.of(context);
+    if (viewmodel.tasks.isEmpty) {
+      return Column(children: [
+        const Icon(Icons.delete, size: 48),
+        Text('No items in trash', style: theme.textTheme.titleMedium),
+        const Text('When you delete tasks they will go here for 14 days. '
+          'After that time they will be deleted permanently.'
+        ),
+      ]);
+    }
+
+    return ListView(
+        children: viewmodel.tasks
+            .map(
+              (task) => TaskItem(
+                key: ValueKey(task),
+                task: task, 
+                showProject: true, 
+                showDate: true, 
+                showRestore: true
+              )
+            )
+            .toList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TrashbinViewModel>(builder: (context, viewmodel, child) {
@@ -37,15 +63,9 @@ class _TrashbinScreenState extends State<TrashbinScreen> {
         body = const LoadingIndicator();
       } else {
         body = RefreshIndicator(
-            onRefresh: () => _refresh(viewmodel),
-            child: ListView(
-              children: viewmodel.tasks
-                  .map(
-                    (task) =>
-                        TaskItem(key: ValueKey(task), task: task, showProject: true, showDate: true, showRestore: true),
-                  )
-                  .toList(),
-            ));
+          onRefresh: () => _refresh(viewmodel),
+          child: itemList(context),
+        );
       }
 
       return Scaffold(

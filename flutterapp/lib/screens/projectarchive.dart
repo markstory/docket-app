@@ -28,6 +28,24 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
     viewmodel.loadData();
   }
 
+  Widget itemList(BuildContext context) {
+    var theme = Theme.of(context);
+    if (viewmodel.projects.isEmpty) {
+      return Column(children: [
+        const Icon(Icons.archive, size: 48),
+        Text('No archived projects', style: theme.textTheme.titleMedium),
+      ]);
+    }
+    return ListView(
+          children: viewmodel.projects
+              .map((project) => ListTile(
+                    title: ProjectBadge(text: project.name, color: project.color),
+                    trailing: ArchivedProjectActions(project),
+                  ))
+              .toList(),
+        );
+    }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectArchiveViewModel>(builder: (context, viewmodel, child) {
@@ -38,14 +56,7 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
       } else {
         body = RefreshIndicator(
           onRefresh: () => viewmodel.refresh(),
-          child: ListView(
-            children: viewmodel.projects
-                .map((project) => ListTile(
-                      title: ProjectBadge(text: project.name, color: project.color),
-                      trailing: ArchivedProjectActions(project),
-                    ))
-                .toList(),
-          ),
+          child: itemList(context),
         );
       }
 

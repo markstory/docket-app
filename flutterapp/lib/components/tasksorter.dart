@@ -175,9 +175,6 @@ class _TaskSorterState extends State<TaskSorter> {
       ));
     }
 
-    if (taskMeta.button != null) {
-      children.add(taskMeta.button!);
-    }
     if (taskMeta.showButton == true) {
       var buttonArgs = taskMeta.buttonArgs ?? const TaskSortButtonArgs();
       children.add(TaskAddButton(
@@ -208,6 +205,11 @@ class TaskSortButtonArgs {
   const TaskSortButtonArgs({this.dueOn, this.evening, this.projectId, this.sectionId});
 }
 
+enum EmptyStateCategory {
+  congrats,
+  compactNoTasks
+}
+
 /// Metadata container for building sortable task lists.
 class TaskSortMetadata<T> {
   /// Enable if a task group can be dragsorted as well.
@@ -230,12 +232,10 @@ class TaskSortMetadata<T> {
   /// Rendered with secondary text.
   final String? subtitle;
 
-  /// Header button shown after title. Can also be a Row
-  /// if more than one button is required.
-  /// @deprecated
-  final Widget? button;
-
   final bool? showButton;
+
+  /// The kind of empty state to show for this task sort list
+  final EmptyStateCategory emptyState;
 
   final TaskSortButtonArgs? buttonArgs;
 
@@ -252,7 +252,6 @@ class TaskSortMetadata<T> {
     this.icon,
     this.title,
     this.subtitle,
-    this.button,
     this.data,
     this.iconStyle,
     this.showButton,
@@ -260,5 +259,6 @@ class TaskSortMetadata<T> {
     this.tasks = const [],
     this.calendarItems = const [],
     this.canDrag = false,
+    this.emptyState = EmptyStateCategory.compactNoTasks
   });
 }
