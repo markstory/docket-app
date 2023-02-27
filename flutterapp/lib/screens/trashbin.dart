@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/emptystate.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/taskitem.dart';
 import 'package:docket/theme.dart';
@@ -29,15 +30,13 @@ class _TrashbinScreenState extends State<TrashbinScreen> {
   }
 
   Widget itemList(BuildContext context) {
-    var theme = Theme.of(context);
     if (viewmodel.tasks.isEmpty) {
-      return Column(children: [
-        const Icon(Icons.delete, size: 48),
-        Text('No items in trash', style: theme.textTheme.titleMedium),
-        const Text('When you delete tasks they will go here for 14 days. '
+      return const EmptyState(
+        icon: Icons.delete,
+        title: 'No items in trash',
+        text: 'When you delete tasks they will go here for 14 days.'
           'After that time they will be deleted permanently.'
-        ),
-      ]);
+      );
     }
 
     return ListView(

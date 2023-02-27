@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/appdrawer.dart';
+import 'package:docket/components/emptystate.dart';
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/components/projectbadge.dart';
@@ -29,12 +30,11 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
   }
 
   Widget itemList(BuildContext context) {
-    var theme = Theme.of(context);
     if (viewmodel.projects.isEmpty) {
-      return Column(children: [
-        const Icon(Icons.archive, size: 48),
-        Text('No archived projects', style: theme.textTheme.titleMedium),
-      ]);
+      return const EmptyState(
+        icon: Icons.archive,
+        title: 'No archived projects',
+      );
     }
     return ListView(
           children: viewmodel.projects
