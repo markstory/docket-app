@@ -25,6 +25,9 @@ class LoginFormState extends State<LoginForm> {
 
   String? _email;
   String? _password;
+  bool _loading = false;
+
+  get loading => _loading;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +67,21 @@ class LoginFormState extends State<LoginForm> {
             ),
             SizedBox(height: space(2)),
             ElevatedButton(
-                child: const Text('Log in'),
+                child: _loading ? const Text('Loading') : const Text('Log in'),
                 onPressed: () async {
-                  if (!_formKey.currentState!.validate()) {
+                  if (!_formKey.currentState!.validate() || _loading) {
                     return;
                   }
+                  setState(() {
+                    _loading = true;
+                  });
                   _formKey.currentState!.save();
+
                   await widget.onSubmit(_email, _password);
+
+                  setState(() {
+                    _loading = false;
+                  });
                 })
           ],
         ),
