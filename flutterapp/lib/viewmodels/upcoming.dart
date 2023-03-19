@@ -96,12 +96,20 @@ class UpcomingViewModel extends ChangeNotifier {
             subtitle: 'Evening',
             tasks: group.items,
             onReceive: (Task task, int newIndex) {
-              task.previousDueOn = task.dueOn;
-              task.evening = true;
+              Map<String, dynamic> updates = {
+                'day_order': newIndex,
+                'evening': true,
+              };
               task.dayOrder = newIndex;
-              task.dueOn = dateVal;
+              task.evening = true;
 
-              return {'evening': true, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
+              if (task.dueOn != dateVal) {
+                task.previousDueOn = task.dueOn;
+                task.dueOn = dateVal;
+                updates['due_on'] = formatters.dateString(dateVal);
+              }
+
+              return updates;
             });
       } else {
         var title = formatters.compactDate(dateVal);
@@ -118,12 +126,19 @@ class UpcomingViewModel extends ChangeNotifier {
             tasks: group.items,
             calendarItems: groupedCalendarItems.get(groupDate),
             onReceive: (Task task, int newIndex) {
-              task.evening = false;
+              Map<String, dynamic> updates = {
+                'day_order': newIndex,
+                'evening': false,
+              };
               task.dayOrder = newIndex;
-              task.previousDueOn = task.dueOn;
-              task.dueOn = dateVal;
+              task.evening = false;
 
-              return {'evening': false, 'day_order': newIndex, 'due_on': formatters.dateString(dateVal)};
+              if (task.dueOn != dateVal) {
+                task.previousDueOn = task.dueOn;
+                task.dueOn = dateVal;
+              }
+
+              return updates;
             });
       }
       _taskLists.add(metadata);
@@ -147,6 +162,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
+    await _database.upcoming.updateTask(task);
     _database.expireTask(task);
   }
 

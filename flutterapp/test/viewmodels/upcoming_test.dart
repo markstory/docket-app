@@ -119,6 +119,10 @@ void main() {
           return Response(tasksResponseFixture, 200);
         }
         if (request.url.path == '/tasks/1/move') {
+          var payload = jsonDecode(request.body);
+          expect(payload['day_order'], equals(1));
+          expect(payload['evening'], isFalse);
+
           return Response('', 200);
         }
         throw "Unknown request to ${request.url.path}";

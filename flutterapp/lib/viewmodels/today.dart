@@ -197,7 +197,6 @@ class TodayViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-    task.dayOrder = newItemIndex;
 
     // TODO the sequencing of these actions results in some
     // render jank. It would be good to solve that.
