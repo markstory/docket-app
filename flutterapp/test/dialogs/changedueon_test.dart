@@ -36,7 +36,7 @@ void main() {
         callCount++;
       }
 
-      await tester.pumpWidget(buildButton(today, false, onUpdate));
+      await tester.pumpWidget(buildButton(futureDay, false, onUpdate));
 
       // Open dialog.
       await tester.tap(find.text('Open'));

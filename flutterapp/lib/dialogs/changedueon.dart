@@ -39,8 +39,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             leading: Icon(Icons.today, color: docketColors.dueToday),
             title: const Text('Today'),
             onTap: () {
-              var newValue = DateUtils.dateOnly(DateTime.now());
-              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: false));
+              completer.complete(ChangeDueOnResult(dueOn: today, evening: false));
               Navigator.of(context).pop();
             }));
       }
@@ -51,8 +50,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             leading: Icon(Icons.light_mode_outlined, color: docketColors.dueTomorrow),
             title: const Text('Tomorrow'),
             onTap: () {
-              var newValue = DateUtils.dateOnly(currentValue.add(const Duration(days: 1)));
-              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: evening));
+              completer.complete(ChangeDueOnResult(dueOn: tomorrow, evening: evening));
               Navigator.of(context).pop();
             }));
       }
@@ -63,9 +61,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             leading: Icon(Icons.bedtime_outlined, color: docketColors.dueEvening),
             title: const Text('This evening'),
             onTap: () {
-              var newValue = DateUtils.dateOnly(DateTime.now());
-
-              completer.complete(ChangeDueOnResult(dueOn: newValue, evening: true));
+              completer.complete(ChangeDueOnResult(dueOn: today, evening: true));
               Navigator.of(context).pop();
             }));
       }
