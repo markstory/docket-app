@@ -7,14 +7,10 @@ import {formatCompactDate, getDiff} from 'app/utils/dates';
 
 type Props = {
   task: Task;
-  /**
-   * Set to false to only show the evening indicator.
-   */
-  showDetailed?: boolean;
   showNull?: boolean;
 };
 
-function DueOn({task, showNull = false, showDetailed = true}: Props): JSX.Element | null {
+function DueOn({task, showNull = false}: Props): JSX.Element | null {
   const value = task.due_on;
   if (!value) {
     return showNull ? <span className="due-on none">{t('No Due Date')}</span> : null;
@@ -36,9 +32,9 @@ function DueOn({task, showNull = false, showDetailed = true}: Props): JSX.Elemen
       {task.evening ? (
         <InlineIcon icon="moon" />
       ) : (
-        showDetailed && <InlineIcon icon="calendar" width="xsmall" />
+        <InlineIcon icon="calendar" width="xsmall" />
       )}
-      {showDetailed && formatted}
+      {formatted}
     </time>
   );
 }

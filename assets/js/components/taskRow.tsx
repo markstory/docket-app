@@ -82,7 +82,7 @@ export default function TaskRow({
         <span className="title">{task.title}</span>
         <div className="attributes">
           {showProject && <ProjectBadge project={task.project} />}
-          <DueOn task={task} showDetailed={showDueOn} />
+          {showDueOn && <DueOn task={task} />}
           <SubtaskSummary task={task} />
         </div>
       </TextWrapper>
