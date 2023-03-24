@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,
@@ -50,7 +50,7 @@ export default function TaskSorter({
   showDueOn,
 }: Props): JSX.Element {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [sorted, setSorted] = React.useState<Task[] | undefined>(undefined);
+  const [sorted, setSorted] = useState<Task[] | undefined>(undefined);
   const items = sorted || tasks;
   const taskIds = items.map(task => String(task.id));
 

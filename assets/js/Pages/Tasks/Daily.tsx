@@ -88,7 +88,6 @@ export default function TasksDaily({
         grouper={grouper}
         updater={sortUpdater}
         showProject
-        showDueOn
       >
         {({groupedItems, activeTask}) => {
           const [overdue, today, evening] = groupedItems;
