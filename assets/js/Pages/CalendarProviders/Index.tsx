@@ -126,7 +126,6 @@ type CalendarProviderTileProps = {
 };
 
 function CalendarProviderTile({provider}: CalendarProviderTileProps) {
-  console.log(provider);
   return (
     <Fragment>
       <ProviderIcon provider={provider} />
