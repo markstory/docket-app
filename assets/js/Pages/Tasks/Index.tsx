@@ -151,7 +151,6 @@ export default function TasksIndex({
         grouper={createGrouper(start, 28)}
         updater={sortUpdater}
         showProject
-        showDueOn
       >
         {({groupedItems, activeTask}) => {
           return (
