@@ -54,7 +54,6 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
-    var today = DateUtils.dateOnly(DateTime.now());
     if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
       await refreshTasks();
     }
@@ -106,8 +105,6 @@ class TodayViewModel extends ChangeNotifier {
   }
 
   void _buildTaskLists(TaskViewData data) {
-    var today = DateUtils.dateOnly(DateTime.now());
-
     _overdue = null;
     var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
     if (overdueTasks.isNotEmpty) {
