@@ -13,11 +13,11 @@ class ProjectBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var docketColors = theme.extension<DocketColors>()!;
-
     var projectColor = getProjectColor(color);
     var icon = isActive ? Icons.star : Icons.circle;
-    return Wrap(spacing: space(1), children: [
-      Icon(icon, color: projectColor, size: 12),
+
+    return Wrap(spacing: space(1.1), children: [
+      Icon(icon, color: projectColor, size: 14),
       Text(
         text,
         style: TextStyle(color: docketColors.secondaryText),

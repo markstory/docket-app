@@ -4,9 +4,40 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:docket/components/loadingindicator.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/components/projectitem.dart';
 import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/routes.dart';
+
+/// A project list item, primarily used in the application drawer.
+class ProjectItem extends StatelessWidget {
+  final Project project;
+
+  const ProjectItem({required this.project, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var modalRoute = ModalRoute.of(context);
+    var routeName = modalRoute?.settings.name;
+    var routeArgs = modalRoute?.settings.arguments as ProjectDetailsArguments?;
+
+    return ListTile(
+      onTap: () {
+        Navigator.pushNamed(context,
+          Routes.projectDetails,
+          arguments: ProjectDetailsArguments(project)
+        );
+      },
+      leading: Icon(Icons.circle, color: getProjectColor(project.color)),
+      title: Text(project.name),
+      trailing: Text(
+        project.incompleteTaskCount.toString(),
+        style: TextStyle(color: theme.disabledColor),
+      ),
+      selected: (routeName == Routes.projectDetails && routeArgs?.project.slug == project.slug)
+    );
+  }
+}
 
 /// Sortable project list used in the application drawer.
 /// When sorting is complete, the moved project will be updated
