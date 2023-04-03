@@ -20,6 +20,8 @@ class Routes {
   static const String calendarList = '/calendars';
   static const String calendarDetails = '/calendars/view';
   static const String trashbin = '/trashbin';
+
+  static String? activeRoute = '';
 }
 
 // Route Parameter Classes {{{

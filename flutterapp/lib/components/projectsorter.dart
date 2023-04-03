@@ -17,9 +17,14 @@ class ProjectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var modalRoute = ModalRoute.of(context);
-    var routeName = modalRoute?.settings.name;
-    var routeArgs = modalRoute?.settings.arguments as ProjectDetailsArguments?;
+
+    var isActive = false;
+    var activeRoute = Routes.activeRoute;
+    if (activeRoute != null && activeRoute.startsWith(Routes.projectDetails)) {
+      var parts = activeRoute.split(':');
+      var slug = parts[1];
+      isActive = slug == project.slug;
+    }
 
     return ListTile(
       onTap: () {
@@ -34,7 +39,7 @@ class ProjectItem extends StatelessWidget {
         project.incompleteTaskCount.toString(),
         style: TextStyle(color: theme.disabledColor),
       ),
-      selected: (routeName == Routes.projectDetails && routeArgs?.project.slug == project.slug)
+      selected: isActive
     );
   }
 }

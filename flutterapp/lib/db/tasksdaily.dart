@@ -100,7 +100,6 @@ class TasksDailyRepo extends Repository<TaskViewData> {
   /// a task from the TasksDaily view depending on the task details.
   /// Will notify on changes.
   Future<void> updateTask(Task task, {bool expire = true}) async {
-
     var previousDueOn = task.previousDueOn;
     if (previousDueOn != null) {
       // Remove from the previous view if the task is there.

@@ -41,6 +41,7 @@ class _AppDrawerState extends State<AppDrawer> {
           },
           leading: Icon(Icons.today, color: customColors.dueToday),
           title: const Text('Today'),
+          selected: Routes.activeRoute == Routes.today,
         ),
         ListTile(
           onTap: () {
@@ -48,7 +49,7 @@ class _AppDrawerState extends State<AppDrawer> {
           },
           leading: Icon(Icons.calendar_today, color: customColors.dueTomorrow),
           title: const Text('Upcoming'),
-          selected: currentRoute == Routes.upcoming,
+          selected: Routes.activeRoute == Routes.upcoming,
         ),
         ListTile(
           title: Text('Projects', style: theme.textTheme.subtitle1),
@@ -58,27 +59,28 @@ class _AppDrawerState extends State<AppDrawer> {
         ListTile(
             leading: Icon(Icons.add, color: theme.colorScheme.primary),
             title: Text('Add Project', style: TextStyle(color: theme.colorScheme.primary)),
-            selected: currentRoute == Routes.projectAdd,
+            selected: Routes.activeRoute == Routes.projectAdd,
             onTap: () {
               navigator.pushNamed(Routes.projectAdd);
             }),
         ListTile(
             leading: Icon(Icons.archive, color: customColors.dueNone),
             title: Text('Archived Projects', style: TextStyle(color: customColors.dueNone)),
-            selected: currentRoute == Routes.projectArchive,
+            selected: Routes.activeRoute == Routes.projectArchive,
             onTap: () {
               navigator.pushNamed(Routes.projectArchive);
             }),
         ListTile(
             leading: Icon(Icons.sync, color: customColors.dueNone),
             title: Text('Calendar Sync', style: TextStyle(color: customColors.dueNone)),
+            selected: Routes.activeRoute == Routes.calendarList,
             onTap: () {
               navigator.pushNamed(Routes.calendarList);
             }),
         ListTile(
             leading: Icon(Icons.delete, color: customColors.dueNone),
             title: Text('Trash Bin', style: TextStyle(color: customColors.dueNone)),
-            selected: currentRoute == Routes.trashbin,
+            selected: Routes.activeRoute == Routes.trashbin,
             onTap: () {
               navigator.pushNamed(Routes.trashbin);
             }),

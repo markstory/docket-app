@@ -150,17 +150,22 @@ class DocketApp extends StatelessWidget {
             darkTheme: darkTheme,
             navigatorObservers: [SentryNavigatorObserver()],
             onGenerateRoute: (settings) {
+              Routes.activeRoute = null;
+
               // The named route and the default application route go to Today.
               // Should the user not have a session they are directed to Login.
               if (settings.name == Routes.today || settings.name == '/') {
+                Routes.activeRoute = Routes.today;
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: TodayScreen()));
               }
               // Upcoming tasks in the next 28 days.
               if (settings.name == Routes.upcoming) {
+                Routes.activeRoute = Routes.upcoming;
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
               }
               // Trashbin
               if (settings.name == Routes.trashbin) {
+                Routes.activeRoute = Routes.trashbin;
                 return MaterialPageRoute(builder: (context) => const TrashbinScreen());
               }
               // Task Add
@@ -182,6 +187,7 @@ class DocketApp extends StatelessWidget {
               // Project Detailed View.
               if (settings.name == Routes.projectDetails) {
                 var args = settings.arguments as ProjectDetailsArguments;
+                Routes.activeRoute = "${Routes.projectDetails}:${args.project.slug}";
 
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
               }
@@ -196,9 +202,11 @@ class DocketApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectCompletedScreen(args.project)));
               }
               if (settings.name == Routes.projectAdd) {
+                Routes.activeRoute = Routes.projectAdd;
                 return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
               }
               if (settings.name == Routes.projectArchive) {
+                Routes.activeRoute = Routes.projectArchive;
                 return MaterialPageRoute(builder: (context) => const LoginRequired(child: ProjectArchiveScreen()));
               }
 
@@ -211,9 +219,11 @@ class DocketApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (context) => const ProfileSettingsScreen());
               }
               if (settings.name == Routes.calendarList) {
+                Routes.activeRoute = Routes.calendarList;
                 return MaterialPageRoute(builder: (context) => const CalendarProviderListScreen());
               }
               if (settings.name == Routes.calendarDetails) {
+                Routes.activeRoute = Routes.calendarList;
                 var args = settings.arguments as CalendarDetailsArguments;
                 return MaterialPageRoute(builder: (context) => CalendarProviderDetailsScreen(args.provider));
               }
