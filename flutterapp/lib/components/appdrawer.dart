@@ -29,8 +29,6 @@ class _AppDrawerState extends State<AppDrawer> {
 
     return Consumer<UserProfileViewModel>(builder: (context, viewmodel, child) {
       var navigator = Navigator.of(context);
-      var modalRoute = ModalRoute.of(context);
-      var currentRoute = modalRoute?.settings.name;
 
       return Drawer(
           child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [
@@ -112,6 +110,7 @@ class _AppDrawerState extends State<AppDrawer> {
     var profile = viewmodel.profile;
     var theme = Theme.of(context);
     var gravatarurl = 'https://www.gravatar.com/avatar/${profile.avatarHash}?s=50&default=retro';
+    var backgroundColor = adjustBrightness(theme.colorScheme.primary, -0.05);
 
     return UserAccountsDrawerHeader(
         decoration: BoxDecoration(
@@ -120,8 +119,13 @@ class _AppDrawerState extends State<AppDrawer> {
         accountEmail: Text(profile.email),
         accountName: Text(profile.name),
         currentAccountPicture: CircleAvatar(
-          foregroundImage: NetworkImage(gravatarurl),
-          backgroundColor: theme.colorScheme.surfaceTint,
+          backgroundColor: backgroundColor,
+          child: CircleAvatar(
+            radius: 34,
+            backgroundColor: backgroundColor,
+            foregroundImage: NetworkImage(gravatarurl),
+            foregroundColor: theme.colorScheme.secondary,
+          ),
         ),
         onDetailsPressed: () {
           Navigator.pushNamed(context, Routes.profileSettings);
