@@ -54,15 +54,15 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
-    if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
-      await refreshTasks();
-    }
     var taskView = await _database.tasksDaily.get(today);
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
     if (!_loading && taskView.isEmpty) {
       return refresh();
+    }
+    if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
+      return refreshTasks();
     }
   }
 
@@ -94,9 +94,9 @@ class TodayViewModel extends ChangeNotifier {
       return Future.wait([
         _database.projectMap.replace(projects),
         _database.tasksDaily.set(tasksView),
-        _database.tasksDaily.removeOlderThan(today),
       ]).then((results) {
         _buildTaskLists(tasksView);
+        return _database.tasksDaily.removeOlderThan(today);
       });
     }).onError((error, stack) {
       _loadError = true;
@@ -194,9 +194,6 @@ class TodayViewModel extends ChangeNotifier {
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
-
-    // TODO the sequencing of these actions results in some
-    // render jank. It would be good to solve that.
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
