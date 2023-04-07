@@ -350,3 +350,9 @@ TextStyle? completedStyle(BuildContext context, bool completed) {
     decoration: TextDecoration.lineThrough,
   );
 }
+
+Color adjustBrightness(Color color, double amount) {
+  assert(amount >= -1 && amount <= 1);
+  final hsl = HSLColor.fromColor(color);
+  return hsl.withLightness(hsl.lightness + amount).toColor();
+}
