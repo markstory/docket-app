@@ -224,7 +224,7 @@ void main() {
       expect(database.upcoming.isExpired, isTrue);
     });
 
-    test('updateTask() removes from today view', () async {
+    test('updateTask() removes from today view with new dueOn value', () async {
       var other = Task.blank();
       other.id = 2;
       other.dueOn = today;
@@ -250,6 +250,32 @@ void main() {
       expect(upcoming.tasks.length, equals(1));
       expect(upcoming.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
+    });
+
+    test('updateTask() removes from today view with null dueOn value', () async {
+      var other = Task.blank();
+      other.id = 2;
+      other.dueOn = today;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+
+      await database.tasksDaily.set(TaskViewData(tasks: [other, task], calendarItems: []));
+
+      task.previousDueOn = task.dueOn;
+      task.dueOn = null;
+      await database.updateTask(task);
+
+      var todayData = await database.tasksDaily.get(today);
+      expect(todayData.tasks.length, equals(1));
+      expect(todayData.tasks[0].title, equals(other.title));
+      expect(database.tasksDaily.isDayExpired(today), isTrue);
+
+      var upcoming = await database.upcoming.get();
+      expect(upcoming.tasks.length, equals(0));
     });
 
     test('updateTask() adds task to upcoming view', () async {

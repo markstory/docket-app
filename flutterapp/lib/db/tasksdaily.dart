@@ -112,21 +112,22 @@ class TasksDailyRepo extends Repository<TaskViewData> {
       }
     }
 
-    // Update or add to the new view.
-    var data = await getOrCreate(task.dueOn);
-    var index = data.tasks.indexWhere((item) => item.id == task.id);
-    // Add or replace depending
-    if (index == -1) {
-      data.tasks.add(task);
-    } else {
-      data.tasks.removeAt(index);
-      data.tasks.insert(index, task);
-    }
-    await set(data);
-    if (expire) {
-      if (previousDueOn != null) {
-        expireDay(previousDueOn);
+    if (task.dueOn != null) {
+      // Update or add to the new view.
+      var data = await getOrCreate(task.dueOn);
+      var index = data.tasks.indexWhere((item) => item.id == task.id);
+      // Add or replace depending
+      if (index == -1) {
+        data.tasks.add(task);
+      } else {
+        data.tasks.removeAt(index);
+        data.tasks.insert(index, task);
       }
+      await set(data);
+    }
+
+    if (expire) {
+      expireDay(previousDueOn);
       expireDay(task.dueOn);
     }
 
