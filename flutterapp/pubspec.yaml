@@ -53,6 +53,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_launcher_icons: "^0.11.0"
+  flutter_native_splash: "^2.0.1"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -96,6 +97,10 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#2a1813"
+  image: assets/splash.png
 
 flutter_icons:
   image_path: 'assets/docket-logo.png'
