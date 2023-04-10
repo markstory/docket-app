@@ -6,9 +6,9 @@
         android:label="Docket"
         android:icon="@mipmap/ic_launcher">
 
-   <activity 
-       android:name="com.docket.flutterapp.CallbackActivity"
-       android:exported="true">
+       <activity 
+           android:name="com.docket.flutterapp.CallbackActivity"
+           android:exported="true">
             <intent-filter android:name="flutter_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
