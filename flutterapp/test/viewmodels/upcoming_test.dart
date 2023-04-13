@@ -43,8 +43,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   var today = DateUtils.dateOnly(DateTime.now());
+  var tomorrow = today.add(const Duration(days: 1));
   var file = File('test_resources/tasks_today.json');
-  final tasksResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final tasksResponseFixture = file.readAsStringSync()
+      .replaceAll('__TOMORROW__', formatters.dateString(tomorrow))
+      .replaceAll('__TODAY__', formatters.dateString(today));
 
   Future<void> setUpcomingView(LocalDatabase db, List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
@@ -73,7 +76,7 @@ void main() {
       expect(viewmodel.overdue, isNull);
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(1));
+      expect(viewmodel.taskLists.length, equals(2));
 
       // Check today
       expect(viewmodel.taskLists[0].title, equals('Today'));
@@ -91,7 +94,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(1));
+      expect(viewmodel.taskLists.length, equals(2));
     });
 
     test('loadData() refresh from server when expired', () async {
@@ -110,10 +113,39 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(1));
+      expect(viewmodel.taskLists.length, equals(2));
     });
 
     test('reorderTask() updates state', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/upcoming') {
+          return Response(tasksResponseFixture, 200);
+        }
+        if (request.url.path == '/tasks/1/move') {
+          var payload = jsonDecode(request.body);
+          expect(payload['due_on'], equals(formatters.dateString(tomorrow)));
+          expect(payload['day_order'], equals(1));
+          expect(payload['evening'], isFalse);
+
+          return Response('', 200);
+        }
+        throw "Unknown request to ${request.url.path}";
+      });
+
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+
+      var viewmodel = UpcomingViewModel(db);
+      await viewmodel.loadData();
+
+      var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
+      await viewmodel.reorderTask(0, 0, 1, 1);
+
+      var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
+      expect(updated, isNot(equals(initialOrder)));
+    });
+
+    test('reorderTask() moves tasks between days', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
@@ -135,7 +167,7 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 1, 0);
+      await viewmodel.reorderTask(0, 0, 1, 1);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
@@ -155,7 +187,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
-      expect(viewmodel.taskLists[0].tasks.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(2));
       expect(counter.callCount, equals(1));
     });
 
@@ -173,7 +205,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refreshTasks();
-      expect(viewmodel.taskLists[0].tasks.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(2));
       expect(counter.callCount, equals(1));
     });
 

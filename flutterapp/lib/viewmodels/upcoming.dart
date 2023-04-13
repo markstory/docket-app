@@ -71,7 +71,6 @@ class UpcomingViewModel extends ChangeNotifier {
     var taskView = await actions.fetchUpcomingTasks(_database.apiToken.token);
     _database.upcoming.set(taskView);
 
-    _loading = _silentLoading = false;
     _buildTaskLists(taskView);
   }
 
@@ -144,7 +143,7 @@ class UpcomingViewModel extends ChangeNotifier {
       _taskLists.add(metadata);
     }
 
-    _loading = false;
+    _loading = _silentLoading = false;
 
     notifyListeners();
   }
@@ -155,6 +154,16 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Get the changes that need to be made on the server.
     var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+    if (oldListIndex != newListIndex) {
+      var targetListTask = _taskLists[newListIndex].tasks.first;
+      var dueOn = targetListTask.dueOn;
+      if (dueOn != null) {
+        updates['due_on'] = formatters.dateString(dueOn);
+        task.dueOn = dueOn;
+      }
+      updates['evening'] = targetListTask.evening;
+      task.evening = targetListTask.evening;
+    }
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);

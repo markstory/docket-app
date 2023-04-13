@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
+      "title": "clean dishes",
+      "body": "",
+      "evening": false,
+      "completed": false,
+      "due_on": "__TODAY__",
+      "child_order": 0,
+      "day_order": 0
+    },
+    {
+      "id": 2,
+      "project": {"id": 1, "slug": "home", "name": "home", "color": 1}, 
+      "title": "cut grass",
+      "body": "",
+      "evening": false,
+      "completed": false,
+      "due_on": "__TOMORROW__",
+      "child_order": 1,
+      "day_order": 1
+    }
+  ],
+  "calendarItems": [
+    {
+      "id": 1,
+      "calendar_source_id": 1,
+      "provider_id": "google",
+      "color": 1,
+      "title": "Get haircut",
+      "start_time": null,
+      "end_time": null,
+      "start_date": "__TODAY__",
+      "end_date": "__TODAY__",
+      "all_day": true,
+      "html_link": ""
+    }
+  ]
+}
