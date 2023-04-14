@@ -66,20 +66,24 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     if (!projectData.isEmpty) {
       _project = projectData.project;
       _buildTaskLists(projectData.tasks);
+      return;
     }
-    _loading = false;
 
+    _loading = false;
     notifyListeners();
   }
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
+    if (_slug == null) {
+      return;
+    }
     await fetchProject();
 
-    if (!_loading && (_project == null || project.slug != _slug)) {
+    if (!_loading && (_project == null || project.slug != slug)) {
       return refresh();
     }
-    if (!_loading && _database.projectDetails.isExpiredSlug(_slug)) {
+    if (!_loading && !_database.projectDetails.isFreshSlug(slug)) {
       await silentRefresh();
     }
   }
@@ -103,8 +107,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     _project = result.project;
     await _database.projectDetails.set(result);
-
-    _loading = _silentLoading = false;
 
     _buildTaskLists(result.tasks);
   }

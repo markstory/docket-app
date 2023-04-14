@@ -114,7 +114,7 @@ void main() {
       expect(db.tasksDaily.isDayExpired(today), isTrue);
       expect(db.upcoming.isExpired, isTrue);
       expect(db.completedTasks.isExpired, isTrue);
-      expect(db.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+      expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
       var todayData = await db.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(1));

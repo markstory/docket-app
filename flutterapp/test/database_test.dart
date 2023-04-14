@@ -85,7 +85,7 @@ void main() {
       expect(detailsCounter.callCount, equals(1));
       expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.upcoming.isExpired, isTrue);
-      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+      expect(database.projectDetails.isFreshSlug(task.projectSlug), isFalse);
     });
 
     test('expireTask() expires only upcoming', () async {
@@ -108,7 +108,7 @@ void main() {
       // Day is empty and empty ~= expired
       expect(database.tasksDaily.isDayExpired(today), isTrue);
       expect(database.upcoming.isExpired, isTrue);
-      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+      expect(database.projectDetails.isFreshSlug(task.projectSlug), isFalse);
     });
 
     test('expireTask() removes from today when moving out', () async {
@@ -188,7 +188,7 @@ void main() {
       // While create is generally safe we should refetch
       // to ensure dayOrder/childOrder are synced.
       expect(database.tasksDaily.isDayExpired(today), isTrue);
-      expect(database.projectDetails.isExpiredSlug(task.projectSlug), isTrue);
+      expect(database.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
       var upcoming = await database.upcoming.get();
       expect(upcoming.tasks.length, equals(1));
@@ -347,7 +347,7 @@ void main() {
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(1));
       expect(home.tasks[0].title, equals('Dig up potatoes'));
-      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
+      expect(database.projectDetails.isFreshSlug('home'), isFalse);
     });
 
     test('updateTask() moves tasks between projects', () async {
@@ -379,12 +379,12 @@ void main() {
 
       var home = await database.projectDetails.get('home');
       expect(home.tasks.length, equals(0));
-      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
+      expect(database.projectDetails.isFreshSlug('home'), isFalse);
 
       var work = await database.projectDetails.get('work');
       expect(work.tasks.length, equals(1));
       expect(work.tasks[0].title, equals('Do accounting'));
-      expect(database.projectDetails.isExpiredSlug('work'), isTrue);
+      expect(database.projectDetails.isFreshSlug('work'), isFalse);
     });
 
     test('createTask() adds task to today view', () async {
@@ -456,7 +456,7 @@ void main() {
       var details = await database.projectDetails.get(task.projectSlug);
       expect(details.tasks.length, equals(1));
       expect(details.tasks[0].title, equals(task.title));
-      expect(database.projectDetails.isExpiredSlug('home'), isTrue);
+      expect(database.projectDetails.isFreshSlug('home'), isFalse);
     });
 
     test('deleteTask() removes from date views', () async {
@@ -493,7 +493,7 @@ void main() {
       await database.deleteTask(task);
       var result = await database.projectDetails.get(project.slug);
       expect(result.tasks.length, equals(0));
-      expect(database.projectDetails.isExpiredSlug(project.slug), isTrue);
+      expect(database.projectDetails.isFreshSlug(project.slug), isFalse);
     });
 
     test('undeleteTask() adds task to view and expires trash', () async {
@@ -510,7 +510,7 @@ void main() {
       await database.undeleteTask(task);
       expect(database.trashbin.isExpired, isTrue);
       expect(database.tasksDaily.isDayExpired(today), isTrue);
-      expect(database.projectDetails.isExpiredSlug(project.slug), isTrue);
+      expect(database.projectDetails.isFreshSlug(project.slug), isFalse);
 
       var result = await database.projectDetails.get(project.slug);
       expect(result.tasks.length, equals(1));

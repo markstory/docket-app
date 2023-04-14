@@ -11,7 +11,8 @@ import 'package:docket/models/task.dart';
 // changes run at O(n).
 class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
   static const String name = 'projectdetails';
-  final Map<String, DateTime> _expired = {};
+
+  final Map<String, DateTime?> _lastUpdate = {};
 
   ProjectDetailsRepo(JsonCache database, Duration duration) : super(database, duration);
 
@@ -25,7 +26,7 @@ class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
   Future<void> set(ProjectWithTasks view) async {
     var current = await getMap() ?? {};
     current[view.project.slug] = view.toMap();
-    _expired.remove(view.project.slug);
+    _lastUpdate[view.project.slug] = clock.now();
 
     return setMap(current);
   }
@@ -53,7 +54,7 @@ class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
       if (index > -1) {
         source.tasks.removeAt(index);
         await set(source);
-        _expired[previousProject] = clock.now();
+        _lastUpdate[previousProject] = null;
       }
     }
 
@@ -85,18 +86,27 @@ class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
 
   /// Expire a project by slug
   void expireSlug(String slug, {bool notify = false}) {
-    _expired[slug] = clock.now();
+    _lastUpdate[slug] = null;
     if (notify) {
       notifyListeners();
     }
   }
 
-  /// Check if the project of slug has been expired.
-  bool isExpiredSlug(String? slug) {
-    if (slug == null) {
+  /// Check if local data for the project matching slug is fresh
+  /// Freshness determined by `duration`
+  bool isFreshSlug(String? slug) {
+    if (slug == null || duration == null) {
       return false;
     }
-    return _expired[slug] != null;
+    var lastUpdate = _lastUpdate[slug];
+    if (lastUpdate == null) {
+      return false;
+    }
+
+    var expires = clock.now();
+    expires = expires.subtract(duration!);
+
+    return lastUpdate.isAfter(expires);
   }
 
   Future<ProjectWithTasks> get(String slug) async {
