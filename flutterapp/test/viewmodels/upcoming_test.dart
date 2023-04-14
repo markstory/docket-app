@@ -44,7 +44,7 @@ void main() {
 
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
-  var file = File('test_resources/tasks_today.json');
+  var file = File('test_resources/tasks_upcoming.json');
   final tasksResponseFixture = file.readAsStringSync()
       .replaceAll('__TOMORROW__', formatters.dateString(tomorrow))
       .replaceAll('__TODAY__', formatters.dateString(today));
