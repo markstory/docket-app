@@ -3,7 +3,7 @@ import 'package:json_cache/json_cache.dart';
 import 'package:docket/db/repository.dart';
 import 'package:docket/models/task.dart';
 
-class UpcomingRepo extends Repository<TaskViewData> {
+class UpcomingRepo extends Repository<UpcomingTasksData> {
   static const String name = 'upcoming';
 
   UpcomingRepo(JsonCache database, Duration duration) : super(database, duration);
@@ -13,25 +13,43 @@ class UpcomingRepo extends Repository<TaskViewData> {
     return 'v1:$name';
   }
 
-  /// Refresh the data stored for the 'upcoming' view.
-  @override
-  Future<void> set(TaskViewData data) async {
-    return setMap(data.toMap());
+  Map<String, dynamic> serialize(UpcomingTasksData data) {
+    Map<String, dynamic> result = {};
+    data.forEach((key, dayView) {
+      result[key] = dayView.toMap();
+    });
+    return result;
   }
 
-  Future<TaskViewData> get() async {
+  /// Refresh the data stored for the 'upcoming' view.
+  @override
+  Future<void> set(UpcomingTasksData data) async {
+    return setMap(serialize(data));
+  }
+
+  /// Get all stored data. If no data is available and empty list
+  /// will be returned.
+  Future<UpcomingTasksData> get() async {
     var data = await getMap();
-    // Empty local data
-    if (data == null || data['tasks'] == null) {
-      return TaskViewData(isEmpty: true, tasks: [], calendarItems: []);
+    if (data == null || data.isEmpty) {
+      return {};
     }
-    return TaskViewData.fromMap(data);
+    UpcomingTasksData result = {};
+    data.forEach((key, viewData) {
+      result[key] = TaskViewData.fromMap(viewData);
+    });
+
+    return result;
   }
 
   /// Add a task to the collection
   Future<void> append(Task task) async {
     var data = await get();
-    data.tasks.add(task);
+
+    var taskDate = task.dateKey;
+    var dateView = data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
+    data[taskDate] = dateView;
+
     await set(data);
     expire();
 
@@ -42,17 +60,23 @@ class UpcomingRepo extends Repository<TaskViewData> {
   // task based on its state. Will notify on changes.
   Future<void> updateTask(Task task, {expire = true}) async {
     var data = await get();
-    var index = data.tasks.indexWhere((item) => item.id == task.id);
+
+    var taskDate = task.dateKey;
+    var dateView = data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
+
+    var index = dateView.tasks.indexWhere((item) => item.id == task.id);
     if (task.hasDueDate) {
       if (index == -1) {
-        data.tasks.add(task);
+        dateView.tasks.add(task);
       } else {
-        data.tasks.removeAt(index);
-        data.tasks.insert(index, task);
+        dateView.tasks.removeAt(index);
+        dateView.tasks.insert(index, task);
       }
     } else if (index != -1){
-      data.tasks.removeAt(index);
+      dateView.tasks.removeAt(index);
     }
+    data[taskDate] = dateView;
+
     await set(data);
     if (expire) {
       this.expire();
@@ -64,9 +88,15 @@ class UpcomingRepo extends Repository<TaskViewData> {
   /// Remove a task from this view if it exists.
   Future<void> removeTask(Task task) async {
     var data = await get();
-    var index = data.tasks.indexWhere((item) => item.id == task.id);
+
+    var taskDate = task.dateKey;
+    var dateView = data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
+
+    var index = dateView.tasks.indexWhere((item) => item.id == task.id);
     if (index > -1) {
-      data.tasks.removeAt(index);
+      dateView.tasks.removeAt(index);
+      data[taskDate] = dateView;
+
       await set(data);
 
       expire(notify: true);

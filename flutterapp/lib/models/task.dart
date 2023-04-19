@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendaritem.dart';
 
@@ -237,6 +238,70 @@ class TaskViewData {
     );
   }
 
+  String dateKey() {
+    if (tasks.isEmpty) {
+      return '';
+    }
+    var dueOn = tasks.first.dueOn;
+    if (dueOn == null) {
+      return '';
+    }
+    return formatters.dateString(dueOn);
+  }
+
+  /// Convert a single collection into a map of TaskViewData
+  /// grouped by date. Used in the upcoming view.
+  Map<String, TaskViewData> groupByDay() {
+    Map<String, List<Task>> taskMap = {};
+    Map<String, List<CalendarItem>> calendarMap = {};
+
+    var start = clock.now();
+    var end = clock.now();
+
+    // Index tasks by date.
+    for (var task in tasks) {
+      var dueOn = task.dueOn;
+      var dateKey = task.dateKey;
+      var dateList = taskMap[dateKey] ?? [];
+      if (dateList.isEmpty) {
+        taskMap[dateKey] = dateList;
+      }
+      dateList.add(task);
+      if (dueOn != null && dueOn.isBefore(start)) {
+        start = dueOn;
+      }
+      if (dueOn != null && dueOn.isAfter(end)) {
+        end = dueOn;
+      }
+    }
+
+    // Index calendarItems by date.
+    for (var item in calendarItems) {
+      for (var dateKey in item.dateKeys()) {
+        var itemList = calendarMap[dateKey] ?? [];
+        if (itemList.isEmpty) {
+          calendarMap[dateKey] = itemList;
+        }
+        itemList.add(item);
+      }
+    }
+
+    // Use a date range to ensure all values are there.
+    // This makes screens easier to build I think.
+    var current = start;
+    Map<String, TaskViewData> views = {};
+    while (current.isBefore(end)) {
+      var dateKey = formatters.dateString(current);
+      views[dateKey] = TaskViewData(
+        tasks: taskMap[dateKey] ?? [],
+        calendarItems: calendarMap[dateKey] ?? [],
+      );
+      current = current.add(const Duration(days: 1));
+    }
+
+    return views;
+  }
+
   Map<String, Object?> toMap() {
     return {
       'tasks': tasks.map((task) => task.toMap()).toList(),
@@ -244,3 +309,5 @@ class TaskViewData {
     };
   }
 }
+
+typedef UpcomingTasksData = Map<String, TaskViewData>;

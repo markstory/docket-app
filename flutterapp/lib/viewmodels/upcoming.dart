@@ -42,11 +42,11 @@ class UpcomingViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    var taskView = await _database.upcoming.get();
-    if (taskView.isEmpty == false) {
-      _buildTaskLists(taskView);
+    var taskViews = await _database.upcoming.get();
+    if (taskViews.isNotEmpty) {
+      _buildTaskLists(taskViews);
     }
-    if (!_loading && taskView.isEmpty) {
+    if (!_loading && taskViews.isEmpty) {
       return refresh();
     }
     if (!_loading && !_database.upcoming.isFresh()) {
@@ -58,9 +58,9 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var tasksView = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    await _database.upcoming.set(tasksView);
-    _buildTaskLists(tasksView);
+    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    await _database.upcoming.set(taskViews);
+    _buildTaskLists(taskViews);
   }
 
   /// Refresh tasks from server state. Does not use loading
@@ -68,13 +68,14 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskView = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    _database.upcoming.set(taskView);
+    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    _database.upcoming.set(taskViews);
 
-    _buildTaskLists(taskView);
+    _buildTaskLists(taskViews);
   }
 
-  void _buildTaskLists(TaskViewData data) {
+  void _buildTaskLists(UpcomingTasksData data) {
+    // TODO this effectively moves or is removed.
     var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
     var grouped = grouperFunc(data.tasks);
     var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);

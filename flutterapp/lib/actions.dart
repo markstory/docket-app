@@ -250,20 +250,24 @@ Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overd
 }
 
 /// Fetch the tasks and calendar items for the 'Upcoming' view
-Future<TaskViewData> fetchUpcomingTasks(String apiToken) async {
+Future<UpcomingTasksData> fetchUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
-    List<Task> tasks = [];
     List<CalendarItem> calendarItems = [];
+    List<Task> tasks = [];
     for (var item in mapData['tasks']) {
       tasks.add(Task.fromMap(item));
     }
     for (var item in mapData['calendarItems']) {
       calendarItems.add(CalendarItem.fromMap(item));
     }
-    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
+    var singleCollection = TaskViewData(tasks: tasks, calendarItems: calendarItems);
+    // Replace this with the grouping functions.
+    // What we have right now is all wrong.
+
+    return singleCollection.groupByDay();
   });
 }
 
