@@ -49,6 +49,32 @@ void main() {
       expect(viewmodel.tasks.length, equals(2));
     });
 
+    test('loadData() refreshes with stale data', () async {
+      var callCounter = CallCounter();
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          callCounter();
+          return Response(projectCompletedResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = ProjectCompletedViewModel(db);
+      expect(viewmodel.tasks.length, equals(0));
+
+      viewmodel.setSlug('home');
+      await viewmodel.loadData();
+      expect(viewmodel.tasks.length, equals(2));
+
+      await viewmodel.loadData();
+      expect(viewmodel.tasks.length, equals(2));
+
+      db.completedTasks.expireSlug('home');
+      await viewmodel.loadData();
+      expect(viewmodel.tasks.length, equals(2));
+      expect(callCounter.callCount, equals(2));
+    });
+
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/projects/home') {

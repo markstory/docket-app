@@ -43,6 +43,10 @@ class ProjectCompletedViewModel extends ChangeNotifier {
   /// Set the slug
   /// If the slug changes data will be refreshed.
   setSlug(String slug) {
+    if (_slug != slug) {
+      // Changing slug, wipe local state.
+      _tasks = [];
+    }
     _slug = slug;
   }
 
@@ -63,7 +67,7 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     if (!_loading && _tasks.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.completedTasks.isFresh()) {
+    if (!_loading && !_database.completedTasks.isFreshSlug(_slug)) {
       return refreshSilent();
     }
   }
