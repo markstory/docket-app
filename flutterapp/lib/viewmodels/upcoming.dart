@@ -104,36 +104,37 @@ class UpcomingViewModel extends ChangeNotifier {
 
               return updates;
             });
-      } else {
-        var title = formatters.compactDate(dateVal);
-        var subtitle = formatters.monthDay(dateVal);
-        if (title == subtitle) {
-          subtitle = '';
-        }
-
-        metadata = TaskSortMetadata(
-            title: title,
-            subtitle: subtitle,
-            showButton: true,
-            buttonArgs: TaskSortButtonArgs(dueOn: dateVal),
-            tasks: taskView.tasks,
-            calendarItems: taskView.calendarItems,
-            onReceive: (Task task, int newIndex) {
-              Map<String, dynamic> updates = {
-                'day_order': newIndex,
-                'evening': false,
-              };
-              task.dayOrder = newIndex;
-              task.evening = false;
-
-              if (task.dueOn != dateVal) {
-                task.previousDueOn = task.dueOn;
-                task.dueOn = dateVal;
-              }
-
-              return updates;
-            });
+        _taskLists.add(metadata);
       }
+
+      var title = formatters.compactDate(dateVal);
+      var subtitle = formatters.monthDay(dateVal);
+      if (title == subtitle) {
+        subtitle = '';
+      }
+
+      metadata = TaskSortMetadata(
+          title: title,
+          subtitle: subtitle,
+          showButton: true,
+          buttonArgs: TaskSortButtonArgs(dueOn: dateVal),
+          tasks: taskView.dayTasks(),
+          calendarItems: taskView.calendarItems,
+          onReceive: (Task task, int newIndex) {
+            Map<String, dynamic> updates = {
+              'day_order': newIndex,
+              'evening': false,
+            };
+            task.dayOrder = newIndex;
+            task.evening = false;
+
+            if (task.dueOn != dateVal) {
+              task.previousDueOn = task.dueOn;
+              task.dueOn = dateVal;
+            }
+
+            return updates;
+          });
       _taskLists.add(metadata);
     }
 

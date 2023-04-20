@@ -157,11 +157,7 @@ class Task {
     if (dueOn == null) {
       return 'No Due Date';
     }
-    var date = formatters.dateString(dueOn!);
-    if (evening) {
-      return 'evening:$date';
-    }
-    return date;
+    return formatters.dateString(dueOn!);
   }
 
   bool get hasDueDate {
@@ -251,6 +247,10 @@ class TaskViewData {
 
   List<Task> eveningTasks() {
     return tasks.where((item) => item.evening).toList();
+  }
+
+  List<Task> dayTasks() {
+    return tasks.where((item) => item.evening == false).toList();
   }
 
   /// Convert a single collection into a map of TaskViewData

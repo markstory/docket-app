@@ -23,7 +23,7 @@ void main() {
 
     setUp(() async {
       var viewdata = TaskViewData.fromMap(decoded);
-      await db.upcoming.set(viewdata);
+      await db.upcoming.set(viewdata.groupByDay());
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -73,7 +73,7 @@ void main() {
           dayOrder: 0,
           childOrder: 10,
           completed: false));
-      await db.upcoming.set(viewdata);
+      await db.upcoming.set(viewdata.groupByDay());
 
       await tester.pumpWidget(EntryPoint(
           database: db,
