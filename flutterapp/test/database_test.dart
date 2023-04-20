@@ -5,6 +5,7 @@ import 'package:docket/database.dart';
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
+import 'package:docket/formatters.dart' as formatters;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,8 @@ void main() {
   var database = LocalDatabase(inTest: true);
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
+  var todayStr = formatters.dateString(today);
+  var tomorrowStr = formatters.dateString(tomorrow);
 
   var project = Project.blank();
   project.id = 1;
@@ -191,8 +194,8 @@ void main() {
       expect(database.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(upcoming[todayStr]?.tasks.length, equals(1));
+      expect(upcoming[todayStr]?.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
     });
 
@@ -218,8 +221,8 @@ void main() {
       expect(database.tasksDaily.isDayExpired(today), isTrue);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(upcoming[todayStr]?.tasks.length, equals(1));
+      expect(upcoming[todayStr]?.tasks[0].title, equals(task.title));
       // View should be expired so that we refetch
       expect(database.upcoming.isExpired, isTrue);
     });
@@ -247,8 +250,8 @@ void main() {
       expect(database.tasksDaily.isDayExpired(today), isTrue);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(upcoming[tomorrowStr]?.tasks.length, equals(1));
+      expect(upcoming[tomorrowStr]?.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
     });
 
@@ -275,7 +278,7 @@ void main() {
       expect(database.tasksDaily.isDayExpired(today), isTrue);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(0));
+      expect(upcoming[todayStr], isNull);
     });
 
     test('updateTask() adds task to upcoming view', () async {
@@ -294,8 +297,8 @@ void main() {
       database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(upcoming[tomorrowStr]?.tasks.length, equals(1));
+      expect(upcoming[tomorrowStr]?.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
 
       var todayData = await database.tasksDaily.get(today);
@@ -321,7 +324,7 @@ void main() {
       database.upcoming.removeListener(callListener);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(0));
+      expect(upcoming[tomorrowStr], isNull);
       expect(database.upcoming.isExpired, isTrue);
 
       var todayData = await database.tasksDaily.get(today);
@@ -396,7 +399,7 @@ void main() {
       await database.createTask(task);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
+      expect(upcoming[todayStr]?.tasks.length, equals(1));
 
       var todayTasks = await database.tasksDaily.get(today);
       expect(todayTasks.tasks.length, equals(1));
@@ -414,8 +417,8 @@ void main() {
       await database.createTask(task);
 
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(1));
-      expect(upcoming.tasks[0].title, equals(task.title));
+      expect(upcoming[tomorrowStr]?.tasks.length, equals(1));
+      expect(upcoming[tomorrowStr]?.tasks[0].title, equals(task.title));
       expect(database.upcoming.isExpired, isTrue);
     });
 
@@ -428,11 +431,11 @@ void main() {
       await database.createTask(task);
 
       var taskData = await database.upcoming.get();
-      expect(taskData.tasks.length, equals(0));
+      expect(taskData[todayStr], isNull);
       expect(database.upcoming.isExpired, isFalse);
 
-      taskData = await database.tasksDaily.get(today);
-      expect(taskData.tasks.length, equals(0));
+      var todayTasks = await database.tasksDaily.get(today);
+      expect(todayTasks.tasks.length, equals(0));
       expect(database.tasksDaily.isDayExpired(today), isTrue);
     });
 
@@ -469,13 +472,13 @@ void main() {
 
       await database.taskDetails.set(task);
       await database.tasksDaily.set(TaskViewData(tasks: [task], calendarItems: []));
-      await database.upcoming.set(TaskViewData(calendarItems: [], tasks: [task]));
+      await database.upcoming.set({todayStr: TaskViewData(calendarItems: [], tasks: [task])});
 
       await database.deleteTask(task);
       var todayData = await database.tasksDaily.get(today);
       expect(todayData.tasks.length, equals(0));
       var upcoming = await database.upcoming.get();
-      expect(upcoming.tasks.length, equals(0));
+      expect(upcoming[todayStr]?.tasks.length, equals(0));
       var details = await database.taskDetails.get(task.id!);
       expect(details, isNotNull);
     });

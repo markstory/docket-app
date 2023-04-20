@@ -249,6 +249,10 @@ class TaskViewData {
     return formatters.dateString(dueOn);
   }
 
+  List<Task> eveningTasks() {
+    return tasks.where((item) => item.evening).toList();
+  }
+
   /// Convert a single collection into a map of TaskViewData
   /// grouped by date. Used in the upcoming view.
   Map<String, TaskViewData> groupByDay() {
@@ -267,10 +271,13 @@ class TaskViewData {
         taskMap[dateKey] = dateList;
       }
       dateList.add(task);
-      if (dueOn != null && dueOn.isBefore(start)) {
+      if (dueOn == null) {
+        continue;
+      }
+      if (dueOn.isBefore(start)) {
         start = dueOn;
       }
-      if (dueOn != null && dueOn.isAfter(end)) {
+      if (dueOn.isAfter(end)) {
         end = dueOn;
       }
     }
