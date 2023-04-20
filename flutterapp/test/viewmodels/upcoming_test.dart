@@ -51,7 +51,7 @@ void main() {
 
   Future<void> setUpcomingView(LocalDatabase db, List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.upcoming.set(taskView);
+    await db.upcoming.set(taskView.groupByDay());
   }
 
   group('$UpcomingViewModel', () {

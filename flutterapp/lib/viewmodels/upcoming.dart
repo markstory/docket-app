@@ -5,7 +5,6 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
-import 'package:docket/grouping.dart' as grouping;
 
 
 class UpcomingViewModel extends ChangeNotifier {
@@ -75,26 +74,20 @@ class UpcomingViewModel extends ChangeNotifier {
   }
 
   void _buildTaskLists(UpcomingTasksData data) {
-    // TODO this effectively moves or is removed.
-    var grouperFunc = grouping.createGrouper(DateTime.now(), 28);
-    var grouped = grouperFunc(data.tasks);
-    var groupedCalendarItems = grouping.groupCalendarItems(data.calendarItems);
-
     _taskLists = [];
-    for (var group in grouped) {
-      var groupDate = group.key;
-      var isEvening = groupDate.contains('evening:');
-      if (isEvening) {
-        groupDate = groupDate.replaceFirst('evening:', '');
-      }
+    for (var entry in data.entries) {
+      var taskView = entry.value;
+      var groupDate = entry.key;
+
       var dateVal = DateTime.parse('$groupDate 00:00:00');
+      var eveningTasks = taskView.eveningTasks();
 
       late TaskSortMetadata metadata;
-      if (isEvening) {
+      if (eveningTasks.isNotEmpty) {
         // Evening sections only have a subtitle and no calendar items.
         metadata = TaskSortMetadata(
             subtitle: 'Evening',
-            tasks: group.items,
+            tasks: eveningTasks,
             onReceive: (Task task, int newIndex) {
               Map<String, dynamic> updates = {
                 'day_order': newIndex,
@@ -123,8 +116,8 @@ class UpcomingViewModel extends ChangeNotifier {
             subtitle: subtitle,
             showButton: true,
             buttonArgs: TaskSortButtonArgs(dueOn: dateVal),
-            tasks: group.items,
-            calendarItems: groupedCalendarItems.get(groupDate),
+            tasks: taskView.tasks,
+            calendarItems: taskView.calendarItems,
             onReceive: (Task task, int newIndex) {
               Map<String, dynamic> updates = {
                 'day_order': newIndex,

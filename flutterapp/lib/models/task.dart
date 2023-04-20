@@ -259,26 +259,16 @@ class TaskViewData {
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
 
-    var start = clock.now();
-    var end = clock.now();
-
     // Index tasks by date.
     for (var task in tasks) {
       var dueOn = task.dueOn;
       var dateKey = task.dateKey;
-      var dateList = taskMap[dateKey] ?? [];
-      if (dateList.isEmpty) {
-        taskMap[dateKey] = dateList;
+      if (taskMap[dateKey] == null) {
+        taskMap[dateKey] = [];
       }
-      dateList.add(task);
+      taskMap[dateKey]?.add(task);
       if (dueOn == null) {
         continue;
-      }
-      if (dueOn.isBefore(start)) {
-        start = dueOn;
-      }
-      if (dueOn.isAfter(end)) {
-        end = dueOn;
       }
     }
 
@@ -295,15 +285,20 @@ class TaskViewData {
 
     // Use a date range to ensure all values are there.
     // This makes screens easier to build I think.
-    var current = start;
     Map<String, TaskViewData> views = {};
-    while (current.isBefore(end)) {
-      var dateKey = formatters.dateString(current);
-      views[dateKey] = TaskViewData(
-        tasks: taskMap[dateKey] ?? [],
-        calendarItems: calendarMap[dateKey] ?? [],
+    for (var entry in taskMap.entries) {
+      views[entry.key] = TaskViewData(
+        tasks: taskMap[entry.key] ?? [],
+        calendarItems: calendarMap.remove(entry.key) ?? [],
       );
-      current = current.add(const Duration(days: 1));
+    }
+    for (var entry in calendarMap.entries) {
+      if (!views.containsKey(entry.key)) {
+        views[entry.key] = TaskViewData(
+          tasks: [],
+          calendarItems: calendarMap.remove(entry.key) ?? [],
+        );
+      }
     }
 
     return views;
