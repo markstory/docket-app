@@ -83,29 +83,6 @@ class UpcomingViewModel extends ChangeNotifier {
       var eveningTasks = taskView.eveningTasks();
 
       late TaskSortMetadata metadata;
-      if (eveningTasks.isNotEmpty) {
-        // Evening sections only have a subtitle and no calendar items.
-        metadata = TaskSortMetadata(
-            subtitle: 'Evening',
-            tasks: eveningTasks,
-            onReceive: (Task task, int newIndex) {
-              Map<String, dynamic> updates = {
-                'day_order': newIndex,
-                'evening': true,
-              };
-              task.dayOrder = newIndex;
-              task.evening = true;
-
-              if (task.dueOn != dateVal) {
-                task.previousDueOn = task.dueOn;
-                task.dueOn = dateVal;
-                updates['due_on'] = formatters.dateString(dateVal);
-              }
-
-              return updates;
-            });
-        _taskLists.add(metadata);
-      }
 
       var title = formatters.compactDate(dateVal);
       var subtitle = formatters.monthDay(dateVal);
@@ -113,6 +90,7 @@ class UpcomingViewModel extends ChangeNotifier {
         subtitle = '';
       }
 
+      // Add day section
       metadata = TaskSortMetadata(
           title: title,
           subtitle: subtitle,
@@ -136,6 +114,28 @@ class UpcomingViewModel extends ChangeNotifier {
             return updates;
           });
       _taskLists.add(metadata);
+
+      // Evening sections only have a subtitle and no calendar items.
+      metadata = TaskSortMetadata(
+          subtitle: 'Evening',
+          tasks: eveningTasks,
+          onReceive: (Task task, int newIndex) {
+            Map<String, dynamic> updates = {
+              'day_order': newIndex,
+              'evening': true,
+            };
+            task.dayOrder = newIndex;
+            task.evening = true;
+
+            if (task.dueOn != dateVal) {
+              task.previousDueOn = task.dueOn;
+              task.dueOn = dateVal;
+              updates['due_on'] = formatters.dateString(dateVal);
+            }
+
+            return updates;
+          });
+      _taskLists.add(metadata);
     }
 
     _loading = _silentLoading = false;
@@ -150,14 +150,15 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
     if (oldListIndex != newListIndex) {
-      var targetListTask = _taskLists[newListIndex].tasks.first;
-      var dueOn = targetListTask.dueOn;
-      if (dueOn != null) {
-        updates['due_on'] = formatters.dateString(dueOn);
-        task.dueOn = dueOn;
+      Task? targetListTask;
+      if (_taskLists[newListIndex].tasks.isNotEmpty) {
+        targetListTask = _taskLists[newListIndex].tasks.first;
+        var dueOn = targetListTask.dueOn;
+        if (dueOn != null) {
+          updates['due_on'] = formatters.dateString(dueOn);
+          task.dueOn = dueOn;
+        }
       }
-      updates['evening'] = targetListTask.evening;
-      task.evening = targetListTask.evening;
     }
 
     // Update local state assuming server will be ok.

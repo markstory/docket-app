@@ -76,7 +76,7 @@ void main() {
       expect(viewmodel.overdue, isNull);
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(4));
 
       // Check today
       expect(viewmodel.taskLists[0].title, equals('Today'));
@@ -94,7 +94,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(4));
     });
 
     test('loadData() refresh from server when expired', () async {
@@ -113,7 +113,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(4));
     });
 
     test('reorderTask() updates state', () async {
@@ -139,10 +139,39 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 1, 1);
+      await viewmodel.reorderTask(0, 0, 1, 2);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
+    });
+
+    test('reorderTask() moves tasks into evening', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/upcoming') {
+          return Response(tasksResponseFixture, 200);
+        }
+        if (request.url.path == '/tasks/1/move') {
+          var payload = jsonDecode(request.body);
+          expect(payload['day_order'], equals(0));
+          expect(payload['evening'], isTrue);
+
+          return Response('', 200);
+        }
+        throw "Unknown request to ${request.url.path}";
+      });
+
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+
+      var viewmodel = UpcomingViewModel(db);
+      await viewmodel.loadData();
+
+      equals(viewmodel.taskLists[0].tasks.length, 1);
+      equals(viewmodel.taskLists[1].tasks.length, 0);
+      await viewmodel.reorderTask(0, 0, 0, 1);
+
+      equals(viewmodel.taskLists[0].tasks.length, 0);
+      equals(viewmodel.taskLists[1].tasks.length, 1);
     });
 
     test('reorderTask() moves tasks between days', () async {
@@ -167,7 +196,7 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 1, 1);
+      await viewmodel.reorderTask(0, 0, 1, 2);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
@@ -187,7 +216,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(4));
       expect(counter.callCount, equals(1));
     });
 
@@ -205,7 +234,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refreshTasks();
-      expect(viewmodel.taskLists.length, equals(2));
+      expect(viewmodel.taskLists.length, equals(4));
       expect(counter.callCount, equals(1));
     });
 
