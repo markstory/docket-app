@@ -112,7 +112,7 @@ class TodayViewModel extends ChangeNotifier {
           iconStyle: TaskSortIcon.warning,
           title: 'Overdue',
           tasks: overdueTasks,
-          onReceive: (Task task, int newIndex) {
+          onReceive: (task, newIndex, meta) {
             throw Exception('Cannot move task to overdue');
           });
     }
@@ -124,7 +124,7 @@ class TodayViewModel extends ChangeNotifier {
         tasks: data.tasks.where((task) {
           return !task.evening && !overdueTasks.contains(task);
         }).toList(),
-        onReceive: (Task task, int newIndex) {
+        onReceive: (task, newIndex, meta) {
           var updates = {'evening': false, 'day_order': newIndex};
           task.evening = false;
           task.dayOrder = newIndex;
@@ -144,7 +144,7 @@ class TodayViewModel extends ChangeNotifier {
         tasks: data.tasks.where((task) {
           return task.evening && !overdueTasks.contains(task);
         }).toList(),
-        onReceive: (Task task, int newIndex) {
+        onReceive: (task, newIndex, meta) {
           var updates = {'evening': true, 'day_order': newIndex};
           task.evening = true;
           task.dayOrder = newIndex;
@@ -174,7 +174,8 @@ class TodayViewModel extends ChangeNotifier {
     }
 
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+    var sortMeta = _taskLists[listIndex];
+    var updates = sortMeta.onReceive(task, itemIndex, sortMeta);
     _overdue?.tasks.remove(task);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
 
@@ -189,7 +190,8 @@ class TodayViewModel extends ChangeNotifier {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+    var sortMeta = _taskLists[newListIndex];
+    var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);

@@ -144,7 +144,8 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     }
 
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
+    var sortMeta = _taskLists[listIndex] as TaskSortMetadata<Section>;
+    var updates = sortMeta.onReceive(task, itemIndex, sortMeta);
     _taskLists[listIndex].tasks.insert(itemIndex, task);
 
     // Update the moved task and reload from server async
@@ -159,7 +160,8 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+    var sortMeta = _taskLists[newListIndex] as TaskSortMetadata<Section>;
+    var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
@@ -179,7 +181,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
         metadata = TaskSortMetadata(
             title: group.section?.name ?? '',
             tasks: group.tasks,
-            onReceive: (Task task, int newIndex) {
+            onReceive: (task, newIndex, meta) {
               task.childOrder = newIndex;
               task.sectionId = null;
               return {'child_order': newIndex, 'section_id': null};
@@ -190,7 +192,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
             title: group.section?.name ?? '',
             tasks: group.tasks,
             data: group.section,
-            onReceive: (Task task, int newIndex) {
+            onReceive: (task, newIndex, meta) {
               task.childOrder = newIndex;
               task.sectionId = group.section?.id;
               return {'child_order': newIndex, 'section_id': task.sectionId};

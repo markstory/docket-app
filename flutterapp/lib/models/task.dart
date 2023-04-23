@@ -1,6 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/models/calendaritem.dart';
+import 'package:flutter/material.dart';
 
 class Task {
   int? id;
@@ -255,13 +256,17 @@ class TaskViewData {
 
   /// Convert a single collection into a map of TaskViewData
   /// grouped by date. Used in the upcoming view.
-  Map<String, TaskViewData> groupByDay() {
+  Map<String, TaskViewData> groupByDay({int daysToFill = 28}) {
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
+    var start = DateUtils.dateOnly(DateTime.now());
 
     // Index tasks by date.
     for (var task in tasks) {
       var dueOn = task.dueOn;
+      if (dueOn != null && start.isAfter(dueOn)) {
+        start = dueOn;
+      }
       var dateKey = task.dateKey;
       if (taskMap[dateKey] == null) {
         taskMap[dateKey] = [];
@@ -271,34 +276,29 @@ class TaskViewData {
         continue;
       }
     }
-
     // Index calendarItems by date.
     for (var item in calendarItems) {
       for (var dateKey in item.dateKeys()) {
-        var itemList = calendarMap[dateKey] ?? [];
-        if (itemList.isEmpty) {
-          calendarMap[dateKey] = itemList;
+        var itemList = calendarMap[dateKey];
+        if (itemList == null) {
+          calendarMap[dateKey] = [];
         }
-        itemList.add(item);
+        itemList?.add(item);
       }
     }
 
     // Use a date range to ensure all values are there.
     // This makes screens easier to build I think.
     Map<String, TaskViewData> views = {};
-    for (var entry in taskMap.entries) {
-      views[entry.key] = TaskViewData(
-        tasks: taskMap[entry.key] ?? [],
-        calendarItems: calendarMap.remove(entry.key) ?? [],
+    var current = start;
+    var end = start.add(Duration(days: daysToFill));
+    while (current.isBefore(end) || current == end) {
+      var dateStr = formatters.dateString(current);
+      views[dateStr] = TaskViewData(
+        tasks: taskMap[dateStr] ?? [],
+        calendarItems: calendarMap.remove(dateStr) ?? [],
       );
-    }
-    for (var entry in calendarMap.entries) {
-      if (!views.containsKey(entry.key)) {
-        views[entry.key] = TaskViewData(
-          tasks: [],
-          calendarItems: calendarMap.remove(entry.key) ?? [],
-        );
-      }
+      current = current.add(const Duration(days: 1));
     }
 
     return views;

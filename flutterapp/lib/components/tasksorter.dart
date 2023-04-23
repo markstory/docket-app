@@ -243,9 +243,13 @@ class TaskSortMetadata<T> {
 
   final List<CalendarItem> calendarItems;
 
+  final DateTime? date;
+
+  final bool evening;
+
   /// Called when a task is moved into this list.
   /// Expected to return the map of data that needs to be sent to the server.
-  final Map<String, dynamic> Function(Task task, int newIndex) onReceive;
+  final Map<String, dynamic> Function(Task task, int newIndex, TaskSortMetadata<T> meta) onReceive;
 
   TaskSortMetadata({
     required this.onReceive,
@@ -256,9 +260,11 @@ class TaskSortMetadata<T> {
     this.iconStyle,
     this.showButton,
     this.buttonArgs,
+    this.date,
     this.tasks = const [],
     this.calendarItems = const [],
     this.canDrag = false,
+    this.evening = false, 
     this.emptyState = EmptyStateCategory.compactNoTasks
   });
 }

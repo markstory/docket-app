@@ -31,10 +31,15 @@ class UpcomingRepo extends Repository<UpcomingTasksData> {
   /// will be returned.
   Future<UpcomingTasksData> get() async {
     var data = await getMap();
-    if (data == null || data.isEmpty) {
+    if (data == null || data.isEmpty || data.runtimeType == List) {
       return {};
     }
     UpcomingTasksData result = {};
+    // Stale cached data from earlier version.
+    if (data.containsKey('tasks')) {
+      return {};
+    }
+
     data.forEach((key, viewData) {
       result[key] = TaskViewData.fromMap(viewData);
     });

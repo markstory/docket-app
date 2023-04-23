@@ -76,7 +76,7 @@ void main() {
       expect(viewmodel.overdue, isNull);
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(4));
+      expect(viewmodel.taskLists.length, equals(28));
 
       // Check today
       expect(viewmodel.taskLists[0].title, equals('Today'));
@@ -94,7 +94,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(4));
+      expect(viewmodel.taskLists.length, equals(28));
     });
 
     test('loadData() refresh from server when expired', () async {
@@ -113,7 +113,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.loadData();
-      expect(viewmodel.taskLists.length, equals(4));
+      expect(viewmodel.taskLists.length, equals(28));
     });
 
     test('reorderTask() updates state', () async {
@@ -124,7 +124,7 @@ void main() {
         if (request.url.path == '/tasks/1/move') {
           var payload = jsonDecode(request.body);
           expect(payload['due_on'], equals(formatters.dateString(tomorrow)));
-          expect(payload['day_order'], equals(1));
+          expect(payload['day_order'], equals(0));
           expect(payload['evening'], isFalse);
 
           return Response('', 200);
@@ -139,13 +139,15 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 1, 2);
+      await viewmodel.reorderTask(0, 0, 0, 1);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
     });
 
-    test('reorderTask() moves tasks into evening', () async {
+    test(
+      skip: 'need a fixture with a task in evening as you cannot drag into regions that do not exist',
+      'reorderTask() moves tasks into evening', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
@@ -181,7 +183,7 @@ void main() {
         }
         if (request.url.path == '/tasks/1/move') {
           var payload = jsonDecode(request.body);
-          expect(payload['day_order'], equals(1));
+          expect(payload['day_order'], equals(0));
           expect(payload['evening'], isFalse);
 
           return Response('', 200);
@@ -196,11 +198,11 @@ void main() {
       await viewmodel.loadData();
 
       var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
-      await viewmodel.reorderTask(0, 0, 1, 2);
+      await viewmodel.reorderTask(0, 0, 0, 1);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
-    });
+  });
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
@@ -216,7 +218,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refresh();
-      expect(viewmodel.taskLists.length, equals(4));
+      expect(viewmodel.taskLists.length, equals(28));
       expect(counter.callCount, equals(1));
     });
 
@@ -234,7 +236,7 @@ void main() {
       expect(viewmodel.taskLists.length, equals(0));
 
       await viewmodel.refreshTasks();
-      expect(viewmodel.taskLists.length, equals(4));
+      expect(viewmodel.taskLists.length, equals(28));
       expect(counter.callCount, equals(1));
     });
 

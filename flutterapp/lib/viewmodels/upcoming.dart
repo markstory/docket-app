@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/actions.dart' as actions;
@@ -75,30 +76,54 @@ class UpcomingViewModel extends ChangeNotifier {
 
   void _buildTaskLists(UpcomingTasksData data) {
     _taskLists = [];
-    for (var entry in data.entries) {
-      var taskView = entry.value;
-      var groupDate = entry.key;
 
-      var dateVal = DateTime.parse('$groupDate 00:00:00');
+    // Our DB data structure doesn't have the start/end times yet.
+    // Workaround that by burning CPU.
+    DateTime start = clock.now();
+    DateTime end = start;
+    for (var entry in data.entries) {
+      var dateVal = DateTime.parse('${entry.key} 00:00:00');
+      if (dateVal.isBefore(start)) {
+        start = dateVal;
+      }
+      if (dateVal.isAfter(end)) {
+        end = dateVal;
+      }
+    }
+
+    var i = 0;
+    var current = start;
+    while (current.isBefore(end) && i < 50) {
+      i = i + 1;
+      var dateStr = formatters.dateString(current);
+
+      var taskView = data[dateStr];
+      if (taskView == null) {
+        current = current.add(const Duration(days: 1));
+        continue;
+      }
+
       var eveningTasks = taskView.eveningTasks();
 
       late TaskSortMetadata metadata;
 
-      var title = formatters.compactDate(dateVal);
-      var subtitle = formatters.monthDay(dateVal);
+      var title = formatters.compactDate(current);
+      var subtitle = formatters.monthDay(current);
       if (title == subtitle) {
         subtitle = '';
       }
 
       // Add day section
       metadata = TaskSortMetadata(
+          evening: false,
+          date: current,
           title: title,
           subtitle: subtitle,
           showButton: true,
-          buttonArgs: TaskSortButtonArgs(dueOn: dateVal),
+          buttonArgs: TaskSortButtonArgs(dueOn: current),
           tasks: taskView.dayTasks(),
           calendarItems: taskView.calendarItems,
-          onReceive: (Task task, int newIndex) {
+          onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
             Map<String, dynamic> updates = {
               'day_order': newIndex,
               'evening': false,
@@ -106,9 +131,9 @@ class UpcomingViewModel extends ChangeNotifier {
             task.dayOrder = newIndex;
             task.evening = false;
 
-            if (task.dueOn != dateVal) {
-              task.previousDueOn = task.dueOn;
-              task.dueOn = dateVal;
+            if (task.dueOn != meta.date) {
+              task.previousDueOn = meta.date;
+              task.dueOn = meta.date;
             }
 
             return updates;
@@ -116,26 +141,32 @@ class UpcomingViewModel extends ChangeNotifier {
       _taskLists.add(metadata);
 
       // Evening sections only have a subtitle and no calendar items.
-      metadata = TaskSortMetadata(
-          subtitle: 'Evening',
-          tasks: eveningTasks,
-          onReceive: (Task task, int newIndex) {
-            Map<String, dynamic> updates = {
-              'day_order': newIndex,
-              'evening': true,
-            };
-            task.dayOrder = newIndex;
-            task.evening = true;
+      if (eveningTasks.isNotEmpty) {
+        metadata = TaskSortMetadata(
+            evening: true,
+            date: current,
+            subtitle: 'Evening',
+            tasks: eveningTasks,
+            onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
+              Map<String, dynamic> updates = {
+                'day_order': newIndex,
+                'evening': true,
+              };
+              task.dayOrder = newIndex;
+              task.evening = true;
 
-            if (task.dueOn != dateVal) {
-              task.previousDueOn = task.dueOn;
-              task.dueOn = dateVal;
-              updates['due_on'] = formatters.dateString(dateVal);
-            }
+              if (task.dueOn != meta.date) {
+                task.previousDueOn = task.dueOn;
+                task.dueOn = current;
+                updates['due_on'] = formatters.dateString(current);
+              }
 
-            return updates;
-          });
-      _taskLists.add(metadata);
+              return updates;
+            });
+        _taskLists.add(metadata);
+      }
+
+      current = current.add(const Duration(days: 1));
     }
 
     _loading = _silentLoading = false;
@@ -148,16 +179,13 @@ class UpcomingViewModel extends ChangeNotifier {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[newListIndex].onReceive(task, newItemIndex);
+    var sortMeta = _taskLists[newListIndex];
+    var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
     if (oldListIndex != newListIndex) {
-      Task? targetListTask;
-      if (_taskLists[newListIndex].tasks.isNotEmpty) {
-        targetListTask = _taskLists[newListIndex].tasks.first;
-        var dueOn = targetListTask.dueOn;
-        if (dueOn != null) {
-          updates['due_on'] = formatters.dateString(dueOn);
-          task.dueOn = dueOn;
-        }
+      var dueOn = sortMeta.date;
+      if (dueOn != null) {
+        task.dueOn = dueOn;
+        updates['due_on'] = formatters.dateString(dueOn);
       }
     }
 
@@ -180,8 +208,8 @@ class UpcomingViewModel extends ChangeNotifier {
       itemIndex = targetList.tasks.length;
     }
     // Get the changes that need to be made on the server.
-    var updates = _taskLists[listIndex].onReceive(task, itemIndex);
-    _taskLists[listIndex].tasks.insert(itemIndex, task);
+    var updates = targetList.onReceive(task, itemIndex, targetList);
+    targetList.tasks.insert(itemIndex, task);
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);

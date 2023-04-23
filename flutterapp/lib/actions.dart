@@ -264,8 +264,6 @@ Future<UpcomingTasksData> fetchUpcomingTasks(String apiToken) async {
       calendarItems.add(CalendarItem.fromMap(item));
     }
     var singleCollection = TaskViewData(tasks: tasks, calendarItems: calendarItems);
-    // Replace this with the grouping functions.
-    // What we have right now is all wrong.
 
     return singleCollection.groupByDay();
   });
@@ -280,6 +278,11 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
     List<Task> tasks = [];
     if (mapData['completed'] != null) {
       for (var item in mapData['completed']) {
+        tasks.add(Task.fromMap(item));
+      }
+    }
+    if (mapData['tasks'] != null) {
+      for (var item in mapData['tasks']) {
         tasks.add(Task.fromMap(item));
       }
     }
