@@ -6,7 +6,6 @@ import 'package:json_cache/json_cache.dart';
 import 'package:localstorage/localstorage.dart';
 
 import 'package:docket/models/task.dart';
-import 'package:docket/models/project.dart';
 
 import 'package:docket/db/apitoken.dart';
 import 'package:docket/db/calendarproviderlist.dart';

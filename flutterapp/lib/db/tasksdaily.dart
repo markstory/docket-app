@@ -8,7 +8,7 @@ import 'package:docket/formatters.dart' as formatters;
 
 class TasksDailyRepo extends Repository<TaskViewData> {
   static const String name = 'today';
-  final Map<String, DateTime> _expired = {};
+  final Map<String, DateTime> _lastUpdate = {};
 
   TasksDailyRepo(JsonCache database, Duration duration) : super(database, duration);
 
@@ -34,7 +34,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
     }
     var key = dateKey(date);
     current[key] = viewData.toMap();
-    _expired.remove(key);
+    _lastUpdate[key] = clock.now();
 
     return setMap(current);
   }
@@ -51,15 +51,18 @@ class TasksDailyRepo extends Repository<TaskViewData> {
 
   /// Check if a daily view is fresh.
   bool isDayFresh(DateTime date) {
-    if (state == null) {
+    if (state == null || duration == null) {
       return false;
     }
-    if (duration == null) {
-      return true;
-    }
     var key = dateKey(date);
+    var lastUpdate = _lastUpdate[key];
+    if (lastUpdate == null) {
+      return false;
+    }
+    var expires = clock.now();
+    expires = expires.subtract(duration!);
 
-    return _expired[key] == null;
+    return lastUpdate.isAfter(expires);
   }
 
   /// Check if a daily view is expired
@@ -90,7 +93,7 @@ class TasksDailyRepo extends Repository<TaskViewData> {
       return;
     }
     var key = dateKey(date);
-    _expired[key] = clock.now();
+    _lastUpdate.remove(key);
     if (notify) {
       notifyListeners();
     }

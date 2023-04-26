@@ -61,7 +61,7 @@ class TodayViewModel extends ChangeNotifier {
     if (!_loading && taskView.isEmpty) {
       return refresh();
     }
-    if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
+    if (!_loading && !_database.tasksDaily.isDayFresh(today)) {
       return refreshTasks();
     }
   }
