@@ -263,6 +263,8 @@ class TaskViewData {
 
     // Index tasks by date.
     for (var task in tasks) {
+      // TODO Add in handling for overdue tasks
+      // Use a constant key for that view.
       var dueOn = task.dueOn;
       if (dueOn != null && start.isAfter(dueOn)) {
         start = dueOn;
@@ -290,6 +292,8 @@ class TaskViewData {
     // Use a date range to ensure all values are there.
     // This makes screens easier to build I think.
     Map<String, TaskViewData> views = {};
+
+    // TODO add check for overdue key.
     var current = start;
     var end = start.add(Duration(days: daysToFill));
     while (current.isBefore(end) || current == end) {

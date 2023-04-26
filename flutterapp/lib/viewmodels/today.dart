@@ -54,6 +54,7 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
+    // Update to us the upcoming repo.
     var taskView = await _database.tasksDaily.get(today);
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
@@ -72,6 +73,7 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
+      // TODO update here too
       var taskView = await actions.fetchTasksDaily(_database.apiToken.token, today);
       _database.tasksDaily.set(taskView);
       _buildTaskLists(taskView);
@@ -93,9 +95,13 @@ class TodayViewModel extends ChangeNotifier {
 
       return Future.wait([
         _database.projectMap.replace(projects),
+        // TODO use upcoming repo instead.
         _database.tasksDaily.set(tasksView),
       ]).then((results) {
+        // TODO update to list view.
         _buildTaskLists(tasksView);
+        // TODO this needs to be on upcoming now, and is likely
+        // the source of the disappearing sections
         return _database.tasksDaily.removeOlderThan(today);
       });
     }).onError((error, stack) {

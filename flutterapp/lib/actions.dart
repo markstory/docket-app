@@ -232,6 +232,7 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 
 /// Fetch tasks for a single day
 Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
+  // TODO Needs to make a list of TaskViewData like fetchUpcomingTasks
   var urlDate = formatters.dateString(date);
   var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
