@@ -5,6 +5,9 @@ import 'package:docket/db/repository.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/formatters.dart' as formatters;
 
+/// Task storage for the day views (today + upcoming)
+/// Has special keys for `overdue` tasks and methods to incrementally
+/// garbage collect previous day buckets.
 class DailyTasksRepo extends Repository<DailyTasksData> {
   static const String name = 'dailytasks';
   final Map<String, DateTime> _lastUpdate = {};
