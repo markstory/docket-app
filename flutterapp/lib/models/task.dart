@@ -171,10 +171,6 @@ class Task {
     }
     return due.isBefore(DateUtils.dateOnly(clock.now()));
   }
-
-  bool get hasDueDate {
-    return dueOn != null;
-  }
 }
 
 class Subtask {

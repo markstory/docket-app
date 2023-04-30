@@ -23,14 +23,6 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return formatters.dateString(date);
   }
 
-  Map<String, dynamic> serialize(DailyTasksData data) {
-    Map<String, dynamic> result = {};
-    data.forEach((key, dayView) {
-      result[key] = dayView.toMap();
-    });
-    return result;
-  }
-
   /// Set the provided data into the repo.
   /// Will overwrite any keys present in `data`
   /// with the provided collections.
