@@ -99,6 +99,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   Future<void> updateTask(Task task, {expire = true}) async {
     var data = await get();
 
+    var changed = false;
     var previousDue = task.previousDueOn;
     if (previousDue != null) {
       var previousKey = formatters.dateString(previousDue);
@@ -107,17 +108,30 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       // Moved between days, remove from old view.
       previousView.tasks.removeWhere((item) => item.id == task.id);
       data[previousKey] = previousView;
+      changed = true;
     }
 
-    var taskDate = task.dateKey;
-    var dateView = data[taskDate] ?? TaskViewData(tasks: [], calendarItems: []);
+    var dueOn = task.dueOn;
+    if (dueOn != null) {
+      changed = true;
+      // TODO when moving from april 30 to may 1 the may 1 bucket is empty?
+      var taskDate = formatters.dateString(dueOn);
+      var dateView = data[taskDate] ?? TaskViewData(tasks: [], calendarItems: []);
+      // Remove & add to the new view. It could be the same as previousView
+      var currentIndex = dateView.tasks.indexWhere((item) => item.id == task.id);
+      if (currentIndex > -1) {
+        dateView.tasks.removeAt(currentIndex);
+        dateView.tasks.insert(task.dayOrder, task);
+      } else {
+        dateView.tasks.add(task);
+      }
 
-    // Remove & add to the new view. It could be the same as previousView
-    dateView.tasks.removeWhere((item) => item.id == task.id);
-    dateView.tasks.add(task);
+      data[taskDate] = dateView;
+    }
 
-    data[taskDate] = dateView;
-    await set(data);
+    if (changed) {
+      await set(data);
+    }
 
     if (expire) {
       expireDay(previousDue, notify: false);

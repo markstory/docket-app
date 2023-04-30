@@ -105,9 +105,6 @@ class UpcomingViewModel extends ChangeNotifier {
         current = current.add(const Duration(days: 1));
         continue;
       }
-
-      var eveningTasks = taskView.eveningTasks();
-
       late TaskSortMetadata metadata;
 
       var title = formatters.compactDate(current);
@@ -145,6 +142,7 @@ class UpcomingViewModel extends ChangeNotifier {
       _taskLists.add(metadata);
 
       // Evening sections only have a subtitle and no calendar items.
+      var eveningTasks = taskView.eveningTasks();
       if (eveningTasks.isNotEmpty) {
         metadata = TaskSortMetadata(
             evening: true,
@@ -161,8 +159,8 @@ class UpcomingViewModel extends ChangeNotifier {
 
               if (task.dueOn != meta.date) {
                 task.previousDueOn = task.dueOn;
-                task.dueOn = current;
-                updates['due_on'] = formatters.dateString(current);
+                task.dueOn = meta.date;
+                updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
               }
 
               return updates;
@@ -184,7 +182,9 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Get the changes that need to be made on the server.
     var sortMeta = _taskLists[newListIndex];
+    print('new list is ${sortMeta.date}');
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
+    print('updating task $updates');
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
@@ -193,6 +193,7 @@ class UpcomingViewModel extends ChangeNotifier {
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
     await _database.updateTask(task);
+    _database.expireTask(task);
   }
 
   Future<void> insertAt(Task task, int listIndex, int itemIndex) async {
