@@ -26,10 +26,10 @@ void main() {
     var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.tasksDaily.clear();
+      await db.dailyTasks.clear();
 
       var viewdata = TaskViewData.fromMap(decoded);
-      await db.tasksDaily.set(viewdata);
+      await db.dailyTasks.set(viewdata.groupByDay());
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -54,7 +54,7 @@ void main() {
     });
 
     testWidgets('shows loading error', (tester) async {
-      await db.tasksDaily.clearSilent();
+      await db.dailyTasks.clearSilent();
 
       actions.client = MockClient((request) async {
         return Response('{"error": "Server unavailable"}', 500);
@@ -97,7 +97,7 @@ void main() {
           dayOrder: 0,
           childOrder: 10,
           completed: false));
-      await db.tasksDaily.set(viewdata);
+      await db.dailyTasks.set(viewdata.groupByDay());
 
       await tester.pumpWidget(EntryPoint(
         database: db,
