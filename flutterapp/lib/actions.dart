@@ -231,6 +231,7 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 // Task Methods {{{
 
 /// Fetch tasks for a single day
+/// @deprecated
 Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overdue = true}) async {
   // TODO Needs to make a list of TaskViewData like fetchUpcomingTasks
   var urlDate = formatters.dateString(date);
@@ -250,8 +251,30 @@ Future<TaskViewData> fetchTasksDaily(String apiToken, DateTime date, {bool overd
   });
 }
 
+/// Get tasks and calendaritems for a single day.
+/// Generally used for today view.
+Future<DailyTasksData> fetchDailyTasks(String apiToken, DateTime date, {bool overdue = true}) async {
+  var urlDate = formatters.dateString(date);
+  var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
+  var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
+
+  return _decodeResponse(response.bodyBytes, (mapData) {
+    List<Task> tasks = [];
+    List<CalendarItem> calendarItems = [];
+    for (var item in mapData['tasks']) {
+      tasks.add(Task.fromMap(item));
+    }
+    for (var item in mapData['calendarItems']) {
+      calendarItems.add(CalendarItem.fromMap(item));
+    }
+    var initial = TaskViewData(tasks: tasks, calendarItems: calendarItems);
+
+    return initial.groupByDay(daysToFill: 1, groupOverdue: overdue);
+  });
+}
+
 /// Fetch the tasks and calendar items for the 'Upcoming' view
-Future<UpcomingTasksData> fetchUpcomingTasks(String apiToken) async {
+Future<DailyTasksData> fetchUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 

@@ -158,7 +158,18 @@ class Task {
     if (dueOn == null) {
       return 'No Due Date';
     }
+    if (isOverdue) {
+      return TaskViewData.overdueKey;
+    }
     return formatters.dateString(dueOn!);
+  }
+
+  bool get isOverdue {
+    var due = dueOn;
+    if (due == null) {
+      return false;
+    }
+    return due.isBefore(DateUtils.dateOnly(clock.now()));
   }
 
   bool get hasDueDate {
@@ -204,6 +215,8 @@ class Subtask {
 
 /// Container type for APIs that return both tasks and calendar items
 class TaskViewData {
+  static const overdueKey = 'overdue';
+
   final List<Task> tasks;
   final List<CalendarItem> calendarItems;
 
@@ -256,15 +269,13 @@ class TaskViewData {
 
   /// Convert a single collection into a map of TaskViewData
   /// grouped by date. Used in the upcoming view.
-  Map<String, TaskViewData> groupByDay({int daysToFill = 28}) {
+  DailyTasksData groupByDay({int daysToFill = 28, bool groupOverdue = false}) {
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
     var start = DateUtils.dateOnly(DateTime.now());
 
     // Index tasks by date.
     for (var task in tasks) {
-      // TODO Add in handling for overdue tasks
-      // Use a constant key for that view.
       var dueOn = task.dueOn;
       if (dueOn != null && start.isAfter(dueOn)) {
         start = dueOn;
@@ -293,7 +304,13 @@ class TaskViewData {
     // This makes screens easier to build I think.
     Map<String, TaskViewData> views = {};
 
-    // TODO add check for overdue key.
+    if (taskMap.containsKey(TaskViewData.overdueKey)) {
+      views[TaskViewData.overdueKey] = TaskViewData(
+        tasks: taskMap[TaskViewData.overdueKey] ?? [],
+        calendarItems: [],
+      );
+    }
+
     var current = start;
     var end = start.add(Duration(days: daysToFill));
     while (current.isBefore(end) || current == end) {
@@ -316,4 +333,4 @@ class TaskViewData {
   }
 }
 
-typedef UpcomingTasksData = Map<String, TaskViewData>;
+typedef DailyTasksData = Map<String, TaskViewData>;

@@ -3,7 +3,7 @@ import 'package:json_cache/json_cache.dart';
 import 'package:docket/db/repository.dart';
 import 'package:docket/models/task.dart';
 
-class UpcomingRepo extends Repository<UpcomingTasksData> {
+class UpcomingRepo extends Repository<DailyTasksData> {
   static const String name = 'upcoming';
 
   UpcomingRepo(JsonCache database, Duration duration) : super(database, duration);
@@ -13,7 +13,7 @@ class UpcomingRepo extends Repository<UpcomingTasksData> {
     return 'v1:$name';
   }
 
-  Map<String, dynamic> serialize(UpcomingTasksData data) {
+  Map<String, dynamic> serialize(DailyTasksData data) {
     Map<String, dynamic> result = {};
     data.forEach((key, dayView) {
       result[key] = dayView.toMap();
@@ -23,18 +23,18 @@ class UpcomingRepo extends Repository<UpcomingTasksData> {
 
   /// Refresh the data stored for the 'upcoming' view.
   @override
-  Future<void> set(UpcomingTasksData data) async {
+  Future<void> set(DailyTasksData data) async {
     return setMap(serialize(data));
   }
 
   /// Get all stored data. If no data is available and empty list
   /// will be returned.
-  Future<UpcomingTasksData> get() async {
+  Future<DailyTasksData> get() async {
     var data = await getMap();
     if (data == null || data.isEmpty || data.runtimeType == List) {
       return {};
     }
-    UpcomingTasksData result = {};
+    DailyTasksData result = {};
     // Stale cached data from earlier version.
     if (data.containsKey('tasks')) {
       return {};

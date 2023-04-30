@@ -23,12 +23,12 @@ class UpcomingViewModel extends ChangeNotifier {
 
   UpcomingViewModel(LocalDatabase database) {
     _database = database;
-    _database.upcoming.addListener(listener);
+    _database.dailyTasks.addListener(listener);
   }
 
   @override
   void dispose() {
-    _database.upcoming.removeListener(listener);
+    _database.dailyTasks.removeListener(listener);
     super.dispose();
   }
 
@@ -42,14 +42,14 @@ class UpcomingViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    var taskViews = await _database.upcoming.get();
+    var taskViews = await _database.dailyTasks.get();
     if (taskViews.isNotEmpty) {
       _buildTaskLists(taskViews);
     }
     if (!_loading && taskViews.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.upcoming.isFresh()) {
+    if (!_loading && !_database.dailyTasks.isFresh()) {
       return refreshTasks();
     }
   }
@@ -59,7 +59,7 @@ class UpcomingViewModel extends ChangeNotifier {
     _loading = true;
 
     var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    await _database.upcoming.set(taskViews);
+    await _database.dailyTasks.set(taskViews);
     _buildTaskLists(taskViews);
   }
 
@@ -69,12 +69,12 @@ class UpcomingViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    _database.upcoming.set(taskViews);
+    _database.dailyTasks.set(taskViews);
 
     _buildTaskLists(taskViews);
   }
 
-  void _buildTaskLists(UpcomingTasksData data) {
+  void _buildTaskLists(DailyTasksData data) {
     _taskLists = [];
 
     // Our DB data structure doesn't have the start/end times yet.
@@ -195,8 +195,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
-    await _database.upcoming.updateTask(task);
-    _database.expireTask(task);
+    await _database.updateTask(task);
   }
 
   Future<void> insertAt(Task task, int listIndex, int itemIndex) async {
