@@ -82,6 +82,9 @@ class UpcomingViewModel extends ChangeNotifier {
     DateTime start = clock.now();
     DateTime end = start;
     for (var entry in data.entries) {
+      if (entry.key == TaskViewData.overdueKey) {
+        continue;
+      }
       var dateVal = DateTime.parse('${entry.key} 00:00:00');
       if (dateVal.isBefore(start)) {
         start = dateVal;
@@ -132,8 +135,9 @@ class UpcomingViewModel extends ChangeNotifier {
             task.evening = false;
 
             if (task.dueOn != meta.date) {
-              task.previousDueOn = meta.date;
+              task.previousDueOn = task.dueOn;
               task.dueOn = meta.date;
+              updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
             }
 
             return updates;
@@ -181,13 +185,6 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var sortMeta = _taskLists[newListIndex];
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
-    if (oldListIndex != newListIndex) {
-      var dueOn = sortMeta.date;
-      if (dueOn != null) {
-        task.dueOn = dueOn;
-        updates['due_on'] = formatters.dateString(dueOn);
-      }
-    }
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);

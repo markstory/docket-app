@@ -42,6 +42,15 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return setMap(current);
   }
 
+  /// Set the view data for a single day
+  Future<void> setDay(DateTime day, TaskViewData data) async {
+    var current = await getMap() ?? {};
+    var key = dateKey(day);
+    current[key] = data;
+
+    return setMap(current);
+  }
+
   /// Get all stored data. If no data is available an empty list
   /// will be returned.
   Future<DailyTasksData> get() async {

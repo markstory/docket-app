@@ -52,15 +52,15 @@ void main() {
   final projectListResponseFixture = file.readAsStringSync();
 
   Future<void> setTodayView(LocalDatabase db, List<Task> tasks) async {
-    var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.tasksDaily.set(taskView);
+    var taskView = TaskViewData(tasks: tasks, calendarItems: []).groupByDay(groupOverdue: true);
+    await db.dailyTasks.set(taskView);
   }
 
   group('$TodayViewModel', () {
     var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.tasksDaily.clearSilent();
+      await db.dailyTasks.clearSilent();
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -118,7 +118,7 @@ void main() {
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(db, tasks);
-      db.tasksDaily.expire();
+      db.dailyTasks.expire();
 
       var viewmodel = TodayViewModel(db);
 
@@ -190,12 +190,12 @@ void main() {
       var twoDays = today.subtract(const Duration(days: 2));
       var view = TaskViewData.blank();
       view.tasks.add(Task.blank(dueOn: twoDays));
-      await db.tasksDaily.set(view);
+      await db.dailyTasks.setDay(twoDays, view);
 
       var viewmodel = TodayViewModel(db);
       await viewmodel.refresh();
 
-      var removed = await db.tasksDaily.get(twoDays);
+      var removed = await db.dailyTasks.getDate(twoDays);
       expect(removed.isEmpty, isTrue);
     });
 
