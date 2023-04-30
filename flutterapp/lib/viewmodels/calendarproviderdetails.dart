@@ -88,8 +88,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
 
     provider.replaceSource(updated);
     await _database.calendarDetails.set(provider);
-    _database.tasksDaily.expire();
-    _database.upcoming.expire();
+    _database.dailyTasks.expire();
 
     notifyListeners();
   }

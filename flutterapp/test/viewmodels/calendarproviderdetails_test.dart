@@ -86,8 +86,7 @@ void main() {
 
       await viewmodel.syncEvents(viewmodel.provider.sources[0]);
       expect(viewmodel.loading, isFalse);
-      expect(db.tasksDaily.isExpired, isTrue);
-      expect(db.upcoming.isExpired, isTrue);
+      expect(db.dailyTasks.isExpired, isTrue);
     });
 
     test('removeSource() makes a request', () async {
