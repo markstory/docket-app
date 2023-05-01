@@ -46,7 +46,8 @@ class UpcomingViewModel extends ChangeNotifier {
     if (taskViews.isNotEmpty) {
       _buildTaskLists(taskViews);
     }
-    if (!_loading && taskViews.isEmpty) {
+    // Use 7 days as a rough guide for only having today 
+    if (!_loading && (taskViews.isEmpty || taskViews.keys.length <= 7)) {
       return refresh();
     }
     if (!_loading && !_database.dailyTasks.isFresh()) {
