@@ -182,9 +182,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Get the changes that need to be made on the server.
     var sortMeta = _taskLists[newListIndex];
-    print('new list is ${sortMeta.date}');
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
-    print('updating task $updates');
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);

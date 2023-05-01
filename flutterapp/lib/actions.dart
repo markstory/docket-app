@@ -248,7 +248,7 @@ Future<DailyTasksData> fetchDailyTasks(String apiToken, DateTime date, {bool ove
     }
     var initial = TaskViewData(tasks: tasks, calendarItems: calendarItems);
 
-    return initial.groupByDay(daysToFill: 1, groupOverdue: overdue);
+    return initial.groupByDay(daysToFill: 0, groupOverdue: overdue);
   });
 }
 

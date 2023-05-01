@@ -114,13 +114,16 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var dueOn = task.dueOn;
     if (dueOn != null) {
       changed = true;
-      // TODO when moving from april 30 to may 1 the may 1 bucket is empty?
       var taskDate = formatters.dateString(dueOn);
       var dateView = data[taskDate] ?? TaskViewData(tasks: [], calendarItems: []);
-      // Remove & add to the new view. It could be the same as previousView
+
+      // Remove from the new view as we might not have a day change.
       var currentIndex = dateView.tasks.indexWhere((item) => item.id == task.id);
       if (currentIndex > -1) {
         dateView.tasks.removeAt(currentIndex);
+      }
+
+      if (task.dayOrder <= dateView.tasks.length) {
         dateView.tasks.insert(task.dayOrder, task);
       } else {
         dateView.tasks.add(task);

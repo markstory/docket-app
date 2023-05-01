@@ -161,17 +161,20 @@ void main() {
       expect(database.projectDetails.isFreshSlug(task.projectSlug), isFalse);
     });
 
-    test('updateTask() updates exsting daily task', () async {
+    test('updateTask() updates existing daily task', () async {
       var other = Task.blank();
       other.id = 2;
+      other.title = 'first task';
       other.dueOn = today;
       other.projectSlug = 'home';
+      other.dayOrder = 0;
 
       var task = Task.blank(projectId: project.id);
       task.id = 1;
       task.title = 'Pay bills';
       task.dueOn = today;
       task.projectSlug = 'home';
+      task.dayOrder = 1;
 
       await database.dailyTasks.set({
         todayStr: TaskViewData(tasks: [other, task], calendarItems: [])
@@ -189,7 +192,7 @@ void main() {
       expect(database.dailyTasks.isExpired, isFalse);
     });
 
-    test('updateTask() moves between days based on dueOn', () async {
+    test('updateTask() moves to empty day', () async {
       var other = Task.blank();
       other.id = 2;
       other.dueOn = today;
@@ -217,6 +220,73 @@ void main() {
       expect(taskData[todayStr]?.tasks[0].title, equals(other.title));
       expect(taskData[tomorrowStr]?.tasks.length, equals(1));
       expect(taskData[tomorrowStr]?.tasks[0].title, equals(task.title));
+    });
+
+    test('updateTask() moves within a day', () async {
+      var other = Task.blank();
+      other.id = 2;
+      other.dueOn = today;
+      other.projectSlug = 'home';
+      other.dayOrder = 1;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+      task.dayOrder = 0;
+
+      await database.dailyTasks.set({
+        todayStr: TaskViewData(tasks: [task, other], calendarItems: []),
+      });
+
+      task.dayOrder = 1;
+      await database.updateTask(task);
+
+      expect(database.dailyTasks.isDayExpired(today), isTrue);
+      expect(database.dailyTasks.isExpired, isFalse);
+
+      var taskData = await database.dailyTasks.get();
+      expect(taskData[todayStr]?.tasks.length, equals(2));
+      // Moved task should be last.
+      expect(taskData[todayStr]?.tasks[0].title, equals(other.title));
+      expect(taskData[todayStr]?.tasks[1].title, equals(task.title));
+    });
+
+    test('updateTask() moves to occupied day', () async {
+      var other = Task.blank();
+      other.id = 2;
+      other.dueOn = today;
+      other.projectSlug = 'home';
+      other.dayOrder = 0;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+      task.dayOrder = 0;
+
+      await database.dailyTasks.set({
+        todayStr: TaskViewData(tasks: [task], calendarItems: []),
+        tomorrowStr: TaskViewData(tasks: [other], calendarItems: []),
+      });
+
+      task.previousDueOn = task.dueOn;
+      task.dueOn = tomorrow;
+      task.dayOrder = 0;
+      await database.updateTask(task);
+
+      expect(database.dailyTasks.isDayExpired(today), isTrue);
+      expect(database.dailyTasks.isDayExpired(tomorrow), isTrue);
+      expect(database.dailyTasks.isExpired, isFalse);
+
+      var taskData = await database.dailyTasks.get();
+      expect(taskData[todayStr]?.tasks.length, equals(0));
+      expect(taskData[tomorrowStr]?.tasks.length, equals(2));
+      // Moved task should be first.
+      expect(taskData[tomorrowStr]?.tasks[0].title, equals(task.title));
+      expect(taskData[tomorrowStr]?.tasks[1].title, equals(other.title));
     });
 
     test('updateTask() removes from today with null dueOn value', () async {
@@ -260,8 +330,6 @@ void main() {
       database.dailyTasks.removeListener(callListener);
 
       expect(database.dailyTasks.isExpired, isFalse);
-      // TODO this passes individually but not in a group
-      // expect(database.dailyTasks.isDayExpired(today), isTrue);
 
       var taskData = await database.dailyTasks.get();
       expect(taskData[tomorrowStr]?.tasks.length, equals(1));

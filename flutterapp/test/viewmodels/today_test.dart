@@ -129,6 +129,26 @@ void main() {
       expect(viewmodel.taskLists.length, equals(2));
     });
 
+    test('loadData() only sets today', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/day/$urlDate') {
+          return Response(tasksTodayResponseFixture, 200);
+        }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var viewmodel = TodayViewModel(db);
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(2));
+
+      // Only today should be set.
+      var data = await db.dailyTasks.get();
+      expect(data.keys.length, equals(1));
+    });
+
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/day/$urlDate') {
