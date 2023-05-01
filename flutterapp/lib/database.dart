@@ -141,7 +141,6 @@ class LocalDatabase {
           futures.add(dailyTasks.append(task));
           break;
         default:
-          throw Exception('Unknown view to clear "$view"');
       }
     }
 
@@ -162,7 +161,6 @@ class LocalDatabase {
           futures.add(dailyTasks.updateTask(task, expire: true));
           break;
         default:
-          throw Exception('Unknown view to clear "$view"');
       }
     }
     // TODO update project counters
@@ -190,7 +188,6 @@ class LocalDatabase {
           futures.add(dailyTasks.removeTask(task));
           break;
         default:
-          throw Exception('Cannot expire view of $view');
       }
     }
     await Future.wait(futures);
@@ -219,7 +216,6 @@ class LocalDatabase {
           dailyTasks.expireDay(task.dueOn, notify: true);
           break;
         default:
-          throw Exception('Cannot expire view of $view');
       }
     }
   }
