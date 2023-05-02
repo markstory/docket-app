@@ -45,8 +45,15 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
   var urlDate = formatters.dateString(today);
 
+  var twoDaysAgo = DateUtils.dateOnly(today.subtract(const Duration(days: 2)));
+
   var file = File('test_resources/tasks_today.json');
   final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
+
+  file = File('test_resources/tasks_upcoming.json');
+  final tasksTodayWithOverdueResponseFixture = file.readAsStringSync()
+      .replaceAll('__TODAY__', urlDate)
+      .replaceAll('__TOMORROW__', formatters.dateString(twoDaysAgo));
 
   file = File('test_resources/project_list.json');
   final projectListResponseFixture = file.readAsStringSync();
@@ -200,23 +207,27 @@ void main() {
     test('refresh() expires old data', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/day/$urlDate') {
-          return Response(tasksTodayResponseFixture, 200);
+          // This fixture has old tasks that will be grouped as overdue
+          return Response(tasksTodayWithOverdueResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
       });
-      var twoDays = today.subtract(const Duration(days: 2));
+
       var view = TaskViewData.blank();
-      view.tasks.add(Task.blank(dueOn: twoDays));
-      await db.dailyTasks.setDay(twoDays, view);
+      view.tasks.add(Task.blank(dueOn: twoDaysAgo));
+      await db.dailyTasks.setDay(twoDaysAgo, view);
 
       var viewmodel = TodayViewModel(db);
       await viewmodel.refresh();
 
-      var removed = await db.dailyTasks.getDate(twoDays);
-      expect(removed.isEmpty, isTrue);
+      var stored = await db.dailyTasks.getDate(twoDaysAgo, overdue: true);
+
+      // Should have tasks in overdue
+      expect(stored[TaskViewData.overdueKey]?.tasks.length, equals(1));
+      expect(stored[formatters.dateString(twoDaysAgo)], isNull);
     });
 
     test('refreshTasks() loads data from the server', () async {
