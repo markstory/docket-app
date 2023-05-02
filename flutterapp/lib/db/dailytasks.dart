@@ -169,6 +169,9 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var data = await getMap() ?? {};
     List<String> removeKeys = [];
     for (var key in data.keys) {
+      if (key == TaskViewData.overdueKey) {
+        continue;
+      }
       var keyDate = formatters.parseToLocal(key);
       if (keyDate.isBefore(date)) {
         removeKeys.add(key);
