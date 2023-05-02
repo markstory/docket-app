@@ -63,9 +63,8 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    await _database.dailyTasks.set(taskViews);
-    var rangeView = TaskRangeView.fromTaskViews(taskViews, start);
+    var rangeView = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    await _database.dailyTasks.setRange(rangeView);
     _buildTaskLists(rangeView);
   }
 
@@ -74,9 +73,8 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    await _database.dailyTasks.set(taskViews);
-    var rangeView = TaskRangeView.fromTaskViews(taskViews, start);
+    var rangeView = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    await _database.dailyTasks.setRange(rangeView);
 
     _buildTaskLists(rangeView);
   }
@@ -165,6 +163,9 @@ class UpcomingViewModel extends ChangeNotifier {
     var sortMeta = _taskLists[newListIndex];
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
 
+    // TODO something isn't correct in here. The view doesn't reflect updated state
+    // on the server or what should be done locally here.
+
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
     _taskLists[newListIndex].tasks.insert(newItemIndex, task);
@@ -189,6 +190,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
+    await _database.updateTask(task);
     _database.expireTask(task);
   }
 }

@@ -46,6 +46,19 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return setMap(current);
   }
 
+  /// Add a TaskRangeView to the repo.
+  Future<void> setRange(TaskRangeView rangeView) async {
+    var data = await getMap() ?? {};
+    if (rangeView.overdue != null) {
+      data[TaskViewData.overdueKey] = rangeView.overdue!.toMap();
+    }
+    for (var entry in rangeView.entries) {
+      var key = dateKey(entry.key);
+      data[key] = entry.value.toMap();
+    }
+    await setMap(data);
+  }
+
   /// Get all stored data. If no data is available an empty list
   /// will be returned.
   Future<DailyTasksData> get() async {

@@ -376,6 +376,65 @@ class TaskRangeView {
     );
   }
 
+  /// Create a TaskRangeView based on a list of tasks, calendarItems
+  /// and a start date. Tasks will be grouped by `dateKey`
+  /// be grouped into the overdue key.
+  factory TaskRangeView.fromLists({
+    required List<Task> tasks,
+    required List<CalendarItem> calendarItems,
+    required DateTime start,
+    int days = 28,
+  }) {
+    Map<String, List<Task>> taskMap = {};
+    Map<String, List<CalendarItem>> calendarMap = {};
+
+    // Index tasks by date.
+    for (var task in tasks) {
+      var dateKey = task.dateKey;
+      if (taskMap[dateKey] == null) {
+        taskMap[dateKey] = [];
+      }
+      taskMap[dateKey]?.add(task);
+    }
+    // Index calendarItems by date.
+    for (var item in calendarItems) {
+      for (var dateKey in item.dateKeys()) {
+        var itemList = calendarMap[dateKey];
+        if (itemList == null) {
+          calendarMap[dateKey] = [];
+        }
+        itemList?.add(item);
+      }
+    }
+
+    List<TaskViewData> views = [];
+    TaskViewData? overdueView;
+    if (taskMap.containsKey(TaskViewData.overdueKey)) {
+      overdueView = TaskViewData(
+        tasks: taskMap[TaskViewData.overdueKey] ?? [],
+        calendarItems: [],
+      );
+    }
+
+    var end = start.add(Duration(days: days));
+    var current = start;
+    while (current.isBefore(end) || current == end) {
+      var dateStr = formatters.dateString(current);
+      views.add(TaskViewData(
+        tasks: taskMap[dateStr] ?? [],
+        calendarItems: calendarMap[dateStr] ?? [],
+      ));
+      current = current.add(const Duration(days: 1));
+    }
+
+    return TaskRangeView(
+      start: start,
+      days: days,
+      overdue: overdueView,
+      views: views,
+    );
+  }
+
   bool get isEmpty {
     return views.isEmpty;
   }

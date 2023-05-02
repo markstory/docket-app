@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:docket/models/apitoken.dart';
@@ -253,7 +254,7 @@ Future<DailyTasksData> fetchDailyTasks(String apiToken, DateTime date, {bool ove
 }
 
 /// Fetch the tasks and calendar items for the 'Upcoming' view
-Future<DailyTasksData> fetchUpcomingTasks(String apiToken) async {
+Future<TaskRangeView> fetchUpcomingTasks(String apiToken) async {
   var url = _makeUrl('/tasks/upcoming');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
@@ -266,9 +267,11 @@ Future<DailyTasksData> fetchUpcomingTasks(String apiToken) async {
     for (var item in mapData['calendarItems']) {
       calendarItems.add(CalendarItem.fromMap(item));
     }
-    var singleCollection = TaskViewData(tasks: tasks, calendarItems: calendarItems);
-
-    return singleCollection.groupByDay();
+    return TaskRangeView.fromLists(
+      tasks: tasks,
+      calendarItems: calendarItems,
+      start: DateUtils.dateOnly(DateTime.now()),
+    );
   });
 }
 
