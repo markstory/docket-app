@@ -343,8 +343,9 @@ class TaskRangeView {
   final int days;
   final List<TaskViewData> views;
   final TaskViewData? overdue;
+  final bool isFresh;
 
-  const TaskRangeView({required this.start, required this.days, required this.views, this.overdue});
+  const TaskRangeView({required this.start, required this.days, required this.views, this.overdue, this.isFresh = true});
 
   factory TaskRangeView.blank({required DateTime start, required int days}) {
     return TaskRangeView(start: start, days: days, views: []);
@@ -441,6 +442,10 @@ class TaskRangeView {
 
   bool get isNotEmpty {
     return views.isNotEmpty;
+  }
+
+  bool get needsRefresh {
+    return isEmpty || isFresh == false;
   }
 
   Iterable<MapEntry<DateTime, TaskViewData>> get entries sync* {

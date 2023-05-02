@@ -116,6 +116,10 @@ void main() {
       expect(viewmodel.taskLists.length, equals(28));
     });
 
+    test('loadData() refresh from server when there are stale days', () async {
+      // TODO
+    });
+
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/upcoming') {

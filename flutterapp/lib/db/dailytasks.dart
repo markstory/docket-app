@@ -95,8 +95,11 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
 
   /// Get a list of dates starting from `start` and continuing for `days`
   /// If there are holes in the data, empty TaskViews will be inserted.
+  /// If a day has been expired in the view, the isFresh attribute of TaskRangeView will be false
   Future<TaskRangeView> getRange(DateTime start, {bool overdue = false, int days = 28}) async {
     var end = start.add(Duration(days: days));
+    var isFresh = true;
+
     var data = await getMap();
     if (data == null || data.isEmpty) {
       return TaskRangeView.blank(start: start, days: days);
@@ -109,6 +112,9 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     List<TaskViewData> views = [];
     var current = start;
     while (current.isBefore(end) || current == end) {
+      if (isFresh) {
+        isFresh = isDayFresh(current);
+      }
       var datekey = formatters.dateString(current);
       if (data.containsKey(datekey)) {
         views.add(TaskViewData.fromMap(data[datekey]));
@@ -123,6 +129,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       days: days,
       overdue: overdueView,
       views: views,
+      isFresh: isFresh,
     );
   }
 
@@ -251,7 +258,6 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   bool isDayExpired(DateTime date) {
     return !isDayFresh(date);
   }
-
 
   /// Expire a single day's data
   Future<void> expireDay(DateTime? date, {bool notify = false}) async {

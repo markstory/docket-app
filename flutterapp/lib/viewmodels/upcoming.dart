@@ -50,11 +50,10 @@ class UpcomingViewModel extends ChangeNotifier {
     if (rangeView.isNotEmpty) {
       _buildTaskLists(rangeView);
     }
-    // Use 7 days as a rough guide for only having today 
-    if (!_loading && (rangeView.isEmpty || rangeView.views.length <= 7)) {
+    if (!_loading && rangeView.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.dailyTasks.isFresh()) {
+    if (!_loading && rangeView.needsRefresh) {
       return refreshTasks();
     }
   }
@@ -162,9 +161,6 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var sortMeta = _taskLists[newListIndex];
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
-
-    // TODO something isn't correct in here. The view doesn't reflect updated state
-    // on the server or what should be done locally here.
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
