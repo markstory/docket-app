@@ -80,6 +80,39 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return result;
   }
 
+  /// Get a list of dates starting from `start` and continuing for `days`
+  /// If there are holes in the data, empty TaskViews will be inserted.
+  Future<TaskRangeView> getRange(DateTime start, {bool overdue = false, int days = 28}) async {
+    var end = start.add(Duration(days: days));
+    var data = await getMap();
+    if (data == null || data.isEmpty) {
+      return TaskRangeView.blank(start: start, days: days);
+    }
+    TaskViewData? overdueView;
+    if (overdue && data.containsKey(TaskViewData.overdueKey)) {
+      overdueView = data[TaskViewData.overdueKey];
+    }
+
+    List<TaskViewData> views = [];
+    var current = start;
+    while (current.isBefore(end) || current == end) {
+      var datekey = formatters.dateString(current);
+      if (data.containsKey(datekey)) {
+        views.add(TaskViewData.fromMap(data[datekey]));
+      } else {
+        views.add(TaskViewData(tasks: [], calendarItems: []));
+      }
+      current = current.add(const Duration(days: 1));
+    }
+
+    return TaskRangeView(
+      start: start,
+      days: days,
+      overdue: overdueView,
+      views: views,
+    );
+  }
+
   /// Add a task to the collection
   Future<void> append(Task task) async {
     var data = await get();

@@ -329,4 +329,70 @@ class TaskViewData {
   }
 }
 
+// This type would be much easier to work with if it was a struct
+// As a struct it could contain properties for overdue,
+// the start & end date and the task views in each 'slot'.
 typedef DailyTasksData = Map<String, TaskViewData>;
+
+
+/// Container type for a range of TaskViewData objects.
+/// This helps make UI logic simpler to operate.
+class TaskRangeView {
+  final DateTime start;
+  final int days;
+  final List<TaskViewData> views;
+  final TaskViewData? overdue;
+
+  const TaskRangeView({required this.start, required this.days, required this.views, this.overdue});
+
+  factory TaskRangeView.blank({required DateTime start, required int days}) {
+    return TaskRangeView(start: start, days: days, views: []);
+  }
+
+  factory TaskRangeView.fromTaskViews(DailyTasksData views, DateTime start) {
+    List<TaskViewData> taskViews = [];
+    TaskViewData? overdueView;
+    if (views.containsKey(TaskViewData.overdueKey)) {
+      overdueView = views[TaskViewData.overdueKey];
+    }
+    DateTime end = start;
+    for (var entry in views.entries) {
+      if (entry.key == TaskViewData.overdueKey) {
+        continue;
+      }
+      var current = DateTime.parse(entry.key);
+      if (current.isAfter(end)) {
+        end = current;
+      }
+      taskViews.add(entry.value);
+    }
+
+    return TaskRangeView(
+      start: start,
+      days: end.difference(start).inDays,
+      overdue: overdueView,
+      views: taskViews,
+    );
+  }
+
+  bool get isEmpty {
+    return views.isEmpty;
+  }
+
+  bool get isNotEmpty {
+    return views.isNotEmpty;
+  }
+
+  Iterable<MapEntry<DateTime, TaskViewData>> get entries sync* {
+    var current = start;
+    var end = DateUtils.dateOnly(current.add(Duration(days: days)));
+
+    var i = 0;
+    while (current.isBefore(end)) {
+      yield MapEntry<DateTime, TaskViewData>(current, views[i]);
+
+      current = current.add(const Duration(days: 1));
+      i++;
+    }
+  }
+}

@@ -26,6 +26,10 @@ class UpcomingViewModel extends ChangeNotifier {
     _database.dailyTasks.addListener(listener);
   }
 
+  DateTime get start {
+    return DateUtils.dateOnly(DateTime.now());
+  }
+
   @override
   void dispose() {
     _database.dailyTasks.removeListener(listener);
@@ -42,12 +46,12 @@ class UpcomingViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    var taskViews = await _database.dailyTasks.get();
-    if (taskViews.isNotEmpty) {
-      _buildTaskLists(taskViews);
+    var rangeView = await _database.dailyTasks.getRange(start);
+    if (rangeView.isNotEmpty) {
+      _buildTaskLists(rangeView);
     }
     // Use 7 days as a rough guide for only having today 
-    if (!_loading && (taskViews.isEmpty || taskViews.keys.length <= 7)) {
+    if (!_loading && (rangeView.isEmpty || rangeView.views.length <= 7)) {
       return refresh();
     }
     if (!_loading && !_database.dailyTasks.isFresh()) {
@@ -61,7 +65,8 @@ class UpcomingViewModel extends ChangeNotifier {
 
     var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
     await _database.dailyTasks.set(taskViews);
-    _buildTaskLists(taskViews);
+    var rangeView = TaskRangeView.fromTaskViews(taskViews, start);
+    _buildTaskLists(rangeView);
   }
 
   /// Refresh tasks from server state. Does not use loading
@@ -70,58 +75,35 @@ class UpcomingViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    _database.dailyTasks.set(taskViews);
+    await _database.dailyTasks.set(taskViews);
+    var rangeView = TaskRangeView.fromTaskViews(taskViews, start);
 
-    _buildTaskLists(taskViews);
+    _buildTaskLists(rangeView);
   }
 
-  void _buildTaskLists(DailyTasksData data) {
+  void _buildTaskLists(TaskRangeView rangeView) {
     _taskLists = [];
 
-    // Our DB data structure doesn't have the start/end times yet.
-    // Workaround that by burning CPU.
-    DateTime start = clock.now();
-    DateTime end = start;
-    for (var entry in data.entries) {
-      if (entry.key == TaskViewData.overdueKey) {
-        continue;
-      }
-      var dateVal = DateTime.parse('${entry.key} 00:00:00');
-      if (dateVal.isBefore(start)) {
-        start = dateVal;
-      }
-      if (dateVal.isAfter(end)) {
-        end = dateVal;
-      }
-    }
-
-    var i = 0;
-    var current = start;
-    while (current.isBefore(end) && i < 50) {
-      i = i + 1;
-      var dateStr = formatters.dateString(current);
-
-      var taskView = data[dateStr];
-      if (taskView == null) {
-        current = current.add(const Duration(days: 1));
-        continue;
-      }
+    for (var entry in rangeView.entries) {
+      // var dateStr = formatters.dateString(current);
+      // var taskView = data[dateStr];
       late TaskSortMetadata metadata;
 
-      var title = formatters.compactDate(current);
-      var subtitle = formatters.monthDay(current);
+      var title = formatters.compactDate(entry.key);
+      var subtitle = formatters.monthDay(entry.key);
       if (title == subtitle) {
         subtitle = '';
       }
+      var taskView = entry.value;
 
       // Add day section
       metadata = TaskSortMetadata(
           evening: false,
-          date: current,
+          date: entry.key,
           title: title,
           subtitle: subtitle,
           showButton: true,
-          buttonArgs: TaskSortButtonArgs(dueOn: current),
+          buttonArgs: TaskSortButtonArgs(dueOn: entry.key),
           tasks: taskView.dayTasks(),
           calendarItems: taskView.calendarItems,
           onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
@@ -147,7 +129,7 @@ class UpcomingViewModel extends ChangeNotifier {
       if (eveningTasks.isNotEmpty) {
         metadata = TaskSortMetadata(
             evening: true,
-            date: current,
+            date: entry.key,
             subtitle: 'Evening',
             tasks: eveningTasks,
             onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
@@ -168,8 +150,6 @@ class UpcomingViewModel extends ChangeNotifier {
             });
         _taskLists.add(metadata);
       }
-
-      current = current.add(const Duration(days: 1));
     }
 
     _loading = _silentLoading = false;
