@@ -266,6 +266,7 @@ class TaskViewData {
   /// Convert a single collection into a map of TaskViewData
   /// grouped by date. Used in the upcoming view.
   DailyTasksData groupByDay({int daysToFill = 28, bool groupOverdue = false}) {
+    // TODO move this to TaskRangeView
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
     var start = DateUtils.dateOnly(DateTime.now());
