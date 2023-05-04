@@ -117,7 +117,21 @@ void main() {
     });
 
     test('loadData() refresh from server when there are stale days', () async {
-      // TODO
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/upcoming') {
+          return Response(tasksResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+      db.dailyTasks.expireDay(tomorrow);
+
+      var viewmodel = UpcomingViewModel(db);
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(28));
     });
 
     test('reorderTask() updates state', () async {
