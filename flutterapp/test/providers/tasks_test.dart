@@ -41,6 +41,7 @@ void main() {
   late TasksProvider provider;
 
   var today = DateUtils.dateOnly(DateTime.now());
+  var todayStr = formatters.dateString(today);
 
   var file = File('test_resources/tasks_today.json');
   final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
@@ -58,7 +59,7 @@ void main() {
 
   Future<void> setTodayView(List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.tasksDaily.set(taskView);
+    await db.dailyTasks.set(taskView.groupByDay());
   }
   late CallCounter listener;
 
@@ -71,7 +72,7 @@ void main() {
     });
 
     tearDown(() {
-      db.tasksDaily.removeListener(listener);
+      db.dailyTasks.removeListener(listener);
     });
 
     test('toggleComplete() sends request and removes local data', () async {
@@ -83,15 +84,15 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       setTodayView(tasks);
 
-      db.tasksDaily.addListener(listener);
+      db.dailyTasks.addListener(listener);
       var provider = TasksProvider(db);
 
       await provider.toggleComplete(tasks[0]);
 
       expect(listener.callCount, greaterThan(0));
-      expect(db.tasksDaily.isDayExpired(tasks[0].dueOn!), isTrue);
-      var viewData = await db.tasksDaily.get(today);
-      expect(viewData.tasks.length, equals(1));
+      expect(db.dailyTasks.isDayExpired(tasks[0].dueOn!), isTrue);
+      var viewData = await db.dailyTasks.getDate(today);
+      expect(viewData[todayStr]?.tasks.length, equals(1));
     });
 
     test('toggleComplete() sends request to incomplete and expires data', () async {
@@ -111,13 +112,12 @@ void main() {
       var provider = TasksProvider(db);
       await provider.toggleComplete(task);
 
-      expect(db.tasksDaily.isDayExpired(today), isTrue);
-      expect(db.upcoming.isExpired, isTrue);
+      expect(db.dailyTasks.isDayExpired(today), isTrue);
       expect(db.completedTasks.isExpired, isTrue);
       expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
-      var todayData = await db.tasksDaily.get(today);
-      expect(todayData.tasks.length, equals(1));
+      var todayData = await db.dailyTasks.getDate(today);
+      expect(todayData[todayStr]?.tasks.length, equals(1));
     });
 
     test('deleteTask() removes task and clears local db', () async {
@@ -130,12 +130,12 @@ void main() {
       await setTodayView(tasks);
 
       var provider = TasksProvider(db);
-      db.tasksDaily.addListener(listener);
+      db.dailyTasks.addListener(listener);
 
       await provider.deleteTask(tasks[0]);
 
       expect(listener.callCount, greaterThan(0));
-      expect(db.tasksDaily.isDayExpired(tasks[0].dueOn!), isTrue);
+      expect(db.dailyTasks.isDayExpired(tasks[0].dueOn!), isTrue);
     });
 
     test('deleteTask() reduces the local project incomplete task count', () async {
@@ -178,8 +178,8 @@ void main() {
       expect(updated.id, equals(1));
       expect(updated.title, equals('fold the towels'));
 
-      var todayData = await db.tasksDaily.get(today);
-      expect(todayData.tasks.length, equals(2));
+      var todayData = await db.dailyTasks.getDate(today);
+      expect(todayData[todayStr]?.tasks.length, equals(2));
     });
 
     test('toggleSubtask() call API and update local task', () async {

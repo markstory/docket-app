@@ -45,22 +45,29 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
   var urlDate = formatters.dateString(today);
 
+  var twoDaysAgo = DateUtils.dateOnly(today.subtract(const Duration(days: 2)));
+
   var file = File('test_resources/tasks_today.json');
   final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
+
+  file = File('test_resources/tasks_upcoming.json');
+  final tasksTodayWithOverdueResponseFixture = file.readAsStringSync()
+      .replaceAll('__TODAY__', urlDate)
+      .replaceAll('__TOMORROW__', formatters.dateString(twoDaysAgo));
 
   file = File('test_resources/project_list.json');
   final projectListResponseFixture = file.readAsStringSync();
 
   Future<void> setTodayView(LocalDatabase db, List<Task> tasks) async {
-    var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.tasksDaily.set(taskView);
+    var taskView = TaskViewData(tasks: tasks, calendarItems: []).groupByDay(groupOverdue: true);
+    await db.dailyTasks.set(taskView);
   }
 
   group('$TodayViewModel', () {
     var db = LocalDatabase(inTest: true);
 
     setUp(() async {
-      await db.tasksDaily.clearSilent();
+      await db.dailyTasks.clearSilent();
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -118,7 +125,7 @@ void main() {
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       await setTodayView(db, tasks);
-      db.tasksDaily.expire();
+      db.dailyTasks.expire();
 
       var viewmodel = TodayViewModel(db);
 
@@ -127,6 +134,26 @@ void main() {
 
       await viewmodel.loadData();
       expect(viewmodel.taskLists.length, equals(2));
+    });
+
+    test('loadData() only sets today', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/day/$urlDate') {
+          return Response(tasksTodayResponseFixture, 200);
+        }
+        if (request.url.path == '/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var viewmodel = TodayViewModel(db);
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(2));
+
+      // Only today should be set.
+      var data = await db.dailyTasks.get();
+      expect(data.keys.length, equals(1));
     });
 
     test('reorderTask() updates state', () async {
@@ -180,23 +207,27 @@ void main() {
     test('refresh() expires old data', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/tasks/day/$urlDate') {
-          return Response(tasksTodayResponseFixture, 200);
+          // This fixture has old tasks that will be grouped as overdue
+          return Response(tasksTodayWithOverdueResponseFixture, 200);
         }
         if (request.url.path == '/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
       });
-      var twoDays = today.subtract(const Duration(days: 2));
+
       var view = TaskViewData.blank();
-      view.tasks.add(Task.blank(dueOn: twoDays));
-      await db.tasksDaily.set(view);
+      view.tasks.add(Task.blank(dueOn: twoDaysAgo));
+      await db.dailyTasks.setDay(twoDaysAgo, view);
 
       var viewmodel = TodayViewModel(db);
       await viewmodel.refresh();
 
-      var removed = await db.tasksDaily.get(twoDays);
-      expect(removed.isEmpty, isTrue);
+      var stored = await db.dailyTasks.getDate(twoDaysAgo, overdue: true);
+
+      // Should have tasks in overdue
+      expect(stored[TaskViewData.overdueKey]?.tasks.length, equals(1));
+      expect(stored[formatters.dateString(twoDaysAgo)], isNull);
     });
 
     test('refreshTasks() loads data from the server', () async {

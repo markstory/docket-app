@@ -27,12 +27,12 @@ class TodayViewModel extends ChangeNotifier {
   TodayViewModel(LocalDatabase database) {
     _taskLists = [];
     _database = database;
-    _database.tasksDaily.addListener(listener);
+    _database.dailyTasks.addListener(listener);
   }
 
   @override
   void dispose() {
-    _database.tasksDaily.removeListener(listener);
+    _database.dailyTasks.removeListener(listener);
     super.dispose();
   }
 
@@ -54,14 +54,15 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
-    var taskView = await _database.tasksDaily.get(today);
+    // Update to us the upcoming repo.
+    var taskView = await _database.dailyTasks.getDate(today, overdue: true);
     if (taskView.isEmpty == false) {
       _buildTaskLists(taskView);
     }
     if (!_loading && taskView.isEmpty) {
       return refresh();
     }
-    if (!_loading && (!_database.tasksDaily.isDayFresh(today) || _database.tasksDaily.isExpired)) {
+    if (!_loading && !_database.dailyTasks.isDayFresh(today)) {
       return refreshTasks();
     }
   }
@@ -72,9 +73,9 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
-      var taskView = await actions.fetchTasksDaily(_database.apiToken.token, today);
-      _database.tasksDaily.set(taskView);
-      _buildTaskLists(taskView);
+      var taskViews = await actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true);
+      _database.dailyTasks.set(taskViews);
+      _buildTaskLists(taskViews);
     } catch (err) {
       _loadError = true;
       notifyListeners();
@@ -85,18 +86,18 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
     await Future.wait([
-      actions.fetchTasksDaily(_database.apiToken.token, today),
+      actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true),
       actions.fetchProjects(_database.apiToken.token),
     ]).then((results) {
-      var tasksView = results[0] as TaskViewData;
+      var taskViews = results[0] as DailyTasksData;
       var projects = results[1] as List<Project>;
 
       return Future.wait([
         _database.projectMap.replace(projects),
-        _database.tasksDaily.set(tasksView),
+        _database.dailyTasks.set(taskViews),
       ]).then((results) {
-        _buildTaskLists(tasksView);
-        return _database.tasksDaily.removeOlderThan(today);
+        _buildTaskLists(taskViews);
+        return _database.dailyTasks.removeOlderThan(today);
       });
     }).onError((error, stack) {
       _loadError = true;
@@ -104,59 +105,59 @@ class TodayViewModel extends ChangeNotifier {
     });
   }
 
-  void _buildTaskLists(TaskViewData data) {
+  void _buildTaskLists(DailyTasksData data) {
     _overdue = null;
-    var overdueTasks = data.tasks.where((task) => task.dueOn?.isBefore(today) ?? false).toList();
-    if (overdueTasks.isNotEmpty) {
+    var overdueData = data[TaskViewData.overdueKey];
+    if (overdueData != null) {
       _overdue = TaskSortMetadata(
           iconStyle: TaskSortIcon.warning,
           title: 'Overdue',
-          tasks: overdueTasks,
+          tasks: overdueData.tasks,
           onReceive: (task, newIndex, meta) {
             throw Exception('Cannot move task to overdue');
           });
     }
 
-    // No setState() as we don't want to re-render.
-    var todayTasks = TaskSortMetadata(
-        calendarItems: data.calendarItems,
-        title: _overdue != null ? 'Today' : null,
-        tasks: data.tasks.where((task) {
-          return !task.evening && !overdueTasks.contains(task);
-        }).toList(),
-        onReceive: (task, newIndex, meta) {
-          var updates = {'evening': false, 'day_order': newIndex};
-          task.evening = false;
-          task.dayOrder = newIndex;
+    _taskLists = [];
+    var todayStr = formatters.dateString(today);
+    var todayData = data[todayStr];
+    if (todayData != null) {
+      var dayTasks = TaskSortMetadata(
+          calendarItems: todayData.calendarItems,
+          title: _overdue != null ? 'Today' : null,
+          tasks: todayData.dayTasks(),
+          onReceive: (task, newIndex, meta) {
+            var updates = {'evening': false, 'day_order': newIndex};
+            task.evening = false;
+            task.dayOrder = newIndex;
 
-          if (task.dueOn?.isBefore(today) ?? false) {
-            task.dueOn = today;
-            updates['due_on'] = formatters.dateString(today);
-          }
-          return updates;
-        });
+            if (task.dueOn?.isBefore(today) ?? false) {
+              task.dueOn = today;
+              updates['due_on'] = formatters.dateString(today);
+            }
+            return updates;
+          });
+      _taskLists.add(dayTasks);
 
-    var eveningTasks = TaskSortMetadata(
-        iconStyle: TaskSortIcon.evening,
-        title: 'This Evening',
-        showButton: true,
-        buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
-        tasks: data.tasks.where((task) {
-          return task.evening && !overdueTasks.contains(task);
-        }).toList(),
-        onReceive: (task, newIndex, meta) {
-          var updates = {'evening': true, 'day_order': newIndex};
-          task.evening = true;
-          task.dayOrder = newIndex;
+      var eveningTasks = TaskSortMetadata(
+          iconStyle: TaskSortIcon.evening,
+          title: 'This Evening',
+          showButton: true,
+          buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
+          tasks: todayData.eveningTasks(),
+          onReceive: (task, newIndex, meta) {
+            var updates = {'evening': true, 'day_order': newIndex};
+            task.evening = true;
+            task.dayOrder = newIndex;
 
-          if (task.dueOn?.isBefore(today) ?? false) {
-            task.dueOn = today;
-            updates['due_on'] = formatters.dateString(today);
-          }
-          return updates;
-        });
-
-    _taskLists = [todayTasks, eveningTasks];
+            if (task.dueOn?.isBefore(today) ?? false) {
+              task.dueOn = today;
+              updates['due_on'] = formatters.dateString(today);
+            }
+            return updates;
+          });
+      _taskLists.add(eveningTasks);
+    }
 
     _loading = _silentLoading = false;
 
@@ -199,7 +200,6 @@ class TodayViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
-    await _database.tasksDaily.updateTask(task);
-    _database.expireTask(task);
+    await _database.updateTask(task);
   }
 }

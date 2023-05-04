@@ -23,12 +23,16 @@ class UpcomingViewModel extends ChangeNotifier {
 
   UpcomingViewModel(LocalDatabase database) {
     _database = database;
-    _database.upcoming.addListener(listener);
+    _database.dailyTasks.addListener(listener);
+  }
+
+  DateTime get start {
+    return DateUtils.dateOnly(DateTime.now());
   }
 
   @override
   void dispose() {
-    _database.upcoming.removeListener(listener);
+    _database.dailyTasks.removeListener(listener);
     super.dispose();
   }
 
@@ -42,14 +46,14 @@ class UpcomingViewModel extends ChangeNotifier {
 
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
-    var taskViews = await _database.upcoming.get();
-    if (taskViews.isNotEmpty) {
-      _buildTaskLists(taskViews);
+    var rangeView = await _database.dailyTasks.getRange(start);
+    if (rangeView.isNotEmpty) {
+      _buildTaskLists(rangeView);
     }
-    if (!_loading && taskViews.isEmpty) {
+    if (!_loading && rangeView.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.upcoming.isFresh()) {
+    if (!_loading && rangeView.needsRefresh) {
       return refreshTasks();
     }
   }
@@ -58,9 +62,9 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    await _database.upcoming.set(taskViews);
-    _buildTaskLists(taskViews);
+    var rangeView = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    await _database.dailyTasks.setRange(rangeView);
+    _buildTaskLists(rangeView);
   }
 
   /// Refresh tasks from server state. Does not use loading
@@ -68,59 +72,35 @@ class UpcomingViewModel extends ChangeNotifier {
   Future<void> refreshTasks() async {
     _loading = _silentLoading = true;
 
-    var taskViews = await actions.fetchUpcomingTasks(_database.apiToken.token);
-    _database.upcoming.set(taskViews);
+    var rangeView = await actions.fetchUpcomingTasks(_database.apiToken.token);
+    await _database.dailyTasks.setRange(rangeView);
 
-    _buildTaskLists(taskViews);
+    _buildTaskLists(rangeView);
   }
 
-  void _buildTaskLists(UpcomingTasksData data) {
+  void _buildTaskLists(TaskRangeView rangeView) {
     _taskLists = [];
 
-    // Our DB data structure doesn't have the start/end times yet.
-    // Workaround that by burning CPU.
-    DateTime start = clock.now();
-    DateTime end = start;
-    for (var entry in data.entries) {
-      var dateVal = DateTime.parse('${entry.key} 00:00:00');
-      if (dateVal.isBefore(start)) {
-        start = dateVal;
-      }
-      if (dateVal.isAfter(end)) {
-        end = dateVal;
-      }
-    }
-
-    var i = 0;
-    var current = start;
-    while (current.isBefore(end) && i < 50) {
-      i = i + 1;
-      var dateStr = formatters.dateString(current);
-
-      var taskView = data[dateStr];
-      if (taskView == null) {
-        current = current.add(const Duration(days: 1));
-        continue;
-      }
-
-      var eveningTasks = taskView.eveningTasks();
-
+    for (var entry in rangeView.entries) {
+      // var dateStr = formatters.dateString(current);
+      // var taskView = data[dateStr];
       late TaskSortMetadata metadata;
 
-      var title = formatters.compactDate(current);
-      var subtitle = formatters.monthDay(current);
+      var title = formatters.compactDate(entry.key);
+      var subtitle = formatters.monthDay(entry.key);
       if (title == subtitle) {
         subtitle = '';
       }
+      var taskView = entry.value;
 
       // Add day section
       metadata = TaskSortMetadata(
           evening: false,
-          date: current,
+          date: entry.key,
           title: title,
           subtitle: subtitle,
           showButton: true,
-          buttonArgs: TaskSortButtonArgs(dueOn: current),
+          buttonArgs: TaskSortButtonArgs(dueOn: entry.key),
           tasks: taskView.dayTasks(),
           calendarItems: taskView.calendarItems,
           onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
@@ -132,8 +112,9 @@ class UpcomingViewModel extends ChangeNotifier {
             task.evening = false;
 
             if (task.dueOn != meta.date) {
-              task.previousDueOn = meta.date;
+              task.previousDueOn = task.dueOn;
               task.dueOn = meta.date;
+              updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
             }
 
             return updates;
@@ -141,10 +122,11 @@ class UpcomingViewModel extends ChangeNotifier {
       _taskLists.add(metadata);
 
       // Evening sections only have a subtitle and no calendar items.
+      var eveningTasks = taskView.eveningTasks();
       if (eveningTasks.isNotEmpty) {
         metadata = TaskSortMetadata(
             evening: true,
-            date: current,
+            date: entry.key,
             subtitle: 'Evening',
             tasks: eveningTasks,
             onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
@@ -157,16 +139,14 @@ class UpcomingViewModel extends ChangeNotifier {
 
               if (task.dueOn != meta.date) {
                 task.previousDueOn = task.dueOn;
-                task.dueOn = current;
-                updates['due_on'] = formatters.dateString(current);
+                task.dueOn = meta.date;
+                updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
               }
 
               return updates;
             });
         _taskLists.add(metadata);
       }
-
-      current = current.add(const Duration(days: 1));
     }
 
     _loading = _silentLoading = false;
@@ -181,13 +161,6 @@ class UpcomingViewModel extends ChangeNotifier {
     // Get the changes that need to be made on the server.
     var sortMeta = _taskLists[newListIndex];
     var updates = sortMeta.onReceive(task, newItemIndex, sortMeta);
-    if (oldListIndex != newListIndex) {
-      var dueOn = sortMeta.date;
-      if (dueOn != null) {
-        task.dueOn = dueOn;
-        updates['due_on'] = formatters.dateString(dueOn);
-      }
-    }
 
     // Update local state assuming server will be ok.
     _taskLists[oldListIndex].tasks.removeAt(oldItemIndex);
@@ -195,7 +168,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
-    await _database.upcoming.updateTask(task);
+    await _database.updateTask(task);
     _database.expireTask(task);
   }
 
@@ -213,6 +186,7 @@ class UpcomingViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
+    await _database.updateTask(task);
     _database.expireTask(task);
   }
 }

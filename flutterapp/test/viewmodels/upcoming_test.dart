@@ -51,7 +51,7 @@ void main() {
 
   Future<void> setUpcomingView(LocalDatabase db, List<Task> tasks) async {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
-    await db.upcoming.set(taskView.groupByDay());
+    await db.dailyTasks.set(taskView.groupByDay());
   }
 
   group('$UpcomingViewModel', () {
@@ -59,7 +59,7 @@ void main() {
 
     setUp(() async {
       await db.apiToken.set(ApiToken.fake());
-      await db.upcoming.clearSilent();
+      await db.dailyTasks.clearSilent();
     });
 
     test('loadData() refreshes from server', () async {
@@ -107,7 +107,25 @@ void main() {
 
       var tasks = parseTaskList(tasksResponseFixture);
       await setUpcomingView(db, tasks);
-      db.upcoming.expire();
+      db.dailyTasks.expire();
+
+      var viewmodel = UpcomingViewModel(db);
+      expect(viewmodel.taskLists.length, equals(0));
+
+      await viewmodel.loadData();
+      expect(viewmodel.taskLists.length, equals(28));
+    });
+
+    test('loadData() refresh from server when there are stale days', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/tasks/upcoming') {
+          return Response(tasksResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+      var tasks = parseTaskList(tasksResponseFixture);
+      await setUpcomingView(db, tasks);
+      db.dailyTasks.expireDay(tomorrow);
 
       var viewmodel = UpcomingViewModel(db);
       expect(viewmodel.taskLists.length, equals(0));
@@ -131,9 +149,6 @@ void main() {
         }
         throw "Unknown request to ${request.url.path}";
       });
-
-      var tasks = parseTaskList(tasksResponseFixture);
-      await setUpcomingView(db, tasks);
 
       var viewmodel = UpcomingViewModel(db);
       await viewmodel.loadData();

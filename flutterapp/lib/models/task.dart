@@ -158,11 +158,18 @@ class Task {
     if (dueOn == null) {
       return 'No Due Date';
     }
+    if (isOverdue) {
+      return TaskViewData.overdueKey;
+    }
     return formatters.dateString(dueOn!);
   }
 
-  bool get hasDueDate {
-    return dueOn != null;
+  bool get isOverdue {
+    var due = dueOn;
+    if (due == null) {
+      return false;
+    }
+    return due.isBefore(DateUtils.dateOnly(clock.now()));
   }
 }
 
@@ -204,6 +211,8 @@ class Subtask {
 
 /// Container type for APIs that return both tasks and calendar items
 class TaskViewData {
+  static const overdueKey = 'overdue';
+
   final List<Task> tasks;
   final List<CalendarItem> calendarItems;
 
@@ -256,7 +265,8 @@ class TaskViewData {
 
   /// Convert a single collection into a map of TaskViewData
   /// grouped by date. Used in the upcoming view.
-  Map<String, TaskViewData> groupByDay({int daysToFill = 28}) {
+  DailyTasksData groupByDay({int daysToFill = 28, bool groupOverdue = false}) {
+    // TODO move this to TaskRangeView
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
     var start = DateUtils.dateOnly(DateTime.now());
@@ -290,6 +300,14 @@ class TaskViewData {
     // Use a date range to ensure all values are there.
     // This makes screens easier to build I think.
     Map<String, TaskViewData> views = {};
+
+    if (taskMap.containsKey(TaskViewData.overdueKey)) {
+      views[TaskViewData.overdueKey] = TaskViewData(
+        tasks: taskMap[TaskViewData.overdueKey] ?? [],
+        calendarItems: [],
+      );
+    }
+
     var current = start;
     var end = start.add(Duration(days: daysToFill));
     while (current.isBefore(end) || current == end) {
@@ -312,4 +330,134 @@ class TaskViewData {
   }
 }
 
-typedef UpcomingTasksData = Map<String, TaskViewData>;
+// This type would be much easier to work with if it was a struct
+// As a struct it could contain properties for overdue,
+// the start & end date and the task views in each 'slot'.
+typedef DailyTasksData = Map<String, TaskViewData>;
+
+
+/// Container type for a range of TaskViewData objects.
+/// This helps make UI logic simpler to operate.
+class TaskRangeView {
+  final DateTime start;
+  final int days;
+  final List<TaskViewData> views;
+  final TaskViewData? overdue;
+  final bool isFresh;
+
+  const TaskRangeView({required this.start, required this.days, required this.views, this.overdue, this.isFresh = true});
+
+  factory TaskRangeView.blank({required DateTime start, required int days}) {
+    return TaskRangeView(start: start, days: days, views: []);
+  }
+
+  factory TaskRangeView.fromTaskViews(DailyTasksData views, DateTime start) {
+    List<TaskViewData> taskViews = [];
+    TaskViewData? overdueView;
+    if (views.containsKey(TaskViewData.overdueKey)) {
+      overdueView = views[TaskViewData.overdueKey];
+    }
+    DateTime end = start;
+    for (var entry in views.entries) {
+      if (entry.key == TaskViewData.overdueKey) {
+        continue;
+      }
+      var current = DateTime.parse(entry.key);
+      if (current.isAfter(end)) {
+        end = current;
+      }
+      taskViews.add(entry.value);
+    }
+
+    return TaskRangeView(
+      start: start,
+      days: end.difference(start).inDays,
+      overdue: overdueView,
+      views: taskViews,
+    );
+  }
+
+  /// Create a TaskRangeView based on a list of tasks, calendarItems
+  /// and a start date. Tasks will be grouped by `dateKey`
+  /// be grouped into the overdue key.
+  factory TaskRangeView.fromLists({
+    required List<Task> tasks,
+    required List<CalendarItem> calendarItems,
+    required DateTime start,
+    int days = 28,
+  }) {
+    Map<String, List<Task>> taskMap = {};
+    Map<String, List<CalendarItem>> calendarMap = {};
+
+    // Index tasks by date.
+    for (var task in tasks) {
+      var dateKey = task.dateKey;
+      if (taskMap[dateKey] == null) {
+        taskMap[dateKey] = [];
+      }
+      taskMap[dateKey]?.add(task);
+    }
+    // Index calendarItems by date.
+    for (var item in calendarItems) {
+      for (var dateKey in item.dateKeys()) {
+        var itemList = calendarMap[dateKey];
+        if (itemList == null) {
+          calendarMap[dateKey] = [];
+        }
+        itemList?.add(item);
+      }
+    }
+
+    List<TaskViewData> views = [];
+    TaskViewData? overdueView;
+    if (taskMap.containsKey(TaskViewData.overdueKey)) {
+      overdueView = TaskViewData(
+        tasks: taskMap[TaskViewData.overdueKey] ?? [],
+        calendarItems: [],
+      );
+    }
+
+    var end = start.add(Duration(days: days));
+    var current = start;
+    while (current.isBefore(end) || current == end) {
+      var dateStr = formatters.dateString(current);
+      views.add(TaskViewData(
+        tasks: taskMap[dateStr] ?? [],
+        calendarItems: calendarMap[dateStr] ?? [],
+      ));
+      current = current.add(const Duration(days: 1));
+    }
+
+    return TaskRangeView(
+      start: start,
+      days: days,
+      overdue: overdueView,
+      views: views,
+    );
+  }
+
+  bool get isEmpty {
+    return views.isEmpty;
+  }
+
+  bool get isNotEmpty {
+    return views.isNotEmpty;
+  }
+
+  bool get needsRefresh {
+    return isEmpty || isFresh == false;
+  }
+
+  Iterable<MapEntry<DateTime, TaskViewData>> get entries sync* {
+    var current = start;
+    var end = DateUtils.dateOnly(current.add(Duration(days: days)));
+
+    var i = 0;
+    while (current.isBefore(end)) {
+      yield MapEntry<DateTime, TaskViewData>(current, views[i]);
+
+      current = current.add(const Duration(days: 1));
+      i++;
+    }
+  }
+}
