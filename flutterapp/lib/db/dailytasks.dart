@@ -55,6 +55,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     for (var entry in rangeView.entries) {
       var key = dateKey(entry.key);
       data[key] = entry.value.toMap();
+      _lastUpdate[key] = clock.now();
     }
     await setMap(data);
   }
@@ -240,7 +241,10 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
 
   /// Check if a daily view is fresh.
   bool isDayFresh(DateTime date) {
-    if (state == null || duration == null) {
+    if (duration == null) {
+      return true;
+    }
+    if (state == null) {
       return false;
     }
     var key = dateKey(date);
@@ -270,5 +274,4 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       notifyListeners();
     }
   }
-
 }

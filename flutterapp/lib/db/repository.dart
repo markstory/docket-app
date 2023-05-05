@@ -108,6 +108,11 @@ abstract class Repository<T> extends ChangeNotifier {
     return _database.remove(keyName());
   }
 
+  /// Disable the internal cache and freshness checks.
+  void disableCache() {
+    duration = null;
+  }
+
   /// Get the database keyname for this repository,
   String keyName();
 

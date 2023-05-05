@@ -26,7 +26,13 @@ void main() {
 
     setUp(() async {
       var viewdata = TaskViewData.fromMap(decoded);
-      await db.dailyTasks.set(viewdata.groupByDay());
+      var rangeView = TaskRangeView.fromLists(
+        tasks: viewdata.tasks,
+        calendarItems: viewdata.calendarItems,
+        start: today
+      );
+      db.dailyTasks.disableCache();
+      await db.dailyTasks.setRange(rangeView);
       await db.apiToken.set(ApiToken.fake());
     });
 
