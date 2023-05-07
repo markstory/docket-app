@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {Fragment, useEffect, useRef, useState} from 'react';
 import {MenuButton, MenuItem} from '@reach/menu-button';
 import DayPicker from 'react-day-picker';
 import addDays from 'date-fns/addDays';
@@ -104,7 +104,19 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
   const isThisEvening = task.due_on === today && task.evening === true;
   const isTomorrow = task.due_on === tomorrow;
   const isEvening = task.evening;
+  const isWeekend = [0, 6].includes(todayDate.getDay());
+  const isFriday = todayDate.getDay() == 5;
   const futureDue = task.due_on !== null && task.due_on !== today;
+
+  const dayNumber = todayDate.getDay();
+  let monday;
+  if (dayNumber < 1) {
+    monday = addDays(todayDate, 1);
+  } else if (dayNumber > 1) {
+    // Because dayNumber is 0-6, the upcoming monday would
+    // be 8.
+    monday = addDays(todayDate, 8 - dayNumber);
+  }
 
   return (
     <div className="due-on-menu" onClick={clickSink}>
@@ -144,6 +156,28 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
         >
           <InlineIcon icon="sun" />
           {t('Tommorrow')}
+        </MenuItem>
+      )}
+      {isWeekend && monday && (
+        // If today is saturday or sunday, go to monday
+        <MenuItem
+          className="tomorrow"
+          data-testid="to-monday"
+          onSelect={handleButtonClick(toDateString(monday), task.evening)}
+        >
+          <InlineIcon icon="calendar" />
+          {t('On Monday')}
+        </MenuItem>
+      )}
+      {isFriday && monday && (
+        // If today is friday, monday is 3 days later.
+        <MenuItem
+          className="tomorrow"
+          data-testid="to-monday"
+          onSelect={handleButtonClick(toDateString(monday), task.evening)}
+        >
+          <InlineIcon icon="calendar" />
+          {t('On Monday')}
         </MenuItem>
       )}
       {futureDue && isEvening && (
@@ -190,10 +224,10 @@ export function MenuContents({task, onChange}: ContentsProps): JSX.Element {
           checked={task.evening}
           onChange={handleEveningChange}
           label={
-            <React.Fragment>
+            <Fragment>
               <InlineIcon icon="moon" />
               {t('Evening')}
-            </React.Fragment>
+            </Fragment>
           }
         />
       </div>

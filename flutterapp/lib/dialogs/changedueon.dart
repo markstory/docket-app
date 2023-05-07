@@ -26,11 +26,20 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
 
       final isToday = dueOn == today && evening == false;
       final isTodayFriday = dueOn == today && today.weekday == DateTime.friday;
+      final isWeekend = [6, 7].contains(today.weekday);
       final isThisEvening = dueOn == today && evening == true;
       final isTomorrow = dueOn == tomorrow;
       final isEvening = evening;
       final futureDue = dueOn != null && dueOn != today;
       final currentValue = DateUtils.dateOnly(dueOn ?? DateTime.now());
+
+      // Today is friday, in 3 days it will be monday
+      var monday = today.add(const Duration(days: 3));
+      if (today.weekday > 1) {
+        // Because dayNumber is 1-7, the upcoming monday would
+        // be 8.
+        monday = today.add(Duration(days: 8 - today.weekday));
+      }
 
       List<Widget> items = [];
       if (!isToday) {
@@ -88,13 +97,11 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
             }));
       }
 
-      if (isTodayFriday) {
-        // Today is friday, in 3 days it will be monday
-        var monday = today.add(const Duration(days: 3));
+      if (isTodayFriday || isWeekend) {
         items.add(ListTile(
             dense: true,
             leading: Icon(Icons.date_range_outlined, color: docketColors.dueFortnight),
-            title: Text(formatters.compactDate(monday)),
+            title: const Text('On monday'),
             onTap: () {
               completer.complete(ChangeDueOnResult(dueOn: monday, evening: evening));
               Navigator.of(context).pop();
