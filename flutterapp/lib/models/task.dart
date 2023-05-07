@@ -274,9 +274,6 @@ class TaskViewData {
     // Index tasks by date.
     for (var task in tasks) {
       var dueOn = task.dueOn;
-      if (dueOn != null && start.isAfter(dueOn)) {
-        start = dueOn;
-      }
       var dateKey = task.dateKey;
       if (taskMap[dateKey] == null) {
         taskMap[dateKey] = [];
