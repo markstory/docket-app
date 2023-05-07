@@ -108,6 +108,19 @@ abstract class Repository<T> extends ChangeNotifier {
     return _database.remove(keyName());
   }
 
+  /// Disable the internal cache and freshness checks.
+  void disableCache() {
+    duration = null;
+  }
+
+  /// Enable a 1 hr local cache TTL.
+  /// After 1 hour data can still be read but
+  /// is considered stale and refreshes from server
+  /// will be done.
+  void enableCache() {
+    duration = const Duration(hours: 1);
+  }
+
   /// Get the database keyname for this repository,
   String keyName();
 

@@ -60,6 +60,7 @@ void main() {
     setUp(() async {
       await db.apiToken.set(ApiToken.fake());
       await db.dailyTasks.clearSilent();
+      db.dailyTasks.enableCache();
     });
 
     test('loadData() refreshes from server', () async {
