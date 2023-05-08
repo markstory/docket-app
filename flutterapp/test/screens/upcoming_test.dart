@@ -13,9 +13,12 @@ import 'package:docket/screens/upcoming.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   var today = DateUtils.dateOnly(DateTime.now());
+  var tomorrow = today.add(const Duration(days: 1));
 
-  var file = File('test_resources/tasks_today.json');
-  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  var file = File('test_resources/tasks_upcoming.json');
+  final todayResponse = file.readAsStringSync()
+      .replaceAll('__TODAY__', formatters.dateString(today))
+      .replaceAll('__TOMORROW__', formatters.dateString(tomorrow));
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$UpcomingScreen', () {
@@ -23,7 +26,13 @@ void main() {
 
     setUp(() async {
       var viewdata = TaskViewData.fromMap(decoded);
-      await db.dailyTasks.set(viewdata.groupByDay());
+      var rangeView = TaskRangeView.fromLists(
+        tasks: viewdata.tasks,
+        calendarItems: viewdata.calendarItems,
+        start: today
+      );
+      db.dailyTasks.disableCache();
+      await db.dailyTasks.setRange(rangeView);
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -56,6 +65,16 @@ void main() {
 
       expect(find.text('clean dishes'), findsOneWidget);
       expect(find.text('cut grass'), findsOneWidget);
+    });
+
+    testWidgets('shows calendar items', (tester) async {
+      await tester.pumpWidget(EntryPoint(
+          database: db,
+          child: const UpcomingScreen(),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Get haircut'), findsOneWidget);
     });
 
     testWidgets('shows upcoming tasks in evening', (tester) async {

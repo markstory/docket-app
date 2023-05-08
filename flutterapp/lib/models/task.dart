@@ -286,11 +286,10 @@ class TaskViewData {
     // Index calendarItems by date.
     for (var item in calendarItems) {
       for (var dateKey in item.dateKeys()) {
-        var itemList = calendarMap[dateKey];
-        if (itemList == null) {
+        if (calendarMap[dateKey] == null) {
           calendarMap[dateKey] = [];
         }
-        itemList?.add(item);
+        calendarMap[dateKey]?.add(item);
       }
     }
 
@@ -397,11 +396,10 @@ class TaskRangeView {
     // Index calendarItems by date.
     for (var item in calendarItems) {
       for (var dateKey in item.dateKeys()) {
-        var itemList = calendarMap[dateKey];
-        if (itemList == null) {
+        if (calendarMap[dateKey] == null) {
           calendarMap[dateKey] = [];
         }
-        itemList?.add(item);
+        calendarMap[dateKey]?.add(item);
       }
     }
 

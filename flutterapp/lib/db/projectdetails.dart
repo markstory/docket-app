@@ -95,7 +95,10 @@ class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
   /// Check if local data for the project matching slug is fresh
   /// Freshness determined by `duration`
   bool isFreshSlug(String? slug) {
-    if (slug == null || duration == null) {
+    if (duration == null) {
+      return true;
+    }
+    if (slug == null) {
       return false;
     }
     var lastUpdate = _lastUpdate[slug];
