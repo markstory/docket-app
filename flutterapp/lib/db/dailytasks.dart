@@ -216,6 +216,16 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     }
   }
 
+  Future<void> removeFromOverdue(Task task) async {
+    var data = await getMap() ?? {};
+    var viewdata = data[TaskViewData.overdueKey];
+    if (viewdata == null || viewdata['tasks'] == null) {
+      return;
+    }
+    viewdata['tasks'].removeWhere((item) => item['id'] == task.id);
+    await setMap(viewdata);
+  }
+
   /// Remove all day views older than date
   /// Used to garbage collect old data.
   /// Will not remove 'overdue' as that day view is special.

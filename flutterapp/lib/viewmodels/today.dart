@@ -73,6 +73,7 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
+      // TODO move this to a RangeView so that overdue is easier to manage.
       var taskViews = await actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true);
       _database.dailyTasks.set(taskViews);
       _buildTaskLists(taskViews);
@@ -182,6 +183,7 @@ class TodayViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
+    await _database.dailyTasks.removeFromOverdue(task);
     _database.expireTask(task);
   }
 

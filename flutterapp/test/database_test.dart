@@ -13,6 +13,7 @@ void main() {
   var database = LocalDatabase(inTest: true);
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
+  var yesterday = today.subtract(const Duration(days: 1));
   var todayStr = formatters.dateString(today);
   var tomorrowStr = formatters.dateString(tomorrow);
 
@@ -424,6 +425,31 @@ void main() {
       expect(work.tasks.length, equals(1));
       expect(work.tasks[0].title, equals('Do accounting'));
       expect(database.projectDetails.isFreshSlug('work'), isFalse);
+    });
+
+    test('removeFromOverdue() removes', () async {
+      var old = Task.blank();
+      old.id = 2;
+      old.title = 'first task';
+      old.dueOn = yesterday;
+      old.projectSlug = 'home';
+      old.dayOrder = 0;
+
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Pay bills';
+      task.dueOn = today;
+      task.projectSlug = 'home';
+      task.dayOrder = 0;
+
+      await database.dailyTasks.set({
+        TaskViewData.overdueKey: TaskViewData(tasks: [old], calendarItems: []),
+        todayStr: TaskViewData(tasks: [task], calendarItems: [])
+      });
+      await database.dailyTasks.removeFromOverdue(old);
+
+      var taskData = await database.dailyTasks.getDate(today, overdue: true);
+      expect(taskData[TaskViewData.overdueKey], isNull);
     });
 
     test('createTask() adds task to today view', () async {

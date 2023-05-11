@@ -281,6 +281,7 @@ void main() {
 
       await viewmodel.moveOverdue(overdue, 0, 0);
       expect(viewmodel.taskLists[0].tasks[0].title, equals('something old'));
+      expect(viewmodel.overdue, isNull);
     });
   });
 }
