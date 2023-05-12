@@ -64,7 +64,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   /// will be returned.
   Future<DailyTasksData> get() async {
     var data = await getMap();
-    if (data == null || data.isEmpty || data.runtimeType == List) {
+    if (data == null || data.isEmpty) {
+      await setMap({});
       return {};
     }
     DailyTasksData result = {};
