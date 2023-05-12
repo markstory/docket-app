@@ -239,6 +239,14 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   /// Used to garbage collect old data.
   /// Will not remove 'overdue' as that day view is special.
   Future<void> removeOlderThan(DateTime date) async {
+    // TODO what if instead of deleting these keys.
+    // They were compacted into the overdue key.
+    // The overdue key would act as a 'slop' bucket 
+    // this makes it much easier to manage state internally
+    // as network data could be added as is, and the db can
+    // manage compacting old days into the 'overdue' bucket
+    // when views are created.
+    // This cleanup process will need to also check that old blocks are empty.
     var data = await getMap() ?? {};
     List<String> removeKeys = [];
     for (var key in data.keys) {
