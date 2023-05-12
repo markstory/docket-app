@@ -55,14 +55,14 @@ class TodayViewModel extends ChangeNotifier {
   /// or when database events are received.
   Future<void> loadData() async {
     // Update to us the upcoming repo.
-    var taskView = await _database.dailyTasks.getDate(today, overdue: true);
-    if (taskView.isEmpty == false) {
-      _buildTaskLists(taskView);
+    var rangeView = await _database.dailyTasks.getDate(today, overdue: true);
+    if (rangeView.isNotEmpty) {
+      _buildTaskLists(rangeView);
     }
-    if (!_loading && taskView.isEmpty) {
+    if (!_loading && rangeView.isEmpty) {
       return refresh();
     }
-    if (!_loading && !_database.dailyTasks.isDayFresh(today)) {
+    if (!_loading && rangeView.needsRefresh) {
       return refreshTasks();
     }
   }
@@ -73,10 +73,9 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
-      // TODO move this to a RangeView so that overdue is easier to manage.
-      var taskViews = await actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true);
-      _database.dailyTasks.set(taskViews);
-      _buildTaskLists(taskViews);
+      var rangeView = await actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true);
+      _database.dailyTasks.setRange(rangeView);
+      _buildTaskLists(rangeView);
     } catch (err) {
       _loadError = true;
       notifyListeners();
@@ -90,14 +89,14 @@ class TodayViewModel extends ChangeNotifier {
       actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true),
       actions.fetchProjects(_database.apiToken.token),
     ]).then((results) {
-      var taskViews = results[0] as DailyTasksData;
+      var rangeView = results[0] as TaskRangeView;
       var projects = results[1] as List<Project>;
 
       return Future.wait([
         _database.projectMap.replace(projects),
-        _database.dailyTasks.set(taskViews),
+        _database.dailyTasks.setRange(rangeView),
       ]).then((results) {
-        _buildTaskLists(taskViews);
+        _buildTaskLists(rangeView);
         return _database.dailyTasks.removeOlderThan(today);
       });
     }).onError((error, stack) {
@@ -106,9 +105,9 @@ class TodayViewModel extends ChangeNotifier {
     });
   }
 
-  void _buildTaskLists(DailyTasksData data) {
+  void _buildTaskLists(TaskRangeView rangeView) {
     _overdue = null;
-    var overdueData = data[TaskViewData.overdueKey];
+    var overdueData = rangeView.overdue;
     if (overdueData != null) {
       _overdue = TaskSortMetadata(
           iconStyle: TaskSortIcon.warning,
@@ -120,13 +119,13 @@ class TodayViewModel extends ChangeNotifier {
     }
 
     _taskLists = [];
-    var todayStr = formatters.dateString(today);
-    var todayData = data[todayStr];
-    if (todayData != null) {
+    for (var entry in rangeView.entries) {
+      var taskView = entry.value;
+
       var dayTasks = TaskSortMetadata(
-          calendarItems: todayData.calendarItems,
+          calendarItems: taskView.calendarItems,
           title: _overdue != null ? 'Today' : null,
-          tasks: todayData.dayTasks(),
+          tasks: taskView.dayTasks(),
           onReceive: (task, newIndex, meta) {
             var updates = {'evening': false, 'day_order': newIndex};
             task.evening = false;
@@ -145,7 +144,7 @@ class TodayViewModel extends ChangeNotifier {
           title: 'This Evening',
           showButton: true,
           buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
-          tasks: todayData.eveningTasks(),
+          tasks: taskView.eveningTasks(),
           onReceive: (task, newIndex, meta) {
             var updates = {'evening': true, 'day_order': newIndex};
             task.evening = true;

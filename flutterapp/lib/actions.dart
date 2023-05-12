@@ -233,7 +233,7 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 
 /// Get tasks and calendaritems for a single day.
 /// Generally used for today view.
-Future<DailyTasksData> fetchDailyTasks(String apiToken, DateTime date, {bool overdue = true}) async {
+Future<TaskRangeView> fetchDailyTasks(String apiToken, DateTime date, {bool overdue = true}) async {
   var urlDate = formatters.dateString(date);
   var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
@@ -247,9 +247,12 @@ Future<DailyTasksData> fetchDailyTasks(String apiToken, DateTime date, {bool ove
     for (var item in mapData['calendarItems']) {
       calendarItems.add(CalendarItem.fromMap(item));
     }
-    var initial = TaskViewData(tasks: tasks, calendarItems: calendarItems);
-
-    return initial.groupByDay(daysToFill: 0, groupOverdue: overdue);
+    return TaskRangeView.fromLists(
+      tasks: tasks,
+      calendarItems: calendarItems,
+      start: DateUtils.dateOnly(DateTime.now()),
+      days: 1,
+    );
   });
 }
 

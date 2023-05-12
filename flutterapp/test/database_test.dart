@@ -153,8 +153,8 @@ void main() {
       expect(todayListener.callCount, greaterThan(0));
 
       var todayData = await database.dailyTasks.getDate(today);
-      expect(todayData[todayStr]?.tasks.length, equals(1));
-      expect(todayData[todayStr]?.tasks[0].title, equals(task.title));
+      expect(todayData.views[0].tasks.length, equals(1));
+      expect(todayData.views[0].tasks[0].title, equals(task.title));
 
       // While create is generally safe we should refetch
       // to ensure dayOrder/childOrder are synced.
@@ -185,8 +185,8 @@ void main() {
       await database.updateTask(task);
 
       var todayData = await database.dailyTasks.getDate(today);
-      expect(todayData[todayStr]?.tasks.length, equals(2));
-      expect(todayData[todayStr]?.tasks[1].title, equals(task.title));
+      expect(todayData.views[0].tasks.length, equals(2));
+      expect(todayData.views[0].tasks[1].title, equals(task.title));
 
       // View should be expired so that we refetch
       expect(database.dailyTasks.isDayExpired(today), isTrue);
@@ -449,7 +449,7 @@ void main() {
       await database.dailyTasks.removeFromOverdue(old);
 
       var taskData = await database.dailyTasks.getDate(today, overdue: true);
-      expect(taskData[TaskViewData.overdueKey], isNull);
+      expect(taskData.overdue, isNull);
     });
 
     test('createTask() adds task to today view', () async {
@@ -463,8 +463,8 @@ void main() {
       expect(database.dailyTasks.isDayExpired(today), isTrue);
 
       var todayTasks = await database.dailyTasks.getDate(today);
-      expect(todayTasks[todayStr]?.tasks.length, equals(1));
-      expect(todayTasks[todayStr]?.tasks[0].title, equals(task.title));
+      expect(todayTasks.views[0].tasks.length, equals(1));
+      expect(todayTasks.views[0].tasks[0].title, equals(task.title));
     });
 
     test('createTask() adds task to taskDaily view', () async {

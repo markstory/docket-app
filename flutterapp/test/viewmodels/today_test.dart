@@ -226,8 +226,8 @@ void main() {
       var stored = await db.dailyTasks.getDate(twoDaysAgo, overdue: true);
 
       // Should have tasks in overdue
-      expect(stored[TaskViewData.overdueKey]?.tasks.length, equals(1));
-      expect(stored[formatters.dateString(twoDaysAgo)], isNull);
+      expect(stored.overdue?.tasks.length, equals(1));
+      expect(stored.views.length, equals(0));
     });
 
     test('refreshTasks() loads data from the server', () async {

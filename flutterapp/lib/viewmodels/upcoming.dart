@@ -82,8 +82,6 @@ class UpcomingViewModel extends ChangeNotifier {
     _taskLists = [];
 
     for (var entry in rangeView.entries) {
-      // var dateStr = formatters.dateString(current);
-      // var taskView = data[dateStr];
       late TaskSortMetadata metadata;
 
       var title = formatters.compactDate(entry.key);

@@ -91,7 +91,7 @@ void main() {
 
       expect(listener.callCount, greaterThan(0));
       expect(db.dailyTasks.isDayExpired(tasks[0].dueOn!), isTrue);
-      var viewData = await db.dailyTasks.getDate(today);
+      var viewData = await db.dailyTasks.get();
       expect(viewData[todayStr]?.tasks.length, equals(1));
     });
 
@@ -116,7 +116,7 @@ void main() {
       expect(db.completedTasks.isExpired, isTrue);
       expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
-      var todayData = await db.dailyTasks.getDate(today);
+      var todayData = await db.dailyTasks.get();
       expect(todayData[todayStr]?.tasks.length, equals(1));
     });
 
@@ -178,7 +178,7 @@ void main() {
       expect(updated.id, equals(1));
       expect(updated.title, equals('fold the towels'));
 
-      var todayData = await db.dailyTasks.getDate(today);
+      var todayData = await db.dailyTasks.get();
       expect(todayData[todayStr]?.tasks.length, equals(2));
     });
 

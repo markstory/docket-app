@@ -77,21 +77,30 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
 
   /// Read the tasks for a single date.
   /// Use `overdue` to also include tasks in the overdue bucket.
-  Future<DailyTasksData> getDate(DateTime date, {bool overdue = false}) async {
+  Future<TaskRangeView> getDate(DateTime date, {bool overdue = false}) async {
     var data = await getMap();
     if (data == null || data.isEmpty) {
-      return {};
+      return TaskRangeView.blank(start: date, days: 1);
     }
-    DailyTasksData result = {};
+    TaskViewData? overdueView;
     if (overdue && data.containsKey(TaskViewData.overdueKey)) {
-      result[TaskViewData.overdueKey] = TaskViewData.fromMap(data[TaskViewData.overdueKey]);
+      overdueView = TaskViewData.fromMap(data[TaskViewData.overdueKey]);
     }
+    var isFresh = false;
+    List<TaskViewData> views = [];
     var key = dateKey(date);
     if (data.containsKey(key)) {
-      result[key] = TaskViewData.fromMap(data[key]);
+      isFresh = isDayFresh(date);
+      views.add(TaskViewData.fromMap(data[key]));
     }
 
-    return result;
+    return TaskRangeView(
+      start: date,
+      days: 1,
+      overdue: overdueView,
+      views: views,
+      isFresh: isFresh,
+    );
   }
 
   /// Get a list of dates starting from `start` and continuing for `days`
