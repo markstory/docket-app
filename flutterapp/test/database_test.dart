@@ -14,6 +14,8 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
   var yesterday = today.subtract(const Duration(days: 1));
+
+  var yesterdayStr = formatters.dateString(yesterday);
   var todayStr = formatters.dateString(today);
   var tomorrowStr = formatters.dateString(tomorrow);
 
@@ -427,7 +429,7 @@ void main() {
       expect(database.projectDetails.isFreshSlug('work'), isFalse);
     });
 
-    test('removeFromOverdue() removes', () async {
+    test('removeOlderThan() removes empty old sections', () async {
       var old = Task.blank();
       old.id = 2;
       old.title = 'first task';
@@ -442,14 +444,23 @@ void main() {
       task.projectSlug = 'home';
       task.dayOrder = 0;
 
+      var twoDaysAgoStr = formatters.dateString(today.subtract(const Duration(days: 2)));
+
       await database.dailyTasks.set({
-        TaskViewData.overdueKey: TaskViewData(tasks: [old], calendarItems: []),
+        twoDaysAgoStr: TaskViewData(tasks: [], calendarItems: []),
+        yesterdayStr: TaskViewData(tasks: [old], calendarItems: []),
         todayStr: TaskViewData(tasks: [task], calendarItems: [])
       });
-      await database.dailyTasks.removeFromOverdue(old);
+      await database.dailyTasks.removeOlderThan(today);
 
       var taskData = await database.dailyTasks.getDate(today, overdue: true);
-      expect(taskData.overdue, isNull);
+      expect(taskData.overdue, isNotNull);
+      expect(taskData.overdue!.tasks.length, equals(1));
+
+      var taskLists = await database.dailyTasks.get();
+      expect(taskLists[todayStr], isNotNull);
+      expect(taskLists[yesterdayStr], isNotNull);
+      expect(taskLists[twoDaysAgoStr], isNull);
     });
 
     test('createTask() adds task to today view', () async {

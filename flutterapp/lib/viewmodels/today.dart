@@ -182,8 +182,7 @@ class TodayViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
-    await _database.dailyTasks.removeFromOverdue(task);
-    _database.expireTask(task);
+    await _database.updateTask(task);
   }
 
   /// Reorder a task based on the protocol defined by

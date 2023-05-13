@@ -41,7 +41,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   Future<void> setDay(DateTime day, TaskViewData data) async {
     var current = await getMap() ?? {};
     var key = dateKey(day);
-    current[key] = data;
+    current[key] = data.toMap();
 
     return setMap(current);
   }
@@ -50,8 +50,17 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   Future<void> setRange(TaskRangeView rangeView) async {
     var data = await getMap() ?? {};
     if (rangeView.overdue != null) {
-      data[TaskViewData.overdueKey] = rangeView.overdue!.toMap();
+      Set<String> visited = {};
+      for (var task in rangeView.overdue!.tasks) {
+        var dateKey = task.dateKey;
+        if (data[dateKey] == null || !visited.contains(dateKey)) {
+          data[dateKey] = {"tasks": [], "calendarItems": []};
+          visited.add(dateKey);
+        }
+        data[dateKey]["tasks"].add(task.toMap());
+      }
     }
+
     for (var entry in rangeView.entries) {
       var key = dateKey(entry.key);
       data[key] = entry.value.toMap();
@@ -76,6 +85,25 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return result;
   }
 
+  TaskViewData? _getOverdue(Map<String, dynamic> data, DateTime start, {int limit = 14}) {
+    List<Map<String, dynamic>> overdueTasks = [];
+    var offset = 1;
+    while (offset < limit) {
+      var check = dateKey(start.subtract(Duration(days: offset)));
+      if (data[check] != null) {
+        for (Map<String, dynamic> taskData in data[check]["tasks"] ?? []) {
+          overdueTasks.add(taskData);
+        }
+      }
+      offset++;
+    }
+    if (overdueTasks.isNotEmpty) {
+      return TaskViewData.fromMap({"tasks": overdueTasks, "calendarItems": []});
+    }
+
+    return null;
+  }
+
   /// Read the tasks for a single date.
   /// Use `overdue` to also include tasks in the overdue bucket.
   Future<TaskRangeView> getDate(DateTime date, {bool overdue = false}) async {
@@ -84,9 +112,10 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       return TaskRangeView.blank(start: date, days: 1);
     }
     TaskViewData? overdueView;
-    if (overdue && data.containsKey(TaskViewData.overdueKey)) {
-      overdueView = TaskViewData.fromMap(data[TaskViewData.overdueKey]);
+    if (overdue) {
+      overdueView = _getOverdue(data, date);
     }
+
     var isFresh = false;
     List<TaskViewData> views = [];
     var key = dateKey(date);
@@ -116,8 +145,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       return TaskRangeView.blank(start: start, days: days);
     }
     TaskViewData? overdueView;
-    if (overdue && data.containsKey(TaskViewData.overdueKey)) {
-      overdueView = data[TaskViewData.overdueKey];
+    if (overdue) {
+      overdueView = _getOverdue(data, start);
     }
 
     List<TaskViewData> views = [];
@@ -226,37 +255,22 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     }
   }
 
-  Future<void> removeFromOverdue(Task task) async {
-    var data = await getMap() ?? {};
-    var viewdata = data[TaskViewData.overdueKey];
-    if (viewdata == null || viewdata['tasks'] == null) {
-      return;
-    }
-    viewdata['tasks'].removeWhere((item) => item['id'] == task.id);
-    await setMap(viewdata);
-  }
-
-  /// Remove all day views older than date
+  /// Remove all day views older than date that are empty
   /// Used to garbage collect old data.
-  /// Will not remove 'overdue' as that day view is special.
   Future<void> removeOlderThan(DateTime date) async {
-    // TODO what if instead of deleting these keys.
-    // They were compacted into the overdue key.
-    // The overdue key would act as a 'slop' bucket 
-    // this makes it much easier to manage state internally
-    // as network data could be added as is, and the db can
-    // manage compacting old days into the 'overdue' bucket
-    // when views are created.
-    // This cleanup process will need to also check that old blocks are empty.
     var data = await getMap() ?? {};
     List<String> removeKeys = [];
     for (var key in data.keys) {
       if (key == TaskViewData.overdueKey) {
+        removeKeys.add(key);
         continue;
       }
       var keyDate = formatters.parseToLocal(key);
-      if (keyDate.isBefore(date)) {
-        removeKeys.add(key);
+      if (keyDate.isBefore(date) && data[key] != null) {
+        var dayData = data[key];
+        if (dayData['tasks']?.isEmpty) {
+          removeKeys.add(key);
+        }
       }
     }
     if (removeKeys.isNotEmpty) {

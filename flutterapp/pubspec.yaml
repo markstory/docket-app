@@ -44,7 +44,7 @@ dependencies:
       url: https://github.com/markstory/DragAndDropLists
       ref: scroll-physics
   flutter_markdown: ^0.6.10
-  sentry_flutter: ^6.9.1
+  sentry_flutter: ^7.5.2
   url_launcher: ^6.1.0
   flutter_appauth: ^4.2.1
 
