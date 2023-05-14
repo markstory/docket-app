@@ -60,7 +60,7 @@ class _TaskFormState extends State<TaskForm> {
         },
       ),
       Padding(
-        padding: const EdgeInsets.fromLTRB(60, 0, 0, 30),
+        padding: const EdgeInsets.fromLTRB(60, 0, 10, 30),
         child: TextField(
           key: const ValueKey('new-subtask'),
           controller: _newtaskController,
