@@ -76,6 +76,7 @@ class TasksProvider extends ChangeNotifier {
 
   // {{{ Subtask methods
   /// Create or Update a subtask and persist to the server.
+  /// @deprecated
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     // Get the index before updating the server so that we can
     // get the index of new subtasks. We're assuming that there is only
@@ -95,6 +96,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   /// Flip subtask.completed and persist to the server.
+  /// @deprecated
   Future<void> toggleSubtask(Task task, Subtask subtask) async {
     subtask.completed = !subtask.completed;
     await actions.toggleSubtask(_database.apiToken.token, task, subtask);
@@ -109,6 +111,7 @@ class TasksProvider extends ChangeNotifier {
   /// Send an API request to move a task
   /// Does not update the local database.
   /// Assumption is that the calling view will refresh from server.
+  /// @deprecated
   Future<void> moveSubtask(Task task, Subtask subtask) async {
     await Future.wait([
       actions.moveSubtask(_database.apiToken.token, task, subtask),
@@ -118,6 +121,7 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// @deprecated
   Future<void> deleteSubtask(Task task, Subtask subtask) async {
     task.subtasks.remove(subtask);
 

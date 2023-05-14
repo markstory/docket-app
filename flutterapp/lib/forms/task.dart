@@ -27,10 +27,14 @@ class _TaskFormState extends State<TaskForm> {
   late bool completed;
   late bool saving = false;
 
+  late TextEditingController _newtaskController;
+
   @override
   void initState() {
     super.initState();
     completed = widget.task.completed;
+
+    _newtaskController = TextEditingController(text: '');
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -56,14 +60,24 @@ class _TaskFormState extends State<TaskForm> {
         },
       ),
       Padding(
-          padding: EdgeInsets.fromLTRB(10, space(0.75), 0, 0),
-          child: TextButton(
-              child: const Text('Add Subtask'),
-              onPressed: () {
-                setState(() {
-                  task.subtasks.add(Subtask.blank());
-                });
-              }))
+        padding: const EdgeInsets.fromLTRB(60, 0, 0, 30),
+        child: TextField(
+          key: const ValueKey('new-subtask'),
+          controller: _newtaskController,
+          decoration: const InputDecoration(
+            hintText: "Add a subtask",
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (String value) async {
+            var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+
+            var subtask = Subtask.blank(title: value);
+            task.subtasks.add(subtask);
+            await viewmodel.saveSubtask(widget.task, subtask);
+            _newtaskController.clear();
+          }
+        ),
+      ),
     ]);
   }
 
