@@ -8,10 +8,9 @@ import {useSubtasks} from 'app/providers/subtasks';
 
 type Props = {
   task: TaskDetailed;
-  onCancel: () => void;
 };
 
-export default function SubtaskAddForm({task, onCancel}: Props) {
+export default function SubtaskAddForm({task}: Props) {
   const [value, setValue] = useState('');
   const [subtasks, setSubtasks] = useSubtasks();
 
@@ -38,7 +37,6 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
     switch (e.key) {
       case 'Esc':
       case 'Escape':
-        onCancel();
         e.stopPropagation();
         break;
     }
@@ -51,7 +49,6 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
           type="text"
           name="title"
           placeholder={t('Take out the trash')}
-          autoFocus
           required
           value={value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
@@ -60,9 +57,6 @@ export default function SubtaskAddForm({task, onCancel}: Props) {
       <div className="button-bar">
         <button className="button-primary" data-testid="save-subtask" type="submit">
           {t('Save')}
-        </button>
-        <button className="button-muted" onClick={onCancel}>
-          {t('Cancel')}
         </button>
       </div>
     </form>

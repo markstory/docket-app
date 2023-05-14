@@ -1,5 +1,6 @@
 .heading-button {
   display: flex;
+  gap: $space / 2;
   align-items: center;
   margin-bottom: $space;
 
@@ -8,6 +9,10 @@
 
   button {
     margin-left: $space;
+  }
+
+  > svg {
+    color: var(--color-muted);
   }
 }
 
