@@ -33,7 +33,6 @@ class _TaskFormState extends State<TaskForm> {
   void initState() {
     super.initState();
     completed = widget.task.completed;
-
     _newtaskController = TextEditingController(text: '');
   }
 
