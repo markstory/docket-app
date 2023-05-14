@@ -20,6 +20,8 @@ class TaskDetailsScreen extends StatefulWidget {
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   late TaskDetailsViewModel viewmodel;
+  bool saving = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskDetailsViewModel>(builder: (context, view, child) {
+      var theme = Theme.of(context);
       Widget body;
       if (view.loading) {
         body = const LoadingIndicator();
@@ -56,16 +59,33 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             padding: EdgeInsets.all(space(1)),
             child: Column(children: [
               TaskForm(
+                formKey: _formKey,
                 task: viewmodel.task,
-                onSave: (task) async => await _onSave(context, task),
-                onComplete: () => Navigator.of(context).pop(),
               ),
             ]),
           ));
       }
       return Portal(
         child: Scaffold(
-          appBar: AppBar(title: const Text('Task Details')),
+          appBar: AppBar(
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+                child: const Text('Save'),
+                onPressed: () async {
+                  if (_formKey.currentState!.validate() && saving == false) {
+                    saving = true;
+                    _formKey.currentState!.save();
+                    await _onSave(context, viewmodel.task);
+                    saving = false;
+                  }
+                }
+              )
+            ],
+            title: const Text('Task Details')
+          ),
           body: body,
         ),
       );

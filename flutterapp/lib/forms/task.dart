@@ -15,35 +15,23 @@ import 'package:docket/theme.dart';
 // Depends on TaskDetailsViewModel.
 class TaskForm extends StatefulWidget {
   final Task task;
-  final Future<void> Function(Task task) onSave;
-  final void Function()? onComplete;
+  final GlobalKey<FormState>? formKey;
 
-  const TaskForm({required this.task, required this.onSave, this.onComplete, super.key});
+  const TaskForm({required this.task, this.formKey, super.key});
 
   @override
   State<TaskForm> createState() => _TaskFormState();
 }
 
 class _TaskFormState extends State<TaskForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late Task task;
   late bool completed;
   late bool saving = false;
 
   @override
   void initState() {
     super.initState();
-    task = widget.task.copy();
-    completed = task.completed;
-  }
-
-  @override
-  void didUpdateWidget(TaskForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Sync changes for deleted subtasks.
-    if (task.subtasks.length != widget.task.subtasks.length) {
-      task = widget.task;
-    }
+    completed = widget.task.completed;
+    _newtaskController = TextEditingController(text: '');
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -82,6 +70,7 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
+    var task = widget.task;
     var projectProvider = Provider.of<ProjectsProvider>(context);
 
     var projectList = projectProvider.getAll();
@@ -101,7 +90,7 @@ class _TaskFormState extends State<TaskForm> {
           var docketColors = theme.extension<DocketColors>()!;
 
           return Form(
-              key: _formKey,
+              key: widget.formKey,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(
@@ -257,19 +246,6 @@ class _TaskFormState extends State<TaskForm> {
                         })),
 
                 _buildSubtasks(context, widget.task),
-
-                ButtonBar(children: [
-                  ElevatedButton(
-                      child: const Text('Save'),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate() && saving == false) {
-                          saving = true;
-                          _formKey.currentState!.save();
-                          await widget.onSave(task);
-                          saving = false;
-                        }
-                      })
-                ])
               ]));
         });
   }
