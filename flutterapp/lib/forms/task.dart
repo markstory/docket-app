@@ -45,6 +45,7 @@ class _TaskFormState extends State<TaskForm> {
     if (task.id == null) {
       return const SizedBox(height: 0, width: 0);
     }
+    var theme = Theme.of(context);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: space(2)),
@@ -63,8 +64,9 @@ class _TaskFormState extends State<TaskForm> {
         child: TextField(
           key: const ValueKey('new-subtask'),
           controller: _newtaskController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: "Add a subtask",
+            hintStyle: TextStyle(color: theme.colorScheme.primary, fontSize: 15),
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (String value) async {
