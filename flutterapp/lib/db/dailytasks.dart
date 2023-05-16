@@ -49,6 +49,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   /// Add a TaskRangeView to the repo.
   Future<void> setRange(TaskRangeView rangeView) async {
     var data = await getMap() ?? {};
+
     if (rangeView.overdue != null) {
       Set<String> visited = {};
       for (var task in rangeView.overdue!.tasks) {
@@ -58,6 +59,18 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
           visited.add(dateKey);
         }
         data[dateKey]["tasks"].add(task.toMap());
+      }
+      // Remove old overdue as we've got new overdue state.
+      Set<String> cleanup = {};
+      for (var key in data.keys) {
+        var keyDate = formatters.parseToLocal(key);
+        if (!visited.contains(key) && keyDate.isBefore(rangeView.start)) {
+          cleanup.add(key);
+        }
+      }
+      // Avoid mutation during iteration
+      for (var key in cleanup) {
+        data.remove(key);
       }
     }
 
@@ -252,32 +265,6 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       await set(data);
 
       expireDay(task.dueOn, notify: true);
-    }
-  }
-
-  /// Remove all day views older than date that are empty
-  /// Used to garbage collect old data.
-  Future<void> removeOlderThan(DateTime date) async {
-    var data = await getMap() ?? {};
-    List<String> removeKeys = [];
-    for (var key in data.keys) {
-      if (key == TaskViewData.overdueKey) {
-        removeKeys.add(key);
-        continue;
-      }
-      var keyDate = formatters.parseToLocal(key);
-      if (keyDate.isBefore(date) && data[key] != null) {
-        var dayData = data[key];
-        if (dayData['tasks']?.isEmpty) {
-          removeKeys.add(key);
-        }
-      }
-    }
-    if (removeKeys.isNotEmpty) {
-      for (var key in removeKeys) {
-          data.remove(key);
-      }
-      await setMap(data);
     }
   }
 

@@ -429,7 +429,17 @@ void main() {
       expect(database.projectDetails.isFreshSlug('work'), isFalse);
     });
 
-    test('removeOlderThan() removes empty old sections', () async {
+
+    test('setRange() removes overdue data', () async {
+      var twoDaysAgo = today.subtract(const Duration(days: 2));
+      var twoDaysAgoStr = formatters.dateString(twoDaysAgo);
+      var older = Task.blank();
+      older.id = 3;
+      older.title = 'older task';
+      older.dueOn = twoDaysAgo;
+      older.projectSlug = 'home';
+      older.dayOrder = 0;
+
       var old = Task.blank();
       old.id = 2;
       old.title = 'first task';
@@ -444,14 +454,13 @@ void main() {
       task.projectSlug = 'home';
       task.dayOrder = 0;
 
-      var twoDaysAgoStr = formatters.dateString(today.subtract(const Duration(days: 2)));
-
       await database.dailyTasks.set({
-        twoDaysAgoStr: TaskViewData(tasks: [], calendarItems: []),
+        twoDaysAgoStr: TaskViewData(tasks: [older], calendarItems: []),
         yesterdayStr: TaskViewData(tasks: [old], calendarItems: []),
         todayStr: TaskViewData(tasks: [task], calendarItems: [])
       });
-      await database.dailyTasks.removeOlderThan(today);
+      var range = TaskRangeView.fromLists(tasks: [old, task], calendarItems: [], start: today, days: 1);
+      await database.dailyTasks.setRange(range);
 
       var taskData = await database.dailyTasks.getDate(today, overdue: true);
       expect(taskData.overdue, isNotNull);
@@ -459,7 +468,8 @@ void main() {
 
       var taskLists = await database.dailyTasks.get();
       expect(taskLists[todayStr], isNotNull);
-      expect(taskLists[yesterdayStr], isNotNull);
+      expect(taskLists[todayStr]!.tasks.length, equals(1));
+      expect(taskLists[yesterdayStr]!.tasks.length, equals(1));
       expect(taskLists[twoDaysAgoStr], isNull);
     });
 

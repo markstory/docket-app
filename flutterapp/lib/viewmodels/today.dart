@@ -96,8 +96,7 @@ class TodayViewModel extends ChangeNotifier {
         _database.projectMap.replace(projects),
         _database.dailyTasks.setRange(rangeView),
       ]).then((results) {
-        _buildTaskLists(rangeView);
-        return _database.dailyTasks.removeOlderThan(today);
+        return _buildTaskLists(rangeView);
       });
     }).onError((error, stack) {
       _loadError = true;
