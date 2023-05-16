@@ -4,6 +4,8 @@ import 'package:docket/models/calendaritem.dart';
 import 'package:flutter/material.dart';
 
 class Task {
+  static const idPending = -1;
+
   int? id;
   int? projectId;
   String projectSlug;
@@ -65,6 +67,13 @@ class Task {
     );
   }
 
+  factory Task.pending() {
+    var task = Task.blank();
+    task.id = Task.idPending;
+
+    return task;
+  }
+
   factory Task.fromMap(Map<String, dynamic> json) {
     var projectId = json['project_id'];
     projectId ??= json['project']?['id'];
@@ -121,6 +130,10 @@ class Task {
       subtaskCount: subtaskCount,
       completeSubtaskCount: completeSubtaskCount,
     );
+  }
+
+  bool get hasId {
+    return id != null && id != Task.idPending;
   }
 
   Task copy() {

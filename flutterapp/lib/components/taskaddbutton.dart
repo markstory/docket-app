@@ -15,7 +15,7 @@ class TaskAddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var task = Task.blank();
+    var task = Task.pending();
 
     if (dueOn != null) {
       task.dueOn = dueOn;

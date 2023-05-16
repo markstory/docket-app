@@ -41,10 +41,6 @@ class _TaskFormState extends State<TaskForm> {
   /// while other changes are deferred. Perhaps task updates should apply immediately
   /// or as a time throttled async change?
   Widget _buildSubtasks(BuildContext context, Task task) {
-    // No subtasks for unsaved tasks.
-    if (task.id == null) {
-      return const SizedBox(height: 0, width: 0);
-    }
     var theme = Theme.of(context);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
