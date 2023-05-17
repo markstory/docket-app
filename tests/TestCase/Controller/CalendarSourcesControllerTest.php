@@ -130,7 +130,7 @@ class CalendarSourcesControllerTest extends TestCase
     /**
      * @vcr controller_calendarsources_sync.yml
      */
-    public function testSyncUpdateExistingRemoveDeleted(): void
+    public function testSyncReplaceExistingRemoveDeleted(): void
     {
         FrozenTime::setTestNow('2021-07-11 12:13:14');
 
@@ -155,8 +155,11 @@ class CalendarSourcesControllerTest extends TestCase
 
         $this->assertFalse($this->CalendarItems->exists(['id' => $remove->id]));
 
-        $updated = $this->CalendarItems->get($update->id);
-        $this->assertSame('Dentist Appointment', $updated->title);
+        $updated = $this->CalendarItems->findById($update->id)->first();
+        $this->assertNull($updated);
+
+        $created = $this->CalendarItems->findByTitle('Dentist Appointment')->firstOrFail();
+        $this->assertNotNull($created);
     }
 
     /**

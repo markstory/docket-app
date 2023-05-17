@@ -180,9 +180,8 @@ void main() {
       await tester.tap(menu);
       await tester.pumpAndSettle();
 
-      // Choose a color option.
-      // TODO figure out why warnings need to be disabled here.
-      var menuOption = find.byKey(const ValueKey('color-green')).first;
+      // Choose a color option, for some reason colors are always offstage?
+      var menuOption = find.byKey(const ValueKey('color-green'), skipOffstage: false).first;
       await tester.ensureVisible(menuOption);
       await tester.tap(menuOption, warnIfMissed: false);
       await tester.pumpAndSettle();
