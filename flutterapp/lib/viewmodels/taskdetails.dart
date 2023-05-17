@@ -147,6 +147,8 @@ class TaskDetailsViewModel extends ChangeNotifier {
     task.subtasks[index] = subtask;
     await _database.updateTask(task);
 
+    _task = task;
+
     notifyListeners();
   }
 

@@ -69,8 +69,9 @@ class _TaskFormState extends State<TaskForm> {
             var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
 
             var subtask = Subtask.blank(title: value);
+            subtask.ranking = task.subtasks.length + 1;
             task.subtasks.add(subtask);
-            await viewmodel.saveSubtask(widget.task, subtask);
+            await viewmodel.saveSubtask(task, subtask);
             _newtaskController.clear();
           }
         ),
@@ -255,7 +256,7 @@ class _TaskFormState extends State<TaskForm> {
                           });
                         })),
 
-                _buildSubtasks(context, widget.task),
+                _buildSubtasks(context, task),
               ]));
         });
   }
