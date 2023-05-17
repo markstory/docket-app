@@ -26,14 +26,25 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   late bool completed;
   late bool saving = false;
+  late Task task;
 
   late TextEditingController _newtaskController;
 
   @override
   void initState() {
     super.initState();
+    task = widget.task.copy();
     completed = widget.task.completed;
     _newtaskController = TextEditingController(text: '');
+  }
+
+  @override
+  void didUpdateWidget(TaskForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync changes for deleted subtasks.
+    if (task.subtasks.length != widget.task.subtasks.length) {
+      task = widget.task;
+    }
   }
 
   /// Create the subtasks section for task details. This is a bit
