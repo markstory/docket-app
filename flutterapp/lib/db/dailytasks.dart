@@ -50,8 +50,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   Future<void> setRange(TaskRangeView rangeView) async {
     var data = await getMap() ?? {};
 
+    Set<String> visited = {};
     if (rangeView.overdue != null) {
-      Set<String> visited = {};
       for (var task in rangeView.overdue!.tasks) {
         var dateKey = task.dateKey;
         if (data[dateKey] == null || !visited.contains(dateKey)) {
@@ -60,18 +60,19 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
         }
         data[dateKey]["tasks"].add(task.toMap());
       }
-      // Remove old overdue as we've got new overdue state.
-      Set<String> cleanup = {};
-      for (var key in data.keys) {
-        var keyDate = formatters.parseToLocal(key);
-        if (!visited.contains(key) && keyDate.isBefore(rangeView.start)) {
-          cleanup.add(key);
-        }
+    }
+
+    // Remove old overdue as we've got new overdue state.
+    Set<String> cleanup = {};
+    for (var key in data.keys) {
+      var keyDate = formatters.parseToLocal(key);
+      if (!visited.contains(key) && keyDate.isBefore(rangeView.start)) {
+        cleanup.add(key);
       }
-      // Avoid mutation during iteration
-      for (var key in cleanup) {
-        data.remove(key);
-      }
+    }
+    // Avoid mutation during iteration
+    for (var key in cleanup) {
+      data.remove(key);
     }
 
     for (var entry in rangeView.entries) {
@@ -103,8 +104,10 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var offset = 1;
     while (offset < limit) {
       var check = dateKey(start.subtract(Duration(days: offset)));
+      print('Reading data for $check');
       if (data[check] != null) {
         for (Map<String, dynamic> taskData in data[check]["tasks"] ?? []) {
+          print("Adding ${taskData['title']}");
           overdueTasks.add(taskData);
         }
       }
@@ -132,6 +135,7 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var isFresh = false;
     List<TaskViewData> views = [];
     var key = dateKey(date);
+    print('Reading data for $key');
     if (data.containsKey(key)) {
       isFresh = isDayFresh(date);
       views.add(TaskViewData.fromMap(data[key]));
