@@ -26,13 +26,13 @@ void main() {
   var database = LocalDatabase(inTest: true);
 
   // Rendering helper.
-  Widget renderForm(Task task, Future<void> Function(Task task) onSave) {
+  Widget renderForm(Task task, GlobalKey<FormState> formKey) {
     return EntryPoint(
       database: database, 
       child: Scaffold(
         body: Portal(
           child: SingleChildScrollView(
-            child: TaskForm(task: task, onSave: onSave)
+            child: TaskForm(task: task, formKey: formKey)
           )
         )
       )
@@ -48,18 +48,9 @@ void main() {
 
   group('$TaskForm', () {
     testWidgets('can edit blank task', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-        expect(task.title, equals('Do dishes'));
-        expect(task.projectId, equals(1));
-        expect(task.body, equals('Use lots of soap'));
-
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       final task = Task.blank();
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and description
@@ -79,26 +70,18 @@ void main() {
       await tester.tap(find.text('Home').last);
       await tester.pumpAndSettle();
 
-      // Save onSaveCalled is mutated by callback.
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.title, equals('Do dishes'));
+      expect(task.projectId, equals(1));
+      expect(task.body, equals('Use lots of soap'));
     });
 
     testWidgets('can use mention for due date', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-        expect(task.title, equals('Do dishes'));
-        expect(task.projectId, equals(1));
-        expect(task.evening, isTrue);
-
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       final task = Task.blank();
       expect(task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
@@ -110,24 +93,18 @@ void main() {
       await tester.tap(mention);
       await tester.pumpAndSettle();
 
-      // Save onSaveCalled is mutated by callback.
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.title, equals('Do dishes'));
+      expect(task.projectId, equals(1));
+      expect(task.evening, isTrue);
     });
 
     testWidgets('can use mention for project', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-        expect(task.title, equals('Do dishes'));
-        expect(task.projectId, equals(2));
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       final task = Task.blank();
       expect(task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
@@ -139,51 +116,35 @@ void main() {
       await tester.tap(mention);
       await tester.pumpAndSettle();
 
-      // Save onSaveCalled is mutated by callback.
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.title, equals('Do dishes'));
+      expect(task.projectId, equals(2));
     });
 
     testWidgets('project and date value has a default', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-        expect(task.title, equals('Do dishes'));
-        expect(task.projectId, equals(1));
-        expect(task.dueOn, isNull);
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       final task = Task.blank();
       expect(task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
       await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
 
-      // Save onSaveCalled is mutated by callback.
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.title, equals('Do dishes'));
+      expect(task.projectId, equals(1));
+      expect(task.dueOn, isNull);
     });
 
     testWidgets('can edit task with contents', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-
-        expect(task.title, equals('Do dishes'));
-        expect(task.projectId, equals(1));
-        expect(task.body, equals('Use lots of soap'));
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       var task = Task.blank();
       task.title = "Original title";
       task.projectId = 2;
       task.body = 'Original notes';
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Existing data should display.
@@ -207,22 +168,17 @@ void main() {
       await tester.tap(find.text('Home').last);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.title, equals('Do dishes'));
+      expect(task.projectId, equals(1));
+      expect(task.body, equals('Use lots of soap'));
     });
 
     testWidgets('can update due on date', (tester) async {
       var today = DateUtils.dateOnly(DateTime.now());
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-
-        expect(task.dueOn, equals(today));
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       var task = Task.blank();
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Open the due date picker.
@@ -232,21 +188,14 @@ void main() {
       await tester.tap(find.text('Today').last);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.dueOn, equals(today));
     });
 
     testWidgets('can set section', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-
-        expect(task.sectionId, equals(work.sections[1].id));
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       var task = Task.blank();
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Select a project
@@ -265,26 +214,18 @@ void main() {
       await tester.tap(find.text('Eventually').last);
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Save'));
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.sectionId, equals(work.sections[1].id));
     });
 
     testWidgets('change project clears section', (tester) async {
-      var onSaveCalled = false;
-      Future<void> onSave(Task task) {
-        onSaveCalled = true;
-
-        expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
-        return Future.value();
-      }
-
+      var formKey = GlobalKey<FormState>();
       var task = Task.blank();
       task.projectId = 2;
       task.projectSlug = 'work';
       task.sectionId = 1;
 
-      await tester.pumpWidget(renderForm(task, onSave));
+      await tester.pumpWidget(renderForm(task, formKey));
       await tester.pumpAndSettle();
 
       // Open project selector
@@ -298,9 +239,8 @@ void main() {
       // Section input should hide.
       expect(find.byKey(const ValueKey('section')), findsNothing);
 
-      await tester.ensureVisible(find.text('Save'));
-      await tester.tap(find.text('Save'));
-      expect(onSaveCalled, equals(true));
+      formKey.currentState!.save();
+      expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
      });
   });
 }

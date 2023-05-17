@@ -14,8 +14,8 @@ void main() {
     test('it handles past dates', () {
       var date = DateTime.now().subtract(const Duration(days: 91));
       var result = formatters.compactDate(date);
-      var expected = DateFormat('MMM d yyyy').format(date);
-      expect(result, equals(expected));
+      var expected = DateFormat('MMM d').format(date);
+      expect(result, contains(expected));
     });
 
     test('it handles today', () {

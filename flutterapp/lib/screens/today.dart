@@ -22,8 +22,6 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
-  Task? _newTask;
-
   late TodayViewModel viewmodel;
 
   @override
@@ -32,12 +30,9 @@ class _TodayScreenState extends State<TodayScreen> {
 
     viewmodel = Provider.of<TodayViewModel>(context, listen: false);
     viewmodel.loadData();
-    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
   }
 
   Future<void> _refresh(TodayViewModel view) async {
-    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
-
     return view.refresh();
   }
 
@@ -113,7 +108,7 @@ class _TodayScreenState extends State<TodayScreen> {
         title: const Text('Today'),
       ),
       drawer: const AppDrawer(),
-      floatingActionButton: FloatingCreateTaskButton(task: _newTask),
+      floatingActionButton: FloatingCreateTaskButton(task: viewmodel.newTask),
       body: body,
     );
   }

@@ -97,7 +97,12 @@ void main() {
           dayOrder: 0,
           childOrder: 10,
           completed: false));
-      await db.dailyTasks.set(viewdata.groupByDay());
+      var rangeView = TaskRangeView.fromLists(
+        tasks: viewdata.tasks,
+        calendarItems: viewdata.calendarItems,
+        start: today,
+      );
+      await db.dailyTasks.setRange(rangeView);
 
       await tester.pumpWidget(EntryPoint(
         database: db,

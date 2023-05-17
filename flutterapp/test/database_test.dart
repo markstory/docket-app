@@ -14,6 +14,8 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
   var yesterday = today.subtract(const Duration(days: 1));
+
+  var yesterdayStr = formatters.dateString(yesterday);
   var todayStr = formatters.dateString(today);
   var tomorrowStr = formatters.dateString(tomorrow);
 
@@ -427,7 +429,17 @@ void main() {
       expect(database.projectDetails.isFreshSlug('work'), isFalse);
     });
 
-    test('removeFromOverdue() removes', () async {
+
+    test('setRange() removes overdue data', () async {
+      var twoDaysAgo = today.subtract(const Duration(days: 2));
+      var twoDaysAgoStr = formatters.dateString(twoDaysAgo);
+      var older = Task.blank();
+      older.id = 3;
+      older.title = 'older task';
+      older.dueOn = twoDaysAgo;
+      older.projectSlug = 'home';
+      older.dayOrder = 0;
+
       var old = Task.blank();
       old.id = 2;
       old.title = 'first task';
@@ -443,13 +455,22 @@ void main() {
       task.dayOrder = 0;
 
       await database.dailyTasks.set({
-        TaskViewData.overdueKey: TaskViewData(tasks: [old], calendarItems: []),
+        twoDaysAgoStr: TaskViewData(tasks: [older], calendarItems: []),
+        yesterdayStr: TaskViewData(tasks: [old], calendarItems: []),
         todayStr: TaskViewData(tasks: [task], calendarItems: [])
       });
-      await database.dailyTasks.removeFromOverdue(old);
+      var range = TaskRangeView.fromLists(tasks: [old, task], calendarItems: [], start: today, days: 1);
+      await database.dailyTasks.setRange(range);
 
       var taskData = await database.dailyTasks.getDate(today, overdue: true);
-      expect(taskData.overdue, isNull);
+      expect(taskData.overdue, isNotNull);
+      expect(taskData.overdue!.tasks.length, equals(1));
+
+      var taskLists = await database.dailyTasks.get();
+      expect(taskLists[todayStr], isNotNull);
+      expect(taskLists[todayStr]!.tasks.length, equals(1));
+      expect(taskLists[yesterdayStr]!.tasks.length, equals(1));
+      expect(taskLists[twoDaysAgoStr], isNull);
     });
 
     test('createTask() adds task to today view', () async {

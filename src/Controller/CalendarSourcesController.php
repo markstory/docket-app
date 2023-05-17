@@ -102,6 +102,12 @@ class CalendarSourcesController extends AppController
         $source = $this->getSource();
         $this->Authorization->authorize($source->calendar_provider, 'sync');
 
+        // Force a resync and clear the local database. This could result in
+        // a blank calendar list should the sync fail. While I could design around
+        // this, I want to see if it happens first.
+        $source->sync_token = null;
+        $this->CalendarSources->CalendarItems->deleteAll(['calendar_source_id' => $source->id]);
+
         $service->setAccessToken($source->calendar_provider);
         $success = true;
         $error = '';

@@ -24,10 +24,13 @@ class TodayViewModel extends ChangeNotifier {
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
+  Task? _newTask;
+
   TodayViewModel(LocalDatabase database) {
     _taskLists = [];
     _database = database;
     _database.dailyTasks.addListener(listener);
+    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
   }
 
   @override
@@ -43,6 +46,7 @@ class TodayViewModel extends ChangeNotifier {
   bool get loading => _loading && !_silentLoading;
   bool get loadError => _loadError;
   DateTime get today => DateUtils.dateOnly(DateTime.now());
+  Task? get newTask => _newTask;
 
   TaskSortMetadata? get overdue => _overdue;
   List<TaskSortMetadata> get taskLists => _taskLists;
@@ -54,6 +58,7 @@ class TodayViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {
+    _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
     // Update to us the upcoming repo.
     var rangeView = await _database.dailyTasks.getDate(today, overdue: true);
     if (rangeView.isNotEmpty) {
@@ -96,8 +101,7 @@ class TodayViewModel extends ChangeNotifier {
         _database.projectMap.replace(projects),
         _database.dailyTasks.setRange(rangeView),
       ]).then((results) {
-        _buildTaskLists(rangeView);
-        return _database.dailyTasks.removeOlderThan(today);
+        return _buildTaskLists(rangeView);
       });
     }).onError((error, stack) {
       _loadError = true;
@@ -182,8 +186,7 @@ class TodayViewModel extends ChangeNotifier {
 
     // Update the moved task and reload from server async
     await actions.moveTask(_database.apiToken.token, task, updates);
-    await _database.dailyTasks.removeFromOverdue(task);
-    _database.expireTask(task);
+    await _database.updateTask(task);
   }
 
   /// Reorder a task based on the protocol defined by

@@ -158,9 +158,6 @@ class Task {
     if (dueOn == null) {
       return 'No Due Date';
     }
-    if (isOverdue) {
-      return TaskViewData.overdueKey;
-    }
     return formatters.dateString(dueOn!);
   }
 
@@ -347,32 +344,6 @@ class TaskRangeView {
     return TaskRangeView(start: start, days: days, views: []);
   }
 
-  factory TaskRangeView.fromTaskViews(DailyTasksData views, DateTime start) {
-    List<TaskViewData> taskViews = [];
-    TaskViewData? overdueView;
-    if (views.containsKey(TaskViewData.overdueKey)) {
-      overdueView = views[TaskViewData.overdueKey];
-    }
-    DateTime end = start;
-    for (var entry in views.entries) {
-      if (entry.key == TaskViewData.overdueKey) {
-        continue;
-      }
-      var current = DateTime.parse(entry.key);
-      if (current.isAfter(end)) {
-        end = current;
-      }
-      taskViews.add(entry.value);
-    }
-
-    return TaskRangeView(
-      start: start,
-      days: end.difference(start).inDays,
-      overdue: overdueView,
-      views: taskViews,
-    );
-  }
-
   /// Create a TaskRangeView based on a list of tasks, calendarItems
   /// and a start date. Tasks will be grouped by `dateKey`
   /// be grouped into the overdue key.
@@ -384,10 +355,14 @@ class TaskRangeView {
   }) {
     Map<String, List<Task>> taskMap = {};
     Map<String, List<CalendarItem>> calendarMap = {};
+    Set<String> overdueDays = {};
 
     // Index tasks by date.
     for (var task in tasks) {
       var dateKey = task.dateKey;
+      if (task.isOverdue) {
+        overdueDays.add(dateKey);
+      }
       if (taskMap[dateKey] == null) {
         taskMap[dateKey] = [];
       }
@@ -405,11 +380,12 @@ class TaskRangeView {
 
     List<TaskViewData> views = [];
     TaskViewData? overdueView;
-    if (taskMap.containsKey(TaskViewData.overdueKey)) {
-      overdueView = TaskViewData(
-        tasks: taskMap[TaskViewData.overdueKey] ?? [],
-        calendarItems: [],
-      );
+    if (overdueDays.isNotEmpty) {
+      List<Task> overdueTasks = [];
+      for (var dateKey in overdueDays) {
+        overdueTasks.addAll(taskMap[dateKey] ?? []);
+      }
+      overdueView = TaskViewData(tasks: overdueTasks, calendarItems: []);
     }
 
     var end = start.add(Duration(days: days));

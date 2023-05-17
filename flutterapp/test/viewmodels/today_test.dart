@@ -223,11 +223,12 @@ void main() {
       var viewmodel = TodayViewModel(db);
       await viewmodel.refresh();
 
-      var stored = await db.dailyTasks.getDate(twoDaysAgo, overdue: true);
+      var stored = await db.dailyTasks.getDate(today, overdue: true);
 
       // Should have tasks in overdue
       expect(stored.overdue?.tasks.length, equals(1));
-      expect(stored.views.length, equals(0));
+      expect(stored.views.length, equals(1));
+      expect(stored.views[0].tasks.length, equals(1));
     });
 
     test('refreshTasks() loads data from the server', () async {
