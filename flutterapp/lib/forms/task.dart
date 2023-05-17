@@ -31,7 +31,6 @@ class _TaskFormState extends State<TaskForm> {
   void initState() {
     super.initState();
     completed = widget.task.completed;
-    _newtaskController = TextEditingController(text: '');
   }
 
   /// Create the subtasks section for task details. This is a bit
