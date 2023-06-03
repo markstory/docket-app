@@ -666,7 +666,7 @@ class TasksControllerTest extends TestCase
             'subtasks' => [
                 ['title' => 'first subtask', 'ranking' => 0],
                 ['title' => 'second subtask', 'ranking' => 1],
-            ]
+            ],
         ]);
         $this->assertResponseOk();
 
