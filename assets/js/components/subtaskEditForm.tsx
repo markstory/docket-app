@@ -36,17 +36,15 @@ export default function SubtaskEditForm({subtask, index, taskId, onCancel}: Prop
   }
   return (
     <form className="subtask-quickform" method="post" onSubmit={handleSubmit}>
-      <div className="title">
-        <input
-          type="text"
-          name="title"
-          placeholder={t('Take out the trash')}
-          defaultValue={subtask.title}
-          autoFocus
-          required
-        />
-      </div>
-      <div className="button-bar">
+      <input
+        type="text"
+        name="title"
+        placeholder={t('Take out the trash')}
+        defaultValue={subtask.title}
+        autoFocus
+        required
+      />
+      <div className="button-bar-inline">
         <button className="button-primary" type="submit">
           {t('Save')}
         </button>

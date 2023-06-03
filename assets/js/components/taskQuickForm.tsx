@@ -8,7 +8,7 @@ import ProjectSelect from 'app/components/projectSelect';
 import SmartTaskInput from 'app/components/smartTaskInput';
 import {useProjects} from 'app/providers/projects';
 import TaskSubtasks from './taskSubtasks';
-import { InlineIcon } from './icon';
+import {InlineIcon} from './icon';
 
 type Props = {
   task: TaskDetailed;
@@ -17,6 +17,7 @@ type Props = {
   onCancel: () => void;
   errors?: null | ValidationErrors;
   showNotes?: boolean;
+  showSubtasks?: boolean;
 };
 
 export default function TaskQuickForm({
@@ -26,6 +27,7 @@ export default function TaskQuickForm({
   onSubmit,
   onCancel,
   showNotes = false,
+  showSubtasks = false,
 }: Props): JSX.Element {
   const mounted = useRef(true);
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -172,7 +174,7 @@ export default function TaskQuickForm({
           />
         </div>
       )}
-      <TaskSubtasks task={task} isNew />
+      {showSubtasks && <TaskSubtasks task={task} />}
       <div className="button-bar">
         <button
           type="submit"

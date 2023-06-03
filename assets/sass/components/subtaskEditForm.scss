@@ -1,0 +1,5 @@
+.subtask-quickform {
+  display: grid;
+  grid-template-columns: max(20%, 200px) min-content;
+  gap: $space;
+}

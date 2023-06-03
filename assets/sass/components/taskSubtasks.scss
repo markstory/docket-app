@@ -40,6 +40,6 @@
 .subtask-addform {
   margin-left: ($space * 3) - 2;
   display: grid;
-  grid-template-columns: 20% auto;
-  gap: $space * 2;
+  grid-template-columns: max(20%, 200px) min-content;
+  gap: $space;
 }
