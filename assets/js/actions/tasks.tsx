@@ -1,7 +1,8 @@
 import axios, {AxiosResponse} from 'axios';
 import {Inertia} from '@inertiajs/inertia';
 
-import {DefaultTaskValues, Task} from 'app/types';
+import {NEW_ID} from 'app/constants';
+import {DefaultTaskValues, Task, TaskDetailed} from 'app/types';
 import {UpdaterCallback, UpdateData} from 'app/components/taskGroupedSorter';
 
 export function createTask(data: FormData | Task): Promise<boolean> {
@@ -20,9 +21,11 @@ export function createTask(data: FormData | Task): Promise<boolean> {
   return promise;
 }
 
-export function makeTaskFromDefaults(defaults: DefaultTaskValues | undefined): Task {
-  const task: Task = {
-    id: -1,
+export function makeTaskFromDefaults(
+  defaults: DefaultTaskValues | undefined
+): TaskDetailed {
+  const task: TaskDetailed = {
+    id: NEW_ID,
     section_id: null,
     title: '',
     body: '',
@@ -41,6 +44,7 @@ export function makeTaskFromDefaults(defaults: DefaultTaskValues | undefined): T
       slug: '',
       color: 0,
     },
+    subtasks: [],
     ...defaults,
   };
   if (task.due_on === undefined) {

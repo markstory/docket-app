@@ -3,13 +3,15 @@ import {useEffect, useState, useRef} from 'react';
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
-import {Task, ValidationErrors} from 'app/types';
+import {TaskDetailed, ValidationErrors} from 'app/types';
 import ProjectSelect from 'app/components/projectSelect';
 import SmartTaskInput from 'app/components/smartTaskInput';
 import {useProjects} from 'app/providers/projects';
+import TaskSubtasks from './taskSubtasks';
+import { InlineIcon } from './icon';
 
 type Props = {
-  task: Task;
+  task: TaskDetailed;
   url: string;
   onSubmit: (e: React.FormEvent) => Promise<boolean>;
   onCancel: () => void;
@@ -156,7 +158,11 @@ export default function TaskQuickForm({
       </div>
       {showNotesInput && (
         <div className="task-body">
-          <label htmlFor="task-body">{t('Notes')}</label>
+          <h4 className="heading-button">
+            <InlineIcon icon="note" />
+            {t('Notes')}
+          </h4>
+
           <textarea
             ref={notesRef}
             id="task-body"
@@ -166,6 +172,7 @@ export default function TaskQuickForm({
           />
         </div>
       )}
+      <TaskSubtasks task={task} isNew />
       <div className="button-bar">
         <button
           type="submit"

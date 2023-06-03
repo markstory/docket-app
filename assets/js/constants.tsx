@@ -24,3 +24,5 @@ export const VALID_THEMES = [
   {value: 'dark', label: 'Dark'},
   {value: 'system', label: 'System'},
 ];
+
+export const NEW_ID = -1;

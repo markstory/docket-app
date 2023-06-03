@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {
   DndContext,
@@ -26,13 +26,13 @@ import {useSubtasks} from 'app/providers/subtasks';
 import DragHandle from './dragHandle';
 
 type Props = {
-  taskId: Task['id'];
+  task: Task;
 };
 
 /**
  * Abstraction around reorder lists of todo subtasks and optimistically updating state.
  */
-export default function SubtaskSorter({taskId}: Props): JSX.Element {
+export default function SubtaskSorter({task}: Props): JSX.Element {
   const [subtasks, setSubtasks] = useSubtasks();
   const subtaskIds = subtasks.map(subtask => String(subtask.id));
 
@@ -67,7 +67,7 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
       ranking: newIndex,
     };
 
-    Inertia.post(`/tasks/${taskId}/subtasks/${active.id}/move`, data, {
+    Inertia.post(`/tasks/${task.id}/subtasks/${active.id}/move`, data, {
       only: ['task', 'flash'],
       onSuccess() {
         // Revert local state.
@@ -92,7 +92,7 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
               tag="li"
               dragActive={String(activeSubtask?.id)}
             >
-              <SubtaskItem subtask={subtask} taskId={taskId} index={index} />
+              <SubtaskItem subtask={subtask} taskId={task.id} index={index} />
             </SortableItem>
           ))}
         </ul>
@@ -101,7 +101,7 @@ export default function SubtaskSorter({taskId}: Props): JSX.Element {
         {activeSubtask ? (
           <li className="dnd-item dnd-item-dragging">
             <DragHandle />
-            <SubtaskItem index={0} subtask={activeSubtask} taskId={taskId} />
+            <SubtaskItem index={0} subtask={activeSubtask} taskId={task.id} />
           </li>
         ) : null}
       </DragOverlay>
