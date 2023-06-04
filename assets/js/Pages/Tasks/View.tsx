@@ -71,6 +71,7 @@ export default function TasksView({referer, task}: Props): JSX.Element {
               onCancel={handleCancel}
               task={task}
               errors={errors}
+              showSubtasks={false}
             />
           ) : (
             <TaskSummary task={task} onClick={() => setEditing(true)} />
