@@ -117,6 +117,30 @@ void main() {
       expect(callCounter.callCount, greaterThan(0));
     });
 
+    test('reorderSubtask() only updates local for new task', () async {
+      actions.client = MockClient((request) async {
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var task = Task.pending();
+      task.title = 'Has a title';
+      task.subtasks = [
+        Subtask(title: 'subtask one'),
+        Subtask(title: 'subtask two'),
+      ];
+      await db.taskDetails.set(task);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      await viewmodel.loadData();
+
+      var callCounter = CallCounter();
+      viewmodel.addListener(callCounter);
+
+      await viewmodel.reorderSubtask(0, 0, 1, 0);
+      expect(callCounter.callCount, greaterThan(0));
+    });
+
     test('saveSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
@@ -173,6 +197,30 @@ void main() {
       expect(updatedSubtask.title, equals('fold big towels'));
     });
 
+    test('saveSubtask() updates local only for new task', () async {
+      actions.client = MockClient((request) async {
+        throw 'No requests should be sent';
+      });
+
+      var task = Task.pending();
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "Do laundry";
+      var subtask = Subtask(title: 'fold big towels');
+      task.subtasks.add(subtask);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      await viewmodel.saveSubtask(task, subtask);
+
+      var updated = await db.taskDetails.get(task.id!);
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.id, isNull);
+      expect(updatedSubtask.completed, isFalse);
+      expect(updatedSubtask.title, equals('fold big towels'));
+    });
+
     test('deleteSubtask() uses API and update local task', () async {
       actions.client = MockClient((request) async {
         expect(request.url.path, equals('/tasks/1/subtasks/2/delete'));
@@ -186,6 +234,26 @@ void main() {
       task.projectSlug = 'home';
       task.title = "fold the towels";
       var subtask = Subtask(id: 2, title: 'get the towels');
+      task.subtasks.add(subtask);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      await viewmodel.deleteSubtask(task, subtask);
+
+      var updated = await db.taskDetails.get(task.id!);
+      expect(updated?.subtasks.length, equals(0));
+    });
+
+    test('deleteSubtask() updates local only for new task', () async {
+      actions.client = MockClient((request) async {
+        throw 'No requests expected';
+      });
+
+      var task = Task.pending();
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(title: 'get the towels');
       task.subtasks.add(subtask);
 
       var viewmodel = TaskDetailsViewModel(db);

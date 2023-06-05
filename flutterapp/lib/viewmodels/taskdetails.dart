@@ -45,7 +45,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   }
 
   setId(int value) {
-    if (value < 0) {
+    if (value < 0 && value != Task.idPending) {
       throw Exception('task id should not be below 0');
     }
     _id = value;
@@ -111,6 +111,8 @@ class TaskDetailsViewModel extends ChangeNotifier {
     return task;
   }
 
+  // {{{ Subtask methods
+
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
   Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
@@ -128,7 +130,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
-  // {{{ Subtask methods
+
   /// Create or Update a subtask and persist to the server.
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     // Get the index before updating the server so that we can

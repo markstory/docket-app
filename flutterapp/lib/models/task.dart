@@ -41,8 +41,8 @@ class Task {
     required this.dayOrder,
     required this.evening,
     required this.completed,
+    required this.subtasks,
     this.deletedAt,
-    this.subtasks = const [],
     this.subtaskCount = 0,
     this.completeSubtaskCount = 0,
   });
@@ -161,7 +161,7 @@ class Task {
       'completed': completed,
       'deleted_at': null,
       // Filtering to exclude any pending subtasks that didn't get saved.
-      'subtasks': subtasks.where((sub) => sub.id != null).map((sub) => sub.toMap()).toList(),
+      'subtasks': subtasks.map((sub) => sub.toMap()).toList(),
       'subtask_count': subtaskCount,
       'complete_subtask_count': completeSubtaskCount,
     };
