@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
-import {createTask, makeTaskFromDefaults} from 'app/actions/tasks';
-import {DefaultTaskValues, ValidationErrors} from 'app/types';
+import {createTask, makeTaskFromDefaults} from 'app/actions/tasks'; import {DefaultTaskValues, ValidationErrors} from
+'app/types';
 import TaskQuickForm from 'app/components/taskQuickForm';
 
 type Props = {

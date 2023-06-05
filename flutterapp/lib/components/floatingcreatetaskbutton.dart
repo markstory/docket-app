@@ -18,7 +18,7 @@ class FloatingCreateTaskButton extends StatelessWidget {
         Navigator.pushNamed(
           context,
           Routes.taskAdd,
-          arguments: TaskAddArguments(task ?? Task.blank()),
+          arguments: TaskAddArguments(task ?? Task.pending()),
         );
       },
       backgroundColor: theme.colorScheme.primary,

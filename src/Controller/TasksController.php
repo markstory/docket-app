@@ -179,7 +179,9 @@ class TasksController extends AppController
         $serialize = [];
 
         if ($this->request->is('post')) {
-            $task = $this->Tasks->patchEntity($task, $this->request->getData());
+            $options = ['associated' => ['Subtasks']];
+            $task->setAccess('subtasks', true);
+            $task = $this->Tasks->patchEntity($task, $this->request->getData(), $options);
 
             // Ensure the project belongs to the current user.
             $project = $this->Tasks->Projects->get($task->project_id);
@@ -189,7 +191,7 @@ class TasksController extends AppController
             $this->Tasks->setNextOrderProperties($user, $task);
 
             $task->project = $project;
-            if ($this->Tasks->save($task)) {
+            if ($this->Tasks->save($task, $options)) {
                 $success = true;
                 $redirect = $this->referer(['_name' => 'tasks:today']);
 

@@ -26,11 +26,25 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   late bool completed;
   late bool saving = false;
+  late Task task;
+
+  late TextEditingController _newtaskController;
 
   @override
   void initState() {
     super.initState();
+    task = widget.task.copy();
     completed = widget.task.completed;
+    _newtaskController = TextEditingController(text: '');
+  }
+
+  @override
+  void didUpdateWidget(TaskForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync changes for deleted subtasks.
+    if (task.subtasks.length != widget.task.subtasks.length) {
+      task = widget.task;
+    }
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -38,10 +52,7 @@ class _TaskFormState extends State<TaskForm> {
   /// while other changes are deferred. Perhaps task updates should apply immediately
   /// or as a time throttled async change?
   Widget _buildSubtasks(BuildContext context, Task task) {
-    // No subtasks for unsaved tasks.
-    if (task.id == null) {
-      return const SizedBox(height: 0, width: 0);
-    }
+    var theme = Theme.of(context);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: space(2)),
@@ -56,14 +67,26 @@ class _TaskFormState extends State<TaskForm> {
         },
       ),
       Padding(
-          padding: EdgeInsets.fromLTRB(10, space(0.75), 0, 0),
-          child: TextButton(
-              child: const Text('Add Subtask'),
-              onPressed: () {
-                setState(() {
-                  task.subtasks.add(Subtask.blank());
-                });
-              }))
+        padding: const EdgeInsets.fromLTRB(60, 0, 10, 30),
+        child: TextField(
+          key: const ValueKey('new-subtask'),
+          controller: _newtaskController,
+          decoration: InputDecoration(
+            hintText: "Add a subtask",
+            hintStyle: TextStyle(color: theme.colorScheme.primary, fontSize: 15),
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (String value) async {
+            var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+
+            var subtask = Subtask.blank(title: value);
+            subtask.ranking = task.subtasks.length + 1;
+            task.subtasks.add(subtask);
+            await viewmodel.saveSubtask(task, subtask);
+            _newtaskController.clear();
+          }
+        ),
+      ),
     ]);
   }
 
@@ -244,7 +267,7 @@ class _TaskFormState extends State<TaskForm> {
                           });
                         })),
 
-                _buildSubtasks(context, widget.task),
+                _buildSubtasks(context, task),
               ]));
         });
   }

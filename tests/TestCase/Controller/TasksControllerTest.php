@@ -653,6 +653,29 @@ class TasksControllerTest extends TestCase
         $this->assertSame($section->id, $todo->section_id);
     }
 
+    public function testAddWithSubtasks(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $token = $this->makeApiToken(1);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post('/tasks/add', [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+            'subtasks' => [
+                ['title' => 'first subtask', 'ranking' => 0],
+                ['title' => 'second subtask', 'ranking' => 1],
+            ],
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
+        $this->assertSame('first todo', $todo->title);
+        $this->assertCount(2, $todo->subtasks);
+        $this->assertEquals('first subtask', $todo->subtasks[0]->title);
+    }
+
     public function testAddToSectionInDifferentProject(): void
     {
         $home = $this->makeProject('home', 1);

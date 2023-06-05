@@ -24,7 +24,7 @@ class TodayViewModel extends ChangeNotifier {
   /// Any overdue tasks
   TaskSortMetadata? _overdue;
 
-  Task? _newTask;
+  late Task _newTask;
 
   TodayViewModel(LocalDatabase database) {
     _taskLists = [];
@@ -65,9 +65,11 @@ class TodayViewModel extends ChangeNotifier {
       _buildTaskLists(rangeView);
     }
     if (!_loading && rangeView.isEmpty) {
+      _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
       return refresh();
     }
     if (!_loading && rangeView.needsRefresh) {
+      _newTask = Task.blank(dueOn: DateUtils.dateOnly(DateTime.now()));
       return refreshTasks();
     }
   }

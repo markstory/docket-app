@@ -99,22 +99,6 @@ class TaskDetailsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Reorder a subtask based on the protocol defined by
-  /// the drag_and_drop_lists package.
-  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-    assert(oldListIndex == newListIndex,
-      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
-    var item = task.subtasks[oldItemIndex];
-    item.ranking = newItemIndex;
-
-    task.subtasks.removeAt(oldItemIndex);
-    task.subtasks.insert(newItemIndex, item);
-    await actions.moveSubtask(_database.apiToken.token, task, item);
-    await _database.updateTask(task);
-
-    notifyListeners();
-  }
-
   /// Create a task on the server and notify listeners.
   Future<Task> create(Task task) async {
     task = await actions.createTask(_database.apiToken.token, task);
@@ -126,4 +110,88 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
     return task;
   }
+
+  /// Reorder a subtask based on the protocol defined by
+  /// the drag_and_drop_lists package.
+  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+    assert(oldListIndex == newListIndex,
+      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
+    var item = task.subtasks[oldItemIndex];
+    item.ranking = newItemIndex;
+
+    task.subtasks.removeAt(oldItemIndex);
+    task.subtasks.insert(newItemIndex, item);
+    if (task.hasId) {
+      await actions.moveSubtask(_database.apiToken.token, task, item);
+    }
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
+  // {{{ Subtask methods
+  /// Create or Update a subtask and persist to the server.
+  Future<void> saveSubtask(Task task, Subtask subtask) async {
+    // Get the index before updating the server so that we can
+    // get the index of new subtasks. We're assuming that there is only
+    // one unsaved subtask at a time.
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+
+    if (task.hasId) {
+      if (subtask.id == null) {
+        subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
+      } else {
+        subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
+      }
+    }
+
+    task.subtasks[index] = subtask;
+    await _database.updateTask(task);
+
+    _task = task;
+
+    notifyListeners();
+  }
+
+  /// Flip subtask.completed and persist to the server.
+  Future<void> toggleSubtask(Task task, Subtask subtask) async {
+    subtask.completed = !subtask.completed;
+
+    if (task.hasId) {
+      await actions.toggleSubtask(_database.apiToken.token, task, subtask);
+    }
+
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    task.subtasks[index] = subtask;
+    await _database.updateTask(task);
+
+    notifyListeners();
+  }
+
+  /// Send an API request to move a task
+  /// Does not update the local database.
+  /// Assumption is that the calling view will refresh from server.
+  Future<void> moveSubtask(Task task, Subtask subtask) async {
+    List<Future> futures = [];
+    if (task.hasId) {
+      futures.add(actions.moveSubtask(_database.apiToken.token, task, subtask));
+    }
+    futures.add(_database.updateTask(task));
+    await Future.wait(futures);
+
+    notifyListeners();
+  }
+
+  Future<void> deleteSubtask(Task task, Subtask subtask) async {
+    task.subtasks.remove(subtask);
+
+    List<Future> futures = [];
+    if (task.hasId) {
+      futures.add(actions.deleteSubtask(_database.apiToken.token, task, subtask));
+    }
+    futures.add(_database.updateTask(task));
+    await Future.wait(futures);
+
+    notifyListeners();
+  }
+  // }}}
 }

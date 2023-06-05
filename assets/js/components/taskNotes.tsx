@@ -6,6 +6,7 @@ import MarkdownText from 'app/components/markdownText';
 import useKeyboardShortcut from 'app/hooks/useKeyboardShortcut';
 import {t} from 'app/locale';
 import {Task} from 'app/types';
+import {InlineIcon} from './icon';
 
 type Props = {
   task: Task;
@@ -37,6 +38,7 @@ export default function TaskNotes({task}: Props) {
     return (
       <div className="task-notes">
         <h4 className="heading-button">
+          <InlineIcon icon="note" />
           {t('Notes')}
           <button
             className="button-secondary button-narrow"

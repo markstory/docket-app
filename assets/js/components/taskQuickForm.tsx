@@ -3,18 +3,21 @@ import {useEffect, useState, useRef} from 'react';
 import {t} from 'app/locale';
 import FormError from 'app/components/formError';
 import DueOnPicker from 'app/components/dueOnPicker';
-import {Task, ValidationErrors} from 'app/types';
+import {TaskDetailed, ValidationErrors} from 'app/types';
 import ProjectSelect from 'app/components/projectSelect';
 import SmartTaskInput from 'app/components/smartTaskInput';
 import {useProjects} from 'app/providers/projects';
+import TaskSubtasks from './taskSubtasks';
+import {InlineIcon} from './icon';
 
 type Props = {
-  task: Task;
+  task: TaskDetailed;
   url: string;
   onSubmit: (e: React.FormEvent) => Promise<boolean>;
   onCancel: () => void;
   errors?: null | ValidationErrors;
   showNotes?: boolean;
+  showSubtasks?: boolean;
 };
 
 export default function TaskQuickForm({
@@ -24,6 +27,7 @@ export default function TaskQuickForm({
   onSubmit,
   onCancel,
   showNotes = false,
+  showSubtasks = false,
 }: Props): JSX.Element {
   const mounted = useRef(true);
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -32,6 +36,7 @@ export default function TaskQuickForm({
   const [data, setData] = useState(task);
   const [busy, setBusy] = useState(false);
   const [showNotesInput, setShowNotesInput] = useState(false);
+  const [showSubtaskInputs, setShowSubtaskInputs] = useState(false);
   const [projects] = useProjects();
 
   mounted.current = true;
@@ -90,6 +95,11 @@ export default function TaskQuickForm({
     event.preventDefault();
     setShowNotesInput(true);
   }
+  function handleToggleSubtasks(event: React.MouseEvent) {
+    event.preventDefault();
+    setShowSubtaskInputs(true);
+  }
+
   useEffect(() => {
     if (showNotesInput && notesRef.current) {
       notesRef.current.focus();
@@ -100,6 +110,32 @@ export default function TaskQuickForm({
       titleRef.current.focus();
     }
   }, [textTitle]);
+
+  const extraButtons = [];
+  if (showNotes && !showNotesInput) {
+    extraButtons.push(
+      <button
+        type="button"
+        onClick={handleToggleNotes}
+        className="button-muted"
+        data-testid="add-notes"
+      >
+        {t('Add Notes')}
+      </button>
+    );
+  }
+  if (showSubtasks && !showSubtaskInputs) {
+    extraButtons.push(
+      <button
+        type="button"
+        onClick={handleToggleSubtasks}
+        className="button-muted"
+        data-testid="add-subtasks"
+      >
+        {t('Add Subtasks')}
+      </button>
+    );
+  }
 
   return (
     <form
@@ -141,22 +177,15 @@ export default function TaskQuickForm({
           />
           <FormError errors={errors} field="due_on" />
         </div>
-        {showNotes && !showNotesInput && (
-          <div>
-            <button
-              type="button"
-              onClick={handleToggleNotes}
-              className="button-muted"
-              data-testid="add-notes"
-            >
-              {t('Add Notes')}
-            </button>
-          </div>
-        )}
+        {extraButtons.length && <div className="task-extra-buttons">{extraButtons}</div>}
       </div>
       {showNotesInput && (
         <div className="task-body">
-          <label htmlFor="task-body">{t('Notes')}</label>
+          <h4 className="heading-button">
+            <InlineIcon icon="note" />
+            {t('Notes')}
+          </h4>
+
           <textarea
             ref={notesRef}
             id="task-body"
@@ -166,6 +195,7 @@ export default function TaskQuickForm({
           />
         </div>
       )}
+      {showSubtaskInputs && <TaskSubtasks task={task} />}
       <div className="button-bar">
         <button
           type="submit"
