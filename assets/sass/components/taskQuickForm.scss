@@ -58,6 +58,10 @@
     margin-top: $space / 2;
     width: 100%;
   }
+
+  .task-extra-buttons {
+    display: flex;
+  }
 }
 
 // Global task create.

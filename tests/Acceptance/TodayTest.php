@@ -117,6 +117,49 @@ class TodayTest extends AcceptanceTestCase
         $this->assertTrue($task->evening);
     }
 
+    public function testCreateWithSubtasks()
+    {
+        $project = $this->makeProject('Work', 1);
+
+        $client = $this->login();
+        $client->get('/tasks/today');
+        $client->waitFor('[data-testid="loggedin"]');
+        $crawler = $client->getCrawler();
+
+        // Open the add form
+        $button = $crawler->filter('[data-testid="add-task"]');
+        $button->click();
+        $client->waitFor('.task-quickform');
+
+        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title->sendKeys('A new task');
+
+        $crawler->filter('[data-testid="add-subtasks"]')->click();
+        $client->waitFor('.task-subtasks');
+
+        // Add a subtask
+        $form = $crawler->filter('.task-quickform')->form();
+        $form->get('subtask_title')->setValue('First subtask');
+        $button = $crawler->filter('[data-testid="save-subtask"]');
+        $button->click();
+
+        // Use the default project value as it is hard to automate with webdriver.
+        // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
+        // when needing to automate that component comes up again.
+        $button = $client->getCrawler()->filter('[data-testid="save-task"]');
+        $button->click();
+
+        $task = $this->Tasks
+            ->find()
+            ->contain('Subtasks')
+            ->firstOrFail();
+        $this->assertNotEmpty($task, 'No task saved');
+        $this->assertEquals('A new task', $task->title);
+        $this->assertEquals($project->id, $task->project_id);
+        $this->assertCount(1, $task->subtasks);
+        $this->assertEquals('First subtask', $task->subtasks[0]->title);
+    }
+
     public function testCompleteTask()
     {
         $today = new FrozenDate('today', 'UTC');

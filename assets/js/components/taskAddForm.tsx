@@ -29,7 +29,7 @@ function TaskAddForm({onCancel, defaultValues}: Props): JSX.Element {
   const task = makeTaskFromDefaults(defaultValues);
 
   return (
-    <TtaskQuickForm
+    <TaskQuickForm
       url="/tasks/add"
       errors={errors}
       task={task}

@@ -36,6 +36,7 @@ export default function TaskQuickForm({
   const [data, setData] = useState(task);
   const [busy, setBusy] = useState(false);
   const [showNotesInput, setShowNotesInput] = useState(false);
+  const [showSubtaskInputs, setShowSubtaskInputs] = useState(false);
   const [projects] = useProjects();
 
   mounted.current = true;
@@ -94,6 +95,11 @@ export default function TaskQuickForm({
     event.preventDefault();
     setShowNotesInput(true);
   }
+  function handleToggleSubtasks(event: React.MouseEvent) {
+    event.preventDefault();
+    setShowSubtaskInputs(true);
+  }
+
   useEffect(() => {
     if (showNotesInput && notesRef.current) {
       notesRef.current.focus();
@@ -104,6 +110,32 @@ export default function TaskQuickForm({
       titleRef.current.focus();
     }
   }, [textTitle]);
+
+  const extraButtons = [];
+  if (showNotes && !showNotesInput) {
+    extraButtons.push(
+      <button
+        type="button"
+        onClick={handleToggleNotes}
+        className="button-muted"
+        data-testid="add-notes"
+      >
+        {t('Add Notes')}
+      </button>
+    );
+  }
+  if (showSubtasks && !showSubtaskInputs) {
+    extraButtons.push(
+      <button
+        type="button"
+        onClick={handleToggleSubtasks}
+        className="button-muted"
+        data-testid="add-subtasks"
+      >
+        {t('Add Subtasks')}
+      </button>
+    );
+  }
 
   return (
     <form
@@ -145,18 +177,7 @@ export default function TaskQuickForm({
           />
           <FormError errors={errors} field="due_on" />
         </div>
-        {showNotes && !showNotesInput && (
-          <div>
-            <button
-              type="button"
-              onClick={handleToggleNotes}
-              className="button-muted"
-              data-testid="add-notes"
-            >
-              {t('Add Notes')}
-            </button>
-          </div>
-        )}
+        {extraButtons.length && <div className="task-extra-buttons">{extraButtons}</div>}
       </div>
       {showNotesInput && (
         <div className="task-body">
@@ -174,7 +195,7 @@ export default function TaskQuickForm({
           />
         </div>
       )}
-      {showSubtasks && <TaskSubtasks task={task} />}
+      {showSubtaskInputs && <TaskSubtasks task={task} />}
       <div className="button-bar">
         <button
           type="submit"
