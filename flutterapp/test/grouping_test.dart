@@ -19,6 +19,7 @@ void main() {
     projectId: 1,
     sectionId: null,
     id: 1,
+    subtasks: [],
   );
 
   var dueLast = Task(
@@ -35,6 +36,7 @@ void main() {
     sectionId: null,
     dueOn: DateTime.now().add(const Duration(days: 30)),
     id: 2,
+    subtasks: [],
   );
 
   var dueLastAgain = Task(
@@ -51,6 +53,7 @@ void main() {
     sectionId: 1,
     dueOn: DateTime.now().add(const Duration(days: 30)),
     id: 3,
+    subtasks: [],
   );
 
   var dueFirstEvening = Task(
@@ -67,6 +70,7 @@ void main() {
     sectionId: 2,
     dueOn: DateTime.now(),
     id: 3,
+    subtasks: [],
   );
 
   group('grouping.groupTasksBySection()', () {

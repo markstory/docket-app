@@ -96,6 +96,7 @@ void main() {
           evening: false,
           dayOrder: 0,
           childOrder: 10,
+          subtasks: [],
           completed: false));
       var rangeView = TaskRangeView.fromLists(
         tasks: viewdata.tasks,

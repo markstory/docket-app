@@ -91,6 +91,7 @@ void main() {
           evening: true,
           dayOrder: 0,
           childOrder: 10,
+          subtasks: [],
           completed: false));
       await db.dailyTasks.set(viewdata.groupByDay());
 
