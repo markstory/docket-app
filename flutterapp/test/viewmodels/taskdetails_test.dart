@@ -22,6 +22,9 @@ void main() {
   file = File('test_resources/task_create_today.json');
   final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
+  file = File('test_resources/subtask_update.json');
+  final subtaskUpdateResponse = file.readAsStringSync();
+
   group('$TaskDetailsViewModel', () {
     var db = LocalDatabase(inTest: true);
 
@@ -112,6 +115,85 @@ void main() {
       await viewmodel.reorderSubtask(0, 0, 1, 0);
       expect(requestCounter.callCount, equals(1));
       expect(callCounter.callCount, greaterThan(0));
+    });
+
+    test('saveSubtask() call API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "Do laundry";
+      var subtask = Subtask(id: 1, title: 'replaced by server data');
+      task.subtasks.add(subtask);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      var callCounter = CallCounter();
+      viewmodel.addListener(callCounter);
+      await viewmodel.saveSubtask(task, subtask);
+
+      var updated = await db.taskDetails.get(task.id!);
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.completed, isFalse);
+      expect(updatedSubtask.title, equals('fold big towels'));
+      expect(callCounter.callCount, greaterThan(1));
+    });
+
+    test('saveSubtask() uses create API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "Do laundry";
+      var subtask = Subtask(title: 'replaced by server data');
+      task.subtasks.add(subtask);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      await viewmodel.saveSubtask(task, subtask);
+
+      var updated = await db.taskDetails.get(task.id!);
+      var updatedSubtask = updated!.subtasks[0];
+      expect(updatedSubtask, isNotNull);
+      expect(updatedSubtask.id, equals(1));
+      expect(updatedSubtask.completed, isFalse);
+      expect(updatedSubtask.title, equals('fold big towels'));
+    });
+
+    test('deleteSubtask() uses API and update local task', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, equals('/tasks/1/subtasks/2/delete'));
+
+        return Response(subtaskUpdateResponse, 200);
+      });
+
+      var task = Task.blank();
+      task.id = 1;
+      task.projectId = 1;
+      task.projectSlug = 'home';
+      task.title = "fold the towels";
+      var subtask = Subtask(id: 2, title: 'get the towels');
+      task.subtasks.add(subtask);
+
+      var viewmodel = TaskDetailsViewModel(db);
+      viewmodel.setId(task.id!);
+      await viewmodel.deleteSubtask(task, subtask);
+
+      var updated = await db.taskDetails.get(task.id!);
+      expect(updated?.subtasks.length, equals(0));
     });
   });
 }

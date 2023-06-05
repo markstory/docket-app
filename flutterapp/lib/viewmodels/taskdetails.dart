@@ -167,20 +167,6 @@ class TaskDetailsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Send an API request to move a task
-  /// Does not update the local database.
-  /// Assumption is that the calling view will refresh from server.
-  Future<void> moveSubtask(Task task, Subtask subtask) async {
-    List<Future> futures = [];
-    if (task.hasId) {
-      futures.add(actions.moveSubtask(_database.apiToken.token, task, subtask));
-    }
-    futures.add(_database.updateTask(task));
-    await Future.wait(futures);
-
-    notifyListeners();
-  }
-
   Future<void> deleteSubtask(Task task, Subtask subtask) async {
     task.subtasks.remove(subtask);
 
