@@ -5,14 +5,11 @@ import 'package:flutter_mentions/flutter_mentions.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/forms/task.dart';
-import 'package:docket/models/task.dart';
-import 'package:docket/viewmodels/taskdetails.dart';
+import 'package:docket/viewmodels/taskadd.dart';
 import 'package:docket/theme.dart';
 
 class TaskAddScreen extends StatefulWidget {
-  final Task task;
-
-  const TaskAddScreen({required this.task, super.key});
+  const TaskAddScreen({super.key});
 
   @override
   State<TaskAddScreen> createState() => _TaskAddScreenState();
@@ -24,16 +21,17 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> saveTask(BuildContext context, Task task) async {
+    var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
+
+    Future<void> saveTask(BuildContext context) async {
       var messenger = ScaffoldMessenger.of(context);
-      var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
 
       void complete() {
         Navigator.pop(context);
       }
 
       try {
-        await viewmodel.create(task);
+        await viewmodel.save();
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
       } catch (e, stacktrace) {
@@ -42,13 +40,12 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
       }
     }
 
-    var title = widget.task.id != null ? const Text('Edit Task') : const Text('New Task');
     var theme = Theme.of(context);
 
     return Portal(
         child: Scaffold(
             appBar: AppBar(
-              title: title,
+              title: const Text('New Task'),
               actions: [
                 TextButton(
                   style: TextButton.styleFrom(
@@ -59,7 +56,7 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                     if (_formKey.currentState!.validate() && saving == false) {
                       saving = true;
                       _formKey.currentState!.save();
-                      await saveTask(context, widget.task);
+                      await saveTask(context);
                       saving = false;
                     }
                   }
@@ -70,7 +67,7 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                 padding: EdgeInsets.all(space(2)),
                 child: TaskForm(
                   formKey: _formKey,
-                  task: widget.task,
+                  task: viewmodel.task,
                 ))));
   }
 }

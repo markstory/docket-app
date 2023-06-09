@@ -25,12 +25,6 @@ class Routes {
 }
 
 // Route Parameter Classes {{{
-class TaskAddArguments {
-  final Task task;
-
-  TaskAddArguments(this.task);
-}
-
 class TaskDetailsArguments {
   final Task task;
 
