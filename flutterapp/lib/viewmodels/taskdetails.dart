@@ -1,3 +1,4 @@
+import 'package:docket/viewmodels/taskform.dart';
 import 'package:flutter/material.dart';
 
 import 'package:docket/actions.dart' as actions;
@@ -5,7 +6,7 @@ import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
 
-class TaskDetailsViewModel extends ChangeNotifier {
+class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   late LocalDatabase _database;
   int? _id;
   Task? _task;
@@ -28,6 +29,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     fetchTask();
   }
 
+  @override
   bool get loading => _loading;
 
   int get id {
@@ -37,6 +39,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     return value!;
   }
 
+  @override
   Task get task {
     var value = _task;
     assert(value != null, "Cannot read task it has not been set.");
@@ -115,6 +118,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
 
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
+  @override
   Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
     assert(oldListIndex == newListIndex,
       "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
@@ -132,6 +136,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   }
 
   /// Create or Update a subtask and persist to the server.
+  @override
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     // Get the index before updating the server so that we can
     // get the index of new subtasks. We're assuming that there is only
@@ -155,6 +160,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
   }
 
   /// Flip subtask.completed and persist to the server.
+  @override
   Future<void> toggleSubtask(Task task, Subtask subtask) async {
     subtask.completed = !subtask.completed;
 
@@ -169,6 +175,7 @@ class TaskDetailsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   Future<void> deleteSubtask(Task task, Subtask subtask) async {
     task.subtasks.remove(subtask);
 

@@ -60,7 +60,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             child: Column(children: [
               TaskForm(
                 formKey: _formKey,
-                task: viewmodel.task,
+                viewmodel: viewmodel,
               ),
             ]),
           ));

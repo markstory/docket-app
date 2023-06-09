@@ -1,3 +1,4 @@
+import 'package:docket/viewmodels/taskform.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +15,10 @@ import 'package:docket/theme.dart';
 
 // Depends on TaskDetailsViewModel.
 class TaskForm extends StatefulWidget {
-  final Task task;
+  final TaskFormViewModel viewmodel;
   final GlobalKey<FormState>? formKey;
 
-  const TaskForm({required this.task, this.formKey, super.key});
+  const TaskForm({required this.viewmodel, this.formKey, super.key});
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -33,8 +34,8 @@ class _TaskFormState extends State<TaskForm> {
   @override
   void initState() {
     super.initState();
-    task = widget.task.copy();
-    completed = widget.task.completed;
+    task = widget.viewmodel.task.copy();
+    completed = widget.viewmodel.task.completed;
     _newtaskController = TextEditingController(text: '');
   }
 
@@ -42,8 +43,8 @@ class _TaskFormState extends State<TaskForm> {
   void didUpdateWidget(TaskForm oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Sync changes for deleted subtasks.
-    if (task.subtasks.length != widget.task.subtasks.length) {
-      task = widget.task;
+    if (task.subtasks.length != widget.viewmodel.task.subtasks.length) {
+      task = widget.viewmodel.task;
     }
   }
 
@@ -62,7 +63,7 @@ class _TaskFormState extends State<TaskForm> {
           return SubtaskItem(task: task, subtask: subtask);
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
-          var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+          var viewmodel = widget.viewmodel;
           viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
         },
       ),
@@ -77,7 +78,7 @@ class _TaskFormState extends State<TaskForm> {
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (String value) async {
-            var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+            var viewmodel = widget.viewmodel;
 
             var subtask = Subtask.blank(title: value);
             subtask.ranking = task.subtasks.length + 1;
@@ -92,7 +93,8 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    var task = widget.task;
+    var viewmodel = widget.viewmodel;
+    var task = viewmodel.task;
     var projectProvider = Provider.of<ProjectsProvider>(context);
 
     var projectList = projectProvider.getAll();
@@ -119,7 +121,7 @@ class _TaskFormState extends State<TaskForm> {
                       padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
                       child: TaskCheckbox(
                         value: completed,
-                        task: widget.task,
+                        task: task,
                         disabled: task.id == null,
                         onToggle: (value) {
                           setState(() {

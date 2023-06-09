@@ -67,7 +67,7 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                 padding: EdgeInsets.all(space(2)),
                 child: TaskForm(
                   formKey: _formKey,
-                  task: viewmodel.task,
+                  viewmodel: viewmodel,
                 ))));
   }
 }
