@@ -55,7 +55,12 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     // For new tasks subtasks must have unique text.
     var index = task.subtasks.indexWhere((item) => item.title == subtask.title);
-    _task.subtasks[index] = subtask;
+    if (index >= 0) {
+      task.subtasks[index] = subtask;
+    } else {
+      task.subtasks.add(subtask);
+    }
+
     _task = task;
 
     notifyListeners();

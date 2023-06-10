@@ -44,7 +44,9 @@ class _TaskFormState extends State<TaskForm> {
     super.didUpdateWidget(oldWidget);
     // Sync changes for deleted subtasks.
     if (task.subtasks.length != widget.viewmodel.task.subtasks.length) {
-      task = widget.viewmodel.task;
+      setState(() {
+        task = widget.viewmodel.task;
+      });
     }
   }
 
@@ -64,7 +66,10 @@ class _TaskFormState extends State<TaskForm> {
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
           var viewmodel = widget.viewmodel;
-          viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+          await viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+          setState(() {
+            task = viewmodel.task;
+          });
         },
       ),
       Padding(
@@ -82,9 +87,11 @@ class _TaskFormState extends State<TaskForm> {
 
             var subtask = Subtask.blank(title: value);
             subtask.ranking = task.subtasks.length + 1;
-            task.subtasks.add(subtask);
             await viewmodel.saveSubtask(task, subtask);
-            _newtaskController.clear();
+            setState(() {
+              task = viewmodel.task;
+              _newtaskController.clear();
+            });
           }
         ),
       ),

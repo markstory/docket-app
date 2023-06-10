@@ -142,6 +142,7 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
     // get the index of new subtasks. We're assuming that there is only
     // one unsaved subtask at a time.
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    task.subtasks[index] = subtask;
 
     if (task.hasId) {
       if (subtask.id == null) {
@@ -151,7 +152,6 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
       }
     }
 
-    task.subtasks[index] = subtask;
     await _database.updateTask(task);
 
     _task = task;
