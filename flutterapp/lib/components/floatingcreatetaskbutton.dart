@@ -17,15 +17,9 @@ class FloatingCreateTaskButton extends StatelessWidget {
     var theme = Theme.of(context);
     var viewmodel = Provider.of<TaskAddViewModel>(context);
 
-    if (dueOn != null) {
-      viewmodel.task.dueOn = dueOn;
-    }
-    if (projectId != null) {
-      viewmodel.task.projectId = projectId;
-    }
-    if (sectionId != null) {
-      viewmodel.task.sectionId = sectionId;
-    }
+    viewmodel.task.dueOn = dueOn;
+    viewmodel.task.sectionId = sectionId;
+    viewmodel.task.projectId = projectId;
     if (evening != null) {
       viewmodel.task.evening = evening!;
     }
