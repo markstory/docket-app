@@ -275,5 +275,29 @@ void main() {
       expect(task.subtasks.length, equals(1));
       expect(task.subtasks[0].title, equals('New subtask'));
     });
+
+    testWidgets('can remove subtasks', (tester) async {
+      var formKey = GlobalKey<FormState>();
+      viewmodel.reset();
+      viewmodel.task.subtasks.add(Subtask(title: 'remove me'));
+
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
+      await tester.pumpAndSettle();
+
+      var subtaskTitle = find.text('remove me');
+      await tester.tap(subtaskTitle);
+      await tester.pumpAndSettle();
+
+      var remove = find.byKey(const ValueKey('remove-subtask'));
+      await tester.tap(remove);
+      await tester.pumpAndSettle();
+
+      // Confirm removal
+      expect(find.text('Are you sure?'), findsOneWidget);
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(viewmodel.task.subtasks.length, equals(0));
+    });
   });
 }

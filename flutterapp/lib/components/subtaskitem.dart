@@ -101,10 +101,10 @@ class _SubtaskItemState extends State<SubtaskItem> {
     }
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
-    var viewmodel = widget.viewmodel;
 
     return InputDecoration(
       suffixIcon: IconButton(
+          key: const ValueKey('remove-subtask'),
           icon: Icon(Icons.delete, color: customColors.actionDelete),
           onPressed: () {
             showConfirmDelete(
@@ -112,6 +112,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
                 content: "Are you sure you want to delete this subtask?",
                 onConfirm: () async {
                   var navigator = Navigator.of(context);
+                  var viewmodel = widget.viewmodel;
 
                   await viewmodel.deleteSubtask(widget.task, widget.subtask);
                   navigator.pop();
