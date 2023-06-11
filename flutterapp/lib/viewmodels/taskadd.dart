@@ -27,10 +27,14 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
     _loading = true;
 
     await _database.createTask(updated);
-    _task = Task.pending();
+    reset();
     _loading = false;
 
     notifyListeners();
+  }
+
+  void reset() {
+    _task = Task.pending();
   }
 
   // {{{ Subtask methods
