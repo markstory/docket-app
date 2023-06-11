@@ -83,7 +83,7 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   @override
   Future<void> deleteSubtask(Task task, Subtask subtask) async {
-    _task.subtasks.remove(subtask);
+    _task.subtasks.removeWhere((item) => item.title == subtask.title);
 
     notifyListeners();
   }

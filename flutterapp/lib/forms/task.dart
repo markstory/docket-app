@@ -26,27 +26,30 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   late bool completed;
   late bool saving = false;
-  late Task task;
 
   late TextEditingController _newtaskController;
+
+  Task get task => widget.viewmodel.task;
 
   @override
   void initState() {
     super.initState();
-    task = widget.viewmodel.task.copy();
     completed = widget.viewmodel.task.completed;
     _newtaskController = TextEditingController(text: '');
+
+    widget.viewmodel.addListener(listener);
   }
 
   @override
-  void didUpdateWidget(TaskForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Sync changes for deleted subtasks.
-    if (task.subtasks.length != widget.viewmodel.task.subtasks.length) {
-      setState(() {
-        task = widget.viewmodel.task;
-      });
-    }
+  void dispose() {
+    widget.viewmodel.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    setState(() {
+      // Noop, just used to sync state.
+    });
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -178,9 +181,7 @@ class _TaskFormState extends State<TaskForm> {
                           child: Row(children: [
                             Icon(Icons.circle, color: color, size: 12),
                             SizedBox(width: space(1)),
-                            Text(
-                              item.name,
-                            ),
+                            Text(item.name),
                           ]));
                     }).toList(),
                     onChanged: (int? value) {

@@ -16,4 +16,8 @@ abstract class TaskFormViewModel {
   Future<void> toggleSubtask(Task task, Subtask subtask);
 
   Future<void> deleteSubtask(Task task, Subtask subtask);
+
+  void addListener(void Function() listener);
+
+  void removeListener(void Function() listener);
 }
