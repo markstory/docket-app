@@ -127,9 +127,7 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
 
     task.subtasks.removeAt(oldItemIndex);
     task.subtasks.insert(newItemIndex, item);
-    if (task.hasId) {
-      await actions.moveSubtask(_database.apiToken.token, task, item);
-    }
+    await actions.moveSubtask(_database.apiToken.token, task, item);
     await _database.updateTask(task);
 
     notifyListeners();
@@ -142,15 +140,12 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
     // get the index of new subtasks. We're assuming that there is only
     // one unsaved subtask at a time.
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
-    task.subtasks[index] = subtask;
-
-    if (task.hasId) {
-      if (subtask.id == null) {
-        subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
-      } else {
-        subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
-      }
+    if (subtask.id == null) {
+      subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
+    } else {
+      subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
     }
+    task.subtasks[index] = subtask;
 
     await _database.updateTask(task);
 
@@ -164,9 +159,7 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   Future<void> toggleSubtask(Task task, Subtask subtask) async {
     subtask.completed = !subtask.completed;
 
-    if (task.hasId) {
-      await actions.toggleSubtask(_database.apiToken.token, task, subtask);
-    }
+    await actions.toggleSubtask(_database.apiToken.token, task, subtask);
 
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
     task.subtasks[index] = subtask;
@@ -180,9 +173,7 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
     task.subtasks.remove(subtask);
 
     List<Future> futures = [];
-    if (task.hasId) {
-      futures.add(actions.deleteSubtask(_database.apiToken.token, task, subtask));
-    }
+    futures.add(actions.deleteSubtask(_database.apiToken.token, task, subtask));
     futures.add(_database.updateTask(task));
     await Future.wait(futures);
 

@@ -256,6 +256,24 @@ void main() {
 
       formKey.currentState!.save();
       expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
-     });
+    });
+
+    testWidgets('can add substasks to new task', (tester) async {
+      var formKey = GlobalKey<FormState>();
+      viewmodel.reset();
+
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
+      await tester.pumpAndSettle();
+
+      // Enter subtask title.
+      var subtaskTitle = find.byKey(const ValueKey('new-subtask'));
+      await tester.enterText(subtaskTitle, 'New subtask');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+      var task = viewmodel.task;
+      expect(task.subtasks.length, equals(1));
+      expect(task.subtasks[0].title, equals('New subtask'));
+    });
   });
 }

@@ -10,7 +10,6 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
 // Depends on TaskDetailsViewModel.
@@ -56,13 +55,14 @@ class _TaskFormState extends State<TaskForm> {
   /// or as a time throttled async change?
   Widget _buildSubtasks(BuildContext context, Task task) {
     var theme = Theme.of(context);
+    var viewmodel = widget.viewmodel;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: space(2)),
       SubtaskSorter(
         items: task.subtasks,
         buildItem: (Subtask subtask) {
-          return SubtaskItem(task: task, subtask: subtask);
+          return SubtaskItem(task: task, subtask: subtask, viewmodel: viewmodel);
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
           var viewmodel = widget.viewmodel;

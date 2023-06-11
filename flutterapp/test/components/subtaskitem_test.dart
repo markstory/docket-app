@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:docket/models/apitoken.dart';
+import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -28,17 +29,19 @@ void main() {
   group("$SubtaskItem", () {
     late Task task;
     var decoded = jsonDecode(taskDetails);
+    var viewmodel = TaskDetailsViewModel(db);
 
     setUp(() async {
       task = Task.fromMap(decoded['task']);
       await db.apiToken.set(ApiToken.fake());
+      viewmodel.setId(task.id!);
     });
 
     Future<int> renderWidget(WidgetTester tester, Task task, Subtask subtask) async {
       await tester.pumpWidget(EntryPoint(
           database: db,
           child: Scaffold(
-            body: SubtaskItem(task: task, subtask: subtask),
+            body: SubtaskItem(task: task, subtask: subtask, viewmodel: viewmodel),
           )));
 
       return tester.pumpAndSettle();

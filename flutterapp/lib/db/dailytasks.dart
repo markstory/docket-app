@@ -106,7 +106,6 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
       var check = dateKey(start.subtract(Duration(days: offset)));
       if (data[check] != null) {
         for (Map<String, dynamic> taskData in data[check]["tasks"] ?? []) {
-          print("Adding ${taskData['title']}");
           overdueTasks.add(taskData);
         }
       }

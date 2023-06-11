@@ -10,7 +10,6 @@ import 'package:docket/formatters.dart' as formatters;
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 import 'package:docket/models/apitoken.dart';
-import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/screens/taskadd.dart';
 
@@ -48,10 +47,9 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      var task = Task.blank(projectId: 1);
       await tester.pumpWidget(EntryPoint(
           database: db,
-          child: TaskAddScreen(task: task),
+          child: const TaskAddScreen(),
       ));
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
