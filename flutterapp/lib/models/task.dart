@@ -132,10 +132,6 @@ class Task {
     );
   }
 
-  bool get hasId {
-    return id != null && id != Task.idPending;
-  }
-
   Task copy() {
     return Task.fromMap(toMap());
   }

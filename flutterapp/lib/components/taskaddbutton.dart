@@ -1,7 +1,8 @@
+import 'package:docket/viewmodels/taskadd.dart';
 import 'package:flutter/material.dart';
 
-import 'package:docket/models/task.dart';
 import 'package:docket/routes.dart';
+import 'package:provider/provider.dart';
 
 /// Button to create a new task with some fields initialized.
 class TaskAddButton extends StatelessWidget {
@@ -15,19 +16,19 @@ class TaskAddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var task = Task.pending();
+    var viewmodel = Provider.of<TaskAddViewModel>(context);
 
     if (dueOn != null) {
-      task.dueOn = dueOn;
+      viewmodel.task.dueOn = dueOn;
     }
     if (projectId != null) {
-      task.projectId = projectId;
+      viewmodel.task.projectId = projectId;
     }
     if (sectionId != null) {
-      task.sectionId = sectionId;
+      viewmodel.task.sectionId = sectionId;
     }
     if (evening != null) {
-      task.evening = evening!;
+      viewmodel.task.evening = evening!;
     }
     return IconButton(
         icon: const Icon(Icons.add),
@@ -36,7 +37,6 @@ class TaskAddButton extends StatelessWidget {
           Navigator.pushNamed(
             context,
             Routes.taskAdd,
-            arguments: TaskAddArguments(task),
           );
         });
   }

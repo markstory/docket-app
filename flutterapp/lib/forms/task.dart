@@ -1,3 +1,4 @@
+import 'package:docket/viewmodels/taskform.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,15 +10,14 @@ import 'package:docket/components/subtasksorter.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/providers/projects.dart';
-import 'package:docket/viewmodels/taskdetails.dart';
 import 'package:docket/theme.dart';
 
 // Depends on TaskDetailsViewModel.
 class TaskForm extends StatefulWidget {
-  final Task task;
+  final TaskFormViewModel viewmodel;
   final GlobalKey<FormState>? formKey;
 
-  const TaskForm({required this.task, this.formKey, super.key});
+  const TaskForm({required this.viewmodel, this.formKey, super.key});
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -26,25 +26,30 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   late bool completed;
   late bool saving = false;
-  late Task task;
 
   late TextEditingController _newtaskController;
+
+  Task get task => widget.viewmodel.task;
 
   @override
   void initState() {
     super.initState();
-    task = widget.task.copy();
-    completed = widget.task.completed;
+    completed = widget.viewmodel.task.completed;
     _newtaskController = TextEditingController(text: '');
+
+    widget.viewmodel.addListener(listener);
   }
 
   @override
-  void didUpdateWidget(TaskForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Sync changes for deleted subtasks.
-    if (task.subtasks.length != widget.task.subtasks.length) {
-      task = widget.task;
-    }
+  void dispose() {
+    widget.viewmodel.removeListener(listener);
+    super.dispose();
+  }
+
+  void listener() {
+    setState(() {
+      // Noop, just used to sync state.
+    });
   }
 
   /// Create the subtasks section for task details. This is a bit
@@ -53,17 +58,21 @@ class _TaskFormState extends State<TaskForm> {
   /// or as a time throttled async change?
   Widget _buildSubtasks(BuildContext context, Task task) {
     var theme = Theme.of(context);
+    var viewmodel = widget.viewmodel;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: space(2)),
       SubtaskSorter(
         items: task.subtasks,
         buildItem: (Subtask subtask) {
-          return SubtaskItem(task: task, subtask: subtask);
+          return SubtaskItem(task: task, subtask: subtask, viewmodel: viewmodel);
         },
         onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) async {
-          var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
-          viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+          var viewmodel = widget.viewmodel;
+          await viewmodel.reorderSubtask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+          setState(() {
+            task = viewmodel.task;
+          });
         },
       ),
       Padding(
@@ -77,13 +86,15 @@ class _TaskFormState extends State<TaskForm> {
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (String value) async {
-            var viewmodel = Provider.of<TaskDetailsViewModel>(context, listen: false);
+            var viewmodel = widget.viewmodel;
 
             var subtask = Subtask.blank(title: value);
             subtask.ranking = task.subtasks.length + 1;
-            task.subtasks.add(subtask);
             await viewmodel.saveSubtask(task, subtask);
-            _newtaskController.clear();
+            setState(() {
+              task = viewmodel.task;
+              _newtaskController.clear();
+            });
           }
         ),
       ),
@@ -92,7 +103,8 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    var task = widget.task;
+    var viewmodel = widget.viewmodel;
+    var task = viewmodel.task;
     var projectProvider = Provider.of<ProjectsProvider>(context);
 
     var projectList = projectProvider.getAll();
@@ -119,7 +131,7 @@ class _TaskFormState extends State<TaskForm> {
                       padding: EdgeInsets.fromLTRB(0, space(1), space(1), 0),
                       child: TaskCheckbox(
                         value: completed,
-                        task: widget.task,
+                        task: task,
                         disabled: task.id == null,
                         onToggle: (value) {
                           setState(() {
@@ -169,9 +181,7 @@ class _TaskFormState extends State<TaskForm> {
                           child: Row(children: [
                             Icon(Icons.circle, color: color, size: 12),
                             SizedBox(width: space(1)),
-                            Text(
-                              item.name,
-                            ),
+                            Text(item.name),
                           ]));
                     }).toList(),
                     onChanged: (int? value) {

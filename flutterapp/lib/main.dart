@@ -31,6 +31,7 @@ import 'viewmodels/projectarchive.dart';
 import 'viewmodels/projectedit.dart';
 import 'viewmodels/projectcompleted.dart';
 import 'viewmodels/today.dart';
+import 'viewmodels/taskadd.dart';
 import 'viewmodels/taskdetails.dart';
 import 'viewmodels/trashbin.dart';
 import 'viewmodels/upcoming.dart';
@@ -90,6 +91,9 @@ class EntryPoint extends StatelessWidget {
         ),
         ChangeNotifierProvider<TaskDetailsViewModel>(
           create: (_) => TaskDetailsViewModel(database),
+        ),
+        ChangeNotifierProvider<TaskAddViewModel>(
+          create: (_) => TaskAddViewModel(database),
         ),
         ChangeNotifierProvider<TasksProvider>(
           create: (_) => TasksProvider(database),
@@ -170,8 +174,7 @@ class DocketApp extends StatelessWidget {
               }
               // Task Add
               if (settings.name == Routes.taskAdd) {
-                final args = settings.arguments as TaskAddArguments;
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskAddScreen(task: args.task)));
+                return MaterialPageRoute(builder: (context) => const LoginRequired(child: TaskAddScreen()));
               }
               // Task Detailed View.
               if (settings.name == Routes.taskDetails) {

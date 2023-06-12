@@ -28,13 +28,11 @@ class ProjectDetailsScreen extends StatefulWidget {
 }
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
-  Task? _newTask;
   late ProjectDetailsViewModel viewmodel;
 
   @override
   void initState() {
     super.initState();
-    _newTask = Task.blank(projectId: widget.project.id);
 
     viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
     viewmodel.setSlug(widget.project.slug);
@@ -42,8 +40,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   Future<void> _refresh(ProjectDetailsViewModel view) {
-    _newTask = Task.blank(projectId: widget.project.id);
-
     return view.refresh();
   }
 
@@ -104,7 +100,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ),
       drawer: const AppDrawer(),
       // TODO add scroll tracking for sections and update add button.
-      floatingActionButton: FloatingCreateTaskButton(task: _newTask),
+      floatingActionButton: FloatingCreateTaskButton(projectId: project.id),
       body: RefreshIndicator(
         onRefresh: () => _refresh(viewmodel),
         child: child,

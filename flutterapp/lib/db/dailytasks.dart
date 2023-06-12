@@ -104,10 +104,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var offset = 1;
     while (offset < limit) {
       var check = dateKey(start.subtract(Duration(days: offset)));
-      print('Reading data for $check');
       if (data[check] != null) {
         for (Map<String, dynamic> taskData in data[check]["tasks"] ?? []) {
-          print("Adding ${taskData['title']}");
           overdueTasks.add(taskData);
         }
       }
@@ -135,7 +133,6 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var isFresh = false;
     List<TaskViewData> views = [];
     var key = dateKey(date);
-    print('Reading data for $key');
     if (data.containsKey(key)) {
       isFresh = isDayFresh(date);
       views.add(TaskViewData.fromMap(data[key]));

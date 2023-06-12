@@ -1,3 +1,4 @@
+import 'package:docket/viewmodels/taskadd.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
@@ -24,15 +25,16 @@ void main() {
     ],
   );
   var database = LocalDatabase(inTest: true);
+  var viewmodel = TaskAddViewModel(database);
 
   // Rendering helper.
-  Widget renderForm(Task task, GlobalKey<FormState> formKey) {
+  Widget renderForm(TaskAddViewModel viewmodel, GlobalKey<FormState> formKey) {
     return EntryPoint(
       database: database, 
       child: Scaffold(
         body: Portal(
           child: SingleChildScrollView(
-            child: TaskForm(task: task, formKey: formKey)
+            child: TaskForm(viewmodel: viewmodel, formKey: formKey)
           )
         )
       )
@@ -47,10 +49,14 @@ void main() {
   });
 
   group('$TaskForm', () {
+    setUp(() {
+      viewmodel.reset();
+    });
+
     testWidgets('can edit blank task', (tester) async {
       var formKey = GlobalKey<FormState>();
-      final task = Task.blank();
-      await tester.pumpWidget(renderForm(task, formKey));
+
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and description
@@ -71,6 +77,7 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.title, equals('Do dishes'));
       expect(task.projectId, equals(1));
       expect(task.body, equals('Use lots of soap'));
@@ -78,10 +85,10 @@ void main() {
 
     testWidgets('can use mention for due date', (tester) async {
       var formKey = GlobalKey<FormState>();
-      final task = Task.blank();
-      expect(task.projectId, isNull);
+      viewmodel.reset();
+      expect(viewmodel.task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, formKey));
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
@@ -94,6 +101,7 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.title, equals('Do dishes'));
       expect(task.projectId, equals(1));
       expect(task.evening, isTrue);
@@ -101,10 +109,10 @@ void main() {
 
     testWidgets('can use mention for project', (tester) async {
       var formKey = GlobalKey<FormState>();
-      final task = Task.blank();
-      expect(task.projectId, isNull);
+      viewmodel.reset();
+      expect(viewmodel.task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, formKey));
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
@@ -117,22 +125,24 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.title, equals('Do dishes'));
       expect(task.projectId, equals(2));
     });
 
     testWidgets('project and date value has a default', (tester) async {
       var formKey = GlobalKey<FormState>();
-      final task = Task.blank();
-      expect(task.projectId, isNull);
+      viewmodel.reset();
+      expect(viewmodel.task.projectId, isNull);
 
-      await tester.pumpWidget(renderForm(task, formKey));
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Fill out the title and use default project and notes
       await tester.enterText(find.byKey(const ValueKey('title')), 'Do dishes');
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.title, equals('Do dishes'));
       expect(task.projectId, equals(1));
       expect(task.dueOn, isNull);
@@ -140,11 +150,11 @@ void main() {
 
     testWidgets('can edit task with contents', (tester) async {
       var formKey = GlobalKey<FormState>();
-      var task = Task.blank();
-      task.title = "Original title";
-      task.projectId = 2;
-      task.body = 'Original notes';
-      await tester.pumpWidget(renderForm(task, formKey));
+      viewmodel.reset();
+      viewmodel.task.title = "Original title";
+      viewmodel.task.projectId = 2;
+      viewmodel.task.body = 'Original notes';
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Existing data should display.
@@ -169,6 +179,7 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.title, equals('Do dishes'));
       expect(task.projectId, equals(1));
       expect(task.body, equals('Use lots of soap'));
@@ -177,8 +188,8 @@ void main() {
     testWidgets('can update due on date', (tester) async {
       var today = DateUtils.dateOnly(DateTime.now());
       var formKey = GlobalKey<FormState>();
-      var task = Task.blank();
-      await tester.pumpWidget(renderForm(task, formKey));
+      viewmodel.reset();
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Open the due date picker.
@@ -189,13 +200,14 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.dueOn, equals(today));
     });
 
     testWidgets('can set section', (tester) async {
       var formKey = GlobalKey<FormState>();
-      var task = Task.blank();
-      await tester.pumpWidget(renderForm(task, formKey));
+      viewmodel.reset();
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Select a project
@@ -215,17 +227,20 @@ void main() {
       await tester.pumpAndSettle();
 
       formKey.currentState!.save();
+      var task = viewmodel.task;
       expect(task.sectionId, equals(work.sections[1].id));
     });
 
     testWidgets('change project clears section', (tester) async {
       var formKey = GlobalKey<FormState>();
-      var task = Task.blank();
+      viewmodel.reset();
+      var task = viewmodel.task;
+
       task.projectId = 2;
       task.projectSlug = 'work';
       task.sectionId = 1;
 
-      await tester.pumpWidget(renderForm(task, formKey));
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
       await tester.pumpAndSettle();
 
       // Open project selector
@@ -241,6 +256,48 @@ void main() {
 
       formKey.currentState!.save();
       expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
-     });
+    });
+
+    testWidgets('can add substasks to new task', (tester) async {
+      var formKey = GlobalKey<FormState>();
+      viewmodel.reset();
+
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
+      await tester.pumpAndSettle();
+
+      // Enter subtask title.
+      var subtaskTitle = find.byKey(const ValueKey('new-subtask'));
+      await tester.enterText(subtaskTitle, 'New subtask');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+      var task = viewmodel.task;
+      expect(task.subtasks.length, equals(1));
+      expect(task.subtasks[0].title, equals('New subtask'));
+    });
+
+    testWidgets('can remove subtasks', (tester) async {
+      var formKey = GlobalKey<FormState>();
+      viewmodel.reset();
+      viewmodel.task.subtasks.add(Subtask(title: 'remove me'));
+
+      await tester.pumpWidget(renderForm(viewmodel, formKey));
+      await tester.pumpAndSettle();
+
+      var subtaskTitle = find.text('remove me');
+      await tester.tap(subtaskTitle);
+      await tester.pumpAndSettle();
+
+      var remove = find.byKey(const ValueKey('remove-subtask'));
+      await tester.tap(remove);
+      await tester.pumpAndSettle();
+
+      // Confirm removal
+      expect(find.text('Are you sure?'), findsOneWidget);
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+
+      expect(viewmodel.task.subtasks.length, equals(0));
+    });
   });
 }

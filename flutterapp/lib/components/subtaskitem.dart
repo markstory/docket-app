@@ -6,12 +6,14 @@ import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/providers/tasks.dart';
 import 'package:docket/theme.dart';
+import 'package:docket/viewmodels/taskform.dart';
 
 class SubtaskItem extends StatefulWidget {
   final Task task;
   final Subtask subtask;
+  final TaskFormViewModel viewmodel;
 
-  const SubtaskItem({required this.task, required this.subtask, super.key});
+  const SubtaskItem({required this.task, required this.subtask, required this.viewmodel, super.key});
 
   @override
   State<SubtaskItem> createState() => _SubtaskItemState();
@@ -45,10 +47,10 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
   void handleSubtaskComplete(BuildContext context, Task task, Subtask subtask) async {
     var messenger = ScaffoldMessenger.of(context);
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    var viewmodel = widget.viewmodel;
 
     try {
-      await tasksProvider.toggleSubtask(task, subtask);
+      await viewmodel.toggleSubtask(task, subtask);
       if (subtask.completed) {
         messenger.showSnackBar(successSnackBar(context: context, text: 'Subtask Updated'));
       }
@@ -59,10 +61,10 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
   void handleUpdate(BuildContext context, Task task, Subtask subtask) async {
     var messenger = ScaffoldMessenger.of(context);
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    var viewmodel = widget.viewmodel;
 
     try {
-      await tasksProvider.saveSubtask(task, subtask);
+      await viewmodel.saveSubtask(task, subtask);
     } catch (e) {
       messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update subtask'));
     }
@@ -102,16 +104,17 @@ class _SubtaskItemState extends State<SubtaskItem> {
 
     return InputDecoration(
       suffixIcon: IconButton(
+          key: const ValueKey('remove-subtask'),
           icon: Icon(Icons.delete, color: customColors.actionDelete),
           onPressed: () {
             showConfirmDelete(
                 context: context,
                 content: "Are you sure you want to delete this subtask?",
                 onConfirm: () async {
-                  var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
                   var navigator = Navigator.of(context);
+                  var viewmodel = widget.viewmodel;
 
-                  await tasksProvider.deleteSubtask(widget.task, widget.subtask);
+                  await viewmodel.deleteSubtask(widget.task, widget.subtask);
                   navigator.pop();
                 });
           }),
@@ -121,6 +124,7 @@ class _SubtaskItemState extends State<SubtaskItem> {
   Widget itemContents(BuildContext context, Subtask subtask, DocketColors customColors) {
     var theme = Theme.of(context);
     var textTheme = theme.textTheme;
+    var viewmodel = widget.viewmodel;
 
     // Show uneditable text at first so that drag/drop can work.
     if (!hasFocus) {
@@ -141,10 +145,9 @@ class _SubtaskItemState extends State<SubtaskItem> {
       controller: _controller,
       textInputAction: TextInputAction.done,
       onSubmitted: (String value) async {
-        var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
         var sub = widget.subtask;
         sub.title = value;
-        await tasksProvider.saveSubtask(widget.task, sub);
+        await viewmodel.saveSubtask(widget.task, sub);
       },
       decoration: inputSuffix(context),
     );

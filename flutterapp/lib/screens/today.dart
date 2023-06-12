@@ -108,7 +108,7 @@ class _TodayScreenState extends State<TodayScreen> {
         title: const Text('Today'),
       ),
       drawer: const AppDrawer(),
-      floatingActionButton: FloatingCreateTaskButton(task: viewmodel.newTask),
+      floatingActionButton: FloatingCreateTaskButton(dueOn: viewmodel.today),
       body: body,
     );
   }
