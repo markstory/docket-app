@@ -15,16 +15,16 @@ class FloatingCreateTaskButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var viewmodel = Provider.of<TaskAddViewModel>(context);
-
-    viewmodel.task.dueOn = dueOn;
-    viewmodel.task.sectionId = sectionId;
-    viewmodel.task.projectId = projectId;
-    viewmodel.task.evening = evening ?? false;
-
     return FloatingActionButton(
       key: const ValueKey("floating-task-add"),
       onPressed: () {
+        var viewmodel = Provider.of<TaskAddViewModel>(context);
+
+        viewmodel.task.dueOn = dueOn;
+        viewmodel.task.sectionId = sectionId;
+        viewmodel.task.projectId = projectId;
+        viewmodel.task.evening = evening ?? false;
+
         Navigator.pushNamed(
           context,
           Routes.taskAdd,
