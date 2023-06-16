@@ -18,17 +18,14 @@ class FloatingCreateTaskButton extends StatelessWidget {
     return FloatingActionButton(
       key: const ValueKey("floating-task-add"),
       onPressed: () {
-        var viewmodel = Provider.of<TaskAddViewModel>(context);
+        var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
 
         viewmodel.task.dueOn = dueOn;
         viewmodel.task.sectionId = sectionId;
         viewmodel.task.projectId = projectId;
         viewmodel.task.evening = evening ?? false;
 
-        Navigator.pushNamed(
-          context,
-          Routes.taskAdd,
-        );
+        Navigator.pushNamed(context, Routes.taskAdd);
       },
       backgroundColor: theme.colorScheme.primary,
       child: Icon(Icons.add, color: theme.colorScheme.onPrimary),

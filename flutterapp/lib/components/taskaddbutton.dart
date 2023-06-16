@@ -20,17 +20,14 @@ class TaskAddButton extends StatelessWidget {
         icon: const Icon(Icons.add),
         color: theme.colorScheme.primary,
         onPressed: () {
-          var viewmodel = Provider.of<TaskAddViewModel>(context);
+          var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
 
           viewmodel.task.dueOn = dueOn;
           viewmodel.task.sectionId = sectionId;
           viewmodel.task.evening = evening ?? false;
           viewmodel.task.projectId = projectId;
 
-          Navigator.pushNamed(
-            context,
-            Routes.taskAdd,
-          );
+          Navigator.pushNamed(context, Routes.taskAdd);
         });
   }
 }
