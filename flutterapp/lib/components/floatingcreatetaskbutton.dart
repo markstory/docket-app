@@ -20,9 +20,7 @@ class FloatingCreateTaskButton extends StatelessWidget {
     viewmodel.task.dueOn = dueOn;
     viewmodel.task.sectionId = sectionId;
     viewmodel.task.projectId = projectId;
-    if (evening != null) {
-      viewmodel.task.evening = evening!;
-    }
+    viewmodel.task.evening = evening ?? false;
 
     return FloatingActionButton(
       key: const ValueKey("floating-task-add"),
