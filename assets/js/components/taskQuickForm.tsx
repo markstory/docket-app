@@ -177,7 +177,9 @@ export default function TaskQuickForm({
           />
           <FormError errors={errors} field="due_on" />
         </div>
-        {extraButtons.length && <div className="task-extra-buttons">{extraButtons}</div>}
+        {extraButtons.length > 0 ? (
+          <div className="task-extra-buttons">{extraButtons}</div>
+        ) : null}
       </div>
       {showNotesInput && (
         <div className="task-body">

@@ -108,7 +108,7 @@ class _TaskSorterState extends State<TaskSorter> {
       SizedBox(height: space(2)),
       buildTitle(taskMeta, theme, customColors),
       ...taskMeta.tasks.map((task) {
-        var taskItem = TaskItem(task: task, showDate: false, showProject: true);
+        var taskItem = TaskItem(key: ValueKey(task.id), task: task, showDate: false, showProject: true);
         return Draggable<DragAndDropItem>(
           feedback: SizedBox(width: 300, height: 60, child: Material(child: taskItem)),
           data: DragAndDropItem(child: taskItem),
