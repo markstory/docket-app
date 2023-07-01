@@ -136,16 +136,21 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   /// Create or Update a subtask and persist to the server.
   @override
   Future<void> saveSubtask(Task task, Subtask subtask) async {
-    // Get the index before updating the server so that we can
-    // get the index of new subtasks. We're assuming that there is only
-    // one unsaved subtask at a time.
-    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
     if (subtask.id == null) {
       subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
     } else {
       subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
     }
-    task.subtasks[index] = subtask;
+
+    // Get the index before updating the server so that we can
+    // get the index of new subtasks. We're assuming that there is only
+    // one unsaved subtask at a time.
+    var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
+    if (index > -1) {
+      task.subtasks[index] = subtask;
+    } else {
+      task.subtasks.add(subtask);
+    }
 
     await _database.updateTask(task);
 

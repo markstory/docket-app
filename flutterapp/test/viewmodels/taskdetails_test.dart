@@ -137,7 +137,6 @@ void main() {
       task.projectSlug = 'home';
       task.title = "Do laundry";
       var subtask = Subtask(title: 'replaced by server data');
-      task.subtasks.add(subtask);
 
       var viewmodel = TaskDetailsViewModel(db);
       viewmodel.setId(task.id!);

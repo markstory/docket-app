@@ -413,7 +413,7 @@ Future<Subtask> updateSubtask(String apiToken, Task task, Subtask subtask) async
 /// Create a subtask
 Future<Subtask> createSubtask(String apiToken, Task task, Subtask subtask) async {
   var url = _makeUrl('/tasks/${task.id}/subtasks');
-  var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
+  var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not create subtask');
   return _decodeResponse(response.bodyBytes, (mapData) => Subtask.fromMap(mapData['subtask']));
 }
 
