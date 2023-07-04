@@ -32,6 +32,7 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
 
       try {
         await viewmodel.save();
+        _formKey.currentState!.reset();
         messenger.showSnackBar(successSnackBar(context: context, text: 'Task Created'));
         complete();
       } catch (e, stacktrace) {
@@ -57,7 +58,9 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
                       saving = true;
                       _formKey.currentState!.save();
                       await saveTask(context);
-                      saving = false;
+                      setState(() {
+                        saving = false;
+                      });
                     }
                   }
                 )

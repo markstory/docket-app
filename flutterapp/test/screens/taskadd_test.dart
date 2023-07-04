@@ -47,9 +47,10 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
+      const child = TaskAddScreen();
       await tester.pumpWidget(EntryPoint(
           database: db,
-          child: const TaskAddScreen(),
+          child: child,
       ));
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
