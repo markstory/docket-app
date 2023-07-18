@@ -24,7 +24,7 @@ void main() {
     setUp(() async {
       var db = LocalDatabase();
       provider = ProjectsProvider(db);
-      await provider.clear();
+      await db.projectMap.clearSilent();
       await db.apiToken.set(ApiToken.fake());
     });
 
@@ -127,6 +127,9 @@ void main() {
 
     test('archive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
+        if (request.url.path == '/projects') {
+          return Response(projectsResponseFixture, 200);
+        }
         expect(request.url.path, contains('/projects/home/archive'));
         return Response("", 200);
       });
@@ -167,7 +170,7 @@ void main() {
     setUp(() async {
       var db = LocalDatabase();
       provider = ProjectsProvider(db);
-      await provider.clear();
+      await db.projectMap.clearSilent();
       await db.apiToken.set(ApiToken.fake());
     });
 
