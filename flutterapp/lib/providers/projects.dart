@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,10 +18,39 @@ class ProjectsProvider extends ChangeNotifier {
   Set<ViewNames> _pending = {};
   Map<ViewNames, int> _retryCount = {};
 
+  List<Project> _projects = [];
+  bool _loading = false;
+
   ProjectsProvider(LocalDatabase database) {
     _database = database;
     _pending = {};
     _retryCount = {};
+    _database.projectMap.addListener(listener);
+  }
+
+  void listener() {
+    loadData();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _database.projectMap.removeListener(listener);
+    super.dispose();
+  }
+
+  List<Project> get projects => _projects;
+  bool get loading => _loading;
+
+  /// Only loads for local database.
+  /// Doesn't reload from the server.
+  Future<void> loadData() async {
+    _projects = await _database.projectMap.all();
+
+    // We don't have a good indicator of an empty states.
+    if (_projects.isEmpty && _recordRetry(ViewNames.projectMap, 5)) {
+      fetchProjects();
+    }
   }
 
   /// Record a retry and return an indication
@@ -42,13 +70,10 @@ class ProjectsProvider extends ChangeNotifier {
   }
 
   /// Get the project list from the local database.
+  /// Deprecated: Use loadData() and .projects instead.
   Future<List<Project>> getAll() async {
-    var projects = await _database.projectMap.all();
-    // We don't have a good indicator of an empty states.
-    if (projects.isEmpty && _recordRetry(ViewNames.projectMap, 5)) {
-      fetchProjects();
-    }
-    return projects;
+    await loadData();
+    return _projects;
   }
 
   /// Create a project on the server and notify listeners.
@@ -89,10 +114,12 @@ class ProjectsProvider extends ChangeNotifier {
 
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
-    await _withPending(ViewNames.projectMap, () async {
-      var projects = await actions.fetchProjects(_database.apiToken.token);
-      return _database.projectMap.replace(projects);
-    });
+    _loading = true;
+    var projects = await actions.fetchProjects(_database.apiToken.token);
+
+    _database.projectMap.replace(projects);
+    _loading = false;
+    _projects = projects;
 
     notifyListeners();
   }

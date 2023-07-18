@@ -27,11 +27,13 @@ class ProjectMapRepo extends Repository<Project> {
   /// Useful when refreshing from the server to handle project
   /// renames or slug changes.
   Future<void> replace(List<Project> projects) async {
-    Map<String, dynamic> map = {};
+    Map<String, dynamic> replacement = {};
     for (var project in projects) {
-      map[project.slug] = project.toMap();
+      replacement[project.slug] = project.toMap();
     }
-    return setMap(map);
+    await setMap(replacement);
+
+    notifyListeners();
   }
 
   Future<void> addMany(List<Project> projects) async {
@@ -88,7 +90,9 @@ class ProjectMapRepo extends Repository<Project> {
   Future<void> remove(String slug) async {
     var data = await getMap() ?? {};
     data.remove(slug);
-    return setMap(data);
+    await setMap(data);
+
+    notifyListeners();
   }
 
   // Remove a project by id.

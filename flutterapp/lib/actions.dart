@@ -453,6 +453,9 @@ Future<List<Project>> fetchProjects(String apiToken) async {
   return _decodeResponse(response.bodyBytes, (mapData) {
     List<Project> projects = [];
     for (var item in mapData['projects']) {
+      if (item['archived'] == true) {
+        continue;
+      }
       projects.add(Project.fromMap(item));
     }
     return projects;

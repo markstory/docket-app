@@ -55,62 +55,56 @@ class ProjectSorter extends StatefulWidget {
 }
 
 class _ProjectSorterState extends State<ProjectSorter> {
-  late Future<List<Project>> projectsFuture;
+  late ProjectsProvider provider;
 
   @override
   void initState() {
     super.initState();
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    projectsFuture = projectsProvider.getAll();
+    provider = Provider.of<ProjectsProvider>(context, listen: false);
+    provider.loadData();
   }
 
   void _onItemReorder(Project project, int newIndex) async {
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
-
-    await projectsProvider.move(project, newIndex);
-
-    setState(() {
-      projectsFuture = projectsProvider.getAll();
-    });
+    await provider.move(project, newIndex);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Project>>(
-        future: projectsFuture,
-        builder: (context, snapshot) {
-          var theme = Theme.of(context);
-          var projects = snapshot.data;
-          if (snapshot.hasData == false || projects == null) {
-            return const LoadingIndicator();
-          }
+    return Consumer<ProjectsProvider>(
+      builder: buildContents,
+    );
+  }
 
-          return DragAndDropLists(
-            children: [
-              DragAndDropList(
-                canDrag: false,
-                children: projects.map((project) {
-                  return DragAndDropItem(
-                    child: ProjectItem(project: project),
-                  );
-                }).toList(),
-              )
-            ],
-            disableScrolling: true,
-            lastItemTargetHeight: 15,
-            lastListTargetSize: 10,
-            removeTopPadding: true,
-            itemDragOnLongPress: true,
-            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-              var project = projects[oldItemIndex];
-              _onItemReorder(project, newItemIndex);
-            },
-            onListReorder: (int oldIndex, int newIndex) {
-              throw Exception('List reordering not supported');
-            },
-            itemDecorationWhileDragging: itemDragBoxDecoration(theme),
-          );
-        });
+  Widget buildContents(BuildContext context, ProjectsProvider provider, Widget? _) {
+    if (provider.loading) {
+      return const LoadingIndicator();
+    } 
+    var theme = Theme.of(context);
+
+    return DragAndDropLists(
+      children: [
+        DragAndDropList(
+          canDrag: false,
+          children: provider.projects.map((project) {
+            return DragAndDropItem(
+              child: ProjectItem(project: project),
+            );
+          }).toList(),
+        )
+      ],
+      disableScrolling: true,
+      lastItemTargetHeight: 15,
+      lastListTargetSize: 10,
+      removeTopPadding: true,
+      itemDragOnLongPress: true,
+      onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+        var project = provider.projects[oldItemIndex];
+        _onItemReorder(project, newItemIndex);
+      },
+      onListReorder: (int oldIndex, int newIndex) {
+        throw Exception('List reordering not supported');
+      },
+      itemDecorationWhileDragging: itemDragBoxDecoration(theme),
+    );
   }
 }
