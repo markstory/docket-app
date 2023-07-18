@@ -49,6 +49,11 @@ void main() {
       expect(projects.length, equals(2));
       expect(projects[0].slug, equals('work'));
       expect(projects[1].slug, equals('home'));
+
+      expect(provider.projects.length, equals(2));
+      var slugs = projects.map((item) => item.slug).toList();
+      expect(slugs, contains('work'));
+      expect(slugs, contains('home'));
     });
 
     test('fetchProjects() will remove stale projects', () async {
