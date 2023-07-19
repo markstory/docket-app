@@ -32,7 +32,7 @@ void main() {
 
     setUp(() async {
       await database.profile.set(profile);
-      await database.projectMap.addMany(projects);
+      await database.projectMap.replace(projects);
     });
 
     testWidgets('render drawer', (tester) async {

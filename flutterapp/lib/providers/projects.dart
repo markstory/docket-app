@@ -45,11 +45,15 @@ class ProjectsProvider extends ChangeNotifier {
   /// Only loads for local database.
   /// Doesn't reload from the server.
   Future<void> loadData() async {
+    var wasEmpty = _projects.isEmpty;
     _projects = await _database.projectMap.all();
+    if (wasEmpty && _projects.isNotEmpty) {
+      notifyListeners();
+    }
 
     // We don't have a good indicator of an empty states.
     if (_projects.isEmpty && _recordRetry(ViewNames.projectMap, 5)) {
-      fetchProjects();
+      return fetchProjects();
     }
   }
 

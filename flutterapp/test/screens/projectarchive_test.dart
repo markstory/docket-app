@@ -25,6 +25,7 @@ void main() {
 
     setUp(() async {
       await db.apiToken.set(ApiToken.fake());
+      await db.projectMap.replace(projects);
       await db.projectArchive.set(projects);
     });
 
@@ -59,6 +60,9 @@ void main() {
     testWidgets('can unarchive', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
+        if (request.url.path == '/projects') {
+          return Response(projectList, 200);
+        }
         if (request.url.path == '/projects/home/unarchive') {
           callCount += 1;
           return Response('', 200);
