@@ -89,23 +89,35 @@ class CalendarSourceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var docketColors = getCustomColors(context);
+
     var lastSync = 'Never synced';
     var syncTime = source.lastSync;
     if (syncTime != null) {
       lastSync = formatters.timeAgo(syncTime);
     }
 
-    return ListTile(
-        leading: CalendarColourPicker(
-            key: const ValueKey("source-color"),
-            color: source.color,
-            onChanged: (color) async {
-              var messenger = ScaffoldMessenger.of(context);
+    late Widget leading;
+    if (source.isLinked) {
+      leading = CalendarColourPicker(
+        key: const ValueKey("source-color"),
+        color: source.color,
+        onChanged: (color) async {
+          var messenger = ScaffoldMessenger.of(context);
+          var snackbar = successSnackBar(context: context, text: "Calendar updated");
 
-              source.color = color;
-              await viewmodel.updateSource(source);
-              messenger.showSnackBar(successSnackBar(context: context, text: "Calendar updated"));
-            }),
+          source.color = color;
+          await viewmodel.updateSource(source);
+          messenger.showSnackBar(snackbar);
+        });
+    } else {
+      leading = Padding(
+        padding: const EdgeInsets.fromLTRB(0, 13, 30, 10),
+        child: Icon(Icons.circle, color: docketColors.disabledText, size: 12),
+      );
+    }
+
+    return ListTile(
+        leading: leading,
         title: Text(source.name),
         subtitle: Text(
             'Last synced: $lastSync',
