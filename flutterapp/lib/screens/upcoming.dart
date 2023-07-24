@@ -28,10 +28,6 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
     viewmodel.loadData();
   }
 
-  Future<void> _refresh(UpcomingViewModel view) async {
-    return view.refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<UpcomingViewModel>(
@@ -46,7 +42,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       body = const LoadingIndicator();
     } else {
       body = RefreshIndicator(
-        onRefresh: () => _refresh(viewmodel),
+        onRefresh: () => viewmodel.refresh(),
         child: TaskSorter(
             taskLists: viewmodel.taskLists,
             buildItem: (Task task) {

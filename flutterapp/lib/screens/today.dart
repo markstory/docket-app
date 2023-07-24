@@ -32,10 +32,6 @@ class _TodayScreenState extends State<TodayScreen> {
     viewmodel.loadData();
   }
 
-  Future<void> _refresh(TodayViewModel view) async {
-    return view.refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
     // Update the the theme based on device settings.
@@ -75,7 +71,7 @@ class _TodayScreenState extends State<TodayScreen> {
       body = const LoadingIndicator();
     } else {
       body = RefreshIndicator(
-          onRefresh: () => _refresh(viewmodel),
+          onRefresh: () => viewmodel.refresh(),
           child: TaskSorter(
                 taskLists: viewmodel.taskLists,
                 overdue: viewmodel.overdue,
