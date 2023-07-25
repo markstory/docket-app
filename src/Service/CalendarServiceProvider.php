@@ -25,6 +25,7 @@ class CalendarServiceProvider extends ServiceProvider
     {
         $container->add(GoogleClient::class, function () {
             $file = file_get_contents(ROOT . '/config/google-auth.json');
+            assert($file !== false, 'Could not read config/google-auth.json');
             $config = json_decode($file, true);
 
             $client = new GoogleClient();

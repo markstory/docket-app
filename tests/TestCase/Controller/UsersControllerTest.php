@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -21,6 +21,8 @@ class UsersControllerTest extends TestCase
     use EmailTrait;
     use IntegrationTestTrait;
 
+    public UsersTable $Users;
+
     /**
      * Fixtures
      *
@@ -34,7 +36,7 @@ class UsersControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->Users = TableRegistry::get('Users');
+        $this->Users = $this->fetchTable('Users');
     }
 
     public function testLogin()

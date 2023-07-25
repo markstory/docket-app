@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\GoogleOauthController;
+use App\Model\Table\CalendarProvidersTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -17,6 +18,8 @@ class GoogleOauthControllerTest extends TestCase
 {
     use FactoryTrait;
     use IntegrationTestTrait;
+
+    protected CalendarProvidersTable $CalendarProviders;
 
     /**
      * @var array

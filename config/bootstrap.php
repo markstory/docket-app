@@ -37,6 +37,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorTrap;
 use Cake\Error\ExceptionTrap;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
@@ -162,3 +163,11 @@ Log::setConfig(Configure::consume('Log'));
 Security::setSalt((string)Configure::consume('Security.salt'));
 
 \Sentry\init(Configure::consume('Sentry'));
+
+// Default value as inertia plugin only sets this when inertia is used,
+ServerRequest::addDetector('inertia', function () {
+    return false;
+});
+ServerRequest::addDetector('inertia-partial-data', function () {
+    return false;
+});

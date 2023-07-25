@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Task;
+use App\Model\Table\SubtasksTable;
+use App\Model\Table\TasksTable;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -15,6 +17,9 @@ use InvalidArgumentException;
  */
 class SubtasksController extends AppController
 {
+    public TasksTable $Tasks;
+    public SubtasksTable $Subtasks;
+
     public function initialize(): void
     {
         parent::initialize();
