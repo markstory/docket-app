@@ -23,10 +23,10 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\ApiToken[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\ApiToken saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\ApiToken[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\ApiToken>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\ApiToken> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\ApiToken>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\ApiToken> deleteManyOrFail(iterable $entities, $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ApiTokensTable extends Table

@@ -31,10 +31,10 @@ use RuntimeException;
  * @method \App\Model\Entity\Task[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\Task|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\Task saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Task[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Task>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Task> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Task>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Task> deleteManyOrFail(iterable $entities, $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class TasksTable extends Table

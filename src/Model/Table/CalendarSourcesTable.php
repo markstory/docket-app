@@ -24,10 +24,10 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\CalendarSource[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\CalendarSource|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\CalendarSource saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSource[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSource>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSource> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSource>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSource> deleteManyOrFail(iterable $entities, $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class CalendarSourcesTable extends Table

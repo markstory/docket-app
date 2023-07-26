@@ -21,10 +21,10 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\CalendarProvider[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\CalendarProvider|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\CalendarProvider saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\CalendarProvider[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarProvider[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarProvider[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarProvider[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarProvider>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarProvider> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarProvider>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarProvider> deleteManyOrFail(iterable $entities, $options = [])
  */
 class CalendarProvidersTable extends Table
 {
