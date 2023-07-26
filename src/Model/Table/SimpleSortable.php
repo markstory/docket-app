@@ -53,9 +53,7 @@ class SimpleSortable
             $targetOffset = $currentTask->get($field);
         }
 
-        $query = $this->table->query()
-            ->update()
-            ->where($scopeConditions);
+        $query = $this->table->updateQuery()->where($scopeConditions);
 
         $current = $record->get($field);
         $record->set($field, $targetOffset);
