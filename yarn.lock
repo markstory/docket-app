@@ -3193,7 +3193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-dynamic-import-node@npm:^2.3.3":
+"babel-plugin-dynamic-import-node@npm:2.3.3, babel-plugin-dynamic-import-node@npm:^2.3.3":
   version: 2.3.3
   resolution: "babel-plugin-dynamic-import-node@npm:2.3.3"
   dependencies:
@@ -7766,6 +7766,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^4.14.1"
     "@typescript-eslint/parser": "npm:^4.14.1"
     "@vitejs/plugin-react-refresh": "npm:^1.3.1"
+    babel-plugin-dynamic-import-node: "npm:2.3.3"
     classnames: "npm:^2.2.6"
     date-fns: "npm:^2.12.0"
     dompurify: "npm:^2.2.6"
