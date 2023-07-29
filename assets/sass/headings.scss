@@ -1,6 +1,6 @@
 .heading-button {
   display: flex;
-  gap: $space / 2;
+  gap: calc($space / 2);
   align-items: center;
   margin-bottom: $space;
 
@@ -19,7 +19,7 @@
 .heading-icon {
   display: flex;
   align-items: baseline;
-  gap: $space / 2;
+  gap: calc($space / 2);
 
   &.today svg {
     color: var(--color-due-today);
@@ -55,7 +55,7 @@
 .heading-task-group {
   display: flex;
   align-items: center;
-  gap: $space / 2;
+  gap: calc($space / 2);
 
   .minor {
     font-weight: normal;

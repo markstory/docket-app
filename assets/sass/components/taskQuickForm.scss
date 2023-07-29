@@ -11,7 +11,7 @@
   }
   label {
     font-size: $font-size-normal;
-    margin-bottom: $space / 2;
+    margin-bottom: calc($space / 2);
   }
 
   .attributes {
@@ -55,7 +55,7 @@
     margin-top: $space;
   }
   .task-body textarea {
-    margin-top: $space / 2;
+    margin-top: calc($space / 2);
     width: 100%;
   }
 

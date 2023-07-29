@@ -4,7 +4,7 @@
 .smart-task-input__control {
   .date-mention,
   .project-mention {
-    padding: $space / 2 0;
+    padding: calc($space / 2) 0;
     border-radius: $border-radius;
 
     background: var(--color-menu-hover);
@@ -13,7 +13,7 @@
 
 .smart-task-input__highlighter {
   height: $button-med-height;
-  padding: $space / 4 $space;
+  padding: calc($space / 4) $space;
   line-height: 2;
 }
 .smart-task-input__suggestions {

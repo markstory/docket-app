@@ -1,6 +1,6 @@
 .project-filter {
   $item-height: 40px;
-  $icon-gap: $space * 0.75;
+  $icon-gap: calc($space * 0.75);
 
   h3 {
     color: var(--color-low-emphasis);
@@ -18,7 +18,7 @@
     height: $item-height;
     display: flex;
     align-items: center;
-    padding: $space 0 $space $space / 2;
+    padding: $space 0 $space calc($space / 2);
     margin: 0 $space * 2 1px 0;
     text-decoration: none;
     border-radius: $border-radius;
@@ -45,7 +45,7 @@
   }
 
   .dnd-dropper-left-offset {
-    margin-right: $space * 2;
+    margin-right: calc($space * 2);
   }
 
   .project-item {

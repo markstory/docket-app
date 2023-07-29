@@ -41,7 +41,7 @@ div.select-narrow__control {
 }
 div.select-narrow__value-container,
 div.select__value-container {
-  padding: $space / 4 $space / 4 $space / 4 $space;
+  padding: calc($space / 4) calc($space / 4) calc($space / 4) $space;
 }
 
 .select-narrow__value-container > div,

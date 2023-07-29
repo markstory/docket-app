@@ -2,7 +2,7 @@
   padding: $space;
   background: var(--color-bg-level1);
   border-radius: $border-radius;
-  margin-bottom: $space * 1.5;
+  margin-bottom: calc($space * 1.5);
 }
 
 .calendar-item {
@@ -22,14 +22,14 @@
     background: var(--calendar-color);
     width: 4px;
     height: 1.2em;
-    margin-right: $space / 2;
+    margin-right: calc($space / 2);
   }
 
   time {
     color: var(--calendar-color);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    margin-right: $space / 2;
+    margin-right: calc($space / 2);
   }
 
   a {

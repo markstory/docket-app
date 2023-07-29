@@ -12,7 +12,7 @@
     justify-content: flex-start;
 
     min-height: 30px;
-    margin-bottom: $space / 2;
+    margin-bottom: calc($space / 2);
 
     input[type=checkbox] {
       margin-right: $space;
@@ -30,7 +30,7 @@
 }
 
 .task-subtasks.is-new {
-  margin-top: $space * 3;
+  margin-top: calc($space * 3);
 }
 
 .subtask-sorter {
@@ -38,7 +38,7 @@
   margin-left: -12px;
 }
 .subtask-addform {
-  margin-left: ($space * 3) - 2;
+  margin-left: calc(($space * 3) - 2px);
   display: grid;
   grid-template-columns: max(20%, 200px) min-content;
   gap: $space;

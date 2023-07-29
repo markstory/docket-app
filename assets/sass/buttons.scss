@@ -13,13 +13,13 @@
 
   border: 1px solid transparent;
   margin-bottom: 0;
-  padding: $space $space * 1.5;
+  padding: $space calc($space * 1.5);
   border-radius: $border-radius;
   height: $button-med-height;
 
   // Space icons away from button text.
   & > svg:first-child {
-    margin-right: $space / 2;
+    margin-right: calc($space / 2);
   }
 
   outline: none;
@@ -161,12 +161,12 @@ button,
 
 .button-global-add {
   position: fixed;
-  bottom: $space * 3.5;
-  right: $space * 3.5;
+  bottom: calc($space * 3.5);
+  right: calc($space * 3.5);
   z-index: $z-modal;
   border-radius: 50%;
-  width: $space * 7;
-  height: $space * 7;
+  width: calc($space * 7);
+  height: calc($space * 7);
 
   > svg:first-child {
     margin: 0;
@@ -220,7 +220,7 @@ button,
   @extend .button-bar;
 
   display: flex;
-  margin: 0 0 0 $space * 2;
+  margin: 0 0 0 calc($space * 2);
   padding: 0;
 }
 // }}}

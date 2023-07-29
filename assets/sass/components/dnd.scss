@@ -12,7 +12,7 @@
   cursor: grab;
   height: 30px;
   width: 30px;
-  margin-right: $space / 2;
+  margin-right: calc($space / 2);
   line-height: 1;
   border: none;
   padding: 3px;

@@ -4,6 +4,6 @@
   }
   ul, ol {
     margin-left: 0;
-    padding-left: $space * 2;
+    padding-left: calc($space * 2);
   }
 }

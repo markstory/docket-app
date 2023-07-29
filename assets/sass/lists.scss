@@ -22,7 +22,7 @@
 
   li.list-item-empty {
     border-bottom: 0;
-    padding: $space * 2;
+    padding: calc($space * 2);
     justify-content: center;
 
     svg {
@@ -55,7 +55,7 @@
   }
 
   kbd {
-    padding: $space / 4 $space;
+    padding: calc($space / 4) $space;
     background: var(--color-bg-low);
     border-radius: $border-radius;
   }
@@ -70,7 +70,7 @@
   padding: $space;
   align-items: flex-start;
   flex-direction: column;
-  margin-bottom: $space * 2;
+  margin-bottom: calc($space * 2);
 
   &[data-active="true"] {
     border-color: var(--color-menu-selected);
@@ -86,6 +86,6 @@
   justify-content: space-between;
 }
 .list-item-panel-header + .list-item-panel-item{
-  padding-top: $space / 2;
+  padding-top: calc($space / 2);
   border-top: 2px solid var(--color-border-med);
 }

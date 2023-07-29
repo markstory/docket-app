@@ -7,5 +7,5 @@
 
 .task-group + .heading-icon,
 .task-group + .heading-task-group {
-  margin-top: $space * 5;
+  margin-top: calc($space * 5);
 }
