@@ -1,3 +1,4 @@
+import 'vite/modulepreload-polyfill';
 import axios from 'axios';
 import {InertiaApp} from '@inertiajs/inertia-react';
 import {render} from 'react-dom';
