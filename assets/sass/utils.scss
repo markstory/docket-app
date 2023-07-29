@@ -1,8 +1,8 @@
 // Used to give hover to editable regions.
 .editable {
   border-radius: $border-radius;
-  padding: $space / 4 $space / 2;
-  margin-left: $space / 2 * -1;
+  padding: calc($space / 4) calc($space / 2);
+  margin-left: calc(($space / 2) * -1);
 
   &:hover {
     background: var(--color-disabled);
@@ -19,6 +19,6 @@
   font-size: $font-size-normal;
   color: var(--color-muted);
   svg {
-    margin-right: $space / 2;
+    margin-right: calc($space / 2);
   }
 }

@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   width: max-content;
-  padding-right: $space / 2;
+  padding-right: calc($space / 2);
   border-radius: $border-radius;
   margin-bottom: 1px;
 
@@ -42,11 +42,11 @@
 
     color: var(--color-fg);
     text-decoration: none;
-    padding-left: $space / 2;
+    padding-left: calc($space / 2);
   }
 
   .counter {
-    margin: 0 $space / 2;
+    margin: 0 calc($space / 2);
   }
 }
 

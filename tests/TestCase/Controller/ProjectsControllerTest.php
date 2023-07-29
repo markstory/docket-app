@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Table\ProjectsTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -16,6 +17,8 @@ class ProjectsControllerTest extends TestCase
 {
     use FactoryTrait;
     use IntegrationTestTrait;
+
+    public ProjectsTable $Projects;
 
     /**
      * Fixtures

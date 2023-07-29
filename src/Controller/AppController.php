@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Table\ProjectsTable;
 use Authentication\Authenticator\SessionAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
@@ -25,6 +26,8 @@ class AppController extends Controller
     use InertiaResponseTrait {
         beforeRender as protected inertiaBeforeRender;
     }
+
+    public ProjectsTable $Projects;
 
     /**
      * Initialization hook method.

@@ -27,10 +27,10 @@ use InvalidArgumentException;
  * @method \App\Model\Entity\Project[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\Project|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\Project saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Project[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Project>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Project> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Project>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\Project> deleteManyOrFail(iterable $entities, $options = [])
  * @method \Cake\ORM\Query findBySlug(string $slug)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

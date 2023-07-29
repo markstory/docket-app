@@ -1,7 +1,7 @@
 // Toggle buttons convert a checkbox into
 // an on/off switch.
-$toggle-width: $button-narrow-height * 2;
-$toggle-knob-diameter: $button-narrow-height - 8;
+$toggle-width: calc($button-narrow-height * 2);
+$toggle-knob-diameter: calc($button-narrow-height - 8px);
 
 .toggle-checkbox {
   position: relative;
@@ -53,7 +53,7 @@ $toggle-knob-diameter: $button-narrow-height - 8;
   }
   input:checked + .knob {
     background: var(--color-toggle-checked);
-    transform: translateX(($toggle-width / 2) - 1);
+    transform: translateX(calc($toggle-width / 2) - 1);
   }
 }
 

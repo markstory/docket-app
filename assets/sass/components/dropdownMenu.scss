@@ -38,7 +38,7 @@
   color: var(--color-foreground);
   border-radius: 0;
   box-shadow: none;
-  padding: $space $space * 1.5;
+  padding: $space calc($space * 1.5);
   text-align: left;
   height: auto;
 
@@ -56,7 +56,7 @@
 .dropdown-item-header {
   line-height: 1.2;
 
-  padding: $space $space * 1.5;
+  padding: $space calc($space * 1.5);
   margin: 0;
 }
 

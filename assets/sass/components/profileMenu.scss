@@ -1,5 +1,5 @@
 .profile-menu {
-  margin: 0 0 $space * 3 $space / 2;
+  margin: 0 0 calc($space * 3) calc($space / 2);
 
   .avatar,
   .avatar:hover {

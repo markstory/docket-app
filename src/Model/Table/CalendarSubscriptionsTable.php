@@ -22,10 +22,10 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\CalendarSubscription[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\CalendarSubscription|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \App\Model\Entity\CalendarSubscription saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\CalendarSubscription[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSubscription[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSubscription[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\CalendarSubscription[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSubscription>|false saveMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSubscription> saveManyOrFail(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSubscription>|false deleteMany(iterable $entities, $options = [])
+ * @method iterable<mixed, \App\Model\Entity\CalendarSubscription> deleteManyOrFail(iterable $entities, $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class CalendarSubscriptionsTable extends Table

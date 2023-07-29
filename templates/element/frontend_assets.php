@@ -7,6 +7,7 @@ $debug = Configure::read('debug');
 ?>
 <?php $this->Html->scriptStart() ?>
 var global = globalThis;
+globalThis.regeneratorRuntime = undefined
 <?= $this->Html->scriptEnd() ?>
 <?php if ($debug) : ?>
     <?= $this->Html->script('http://localhost:3000/@vite/client', ['type' => 'module']) ?>

@@ -2,6 +2,6 @@
   .calendar-name {
     display: flex;
     flex-direction: column;
-    gap: $space / 2;
+    gap: calc($space / 2);
   }
 }

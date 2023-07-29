@@ -6,7 +6,7 @@ input[type=number],
 input[type=password],
 input[type=email] {
   height: $button-med-height;
-  padding: $space / 2 $space;
+  padding: calc($space / 2) $space;
   color: var(--color-fg);
   background: var(--color-bg);
   border-radius: $border-radius;
@@ -54,17 +54,17 @@ textarea {
   display: flex;
   align-items: center;
 
-  margin-bottom: $space * 2;
+  margin-bottom: calc($space * 2);
 
   label {
-    margin-right: $space * 2;
+    margin-right: calc($space * 2);
     width: 33%;
   }
   label[data-required="true"]:after {
     content: "\25CF";
     display: inline;
     color: var(--color-input-required);
-    margin-left: $space / 2;
+    margin-left: calc($space / 2);
   }
 
   &.is-error input {
@@ -80,7 +80,7 @@ textarea {
 .form-help {
   font-size: $font-size-small;
   color: var(--color-muted);
-  margin: $space / 2 0 0 0;
+  margin: calc($space / 2) 0 0 0;
 }
 
 // Inline forms used to do renaming.
@@ -111,7 +111,7 @@ textarea {
     }
     label {
       width: auto;
-      margin-bottom: $space / 2;
+      margin-bottom: calc($space / 2);
     }
     input,
     select, 

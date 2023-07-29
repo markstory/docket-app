@@ -51,8 +51,7 @@ class CleanupCommand extends Command
         $io->verbose("Going to remove tasks older than {$expires->toDateTimeString()}");
 
         $tasks = $this->fetchTable('Tasks');
-        $query = $tasks->query()
-            ->delete()
+        $query = $tasks->deleteQuery()
             ->where([
                 'Tasks.deleted_at IS NOT' => null,
                 'Tasks.deleted_at <' => $expires,

@@ -4,21 +4,24 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Project;
+use App\Model\Table\ProjectsTable;
+use App\Model\Table\TasksTable;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
  * Projects Controller
- *
- * @property \App\Model\Table\TasksTable $Tasks
- * @property \App\Model\Table\ProjectsTable $Projects
  */
 class ProjectsController extends AppController
 {
+    public TasksTable $Tasks;
+    public ProjectsTable $Projects;
+
     public function initialize(): void
     {
         parent::initialize();
         $this->loadModel('Tasks');
+        $this->loadModel('Projects');
     }
 
     public function viewClasses(): array

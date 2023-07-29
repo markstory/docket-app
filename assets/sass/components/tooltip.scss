@@ -2,7 +2,7 @@
   background: var(--color-invert-bg);
   color: var(--color-invert-fg);
   border-radius: $border-radius;
-  padding: $space / 2 $space;
+  padding: calc($space / 2) $space;
 
   z-index: $z-modal;
   pointer-events: none;

@@ -3,7 +3,7 @@
   align-items: center;
 
   svg {
-    margin-right: $space / 2;
+    margin-right: calc($space / 2);
   }
 
   &.none {

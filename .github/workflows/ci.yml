@@ -121,11 +121,11 @@ jobs:
       run: |
         # Run suites individually so we abort on first failure
         # a string of timeouts takes a long time to work through.
-        vendor/bin/phpunit tests/Acceptance/LoginTest.php
         vendor/bin/phpunit tests/Acceptance/ProjectsTest.php
         vendor/bin/phpunit tests/Acceptance/TasksTest.php
         vendor/bin/phpunit tests/Acceptance/TodayTest.php
         vendor/bin/phpunit tests/Acceptance/UpcomingTest.php
+        vendor/bin/phpunit tests/Acceptance/LoginTest.php
 
   flutter-test:
     runs-on: ubuntu-22.04

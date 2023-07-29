@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\ORM\TableRegistry;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
