@@ -95,10 +95,11 @@ class _TaskSorterState extends State<TaskSorter> {
   Widget buildEmpty(ThemeData theme) {
     var docketColors = theme.extension<DocketColors>()!;
     // TODO make contents dynamic based on the current metadata information
-    var contents = Text('No tasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText));
+    // TODO figure out how to get this text aligned on the left
+    var contents = Text('No tasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText), textAlign: TextAlign.left);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: space(2)),
+      padding: EdgeInsets.fromLTRB(0, space(4), 0, 0),
       child: contents,
     );
   }
