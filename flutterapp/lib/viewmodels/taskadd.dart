@@ -13,7 +13,7 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   TaskAddViewModel(LocalDatabase database) {
     _database = database;
-    _task = Task.pending();
+    reset();
   }
 
   @override
@@ -36,8 +36,6 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
   void reset() {
     _task = Task.pending();
   }
-
-  // {{{ Subtask methods
 
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
@@ -87,5 +85,4 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
     notifyListeners();
   }
-  // }}}
 }
