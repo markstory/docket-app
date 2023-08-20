@@ -139,19 +139,6 @@ class ProjectsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Archive a project and remove the project the project and project details.
-  Future<Project> archive(Project project) async {
-    await actions.archiveProject(_database.apiToken.token, project);
-    await Future.wait([
-      _database.projectMap.remove(project.slug),
-      _database.projectDetails.remove(project.slug),
-      _database.projectArchive.clear(),
-    ]);
-    notifyListeners();
-
-    return project;
-  }
-
   /// Un-archive a project
   Future<void> unarchive(Project project) async {
     await actions.unarchiveProject(_database.apiToken.token, project);

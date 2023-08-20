@@ -11,6 +11,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 import 'package:docket/dialogs/createsection.dart';
+import 'package:docket/viewmodels/projectdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,24 +21,28 @@ void main() {
   final projectDetails = file.readAsStringSync();
   var decoded = jsonDecode(projectDetails) as Map<String, dynamic>;
 
-  Widget buildButton(Project project) {
+  Widget buildButton(ProjectDetailsViewModel viewmodel) {
     return EntryPoint(
         database: database,
         child: Builder(builder: (BuildContext context) {
           return TextButton(
               child: const Text('Open'),
               onPressed: () async {
-                await showCreateSectionDialog(context, project);
+                await showCreateSectionDialog(context, viewmodel);
               });
         }));
   }
 
   group('showCreateSectionDialog', () {
     var project = ProjectWithTasks.fromMap(decoded);
+    late ProjectDetailsViewModel viewmodel;
 
     setUp(() async {
       await database.apiToken.set(ApiToken(token: 'abc123'));
       await database.projectDetails.set(project);
+
+      viewmodel = ProjectDetailsViewModel(database)..setSlug(project.project.slug);
+      await viewmodel.loadData();
     });
 
     testWidgets('fill form and send request', (tester) async {
@@ -53,7 +58,7 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(buildButton(project.project));
+      await tester.pumpWidget(buildButton(viewmodel));
 
       // Open dialog.
       await tester.tap(find.text('Open'));

@@ -18,8 +18,8 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/project_details.json');
-  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
-  var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
+  final detailsResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  var decoded = jsonDecode(detailsResponse) as Map<String, dynamic>;
 
   group('$ProjectDetailsScreen', () {
     var db = LocalDatabase(inTest: true);
@@ -125,6 +125,9 @@ void main() {
     testWidgets('rename section sends requests', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          return Response(detailsResponse, 200);
+        }
         if (request.url.path == '/projects/home/sections/1/edit') {
           expect(request.body.contains('Renamed section'), isTrue);
           callCount += 1;

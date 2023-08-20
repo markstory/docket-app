@@ -175,6 +175,25 @@ void main() {
       expect(viewmodel.taskLists.length, equals(3));
     });
 
+    test('archive() makes API request and expires local db', () async {
+      actions.client = MockClient((request) async {
+        expect(request.url.path, contains('/projects/home/archive'));
+        return Response("", 200);
+      });
+
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
+      await viewmodel.loadData();
+      await viewmodel.archive();
+
+      var projectMap = await db.projectMap.get('home');
+      expect(projectMap, isNull);
+
+      var details = await db.projectDetails.get('home');
+      expect(details.isEmpty, equals(true));
+    });
   });
 
   group("$ProjectDetailsViewModel section methods", () {

@@ -112,6 +112,20 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _buildTaskLists(result.tasks);
   }
 
+  /// Archive a project and remove the project the project and project details.
+  Future<Project> archive() async {
+    await actions.archiveProject(_database.apiToken.token, project);
+    await Future.wait([
+      _database.projectMap.remove(project.slug),
+      _database.projectDetails.remove(project.slug),
+      _database.projectArchive.clear(),
+    ]);
+    notifyListeners();
+
+    return project;
+  }
+
+
   // Section Methods {{{
   /// Move a section up or down.
   Future<void> moveSection(int oldIndex, int newIndex) async {

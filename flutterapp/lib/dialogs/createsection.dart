@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:docket/models/project.dart';
 import 'package:docket/viewmodels/projectdetails.dart';
 
-Future<void> showCreateSectionDialog(BuildContext context, Project project) {
+Future<void> showCreateSectionDialog(BuildContext context, ProjectDetailsViewModel viewmodel) {
   var formKey = GlobalKey<FormState>();
   var section = Section.blank();
 
@@ -12,7 +11,6 @@ Future<void> showCreateSectionDialog(BuildContext context, Project project) {
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
-      var viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
       var form = Form(
         key: formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

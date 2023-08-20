@@ -14,7 +14,6 @@ import 'package:docket/components/projectactions.dart';
 import 'package:docket/dialogs/renamesection.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
-import 'package:docket/providers/projects.dart';
 import 'package:docket/viewmodels/projectdetails.dart';
 import 'package:docket/theme.dart';
 
@@ -44,12 +43,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return Consumer<ProjectDetailsViewModel>(builder: (context, viewmodel, child) {
       if (viewmodel.loading) {
         return buildWrapper(
+          viewmodel: viewmodel,
           project: widget.project,
           child: const LoadingIndicator(),
         );
       }
 
       return buildWrapper(
+          viewmodel: viewmodel,
           project: viewmodel.project,
           child: TaskSorter(
               taskLists: viewmodel.taskLists,
@@ -86,8 +87,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           });
   }
 
-  Widget buildWrapper({required Widget child, required Project project}) {
-    var actions = [ProjectActions(project)];
+  Widget buildWrapper({required Widget child, required Project project, required ProjectDetailsViewModel viewmodel}) {
+    var actions = [ProjectActions(viewmodel)];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: getProjectColor(project.color),

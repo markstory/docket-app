@@ -130,28 +130,6 @@ void main() {
       expect(details.isEmpty, equals(true));
     });
 
-    test('archive() makes API request and expires local db', () async {
-      actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
-          return Response(projectsResponseFixture, 200);
-        }
-        expect(request.url.path, contains('/projects/home/archive'));
-        return Response("", 200);
-      });
-      var project = Project(id: 1, slug: 'home', name: 'Home');
-
-      var db = LocalDatabase();
-      await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
-
-      await provider.archive(project);
-
-      var projectMap = await db.projectMap.get('home');
-      expect(projectMap, isNull);
-
-      var details = await db.projectDetails.get('home');
-      expect(details.isEmpty, equals(true));
-    });
-
     test('unarchive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
         if (request.url.path == '/projects') {

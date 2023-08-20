@@ -1,10 +1,10 @@
+import 'package:docket/viewmodels/projectdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/components/iconsnackbar.dart';
 import 'package:docket/dialogs/createsection.dart';
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/projects.dart';
 import 'package:docket/theme.dart';
 import 'package:docket/routes.dart';
 
@@ -16,32 +16,32 @@ enum Menu {
 }
 
 class ProjectActions extends StatelessWidget {
-  final Project project;
+  final ProjectDetailsViewModel viewmodel;
 
-  const ProjectActions(this.project, {super.key});
+  const ProjectActions(this.viewmodel, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    var projectProvider = Provider.of<ProjectsProvider>(context);
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> handleArchive() async {
-      projectProvider.archive(project);
+      viewmodel.archive();
       messenger.showSnackBar(successSnackBar(context: context, text: 'Project Updated'));
     }
 
     void handleEdit() {
-      Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectDetailsArguments(project));
+      Navigator.pushNamed(context, Routes.projectEdit, arguments: ProjectDetailsArguments(viewmodel.project));
     }
 
     void handleViewCompleted() {
-      Navigator.pushNamed(context, Routes.projectCompleted, arguments: ProjectDetailsArguments(project));
+      Navigator.pushNamed(context, Routes.projectCompleted, arguments: ProjectDetailsArguments(viewmodel.project));
     }
 
     void handleAddSection() async {
       try {
-        await showCreateSectionDialog(context, project);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Section Created'));
+        var snackbar = successSnackBar(context: context, text: 'Section Created');
+        await showCreateSectionDialog(context, viewmodel);
+        messenger.showSnackBar(snackbar);
       } catch (e) {
         messenger.showSnackBar(successSnackBar(context: context, text: 'Could not create section'));
       }
