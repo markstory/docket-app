@@ -39,10 +39,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     viewmodel.loadData();
   }
 
-  Future<void> _refresh(ProjectDetailsViewModel view) {
-    return view.refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectDetailsViewModel>(builder: (context, viewmodel, child) {
@@ -72,7 +68,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         Text(metadata.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
                         TaskAddButton(projectId: viewmodel.project.id, sectionId: data.id),
                       ]),
-                      SectionActions(viewmodel.project, data),
+                      SectionActions(viewmodel, data),
                     ]));
               },
               onListReorder: (int oldIndex, int newIndex) async {
@@ -102,7 +98,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       // TODO add scroll tracking for sections and update add button.
       floatingActionButton: FloatingCreateTaskButton(projectId: project.id),
       body: RefreshIndicator(
-        onRefresh: () => _refresh(viewmodel),
+        onRefresh: () => viewmodel.refresh(),
         child: child,
       ),
     );
@@ -113,15 +109,14 @@ enum Menu { delete, edit }
 
 class SectionActions extends StatelessWidget {
   final Section section;
-  final Project project;
+  final ProjectDetailsViewModel viewmodel;
 
-  const SectionActions(this.project, this.section, {super.key});
+  const SectionActions(this.viewmodel, this.section, {super.key});
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> handleDelete() async {
@@ -130,8 +125,9 @@ class SectionActions extends StatelessWidget {
         content: "Are you sure you want to delete this section?",
         onConfirm: () async {
           try {
-            await projectsProvider.deleteSection(project, section);
-            messenger.showSnackBar(successSnackBar(context: context, text: 'Section Deleted'));
+            var snackbar = successSnackBar(context: context, text: 'Section Deleted');
+            await viewmodel.deleteSection(section);
+            messenger.showSnackBar(snackbar);
           } catch (e) {
             messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete section task'));
           }
@@ -140,8 +136,9 @@ class SectionActions extends StatelessWidget {
 
     Future<void> handleEdit() async {
       try {
-        await showRenameSectionDialog(context, project, section);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Section renamed'));
+        var snackbar = successSnackBar(context: context, text: 'Section renamed');
+        await showRenameSectionDialog(context, viewmodel, section);
+        messenger.showSnackBar(snackbar);
       } catch (e) {
         messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not rename section'));
       }

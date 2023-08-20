@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/projects.dart';
+import 'package:docket/viewmodels/projectdetails.dart';
 
 Future<void> showCreateSectionDialog(BuildContext context, Project project) {
   var formKey = GlobalKey<FormState>();
@@ -12,7 +12,7 @@ Future<void> showCreateSectionDialog(BuildContext context, Project project) {
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
-      var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+      var viewmodel = Provider.of<ProjectDetailsViewModel>(context, listen: false);
       var form = Form(
         key: formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -45,7 +45,9 @@ Future<void> showCreateSectionDialog(BuildContext context, Project project) {
                   var navigator = Navigator.of(context);
 
                   formKey.currentState!.save();
-                  await projectsProvider.createSection(project, section);
+                  await viewmodel.createSection(section);
+
+                  formKey.currentState!.reset();
                   navigator.pop();
                 }
               }

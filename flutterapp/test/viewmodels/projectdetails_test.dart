@@ -175,6 +175,117 @@ void main() {
       expect(viewmodel.taskLists.length, equals(3));
     });
 
+  });
+
+  group("$ProjectDetailsViewModel section methods", () {
+    var db = LocalDatabase(inTest: true);
+
+    setUp(() async {
+      await db.apiToken.set(ApiToken.fake());
+      await db.projectDetails.clearSilent();
+      await db.projectMap.clearSilent();
+    });
+
+    test('createSection() makes API request, and refreshes local db', () async {
+      var fetchCount = 0;
+      var addCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          fetchCount++;
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        if (request.url.path == '/projects/home/sections') {
+          addCount += 1;
+          expect(request.body, contains('name":"Repairs"'));
+          return Response('', 200);
+        }
+        throw "Unknown request to ${request.url.path}";
+      });
+      var section = Section(id: 1, name: 'Repairs', ranking: 1);
+
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
+      await viewmodel.loadData();
+      await viewmodel.createSection(section);
+
+      expect(addCount, equals(1));
+      expect(fetchCount, greaterThan(0));
+
+      var projectMap = await db.projectMap.get('home');
+      expect(projectMap, isNotNull);
+
+      var details = await db.projectDetails.get('home');
+      expect(details.isEmpty, isFalse);
+      // Is two because of server fixture.
+      expect(details.project.sections.length, equals(2));
+    });
+
+    test('deleteSection() makes API request and refreshes local db', () async {
+      var deleteCount = 0;
+      var fetchCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          fetchCount++;
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        deleteCount++;
+        expect(request.url.path, contains('/projects/home/sections/1/delete'));
+        return Response("", 200);
+      });
+      var section = Section(id: 1, name: 'Repairs', ranking: 1);
+      var project = Project(id: 1, slug: 'home', name: 'Home');
+
+      await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
+      await viewmodel.loadData();
+      await viewmodel.deleteSection(section);
+
+      expect(deleteCount, equals(1));
+      expect(fetchCount, greaterThan(0));
+
+      var details = await db.projectDetails.get('home');
+      expect(details.isEmpty, isFalse);
+      // Will be 2 because of the refresh from server.
+      expect(details.project.sections.length, equals(2));
+    });
+
+    test('updateSection() makes API request and refreshes local db', () async {
+      var editCount = 0;
+      var fetchCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/projects/home') {
+          fetchCount++;
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        if (request.url.path == '/projects/home/sections/1/edit') {
+          editCount++;
+          expect(request.body, contains('name":"Repairs"'));
+          return Response('', 200);
+        }
+        throw "Unknown request to ${request.url.path}";
+      });
+      var section = Section(id: 1, name: 'Repairs', ranking: 1);
+
+      var data = parseData(projectDetailsResponseFixture);
+      await setViewdata(db, data);
+
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
+      await viewmodel.loadData();
+      await viewmodel.updateSection(section);
+
+      expect(editCount, equals(1));
+      expect(fetchCount, greaterThan(0));
+
+      var projectMap = await db.projectMap.get('home');
+      expect(projectMap, isNotNull);
+
+      var details = await db.projectDetails.get('home');
+      expect(details.isEmpty, isFalse);
+    });
+
     test('moveSection() sends a request', () async {
       var callCount = 0;
       actions.client = MockClient((request) async {

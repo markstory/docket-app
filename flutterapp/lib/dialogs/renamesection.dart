@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:docket/models/project.dart';
-import 'package:docket/providers/projects.dart';
+import 'package:docket/viewmodels/projectdetails.dart';
 
-Future<void> showRenameSectionDialog(BuildContext context, Project project, Section section) {
+Future<void> showRenameSectionDialog(BuildContext context, ProjectDetailsViewModel viewmodel, Section section) {
   var formKey = GlobalKey<FormState>();
 
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
-      var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
       var form = Form(
         key: formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -44,7 +42,7 @@ Future<void> showRenameSectionDialog(BuildContext context, Project project, Sect
                   var navigator = Navigator.of(context);
 
                   formKey.currentState!.save();
-                  await projectsProvider.updateSection(project, section);
+                  await viewmodel.updateSection(section);
                   navigator.pop();
                 }
               }

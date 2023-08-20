@@ -174,39 +174,4 @@ class ProjectsProvider extends ChangeNotifier {
     ]);
     notifyListeners();
   }
-
-  // Section Methods {{{
-  // Remove a section and clear the project details view cache
-  Future<void> createSection(Project project, Section section) async {
-    await actions.createSection(_database.apiToken.token, project, section);
-    await _database.projectDetails.remove(project.slug);
-
-    notifyListeners();
-  }
-
-  // Remove a section and clear the project details view cache
-  Future<void> deleteSection(Project project, Section section) async {
-    await actions.deleteSection(_database.apiToken.token, project, section);
-    await _database.projectDetails.remove(project.slug);
-
-    notifyListeners();
-  }
-
-  /// Read a project from the local database by slug.
-  Future<void> updateSection(Project project, Section section) async {
-    await actions.updateSection(_database.apiToken.token, project, section);
-    await _database.projectDetails.remove(project.slug);
-
-    notifyListeners();
-  }
-
-  /// Read a project from the local database by slug.
-  Future<void> moveSection(Project project, Section section, int newIndex) async {
-    await actions.moveSection(_database.apiToken.token, project, section, newIndex);
-    section.ranking = newIndex;
-    await _database.projectDetails.remove(project.slug);
-
-    notifyListeners();
-  }
-  // }}}
 }

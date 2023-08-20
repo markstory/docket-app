@@ -96,6 +96,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     _project = result.project;
     await _database.projectDetails.set(result);
+    await _database.projectMap.set(result.project);
 
     _buildTaskLists(result.tasks);
   }
@@ -111,6 +112,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     _buildTaskLists(result.tasks);
   }
 
+  // Section Methods {{{
   /// Move a section up or down.
   Future<void> moveSection(int oldIndex, int newIndex) async {
     // Reduce by one as the 0th section is 'root'
@@ -130,6 +132,34 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  // Remove a section and clear the project details view cache
+  Future<void> createSection(Section section) async {
+    // TODO improve server API so that we don't need to refresh the project.
+    await actions.createSection(_database.apiToken.token, project, section);
+    await refresh();
+
+    notifyListeners();
+  }
+
+  // Remove a section and clear the project details view cache
+  Future<void> deleteSection(Section section) async {
+    // TODO improve server API so that we don't need to refresh the project.
+    await actions.deleteSection(_database.apiToken.token, project, section);
+    await refresh();
+
+    notifyListeners();
+  }
+
+  /// Read a project from the local database by slug.
+  Future<void> updateSection(Section section) async {
+    // TODO improve server API so that we don't need to refresh the project.
+    await actions.updateSection(_database.apiToken.token, project, section);
+    await refresh();
+
+    notifyListeners();
+  }
+  // }}}
 
   /// Move a task out of overdue into another section
   Future<void> moveInto(Task task, int listIndex, int itemIndex) async {
