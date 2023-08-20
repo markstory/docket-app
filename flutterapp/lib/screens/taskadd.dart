@@ -34,10 +34,12 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
       var snackbar = successSnackBar(context: context, text: 'Task Created');
 
       await viewmodel.save();
+      messenger.showSnackBar(snackbar);
+
       setState(() {
         _formKey.currentState!.reset();
-        messenger.showSnackBar(snackbar);
       });
+
       navigator.pop();
     } catch (e, stacktrace) {
       developer.log("Failed to create task ${e.toString()} $stacktrace");

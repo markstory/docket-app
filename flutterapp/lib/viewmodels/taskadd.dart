@@ -11,6 +11,7 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   late Task _task;
 
+
   TaskAddViewModel(LocalDatabase database) {
     _database = database;
     reset();
@@ -21,6 +22,7 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   @override
   bool get loading => _loading;
+
 
   Future<void> save() async {
     var updated = await actions.createTask(_database.apiToken.token, task);
@@ -35,6 +37,7 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   void reset() {
     _task = Task.pending();
+    notifyListeners();
   }
 
   /// Reorder a subtask based on the protocol defined by

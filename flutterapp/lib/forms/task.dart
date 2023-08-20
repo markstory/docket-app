@@ -104,6 +104,8 @@ class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     var viewmodel = widget.viewmodel;
+    // TODO state gets stale here sometimes and the previously saved
+    // task has its title retained. Not sure why though yet.
     var task = viewmodel.task;
     var projectProvider = Provider.of<ProjectsProvider>(context);
 
