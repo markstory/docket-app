@@ -85,6 +85,9 @@ class ProjectsProvider extends ChangeNotifier {
     project = await actions.createProject(_database.apiToken.token, project);
 
     await _database.projectMap.set(project);
+    await _database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+
+    _projects = await _database.projectMap.all();
     notifyListeners();
 
     return project;
@@ -119,22 +122,27 @@ class ProjectsProvider extends ChangeNotifier {
   /// Fetch project list from the API and notifyListeners
   Future<void> fetchProjects() async {
     _loading = true;
-    var projects = await actions.fetchProjects(_database.apiToken.token);
-
-    _database.projectMap.replace(projects);
+    await fetchProjectsSilent();
     _loading = false;
-    _projects = projects;
 
     notifyListeners();
+  }
+
+  /// Fetch projects without using loading state or notifying
+  Future<void> fetchProjectsSilent() async {
+    var projects = await actions.fetchProjects(_database.apiToken.token);
+    _database.projectMap.replace(projects);
+    _projects = projects;
   }
 
   /// Move a project on the server and locally
   /// and then notifyListeners
   Future<void> move(Project project, int newRank) async {
-    await _withPending(ViewNames.projectArchive, () async {
-      project = await actions.moveProject(_database.apiToken.token, project, newRank);
-      return _database.projectMap.set(project);
+    await _withPending(ViewNames.projectMap, () async {
+      await actions.moveProject(_database.apiToken.token, project, newRank);
     });
+    // Refetch the list as other projects will have new rankings
+    await fetchProjects();
 
     notifyListeners();
   }

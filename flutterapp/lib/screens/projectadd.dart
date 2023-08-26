@@ -18,15 +18,12 @@ class ProjectAddScreen extends StatelessWidget {
     var projects = Provider.of<ProjectsProvider>(context, listen: false);
 
     Future<void> saveProject(BuildContext context, Project project) async {
-
-      void complete() {
-        Navigator.pop(context);
-      }
-
       try {
+        var navigator = Navigator.of(context);
         await projects.createProject(project);
         messenger.showSnackBar(const SnackBar(content: Text('Project Created')));
-        complete();
+
+        navigator.pop();
       } catch (e, stacktrace) {
         developer.log("Failed to create project ${e.toString()} $stacktrace");
         messenger.showSnackBar(

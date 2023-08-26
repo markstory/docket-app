@@ -94,7 +94,12 @@ void main() {
     });
 
     test('move() makes API request and expires local db', () async {
+      var fetchCounter = 0;
       actions.client = MockClient((request) async {
+        if (request.url.path == '/projects') {
+          fetchCounter++;
+          return Response(projectsResponseFixture, 200);
+        }
         expect(request.url.path, contains('/projects/home/move'));
         return Response(projectViewResponseFixture, 200);
       });
@@ -105,6 +110,7 @@ void main() {
 
       await provider.move(project, 2);
 
+      expect(fetchCounter, greaterThan(0), reason: 'should reload project map');
       var projectMap = await db.projectMap.get('home');
       expect(project, isNotNull);
       expect(projectMap!.slug, equals('home'));
