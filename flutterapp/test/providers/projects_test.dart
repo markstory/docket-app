@@ -110,7 +110,7 @@ void main() {
 
       await provider.move(project, 2);
 
-      expect(fetchCounter, greaterThan(0), reason: 'should reload project map');
+      expect(fetchCounter, equals(1), reason: 'should reload project map');
       var projectMap = await db.projectMap.get('home');
       expect(project, isNotNull);
       expect(projectMap!.slug, equals('home'));
