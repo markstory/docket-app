@@ -284,7 +284,8 @@ class CalendarService
                 // Permission denied error, likely a rate limit
                 Log::info('Calendar sync failed, rate limit hit. ' . $e->getMessage());
             } else {
-                throw $e;
+                \Sentry\captureException($e);
+                Log::info('Calendar sync failed. ' . $e->getMessage());
             }
         }
     }
