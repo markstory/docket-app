@@ -239,7 +239,16 @@ class CalendarService
                             unset($options['timeMin']);
                         }
 
-                        $results = $calendar->events->listEvents($source->provider_id, $options);
+                        try {
+                            $results = $calendar->events->listEvents($source->provider_id, $options);
+                        } catch (GoogleException $e) {
+                            if ($e->getCode() == 410) {
+                                // Start a full sync as our sync token was not good
+                                $options = $defaults;
+                                continue;
+                            }
+                            throw $e;
+                        }
                         $instanceOpts = [
                             'timeMin' => $time->format(FrozenTime::RFC3339),
                             'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
@@ -281,10 +290,7 @@ class CalendarService
             );
         } catch (GoogleException $e) {
             $errorCode = $e->getCode();
-            if ($errorCode == 410) {
-                // Start a full sync as our sync token was not good
-                $options = $defaults;
-            } elseif ($errorCode == 403) {
+            if ($errorCode == 403) {
                 // Permission denied error, likely a rate limit
                 Log::info('Calendar sync failed, rate limit hit. ' . $e->getMessage());
             } else {
