@@ -228,63 +228,65 @@ class CalendarService
             $options = ['syncToken' => $source->sync_token];
         }
 
-        $this->CalendarItems->getConnection()->transactional(
-            function () use ($calendar, $defaults, $options, $source, $time) {
-                $pageToken = null;
+        try {
+            $this->CalendarItems->getConnection()->transactional(
+                function () use ($calendar, $defaults, $options, $source, $time) {
+                    $pageToken = null;
 
-                do {
-                    if ($pageToken !== null) {
-                        $options['pageToken'] = $pageToken;
-                        unset($options['timeMin']);
-                    }
+                    do {
+                        if ($pageToken !== null) {
+                            $options['pageToken'] = $pageToken;
+                            unset($options['timeMin']);
+                        }
 
-                    $results = null;
-                    try {
                         $results = $calendar->events->listEvents($source->provider_id, $options);
-                    } catch (GoogleException $e) {
-                        if ($e->getCode() == 410) {
-                            // Start a full sync as our sync token was not good
-                            $options = $defaults;
-                            continue;
-                        } else {
-                            throw $e;
-                        }
-                    }
-                    $instanceOpts = [
-                        'timeMin' => $time->format(FrozenTime::RFC3339),
-                        'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
-                    ];
-                    assert($results instanceof GoogleEvents);
-                    foreach ($results as $event) {
-                        $instances = [$event];
-                        if (!empty($event->getRecurrence())) {
-                            $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
-                        }
+                        $instanceOpts = [
+                            'timeMin' => $time->format(FrozenTime::RFC3339),
+                            'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                        ];
+                        assert($results instanceof GoogleEvents);
                         foreach ($results as $event) {
                             $instances = [$event];
                             if (!empty($event->getRecurrence())) {
-                                $instances = $calendar->events->instances(
-                                    $source->provider_id,
-                                    $event->id,
-                                    $instanceOpts
-                                );
+                                $instances = $calendar->events->instances($source->provider_id, $event->id, $instanceOpts);
                             }
-                            foreach ($instances as $instance) {
-                                $this->syncEvent($source, $instance);
+                            foreach ($results as $event) {
+                                $instances = [$event];
+                                if (!empty($event->getRecurrence())) {
+                                    $instances = $calendar->events->instances(
+                                        $source->provider_id,
+                                        $event->id,
+                                        $instanceOpts
+                                    );
+                                }
+                                foreach ($instances as $instance) {
+                                    $this->syncEvent($source, $instance);
+                                }
                             }
                         }
-                    }
-                    $pageToken = $results->getNextPageToken();
-                } while ($pageToken !== null);
+                        $pageToken = $results->getNextPageToken();
+                    } while ($pageToken !== null);
 
-                // Save the nextSyncToken for our next sync.
-                $source->sync_token = $results->getNextSyncToken();
-                $source->last_sync = FrozenTime::now();
-                $this->CalendarSources->saveOrFail($source);
+                    // Save the nextSyncToken for our next sync.
+                    $source->sync_token = $results->getNextSyncToken();
+                    $source->last_sync = FrozenTime::now();
+                    $this->CalendarSources->saveOrFail($source);
 
-                Log::info("Calendar sync complete. source={$source->id}");
+                    Log::info("Calendar sync complete. source={$source->id}");
+                }
+            );
+        } catch (GoogleException $e) {
+            $errorCode = $e->getCode();
+            if ($errorCode == 410) {
+                // Start a full sync as our sync token was not good
+                $options = $defaults;
+            } elseif ($errorCode == 403) {
+                // Permission denied error, likely a rate limit
+                Log::info('Calendar sync failed, rate limit hit. ' . $e->getMessage());
+            } else {
+                throw $e;
             }
-        );
+        }
     }
 
     private function syncEvent(CalendarSource $source, GoogleEvent $event)
