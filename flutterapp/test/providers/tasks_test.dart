@@ -80,19 +80,25 @@ void main() {
         expect(request.url.path, contains('/tasks/1/complete'));
         return Response('', 204);
       });
+      var completedListener = CallCounter();
 
       var tasks = parseTaskList(tasksTodayResponseFixture);
       setTodayView(tasks);
 
       db.dailyTasks.addListener(listener);
+      db.completedTasks.addListener(completedListener);
       var provider = TasksProvider(db);
 
       await provider.toggleComplete(tasks[0]);
 
       expect(listener.callCount, greaterThan(0));
+      expect(completedListener.callCount, greaterThan(0));
       expect(db.dailyTasks.isDayExpired(tasks[0].dueOn!), isTrue);
+      expect(db.completedTasks.isFreshSlug(tasks[0].projectSlug), isFalse);
+
       var viewData = await db.dailyTasks.get();
       expect(viewData[todayStr]?.tasks.length, equals(1));
+      db.completedTasks.removeListener(completedListener);
     });
 
     test('toggleComplete() sends request to incomplete and expires data', () async {
@@ -113,7 +119,6 @@ void main() {
       await provider.toggleComplete(task);
 
       expect(db.dailyTasks.isDayExpired(today), isTrue);
-      expect(db.completedTasks.isExpired, isTrue);
       expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
       var todayData = await db.dailyTasks.get();

@@ -579,6 +579,21 @@ void main() {
       expect(database.projectDetails.isFreshSlug(project.slug), isFalse);
     });
 
+    test('deleteTask() expires trashbin and projectcompleted', () async {
+      var task = Task.blank(projectId: project.id);
+      task.id = 1;
+      task.title = 'Dig up potatoes';
+      task.dueOn = today;
+      task.projectId = 1;
+      task.projectSlug = project.slug;
+
+      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: [task]));
+
+      await database.deleteTask(task);
+      expect(database.trashbin.isFresh(), isFalse);
+      expect(database.completedTasks.isFreshSlug(task.projectSlug), isFalse);
+    });
+
     test('undeleteTask() adds task to view and expires trash', () async {
       var task = Task.blank(projectId: project.id);
       task.id = 1;

@@ -190,6 +190,10 @@ class LocalDatabase {
         default:
       }
     }
+    // Expire trashbin and project completed (as they could have changed)
+    trashbin.expire(notify: true);
+    completedTasks.expireSlug(task.projectSlug);
+
     await Future.wait(futures);
 
     return expireTask(task);

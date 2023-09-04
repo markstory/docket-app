@@ -50,8 +50,10 @@ class CompletedTasksRepo extends Repository<ProjectWithTasks> {
   }
 
   /// Mark a slug as expired and needing to be reloaded.
+  /// Will also notify listeners.
   void expireSlug(String slug) {
     _lastUpdate[slug] = null;
+    notifyListeners();
   }
 
   /// check if local data for a given slug is fresh.
