@@ -72,7 +72,7 @@ void main() {
       db.completedTasks.expireSlug('home');
       await viewmodel.loadData();
       expect(viewmodel.tasks.length, equals(2));
-      expect(callCounter.callCount, equals(2));
+      expect(callCounter.callCount, equals(4));
     });
 
     test('refresh() loads data from the server', () async {

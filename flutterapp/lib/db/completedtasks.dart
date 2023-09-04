@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:docket/models/task.dart';
 import 'package:json_cache/json_cache.dart';
 
 import 'package:docket/db/repository.dart';
@@ -38,6 +39,20 @@ class CompletedTasksRepo extends Repository<ProjectWithTasks> {
       );
     }
     return ProjectWithTasks.fromMap(data[slug]);
+  }
+
+  /// Remove a task and notify listeners.
+  Future<void> removeTask(Task task) async {
+    var data = await getMap() ?? {};
+    var slug = task.projectSlug;
+    if (data[slug] == null || data[slug]['tasks'] == null) {
+      return;
+    }
+    List<Map<String, dynamic>> tasks = data[slug]['tasks'];
+    tasks.removeWhere((item) => item['id'] == task.id);
+    await setMap(data);
+
+    notifyListeners();
   }
 
   Future<void> remove(String slug) async {
