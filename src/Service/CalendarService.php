@@ -239,6 +239,7 @@ class CalendarService
                             unset($options['timeMin']);
                         }
 
+                        $results = null;
                         try {
                             $results = $calendar->events->listEvents($source->provider_id, $options);
                         } catch (GoogleException $e) {
