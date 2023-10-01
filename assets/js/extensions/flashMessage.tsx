@@ -10,7 +10,7 @@ import htmx from 'htmx.org';
 
   htmx.defineExtension('flash-message', {
     onEvent: function (name, event) {
-      var element = event.target;
+      const element = event.target;
       if (name === 'htmx:afterProcessNode' && element instanceof HTMLElement) {
         element.addEventListener('mouseleave', function () {
           clearTimeout(Number(element.dataset.timer));
@@ -18,7 +18,7 @@ import htmx from 'htmx.org';
         });
 
         element.addEventListener('mouseenter', function () {
-          clearTimeout(element.dataset.timer);
+          clearTimeout(Number(element.dataset.timer));
         });
 
         // Setup initial timeout
