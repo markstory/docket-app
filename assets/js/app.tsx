@@ -1,4 +1,3 @@
-import htmx from 'htmx.org';
 import 'vite/modulepreload-polyfill';
 import axios from 'axios';
 import {InertiaApp} from '@inertiajs/inertia-react';
@@ -6,13 +5,18 @@ import {render} from 'react-dom';
 
 import '../sass/app.scss';
 
-// Setup CSRF tokens.
-axios.defaults.xsrfCookieName = 'csrfToken';
-axios.defaults.xsrfHeaderName = 'X-Csrf-Token';
+// Htmx setup
+import htmx from 'htmx.org';
+import 'app/extensions/ajax';
+import 'app/extensions/flashMessage';
 
 // Expose htmx on window
 // @ts-ignore-next-line
 window.htmx = htmx;
+
+// Setup CSRF tokens.
+axios.defaults.xsrfCookieName = 'csrfToken';
+axios.defaults.xsrfHeaderName = 'X-Csrf-Token';
 
 const el = document.getElementById('app');
 if (!el) {
