@@ -10,6 +10,7 @@ var global = globalThis;
 globalThis.regeneratorRuntime = undefined
 <?= $this->Html->scriptEnd() ?>
 <?php if ($debug) : ?>
+    <?= $this->ViteAsset->css('assets/js/app.tsx') ?>
     <?= $this->Html->script('http://localhost:3000/@vite/client', ['type' => 'module']) ?>
     <?= $this->Html->script('http://localhost:3000/assets/js/app.tsx', ['type' => 'module']) ?>
     <?php $this->Html->scriptStart(['type' => 'module']) ?>

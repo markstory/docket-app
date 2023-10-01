@@ -52,7 +52,9 @@ class AppController extends Controller
     {
         parent::beforeRender($event);
 
-        $this->viewBuilder()->addHelper('ViteAsset');
+        $this->viewBuilder()
+            ->addHelper('ViteAsset')
+            ->addHelper('Form', ['templates' => 'formtemplates']);
 
         // Load common data.
         $identity = $this->request->getAttribute('identity');

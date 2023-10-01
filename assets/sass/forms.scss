@@ -60,9 +60,12 @@ textarea {
     margin-right: calc($space * 2);
     width: 33%;
   }
+
+  &.required label:after,
   label[data-required="true"]:after {
     content: "\25CF";
     display: inline;
+    font-size: 10px;
     color: var(--color-input-required);
     margin-left: calc($space / 2);
   }
@@ -114,7 +117,7 @@ textarea {
       margin-bottom: calc($space / 2);
     }
     input,
-    select, 
+    select,
     textarea {
       width: 100%;
     }

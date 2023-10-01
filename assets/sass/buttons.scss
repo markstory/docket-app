@@ -179,16 +179,10 @@ button,
 .button-bar {
   display: flex;
   align-items: center;
+  gap: $space;
 
   margin-top: $space;
   padding-top: $space;
-
-  a + a,
-  a + button,
-  button + a,
-  button + button {
-    margin-left: $space;
-  }
 }
 
 .button-bar-right {
@@ -200,18 +194,12 @@ button,
 
 .button-bar-vertical {
   display: flex;
+  gap: $space;
   flex-direction: column;
   align-items: flex-start;
 
   a, button {
     flex-shrink: 1;
-  }
-
-  a + a,
-  a + button,
-  button + a,
-  button + button {
-    margin-top: $space;
   }
 }
 

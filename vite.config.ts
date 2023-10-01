@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     emptyOutDir: false,
     outDir: './webroot/',
+
     // make a manifest and source maps.
     manifest: true,
     sourcemap: true,
