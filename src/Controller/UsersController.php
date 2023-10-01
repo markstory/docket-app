@@ -193,6 +193,7 @@ class UsersController extends AppController
         try {
             $tokenData = User::decodePasswordResetToken($token);
         } catch (RuntimeException $e) {
+            $this->set('user', null);
             $this->Flash->error($e->getMessage());
 
             return;
