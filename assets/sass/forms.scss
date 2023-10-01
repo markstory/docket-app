@@ -47,7 +47,7 @@ textarea {
 
 .form-error {
   color: var(--color-error-fg);
-  margin: $space 0;
+  margin-top: calc($space / 2);
 }
 
 .form-control {

@@ -6,4 +6,6 @@ return [
     'inputContainerError' => '<div class="form-control is-error {{required}}">{{content}}</div>',
     'formGroup' => '{{label}}<div class="form-input">{{input}}{{error}}</div>',
     'label' => '<div class="form-label-group"><label{{attrs}}>{{text}}</label>{{help}}</div>',
+    'error' => '<div class="form-error" id="{{id}}">{{content}}</div>',
+
 ];

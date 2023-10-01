@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 $this->setLayout('card');
 $this->assign('title', 'Forgot your password');
 ?>
