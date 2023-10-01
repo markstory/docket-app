@@ -35,7 +35,7 @@ class UsersController extends AppController
 
     public function useInertia()
     {
-        if (in_array($this->request->getParam('action'), ['login'])) {
+        if (in_array($this->request->getParam('action'), ['login', 'resetPassword'])) {
             return false;
         }
         return true;
