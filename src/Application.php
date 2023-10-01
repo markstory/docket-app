@@ -134,8 +134,7 @@ class Application extends BaseApplication implements
         }
 
         $this->addPlugin('Migrations');
-
-        // Load more plugins here
+        $this->addPlugin('Cake/Repl');
     }
 
     public function services(ContainerInterface $container): void

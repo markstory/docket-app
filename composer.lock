@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62051bc95363e38b2fcee02cf53185ed",
+    "content-hash": "5535371af2d9eb6656edcdc2ccabaa35",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -4699,16 +4699,16 @@
         },
         {
             "name": "cakephp/repl",
-            "version": "0.1.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/repl.git",
-                "reference": "6aa25db799a3bd062101b36f42a1ff0995654a56"
+                "reference": "6790873a9d1e93dcd4a5860bc5afe404b77c652c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/repl/zipball/6aa25db799a3bd062101b36f42a1ff0995654a56",
-                "reference": "6aa25db799a3bd062101b36f42a1ff0995654a56",
+                "url": "https://api.github.com/repos/cakephp/repl/zipball/6790873a9d1e93dcd4a5860bc5afe404b77c652c",
+                "reference": "6790873a9d1e93dcd4a5860bc5afe404b77c652c",
                 "shasum": ""
             },
             "require": {
@@ -4750,9 +4750,9 @@
                 "irc": "irc://irc.freenode.org/cakephp",
                 "issues": "https://github.com/cakephp/repl/issues",
                 "slack": "https://cakesf.herokuapp.com/",
-                "source": "https://github.com/cakephp/repl/tree/0.1.0"
+                "source": "https://github.com/cakephp/repl/tree/1.0.0"
             },
-            "time": "2020-11-18T09:26:29+00:00"
+            "time": "2023-04-10T23:16:35+00:00"
         },
         {
             "name": "cakephp/twig-view",
