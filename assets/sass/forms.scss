@@ -56,11 +56,6 @@ textarea {
 
   margin-bottom: calc($space * 2);
 
-  label {
-    margin-right: calc($space * 2);
-    width: 33%;
-  }
-
   &.required label:after,
   label[data-required="true"]:after {
     content: "\25CF";
@@ -75,6 +70,18 @@ textarea {
   }
 }
 
+.form-label-group {
+  margin-right: calc($space * 2);
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  gap: calc($space);
+
+  label {
+    flex-grow: 1;
+  }
+}
+
 // Narrow controls/inputs in any form.
 .form-control.narrow label {
   width: 100px;
@@ -83,7 +90,7 @@ textarea {
 .form-help {
   font-size: $font-size-small;
   color: var(--color-muted);
-  margin: calc($space / 2) 0 0 0;
+  margin: 0;
 }
 
 // Inline forms used to do renaming.

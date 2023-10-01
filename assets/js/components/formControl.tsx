@@ -56,10 +56,12 @@ function FormControl({
 
   return (
     <div className={className}>
-      <label htmlFor={id} data-required={required}>
-        {label}
+      <div className="form-label-group">
+        <label htmlFor={id} data-required={required}>
+          {label}
+        </label>
         {help && <p className="form-help">{help}</p>}
-      </label>
+      </div>
       <div className="form-input">
         {input}
         <FormError errors={errors} field={name} />
