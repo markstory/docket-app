@@ -10,20 +10,21 @@ import htmx from 'htmx.org';
 
   htmx.defineExtension('flash-message', {
     onEvent: function (name, event) {
-      const element = event.target;
-      if (name === 'htmx:afterProcessNode' && element instanceof HTMLElement) {
-        element.addEventListener('mouseleave', function () {
-          clearTimeout(Number(element.dataset.timer));
-          startTimer(element, 1500);
-        });
-
-        element.addEventListener('mouseenter', function () {
-          clearTimeout(Number(element.dataset.timer));
-        });
-
-        // Setup initial timeout
-        startTimer(element, 4000);
+      if (name !== 'htmx:afterProcessNode') {
+        return;
       }
+      const element = event.target as HTMLElement;
+      element.addEventListener('mouseleave', function () {
+        clearTimeout(Number(element.dataset.timer));
+        startTimer(element, 1500);
+      });
+
+      element.addEventListener('mouseenter', function () {
+        clearTimeout(Number(element.dataset.timer));
+      });
+
+      // Setup initial timeout
+      startTimer(element, 4000);
     },
   });
 })();

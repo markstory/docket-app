@@ -9,6 +9,7 @@ import '../sass/app.scss';
 import htmx from 'htmx.org';
 import 'app/extensions/ajax';
 import 'app/extensions/flashMessage';
+import 'app/extensions/clickOutside';
 
 // Expose htmx on window
 // @ts-ignore-next-line
