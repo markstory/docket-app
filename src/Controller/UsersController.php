@@ -253,4 +253,10 @@ class UsersController extends AppController
 
         return $this->redirect(['_name' => 'users:login']);
     }
+
+    // Renders a template of the profile menu being open.
+    public function profileMenu()
+    {
+        $this->Authorization->skipAuthorization();
+    }
 }
