@@ -32,7 +32,7 @@ export default function ProfileMenu(): JSX.Element {
           <InlineIcon icon="calendar" />
           {t('Calendars')}
         </MenuLink>
-        <MenuLink as={InertiaLink} className="lock" href="/users/updatePassword">
+        <MenuLink className="lock" href="/users/updatePassword">
           <InlineIcon icon="lock" />
           {t('Update Password')}
         </MenuLink>
