@@ -38,6 +38,7 @@ class UsersController extends AppController
         if (in_array($this->request->getParam('action'), ['login', 'resetPassword', 'add', 'newPassword'])) {
             return false;
         }
+
         return true;
     }
 
