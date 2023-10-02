@@ -16,9 +16,8 @@ $this->extend('default');
     <section class="sidebar">
         <div class="menu">
             <div>
-                <?= $this->cell('ProfileMenu', ) ?>
+                <?= $this->element('profile_menu') ?>
                 <!-- add profile and project menu -->
-              <ProfileMenu />
               <ProjectFilter />
             </div>
             <?= $this->Html->image('docket-logo-translucent.svg', ['width' => 30, 'height' => 30]) ?>

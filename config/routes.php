@@ -125,6 +125,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/updatePassword/', ['action' => 'updatePassword'], ['_name' => 'users:updatePassword']);
         $builder->get('/verifyEmail/{token}', ['action' => 'verifyEmail'], 'users:verifyEmail')
             ->setPass(['token']);
+        $builder->connect('/profileMenu/', ['action' => 'profileMenu'], ['_name' => 'users:profileMenu']);
     });
     $builder->scope('/password', ['controller' => 'Users'], function ($builder) {
         $builder->connect('/reset', ['action' => 'resetPassword'], ['_name' => 'users:passwordReset']);

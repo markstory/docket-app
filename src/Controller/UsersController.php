@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\User;
+use App\View\AjaxView;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Mailer\MailerAwareTrait;
@@ -35,7 +36,7 @@ class UsersController extends AppController
 
     public function useInertia()
     {
-        if (in_array($this->request->getParam('action'), ['login', 'resetPassword', 'add', 'newPassword', 'updatePassword'])) {
+        if (in_array($this->request->getParam('action'), ['login', 'resetPassword', 'add', 'newPassword', 'updatePassword', 'profileMenu'])) {
             return false;
         }
 
@@ -258,5 +259,6 @@ class UsersController extends AppController
     public function profileMenu()
     {
         $this->Authorization->skipAuthorization();
+        $this->viewBuilder()->setClassName(AjaxView::class);
     }
 }
