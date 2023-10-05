@@ -1,6 +1,7 @@
 .flash-message {
   position: fixed;
   left: 50%;
+  top: 16px;
   width: max-content;
   transform: translateX(-50%);
 
@@ -12,9 +13,9 @@
 
   svg {
     margin-right: $space;
+    vertical-align: -0.225em;
   }
 
-  // TODO consider using react-spring if more animation comes up.
   transition: top 0.3s, opacity 0.3s;
 
   &[data-state="visible"] {
@@ -32,3 +33,4 @@
 .flash-error svg {
   color: var(--color-error-fg);
 }
+

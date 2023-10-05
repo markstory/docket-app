@@ -19,10 +19,14 @@ indent_size = 2
 [*.js]
 indent_size = 2
 
+[*.tsx]
+indent_size = 2
+
 [*.scss]
 indent_size = 2
 
 [*.twig]
+indent_size = 2
 insert_final_newline = false
 
 [Makefile]

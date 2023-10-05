@@ -381,4 +381,7 @@ return [
             'session.cookie_lifetime' => 60 * 60 * 24 * 14,
         ],
     ],
+    'DebugKit' => [
+        'ignoreAuthorization' => true,
+    ]
 ];

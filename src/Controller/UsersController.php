@@ -33,6 +33,15 @@ class UsersController extends AppController
         ]);
     }
 
+    public function useInertia()
+    {
+        if (in_array($this->request->getParam('action'), ['login', 'resetPassword', 'add', 'newPassword'])) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Add method
      *
@@ -185,13 +194,14 @@ class UsersController extends AppController
         try {
             $tokenData = User::decodePasswordResetToken($token);
         } catch (RuntimeException $e) {
+            $this->set('user', null);
             $this->Flash->error($e->getMessage());
 
             return;
         }
 
+        $user = $this->Users->get($tokenData->uid);
         if ($this->request->is('post')) {
-            $user = $this->Users->get($tokenData->uid);
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
                 'fields' => ['password', 'confirm_password'],
                 'validate' => 'resetPassword',
@@ -199,16 +209,13 @@ class UsersController extends AppController
 
             if ($user->hasErrors()) {
                 $this->Flash->error(__('We could not reset your password.'));
-                $errors = $this->flattenErrors($user->getErrors());
-                $this->set('errors', $errors);
-
-                return;
+            } else {
+                $this->Users->save($user);
+                $this->Flash->success(__('Your password has been reset.'));
+                $this->redirect(['_name' => 'users:login']);
             }
-
-            $this->Users->save($user);
-            $this->Flash->success(__('Your password has been reset.'));
-            $this->redirect(['_name' => 'users:login']);
         }
+        $this->set('user', $user);
     }
 
     public function login()

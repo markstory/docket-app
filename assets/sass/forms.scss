@@ -47,7 +47,7 @@ textarea {
 
 .form-error {
   color: var(--color-error-fg);
-  margin: $space 0;
+  margin-top: calc($space / 2);
 }
 
 .form-control {
@@ -56,19 +56,29 @@ textarea {
 
   margin-bottom: calc($space * 2);
 
-  label {
-    margin-right: calc($space * 2);
-    width: 33%;
-  }
+  &.required label:after,
   label[data-required="true"]:after {
     content: "\25CF";
     display: inline;
+    font-size: 10px;
     color: var(--color-input-required);
     margin-left: calc($space / 2);
   }
 
   &.is-error input {
     border-color: var(--color-error-fg);
+  }
+}
+
+.form-label-group {
+  margin-right: calc($space * 2);
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  gap: calc($space);
+
+  label {
+    flex-grow: 1;
   }
 }
 
@@ -80,7 +90,7 @@ textarea {
 .form-help {
   font-size: $font-size-small;
   color: var(--color-muted);
-  margin: calc($space / 2) 0 0 0;
+  margin: 0;
 }
 
 // Inline forms used to do renaming.
@@ -96,7 +106,7 @@ textarea {
 
 // Forms that pivots to a stacked layout in narrow viewports.
 .form-narrow {
-  label {
+  .form-label-group {
     width: 100px;
   }
 }
@@ -114,7 +124,7 @@ textarea {
       margin-bottom: calc($space / 2);
     }
     input,
-    select, 
+    select,
     textarea {
       width: 100%;
     }
