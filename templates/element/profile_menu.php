@@ -20,7 +20,7 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
     >
         <?= $this->Html->image($avatarUrl, ['height' => 50, 'width' => 50]) ?>
     </button>
-    <div id="profile-menu" style="display:none;">
+    <div id="profile-menu" style="position: absolute; display:none;">
         <div role="menu" data-reach-menu-list="">
             <div class="dropdown-item-text"><?= h($identity->name) ?></div>
             <div class="separator"></div>

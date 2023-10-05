@@ -17,8 +17,39 @@ $this->extend('default');
         <div class="menu">
             <div>
                 <?= $this->element('profile_menu') ?>
-                <!-- add profile and project menu -->
-              <ProjectFilter />
+                <div class="project-filter">
+                    <ul class="links">
+                        <li>
+                            <a href="<?= $this->Url->build(['_name' => 'tasks:today']) ?>">
+                                <i class="today"><?= $this->element('icons/clippy16') ?></i>
+                                Today
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= $this->Url->build(['_name' => 'tasks:upcoming']) ?>">
+                                <i class="upcoming"><?= $this->element('icons/calendar16') ?></i>
+                                Upcoming
+                            </a>
+                        </li>
+                    </ul>
+                    <h3>Projects</h3>
+                    <?= $this->cell('ProjectsMenu', ['identity' => $identity]) ?>
+
+                    <div className="secondary-actions">
+                        <a class="action-primary" href="<?= $this->Url->build(['_name' => 'projects:add']) ?>">
+                            <?= $this->element('icons/plus16') ?>
+                            New Project
+                        </a>
+                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>">
+                            <?= $this->element('icons/archive16') ?>
+                            Archived
+                        </a>
+                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>">
+                            <?= $this->element('icons/trash16') ?>
+                            Trash Bin
+                        </a>
+                    </div>
+                </div>
             </div>
             <?= $this->Html->image('docket-logo-translucent.svg', ['width' => 30, 'height' => 30]) ?>
         </div>
