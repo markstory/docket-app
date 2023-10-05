@@ -8,6 +8,7 @@ import '../sass/app.scss';
 // Htmx setup
 import htmx from 'htmx.org';
 import 'app/extensions/ajax';
+import 'app/extensions/dropdown';
 import 'app/extensions/flashMessage';
 import 'app/extensions/clickOutside';
 
