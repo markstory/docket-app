@@ -42,7 +42,7 @@ $this->extend('default');
                         </a>
                         <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>">
                             <?= $this->element('icons/archive16') ?>
-                            Archived
+                            Archived Projects
                         </a>
                         <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>">
                             <?= $this->element('icons/trash16') ?>

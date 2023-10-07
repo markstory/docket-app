@@ -11,6 +11,7 @@ declare(strict_types=1);
             <?= $this->element('icons/grabber24') ?>
         </button>
         <?= $this->element('project_item', ['project' => $project]) ?>
+        <?= $this->element('project_menu', ['project' => $project]) ?>
     </div>
 <?php endforeach; ?>
 </div>
