@@ -43,6 +43,7 @@
         "react-mentions": "^4.1.1",
         "react-select": "^4.3.0",
         "sass": "^1.15.2",
+        "sortablejs": "^1.15.0",
         "typescript": "^4.2.0",
         "vite": "^2.3.3"
     },
