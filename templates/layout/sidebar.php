@@ -8,7 +8,7 @@ $this->extend('default');
 // TODO make expanded work. Perhaps with an htmx
 // extension that maintains the state?
 ?>
-<main
+<div
     class="layout-three-quarter"
     data-expanded="false"
     data-testid="loggedin"
@@ -66,4 +66,4 @@ $this->extend('default');
     <section class="content">
         <?= $this->fetch('content'); ?>
     </section>
-</main>
+</div>

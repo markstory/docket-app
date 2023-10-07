@@ -9,6 +9,7 @@ import htmx from 'htmx.org';
    *
    * - dropdown-reveal
    * - dropdown-trigger
+   * - dropdown-portal - defaults to '#dropdown-portal'
    */
   htmx.defineExtension('dropdown', {
     onEvent: function (name, event) {
@@ -16,31 +17,53 @@ import htmx from 'htmx.org';
         return;
       }
       const element = event.target as HTMLElement;
+      if (element.getAttribute('hx-ext') !== 'dropdown') {
+        return;
+      }
       const revealTarget = element.getAttribute('dropdown-reveal');
       const triggerTarget = element.getAttribute('dropdown-trigger');
+      const portalTarget = element.getAttribute('dropdown-portal') ?? '#dropdown-portal';
       if (!revealTarget || !triggerTarget) {
         throw new Error('The trigger and reveal attributes are required.');
       }
 
-      const trigger = element.querySelector(triggerTarget);
+      const trigger = element.querySelector(triggerTarget) as HTMLElement | null;
       const reveal = element.querySelector(revealTarget) as HTMLElement | null;
-      if (trigger === null || reveal === null) {
+      const portal = document.querySelector(portalTarget) as HTMLElement | null;
+      if (trigger === null || reveal === null || portal === null) {
         throw new Error(
-          `Could not find trigger ${triggerTarget} or reveal  ${revealTarget} element.`
+          `Could not find one of trigger=${triggerTarget} reveal=${revealTarget} or portal=${portalTarget} elements.`
         );
+      }
+
+      // Handle clicks outside the root parent element.
+      function removeMenu() {
+        // Remove this listener
+        document.removeEventListener('click', removeMenu);
+
+        if (!reveal || !portal) {
+          return;
+        }
+        reveal.appendChild(portal.children[0]);
+        portal.style.display = 'none';
       }
 
       trigger.addEventListener('click', function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
 
-        reveal.style.display = 'block';
+        // Move menu contents to portal element
+        portal.appendChild(reveal.children[0]);
+
+        // position portal
+        portal.style.left = `${trigger.offsetLeft + 5}px`;
+        portal.style.top = `${trigger.offsetTop + trigger.offsetHeight + 5}px`;
+        portal.style.display = 'block';
+
+        // Setup hide handler
+        document.addEventListener('click', removeMenu);
       });
 
-      // Handle clicks outside the root parent element.
-      document.addEventListener('click', function () {
-        reveal.style.display = 'none';
-      });
       reveal.addEventListener('click', function (evt) {
         evt.stopPropagation();
       });

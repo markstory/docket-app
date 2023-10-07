@@ -7,8 +7,8 @@ $menuId = 'project-menu-' . uniqid();
 ?>
 <div
     hx-ext="dropdown"
-    dropdown-reveal="#<?= h($menuId) ?>"
     dropdown-trigger=".button-icon"
+    dropdown-reveal="#<?= h($menuId) ?>"
 >
     <button
         class="button-icon button-default" 
@@ -18,9 +18,8 @@ $menuId = 'project-menu-' . uniqid();
     >
         <?= $this->element('icons/kebab16') ?>
     </button>
-    <div id="<?= h($menuId) ?>" style="position: absolute; display:none;">
+    <div id="<?= h($menuId) ?>" style="display:none;">
         <div role="menu" data-reach-menu-list="">
-            <div class="separator"></div>
             <?= $this->Html->link(
                 $this->element('icons/pencil16') . ' Edit Project',
                 ['_name' => 'projects:edit', 'slug' => $project->slug],
