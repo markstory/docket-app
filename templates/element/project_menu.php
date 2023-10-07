@@ -33,7 +33,6 @@ $menuId = 'project-menu-' . uniqid();
                     ['_name' => 'projects:unarchive', 'slug' => $project->slug],
                     ['class' => 'archive', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '']
                 ) ?>
-
             <?php else : ?>
                 <?= $this->Form->postLink(
                     $this->element('icons/archive16') . ' Archive Project',
