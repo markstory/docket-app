@@ -4,18 +4,24 @@ declare(strict_types=1);
  * @var Array<\App\Model\Entity\Project> $projects
  */
 ?>
-<div class="dnd-dropper-left-offset"
-    hx-ext="project-sorter"
-    hx-trigger="end"
-    hx-post="<?= $this->Url->build(['_name' => 'projects:reorder']) ?>"
->
-    <?php foreach ($projects as $project) : ?>
-        <div class="dnd-item">
-            <button class="dnd-handle" role="button">
-                <?= $this->element('icons/grabber24') ?>
-            </button>
-            <?= $this->element('project_item', ['project' => $project]) ?>
-            <?= $this->element('project_menu', ['project' => $project]) ?>
-        </div>
-    <?php endforeach; ?>
-</div>
+<?= $this->Form->create(
+    null,
+    [
+        'class' => 'dnd-dropper-left-offset',
+        'hx-ext' => 'project-sorter',
+        'hx-trigger' => 'end',
+        'hx-post' => $this->Url->build(['_name' => 'projects:reorder']),
+    ]
+) ?>
+<?php foreach ($projects as $project) : ?>
+    <?php $itemId = 'project-item-' . uniqid(); ?>
+    <div class="dnd-item" id="<?= h($itemId) ?>">
+        <?= $this->Form->hidden('id[]', ['value' => $project->id]) ?>
+        <button class="dnd-handle" role="button">
+            <?= $this->element('icons/grabber24') ?>
+        </button>
+        <?= $this->element('project_item', ['project' => $project]) ?>
+        <?= $this->element('project_menu', ['project' => $project, 'targetId' => $itemId]) ?>
+    </div>
+<?php endforeach; ?>
+<?= $this->Form->end() ?>

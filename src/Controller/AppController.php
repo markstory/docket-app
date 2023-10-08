@@ -154,9 +154,9 @@ class AppController extends Controller
             }
         }
 
+        $code = $config['success'] ? $config['statusSuccess'] : $config['statusError'];
         if ($isApi) {
             $this->viewBuilder()->setOption('serialize', $config['serialize']);
-            $code = $config['success'] ? $config['statusSuccess'] : $config['statusError'];
 
             $this->response = $this->response->withStatus($code);
             if ($this->response->getStatusCode() == 204) {
@@ -164,6 +164,12 @@ class AppController extends Controller
             }
 
             return;
+        }
+        if ($this->request->is('htmx') && $config['statusSuccess'] === 204) {
+            $this->response = $this->response->withStatus($code);
+            if ($this->response->getStatusCode() == 204) {
+                return $this->response;
+            }
         }
 
         if ($config['redirect']) {
