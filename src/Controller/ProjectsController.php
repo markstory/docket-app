@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Model\Entity\Project;
 use App\Model\Table\ProjectsTable;
 use App\Model\Table\TasksTable;
+use Cake\Http\Exception\BadRequestException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -302,5 +303,24 @@ class ProjectsController extends AppController
             'flashError' => $error,
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
+    }
+
+    /**
+     * Reorder a users active projects as a group.
+     */
+    public function reorder()
+    {
+        $this->request->allowMethod(['post']);
+        $ids = (array)$this->request->getData('id');
+
+        $query = $this->Projects
+            ->find('active')->find('top')
+            ->where(['Projects.id IN' => $ids]);
+        $query = $this->Authorization->applyScope($query, 'index');
+        $projects = $query->all();
+        if (count($projects) != count($ids)) {
+            throw new BadRequestException('Invalid id values provided');
+        }
+        $this->Projects->reorder($ids);
     }
 }

@@ -181,4 +181,20 @@ class ProjectsTable extends Table
         ]);
         $sorter->move($project, $operation['ranking'], $conditions);
     }
+
+    /**
+     *
+     * Update the ranking on a list of projectids to match the provided order.
+     */
+    public function reorder(array $ids): void
+    {
+        $this->getConnection()->transactional(function () use ($ids) {
+            foreach ($ids as $ranking => $id) {
+                $this->updateQuery()
+                    ->set(['ranking' => $ranking])
+                    ->where(['id' => $id])
+                    ->execute();
+            }
+        });
+    }
 }

@@ -73,6 +73,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'projects:index');
         $builder->connect('/add', 'Projects::add', ['_name' => 'projects:add']);
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
+        $builder->post('/reorder', ['action' => 'reorder'], 'projects:reorder');
+
         $builder->get('/{slug}', ['action' => 'view'], 'projects:view')
             ->setPass(['slug']);
         $builder->post('/{slug}/delete', ['action' => 'delete'], 'projects:delete')
