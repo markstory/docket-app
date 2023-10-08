@@ -2,7 +2,6 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Project $project
- * @var string $targetId
  */
 $menuId = 'project-menu-' . uniqid();
 ?>
@@ -21,6 +20,7 @@ $menuId = 'project-menu-' . uniqid();
     </button>
     <div id="<?= h($menuId) ?>" style="display:none;">
         <div role="menu" data-reach-menu-list="">
+            <div class="separator"></div>
             <?= $this->Html->link(
                 $this->element('icons/pencil16') . ' Edit Project',
                 ['_name' => 'projects:edit', 'slug' => $project->slug],
@@ -29,47 +29,30 @@ $menuId = 'project-menu-' . uniqid();
             <!-- todo include add-section and view completed buttons -->
             <div class="separator"></div>
             <?php if ($project->archived) : ?>
-                <a
-                    class="archive"
-                    href=""
-                    role="menuitem"
-                    data-reach-menu-item=""
-                    hx-post="<?= $this->Url->build(['_name' => 'projects:unarchive', $project->slug]) ?>"
-                    hx-target="#<?= $targetId ?>"
-                    hx-swap="outerHTML"
-                >
-                    <?= $this->element('icons/archive16') ?> Unarchive Project
-                </a>
+                <?= $this->Form->postLink(
+                    $this->element('icons/archive16') . ' Unarchive Project',
+                    ['_name' => 'projects:unarchive', 'slug' => $project->slug],
+                    ['class' => 'archive', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '']
+                ) ?>
+
             <?php else : ?>
-                <a
-                    class="archive"
-                    href=""
-                    role="menuitem"
-                    data-reach-menu-item=""
-                    hx-post="<?= $this->Url->build(['_name' => 'projects:archive', $project->slug]) ?>"
-                    hx-target="#<?= $targetId ?>"
-                    hx-swap="outerHTML"
-                >
-                    <?= $this->element('icons/archive16') ?> Archive Project
-                </a>
+                <?= $this->Form->postLink(
+                    $this->element('icons/archive16') . ' Archive Project',
+                    ['_name' => 'projects:archive', 'slug' => $project->slug],
+                    ['class' => 'archive', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '']
+                ) ?>
             <?php endif ?>
-            <?php /* 
-            TODO: implement confirm on delete 
+            <!--
+            todo implement confirm on delete 
             delete could be a GET to fetch the confirm window
             and then a POST/PUT to confirm the deletion.
             That might work better with htmx
-            */ ?>
-            <a
-                class="delete"
-                href=""
-                role="menuitem"
-                data-reach-menu-item=""
-                hx-post="<?= $this->Url->build(['_name' => 'projects:delete', $project->slug]) ?>"
-                hx-target="#<?= $targetId ?>"
-                hx-swap="outerHTML"
-            >
-                <?= $this->element('icons/trash16') ?> Delete Project
-            </a>
+            -->
+            <?= $this->Form->postLink(
+                $this->element('icons/trash16') . ' Delete Project',
+                ['_name' => 'projects:delete', 'slug' => $project->slug],
+                ['class' => 'delete', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '',]
+            ) ?>
         </div>
     </div>
 </div>

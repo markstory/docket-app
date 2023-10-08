@@ -21,7 +21,6 @@ declare(strict_types=1);
             <?= $this->element('icons/grabber24') ?>
         </button>
         <?= $this->element('project_item', ['project' => $project]) ?>
-        <?= $this->element('project_menu', ['project' => $project, 'targetId' => $itemId]) ?>
     </div>
 <?php endforeach; ?>
 <?= $this->Form->end() ?>

@@ -247,12 +247,6 @@ class ProjectsController extends AppController
         $project->archive();
         $this->Projects->save($project);
 
-        // TODO cleanup this hack
-        // Also figure out how to show flash messages
-        // with htmx. Does it require a full page rebuild?
-        return $this->response->withStatus(200)
-            ->withStringBody('');
-
         return $this->respond([
             'success' => true,
             'statusSuccess' => 204,
