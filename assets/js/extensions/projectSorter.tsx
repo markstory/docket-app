@@ -8,6 +8,8 @@ import Sortable from 'sortablejs';
         return;
       }
       const element = evt.target as HTMLElement;
+      // Implementing elements listen to the `end` event
+      // triggered on this element and submits a form.
       new Sortable(element, {
         animation: 150,
         ghostClass: 'dnd-ghost',
