@@ -548,6 +548,8 @@ class ProjectsControllerTest extends TestCase
             'id' => [$fun->id, $work->id, $home->id],
         ]);
         $this->assertResponseOk();
+        $this->assertResponseContains('Home');
+        $this->assertResponseContains('Work');
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$fun->id, $work->id, $home->id];

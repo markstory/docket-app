@@ -25,6 +25,11 @@ class ProjectsController extends AppController
         $this->loadModel('Projects');
     }
 
+    protected function useInertia()
+    {
+        return !in_array($this->request->getParam('action'), ['reorder']);
+    }
+
     public function viewClasses(): array
     {
         return [JsonView::class];

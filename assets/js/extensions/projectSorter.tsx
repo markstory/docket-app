@@ -12,7 +12,8 @@ import Sortable from 'sortablejs';
       const element = evt.target as HTMLElement;
       const sorter = new Sortable(element, {
         animation: 150,
-        ghostClass: 'dnd-item-dragging',
+        ghostClass: 'dnd-ghost',
+        dragClass: 'dnd-item-dragging',
         handle: '.dnd-handle',
       });
       sorters.push(sorter);

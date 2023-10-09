@@ -11,6 +11,7 @@ declare(strict_types=1);
         'hx-ext' => 'project-sorter',
         'hx-trigger' => 'end',
         'hx-post' => $this->Url->build(['_name' => 'projects:reorder']),
+        'hx-swap' => 'outerHTML',
     ]
 ) ?>
 <?php foreach ($projects as $project) : ?>
