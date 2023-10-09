@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Table\ProjectsTable;
+use App\View\Widget\ColorPickerWidget;
 use Authentication\Authenticator\SessionAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
@@ -54,7 +55,12 @@ class AppController extends Controller
 
         $this->viewBuilder()
             ->addHelper('ViteAsset')
-            ->addHelper('Form', ['templates' => 'formtemplates']);
+            ->addHelper('Form', [
+                'templates' => 'formtemplates',
+                'widgets' => [
+                    'colorpicker' => [ColorPickerWidget::class, '_view'],
+                ],
+            ]);
 
         // Load common data.
         $identity = $this->request->getAttribute('identity');

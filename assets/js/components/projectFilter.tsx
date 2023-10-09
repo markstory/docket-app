@@ -23,10 +23,10 @@ function ProjectFilter(): JSX.Element {
       <h3>{t('Projects')}</h3>
       <ProjectSorter />
       <div className="secondary-actions">
-        <NavLink className="action-primary" href="/projects/add">
+        <a className="action-primary" href="/projects/add">
           <InlineIcon icon="plus" />
           {t('New Project')}
-        </NavLink>
+        </a>
         <NavLink className="action-secondary" href="/projects/archived">
           <InlineIcon icon="archive" />
           {t('Archived Projects')}

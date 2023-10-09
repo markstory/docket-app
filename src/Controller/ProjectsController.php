@@ -27,7 +27,7 @@ class ProjectsController extends AppController
 
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['reorder']);
+        return !in_array($this->request->getParam('action'), ['add', 'reorder']);
     }
 
     public function viewClasses(): array
@@ -115,7 +115,7 @@ class ProjectsController extends AppController
         $referer = $this->getReferer();
         $this->set('referer', $referer);
 
-        $success = false;
+        $success = null;
         $serialize = [];
         $redirect = null;
 
@@ -135,6 +135,7 @@ class ProjectsController extends AppController
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
         }
+        $this->set('project', $project);
 
         return $this->respond([
             'success' => $success,
