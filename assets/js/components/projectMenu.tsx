@@ -38,7 +38,7 @@ export default function ProjectMenu({
 
   return (
     <ContextMenu onClick={onClick} tooltip={t('Project Actions')}>
-      <MenuLink as={InertiaLink} className="edit" href={`/projects/${project.slug}/edit`}>
+      <MenuLink className="edit" href={`/projects/${project.slug}/edit`}>
         <InlineIcon icon="pencil" />
         {t('Edit Project')}
       </MenuLink>
