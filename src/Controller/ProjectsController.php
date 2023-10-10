@@ -27,7 +27,7 @@ class ProjectsController extends AppController
 
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['add', 'reorder']);
+        return !in_array($this->request->getParam('action'), ['add', 'edit', 'reorder']);
     }
 
     public function viewClasses(): array
@@ -131,6 +131,7 @@ class ProjectsController extends AppController
                 $serialize[] = 'project';
                 $this->set('project', $project);
             } else {
+                $success = false;
                 $serialize[] = 'errors';
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
@@ -158,7 +159,7 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         $referer = $this->getReferer();
-        $success = false;
+        $success = null;
         $serialize = [];
         $redirect = null;
 
@@ -174,6 +175,7 @@ class ProjectsController extends AppController
                     'slug' => $project->slug,
                 ];
             } else {
+                $success = false;
                 $serialize[] = 'errors';
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }

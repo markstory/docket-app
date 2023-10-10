@@ -33,6 +33,10 @@ input[type=radio] {
     box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
   }
 }
+.form-control input[type=checkbox] {
+  width: 18px;
+  height: 18px;
+}
 
 label {
   margin-right: $space;

@@ -147,6 +147,7 @@ class ProjectsControllerTest extends TestCase
         $this->get('/projects/add');
 
         $this->assertResponseOk();
+        $this->assertTemplate('Projects/add');
         $this->assertSame('/tasks/today', $this->viewVariable('referer'));
     }
 
