@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @var string $referer
  */
 $this->setLayout('sidebar');
+$this->assign('title', 'New Project');
 ?>
 <h2>New Project</h2>
 <?php

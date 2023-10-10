@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
-
-use Cake\I18n\FrozenTime;
 /**
  * @var \App\Model\Entity\User $user
  * @var string $referrer
  */
 
+use Cake\I18n\FrozenTime;
+
 $this->setLayout('sidebar');
+$this->assign('title', 'Edit Profile');
 
 ?>
 <h2>Edit Profile</h2>
