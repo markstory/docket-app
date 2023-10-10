@@ -21,6 +21,8 @@ class ColorPickerWidget extends BasicWidget
         'disabled' => null,
         'val' => null,
         'colors' => [],
+        'data-niceselect' => 1,
+        'tabindex' => '-1',
     ];
 
     public function __construct(
@@ -41,14 +43,15 @@ class ColorPickerWidget extends BasicWidget
 
         $options = [];
         foreach ($colors as $color) {
+            $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]) . h($color['name']);
             $optAttrs = [
                 'selected' => $color['id'] == $selected,
-                'style' => 'color: red',
+                'data-display' => $optionBody,
             ];
-            $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]) . h($color['name']);
+
             $options[] = $this->templates->format('option', [
                 'value' => $color['id'],
-                'text' => $optionBody,
+                'text' => $color['name'],
                 'attrs' => $this->templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }

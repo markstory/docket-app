@@ -36,6 +36,7 @@
         "htmx.org": "^1.9.6",
         "lodash.groupby": "^4.0",
         "marked": "^2.0.1",
+        "nice-select2": "git://github.com/bluzky/nice-select2.git#9c8e16aa73db4980dd7d183f4f39734907135823",
         "react": "^17.0",
         "react-confirm": "^0.1.20",
         "react-day-picker": "^7.4.8",
