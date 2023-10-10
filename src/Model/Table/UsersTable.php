@@ -32,6 +32,7 @@ use Exception;
  */
 class UsersTable extends Table
 {
+    // TODO make themes an enum?
     public const VALID_THEMES = ['light', 'dark', 'system'];
 
     /**
