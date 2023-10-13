@@ -6,12 +6,7 @@ declare(strict_types=1);
 
 $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&default=retro";
 ?>
-<div
-    class="profile-menu"
-    hx-ext="dropdown"
-    dropdown-reveal="#profile-menu"
-    dropdown-trigger="button.avatar"
->
+<drop-down class="profile-menu">
     <button
         class="avatar" 
         aria-haspopup="true"
@@ -20,7 +15,7 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
     >
         <?= $this->Html->image($avatarUrl, ['height' => 50, 'width' => 50]) ?>
     </button>
-    <div id="profile-menu" style="position: absolute; display:none;">
+    <drop-down-menu id="profile-menu" style="position: absolute; display:none;">
         <div role="menu" data-reach-menu-list="">
             <div class="dropdown-item-text"><?= h($identity->name) ?></div>
             <div class="separator"></div>
@@ -46,5 +41,5 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
                 ['role' => 'menuitem', 'data-reach-menu-item' => '',]
             ) ?>
         </div>
-    </div>
-</div>
+    </drop-down-menu>
+</drop-down>

@@ -24,7 +24,6 @@ declare(strict_types=1);
     <main class="main">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
-        <div id="dropdown-portal"></div>
     </main>
     <footer>
     </footer>
