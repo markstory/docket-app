@@ -34,4 +34,9 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'axios', '@inertiajs/inertia', '@inertiajs/inertia-react'],
   },
+  server: {
+    watch: {
+      ignored: ['**/vendor/**', '**/flutterapp/**'],
+    },
+  },
 });
