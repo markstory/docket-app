@@ -1,0 +1,65 @@
+select-box {
+  display: block;
+  min-width: 200px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+
+  // We don't have any multi-line select boxes so forcing the height is ok
+  min-height: auto;
+  box-shadow: var(--shadow-inset);
+
+  input[type="text"] {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  &:hover {
+    border-color:var(--color-border-med);
+  }
+
+  .select-box-arrow {
+    width: 24px;
+    height: 100%;
+  }
+}
+
+select-box-current {
+  display: block;
+  height: 100%;
+  cursor: pointer;
+}
+
+select-box-menu {
+  display: none;
+  position: absolute;
+  margin-top: calc($space / 2);
+  min-width: 200px;
+  max-height: 400px;
+  overflow: auto;
+
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+  box-shadow: var(--shadow-med);
+  background: var(--color-bg);
+  z-index: $z-menu;
+}
+
+select-box-option {
+  display: flex;
+  align-items: center;
+  gap: calc($space / 2);
+
+  width: 100%;
+  height: 36px;
+  padding: calc($space / 2);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-menu-hover);
+  }
+
+  &[aria-selected="true"] {
+    background: var(--color-menu-selected);
+  }
+}

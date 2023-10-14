@@ -46,23 +46,27 @@ class ColorPickerWidget extends BasicWidget
             $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]) . h($color['name']);
             $optAttrs = [
                 'selected' => $color['id'] == $selected,
-                'data-display' => $optionBody,
             ];
 
-            $options[] = $this->templates->format('option', [
+            $options[] = $this->templates->format('select-box-option', [
                 'value' => $color['id'],
-                'text' => $color['name'],
+                'text' => $optionBody,
                 'attrs' => $this->templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
 
+        $hidden = $this->templates->format('input', [
+            'name' => $data['name'],
+            'value' => $selected,
+            'type' => 'hidden',
+        ]);
         $attrs = $this->templates->formatAttributes($data);
 
-        return $this->templates->format('select', [
-            'name' => $data['name'],
+        return $this->templates->format('select-box', [
             'templateVars' => $data['templateVars'],
             'attrs' => $attrs,
-            'content' => implode('', $options),
+            'hidden' => $hidden,
+            'options' => implode('', $options),
         ]);
     }
 
