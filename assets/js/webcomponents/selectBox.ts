@@ -66,12 +66,15 @@ class SelectBox extends HTMLElement {
     menu.addEventListener('selected', ((evt: CustomEvent) => {
       hidden.value = evt.detail;
       menu.setAttribute('val', evt.detail);
+      trigger.setAttribute('val', evt.detail);
       this.setAttribute('val', evt.detail);
       hideMenu();
       // TODO clone selected option into current value.
     }) as EventListener);
 
-    menu.setAttribute('val', this.getAttribute('val') ?? '');
+    const value = this.getAttribute('val') ?? '';
+    menu.setAttribute('val', value);
+    trigger.setAttribute('val', value);
   }
 }
 
@@ -137,7 +140,7 @@ class SelectBoxMenu extends HTMLElement {
   }
 
   updateSelected() {
-    const active = this.querySelector('select-box-option[aria-selected="true"]');
+    const active = this.querySelector('select-box-option[selected="true"]');
     if (active) {
       active.setAttribute('selected', 'false');
     }
@@ -149,7 +152,47 @@ class SelectBoxMenu extends HTMLElement {
 }
 
 class SelectBoxCurrent extends HTMLElement {
-  connectedCallback() {}
+  private val: string | null;
+
+  static get observedAttributes() {
+    return ['val'];
+  }
+  constructor() {
+    super();
+    this.val = '';
+  }
+
+  attributeChangedCallback(property: string, oldValue: string, newValue: string) {
+    if (oldValue === newValue) {
+      return;
+    }
+    if (property === 'val') {
+      this.val = newValue;
+      this.updateSelected();
+    }
+  }
+
+  connectedCallback() {
+    this.updateSelected();
+  }
+
+  updateSelected() {
+    const parent = this.parentNode;
+    if (!parent) {
+      return;
+    }
+    if (!this.val) {
+      return;
+    }
+    const menu = parent.querySelector('select-box-menu') as HTMLElement;
+    const selected = menu.querySelector('[selected="true"]');
+    if (!selected) {
+      return;
+    }
+    // TODO make this display innerHTML instead.
+    const text = selected.textContent ?? '';
+    this.querySelector('input')!.value = text;
+  }
 }
 
 customElements.define('select-box', SelectBox);

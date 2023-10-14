@@ -12,6 +12,8 @@ select-box {
   input[type="text"] {
     border: none !important;
     box-shadow: none !important;
+    min-width: auto !important;
+    width: auto !important;
   }
 
   &:hover {
@@ -25,9 +27,20 @@ select-box {
 }
 
 select-box-current {
-  display: block;
+  display: flex;
+  align-items: center;
   height: 100%;
   cursor: pointer;
+
+  &::after {
+    // downwards chevron
+    content: '\002304';
+    font-size: 1.5em;
+    display: block;
+    position: relative;
+    top: -8px;
+    left: -4px;
+  }
 }
 
 select-box-menu {
