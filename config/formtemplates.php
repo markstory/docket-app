@@ -14,6 +14,7 @@ return [
     <select-box name="{{name}}"{{attrs}}>
         {{hidden}}
         <select-box-current>
+            <span class="select-box-value"></span> 
             <input type="text" class="select-box-input" />
         </select-box-current>
         <select-box-menu>{{options}}</select-box-menu>

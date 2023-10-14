@@ -36,25 +36,34 @@ class SelectBox extends HTMLElement {
       return;
     }
 
+    // Set the initial value
+    const value = this.getAttribute('val') ?? '';
+    menu.setAttribute('val', value);
+    trigger.setAttribute('val', value);
+
     // Handle clicks outside the root parent element.
     function hideMenu() {
       // Remove this listener
       document.removeEventListener('click', hideMenu);
 
       menu.style.display = 'none';
+      trigger.setAttribute('open', 'false');
     }
 
+    // Open the menu
     trigger.addEventListener('click', function (evt) {
       evt.preventDefault();
       evt.stopPropagation();
 
       // Show menu
       menu.style.display = 'block';
+      trigger.setAttribute('open', 'true');
 
       // Setup hide handler
       document.addEventListener('click', hideMenu);
     });
 
+    // Swallow clicks to the menu
     menu.addEventListener(
       'click',
       function (evt) {
@@ -63,6 +72,7 @@ class SelectBox extends HTMLElement {
       false
     );
 
+    // Update values when an option is selected.
     menu.addEventListener('selected', ((evt: CustomEvent) => {
       hidden.value = evt.detail;
       menu.setAttribute('val', evt.detail);
@@ -72,9 +82,12 @@ class SelectBox extends HTMLElement {
       // TODO clone selected option into current value.
     }) as EventListener);
 
-    const value = this.getAttribute('val') ?? '';
-    menu.setAttribute('val', value);
-    trigger.setAttribute('val', value);
+    trigger.addEventListener('keyup', evt => {
+      const target = evt.target;
+      if (target instanceof HTMLInputElement) {
+        menu.setAttribute('filter', target.value);
+      }
+    });
   }
 }
 
@@ -120,13 +133,15 @@ class SelectBoxOption extends HTMLElement {
 
 class SelectBoxMenu extends HTMLElement {
   private val: string | null;
+  private filter: string | null;
 
   static get observedAttributes() {
-    return ['val'];
+    return ['val', 'filter'];
   }
   constructor() {
     super();
     this.val = '';
+    this.filter = '';
   }
 
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
@@ -136,6 +151,10 @@ class SelectBoxMenu extends HTMLElement {
     if (property === 'val') {
       this.val = newValue;
       this.updateSelected();
+    }
+    if (property === 'filter') {
+      this.filter = newValue;
+      this.filterOptions();
     }
   }
 
@@ -149,17 +168,33 @@ class SelectBoxMenu extends HTMLElement {
       option.setAttribute('selected', 'true');
     }
   }
+
+  filterOptions() {
+    const menuOptions: NodeListOf<SelectBoxOption> =
+      this.querySelectorAll('select-box-option');
+    for (var option of menuOptions) {
+      if (!this.filter) {
+        option.style.display = 'flex';
+      } else if (option.innerText.includes(this.filter)) {
+        option.style.display = 'flex';
+      } else {
+        option.style.display = 'none';
+      }
+    }
+  }
 }
 
 class SelectBoxCurrent extends HTMLElement {
   private val: string | null;
+  private open: string | null;
 
   static get observedAttributes() {
-    return ['val'];
+    return ['val', 'open'];
   }
   constructor() {
     super();
     this.val = '';
+    this.open = 'false';
   }
 
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
@@ -169,6 +204,17 @@ class SelectBoxCurrent extends HTMLElement {
     if (property === 'val') {
       this.val = newValue;
       this.updateSelected();
+    }
+    if (property === 'open') {
+      this.open = newValue;
+      if (this.open === 'true') {
+        const input = this.querySelector('input') as HTMLInputElement;
+        input.value = '';
+        input.focus();
+
+        const keyup = new CustomEvent('keyup', {bubbles: true});
+        input.dispatchEvent(keyup);
+      }
     }
   }
 
@@ -189,9 +235,8 @@ class SelectBoxCurrent extends HTMLElement {
     if (!selected) {
       return;
     }
-    // TODO make this display innerHTML instead.
-    const text = selected.textContent ?? '';
-    this.querySelector('input')!.value = text;
+    const content = selected.innerHTML ?? '';
+    this.querySelector('.select-box-value')!.innerHTML = content;
   }
 }
 

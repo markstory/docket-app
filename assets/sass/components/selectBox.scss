@@ -9,28 +9,38 @@ select-box {
   min-height: auto;
   box-shadow: var(--shadow-inset);
 
-  input[type="text"] {
-    border: none !important;
-    box-shadow: none !important;
-    min-width: auto !important;
-    width: auto !important;
-  }
-
   &:hover {
     border-color:var(--color-border-med);
   }
 
-  .select-box-arrow {
-    width: 24px;
-    height: 100%;
-  }
 }
 
 select-box-current {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
   height: 100%;
   cursor: pointer;
+
+  input[type="text"] {
+    display: none;
+    border: none;
+    box-shadow: none;
+    min-width: auto;
+    width: auto;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  .select-box-value {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding-left: calc($space);
+  }
 
   &::after {
     // downwards chevron
@@ -39,7 +49,14 @@ select-box-current {
     display: block;
     position: relative;
     top: -8px;
-    left: -4px;
+    left: -8px;
+  }
+
+  &[open="true"] input {
+    display: block;
+  }
+  &[open="true"] .select-box-value {
+    display: none;
   }
 }
 
@@ -65,7 +82,7 @@ select-box-option {
 
   width: 100%;
   height: 36px;
-  padding: calc($space / 2);
+  padding: calc($space / 2) $space;
   cursor: pointer;
 
   &:hover {

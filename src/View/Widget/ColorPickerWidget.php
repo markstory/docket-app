@@ -39,7 +39,7 @@ class ColorPickerWidget extends BasicWidget
         }
         $selected = $data['val'] ?? null;
         $colors = $data['colors'];
-        unset($data['colors']);
+        unset($data['colors'], $data['data-validity-message'], $data['oninvalid'], $data['oninput']);
 
         $options = [];
         foreach ($colors as $color) {
