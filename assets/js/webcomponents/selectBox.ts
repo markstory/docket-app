@@ -37,15 +37,7 @@ class SelectBox extends HTMLElement {
       trigger.setAttribute('open', 'false');
     }
 
-    const setValue = (value: string) => {
-      hidden.value = value;
-      menu.setAttribute('val', value);
-      trigger.setAttribute('val', value);
-      this.setAttribute('val', value);
-    };
-
-    // Open the menu
-    trigger.addEventListener('click', evt => {
+    const openMenu = (evt: Event) => {
       evt.preventDefault();
       evt.stopPropagation();
 
@@ -59,16 +51,14 @@ class SelectBox extends HTMLElement {
 
       // Setup hide handler
       document.addEventListener('click', hideMenu);
-    });
+    };
 
-    // Swallow clicks to the menu
-    menu.addEventListener(
-      'click',
-      function (evt) {
-        evt.stopPropagation();
-      },
-      false
-    );
+    const setValue = (value: string) => {
+      hidden.value = value;
+      menu.setAttribute('val', value);
+      trigger.setAttribute('val', value);
+      this.setAttribute('val', value);
+    };
 
     // Update values when an option is selected.
     menu.addEventListener('selected', ((evt: CustomEvent) => {
@@ -83,12 +73,21 @@ class SelectBox extends HTMLElement {
       menu.setAttribute('current', this.currentOffset.toString());
     }) as EventListener);
 
+    // Open the menu
+    trigger.addEventListener('click', evt => {
+      openMenu(evt);
+    });
+    trigger.addEventListener('open', evt => {
+      openMenu(evt);
+    });
+    // Propagate filtering into menu updates;
     trigger.addEventListener('keyup', evt => {
       const target = evt.target;
       if (target instanceof HTMLInputElement) {
         menu.setAttribute('filter', target.value);
       }
     });
+
     trigger.addEventListener('keydown', evt => {
       // Down arrow
       if (evt.key === 'ArrowDown') {
@@ -149,6 +148,17 @@ class SelectBoxMenu extends HTMLElement {
   static get observedAttributes() {
     return ['val', 'filter', 'current'];
   }
+  connectedCallback() {
+    // Swallow clicks to the menu
+    this.addEventListener(
+      'click',
+      function (evt) {
+        evt.stopPropagation();
+      },
+      false
+    );
+  }
+
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
@@ -238,6 +248,19 @@ class SelectBoxCurrent extends HTMLElement {
 
   connectedCallback() {
     this.updateSelected();
+    const input = this.querySelector('input[type="text"]');
+    if (!input) {
+      console.error('Missing required element input');
+      return;
+    }
+    input.addEventListener('focus', () => {
+      const open = new CustomEvent('open', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.dispatchEvent(open);
+    });
+
     // TODO consider using shadowdom with a link element
     // to the application CSS file. How to get that file path is unknown.
   }
