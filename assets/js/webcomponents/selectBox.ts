@@ -63,8 +63,17 @@ class SelectBox extends HTMLElement {
     const value = this.getAttribute('val') ?? '';
     setValue(value);
 
+    // Open and close the menu
+    this.addEventListener('open', evt => {
+      openMenu(evt);
+    });
+    this.addEventListener('close', () => {
+      hideMenu();
+    });
+
     // Update values when an option is selected.
     menu.addEventListener('selected', ((evt: CustomEvent<SelectedDetail>) => {
+      console.log('selected', evt.detail);
       setValue(evt.detail.value);
       trigger.setAttribute('selectedhtml', evt.detail.htmlText);
       hideMenu();
@@ -77,13 +86,6 @@ class SelectBox extends HTMLElement {
       menu.setAttribute('current', this.currentOffset.toString());
     }) as EventListener);
 
-    // Open the menu
-    trigger.addEventListener('open', evt => {
-      openMenu(evt);
-    });
-    trigger.addEventListener('close', () => {
-      hideMenu();
-    });
     // Propagate filtering into menu updates;
     trigger.addEventListener('keyup', evt => {
       const target = evt.target;
@@ -132,6 +134,13 @@ class SelectBoxMenu extends HTMLElement {
       },
       false
     );
+    this.addEventListener('blur', () => {
+      const close = new CustomEvent('close', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.dispatchEvent(close);
+    });
   }
 
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
@@ -235,17 +244,9 @@ class SelectBoxCurrent extends HTMLElement {
       });
       this.dispatchEvent(open);
     });
-    input.addEventListener('blur', () => {
-      const close = new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-      });
-      this.dispatchEvent(close);
-    });
     this.addEventListener('click', evt => {
       evt.preventDefault();
       evt.stopPropagation();
-
       const open = new CustomEvent('open', {
         bubbles: true,
         cancelable: true,
@@ -293,7 +294,7 @@ class SelectBoxOption extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener('click', evt => {
-      evt.preventDefault();
+      console.log('clicke');
       evt.stopPropagation();
       this.select();
     });
