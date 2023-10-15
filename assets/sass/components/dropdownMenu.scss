@@ -17,8 +17,11 @@ drop-down-menu {
   position: absolute;
   display: none;
 }
+#drop-down-portal > drop-down-menu {
+  display: block;
+}
 
-#drop-down-portal,
+drop-down-menu,
 [data-reach-menu-list] {
   width: max-content;
   position: relative;

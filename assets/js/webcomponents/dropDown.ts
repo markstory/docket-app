@@ -19,8 +19,8 @@ class DropDown extends HTMLElement {
       if (!reveal || !portal) {
         return;
       }
-      reveal.appendChild(portal.children[0]);
       portal.style.display = 'none';
+      portal.removeChild(portal.children[0]);
     }
 
     trigger.addEventListener('click', function (evt) {
@@ -28,7 +28,7 @@ class DropDown extends HTMLElement {
       evt.stopPropagation();
 
       // Move menu contents to portal element
-      portal.appendChild(reveal.children[0]);
+      portal.appendChild(reveal.cloneNode(true));
 
       // position portal
       portal.style.left = `${trigger.offsetLeft + 5}px`;
