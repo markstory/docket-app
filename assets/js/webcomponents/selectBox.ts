@@ -1,3 +1,8 @@
+type SelectedDetail = {
+  value: string;
+  htmlText: string;
+};
+
 class SelectBox extends HTMLElement {
   private currentOffset: number = -1;
 
@@ -22,11 +27,6 @@ class SelectBox extends HTMLElement {
       console.error('Missing required child select-box-current');
       return;
     }
-
-    // Set the initial value
-    const value = this.getAttribute('val') ?? '';
-    menu.setAttribute('val', value);
-    trigger.setAttribute('val', value);
 
     // Handle clicks outside the root parent element.
     function hideMenu() {
@@ -56,13 +56,17 @@ class SelectBox extends HTMLElement {
     const setValue = (value: string) => {
       hidden.value = value;
       menu.setAttribute('val', value);
-      trigger.setAttribute('val', value);
       this.setAttribute('val', value);
     };
 
+    // Set the initial value
+    const value = this.getAttribute('val') ?? '';
+    setValue(value);
+
     // Update values when an option is selected.
-    menu.addEventListener('selected', ((evt: CustomEvent) => {
-      setValue(evt.detail);
+    menu.addEventListener('selected', ((evt: CustomEvent<SelectedDetail>) => {
+      setValue(evt.detail.value);
+      trigger.setAttribute('selectedhtml', evt.detail.htmlText);
       hideMenu();
     }) as EventListener);
 
@@ -74,11 +78,11 @@ class SelectBox extends HTMLElement {
     }) as EventListener);
 
     // Open the menu
-    trigger.addEventListener('click', evt => {
-      openMenu(evt);
-    });
     trigger.addEventListener('open', evt => {
       openMenu(evt);
+    });
+    trigger.addEventListener('close', () => {
+      hideMenu();
     });
     // Propagate filtering into menu updates;
     trigger.addEventListener('keyup', evt => {
@@ -88,6 +92,7 @@ class SelectBox extends HTMLElement {
       }
     });
 
+    // Handle keyboard nav in the menu.
     trigger.addEventListener('keydown', evt => {
       if (evt.key === 'ArrowDown') {
         // Down arrow, rely on outofbounds event to constrain the max.
@@ -101,44 +106,16 @@ class SelectBox extends HTMLElement {
         menu.setAttribute('current', this.currentOffset.toString());
       } else if (evt.key === 'Enter') {
         evt.preventDefault();
-        const currentOpt = menu.querySelector('select-box-option[aria-current="true"]');
+
+        const currentOpt = menu.querySelector(
+          'select-box-option[aria-current="true"]'
+        ) as SelectBoxOption | null;
         if (currentOpt) {
-          setValue(currentOpt.getAttribute('value') ?? '');
+          currentOpt.select();
           hideMenu();
         }
       }
     });
-  }
-}
-
-class SelectBoxOption extends HTMLElement {
-  static get observedAttributes() {
-    return ['selected'];
-  }
-
-  attributeChangedCallback(property: string, oldValue: string, newValue: string) {
-    if (oldValue === newValue) {
-      return;
-    }
-    if (property === 'selected') {
-      this.setAttribute('aria-selected', newValue);
-    }
-  }
-
-  connectedCallback() {
-    this.addEventListener('click', function (evt) {
-      evt.preventDefault();
-      evt.stopPropagation();
-
-      const selected = new CustomEvent('selected', {
-        bubbles: true,
-        cancelable: false,
-        detail: this.getAttribute('value'),
-      });
-      this.dispatchEvent(selected);
-    });
-
-    this.setAttribute('aria-selected', this.getAttribute('selected') ?? 'false');
   }
 }
 
@@ -223,13 +200,13 @@ class SelectBoxMenu extends HTMLElement {
 
 class SelectBoxCurrent extends HTMLElement {
   static get observedAttributes() {
-    return ['val', 'open'];
+    return ['open', 'selectedhtml'];
   }
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
     }
-    if (property === 'val') {
+    if (property === 'selectedhtml') {
       this.updateSelected();
     }
     if (property === 'open') {
@@ -258,33 +235,76 @@ class SelectBoxCurrent extends HTMLElement {
       });
       this.dispatchEvent(open);
     });
+    input.addEventListener('blur', () => {
+      const close = new CustomEvent('close', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.dispatchEvent(close);
+    });
+    this.addEventListener('click', evt => {
+      evt.preventDefault();
+      evt.stopPropagation();
 
+      const open = new CustomEvent('open', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.dispatchEvent(open);
+    });
     // TODO consider using shadowdom with a link element
     // to the application CSS file. How to get that file path is unknown.
   }
 
   updateSelected() {
-    const parent = this.parentNode;
-    if (!parent) {
+    const selectedhtml = this.getAttribute('selectedhtml');
+    if (!selectedhtml) {
       return;
     }
-    const val = this.getAttribute('val');
-    if (!val) {
+    this.querySelector('.select-box-value')!.innerHTML = selectedhtml;
+  }
+}
+
+class SelectBoxOption extends HTMLElement {
+  static get observedAttributes() {
+    return ['selected'];
+  }
+
+  attributeChangedCallback(property: string, oldValue: string, newValue: string) {
+    if (oldValue === newValue) {
       return;
     }
-    const menu = parent.querySelector('select-box-menu') as HTMLElement;
-    const selected = menu.querySelector('[selected="true"]');
-    if (!selected) {
-      return;
+    if (property === 'selected') {
+      this.setAttribute('aria-selected', newValue);
     }
-    const content = selected.innerHTML ?? '';
-    this.querySelector('.select-box-value')!.innerHTML = content;
+  }
+
+  select() {
+    const selected = new CustomEvent<SelectedDetail>('selected', {
+      bubbles: true,
+      cancelable: false,
+      detail: {
+        value: this.getAttribute('value') ?? '',
+        htmlText: this.innerHTML ?? '',
+      },
+    });
+    this.dispatchEvent(selected);
+  }
+
+  connectedCallback() {
+    this.addEventListener('click', evt => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      this.select();
+    });
+
+    this.setAttribute('aria-selected', this.getAttribute('selected') ?? 'false');
   }
 }
 
 customElements.define('select-box', SelectBox);
 customElements.define('select-box-menu', SelectBoxMenu);
-customElements.define('select-box-option', SelectBoxOption);
 customElements.define('select-box-current', SelectBoxCurrent);
+customElements.define('select-box-option', SelectBoxOption);
 
 export default SelectBox;
