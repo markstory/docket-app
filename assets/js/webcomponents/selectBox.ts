@@ -89,26 +89,24 @@ class SelectBox extends HTMLElement {
     });
 
     trigger.addEventListener('keydown', evt => {
-      // Down arrow
       if (evt.key === 'ArrowDown') {
+        // Down arrow, rely on outofbounds event to constrain the max.
         evt.preventDefault();
         this.currentOffset += 1;
         menu.setAttribute('current', this.currentOffset.toString());
       } else if (evt.key === 'ArrowUp') {
+        // Moving up, constrain to 0 on the min
         evt.preventDefault();
         this.currentOffset = Math.max(this.currentOffset - 1, 0);
         menu.setAttribute('current', this.currentOffset.toString());
       } else if (evt.key === 'Enter') {
         evt.preventDefault();
-
         const currentOpt = menu.querySelector('select-box-option[aria-current="true"]');
         if (currentOpt) {
           setValue(currentOpt.getAttribute('value') ?? '');
           hideMenu();
         }
-        return false;
       }
-      return;
     });
   }
 }
