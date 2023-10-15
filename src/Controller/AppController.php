@@ -67,7 +67,8 @@ class AppController extends Controller
         $this->set('identity', $identity);
 
         $isApiResponse = !empty($this->viewBuilder()->getOption('serialize'));
-        if (!$isApiResponse && $identity) {
+        $useInertia = $this->useInertia();
+        if (!$isApiResponse && $useInertia && $identity) {
             // Use a function to defer query exection on partial loads.
             $this->set('projects', function () use ($identity) {
                 $this->loadModel('Projects');
@@ -77,7 +78,7 @@ class AppController extends Controller
         }
 
         // Use inertia if we aren't making a custom JSON response.
-        if ($this->useInertia() && !$isApiResponse) {
+        if ($useInertia && !$isApiResponse) {
             $this->inertiaBeforeRender($event);
         }
     }

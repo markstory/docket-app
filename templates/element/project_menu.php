@@ -5,22 +5,17 @@ declare(strict_types=1);
  */
 $menuId = 'project-menu-' . uniqid();
 ?>
-<div
-    hx-ext="dropdown"
-    dropdown-trigger=".button-icon"
-    dropdown-reveal="#<?= h($menuId) ?>"
->
+<drop-down>
     <button
-        class="button-icon button-default" 
+        class="button-icon button-default"
         aria-haspopup="true"
         aria-controls="<?= h($menuId) ?>"
         type="button"
     >
         <?= $this->element('icons/kebab16') ?>
     </button>
-    <div id="<?= h($menuId) ?>" style="display:none;">
-        <div role="menu" data-reach-menu-list="">
-            <div class="separator"></div>
+    <drop-down-menu id="<?= h($menuId) ?>">
+        <div role="menu">
             <?= $this->Html->link(
                 $this->element('icons/pencil16') . ' Edit Project',
                 ['_name' => 'projects:edit', 'slug' => $project->slug],
@@ -43,7 +38,7 @@ $menuId = 'project-menu-' . uniqid();
                 ) ?>
             <?php endif ?>
             <!--
-            todo implement confirm on delete 
+            todo implement confirm on delete
             delete could be a GET to fetch the confirm window
             and then a POST/PUT to confirm the deletion.
             That might work better with htmx
@@ -54,5 +49,5 @@ $menuId = 'project-menu-' . uniqid();
                 ['class' => 'delete', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '',]
             ) ?>
         </div>
-    </div>
-</div>
+    </drop-down-menu>
+</drop-down>

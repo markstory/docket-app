@@ -1,13 +1,12 @@
 class DropDown extends HTMLElement {
   connectedCallback() {
-    const revealTarget = this.getAttribute('reveal') ?? 'drop-down-menu';
     const triggerTarget = this.getAttribute('trigger') ?? 'button';
 
     const trigger = this.querySelector(triggerTarget) as HTMLElement | null;
-    const reveal = this.querySelector(revealTarget) as HTMLElement | null;
+    const reveal = this.querySelector('drop-down-menu') as HTMLElement | null;
     if (trigger === null || reveal === null) {
       throw new Error(
-        `Could not find one of trigger=${triggerTarget} reveal=${revealTarget} elements.`
+        `Could not find one of trigger=${triggerTarget} drop-down-menu elements.`
       );
     }
     const portal = this.makePortal();

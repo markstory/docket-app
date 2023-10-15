@@ -27,10 +27,10 @@ function ProjectFilter(): JSX.Element {
           <InlineIcon icon="plus" />
           {t('New Project')}
         </a>
-        <NavLink className="action-secondary" href="/projects/archived">
+        <a className="action-secondary" href="/projects/archived">
           <InlineIcon icon="archive" />
           {t('Archived Projects')}
-        </NavLink>
+        </a>
         <NavLink className="action-secondary" href="/tasks/deleted">
           <InlineIcon icon="trash" />
           {t('Trash Bin')}

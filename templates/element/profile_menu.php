@@ -8,15 +8,15 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
 ?>
 <drop-down class="profile-menu">
     <button
-        class="avatar" 
+        class="avatar"
         aria-haspopup="true"
         aria-controls="profile-menu"
         type="button"
     >
         <?= $this->Html->image($avatarUrl, ['height' => 50, 'width' => 50]) ?>
     </button>
-    <drop-down-menu id="profile-menu" style="position: absolute; display:none;">
-        <div role="menu" data-reach-menu-list="">
+    <drop-down-menu id="profile-menu">
+        <div role="menu">
             <div class="dropdown-item-text"><?= h($identity->name) ?></div>
             <div class="separator"></div>
             <?= $this->Html->link(

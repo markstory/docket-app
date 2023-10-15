@@ -27,7 +27,7 @@ class ProjectsController extends AppController
 
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['add', 'edit', 'reorder']);
+        return !in_array($this->request->getParam('action'), ['add', 'edit', 'reorder', 'archived']);
     }
 
     public function viewClasses(): array

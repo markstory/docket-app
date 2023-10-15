@@ -12,6 +12,13 @@
     z-index: $z-active-ui;
   }
 }
+
+drop-down-menu {
+  position: absolute;
+  display: none;
+}
+
+#drop-down-portal,
 [data-reach-menu-list] {
   width: max-content;
   position: relative;
