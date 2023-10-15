@@ -1,4 +1,6 @@
 class SelectBox extends HTMLElement {
+  private currentOffset: number = -1;
+
   static get observedAttributes() {
     return ['val'];
   }
@@ -35,14 +37,25 @@ class SelectBox extends HTMLElement {
       trigger.setAttribute('open', 'false');
     }
 
+    const setValue = (value: string) => {
+      hidden.value = value;
+      menu.setAttribute('val', value);
+      trigger.setAttribute('val', value);
+      this.setAttribute('val', value);
+    };
+
     // Open the menu
-    trigger.addEventListener('click', function (evt) {
+    trigger.addEventListener('click', evt => {
       evt.preventDefault();
       evt.stopPropagation();
 
       // Show menu
       menu.style.display = 'block';
       trigger.setAttribute('open', 'true');
+
+      // Reset current keyboard focus
+      this.currentOffset = -1;
+      menu.removeAttribute('current');
 
       // Setup hide handler
       document.addEventListener('click', hideMenu);
@@ -59,12 +72,15 @@ class SelectBox extends HTMLElement {
 
     // Update values when an option is selected.
     menu.addEventListener('selected', ((evt: CustomEvent) => {
-      hidden.value = evt.detail;
-      menu.setAttribute('val', evt.detail);
-      trigger.setAttribute('val', evt.detail);
-      this.setAttribute('val', evt.detail);
+      setValue(evt.detail);
       hideMenu();
-      // TODO clone selected option into current value.
+    }) as EventListener);
+
+    // Handle the menu signaling that our last operation
+    // would go out of bounds.
+    menu.addEventListener('outofbounds', ((evt: CustomEvent) => {
+      this.currentOffset = Number(evt.detail);
+      menu.setAttribute('current', this.currentOffset.toString());
     }) as EventListener);
 
     trigger.addEventListener('keyup', evt => {
@@ -72,6 +88,28 @@ class SelectBox extends HTMLElement {
       if (target instanceof HTMLInputElement) {
         menu.setAttribute('filter', target.value);
       }
+    });
+    trigger.addEventListener('keydown', evt => {
+      // Down arrow
+      if (evt.key === 'ArrowDown') {
+        evt.preventDefault();
+        this.currentOffset += 1;
+        menu.setAttribute('current', this.currentOffset.toString());
+      } else if (evt.key === 'ArrowUp') {
+        evt.preventDefault();
+        this.currentOffset = Math.max(this.currentOffset - 1, 0);
+        menu.setAttribute('current', this.currentOffset.toString());
+      } else if (evt.key === 'Enter') {
+        evt.preventDefault();
+
+        const currentOpt = menu.querySelector('select-box-option[aria-current="true"]');
+        if (currentOpt) {
+          setValue(currentOpt.getAttribute('value') ?? '');
+          hideMenu();
+        }
+        return false;
+      }
+      return;
     });
   }
 }
@@ -109,17 +147,17 @@ class SelectBoxOption extends HTMLElement {
 
 class SelectBoxMenu extends HTMLElement {
   static get observedAttributes() {
-    return ['val', 'filter', 'focused'];
+    return ['val', 'filter', 'current'];
   }
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
     }
-    if (property === 'val') {
-      this.updateSelected();
-    }
     if (property === 'filter') {
       this.filterOptions();
+    }
+    if (property === 'val' || property === 'current') {
+      this.updateSelected();
     }
   }
 
@@ -129,9 +167,34 @@ class SelectBoxMenu extends HTMLElement {
       active.setAttribute('selected', 'false');
     }
     const val = this.getAttribute('val');
-    const option = this.querySelector(`select-box-option[value="${val}"]`);
-    if (option) {
-      option.setAttribute('selected', 'true');
+    const selected = this.querySelector(`select-box-option[value="${val}"]`);
+    if (selected) {
+      selected.setAttribute('selected', 'true');
+    }
+
+    // Clear the current focused element.
+    const current = Number(this.getAttribute('current') ?? '-1');
+    if (isNaN(current)) {
+      return;
+    }
+    const currentOpt = this.querySelector('select-box-option[aria-current="true"]');
+    if (currentOpt) {
+      currentOpt.removeAttribute('aria-current');
+    }
+    const options = this.querySelectorAll('select-box-option:not([aria-hidden="true"])');
+    if (options[current] !== undefined) {
+      options[current].setAttribute('aria-current', 'true');
+    } else {
+      let target = 0;
+      if (current >= options.length) {
+        target = options.length - 1;
+      }
+      var outofbounds = new CustomEvent('outofbounds', {
+        bubbles: true,
+        cancelable: true,
+        detail: target.toString(),
+      });
+      this.dispatchEvent(outofbounds);
     }
   }
 
@@ -139,13 +202,12 @@ class SelectBoxMenu extends HTMLElement {
     const menuOptions: NodeListOf<SelectBoxOption> =
       this.querySelectorAll('select-box-option');
     const filter = this.getAttribute('filter');
+
     for (var option of menuOptions) {
-      if (!filter) {
-        option.style.display = 'flex';
-      } else if (option.innerText.includes(filter)) {
-        option.style.display = 'flex';
+      if (!filter || option.innerText.includes(filter)) {
+        option.removeAttribute('aria-hidden');
       } else {
-        option.style.display = 'none';
+        option.setAttribute('aria-hidden', 'true');
       }
     }
   }

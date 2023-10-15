@@ -93,4 +93,7 @@ select-box-option {
   &[aria-selected="true"] {
     background: var(--color-menu-selected);
   }
+  &[aria-hidden="true"] {
+    display: none;
+  }
 }
