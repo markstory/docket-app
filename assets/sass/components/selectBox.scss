@@ -85,6 +85,7 @@ select-box-option {
   padding: calc($space / 2) $space;
   cursor: pointer;
 
+  &[aria-current="true"],
   &:hover {
     background: var(--color-menu-hover);
   }

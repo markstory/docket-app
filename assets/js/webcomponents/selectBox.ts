@@ -1,21 +1,6 @@
 class SelectBox extends HTMLElement {
-  private val: string | null;
-
   static get observedAttributes() {
     return ['val'];
-  }
-
-  constructor() {
-    super();
-    this.val = '';
-  }
-
-  attributeChangedCallback(property: string, oldValue: string, newValue: string) {
-    if (oldValue === newValue) {
-      return;
-    }
-    // @ts-ignore-next-line
-    this[property] = newValue;
   }
 
   connectedCallback() {
@@ -92,23 +77,14 @@ class SelectBox extends HTMLElement {
 }
 
 class SelectBoxOption extends HTMLElement {
-  private selected: boolean;
-
   static get observedAttributes() {
     return ['selected'];
-  }
-
-  constructor() {
-    super();
-    this.selected = false;
   }
 
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
     }
-    // @ts-ignore-next-line
-    this[property] = newValue;
     if (property === 'selected') {
       this.setAttribute('aria-selected', newValue);
     }
@@ -127,33 +103,22 @@ class SelectBoxOption extends HTMLElement {
       this.dispatchEvent(selected);
     });
 
-    this.setAttribute('aria-selected', this.selected ? 'true' : 'false');
+    this.setAttribute('aria-selected', this.getAttribute('selected') ?? 'false');
   }
 }
 
 class SelectBoxMenu extends HTMLElement {
-  private val: string | null;
-  private filter: string | null;
-
   static get observedAttributes() {
-    return ['val', 'filter'];
+    return ['val', 'filter', 'focused'];
   }
-  constructor() {
-    super();
-    this.val = '';
-    this.filter = '';
-  }
-
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
     }
     if (property === 'val') {
-      this.val = newValue;
       this.updateSelected();
     }
     if (property === 'filter') {
-      this.filter = newValue;
       this.filterOptions();
     }
   }
@@ -163,7 +128,8 @@ class SelectBoxMenu extends HTMLElement {
     if (active) {
       active.setAttribute('selected', 'false');
     }
-    const option = this.querySelector(`select-box-option[value="${this.val}"]`);
+    const val = this.getAttribute('val');
+    const option = this.querySelector(`select-box-option[value="${val}"]`);
     if (option) {
       option.setAttribute('selected', 'true');
     }
@@ -172,10 +138,11 @@ class SelectBoxMenu extends HTMLElement {
   filterOptions() {
     const menuOptions: NodeListOf<SelectBoxOption> =
       this.querySelectorAll('select-box-option');
+    const filter = this.getAttribute('filter');
     for (var option of menuOptions) {
-      if (!this.filter) {
+      if (!filter) {
         option.style.display = 'flex';
-      } else if (option.innerText.includes(this.filter)) {
+      } else if (option.innerText.includes(filter)) {
         option.style.display = 'flex';
       } else {
         option.style.display = 'none';
@@ -185,29 +152,18 @@ class SelectBoxMenu extends HTMLElement {
 }
 
 class SelectBoxCurrent extends HTMLElement {
-  private val: string | null;
-  private open: string | null;
-
   static get observedAttributes() {
     return ['val', 'open'];
   }
-  constructor() {
-    super();
-    this.val = '';
-    this.open = 'false';
-  }
-
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) {
       return;
     }
     if (property === 'val') {
-      this.val = newValue;
       this.updateSelected();
     }
     if (property === 'open') {
-      this.open = newValue;
-      if (this.open === 'true') {
+      if (newValue === 'true') {
         const input = this.querySelector('input') as HTMLInputElement;
         input.value = '';
         input.focus();
@@ -220,6 +176,8 @@ class SelectBoxCurrent extends HTMLElement {
 
   connectedCallback() {
     this.updateSelected();
+    // TODO consider using shadowdom with a link element
+    // to the application CSS file. How to get that file path is unknown.
   }
 
   updateSelected() {
@@ -227,7 +185,8 @@ class SelectBoxCurrent extends HTMLElement {
     if (!parent) {
       return;
     }
-    if (!this.val) {
+    const val = this.getAttribute('val');
+    if (!val) {
       return;
     }
     const menu = parent.querySelector('select-box-menu') as HTMLElement;
