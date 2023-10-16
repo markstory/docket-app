@@ -27,7 +27,7 @@ class ProjectsController extends AppController
 
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['add', 'edit', 'reorder', 'archived']);
+        return !in_array($this->request->getParam('action'), ['add', 'edit', 'reorder', 'archived', 'delete', 'deleteConfirm']);
     }
 
     public function viewClasses(): array
@@ -216,6 +216,16 @@ class ProjectsController extends AppController
             'success' => true,
             'serialize' => $serialize,
         ]);
+    }
+
+    /**
+     * Render a confirmation dialog for a delete operation.
+     */
+    public function deleteConfirm(string $slug)
+    {
+        $project = $this->getProject($slug);
+        $this->Authorization->authorize($project, 'delete');
+        $this->set('project', $project);
     }
 
     /**

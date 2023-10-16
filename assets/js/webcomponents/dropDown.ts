@@ -41,6 +41,10 @@ class DropDown extends HTMLElement {
 
     reveal.addEventListener('click', function (evt) {
       evt.stopPropagation();
+      const target = evt.target;
+      if (target instanceof HTMLElement && target.getAttribute('dropdown-close')) {
+        removeMenu();
+      }
     });
   }
 

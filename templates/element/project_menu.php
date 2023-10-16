@@ -4,6 +4,7 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Project $project
  */
 $menuId = 'project-menu-' . uniqid();
+$deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug];
 ?>
 <drop-down>
     <button
@@ -36,16 +37,17 @@ $menuId = 'project-menu-' . uniqid();
                 ['class' => 'archive', 'escape' => false, 'role' => 'menuitem']
             ) ?>
         <?php endif ?>
-        <!--
-        todo implement confirm on delete
-        delete could be a GET to fetch the confirm window
-        and then a POST/PUT to confirm the deletion.
-        That might work better with htmx
-        -->
-        <?= $this->Form->postLink(
+        <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Project',
-            ['_name' => 'projects:delete', 'slug' => $project->slug],
-            ['class' => 'delete', 'escape' => false, 'role' => 'menuitem']
+            $deleteConfirm,
+            [
+                'class' => 'delete',
+                'escape' => false,
+                'role' => 'menuitem',
+                'dropdown-close' => true,
+                'hx-get' => $this->Url->build($deleteConfirm),
+                'hx-target' => '#dialog-portal'
+            ]
         ) ?>
     </drop-down-menu>
 </drop-down>

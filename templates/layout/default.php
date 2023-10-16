@@ -27,5 +27,6 @@ declare(strict_types=1);
     </main>
     <footer>
     </footer>
+    <div id="dialog-portal"></div>
 </body>
 </html>

@@ -25,7 +25,7 @@ axios.defaults.xsrfHeaderName = 'X-Csrf-Token';
 
 const el = document.getElementById('app');
 if (!el) {
-  console.error('Could not find application root element');
+  console.log('Could not find application root element');
 } else {
   render(
     <InertiaApp

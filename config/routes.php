@@ -79,6 +79,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['slug']);
         $builder->post('/{slug}/delete', ['action' => 'delete'], 'projects:delete')
             ->setPass(['slug']);
+        $builder->get('/{slug}/delete/confirm', ['action' => 'deleteConfirm'], 'projects:deleteConfirm')
+            ->setPass(['slug']);
         $builder->post('/{slug}/archive', ['action' => 'archive'], 'projects:archive')
             ->setPass(['slug']);
         $builder->post('/{slug}/unarchive', ['action' => 'unarchive'], 'projects:unarchive')
