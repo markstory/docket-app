@@ -18,7 +18,7 @@ $menuId = 'project-menu-' . uniqid();
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit Project',
             ['_name' => 'projects:edit', 'slug' => $project->slug],
-            ['class' => 'edit', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '',]
+            ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
         ) ?>
         <!-- todo include add-section and view completed buttons -->
         <div class="separator"></div>
@@ -26,14 +26,14 @@ $menuId = 'project-menu-' . uniqid();
             <?= $this->Form->postLink(
                 $this->element('icons/archive16') . ' Unarchive Project',
                 ['_name' => 'projects:unarchive', 'slug' => $project->slug],
-                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '']
+                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem']
             ) ?>
 
         <?php else : ?>
             <?= $this->Form->postLink(
                 $this->element('icons/archive16') . ' Archive Project',
                 ['_name' => 'projects:archive', 'slug' => $project->slug],
-                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '']
+                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem']
             ) ?>
         <?php endif ?>
         <!--
@@ -45,7 +45,7 @@ $menuId = 'project-menu-' . uniqid();
         <?= $this->Form->postLink(
             $this->element('icons/trash16') . ' Delete Project',
             ['_name' => 'projects:delete', 'slug' => $project->slug],
-            ['class' => 'delete', 'escape' => false, 'role' => 'menuitem', 'data-reach-menu-item' => '',]
+            ['class' => 'delete', 'escape' => false, 'role' => 'menuitem']
         ) ?>
     </drop-down-menu>
 </drop-down>

@@ -38,6 +38,7 @@ drop-down-menu,
   }
 }
 
+drop-down-menu [role="menuitem"],
 .dropdown-item-text,
 [data-reach-menu-item] {
   display: flex;
@@ -74,6 +75,7 @@ drop-down-menu,
   margin: 0;
 }
 
+drop-down-menu [role="menuitem"],
 [data-reach-menu-item] {
   &[data-selected],
   &:hover {
