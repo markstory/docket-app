@@ -12,7 +12,7 @@ class DropDown extends HTMLElement {
     const portal = this.makePortal();
 
     // Handle clicks outside the root parent element.
-    function removeMenu() {
+    const removeMenu = () => {
       // Remove this listener
       document.removeEventListener('click', removeMenu);
 
@@ -20,15 +20,14 @@ class DropDown extends HTMLElement {
         return;
       }
       portal.style.display = 'none';
-      portal.removeChild(portal.children[0]);
-    }
+      this.appendChild(portal.children[0]);
+    };
 
     trigger.addEventListener('click', function (evt) {
-      evt.preventDefault();
       evt.stopPropagation();
 
       // Move menu contents to portal element
-      portal.appendChild(reveal.cloneNode(true));
+      portal.appendChild(reveal);
 
       // position portal
       portal.style.left = `${trigger.offsetLeft + 5}px`;

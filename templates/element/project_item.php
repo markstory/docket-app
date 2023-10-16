@@ -18,6 +18,7 @@ $url = $this->Url->build(['_path' => 'Projects::view', 'slug' => $project->slug]
     <?php
     if (isset($showMenu) && $showMenu):
         echo $this->element('project_menu', ['project' => $project]);
-    endif; ?>
-    <span class="counter"><?= h($project->incomplete_task_count) ?></span>
+    else: ?>
+        <span class="counter"><?= h($project->incomplete_task_count) ?></span>
+    <?php endif; ?>
 </div>
