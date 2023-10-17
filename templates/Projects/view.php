@@ -30,5 +30,14 @@ $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $projec
         <?= $this->element('project_menu', ['project' => $project, 'showDetailed' => true]) ?>
     </div>
 
+    <?php // Tasks with no section ?>
+    <div class="task-group">
+        <div class="dnd-dropper-left-offset">
+        <?php
+        foreach ($tasks as $task):
+            echo $this->element('task_item', ['task' => $task]);
+        endforeach;
+        ?>
+        </div>
+    </div>
 </div>
-
