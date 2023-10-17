@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @var string $description Body copy
  */
 ?>
-<dialog class="confirm-dialog" open="true">
+<dialog class="confirm-dialog">
     <?= $this->Form->create(null, ['url' => $target]) ?>
     <h2><?= $title ?></h2>
     <p><?= $description ?></p>
@@ -16,7 +16,8 @@ declare(strict_types=1);
         <?= $this->Html->link('Cancel', '#', [
             'modal-close' => '1',
             'class' => 'button button-muted',
-            'data-testid' => 'confirm-cancel'
+            'data-testid' => 'confirm-cancel',
+            'tabindex' => 0,
         ]) ?>
         <?= $this->Form->button('Ok', [
             'type' => 'submit',
