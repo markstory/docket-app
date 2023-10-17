@@ -2,6 +2,7 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Project $project
+ * @var bool $showDetailed
  */
 $menuId = 'project-menu-' . uniqid();
 $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug];
@@ -21,7 +22,18 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
             ['_name' => 'projects:edit', 'slug' => $project->slug],
             ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
         ) ?>
-        <!-- todo include add-section and view completed buttons -->
+        <?php if (!empty($showDetailed)): ?>
+            <?= $this->Html->link(
+                $this->element('icons/plus16') . ' Add Section',
+                ['_name' => 'projectsections:add', 'projectSlug' => $project->slug],
+                ['class' => 'complete', 'escape' => false, 'role' => 'menuitem', 'data-testid' => 'add-section']
+            ) ?>
+            <?= $this->Html->link(
+                $this->element('icons/check16') . ' View Completed ',
+                ['_name' => 'projects:view', 'slug' => $project->slug, 'completed' => 1],
+                ['class' => 'complete', 'escape' => false, 'role' => 'menuitem']
+            ) ?>
+        <?php endif ?>
         <div class="separator"></div>
         <?php if ($project->archived) : ?>
             <?= $this->Form->postLink(
