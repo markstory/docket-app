@@ -7,26 +7,22 @@ declare(strict_types=1);
  * @var string $title The title of the dialog
  * @var string $description Body copy
  */
-
-// TODO figure out how to close the modal on click.
 ?>
-<div class="confirm-overlay">
-    <dialog class="confirm-dialog" open="true">
-        <?= $this->Form->create(null, ['url' => $target]) ?>
-        <h2><?= $title ?></h2>
-        <p><?= $description ?></p>
-        <div class="button-bar-right">
-            <?= $this->Form->button('Cancel', [
-                // TOOD need to close the modal?
-                'class' => 'button button-muted',
-                'data-testid' => 'confirm-cancel'
-            ]) ?>
-            <?= $this->Form->button('Ok', [
-                'type' => 'submit',
-                'class' => 'button button-danger',
-                'data-testid' => 'confirm-proceed'
-            ]) ?>
-        </div>
-        <?= $this->Form->end() ?>
-    </dialog>
-</div>
+<dialog class="confirm-dialog" open="true">
+    <?= $this->Form->create(null, ['url' => $target]) ?>
+    <h2><?= $title ?></h2>
+    <p><?= $description ?></p>
+    <div class="button-bar-right">
+        <?= $this->Html->link('Cancel', '#', [
+            'modal-close' => '1',
+            'class' => 'button button-muted',
+            'data-testid' => 'confirm-cancel'
+        ]) ?>
+        <?= $this->Form->button('Ok', [
+            'type' => 'submit',
+            'class' => 'button button-danger',
+            'data-testid' => 'confirm-proceed'
+        ]) ?>
+    </div>
+    <?= $this->Form->end() ?>
+</dialog>

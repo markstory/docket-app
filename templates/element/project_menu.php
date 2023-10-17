@@ -46,7 +46,8 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
                 'role' => 'menuitem',
                 'dropdown-close' => true,
                 'hx-get' => $this->Url->build($deleteConfirm),
-                'hx-target' => '#dialog-portal'
+                'hx-target' => 'body',
+                'hx-swap' => 'beforeend',
             ]
         ) ?>
     </drop-down-menu>

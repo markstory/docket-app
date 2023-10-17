@@ -1,3 +1,4 @@
+.modal-overlay,
 .confirm-overlay {
   background: var(--color-modal-overlay);
   position: fixed;
@@ -16,6 +17,7 @@
   right: 25%;
   bottom: auto;
   padding-top: 20px;
+  z-index: $z-modal;
 
   border-radius: $border-radius-large;
   border: none;
