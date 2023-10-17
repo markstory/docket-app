@@ -29,7 +29,7 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
                 ['class' => 'complete', 'escape' => false, 'role' => 'menuitem', 'data-testid' => 'add-section']
             ) ?>
             <?= $this->Html->link(
-                $this->element('icons/check16') . ' View Completed ',
+                $this->element('icons/check16') . ' View Completed Tasks',
                 ['_name' => 'projects:view', 'slug' => $project->slug, 'completed' => 1],
                 ['class' => 'complete', 'escape' => false, 'role' => 'menuitem']
             ) ?>

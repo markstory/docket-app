@@ -35,6 +35,14 @@ class DropDown extends HTMLElement {
       portal.style.display = 'block';
       portal.style.position = 'absolute';
 
+      const menuRect = reveal.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      // If the menu would overflow, align to the right
+      if (menuRect.right > bodyRect.right) {
+        const rightEdge = trigger.offsetLeft + trigger.offsetWidth;
+        portal.style.left = `${rightEdge - menuRect.width}px`;
+      }
+
       // Setup hide handler
       document.addEventListener('click', removeMenu);
     });
