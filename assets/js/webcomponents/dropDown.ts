@@ -28,10 +28,11 @@ class DropDown extends HTMLElement {
 
       // Move menu contents to portal element
       portal.appendChild(reveal);
+      const triggerRect = trigger.getBoundingClientRect();
 
-      // position portal
-      portal.style.left = `${trigger.offsetLeft + 5}px`;
-      portal.style.top = `${trigger.offsetTop + trigger.offsetHeight + 5}px`;
+      // position portal left aligned and below trigger.
+      portal.style.left = `${triggerRect.left + 5}px`;
+      portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
       portal.style.display = 'block';
       portal.style.position = 'absolute';
 
@@ -39,7 +40,7 @@ class DropDown extends HTMLElement {
       const bodyRect = document.body.getBoundingClientRect();
       // If the menu would overflow, align to the right
       if (menuRect.right > bodyRect.right) {
-        const rightEdge = trigger.offsetLeft + trigger.offsetWidth;
+        const rightEdge = triggerRect.left + triggerRect.width;
         portal.style.left = `${rightEdge - menuRect.width}px`;
       }
 
