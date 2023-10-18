@@ -20,7 +20,7 @@ class DateHelper extends Helper
 
     public function formatCompact(FrozenDate $date): string
     {
-        $diff = $date->diffInDays(null, false);
+        $diff = FrozenDate::today()->diffInDays($date, false);
         // In the past? Show the date
         if ($diff < -90) {
             return $date->i18nFormat('MMM d yyyy');
@@ -35,7 +35,7 @@ class DateHelper extends Helper
             return 'Tomorrow';
         }
         if ($diff < 7) {
-            return $date->i18nFormat('iiii');
+            return $date->i18nFormat('EEEE');
         }
 
         return $date->i18nFormat('MMM d');
