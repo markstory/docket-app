@@ -35,7 +35,7 @@ $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $projec
         <div class="dnd-dropper-left-offset">
         <?php
         foreach ($tasks as $task):
-            echo $this->element('task_item', ['task' => $task]);
+            echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
         endforeach;
         ?>
         </div>

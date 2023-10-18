@@ -24,8 +24,7 @@ $taskUrl = $this->Url->build(['_name' => 'tasks:view', $task->id]);
             <?php endif ?>
             <?php
             if ($showDueOn ?? false):
-                // TODO implement an element for dueOn.
-                echo h($task->dueOn);
+                echo $this->element('task_due_on', ['task' => $task]);
             endif;
             ?>
             <?php if ($task->subtask_count > 1): ?>
