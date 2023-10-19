@@ -9,6 +9,11 @@ $this->setLayout('sidebar');
 $this->assign('title', $project->name . " Project");
 
 $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $project->id]);
+
+$groupedTasks = [];
+foreach ($tasks as $task) {
+    $groupedTasks[$task->section_id ?? ''][] = $task;
+}
 ?>
 <div class="project-view">
     <div class="heading-actions" data-archived="<?= $project->archived ?>">
@@ -34,10 +39,39 @@ $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $projec
     <div class="task-group">
         <div class="dnd-dropper-left-offset">
         <?php
-        foreach ($tasks as $task):
+        foreach ($groupedTasks[''] as $task):
             echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
         endforeach;
         ?>
         </div>
     </div>
+
+    <?php foreach ($project->sections as $section): ?>
+    <div class="section-container" data-testid="section">
+        <div class="controls">
+            <h3 class="heading">
+                <?= $this->element('icons/grabber24') ?>
+                <span class="editable">
+                    <?= h($section->name) ?>
+                </span>
+
+                <?php // This needs to set the project & section ?>
+                <a class="button-icon-primary" data-testid="add-task" href="<?= $taskAddUrl ?>">
+                    <?= $this->element('icons/plus16') ?>
+                </a>
+            </h3>
+            <?= $this->element('section_menu', ['section' => $section, 'project' => $project]) ?>
+            <drop-down>
+        </div>
+        <div class="task-group">
+            <div class="dnd-dropper-left-offset">
+            <?php
+            foreach ($groupedTasks[$section->id] ?? [] as $task):
+                echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
+            endforeach;
+            ?>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
 </div>

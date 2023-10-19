@@ -18,7 +18,7 @@ declare(strict_types=1);
     <?php $itemId = 'project-item-' . uniqid(); ?>
     <div class="dnd-item" id="<?= h($itemId) ?>">
         <?= $this->Form->hidden('id[]', ['value' => $project->id]) ?>
-        <button class="dnd-handle" role="button">
+        <button class="dnd-handle" role="button" aria-roledescription="sortable">
             <?= $this->element('icons/grabber24') ?>
         </button>
         <?= $this->element('project_item', ['project' => $project]) ?>

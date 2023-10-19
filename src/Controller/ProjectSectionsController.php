@@ -109,6 +109,12 @@ class ProjectSectionsController extends AppController
         return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
     }
 
+    public function deleteConfirm(string $projectSlug, string $id)
+    {
+        // TODO implement this.
+        throw new InvalidArgumentException('This view is not done');
+    }
+
     public function delete(string $projectSlug, string $id)
     {
         $project = $this->getProject($projectSlug);

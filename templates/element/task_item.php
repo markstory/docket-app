@@ -9,33 +9,39 @@ $taskUrl = $this->Url->build(['_name' => 'tasks:view', $task->id]);
 
 // TODO implement restore view for trashbin
 ?>
-<div class="task-row">
-    <input type="checkbox" value="<?= $task->id ?>" />
-    <a href="<?= h($taskUrl) ?>">
-        <span class="title">
-            <?= h($task->title) ?>
-        </span>
-        <div class="attributes">
-            <?php if ($showProject ?? false): ?>
-                <span class="project-badge">
-                    <?= $this->element('icons/dot16', ['color' => $task->project->color_hex]) ?>
-                    <?= h($task->project->name) ?>
-                </span>
-            <?php endif ?>
-            <?php
-            if ($showDueOn ?? false):
-                echo $this->element('task_due_on', ['task' => $task]);
-            endif;
-            ?>
-            <?php if ($task->subtask_count > 1): ?>
-                <span class="counter">
-                    <?= $this->element('icons/workflow16') ?>
-                    <?= $task->complete_subtask_count ?>
-                    /
-                    <?= $task->subtask_count ?>
-                </span>
-            <?php endif ?>
-        </div>
-    </a>
-    <?= $this->element('task_menu', ['task' => $task]) ?>
+<div class="dnd-item">
+    <button class="dnd-handle" role="button" aria-roledescription="sortable">
+        <?= $this->element('icons/grabber24') ?>
+    </button>
+    <div class="task-row">
+        <?php // Use fancy custom checkbox instead ?>
+        <input type="checkbox" value="<?= $task->id ?>" />
+        <a href="<?= h($taskUrl) ?>">
+            <span class="title">
+                <?= h($task->title) ?>
+            </span>
+            <div class="attributes">
+                <?php if ($showProject ?? false): ?>
+                    <span class="project-badge">
+                        <?= $this->element('icons/dot16', ['color' => $task->project->color_hex]) ?>
+                        <?= h($task->project->name) ?>
+                    </span>
+                <?php endif ?>
+                <?php
+                if ($showDueOn ?? false):
+                    echo $this->element('task_due_on', ['task' => $task]);
+                endif;
+                ?>
+                <?php if ($task->subtask_count > 1): ?>
+                    <span class="counter">
+                        <?= $this->element('icons/workflow16') ?>
+                        <?= $task->complete_subtask_count ?>
+                        /
+                        <?= $task->subtask_count ?>
+                    </span>
+                <?php endif ?>
+            </div>
+        </a>
+        <?= $this->element('task_menu', ['task' => $task]) ?>
+    </div>
 </div>

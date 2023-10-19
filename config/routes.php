@@ -97,7 +97,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         function (RouteBuilder $builder) {
             $builder->post('/', ['action' => 'add'], 'projectsections:add')
                 ->setPass(['projectSlug']);
-            $builder->post('/{id}/edit', ['action' => 'edit'], 'projectsections:edit')
+            $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'projectsections:edit'])
                 ->setPass(['projectSlug', 'id']);
             $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
                 ->setPass(['projectSlug', 'id']);
@@ -106,6 +106,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
             $builder->post('/{id}/move', ['action' => 'move'], 'projectsections:move')
                 ->setPass(['projectSlug', 'id']);
             $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
+                ->setPass(['projectSlug', 'id']);
+            $builder->connect('/{id}/delete/confirm', ['action' => 'deleteConfirm'], ['_name' => 'projectsections:deleteconfirm'])
                 ->setPass(['projectSlug', 'id']);
         }
     );
