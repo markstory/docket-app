@@ -10,6 +10,7 @@ import htmx from 'htmx.org';
 import 'app/extensions/ajax';
 import 'app/extensions/flashMessage';
 import 'app/extensions/projectSorter';
+import 'app/extensions/taskSorter';
 
 // Import webcomponents
 import 'app/webcomponents/dropDown.ts';

@@ -36,21 +36,27 @@ foreach ($tasks as $task) {
     </div>
 
     <?php // Tasks with no section ?>
-    <div class="task-group">
-        <div class="dnd-dropper-left-offset">
-        <?php
-        foreach ($groupedTasks[''] as $task):
-            echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
-        endforeach;
-        ?>
-        </div>
+    <div
+        class="task-group dnd-dropper-left-offset"
+        hx-ext="task-sorter"
+        task-sorter-attr="child_order"
+        task-sorter-section=""
+    >
+    <?php
+    foreach ($groupedTasks[''] as $task):
+        echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
+    endforeach;
+    ?>
     </div>
 
+    <? // Tasks in sections ?>
     <?php foreach ($project->sections as $section): ?>
     <div class="section-container" data-testid="section">
         <div class="controls">
             <h3 class="heading">
-                <?= $this->element('icons/grabber24') ?>
+                <button class="dnd-handle" role="button" aria-roledescription="sortable">
+                    <?= $this->element('icons/grabber24') ?>
+                </button>
                 <span class="editable">
                     <?= h($section->name) ?>
                 </span>
@@ -61,16 +67,18 @@ foreach ($tasks as $task) {
                 </a>
             </h3>
             <?= $this->element('section_menu', ['section' => $section, 'project' => $project]) ?>
-            <drop-down>
         </div>
-        <div class="task-group">
-            <div class="dnd-dropper-left-offset">
-            <?php
-            foreach ($groupedTasks[$section->id] ?? [] as $task):
-                echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
-            endforeach;
-            ?>
-            </div>
+        <div
+            class="task-group dnd-dropper-left-offset"
+            hx-ext="task-sorter"
+            task-sorter-attr="child_order"
+            task-sorter-section="<?= h($section->id) ?>"
+        >
+        <?php
+        foreach ($groupedTasks[$section->id] ?? [] as $task):
+            echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
+        endforeach;
+        ?>
         </div>
     </div>
     <?php endforeach; ?>

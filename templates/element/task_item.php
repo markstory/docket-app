@@ -9,11 +9,13 @@ $taskUrl = $this->Url->build(['_name' => 'tasks:view', $task->id]);
 
 // TODO implement restore view for trashbin
 ?>
-<div class="dnd-item">
+<div class="dnd-item" data-id="<?= $task->id ?>">
     <button class="dnd-handle" role="button" aria-roledescription="sortable">
         <?= $this->element('icons/grabber24') ?>
     </button>
     <div class="task-row">
+        <input name="id" type="hidden" value="<?= h($task->id) ?>" />
+
         <?php // Use fancy custom checkbox instead ?>
         <input type="checkbox" value="<?= $task->id ?>" />
         <a href="<?= h($taskUrl) ?>">

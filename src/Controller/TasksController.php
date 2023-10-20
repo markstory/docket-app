@@ -291,7 +291,8 @@ class TasksController extends AppController
             'evening' => $this->request->getData('evening') ?? null,
         ];
         if (array_key_exists('section_id', $this->request->getData())) {
-            $operation['section_id'] = $this->request->getData('section_id');
+            $sectionId = $this->request->getData('section_id');
+            $operation['section_id'] = $sectionId === '' ? null : $sectionId;
         }
 
         $serialize = [];
