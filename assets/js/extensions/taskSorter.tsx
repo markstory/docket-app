@@ -1,6 +1,16 @@
 import htmx from 'htmx.org';
 import Sortable from 'sortablejs';
 
+interface SortableEvent extends Event {
+  to: HTMLElement;
+  from: HTMLElement;
+  item: HTMLElement;
+  newIndex?: number;
+  oldIndex?: number;
+  newDraggableIndex?: number;
+  oldDraggableIndex?: number;
+}
+
 (function () {
   htmx.defineExtension('task-sorter', {
     onEvent: function (name, evt) {
@@ -22,20 +32,19 @@ import Sortable from 'sortablejs';
         throw new Error('Missing required parameter task-sorter-attr');
       }
 
-      element.addEventListener('end', function (event) {
+      element.addEventListener('end', function (event: SortableEvent) {
         const taskEl = event.item as HTMLElement;
         const toEl = event.to as HTMLElement;
         const newIndex = event.newIndex;
         const taskId = taskEl.getAttribute('data-id');
 
-        const updateData = {
+        const updateData: Record<string, string | number | undefined> = {
           [orderAttr]: newIndex,
         };
         const sectionId = toEl.getAttribute('task-sorter-section');
         if (sectionId != null) {
           updateData.section_id = sectionId;
         }
-        console.log('update data', updateData);
 
         // URL could be attribute driven if that makes sense
         // in the future.
@@ -44,7 +53,7 @@ import Sortable from 'sortablejs';
           swap: 'innerHTML',
           values: updateData,
         });
-      });
+      } as EventListener);
     },
   });
 })();
