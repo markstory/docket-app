@@ -1,3 +1,13 @@
+export interface SortableJsEvent extends Event {
+  to: HTMLElement;
+  from: HTMLElement;
+  item: HTMLElement;
+  newIndex?: number;
+  oldIndex?: number;
+  newDraggableIndex?: number;
+  oldDraggableIndex?: number;
+};
+
 export type FlashMessage = {
   message: string;
   key: string;

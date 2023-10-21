@@ -1,15 +1,6 @@
 import htmx from 'htmx.org';
 import Sortable from 'sortablejs';
-
-interface SortableEvent extends Event {
-  to: HTMLElement;
-  from: HTMLElement;
-  item: HTMLElement;
-  newIndex?: number;
-  oldIndex?: number;
-  newDraggableIndex?: number;
-  oldDraggableIndex?: number;
-}
+import {SortableJsEvent} from 'app/types'
 
 (function () {
   htmx.defineExtension('task-sorter', {
@@ -32,7 +23,9 @@ interface SortableEvent extends Event {
         throw new Error('Missing required parameter task-sorter-attr');
       }
 
-      element.addEventListener('end', function (event: SortableEvent) {
+      element.addEventListener('end', function (event: SortableJsEvent) {
+        event.stopPropagation();
+
         const taskEl = event.item as HTMLElement;
         const toEl = event.to as HTMLElement;
         const newIndex = event.newIndex;
