@@ -70,5 +70,6 @@
 }
 .heading-actions-item {
   display: flex;
+  gap: calc($space / 2);
 }
 

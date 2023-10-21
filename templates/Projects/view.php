@@ -18,8 +18,7 @@ foreach ($tasks as $task) {
 <div class="project-view">
     <div class="heading-actions" data-archived="<?= $project->archived ?>">
         <div class="heading-actions-item">
-            <!-- TODO implement editing -->
-            <h1 class="heading-icon editable">
+            <h1 class="heading-icon">
                 <?php
                 if ($project->archived):
                     echo $this->element('icons/archive16');
