@@ -3,7 +3,14 @@ declare(strict_types=1);
 /**
  * Renders the view with the application sidebar.
  */
-$this->extend('default');
+// If we're not handling an HX-Request wrap the layout
+// in page chrome. When we're handling htmx requests,
+// we swap main.main.
+if ($this->request->is('htmx')):
+    echo $this->Flash->render();
+else:
+    $this->extend('default');
+endif;
 
 // TODO make expanded work. Perhaps with an htmx
 // extension that maintains the state?

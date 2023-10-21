@@ -37,15 +37,12 @@ import Sortable from 'sortablejs';
         }
         console.log('update data', updateData);
 
-        // TODO make url attribute driven
-        // Also fix
-        const request = htmx.ajax('POST', `/tasks/${taskId}/move`, {
-          target: '.project-view',
-          swap: 'outerHTML',
+        // URL could be attribute driven if that makes sense
+        // in the future.
+        htmx.ajax('POST', `/tasks/${taskId}/move`, {
+          target: 'main.main',
+          swap: 'innerHTML',
           values: updateData,
-        });
-        request.then((resp) => {
-          console.log('response', resp);
         });
       });
     },
