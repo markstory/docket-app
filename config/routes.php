@@ -29,7 +29,6 @@ use Cake\Routing\RouteBuilder;
 $routes->setRouteClass(DashedRoute::class);
 
 // Cross Site Request Forgery (CSRF) Protection Middleware
-// https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
 $routes->registerMiddleware('csrf', new ApiCsrfProtectionMiddleware());
 
 $routes->scope('/', function (RouteBuilder $builder) {
