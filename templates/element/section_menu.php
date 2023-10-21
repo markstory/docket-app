@@ -5,7 +5,11 @@ declare(strict_types=1);
  * @var \App\Model\Entity\ProjectSection $section
  */
 $menuId = 'section-menu-' . uniqid();
-$deleteConfirm = ['_name' => 'projectsections:deleteconfirm', 'projectSlug' => $project->slug, 'id' => $section->id];
+$deleteConfirm = [
+    '_name' => 'projectsections:deleteconfirm',
+    'projectSlug' => $project->slug,
+    'id' => $section->id
+];
 ?>
 <drop-down>
     <button

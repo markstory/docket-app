@@ -177,6 +177,19 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertResponseCode(404);
     }
 
+    public function testDeleteConfirm()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+
+        $this->login();
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/delete/confirm");
+
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('section'));
+    }
+
     public function testDelete()
     {
         $project = $this->makeProject('Home', 1);

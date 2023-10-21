@@ -16,7 +16,7 @@ class ProjectSectionsController extends AppController
 {
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['edit', 'view']);
+        return !in_array($this->request->getParam('action'), ['edit', 'view', 'deleteConfirm']);
     }
 
     protected function getProject(string $slug): Project
@@ -111,8 +111,12 @@ class ProjectSectionsController extends AppController
 
     public function deleteConfirm(string $projectSlug, string $id)
     {
-        // TODO implement this.
-        throw new InvalidArgumentException('This view is not done');
+        $project = $this->getProject($projectSlug);
+        $section = $this->ProjectSections->get($id);
+
+        $this->Authorization->authorize($project, 'delete');
+        $this->set('project', $project);
+        $this->set('section', $section);
     }
 
     public function delete(string $projectSlug, string $id)
