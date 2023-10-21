@@ -11,6 +11,7 @@ import 'app/extensions/ajax';
 import 'app/extensions/flashMessage';
 import 'app/extensions/projectSorter';
 import 'app/extensions/taskSorter';
+import 'app/extensions/sectionSorter';
 
 // Import webcomponents
 import 'app/webcomponents/dropDown.ts';

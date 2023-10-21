@@ -49,27 +49,29 @@ foreach ($tasks as $task) {
     ?>
     </div>
 
-    <? // Tasks in sections ?>
-    <?php foreach ($project->sections as $section): ?>
-    <div class="section-container" data-testid="section">
-        <div class="controls">
-            <?= $this->element('projectsection_item', [
-                'project' => $project,
-                'section' => $section,
-            ]) ?>
+    <div hx-ext="section-sorter" section-sorter-slug="<?= h($project->slug) ?>">
+        <? // Tasks in sections ?>
+        <?php foreach ($project->sections as $section): ?>
+        <div class="section-container" data-testid="section" data-id="<?= h($section->id) ?>">
+            <div class="controls">
+                <?= $this->element('projectsection_item', [
+                    'project' => $project,
+                    'section' => $section,
+                ]) ?>
+            </div>
+            <div
+                class="task-group dnd-dropper-left-offset"
+                hx-ext="task-sorter"
+                task-sorter-attr="child_order"
+                task-sorter-section="<?= h($section->id) ?>"
+            >
+            <?php
+            foreach ($groupedTasks[$section->id] ?? [] as $task):
+                echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
+            endforeach;
+            ?>
+            </div>
         </div>
-        <div
-            class="task-group dnd-dropper-left-offset"
-            hx-ext="task-sorter"
-            task-sorter-attr="child_order"
-            task-sorter-section="<?= h($section->id) ?>"
-        >
-        <?php
-        foreach ($groupedTasks[$section->id] ?? [] as $task):
-            echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
-        endforeach;
-        ?>
-        </div>
+        <?php endforeach; ?>
     </div>
-    <?php endforeach; ?>
 </div>
