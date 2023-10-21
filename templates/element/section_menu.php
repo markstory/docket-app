@@ -5,6 +5,12 @@ declare(strict_types=1);
  * @var \App\Model\Entity\ProjectSection $section
  */
 $menuId = 'section-menu-' . uniqid();
+
+$sectionEditUrl = $this->Url->build([
+    '_name' => 'projectsections:edit',
+    'projectSlug' => $project->slug,
+    'id' => $section->id
+]);
 $deleteConfirm = [
     '_name' => 'projectsections:deleteconfirm',
     'projectSlug' => $project->slug,
@@ -24,7 +30,14 @@ $deleteConfirm = [
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit Section',
             ['_name' => 'projectsections:edit', 'projectSlug' => $project->slug, 'id' => $section->id],
-            ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
+            [
+                'class' => 'edit',
+                'escape' => false,
+                'role' => 'menuitem',
+                'dropdown-close' => true,
+                'hx-get' => $sectionEditUrl,
+                'hx-target' => "#section-controls-{$section->id}",
+            ]
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Section',

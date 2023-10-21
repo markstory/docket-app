@@ -29,7 +29,7 @@ echo $this->Form->create($section, [
     <?= $this->Form->button('Cancel', [
         'class' => 'button button-muted',
         'hx-get' => $sectionViewUrl,
-        'hx-target' => 'closest .controls'
+        'hx-target' => "#section-controls-{$section->id}",
     ]); ?>
 </div>
 <?= $this->Form->end() ?>

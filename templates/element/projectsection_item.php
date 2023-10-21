@@ -20,7 +20,7 @@ $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $projec
     <span
         class="editable"
         hx-get="<?= h($sectionEditUrl) ?>"
-        hx-target="closest .controls"
+        hx-target="#section-controls-<?= h($section->id) ?>"
     >
         <?= h($section->name) ?>
     </span>

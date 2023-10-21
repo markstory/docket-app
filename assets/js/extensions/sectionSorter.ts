@@ -24,6 +24,8 @@ import {SortableJsEvent} from 'app/types';
       });
 
       element.addEventListener('end', function (event: SortableJsEvent) {
+        event.stopPropagation();
+
         const sectionEl = event.item as HTMLElement;
         const newIndex = event.newIndex;
         const sectionId = sectionEl.getAttribute('data-id');

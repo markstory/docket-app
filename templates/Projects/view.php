@@ -53,7 +53,7 @@ foreach ($tasks as $task) {
         <? // Tasks in sections ?>
         <?php foreach ($project->sections as $section): ?>
         <div class="section-container" data-testid="section" data-id="<?= h($section->id) ?>">
-            <div class="controls">
+            <div class="controls" id="section-controls-<?= h($section->id) ?>">
                 <?= $this->element('projectsection_item', [
                     'project' => $project,
                     'section' => $section,
