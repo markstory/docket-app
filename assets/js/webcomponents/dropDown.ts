@@ -15,6 +15,7 @@ class DropDown extends HTMLElement {
     const removeMenu = () => {
       // Remove this listener
       document.removeEventListener('click', removeMenu);
+      document.removeEventListener('close', removeMenu);
 
       if (!reveal || !portal) {
         return;
@@ -25,6 +26,14 @@ class DropDown extends HTMLElement {
 
     trigger.addEventListener('click', function (evt) {
       evt.stopPropagation();
+      if (portal.style.display !== 'none') {
+        // If the portal is open force it closed.
+        const close = new CustomEvent('close', {
+          bubbles: true,
+          cancelable: true,
+        });
+        document.dispatchEvent(close);
+      }
 
       // Move menu contents to portal element
       portal.appendChild(reveal);
@@ -46,6 +55,7 @@ class DropDown extends HTMLElement {
 
       // Setup hide handler
       document.addEventListener('click', removeMenu);
+      document.addEventListener('close', removeMenu);
     });
 
     reveal.addEventListener('click', function (evt) {
