@@ -57,7 +57,18 @@ foreach ($tasks as $task) {
                 <button class="dnd-handle" role="button" aria-roledescription="sortable">
                     <?= $this->element('icons/grabber24') ?>
                 </button>
-                <span class="editable">
+                <?php
+                $sectionEditUrl = $this->Url->build([
+                    '_name' => 'projectsections:edit',
+                    'projectSlug' => $project->slug,
+                    'id' => $section->id,
+                ]);
+                ?>
+                <span
+                    class="editable"
+                    hx-get="<?= h($sectionEditUrl) ?>"
+                    hx-target="closest .controls"
+                >
                     <?= h($section->name) ?>
                 </span>
 

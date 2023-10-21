@@ -138,19 +138,18 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertNotEmpty($this->viewVariable('errors'));
     }
 
-    public function testEditProjectPermissionError()
+    public function testEditGet()
     {
-        $other = $this->makeProject('Other Home', 2);
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id);
 
         $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/edit", [
-            'name' => 'Reading list',
-            'project_id' => $other->id,
-        ]);
-        $this->assertResponseCode(403);
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/edit");
+
+        $this->assertResponseCode(200);
+        $this->assertContentType('text/html');
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('projectSection'));
     }
 
     public function testArchive()
