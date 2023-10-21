@@ -53,31 +53,10 @@ foreach ($tasks as $task) {
     <?php foreach ($project->sections as $section): ?>
     <div class="section-container" data-testid="section">
         <div class="controls">
-            <h3 class="heading">
-                <button class="dnd-handle" role="button" aria-roledescription="sortable">
-                    <?= $this->element('icons/grabber24') ?>
-                </button>
-                <?php
-                $sectionEditUrl = $this->Url->build([
-                    '_name' => 'projectsections:edit',
-                    'projectSlug' => $project->slug,
-                    'id' => $section->id,
-                ]);
-                ?>
-                <span
-                    class="editable"
-                    hx-get="<?= h($sectionEditUrl) ?>"
-                    hx-target="closest .controls"
-                >
-                    <?= h($section->name) ?>
-                </span>
-
-                <?php // This needs to set the project & section ?>
-                <a class="button-icon-primary" data-testid="add-task" href="<?= $taskAddUrl ?>">
-                    <?= $this->element('icons/plus16') ?>
-                </a>
-            </h3>
-            <?= $this->element('section_menu', ['section' => $section, 'project' => $project]) ?>
+            <?= $this->element('projectsection_item', [
+                'project' => $project,
+                'section' => $section,
+            ]) ?>
         </div>
         <div
             class="task-group dnd-dropper-left-offset"

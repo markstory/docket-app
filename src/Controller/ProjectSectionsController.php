@@ -16,7 +16,7 @@ class ProjectSectionsController extends AppController
 {
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['edit']);
+        return !in_array($this->request->getParam('action'), ['edit', 'view']);
     }
 
     protected function getProject(string $slug): Project
@@ -33,16 +33,16 @@ class ProjectSectionsController extends AppController
         $project = $this->getProject($projectSlug);
         $this->Authorization->authorize($project, 'edit');
 
-        $projectSection = $this->ProjectSections->newEmptyEntity();
+        $section = $this->ProjectSections->newEmptyEntity();
         $referer = $this->getReferer();
 
-        $projectSection = $this->ProjectSections->patchEntity(
-            $projectSection,
+        $section = $this->ProjectSections->patchEntity(
+            $section,
             ['project_id' => $project->id] + $this->request->getData()
         );
-        $projectSection->ranking = $this->ProjectSections->getNextRanking($project->id);
+        $section->ranking = $this->ProjectSections->getNextRanking($project->id);
 
-        if ($this->ProjectSections->save($projectSection)) {
+        if ($this->ProjectSections->save($section)) {
             $this->Flash->success(__('The section has been saved.'));
 
             return $this->redirect($referer);
@@ -50,45 +50,62 @@ class ProjectSectionsController extends AppController
 
         $this->Flash->error(__('The section could not be saved. Please, try again.'));
 
-        $this->set('errors', $this->flattenErrors($projectSection->getErrors()));
+        $this->set('errors', $this->flattenErrors($section->getErrors()));
         $this->viewBuilder()
             ->setClassName(JsonView::class)
             ->setOption('serialize', ['errors']);
     }
 
-    public function edit(string $projectSlug, $id = null)
+    /**
+     * Used by html views to load reload a section when editing
+     * is cancelled.
+     */
+    public function view(string $projectSlug, int $id)
+    {
+        $project = $this->getProject($projectSlug);
+        $section = $this->ProjectSections->get($id);
+        $this->Authorization->authorize($project, 'edit');
+
+        $this->set('project', $project);
+        $this->set('section', $section);
+    }
+
+    /**
+     * Used by both html and JSON API to update a section.
+     */
+    public function edit(string $projectSlug, int $id)
     {
         $referer = $this->getReferer();
         $project = $this->getProject($projectSlug);
-        $projectSection = $this->ProjectSections->get($id);
+        $section = $this->ProjectSections->get($id);
         $this->Authorization->authorize($project, 'edit');
 
         if ($this->request->is(['post', 'put'])) {
-            $projectSection = $this->ProjectSections->patchEntity(
-                $projectSection,
+            $section = $this->ProjectSections->patchEntity(
+                $section,
                 $this->request->getData()
             );
 
             $serialize = [];
             $redirect = null;
             $success = false;
-            if ($this->ProjectSections->save($projectSection)) {
+            if ($this->ProjectSections->save($section)) {
                 $redirect = $referer;
                 $success = true;
             } else {
-                $this->set('errors', $this->flattenErrors($projectSection->getErrors()));
+                $this->set('errors', $this->flattenErrors($section->getErrors()));
                 $serialize[] = 'errors';
             }
             return $this->respond([
                 'success' => $success,
                 'serialize' => $serialize,
-                'flashSuccess' => __('The project section has been saved.'),
-                'flashError' => __('The project section could not be saved.'),
+                'flashSuccess' => __('The section has been saved.'),
+                'flashError' => __('The section could not be saved.'),
                 'redirect' => $redirect,
             ]);
         }
 
-        $this->set('projectSection', $projectSection);
+        $this->set('section', $section);
         $this->set('project', $project);
     }
 

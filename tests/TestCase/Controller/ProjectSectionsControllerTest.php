@@ -149,21 +149,32 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertResponseCode(200);
         $this->assertContentType('text/html');
         $this->assertNotEmpty($this->viewVariable('project'));
-        $this->assertNotEmpty($this->viewVariable('projectSection'));
+        $this->assertNotEmpty($this->viewVariable('section'));
     }
 
-    public function testArchive()
+    public function testView()
     {
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id);
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/archive");
-        $this->assertRedirect('/projects/home');
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/view");
 
-        $updated = $this->ProjectSections->get($section->id);
-        $this->assertTrue($updated->archived);
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('section'));
+    }
+
+    public function testViewPermissions()
+    {
+        $project = $this->makeProject('Home', 2);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/projects/{$project->slug}/sections/{$section->id}/view");
+        $this->assertResponseCode(404);
     }
 
     public function testDelete()

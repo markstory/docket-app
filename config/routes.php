@@ -99,9 +99,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
                 ->setPass(['projectSlug']);
             $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'projectsections:edit'])
                 ->setPass(['projectSlug', 'id']);
-            $builder->post('/{id}/archive', ['action' => 'archive'], 'projectsections:archive')
-                ->setPass(['projectSlug', 'id']);
-            $builder->post('/{id}/unarchive', ['action' => 'unarchive'], 'projectsections:unarchive')
+            $builder->get('/{id}/view', ['action' => 'view'], 'projectsections:view')
                 ->setPass(['projectSlug', 'id']);
             $builder->post('/{id}/move', ['action' => 'move'], 'projectsections:move')
                 ->setPass(['projectSlug', 'id']);

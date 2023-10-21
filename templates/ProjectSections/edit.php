@@ -6,9 +6,15 @@ declare(strict_types=1);
  */
 $this->setLayout('ajax');
 
-echo $this->Form->create($projectSection, [
+$sectionViewUrl = $this->Url->build([
+    '_name' => 'projectsections:view',
+    'projectSlug' => $project->slug,
+    'id' => $section->id
+]);
+
+echo $this->Form->create($section, [
     'class' => 'section-quickform form-inline-rename',
-    'hx-post' => $this->Url->build(['_name' => 'projectsections:edit', 'projectSlug' => $project->slug, 'id' => $projectSection->id]),
+    'hx-post' => $this->Url->build(['_name' => 'projectsections:edit', 'projectSlug' => $project->slug, 'id' => $section->id]),
     'hx-target' => 'main.main',
 ]);
 ?>
@@ -21,8 +27,9 @@ echo $this->Form->create($projectSection, [
         'data-testid' => 'save-section',
     ]); ?>
     <?= $this->Form->button('Cancel', [
-        // TODO implement cancel by fetching the view fragment or restoring?
         'class' => 'button button-muted',
+        'hx-get' => $sectionViewUrl,
+        'hx-target' => 'closest .controls'
     ]); ?>
 </div>
 <?= $this->Form->end() ?>

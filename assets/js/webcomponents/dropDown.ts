@@ -45,6 +45,7 @@ class DropDown extends HTMLElement {
       portal.style.display = 'block';
       portal.style.position = 'absolute';
 
+      // TODO solve for scroll offsets
       const menuRect = reveal.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       // If the menu would overflow, align to the right
