@@ -92,34 +92,6 @@ class ProjectSectionsController extends AppController
         $this->set('project', $project);
     }
 
-    public function archive(string $projectSlug, string $id)
-    {
-        $project = $this->getProject($projectSlug);
-        $this->Authorization->authorize($project, 'edit');
-
-        $section = $this->ProjectSections->get($id);
-        $section->archive();
-        $this->ProjectSections->save($section);
-
-        $this->Flash->success(__('Project Section archived'));
-
-        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
-    }
-
-    public function unarchive(string $projectSlug, string $id)
-    {
-        $project = $this->getProject($projectSlug);
-        $this->Authorization->authorize($project, 'edit');
-
-        $section = $this->ProjectSections->get($id);
-        $section->unarchive();
-        $this->ProjectSections->save($section);
-
-        $this->Flash->success(__('Project Section unarchived'));
-
-        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
-    }
-
     public function deleteConfirm(string $projectSlug, string $id)
     {
         // TODO implement this.

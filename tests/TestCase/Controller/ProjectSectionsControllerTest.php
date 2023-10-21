@@ -166,44 +166,6 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertTrue($updated->archived);
     }
 
-    public function testArchivePermission()
-    {
-        $project = $this->makeProject('Home', 2);
-        $section = $this->makeProjectSection('Day trips', $project->id);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/archive");
-        $this->assertResponseCode(404);
-    }
-
-    public function testUnarchive()
-    {
-        $project = $this->makeProject('Home', 1);
-        $section = $this->makeProjectSection('Day trips', $project->id, 0, [
-            'archived' => true,
-        ]);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/unarchive");
-        $this->assertRedirect('/projects/home');
-
-        $updated = $this->ProjectSections->get($section->id);
-        $this->assertFalse($updated->archived);
-    }
-
-    public function testUnarchivePermission()
-    {
-        $project = $this->makeProject('Home', 2);
-        $section = $this->makeProjectSection('Day trips', $project->id);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/unarchive");
-        $this->assertResponseCode(404);
-    }
-
     public function testDelete()
     {
         $project = $this->makeProject('Home', 1);
