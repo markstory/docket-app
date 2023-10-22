@@ -63,7 +63,12 @@
     margin-left: $space;
   }
 
+  drop-down {
+    visibility: hidden;
+  }
+
   .actions.visible,
+  &:hover drop-down,
   &:hover .actions {
     visibility: visible;
   }

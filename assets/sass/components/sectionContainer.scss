@@ -8,10 +8,15 @@
     margin-bottom: $space;
     border-bottom: 1px solid var(--color-border);
 
+    drop-down {
+      visibility: hidden;
+    }
+    &:hover drop-down,
     &:hover .dnd-handle {
       visibility: visible;
     }
   }
+
   &.dnd-ghost {
     opacity: 0.5;
   }
