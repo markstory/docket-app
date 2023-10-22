@@ -94,7 +94,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         '/projects/{projectSlug}/sections',
         ['controller' => 'ProjectSections'],
         function (RouteBuilder $builder) {
-            $builder->post('/', ['action' => 'add'], 'projectsections:add')
+            $builder->connect('/', ['action' => 'add'], ['_name' => 'projectsections:add'])
                 ->setPass(['projectSlug']);
             $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'projectsections:edit'])
                 ->setPass(['projectSlug', 'id']);

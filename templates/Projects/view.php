@@ -42,7 +42,7 @@ foreach ($tasks as $task) {
         task-sorter-section=""
     >
     <?php
-    foreach ($groupedTasks[''] as $task):
+    foreach ($groupedTasks[''] ?? [] as $task):
         echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
     endforeach;
     ?>

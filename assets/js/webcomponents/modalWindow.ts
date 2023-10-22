@@ -1,9 +1,5 @@
 class ModalWindow extends HTMLElement {
   connectedCallback() {
-    const closeable = this.getAttribute('closeable');
-    if (closeable) {
-      console.error('closable is not implemented yet');
-    }
     const open = this.getAttribute('open');
     const dialog = this.querySelector('dialog');
     if (open && dialog) {
@@ -21,6 +17,32 @@ class ModalWindow extends HTMLElement {
       },
       false
     );
+
+    this.setupClose(dialog);
+    this.closeOnSubmit(dialog);
+  }
+
+  setupClose(dialog: HTMLDialogElement | null): void {
+    const closer = this.querySelector('[modal-close="true"]');
+    if (!closer || !dialog) {
+      return;
+    }
+    closer.addEventListener(
+      'click',
+      evt => {
+        evt.preventDefault();
+        dialog.close();
+      },
+      false
+    );
+  }
+
+  closeOnSubmit(dialog: HTMLDialogElement | null): void {
+    const form = this.querySelector('form');
+    if (!form || !dialog) {
+      return;
+    }
+    dialog.addEventListener('submit', () => dialog.close(), false);
   }
 }
 

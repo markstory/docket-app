@@ -22,7 +22,7 @@ declare(strict_types=1);
         <?= $this->Form->button('Ok', [
             'type' => 'submit',
             'class' => 'button button-danger',
-            'data-testid' => 'confirm-proceed'
+            'data-testid' => 'confirm-proceed',
         ]) ?>
     </div>
     <?= $this->Form->end() ?>

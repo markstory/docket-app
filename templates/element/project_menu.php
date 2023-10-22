@@ -22,11 +22,19 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
             ['_name' => 'projects:edit', 'slug' => $project->slug],
             ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
         ) ?>
-        <?php if (!empty($showDetailed)): ?>
+        <?php if (!empty($showDetailed)) : ?>
             <?= $this->Html->link(
                 $this->element('icons/plus16') . ' Add Section',
                 ['_name' => 'projectsections:add', 'projectSlug' => $project->slug],
-                ['class' => 'complete', 'escape' => false, 'role' => 'menuitem', 'data-testid' => 'add-section']
+                [
+                    'class' => 'complete',
+                    'escape' => false,
+                    'role' => 'menuitem',
+                    'data-testid' => 'add-section',
+                    'hx-get' => $this->Url->build(['_name' => 'projectsections:add', 'projectSlug' => $project->slug]),
+                    'hx-target' => 'body',
+                    'hx-swap' => 'beforeend',
+                ]
             ) ?>
             <?= $this->Html->link(
                 $this->element('icons/check16') . ' View Completed Tasks',
