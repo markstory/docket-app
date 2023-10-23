@@ -130,6 +130,7 @@ class AppController extends Controller
      * - statusSuccess - The HTTP status code for succesful API responses.
      * - statusError - The Http status code for error responses.
      * - serialize - The view variables to serialize into an API response.
+     * - template - The view template to use if one is.
      *
      * @TODO use this in other endpoints as well.
      * @return null|\Cake\Http\Response Either a response or null if we're not skipping view rendering.
@@ -144,13 +145,19 @@ class AppController extends Controller
             'statusSuccess' => 200,
             'statusError' => 400,
             'serialize' => null,
+            'template' => null,
         ];
         $authenticator = $this->Authentication
             ->getAuthenticationService()
             ->getAuthenticationProvider();
 
         $setFlashMessages = ($authenticator instanceof SessionAuthenticator);
+        $viewBuilder = $this->viewBuilder();
         $isApi = $this->request->is('json');
+
+        if ($config['template']) {
+            $viewBuilder->setTemplate($config['template']);
+        }
 
         if ($setFlashMessages) {
             if ($config['success'] && $config['flashSuccess']) {

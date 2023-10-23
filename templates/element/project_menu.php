@@ -38,7 +38,7 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
             ) ?>
             <?= $this->Html->link(
                 $this->element('icons/check16') . ' View Completed Tasks',
-                ['_name' => 'projects:view', 'slug' => $project->slug, 'completed' => 1],
+                ['_name' => 'projects:view', 'slug' => $project->slug, '?' => ['completed' => 1]],
                 ['class' => 'complete', 'escape' => false, 'role' => 'menuitem']
             ) ?>
         <?php endif ?>

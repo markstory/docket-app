@@ -22,6 +22,11 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
+    protected function useInertia(): bool
+    {
+        return !in_array($this->request->getParam('action'), ['complete', 'incomplete']);
+    }
+
     protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
     {
         if ($value !== null && !is_string($value)) {
@@ -233,18 +238,26 @@ class TasksController extends AppController
         ]);
         $this->Authorization->authorize($task, 'edit');
 
+        $template = null;
         $success = false;
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['patch', 'post', 'put', 'delete'])) {
             $task->complete();
             $success = $this->Tasks->save($task);
+        }
+        $status = 204;
+        $redirect = $this->referer(['_name' => 'tasks:today']);
+        if ($this->request->is('htmx')) {
+            $redirect = null;
+            $template = 'delete_ok';
+            $status = 200;
         }
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Task completed'),
             'flashError' => __('The task could not be completed. Please try again.'),
-            'statusSuccess' => 204,
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
+            'statusSuccess' => $status,
+            'redirect' => $redirect,
+            'template' => $template,
         ]);
     }
 
@@ -261,21 +274,29 @@ class TasksController extends AppController
             'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task, 'edit');
+        $template = null;
         $success = false;
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['delete', 'patch', 'post', 'put'])) {
             $task->incomplete();
             if ($this->Tasks->save($task)) {
                 $success = true;
             }
         }
+        $redirect = $this->referer(['_name' => 'tasks:today']);
+        $status = 204;
+        if ($this->request->is('htmx')) {
+            $redirect = null;
+            $template = 'delete_ok';
+            $status = 200;
+        }
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Task updated'),
             'flashError' => __('The task could not be updated. Please try again.'),
-            'statusSuccess' => 204,
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
+            'statusSuccess' => $status,
+            'redirect' => $redirect,
+            'template' => $template,
         ]);
     }
 

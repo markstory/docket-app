@@ -1,3 +1,4 @@
+
 .task-row {
   position: relative;
   display: flex;
@@ -72,6 +73,11 @@
   &:hover .actions {
     visibility: visible;
   }
+}
+
+.htmx-swapping > .task-row {
+  opacity: 0;
+  transition: opacity 500ms ease-out;
 }
 
 @media(max-width: $breakpoint-phone) {

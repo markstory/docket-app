@@ -76,22 +76,25 @@ class ProjectsController extends AppController
     {
         $project = $this->getProject($slug, ['Sections']);
 
-        $tasks = $this->Authorization
-            ->applyScope($this->Tasks->find(), 'index')
-            ->contain('Projects') ->find('incomplete')
-            ->find('forProjectDetails', ['slug' => $slug])
-            ->limit(250);
-
-        $completed = null;
-        if ($this->request->getQuery('completed')) {
-            $completedQuery = $this->Authorization
+        $completed = (int)$this->request->getQuery('completed', '0');
+        if ($completed) {
+            $query = $this->Authorization
                ->applyScope($this->Tasks->find(), 'index')
                ->contain('Projects')
                ->find('complete')
                ->where(['Projects.slug' => $slug])
                ->orderDesc('Tasks.due_on')
                ->orderAsc('title');
-            $completed = $this->paginate($completedQuery, ['scope' => 'completed']);
+            $tasks = $this->paginate($query, ['scope' => 'completed']);
+
+            $this->viewBuilder()->setTemplate('completed');
+        } else {
+            $tasks = $this->Authorization
+                ->applyScope($this->Tasks->find(), 'index')
+                ->contain('Projects')
+                ->find('incomplete')
+                ->find('forProjectDetails', ['slug' => $slug])
+                ->limit(250);
         }
 
         $this->set(compact('project', 'tasks', 'completed'));

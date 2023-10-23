@@ -975,6 +975,24 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->completed);
     }
 
+    public function testCompleteHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->configRequest([
+            'headers' => ['Hx-Request' => 'true'],
+        ]);
+        $this->enableCsrfToken();
+        $this->delete("/tasks/{$first->id}/complete");
+        $this->assertResponseCode(200);
+        $this->assertResponseEquals('');
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertTrue($todo->completed);
+    }
+
     public function testCompleteApiToken(): void
     {
         $token = $this->makeApiToken(1);
@@ -1013,6 +1031,24 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/incomplete");
         $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertFalse($todo->completed);
+    }
+
+    public function testIncompleteHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+
+        $this->login();
+        $this->configRequest([
+            'headers' => ['HX-Request' => 'true'],
+        ]);
+        $this->enableCsrfToken();
+        $this->delete("/tasks/{$first->id}/incomplete");
+        $this->assertResponseCode(200);
+        $this->assertResponseEquals('');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);

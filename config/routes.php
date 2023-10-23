@@ -43,19 +43,23 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     $builder->scope('/tasks', ['controller' => 'Tasks'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'tasks:index');
-
         $builder->get('/today', ['action' => 'daily', 'today'], 'tasks:today');
-        $builder->get('/day/{date}', ['action' => 'daily'], 'tasks:daily')
-            ->setPass(['date']);
-
         $builder->get('/upcoming', ['action' => 'index', 'upcoming'], 'tasks:upcoming');
         $builder->get('/deleted', ['action' => 'deleted'], 'tasks:deleted');
 
+        $builder->get('/day/{date}', ['action' => 'daily'], 'tasks:daily')
+            ->setPass(['date']);
+
         $builder->post('/add', ['action' => 'add'], 'tasks:add');
+        // HTMX uses delete to change completion status as the success
+        // means the element needs to be removed from the client state.
         $builder->post('/{id}/complete', ['action' => 'complete'], 'tasks:complete')
             ->setPass(['id']);
+        $builder->delete('/{id}/complete', ['action' => 'complete'])->setPass(['id']);
         $builder->post('/{id}/incomplete', ['action' => 'incomplete'], 'tasks:incomplete')
             ->setPass(['id']);
+        $builder->delete('/{id}/incomplete', ['action' => 'incomplete'])->setPass(['id']);
+
         $builder->post('/{id}/delete', ['action' => 'delete'], 'tasks:delete')
             ->setPass(['id']);
         $builder->post('/{id}/undelete', ['action' => 'undelete'], 'tasks:undelete')

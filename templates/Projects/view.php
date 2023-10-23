@@ -3,7 +3,6 @@ declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Project $project
  * @var \App\Model\Entity\Task[] $tasks
- * @var \App\Model\Entity\Task[] $completed
  */
 $this->setLayout('sidebar');
 $this->assign('title', $project->name . " Project");
@@ -20,12 +19,12 @@ foreach ($tasks as $task) {
         <div class="heading-actions-item">
             <h1 class="heading-icon">
                 <?php
-                if ($project->archived):
+                if ($project->archived) :
                     echo $this->element('icons/archive16');
                 endif; ?>
                 <?= h($project->name) ?>
             </h1>
-            <?php if (!$project->archived): ?>
+            <?php if (!$project->archived) : ?>
                 <a class="button-icon-primary" data-testid="add-task" href="<?= $taskAddUrl ?>">
                     <?= $this->element('icons/plus16') ?>
                 </a>
@@ -42,7 +41,7 @@ foreach ($tasks as $task) {
         task-sorter-section=""
     >
     <?php
-    foreach ($groupedTasks[''] ?? [] as $task):
+    foreach ($groupedTasks[''] ?? [] as $task) :
         echo $this->element('task_item', ['task' => $task, 'showDueOn' => true]);
     endforeach;
     ?>
@@ -50,7 +49,7 @@ foreach ($tasks as $task) {
 
     <div hx-ext="section-sorter" section-sorter-slug="<?= h($project->slug) ?>">
         <? // Tasks in sections ?>
-        <?php foreach ($project->sections as $section): ?>
+        <?php foreach ($project->sections as $section) : ?>
         <div class="section-container" data-testid="section" data-id="<?= h($section->id) ?>">
             <div class="controls" id="section-controls-<?= h($section->id) ?>">
                 <?= $this->element('projectsection_item', [
