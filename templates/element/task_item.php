@@ -11,15 +11,20 @@ $taskCheckboxUrl = $this->Url->build([
     '_name' => $task->completed ? 'tasks:incomplete' : 'tasks:complete',
     'id' => $task->id,
 ]);
+$className = 'task-row';
+if ($task->completed) :
+    $className .= ' is-completed';
+endif;
 
 // TODO implement restore view for trashbin
+// TODO add/remove `is-completed` class on checkbox change.
+// TODO use custom CSS checkbox
 ?>
 <div class="dnd-item" data-id="<?= $task->id ?>">
     <button class="dnd-handle" role="button" aria-roledescription="sortable">
         <?= $this->element('icons/grabber24') ?>
     </button>
-    <div class="task-row">
-        <?php // Use fancy custom checkbox instead ?>
+    <div class="<?= h($className) ?>">
         <?= $this->Form->checkbox('completed', [
             'checked' => $task->completed,
             'hiddenField' => false,
@@ -47,9 +52,9 @@ $taskCheckboxUrl = $this->Url->build([
                 <?php if ($task->subtask_count > 1) : ?>
                     <span class="counter">
                         <?= $this->element('icons/workflow16') ?>
-                        <?= $task->complete_subtask_count ?>
+                        <?= h($task->complete_subtask_count) ?>
                         /
-                        <?= $task->subtask_count ?>
+                        <?= h($task->subtask_count) ?>
                     </span>
                 <?php endif ?>
             </div>

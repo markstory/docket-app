@@ -9,12 +9,12 @@ $menuId = 'section-menu-' . uniqid();
 $sectionEditUrl = $this->Url->build([
     '_name' => 'projectsections:edit',
     'projectSlug' => $project->slug,
-    'id' => $section->id
+    'id' => $section->id,
 ]);
 $deleteConfirm = [
     '_name' => 'projectsections:deleteconfirm',
     'projectSlug' => $project->slug,
-    'id' => $section->id
+    'id' => $section->id,
 ];
 ?>
 <drop-down>

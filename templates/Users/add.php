@@ -15,22 +15,22 @@ $this->assign('title', 'Register a new account');
     'type' => 'text',
     'required' => true,
     'templateVars' => [
-        'help' => '<p class="form-help">The name used in the site and in emails.</p>'
-    ]
+        'help' => '<p class="form-help">The name used in the site and in emails.</p>',
+    ],
 ]) ?>
 <?= $this->Form->control('email', [
     'type' => 'email',
     'required' => true,
     'templateVars' => [
-        'help' => '<p class="form-help">Used to email you and to login.</p>'
-    ]
+        'help' => '<p class="form-help">Used to email you and to login.</p>',
+    ],
 ]) ?>
 <?= $this->Form->control('password', [
     'type' => 'password',
     'required' => true,
     'templateVars' => [
         'help' => '<p class="form-help">More than 10 characters long.</p>',
-    ]
+    ],
 ]) ?>
 <?= $this->Form->control('confirm_password', [
     'label' => 'Confirm Password',

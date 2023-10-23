@@ -9,12 +9,16 @@ $this->setLayout('ajax');
 $sectionViewUrl = $this->Url->build([
     '_name' => 'projectsections:view',
     'projectSlug' => $project->slug,
-    'id' => $section->id
+    'id' => $section->id,
 ]);
 
 echo $this->Form->create($section, [
     'class' => 'section-quickform form-inline-rename',
-    'hx-post' => $this->Url->build(['_name' => 'projectsections:edit', 'projectSlug' => $project->slug, 'id' => $section->id]),
+    'hx-post' => $this->Url->build([
+        '_name' => 'projectsections:edit',
+        'projectSlug' => $project->slug,
+        'id' => $section->id,
+    ]),
     'hx-target' => 'main.main',
 ]);
 ?>
