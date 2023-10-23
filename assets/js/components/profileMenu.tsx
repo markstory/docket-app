@@ -24,7 +24,7 @@ export default function ProfileMenu(): JSX.Element {
       >
         <div className="dropdown-item-text">{identity.name}</div>
         <div className="separator" />
-        <MenuLink as={InertiaLink} className="edit" href="/users/profile">
+        <MenuLink className="edit" href="/users/profile">
           <InlineIcon icon="pencil" />
           {t('Edit Profile')}
         </MenuLink>
@@ -37,7 +37,7 @@ export default function ProfileMenu(): JSX.Element {
           {t('Update Password')}
         </MenuLink>
         <div className="separator" />
-        <MenuLink as={InertiaLink} href="/logout">
+        <MenuLink href="/logout">
           {t('Logout')}
         </MenuLink>
       </DropdownMenu>
