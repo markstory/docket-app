@@ -904,6 +904,35 @@ class TasksControllerTest extends TestCase
         $this->assertNull($deleted->deleted_at);
     }
 
+    public function testDeleteConfirm(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/delete/confirm");
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Are you sure?');
+
+        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testDeleteConfirmPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/delete/confirm");
+
+        $this->assertResponseCode(403);
+
+        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
+        $this->assertNull($deleted->deleted_at);
+    }
+
     public function testUndelete(): void
     {
         $project = $this->makeProject('work', 1);

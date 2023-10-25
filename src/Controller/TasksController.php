@@ -24,7 +24,7 @@ class TasksController extends AppController
 
     protected function useInertia(): bool
     {
-        return !in_array($this->request->getParam('action'), ['complete', 'incomplete']);
+        return !in_array($this->request->getParam('action'), ['complete', 'incomplete', 'deleteConfirm']);
     }
 
     protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
@@ -434,6 +434,14 @@ class TasksController extends AppController
             'flashError' => __('The task could not be deleted. Please, try again.'),
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
+    }
+
+    public function deleteConfirm(string $id)
+    {
+        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($task, 'delete');
+
+        $this->set('task', $task);
     }
 
     /**

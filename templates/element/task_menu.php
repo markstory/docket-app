@@ -4,6 +4,7 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Task $task
  */
 $menuId = 'task-menu-' . uniqid();
+$deleteConfirm = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
 ?>
 <drop-down>
     <button
@@ -28,9 +29,17 @@ $menuId = 'task-menu-' . uniqid();
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Task',
-            // TODO need to build a view for the deletion confirm
-            ['_name' => 'tasks:view', 'id' => $task->id],
-            ['class' => 'delete', 'escape' => false, 'data-testid' => 'delete', 'role' => 'menuitem']
+            $deleteConfirm,
+            [
+                'class' => 'delete',
+                'escape' => false,
+                'role' => 'menuitem',
+                'data-testid' => 'delete',
+                'dropdown-close' => true,
+                'hx-get' => $this->Url->build($deleteConfirm),
+                'hx-target' => 'body',
+                'hx-swap' => 'beforeend',
+            ]
         ) ?>
     </drop-down-menu>
 </drop-down>

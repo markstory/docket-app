@@ -62,6 +62,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
         $builder->post('/{id}/delete', ['action' => 'delete'], 'tasks:delete')
             ->setPass(['id']);
+        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'tasks:deleteconfirm')
+            ->setPass(['id']);
         $builder->post('/{id}/undelete', ['action' => 'undelete'], 'tasks:undelete')
             ->setPass(['id']);
         $builder->post('/{id}/edit', ['action' => 'edit'], 'tasks:edit')
