@@ -25,8 +25,7 @@ class DropDown extends HTMLElement {
       this.appendChild(portal.children[0]);
     };
 
-    function reposition(evt) {
-      console.log('oh ih')
+    function reposition() {
       if (!trigger || !reveal || !portal) {
         return;
       }
@@ -58,28 +57,9 @@ class DropDown extends HTMLElement {
         });
         document.dispatchEvent(close);
       }
-      // TODO find a way to re-run this logic when
-      // items are loaded.
-
       // Move menu contents to portal element
       portal.appendChild(reveal);
-      const triggerRect = trigger.getBoundingClientRect();
-
-      // position portal left aligned and below trigger.
-      portal.style.left = `${triggerRect.left + 5}px`;
-      portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
-      portal.style.display = 'block';
-      portal.style.position = 'absolute';
-
-      // TODO solve for scroll offsets
-      const menuRect = reveal.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      // If the menu would overflow, align to the right
-      if (menuRect.right > bodyRect.right) {
-        const triggerRightEdge = triggerRect.left + triggerRect.width;
-        portal.style.left = `${triggerRightEdge - menuRect.width}px`;
-      }
-      // end positioning
+      reposition();
 
       // Setup hide handler and menu reposition event
       // for menus that change the shape of the contents.
