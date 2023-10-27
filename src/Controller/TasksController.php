@@ -369,6 +369,8 @@ class TasksController extends AppController
             $task->project = $project;
         }
 
+        // TODO use a redirect url for more graceful behavior.
+        // The URL needs to be sanitized to prevent open redirects.
         $refresh = null;
         $success = false;
         $serialize = [];
