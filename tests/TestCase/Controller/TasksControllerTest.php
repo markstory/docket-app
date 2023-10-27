@@ -572,6 +572,24 @@ class TasksControllerTest extends TestCase
         $this->assertSame($var->title, $first->title);
     }
 
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testViewModeEditProject(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/view/editproject");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertSame($var->title, $first->title);
+        $this->assertTemplate('Tasks/editproject');
+    }
+
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);

@@ -9,6 +9,10 @@ import {SortableJsEvent} from 'app/types';
         return;
       }
       const element = evt.target as HTMLElement;
+      if (element.getAttribute('hx-ext') !== 'section-sorter') {
+        return;
+      }
+
       const projectSlug = element.getAttribute('section-sorter-slug');
       if (!projectSlug) {
         console.error('Missing required attr `section-sorter-slug`');

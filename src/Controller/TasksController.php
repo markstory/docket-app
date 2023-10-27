@@ -24,6 +24,10 @@ class TasksController extends AppController
 
     protected function useInertia(): bool
     {
+        if ($this->request->getParam('action') == 'view' && $this->request->getParam('mode')) {
+            return false;
+        }
+
         return !in_array($this->request->getParam('action'), ['complete', 'incomplete', 'deleteConfirm']);
     }
 
@@ -365,15 +369,21 @@ class TasksController extends AppController
             $task->project = $project;
         }
 
+        $refresh = null;
         $success = false;
         $serialize = [];
         if ($this->Tasks->save($task)) {
             $success = true;
             $serialize[] = 'task';
+            $refresh = $this->request->getData('refresh');
+
             $this->set('task', $task);
         } else {
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
+        }
+        if ($refresh !== null) {
+            $this->response = $this->response->withHeader('Hx-Refresh', 'true');
         }
 
         return $this->respond([
@@ -392,12 +402,20 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($id = null, $mode = null)
     {
         $task = $this->Tasks->get($id, [
             'contain' => ['Projects', 'Subtasks'],
         ]);
         $this->Authorization->authorize($task);
+
+        $template = 'view';
+        if (in_array($mode, ['editproject'], true)) {
+            $template = $mode;
+        }
+        if ($template === 'editproject') {
+            $this->set('projects', $this->Tasks->Projects->find('active')->find('top'));
+        }
 
         $this->set('task', $task);
         $this->set('referer', $this->getReferer('tasks:today'));
@@ -405,6 +423,7 @@ class TasksController extends AppController
         return $this->respond([
             'success' => true,
             'serialize' => ['task'],
+            'template' => $template,
         ]);
     }
 

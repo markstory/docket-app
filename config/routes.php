@@ -66,10 +66,15 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['id']);
         $builder->post('/{id}/undelete', ['action' => 'undelete'], 'tasks:undelete')
             ->setPass(['id']);
+
         $builder->post('/{id}/edit', ['action' => 'edit'], 'tasks:edit')
             ->setPass(['id']);
+        $builder->put('/{id}/edit', ['action' => 'edit'])->setPass(['id']);
+
         $builder->get('/{id}/view', ['action' => 'view'], 'tasks:view')
             ->setPass(['id']);
+        $builder->get('/{id}/view/{mode}', ['action' => 'view'], 'tasks:viewmode')
+            ->setPass(['id', 'mode']);
         $builder->post('/{id}/move', ['action' => 'move'], 'tasks:move')
             ->setPass(['id']);
     });

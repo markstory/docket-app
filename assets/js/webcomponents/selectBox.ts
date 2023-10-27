@@ -73,7 +73,6 @@ class SelectBox extends HTMLElement {
 
     // Update values when an option is selected.
     menu.addEventListener('selected', ((evt: CustomEvent<SelectedDetail>) => {
-      console.log('selected', evt.detail);
       setValue(evt.detail.value);
       trigger.setAttribute('selectedhtml', evt.detail.htmlText);
       hideMenu();

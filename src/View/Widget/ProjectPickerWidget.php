@@ -9,7 +9,7 @@ use Cake\View\View;
 use Cake\View\Widget\BasicWidget;
 use RuntimeException;
 
-class ColorPickerWidget extends BasicWidget
+class ProjectPickerWidget extends BasicWidget
 {
     /**
      * Data defaults.
@@ -20,7 +20,7 @@ class ColorPickerWidget extends BasicWidget
         'name' => '',
         'disabled' => null,
         'val' => null,
-        'colors' => [],
+        'projects' => [],
         'data-niceselect' => 1,
         'tabindex' => '-1',
         'templateVars' => [],
@@ -35,22 +35,22 @@ class ColorPickerWidget extends BasicWidget
     public function render(array $data, ContextInterface $context): string
     {
         $data = $this->mergeDefaults($data, $context);
-        if (empty($data['colors'])) {
-            throw new RuntimeException('`colors` option is required');
+        if (empty($data['projects'])) {
+            throw new RuntimeException('`projects` option is required');
         }
         $selected = $data['val'] ?? null;
-        $colors = $data['colors'];
-        unset($data['colors'], $data['data-validity-message'], $data['oninvalid'], $data['oninput']);
+        $projects = $data['projects'];
+        unset($data['projects'], $data['data-validity-message'], $data['oninvalid'], $data['oninput']);
 
         $options = [];
-        foreach ($colors as $color) {
-            $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]) . h($color['name']);
+        foreach ($projects as $project) {
+            $optionBody = $this->view->element('icons/dot16', ['color' => $project->color_hex]) . h($project->name);
             $optAttrs = [
-                'selected' => $color['id'] == $selected,
+                'selected' => $project->id == $selected,
             ];
 
             $options[] = $this->templates->format('select-box-option', [
-                'value' => $color['id'],
+                'value' => $project->id,
                 'text' => $optionBody,
                 'attrs' => $this->templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);

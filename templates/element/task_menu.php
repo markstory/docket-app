@@ -4,7 +4,8 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Task $task
  */
 $menuId = 'task-menu-' . uniqid();
-$deleteConfirm = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
+$deleteConfirmUrl = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
+$taskEditProjectUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 'editproject'];
 ?>
 <drop-down>
     <button
@@ -18,8 +19,16 @@ $deleteConfirm = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
     <drop-down-menu id="<?= h($menuId) ?>" role="menu">
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Move',
-            ['_name' => 'tasks:move', 'id' => $task->id],
-            ['class' => 'edit', 'escape' => false, 'data-testid' => 'move', 'role' => 'menuitem']
+            $taskEditProjectUrl,
+            [
+                'class' => 'edit',
+                'escape' => false,
+                'data-testid' => 'move',
+                'role' => 'menuitem',
+                // Switch the menu to the edit project state.
+                'hx-get' => $this->Url->build($taskEditProjectUrl),
+                'hx-target' => 'closest drop-down-menu',
+            ]
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/calendar16') . ' Reschedule',
@@ -29,14 +38,14 @@ $deleteConfirm = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Task',
-            $deleteConfirm,
+            $deleteConfirmUrl,
             [
                 'class' => 'delete',
                 'escape' => false,
                 'role' => 'menuitem',
                 'data-testid' => 'delete',
                 'dropdown-close' => true,
-                'hx-get' => $this->Url->build($deleteConfirm),
+                'hx-get' => $this->Url->build($deleteConfirmUrl),
                 'hx-target' => 'body',
                 'hx-swap' => 'beforeend',
             ]

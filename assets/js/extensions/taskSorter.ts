@@ -1,6 +1,6 @@
 import htmx from 'htmx.org';
 import Sortable from 'sortablejs';
-import {SortableJsEvent} from 'app/types'
+import {SortableJsEvent} from 'app/types';
 
 (function () {
   htmx.defineExtension('task-sorter', {
@@ -9,6 +9,11 @@ import {SortableJsEvent} from 'app/types'
         return;
       }
       const element = evt.target as HTMLElement;
+      // Not sure why this happens, but it does.
+      if (element.getAttribute('hx-ext') !== 'task-sorter') {
+        return;
+      }
+
       // Implementing elements listen to the `end` event
       // triggered on this element and submits a form.
       new Sortable(element, {

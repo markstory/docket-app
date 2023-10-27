@@ -36,7 +36,7 @@ class Project extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'user_id' => true,
+        'user_id' => false,
         'name' => true,
         'slug' => true,
         'color' => true,

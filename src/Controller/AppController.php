@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Model\Table\ProjectsTable;
 use App\View\Widget\ColorPickerWidget;
+use App\View\Widget\ProjectPickerWidget;
 use Authentication\Authenticator\SessionAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
@@ -59,6 +60,7 @@ class AppController extends Controller
                 'templates' => 'formtemplates',
                 'widgets' => [
                     'colorpicker' => [ColorPickerWidget::class, '_view'],
+                    'projectpicker' => [ProjectPickerWidget::class, '_view'],
                 ],
             ]);
 
