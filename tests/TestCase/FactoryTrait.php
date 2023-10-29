@@ -38,6 +38,9 @@ trait FactoryTrait
         $this->configRequest(['headers' => $headers]);
     }
 
+    /**
+     * Send a request as a JSON api
+     */
     protected function requestJson()
     {
         $headers = $this->_request['headers'] ?? [];
@@ -45,6 +48,16 @@ trait FactoryTrait
 
         $this->configRequest([
             'headers' => $headers,
+        ]);
+    }
+
+    /**
+     * Send a request as htmx
+     */
+    protected function useHtmx()
+    {
+        $this->configRequest([
+            'headers' => ['Hx-Request' => 'true'],
         ]);
     }
 

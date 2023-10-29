@@ -97,6 +97,11 @@ class ProjectsController extends AppController
                 ->limit(250);
         }
 
+        if ($this->request->is('htmx')) {
+            // Close any open menus/modals
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
+        }
+
         $this->set(compact('project', 'tasks', 'completed'));
 
         return $this->respond([

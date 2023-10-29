@@ -398,7 +398,6 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->disableErrorHandlerMiddleware();
         $this->get("/tasks/day/{$startOfDay->format('Y-m-d')}");
 
         $this->assertResponseOk();
@@ -435,7 +434,6 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->disableErrorHandlerMiddleware();
         $this->get('/tasks');
 
         $this->assertResponseOk();
@@ -775,6 +773,7 @@ class TasksControllerTest extends TestCase
 
         $this->useApiToken($token->token);
         $this->requestJson();
+
         $this->post("/tasks/{$first->id}/edit", [
             'project_id' => $home->id,
         ]);
@@ -783,6 +782,22 @@ class TasksControllerTest extends TestCase
         $updated = $this->viewVariable('task');
         $this->assertEquals($updated->project_id, $home->id);
         $this->assertEquals($updated->project->id, $home->id);
+    }
+
+    public function testEditHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $home = $this->makeProject('home', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->useHtmx();
+        $this->post("/tasks/{$first->id}/edit", [
+            'project_id' => $home->id,
+            'redirect' => '/projects/home',
+        ]);
+        $this->assertRedirect('/projects/home');
     }
 
     public function testEditValidation(): void

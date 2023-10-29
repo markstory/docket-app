@@ -369,26 +369,24 @@ class TasksController extends AppController
             $task->project = $project;
         }
 
-        // TODO use a redirect url for more graceful behavior.
-        // The URL needs to be sanitized to prevent open redirects.
-        $refresh = null;
         $success = false;
         $serialize = [];
         if ($this->Tasks->save($task)) {
             $success = true;
             $serialize[] = 'task';
-            $refresh = $this->request->getData('refresh');
-
             $this->set('task', $task);
         } else {
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
-        if ($refresh !== null) {
-            $this->response = $this->response->withHeader('Hx-Refresh', 'true');
+        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
+        $redirect = null;
+        if ($hxRedirect) {
+            $redirect = $hxRedirect;
         }
 
         return $this->respond([
+            'redirect' => $redirect,
             'success' => $success,
             'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),

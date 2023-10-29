@@ -102,7 +102,7 @@ class AppController extends Controller
             ->withStringBody(json_encode(['errors' => $this->flattenErrors($errors)]));
     }
 
-    protected function getReferer($default = 'tasks:today')
+    protected function getReferer($default = 'tasks:today'): string
     {
         $defaultUrl = Router::url(['_name' => $default]);
 
@@ -111,11 +111,40 @@ class AppController extends Controller
         $header = $this->referer($defaultUrl);
         foreach ([$post, $get, $header] as $option) {
             if (is_string($option) && strlen($option) && $option[0] === '/') {
-                return $option;
+                $pathOnly = $this->sanitizeRedirect($option);
+                if ($pathOnly === null) {
+                    continue;
+                }
+
+                return $pathOnly;
             }
         }
 
         return $defaultUrl;
+    }
+
+    protected function sanitizeRedirect(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+        $parsed = parse_url($url);
+        if (
+            $parsed === false ||
+            empty($parsed['path']) ||
+            (isset($parsed['host']) && $parsed['host'] !== $this->request->host())
+        ) {
+            return null;
+        }
+        $pathOnly = $parsed['path'];
+        if (!empty($parsed['query'])) {
+            $pathOnly .= '?' . $parsed['query'];
+        }
+        if (!empty($parsed['fragment'])) {
+            $pathOnly .= '#' . $parsed['fragment'];
+        }
+
+        return $pathOnly;
     }
 
     /**

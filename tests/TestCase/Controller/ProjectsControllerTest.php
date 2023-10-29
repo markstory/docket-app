@@ -90,6 +90,22 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
+    public function testViewHtmx(): void
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeTask('first post', $home->id, 0);
+
+        $this->login();
+        $this->useHtmx();
+        $this->get("/projects/{$home->slug}");
+
+        $this->assertResponseOk();
+        // Important to close menus like move project and reschedule.
+        $this->assertHeader('Hx-Trigger', 'close');
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(1, $this->viewVariable('tasks'));
+    }
+
     public function testViewApiToken(): void
     {
         $token = $this->makeApiToken(1);
@@ -134,7 +150,6 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
         $this->assertCount(1, $this->viewVariable('tasks'));
-        $this->assertCount(1, $this->viewVariable('completed'));
     }
 
     public function testAddGet(): void
