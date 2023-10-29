@@ -17,6 +17,8 @@ use InvalidArgumentException;
  */
 class TasksController extends AppController
 {
+    public const EDIT_MODES = ['editproject', 'reschedule'];
+
     public function viewClasses(): array
     {
         return [JsonView::class];
@@ -410,7 +412,7 @@ class TasksController extends AppController
         $this->Authorization->authorize($task);
 
         $template = 'view';
-        if (in_array($mode, ['editproject'], true)) {
+        if (in_array($mode, static::EDIT_MODES, true)) {
             $template = $mode;
         }
         if ($template === 'editproject') {

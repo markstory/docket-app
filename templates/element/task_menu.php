@@ -6,6 +6,7 @@ declare(strict_types=1);
 $menuId = 'task-menu-' . uniqid();
 $deleteConfirmUrl = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
 $taskEditProjectUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 'editproject'];
+$taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 'reschedule'];
 ?>
 <drop-down>
     <button
@@ -32,9 +33,16 @@ $taskEditProjectUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' =>
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/calendar16') . ' Reschedule',
-            // TODO need to build a view for this submenu.
-            ['_name' => 'tasks:view', 'id' => $task->id],
-            ['class' => 'calendar', 'escape' => false, 'data-testid' => 'reschedule', 'role' => 'menuitem']
+            $taskRescheduleUrl,
+            [
+                'class' => 'calendar',
+                'escape' => false,
+                'data-testid' => 'reschedule',
+                'role' => 'menuitem',
+                // Switch menu to the date picker state
+                'hx-get' => $this->Url->build($taskRescheduleUrl),
+                'hx-target' => 'closest drop-down-menu',
+            ]
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Task',
