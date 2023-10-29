@@ -293,7 +293,6 @@ class SelectBoxOption extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener('click', evt => {
-      console.log('clicke');
       evt.stopPropagation();
       this.select();
     });
