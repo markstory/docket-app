@@ -82,7 +82,6 @@ drop-down-menu [role="menuitem"],
     background: var(--color-menu-hover);
   }
 
-
   & svg {
     margin-right: $space;
   }
@@ -106,5 +105,27 @@ drop-down-menu [role="menuitem"],
   }
   &.complete svg {
     color: var(--color-action-complete);
+  }
+  &.today svg {
+    color: var(--color-due-today);
+  }
+  &.tomorrow svg {
+    color: var(--color-due-tomorrow);
+  }
+  &.evening svg {
+    color: var(--color-due-evening);
+  }
+  &.not-due svg {
+    color: var(--color-due-none);
+  }
+
+  // Form buttons inside menu items are special
+  .menu-item-button {
+    height: auto;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
   }
 }
