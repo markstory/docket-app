@@ -96,8 +96,14 @@ while ($curVal <= $end) {
     $selected = $curVal == $current;
     $available = $curVal >= $current;
     $month = $curVal->format('F Y');
+    // Get iso day/week number.
     $weekNum = (int)$curVal->format('W');
     $dayNum = (int)$curVal->format('N');
+    // Iso ordering is 1=monday 7=sunday. But we want Sun -> Sat
+    if ($dayNum === 7) {
+        $dayNum = 0;
+        $weekNum += 1;
+    }
 
     $cell = ['available' => $available, 'selected' => $selected, 'date' => $curVal];
     if (!isset($grouped[$month])) {
@@ -106,7 +112,7 @@ while ($curVal <= $end) {
     if (!isset($grouped[$month][$weekNum])) {
         $grouped[$month][$weekNum] = [null, null, null, null, null, null, null];
     }
-    $grouped[$month][$weekNum][$dayNum - 1] = $cell;
+    $grouped[$month][$weekNum][$dayNum] = $cell;
 
     $curVal = $curVal->addDays(1);
 }
@@ -124,13 +130,13 @@ echo $this->Form->hidden('redirect', ['value' => $referer]);
             <caption class="day-picker-caption"><?= h($month) ?></caption>
             <thead class="day-picker-weekdays">
                 <tr>
+                    <th><abbr class="day-picker-weekday" role="columnheader" title="Sunday">Su</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Monday">Mo</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Tuesday">Tu</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Wednesday">We</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Thursday">Th</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Friday">Fr</abbr></th>
                     <th><abbr class="day-picker-weekday" role="columnheader" title="Saturday">Sa</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Sunday">Su</abbr></th>
                 </tr>
             </thead>
             <tbody class="day-picker-body">
