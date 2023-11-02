@@ -3,6 +3,9 @@
   position: relative;
   font-size: $font-size-normal;
 }
+.day-picker {
+  background: var(--color-bg);
+}
 
 .day-picker-month {
   width: 100%;
@@ -73,14 +76,49 @@
 .DayPicker-WeekdaysRow {
   display: table-row;
 }
+.day-picker-weekdays th {
+  text-align: center;
+  width: calc(100% / 7);
+}
 
-.day-picker-day,
 .DayPicker-Weekday {
   display: table-cell;
   padding: 0.5em;
   color: var(--color-low-emphasis);
   text-align: center;
   font-size: $font-size-small;
+}
+
+.day-picker-day {
+}
+.day-picker-day button {
+  color: var(--color-low-emphasis);
+  border-radius: 50%;
+  border: none;
+  background: none;
+  box-shadow: none;
+
+  text-align: center;
+  cursor: pointer;
+
+  padding: 6px;
+  width: 30px;
+  height: 30px;
+
+  &:hover {
+    background: var(--color-menu-hover);
+  }
+}
+.day-picker-day.selected button {
+  font-weight: bold;
+  background: var(--color-menu-selected);
+}
+.day-picker-day.disabled button {
+  color: var(--color-disabled);
+  &:hover {
+    background: none;
+    cursor: default;
+  }
 }
 
 abbr[title].day-picker-weekday,
@@ -99,7 +137,6 @@ abbr[title].day-picker-weekday,
   display: table-row;
 }
 
-.day-picker-day,
 .DayPicker-Day {
   display: table-cell;
   padding: 0.5em;

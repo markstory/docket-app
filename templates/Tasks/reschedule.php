@@ -151,7 +151,9 @@ echo $this->Form->hidden('redirect', ['value' => $referer]);
                             'aria-label' => $cell['date']->format('d M D Y'),
                         ];
                         $class = ['day-picker-day'];
+                        $disabled = false;
                         if (!$cell['available']) :
+                            $disabled = true;
                             $class[] = 'disabled';
                             $attributes['aria-disabled'] = true;
                         endif;
@@ -164,7 +166,7 @@ echo $this->Form->hidden('redirect', ['value' => $referer]);
                         <td <?= $this->Html->templater()->formatAttributes($attributes) ?>>
                             <?= $this->Form->button(
                                 $cell['date']->format('d'),
-                                ['name' => 'due_on', 'value' => $cell['date']->format('Y-m-d')]
+                                ['name' => 'due_on', 'value' => $cell['date']->format('Y-m-d'), 'disabled' => $disabled]
                             ) ?>
                         </td>
                     <?php endforeach; ?>
