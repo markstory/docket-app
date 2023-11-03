@@ -1,10 +1,18 @@
-.day-picker,
+.day-picker-menuitem {
+  &:hover {
+    background: none;
+  }
+}
+
 .DayPicker {
   position: relative;
   font-size: $font-size-normal;
 }
 .day-picker {
   background: var(--color-bg);
+  padding: 0 8px;
+  position: relative;
+  font-size: $font-size-normal;
 }
 
 .day-picker-month {
@@ -73,6 +81,10 @@
   margin-top: 1em;
 }
 
+.day-picker-weekdays th {
+  padding-bottom: calc($space / 2);
+}
+
 .DayPicker-WeekdaysRow {
   display: table-row;
 }
@@ -98,8 +110,10 @@
   background: none;
   box-shadow: none;
 
-  text-align: center;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   padding: 6px;
   width: 30px;
@@ -121,7 +135,16 @@
   }
 }
 
-abbr[title].day-picker-weekday,
+abbr[title].day-picker-weekday {
+  padding: 0.5em;
+  color: var(--color-low-emphasis);
+  text-align: center;
+  font-size: $font-size-small;
+  font-weight: normal;
+
+  border-bottom: none;
+  text-decoration: none;
+}
 .DayPicker-Weekday abbr[title] {
   border-bottom: none;
   text-decoration: none;

@@ -74,7 +74,6 @@ $menuItem = function (string $title, string $icon, string $id, array $data) use 
     <?php $menuItem('Later', 'clock', 'later', ['due_on' => '']) ?>
 </div>
 
-<div role="menuitem">
 <?php
 $current = $today;
 $begin = $current;
@@ -116,65 +115,66 @@ while ($curVal <= $end) {
 
     $curVal = $curVal->addDays(1);
 }
-
+?>
+<div class="day-picker-menuitem">
+<?php
 echo $this->Form->create($task, [
     'url' => $taskEditUrl,
     'hx-post' => $this->Url->build($taskEditUrl),
     'hx-target' => 'main.main',
+    'class' => 'day-picker'
 ]);
 echo $this->Form->hidden('redirect', ['value' => $referer]);
 ?>
-    <div class="day-picker">
-    <?php foreach ($grouped as $month => $weeks) : ?>
-        <table class="day-picker-month" cellspacing="0" cellpadding="0">
-            <caption class="day-picker-caption"><?= h($month) ?></caption>
-            <thead class="day-picker-weekdays">
-                <tr>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Sunday">Su</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Monday">Mo</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Tuesday">Tu</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Wednesday">We</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Thursday">Th</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Friday">Fr</abbr></th>
-                    <th><abbr class="day-picker-weekday" role="columnheader" title="Saturday">Sa</abbr></th>
-                </tr>
-            </thead>
-            <tbody class="day-picker-body">
-            <?php foreach ($weeks as $weekNum => $week) : ?>
-                <tr class="day-picker-week">
-                    <?php foreach ($week as $cell) :
-                        if ($cell === null) :
-                            echo '<td class="day-picker-day disabled" role="gridcell"> </td>';
-                            continue;
-                        endif;
-                        $attributes = [
-                            'aria-label' => $cell['date']->format('d M D Y'),
-                        ];
-                        $class = ['day-picker-day'];
-                        $disabled = false;
-                        if (!$cell['available']) :
-                            $disabled = true;
-                            $class[] = 'disabled';
-                            $attributes['aria-disabled'] = true;
-                        endif;
-                        if ($cell['selected']) :
-                            $class[] = 'selected';
-                            $attributes['aria-selected'] = true;
-                        endif;
-                        $attributes['class'] = $class;
-                        ?>
-                        <td <?= $this->Html->templater()->formatAttributes($attributes) ?>>
-                            <?= $this->Form->button(
-                                $cell['date']->format('d'),
-                                ['name' => 'due_on', 'value' => $cell['date']->format('Y-m-d'), 'disabled' => $disabled]
-                            ) ?>
-                        </td>
-                    <?php endforeach; ?>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endforeach; ?>
-    </div>
-</div>
+<?php foreach ($grouped as $month => $weeks) : ?>
+    <table class="day-picker-month" cellspacing="0" cellpadding="0">
+        <caption class="day-picker-caption"><?= h($month) ?></caption>
+        <thead class="day-picker-weekdays">
+            <tr>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Sunday">Su</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Monday">Mo</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Tuesday">Tu</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Wednesday">We</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Thursday">Th</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Friday">Fr</abbr></th>
+                <th><abbr class="day-picker-weekday" role="columnheader" title="Saturday">Sa</abbr></th>
+            </tr>
+        </thead>
+        <tbody class="day-picker-body">
+        <?php foreach ($weeks as $weekNum => $week) : ?>
+            <tr class="day-picker-week">
+                <?php foreach ($week as $cell) :
+                    if ($cell === null) :
+                        echo '<td class="day-picker-day disabled" role="gridcell"> </td>';
+                        continue;
+                    endif;
+                    $attributes = [
+                        'aria-label' => $cell['date']->format('d M D Y'),
+                    ];
+                    $class = ['day-picker-day'];
+                    $disabled = false;
+                    if (!$cell['available']) :
+                        $disabled = true;
+                        $class[] = 'disabled';
+                        $attributes['aria-disabled'] = true;
+                    endif;
+                    if ($cell['selected']) :
+                        $class[] = 'selected';
+                        $attributes['aria-selected'] = true;
+                    endif;
+                    $attributes['class'] = $class;
+                    ?>
+                    <td <?= $this->Html->templater()->formatAttributes($attributes) ?>>
+                        <?= $this->Form->button(
+                            $cell['date']->format('j'),
+                            ['name' => 'due_on', 'value' => $cell['date']->format('Y-m-d'), 'disabled' => $disabled]
+                        ) ?>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endforeach; ?>
 <?= $this->Form->end() ?>
+</div>
