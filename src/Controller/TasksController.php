@@ -7,6 +7,7 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\View\JsonView;
 use InvalidArgumentException;
+use Exception;
 
 /**
  * Tasks Controller
@@ -369,6 +370,14 @@ class TasksController extends AppController
             $this->Authorization->authorize($project, 'edit');
             $task->section_id = null;
             $task->project = $project;
+        }
+        $dueString = $this->request->getData('due_on_string');
+        if ($dueString) {
+            try {
+                $task->due_on = FrozenDate::parse($dueString);
+            } catch (Exception $e) {
+                $task->setError('due_on', 'Invalid date string.');
+            }
         }
 
         $success = false;

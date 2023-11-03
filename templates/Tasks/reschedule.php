@@ -50,6 +50,20 @@ $menuItem = function (string $title, string $icon, string $id, array $data) use 
 };
 
 ?>
+<div role="menuitem">
+    <?= $this->Form->create($task, [
+        'hx-post' => $this->Url->build($taskEditUrl),
+        'url' => $taskEditUrl,
+        'hx-target' => 'main.main',
+    ]) ?>
+    <?= $this->Form->hidden('redirect', ['value' => $referer]) ?>
+    <?= $this->Form->control('due_on_string', [
+        'label' => false,
+        'placeholder' => 'Type a due date',
+        'value' => $taskDue ? $taskDue->format('Y-m-d') : ''
+    ]) ?>
+    <?= $this->Form->end() ?>
+</div>
 <?php if (!$isToday) : ?>
 <div role="menuitem" class="today">
     <?php $menuItem('Today', 'clippy', 'today', ['due_on' => $today->format('Y-m-d'), 'evening' => '0']) ?>
