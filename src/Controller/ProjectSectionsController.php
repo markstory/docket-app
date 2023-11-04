@@ -35,6 +35,10 @@ class ProjectSectionsController extends AppController
         $section = $this->ProjectSections->newEmptyEntity();
         $referer = $this->getReferer();
 
+        $this->set('referer', $referer);
+        $this->set('section', $section);
+        $this->set('project', $project);
+
         if ($this->request->is(['post', 'put'])) {
             $serialize = [];
             $redirect = null;
@@ -49,6 +53,7 @@ class ProjectSectionsController extends AppController
                 $success = true;
                 $redirect = $referer;
             }
+            $this->set('errors', $this->flattenErrors($section->getErrors()));
 
             return $this->respond([
                 'success' => $success,
@@ -58,10 +63,6 @@ class ProjectSectionsController extends AppController
                 'flashError' => __('The section could not be saved. Please, try again.'),
             ]);
         }
-        $this->set('referer', $referer);
-        $this->set('errors', $this->flattenErrors($section->getErrors()));
-        $this->set('section', $section);
-        $this->set('project', $project);
     }
 
     /**
@@ -88,6 +89,9 @@ class ProjectSectionsController extends AppController
         $section = $this->ProjectSections->get($id);
         $this->Authorization->authorize($project, 'edit');
 
+        $this->set('section', $section);
+        $this->set('project', $project);
+
         if ($this->request->is(['post', 'put'])) {
             $serialize = [];
             $redirect = null;
@@ -104,6 +108,7 @@ class ProjectSectionsController extends AppController
                 $this->set('errors', $this->flattenErrors($section->getErrors()));
                 $serialize[] = 'errors';
             }
+
             return $this->respond([
                 'success' => $success,
                 'serialize' => $serialize,
@@ -112,9 +117,6 @@ class ProjectSectionsController extends AppController
                 'redirect' => $redirect,
             ]);
         }
-
-        $this->set('section', $section);
-        $this->set('project', $project);
     }
 
     public function deleteConfirm(string $projectSlug, string $id)
