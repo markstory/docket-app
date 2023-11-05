@@ -1,9 +1,13 @@
+import htmx from 'htmx.org';
+
 class DropDown extends HTMLElement {
+  private revealBackup: Node | undefined = undefined;
+
   connectedCallback() {
     const triggerTarget = this.getAttribute('trigger') ?? 'button';
 
     const trigger = this.querySelector(triggerTarget) as HTMLElement | null;
-    const reveal = this.querySelector('drop-down-menu') as HTMLElement | null;
+    let reveal = this.querySelector('drop-down-menu') as HTMLElement | null;
     if (trigger === null || reveal === null) {
       throw new Error(
         `Could not find one of trigger=${triggerTarget} drop-down-menu elements.`
@@ -22,8 +26,24 @@ class DropDown extends HTMLElement {
         return;
       }
       portal.style.display = 'none';
-      this.appendChild(portal.children[0]);
+      portal.innerHTML = '';
+      if (this.revealBackup) {
+        reveal = this.revealBackup.cloneNode(true) as HTMLElement;
+        htmx.process(reveal);
+        attachRevealEvents(reveal);
+        this.appendChild(reveal);
+      }
     };
+
+    function attachRevealEvents(element) {
+      element.addEventListener('click', function (evt) {
+        evt.stopPropagation();
+        const target = evt.target;
+        if (target instanceof HTMLElement && target.getAttribute('dropdown-close')) {
+          removeMenu();
+        }
+      });
+    }
 
     function reposition() {
       if (!trigger || !reveal || !portal) {
@@ -47,8 +67,13 @@ class DropDown extends HTMLElement {
       }
     }
 
-    trigger.addEventListener('click', function (evt) {
+    attachRevealEvents(reveal);
+    trigger.addEventListener('click', evt => {
       evt.stopPropagation();
+      if (reveal) {
+        this.revealBackup = reveal.cloneNode(true);
+      }
+
       if (portal.style.display !== 'none') {
         // If the portal is open force it closed.
         const close = new CustomEvent('close', {
@@ -58,22 +83,16 @@ class DropDown extends HTMLElement {
         document.dispatchEvent(close);
       }
       // Move menu contents to portal element
-      portal.appendChild(reveal);
-      reposition();
+      if (reveal) {
+        portal.appendChild(reveal);
+        reposition();
+      }
 
       // Setup hide handler and menu reposition event
       // for menus that change the shape of the contents.
       document.addEventListener('click', removeMenu);
       document.addEventListener('close', removeMenu);
       document.addEventListener('reposition', reposition);
-    });
-
-    reveal.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      const target = evt.target;
-      if (target instanceof HTMLElement && target.getAttribute('dropdown-close')) {
-        removeMenu();
-      }
     });
   }
 
