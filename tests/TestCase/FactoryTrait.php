@@ -73,6 +73,13 @@ trait FactoryTrait
         return $apiTokens->saveOrFail($token);
     }
 
+    protected function getUser($email): User
+    {
+        $users = $this->fetchTable('Users');
+
+        return $users->findByEmail($email)->firstOrFail();
+    }
+
     protected function makeUser($email, $props = []): User
     {
         $users = $this->fetchTable('Users');
