@@ -57,8 +57,8 @@ $menuItem = function (string $title, string $icon, string $id, array $data) use 
         'hx-target' => 'main.main',
     ]) ?>
     <?= $this->Form->hidden('redirect', ['value' => $referer]) ?>
-    <?= $this->Form->control('due_on_string', [
-        'label' => false,
+    <?= $this->Form->input('due_on_string', [
+        'class' => 'form-input-like',
         'placeholder' => 'Type a due date',
         'value' => $taskDue ? $taskDue->format('Y-m-d') : ''
     ]) ?>
@@ -67,23 +67,43 @@ $menuItem = function (string $title, string $icon, string $id, array $data) use 
 <?php if (!$isToday) : ?>
 <div role="menuitem" class="today">
     <?php $menuItem('Today', 'clippy', 'today', ['due_on' => $today->format('Y-m-d'), 'evening' => '0']) ?>
-<?php endif; ?>
 </div>
+<?php endif; ?>
 <?php if (!$isThisEvening) : ?>
 <div role="menuitem" class="evening">
     <?php $menuItem('This Evening', 'moon', 'evening', ['due_on' => $today->format('Y-m-d'), 'evening' => '1']) ?>
-<?php endif; ?>
 </div>
+<?php endif; ?>
 <?php if (!$isTomorrow) : ?>
 <div role="menuitem" class="tomorrow">
     <?php $menuItem('Tomorrow', 'sun', 'tomorrow', ['due_on' => $tomorrow->format('Y-m-d')]) ?>
-<?php endif; ?>
 </div>
+<?php endif; ?>
 <?php if ($isWeekend || $isFriday) : ?>
 <div role="menuitem" class="tomorrow">
     <?php $menuItem('Monday', 'calendar', 'monday', ['due_on' => $monday->format('Y-m-d')]) ?>
-<?php endif; ?>
 </div>
+<?php endif; ?>
+<?php if ($futureDate && $isEvening && $taskDue) : ?>
+<div role="menuitem" class="tomorrow">
+    <?php $menuItem(
+        $task->getCompactDueOn() . ' day',
+        'sun',
+        'to-day',
+        ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '0']
+    ) ?>
+</div>
+<?php endif; ?>
+<?php if ($futureDate && !$isEvening && $taskDue) : ?>
+<div role="menuitem" class="evening">
+    <?php $menuItem(
+        $task->getCompactDueOn() . ' evening',
+        'moon',
+        'to-evening',
+        ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '1']
+    ) ?>
+</div>
+<?php endif; ?>
 <div role="menuitem" class="not-due">
     <?php $menuItem('Later', 'clock', 'later', ['due_on' => '']) ?>
 </div>

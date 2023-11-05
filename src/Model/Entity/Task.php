@@ -78,4 +78,29 @@ class Task extends Entity
     {
         $this->deleted_at = null;
     }
+
+    public function getCompactDueOn(): string
+    {
+        if (!$this->due_on) {
+            return '';
+        }
+        $delta = FrozenDate::today()->diffInDays($this->due_on, false);
+        // In the past? Show the date.
+        if ($delta < -90) {
+            return $this->due_on->format('MMM d yyyy');
+        }
+        if ($delta < 0) {
+            return $this->due_on->format('MMM d');
+        }
+        if ($delta < 1) {
+            return 'Today';
+        } else if ($delta < 2) {
+            return 'Tomorrow';
+        }
+        if ($delta < 7) {
+            return $this->due_on->format('iiii');
+        }
+
+        return $this->due_on->format('MMM d');
+    }
 }
