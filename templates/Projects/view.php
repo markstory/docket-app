@@ -5,7 +5,10 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Task[] $tasks
  */
 $this->setLayout('sidebar');
-$this->assign('title', $project->name . " Project");
+$this->assign('title', $project->name . ' Project');
+
+$this->set('showGlobalAdd', true);
+$this->set('globalAddContext', ['project_id' => $project->id]);
 
 $taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $project->id]);
 
@@ -48,7 +51,7 @@ foreach ($tasks as $task) {
     </div>
 
     <div hx-ext="section-sorter" section-sorter-slug="<?= h($project->slug) ?>">
-        <? // Tasks in sections ?>
+        <?php // Tasks in sections ?>
         <?php foreach ($project->sections as $section) : ?>
         <div class="section-container" data-testid="section" data-id="<?= h($section->id) ?>">
             <div class="controls" id="section-controls-<?= h($section->id) ?>">

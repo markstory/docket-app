@@ -67,6 +67,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: calc($space * 2);
 }
 .heading-actions-item {
   display: flex;
@@ -77,8 +78,10 @@
   display: flex;
   align-items: center;
 
-  font-size: $font-size-normal;
   text-decoration: none;
+  &:visited {
+    color: var(--color-primary);
+  }
 }
 .heading-icon svg {
   margin-top: 3px;

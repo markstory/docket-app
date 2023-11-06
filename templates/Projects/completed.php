@@ -13,11 +13,11 @@ $this->assign('title', $project->name . ' Completed Tasks');
         <div class="heading-actions-item">
             <h1 class="heading-icon">
                 <?= $this->Html->link(
-                    $this->element('icons/arrowleft16'),
+                    $this->element('icons/arrowleft16') . h($project->name),
                     ['_name' => 'projects:view', 'slug' => $project->slug],
                     ['class' => 'heading-back', 'escape' => false]
                 ) ?>
-                <?= h($project->name) ?> - Completed Tasks
+                / Completed Tasks
             </h1>
         </div>
     </div>

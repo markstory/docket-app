@@ -2,7 +2,12 @@
 declare(strict_types=1);
 /**
  * Renders the view with the application sidebar.
+ *
+ * @var \App\Model\Entity\User $identity
+ * @var bool? $showGlobalAdd
+ * @var array $globalAddContext
  */
+
 // If we're not handling an HX-Request wrap the layout
 // in page chrome. When we're handling htmx requests,
 // we swap main.main.
@@ -64,13 +69,24 @@ endif;
             class="expander"
             title="Show project menu"
         >
-            <!-- Need to get the svg for this.
-          <Icon icon="kebab" width="large" />
-            -->
-            ...
+            <?= $this->element('icons/kebab16') ?> 
         </button>
     </section>
     <section class="content">
         <?= $this->fetch('content'); ?>
+        <?php if (isset($showGlobalAdd) && $showGlobalAdd) : ?>
+            <?= $this->Html->link(
+                $this->element('icons/plus16', ['size' => 64]),
+                ['_name' => 'tasks:add', '?' => $taskAddContext ?? []],
+                [
+                    'escape' => false,
+                    'class' => 'button-global-add button-primary',
+                    'data-testid' => 'global-task-add',
+                    'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $taskAddContext ?? []]),
+                    'hx-target' => 'main.main',
+                    'hx-swap' => 'beforeend',
+                ]
+            ) ?>
+        <?php endif; ?>
     </section>
 </div>
