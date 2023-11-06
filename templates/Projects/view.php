@@ -10,7 +10,7 @@ $this->assign('title', $project->name . ' Project');
 $this->set('showGlobalAdd', true);
 $this->set('globalAddContext', ['project_id' => $project->id]);
 
-$taskAddUrl = $this->Url->build(['_name' => 'tasks:add', 'project_id' => $project->id]);
+$taskAddUrl = $this->Url->build(['_name' => 'tasks:add', '?' => ['project_id' => $project->id]]);
 
 $groupedTasks = [];
 foreach ($tasks as $task) {
