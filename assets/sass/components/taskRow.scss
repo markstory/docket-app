@@ -28,6 +28,9 @@
     color: var(--color-fg);
     display: block;
   }
+  .body {
+    flex-grow: 1;
+  }
 
   .attributes {
     display: flex;

@@ -2,10 +2,15 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Task $task
- * @var bool $showProject
- * @var bool showDueOn
+ * @var bool? $showProject
+ * @var bool? showDueOn
+ * @var bool? $restore
  */
 $taskUrl = $this->Url->build(['_name' => 'tasks:view', $task->id]);
+
+$showProject ??= true;
+$showDueOn ??= false;
+$restore ??= false;
 
 $taskCheckboxUrl = $this->Url->build([
     '_name' => $task->completed ? 'tasks:incomplete' : 'tasks:complete',
@@ -16,7 +21,6 @@ if ($task->completed) :
     $className .= ' is-completed';
 endif;
 
-// TODO implement restore view for trashbin
 // TODO add/remove `is-completed` class on checkbox change.
 // TODO use custom CSS checkbox
 ?>

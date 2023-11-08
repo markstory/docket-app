@@ -31,7 +31,7 @@ class TasksController extends AppController
             return false;
         }
 
-        return !in_array($this->request->getParam('action'), ['complete', 'incomplete', 'deleteConfirm']);
+        return !in_array($this->request->getParam('action'), ['deleted', 'complete', 'incomplete', 'deleteConfirm']);
     }
 
     protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
