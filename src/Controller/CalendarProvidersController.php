@@ -24,6 +24,11 @@ class CalendarProvidersController extends AppController
         return [JsonView::class];
     }
 
+    protected function useInertia()
+    {
+        return !in_array($this->request->getParam('action'), ['index']);
+    }
+
     public function createFromGoogle(GoogleClient $client)
     {
         $token = $this->request->getData('accessToken');
@@ -114,7 +119,6 @@ class CalendarProvidersController extends AppController
             }
         }
         $this->set('unlinked', $calendars);
-
         $this->set(compact('activeProvider', 'providers', 'referer'));
 
         return $this->respond([
