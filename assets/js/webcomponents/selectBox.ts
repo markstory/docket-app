@@ -58,10 +58,21 @@ class SelectBox extends HTMLElement {
       menu.setAttribute('val', value);
       this.setAttribute('val', value);
     };
+    const updateSelected = (value: string) => {
+      const options = this.querySelectorAll('select-box-option');
+      for (const option of options) {
+        console.log(option);
+        if (option.getAttribute('selected') === 'selected') {
+          const contents = option.innerHTML;
+          trigger.setAttribute('selectedhtml', contents);
+        }
+      }
+    };
 
     // Set the initial value
     const value = this.getAttribute('val') ?? '';
     setValue(value);
+    updateSelected(value);
 
     // Open and close the menu
     this.addEventListener('open', evt => {

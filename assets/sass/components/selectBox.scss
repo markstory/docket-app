@@ -53,13 +53,21 @@ select-box-current {
     top: 8px;
     right: 8px;
 
-    // downwards chevron
-    content: '\002304';
+    // base64 encoded icons/chevron16
+    content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik02IDguODI1Yy0uMiAwLS40LS4xLS41LS4ybC0zLjMtMy4zYy0uMy0uMy0uMy0uOCAwLTEuMWMuMy0uMy44LS4zIDEuMSAwbDIuNyAyLjdsMi43LTIuN2MuMy0uMy44LS4zIDEuMSAwYy4zLjMuMy44IDAgMS4xbC0zLjIgMy4yYy0uMi4yLS40LjMtLjYuM1oiLz48L3N2Zz4=');
     font-size: 18px;
     line-height: 18px;
   }
-
 }
+
+select-box.select-box-mini {
+  min-width: 50px;
+
+  select-box-current[open="true"] input {
+    width: 20px;
+  }
+}
+
 
 select-box-menu {
   display: none;

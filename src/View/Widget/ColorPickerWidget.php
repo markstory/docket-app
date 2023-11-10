@@ -23,6 +23,7 @@ class ColorPickerWidget extends BasicWidget
         'colors' => [],
         'data-niceselect' => 1,
         'tabindex' => '-1',
+        'showName' => true,
         'templateVars' => [],
     ];
 
@@ -44,7 +45,10 @@ class ColorPickerWidget extends BasicWidget
 
         $options = [];
         foreach ($colors as $color) {
-            $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]) . h($color['name']);
+            $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]);
+            if ($data['showName']) {
+                $optionBody .=  ' ' . h($color['name']);
+            }
             $optAttrs = [
                 'selected' => $color['id'] == $selected,
             ];
