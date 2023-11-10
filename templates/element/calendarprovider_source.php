@@ -52,6 +52,7 @@ $editUrl = ['_name' => 'calendarsources:edit', 'providerId' => $providerId, 'id'
             ]
         ) ?>
         <?= $this->Form->postButton(
+            // TODO add delete confirm?
             $this->element('icons/trash16') . ' Unlink',
             $deleteUrl,
             [
