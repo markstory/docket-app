@@ -20,6 +20,11 @@ class CalendarSourcesController extends AppController
         return [JsonView::class];
     }
 
+    public function useInertia(): bool
+    {
+        return in_array($this->request->getParam('action'), ['confirmDelete']);
+    }
+
     protected function getSource(): CalendarSource
     {
         $query = $this->CalendarSources
@@ -193,5 +198,13 @@ class CalendarSourcesController extends AppController
             'flashError' => __('Calendar not deleted. Please try again.'),
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
         ]);
+    }
+
+    public function deleteConfirm()
+    {
+        $calendarSource = $this->getSource();
+        $this->Authorization->authorize($calendarSource->calendar_provider, 'edit');
+
+        $this->set('calendarSource', $calendarSource);
     }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 $createUrl = ['_name' => 'calendarsources:add', 'providerId' => $providerId];
 $refreshUrl = ['_name' => 'calendarsources:sync', 'providerId' => $providerId, 'id' => $source->id];
-$deleteUrl = ['_name' => 'calendarsources:delete', 'providerId' => $providerId, 'id' => $source->id];
+$deleteConfirmUrl = ['_name' => 'calendarsources:deleteconfirm', 'providerId' => $providerId, 'id' => $source->id];
 $editUrl = ['_name' => 'calendarsources:edit', 'providerId' => $providerId, 'id' => $source->id];
 ?>
 <li>
@@ -51,15 +51,18 @@ $editUrl = ['_name' => 'calendarsources:edit', 'providerId' => $providerId, 'id'
                 'escapeTitle' => false,
             ]
         ) ?>
-        <?= $this->Form->postButton(
+        <?= $this->Html->link(
             // TODO add delete confirm?
             $this->element('icons/trash16') . ' Unlink',
-            $deleteUrl,
+            $deleteConfirmUrl,
             [
-                'class' => 'button-danger',
-                'hx-post' => $this->Url->build($deleteUrl),
-                'hx-target' => 'main.main',
                 'escapeTitle' => false,
+                'class' => 'button-danger',
+                'hx-get' => $this->Url->build($deleteConfirmUrl),
+                'hx-target' => 'body',
+                'hx-swap' => 'beforeend',
+                'data-testid' => 'delete',
+                'dropdown-close' => true,
             ]
         ) ?>
     <?php elseif ($mode === 'create') : ?>
