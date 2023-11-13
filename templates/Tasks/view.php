@@ -33,6 +33,7 @@ event, swallows it and updates the form in the parent form.
     <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
     <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
     <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
+    <?= $this->Form->checkbox("subtasks.{$i}.completed", ['checked' => $subtask->completed]) ?>
     <?= $this->Form->control("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
 <!--
 Could do an hx-post to subtask remove endpoint.
