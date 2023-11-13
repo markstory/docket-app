@@ -7,6 +7,7 @@ use App\Model\Entity\Task;
 use App\Model\Entity\User;
 use Cake\Datasource\EntityInterface;
 use Cake\I18n\FrozenDate;
+use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -68,6 +69,7 @@ class TasksTable extends Table
                 'Subtasks.ranking' => 'ASC',
                 'Subtasks.title' => 'ASC',
             ],
+            'saveStrategy' => HasMany::SAVE_REPLACE,
         ]);
         $this->belongsToMany('Labels', [
             'propertyName' => 'labels',
