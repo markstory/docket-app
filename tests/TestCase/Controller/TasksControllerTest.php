@@ -865,7 +865,7 @@ class TasksControllerTest extends TestCase
             'subtasks' => [
                 ['title' => 'first step'],
                 ['title' => 'second step'],
-            ]
+            ],
         ]);
         $this->assertResponseCode(200);
         $this->assertFlashElement('flash/success');
@@ -879,6 +879,32 @@ class TasksControllerTest extends TestCase
         $this->assertSame('second step', $updated->subtasks[1]->title);
         $this->assertEquals(2, $updated->subtasks[1]->ranking);
         $this->assertNull($updated->subtasks[1]->completed);
+    }
+
+    public function testEditCreateSubtasksNoBlank(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'evening' => true,
+            'subtasks' => [
+                ['title' => 'first step'],
+                ['title' => ''],
+            ],
+        ]);
+        $this->assertResponseCode(200);
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        $this->assertSame('first step', $updated->subtasks[0]->title);
+        $this->assertEquals(1, $updated->subtasks[0]->ranking);
+        $this->assertNull($updated->subtasks[0]->completed);
     }
 
     public function testEditUpdateSubtasks(): void

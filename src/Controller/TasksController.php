@@ -381,6 +381,14 @@ class TasksController extends AppController
                 $task->setError('due_on', 'Invalid date string.');
             }
         }
+        // Remove the last subtask if it has no title.
+        // The view form contains a blank subtask
+        if (!empty($task->subtasks)) {
+            $lastIndex = count($task->subtasks) - 1;
+            if (trim($task->subtasks[$lastIndex]->title) === '') {
+                unset($task->subtasks[$lastIndex]);
+            }
+        }
 
         $success = false;
         $serialize = [];
