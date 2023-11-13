@@ -31,7 +31,7 @@ class TasksController extends AppController
             return false;
         }
 
-        return !in_array($this->request->getParam('action'), ['deleted', 'complete', 'incomplete', 'deleteConfirm']);
+        return !in_array($this->request->getParam('action'), ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view']);
     }
 
     protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
@@ -424,7 +424,7 @@ class TasksController extends AppController
         if (in_array($mode, static::EDIT_MODES, true)) {
             $template = $mode;
         }
-        if ($template === 'editproject') {
+        if ($template === 'editproject' || $template === 'view') {
             $this->set('projects', $this->Tasks->Projects->find('active')->find('top'));
         }
 
