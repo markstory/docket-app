@@ -36,8 +36,8 @@ class Subtask extends Entity
         'body' => true,
         'ranking' => true,
         'completed' => true,
-        'created' => true,
-        'modified' => true,
+        'created' => false,
+        'modified' => false,
         'task' => true,
     ];
 

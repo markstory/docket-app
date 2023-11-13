@@ -47,13 +47,13 @@ class Task extends Entity
         'due_on' => true,
         'completed' => true,
         'evening' => true,
+        'subtasks' => true,
         'child_order' => false,
         'day_order' => false,
         'created' => false,
         'modified' => false,
         'deleted_at' => false,
         'project' => false,
-        'subtasks' => false,
         'labels' => false,
     ];
 

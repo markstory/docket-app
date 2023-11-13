@@ -358,10 +358,12 @@ class TasksController extends AppController
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
+            'contain' => ['Projects', 'Subtasks'],
         ]);
         $this->Authorization->authorize($task);
-        $task = $this->Tasks->patchEntity($task, $this->request->getData());
+        $task = $this->Tasks->patchEntity($task, $this->request->getData(), [
+            'associated' => ['Subtasks'],
+        ]);
 
         // If the project has changed ensure the new project belongs
         // to the current user.
@@ -382,7 +384,7 @@ class TasksController extends AppController
 
         $success = false;
         $serialize = [];
-        if ($this->Tasks->save($task)) {
+        if ($this->Tasks->save($task, ['associated' => ['Subtasks']])) {
             $success = true;
             $serialize[] = 'task';
             $this->set('task', $task);
