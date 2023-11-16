@@ -254,6 +254,13 @@ class SelectBoxCurrent extends HTMLElement {
       });
       this.dispatchEvent(open);
     });
+    input.addEventListener('blur', () => {
+      const close = new CustomEvent('close', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.dispatchEvent(close);
+    });
     this.addEventListener('click', evt => {
       evt.preventDefault();
       evt.stopPropagation();
