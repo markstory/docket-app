@@ -57,7 +57,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         'text' => $this->element('icons/note16') . 'Notes',
         'escape' => false,
     ],
-    'rows' => 5
+    'rows' => 5,
 ]) ?>
 </div>
 

@@ -100,7 +100,7 @@ class SubtasksTable extends Table
 
     public function beforeSave(EventInterface $event, Subtask $subtask)
     {
-        if (!$subtask->ranking) {
+        if ($subtask->ranking === null) {
             $subtask->ranking = $this->getNextRanking($subtask->task_id);
         }
     }
