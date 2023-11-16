@@ -4,18 +4,6 @@
   svg {
     margin-right: calc($space / 2);
   }
-  .today svg {
-    color: var(--color-due-today);
-  }
-  .tomorrow svg {
-    color: var(--color-due-tomorrow);
-  }
-  .evening svg {
-    color: var(--color-due-evening);
-  }
-  .not-due svg {
-    color: var(--color-due-none);
-  }
 
   input[type="text"] {
     padding: $space;

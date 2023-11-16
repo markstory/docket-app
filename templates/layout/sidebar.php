@@ -33,13 +33,13 @@ endif;
                     <ul class="links">
                         <li>
                             <a href="<?= $this->Url->build(['_name' => 'tasks:today']) ?>">
-                                <i class="today"><?= $this->element('icons/clippy16') ?></i>
+                                <i class="icon-today"><?= $this->element('icons/clippy16') ?></i>
                                 Today
                             </a>
                         </li>
                         <li>
                             <a href="<?= $this->Url->build(['_name' => 'tasks:upcoming']) ?>">
-                                <i class="upcoming"><?= $this->element('icons/calendar16') ?></i>
+                                <i class="icon-tomorrow"><?= $this->element('icons/calendar16') ?></i>
                                 Upcoming
                             </a>
                         </li>

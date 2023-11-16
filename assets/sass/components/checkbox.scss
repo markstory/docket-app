@@ -4,6 +4,7 @@ $checkbox-size: 16px;
   position: relative;
   min-width: $checkbox-size;
   width: $checkbox-size;
+  margin: 0;
 
   .box {
     display: block;

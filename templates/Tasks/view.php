@@ -15,61 +15,84 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 <div class="task-view">
 <?= $this->Form->create($task, [
     'url' => $editUrl,
+    'class' => 'form-stacked form-icon-headers',
 ]) ?>
 <?= $this->Form->hidden('redirect', ['value' => $referer]) ?>
 
 <div class="task-view-summary">
-    <div class="title">
+    <div class="task-header">
         <?= $this->element('task_checkbox') ?>
-        <?= $this->Form->text('title') ?>
+        <?= $this->Form->text('title', [
+            'class' => 'task-title-input',
+        ]) ?>
     </div>
+    <!-- TODO figure out how to show sections input -->
+    <?= $this->Form->control('project_id', [
+        'label' => [
+            'class' => 'form-section-heading icon-today',
+            'text' => $this->element('icons/directory16') . 'Project',
+            'escape' => false,
+        ],
+        'type' => 'projectpicker',
+        'projects' => $projects,
+    ]) ?>
+    <!--
+    Could make a custom component for this 
+    Have a dropdown (in a portal) that listens for form submission
+    event, swallows it and updates the form in the parent form.
+    -->
+    <?= $this->Form->control('due_on', [
+        'label' => [
+            'class' => 'form-section-heading icon-tomorrow',
+            'text' => $this->element('icons/calendar16') . 'Due On',
+            'escape' => false,
+        ],
+    ]) ?>
 </div>
 
-<!-- TODO figure out how to show sections input -->
-<?= $this->Form->control('project_id', ['type' => 'projectpicker', 'projects' => $projects]) ?>
-<!--
-Could make a custom component for this 
-Have a dropdown (in a portal) that listens for form submission
-event, swallows it and updates the form in the parent form.
--->
-<?= $this->Form->control('due_on') ?>
 <div class="task-notes">
-    <h4 class="heading-button">
-        <?= $this->element('icons/note16') ?>
-        Notes
-    </h4>
-    <?= $this->Form->textarea('body', ['rows' => 5]) ?>
+<?= $this->Form->control('body', [
+    'label' => [
+        'class' => 'form-section-heading icon-not-due',
+        'text' => $this->element('icons/note16') . 'Notes',
+        'escape' => false,
+    ],
+    'rows' => 5
+]) ?>
 </div>
 
-
-<div class="task-subtasks">
-    <h3>
+<div class="form-control">
+    <h3 class="form-section-heading icon-week">
         <?= $this->element('icons/workflow16') ?>
         Sub-tasks
     </h3>
-    <ul>
+    <ul class="task-subtask-list">
     <?php foreach ($task->subtasks ?? [] as $i => $subtask) : ?>
-        <li>
+        <li class="task-subtask">
         <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
         <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
         <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
-        <?= $this->Form->checkbox("subtasks.{$i}.completed", ['checked' => $subtask->completed]) ?>
+        <?= $this->element('task_checkbox', ['name' => "subtasks.{$i}.completed", 'checked' => $subtask->completed]) ?>
         <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
     <!--
     Could do an hx-post to subtask remove endpoint.
     Could also remove the element locally and have endpoint overwrite association data.
     Removing the row locally could be done with the htmx remove-me extension
     -->
-        <?= $this->Form->button("Remove", ['value' => $subtask->id, 'class' => 'button-danger']) ?>
+    <?= $this->Form->button($this->element('icons/trash16'), [
+    'value' => $subtask->id,
+    'class' => 'icon-overdue button-icon',
+    'escapeTitle' => false,
+]) ?>
         </li>
     <?php endforeach ?>
     </ul>
 
     <!-- While this works it creates a new task each time the form is submitted -->
-    <div class="add-subtask">
+    <div class="subtask-addform">
         <?= $this->Form->hidden("subtasks.{$newSubtaskIndex}.task_id", ['value' => $task->id]) ?>
         <?= $this->Form->text("subtasks.{$newSubtaskIndex}.title", ['value' => '', 'placeholder' => 'Create a subtask']) ?>
-        <?= $this->Form->button('Add', ['class' => 'button button-primary']) ?>
+        <?= $this->Form->button('Add', ['class' => 'button button-secondary']) ?>
     </div>
 </div>
 

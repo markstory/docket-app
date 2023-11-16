@@ -134,3 +134,40 @@ textarea {
     }
   }
 }
+
+
+// Form layout with vertical label + input stacking
+.form-stacked {
+  .form-control {
+    flex-direction: column;
+    gap: calc($space);
+    align-items: start;
+    margin-bottom: calc($space * 2);
+  }
+  .form-section-heading {
+    font-size: $font-size-med;
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+  .form-label-group {
+    margin: none;
+  }
+  .tomorrow svg {
+    color: var(--color-tomorrow);
+  }
+}
+
+// Form layout that assumes each .form-control contains a .form-label-group with an
+// icon. The icons are all 16px wide. The layout will shift the inputs to align with the
+// label text, and then shift the form to the right equal to the icon size.
+.form-icon-headers {
+  --shift-width: -16px;
+
+  .task-header,
+  .form-control {
+    margin-left: var(--shift-width);
+  }
+  .form-input {
+    margin-left: calc(var(--shift-width) * -1 + 5px);
+  }
+}

@@ -10,6 +10,17 @@
   .task-quickform {
     padding-top: 0;
   }
+
+  .task-title-input {
+    font-size: $font-size-med;
+    font-weight: bold;
+  }
+  .task-header {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: calc($space * 3);
+  }
 }
 
 @media (max-width: $breakpoint-phone) {
@@ -32,6 +43,7 @@
     text-decoration: none;
   }
 
+  // TODO remove this with react
   .title {
     display: flex;
     align-items: center;
@@ -59,4 +71,21 @@
     margin-right: 0;
     margin-bottom: $space * 3;
   }
+}
+
+.task-subtask-list {
+  list-style: none;
+  padding-left: 0;
+
+  li {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: $space;
+  }
+}
+
+.task-subtask {
+  display: flex;
+  align-items: center;
+  gap: $space;
 }

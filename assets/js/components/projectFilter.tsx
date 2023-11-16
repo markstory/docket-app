@@ -15,7 +15,7 @@ function ProjectFilter(): JSX.Element {
         </li>
         <li>
           <NavLink href="/tasks/upcoming">
-            <InlineIcon icon="calendar" className="upcoming" />
+            <InlineIcon icon="calendar" className="tomorrow" />
             {t('Upcoming')}
           </NavLink>
         </li>
