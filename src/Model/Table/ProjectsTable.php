@@ -183,7 +183,6 @@ class ProjectsTable extends Table
     }
 
     /**
-     *
      * Update the ranking on a list of projectids to match the provided order.
      */
     public function reorder(array $ids): void

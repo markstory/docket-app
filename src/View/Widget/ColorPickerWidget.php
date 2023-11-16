@@ -29,7 +29,7 @@ class ColorPickerWidget extends BasicWidget
 
     public function __construct(
         private StringTemplate $templates,
-        private View $view,
+        private View $view
     ) {
     }
 
@@ -47,7 +47,7 @@ class ColorPickerWidget extends BasicWidget
         foreach ($colors as $color) {
             $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]);
             if ($data['showName']) {
-                $optionBody .=  ' ' . h($color['name']);
+                $optionBody .= ' ' . h($color['name']);
             }
             $optAttrs = [
                 'selected' => $color['id'] == $selected,

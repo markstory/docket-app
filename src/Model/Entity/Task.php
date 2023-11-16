@@ -94,7 +94,7 @@ class Task extends Entity
         }
         if ($delta < 1) {
             return 'Today';
-        } else if ($delta < 2) {
+        } elseif ($delta < 2) {
             return 'Tomorrow';
         }
         if ($delta < 7) {
