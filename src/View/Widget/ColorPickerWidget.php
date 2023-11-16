@@ -28,8 +28,8 @@ class ColorPickerWidget extends BasicWidget
     ];
 
     public function __construct(
-        private StringTemplate $templates,
-        private View $view
+    private StringTemplate $templates,
+    private View $view
     ) {
     }
 
