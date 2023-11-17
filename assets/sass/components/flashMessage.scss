@@ -1,4 +1,14 @@
+@keyframes flash-message-append {
+  from {
+    top: -60px;
+  }
+  to {
+    top: 16px;
+  }
+}
+
 .flash-message {
+  animation: 0.5s ease-out 0s 1 flash-message-append;
   position: fixed;
   left: 50%;
   top: 16px;
