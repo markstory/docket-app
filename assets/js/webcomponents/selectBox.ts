@@ -16,7 +16,7 @@ class SelectBox extends HTMLElement {
       console.error('Missing required select-box-menu element');
       return;
     }
-    const hidden = this.querySelector('input[type="hidden"]') as HTMLInputElement;
+    const hidden = this.querySelector('input') as HTMLInputElement;
     if (!hidden) {
       console.error('Missing required hidden input element');
       return;
@@ -29,13 +29,10 @@ class SelectBox extends HTMLElement {
     }
 
     // Handle clicks outside the root parent element.
-    function hideMenu() {
-      // Remove this listener
-      document.removeEventListener('click', hideMenu);
-
+    const hideMenu = () => {
       menu.style.display = 'none';
       trigger.setAttribute('open', 'false');
-    }
+    };
 
     const openMenu = (evt: Event) => {
       evt.preventDefault();
@@ -48,19 +45,24 @@ class SelectBox extends HTMLElement {
       // Reset current keyboard focus
       this.currentOffset = -1;
       menu.removeAttribute('current');
-
-      // Setup hide handler
-      document.addEventListener('click', hideMenu);
     };
 
     const setValue = (value: string) => {
-      hidden.value = value;
+      if (value !== hidden.value) {
+        hidden.value = value;
+        const change = new Event('change');
+        hidden.dispatchEvent(change);
+      }
       menu.setAttribute('val', value);
       this.setAttribute('val', value);
     };
-    const updateSelected = (value: string) => {
+
+    const updateSelected = (val: string) => {
       const options = this.querySelectorAll('select-box-option');
       for (const option of options) {
+        if (option.getAttribute('value') === val) {
+          option.setAttribute('selected', 'selected');
+        }
         if (option.getAttribute('selected') === 'selected') {
           const contents = option.innerHTML;
           trigger.setAttribute('selectedhtml', contents);
@@ -123,7 +125,6 @@ class SelectBox extends HTMLElement {
         ) as SelectBoxOption | null;
         if (currentOpt) {
           currentOpt.select();
-          hideMenu();
         }
       }
     });
@@ -143,13 +144,6 @@ class SelectBoxMenu extends HTMLElement {
       },
       false
     );
-    this.addEventListener('blur', () => {
-      const close = new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-      });
-      this.dispatchEvent(close);
-    });
   }
 
   attributeChangedCallback(property: string, oldValue: string, newValue: string) {
@@ -254,11 +248,14 @@ class SelectBoxCurrent extends HTMLElement {
       this.dispatchEvent(open);
     });
     input.addEventListener('blur', () => {
-      const close = new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-      });
-      this.dispatchEvent(close);
+      // Delay the blur to close as to let other events run their course.
+      setTimeout(() => {
+        const close = new CustomEvent('close', {
+          bubbles: true,
+          cancelable: true,
+        });
+        this.dispatchEvent(close);
+      }, 200);
     });
     this.addEventListener('click', evt => {
       evt.preventDefault();
