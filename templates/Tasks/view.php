@@ -3,12 +3,14 @@ declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Task $task
  * @var \App\Model\Entity\Project[] $projects
+ * @var \App\Model\Entity\ProjectSection[] $sections
  * @var string $referer
  */
 $this->setLayout('sidebar');
 $this->assign('title', 'Tasks - ' . h($task->title));
 
 $editUrl = ['_name' => 'tasks:edit', 'id' => $task->id];
+$sectionPickerUrl = ['_name' => 'tasks:viewmode', 'mode' => 'projectsection', 'id' => $task->id];
 
 $newSubtaskIndex = count($task->subtasks) + 1;
 ?>
@@ -35,7 +37,18 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         ],
         'type' => 'projectpicker',
         'projects' => $projects,
+        'hx-get' => $this->Url->build($sectionPickerUrl),
+        'hx-target' => '#task-section-container',
+        'hx-trigger' => 'selected',
+        // TODO add loading indicator
     ]) ?>
+    <div id="task-section-container">
+    <?php
+    if ($task->section_id || count($sections)) :
+        echo $this->element('../Tasks/projectsection', ['sections' => $sections]);
+    endif;
+    ?>
+    </div>
     <!--
     Could make a custom component for this 
     Have a dropdown (in a portal) that listens for form submission

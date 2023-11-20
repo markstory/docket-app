@@ -18,7 +18,7 @@ use InvalidArgumentException;
  */
 class TasksController extends AppController
 {
-    public const EDIT_MODES = ['editproject', 'reschedule'];
+    public const EDIT_MODES = ['editproject', 'reschedule', 'projectsection'];
 
     public function viewClasses(): array
     {
@@ -439,6 +439,14 @@ class TasksController extends AppController
         }
         if ($template === 'editproject' || $template === 'view') {
             $this->set('projects', $this->Tasks->Projects->find('active')->find('top'));
+        }
+        if ($task->project_id) {
+            $projectId = $this->request->getQuery('project_id', $task->project_id);
+            $sections = $this->Tasks->Projects->Sections
+                ->find()
+                ->where(['Sections.project_id' => $projectId])
+                ->toArray();
+            $this->set('sections', $sections);
         }
 
         $this->set('task', $task);

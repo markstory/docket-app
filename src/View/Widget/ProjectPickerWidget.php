@@ -59,7 +59,8 @@ class ProjectPickerWidget extends BasicWidget
         $hidden = $this->templates->format('input', [
             'name' => $data['name'],
             'value' => $selected,
-            'type' => 'hidden',
+            'type' => 'text',
+            'attrs' => 'style="display: none"',
         ]);
         $attrs = $this->templates->formatAttributes($data);
 
