@@ -24,6 +24,7 @@ class ProjectPickerWidget extends BasicWidget
         'data-niceselect' => 1,
         'tabindex' => '-1',
         'templateVars' => [],
+        'inputAttrs' => [],
     ];
 
     public function __construct(
@@ -40,7 +41,10 @@ class ProjectPickerWidget extends BasicWidget
         }
         $selected = $data['val'] ?? null;
         $projects = $data['projects'];
-        unset($data['projects'], $data['data-validity-message'], $data['oninvalid'], $data['oninput']);
+        $inputAttrs = $data['inputAttrs'] ?? [];
+        unset($data['projects'], $data['data-validity-message'], $data['oninvalid'], $data['oninput'], $data['inputAttrs']);
+
+        $inputAttrs += ['style' => 'display:none'];
 
         $options = [];
         foreach ($projects as $project) {
@@ -60,7 +64,7 @@ class ProjectPickerWidget extends BasicWidget
             'name' => $data['name'],
             'value' => $selected,
             'type' => 'text',
-            'attrs' => 'style="display: none"',
+            'attrs' => $this->templates->formatAttributes($inputAttrs),
         ]);
         $attrs = $this->templates->formatAttributes($data);
 

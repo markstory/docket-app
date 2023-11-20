@@ -37,17 +37,14 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         ],
         'type' => 'projectpicker',
         'projects' => $projects,
-        'hx-get' => $this->Url->build($sectionPickerUrl),
-        'hx-target' => '#task-section-container',
-        'hx-trigger' => 'selected',
+        'inputAttrs' => [
+            'hx-get' => $this->Url->build($sectionPickerUrl),
+            'hx-target' => '#task-section-container',
+        ]
         // TODO add loading indicator
     ]) ?>
     <div id="task-section-container">
-    <?php
-    if ($task->section_id || count($sections)) :
-        echo $this->element('../Tasks/projectsection', ['sections' => $sections]);
-    endif;
-    ?>
+    <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
     </div>
     <!--
     Could make a custom component for this 
