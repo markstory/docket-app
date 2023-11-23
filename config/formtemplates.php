@@ -20,4 +20,13 @@ return [
         <select-box-menu>{{options}}</select-box-menu>
     </select-box>
     HTML,
+    'due-on' => <<<HTML
+    <due-on {{attrs}}>
+        {{hidden}}
+        <button type="button" class="button button-secondary">
+            {{label}}
+        </button>
+        <due-on-menu>{{options}}</due-on-menu>
+    </due-on>
+    HTML,
 ];

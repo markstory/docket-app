@@ -87,10 +87,10 @@ class Task extends Entity
         $delta = FrozenDate::today()->diffInDays($this->due_on, false);
         // In the past? Show the date.
         if ($delta < -90) {
-            return $this->due_on->format('MMM d yyyy');
+            return $this->due_on->i18nFormat('MMM d yyyy');
         }
         if ($delta < 0) {
-            return $this->due_on->format('MMM d');
+            return $this->due_on->i18nFormat('MMM d');
         }
         if ($delta < 1) {
             return 'Today';
@@ -98,9 +98,9 @@ class Task extends Entity
             return 'Tomorrow';
         }
         if ($delta < 7) {
-            return $this->due_on->format('iiii');
+            return $this->due_on->i18nFormat('iiii');
         }
 
-        return $this->due_on->format('MMM d');
+        return $this->due_on->i18nFormat('MMM d');
     }
 }

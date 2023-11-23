@@ -28,7 +28,6 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             'class' => 'task-title-input',
         ]) ?>
     </div>
-    <!-- TODO figure out how to show sections input -->
     <?= $this->Form->control('project_id', [
         'label' => [
             'class' => 'form-section-heading icon-today',
@@ -40,11 +39,11 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         'inputAttrs' => [
             'hx-get' => $this->Url->build($sectionPickerUrl),
             'hx-target' => '#task-section-container',
-        ]
+        ],
         // TODO add loading indicator
     ]) ?>
     <div id="task-section-container">
-    <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
+        <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
     </div>
     <!--
     Could make a custom component for this 
@@ -57,6 +56,8 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             'text' => $this->element('icons/calendar16') . 'Due On',
             'escape' => false,
         ],
+        'type' => 'dueon',
+        'value' => $task,
     ]) ?>
 </div>
 
@@ -84,16 +85,16 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
         <?= $this->element('task_checkbox', ['name' => "subtasks.{$i}.completed", 'checked' => $subtask->completed]) ?>
         <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
-    <!--
-    Could do an hx-post to subtask remove endpoint.
-    Could also remove the element locally and have endpoint overwrite association data.
-    Removing the row locally could be done with the htmx remove-me extension
-    -->
-    <?= $this->Form->button($this->element('icons/trash16'), [
-    'value' => $subtask->id,
-    'class' => 'icon-overdue button-icon',
-    'escapeTitle' => false,
-]) ?>
+        <!--
+        Could do an hx-post to subtask remove endpoint.
+        Could also remove the element locally and have endpoint overwrite association data.
+        Removing the row locally could be done with the htmx remove-me extension
+        -->
+        <?= $this->Form->button($this->element('icons/trash16'), [
+            'value' => $subtask->id,
+            'class' => 'icon-overdue button-icon',
+            'escapeTitle' => false,
+        ]) ?>
         </li>
     <?php endforeach ?>
     </ul>
@@ -101,7 +102,10 @@ $newSubtaskIndex = count($task->subtasks) + 1;
     <!-- While this works it creates a new task each time the form is submitted -->
     <div class="subtask-addform">
         <?= $this->Form->hidden("subtasks.{$newSubtaskIndex}.task_id", ['value' => $task->id]) ?>
-        <?= $this->Form->text("subtasks.{$newSubtaskIndex}.title", ['value' => '', 'placeholder' => 'Create a subtask']) ?>
+        <?= $this->Form->text("subtasks.{$newSubtaskIndex}.title", [
+            'value' => '',
+            'placeholder' => 'Create a subtask',
+        ]) ?>
         <?= $this->Form->button('Add', ['class' => 'button button-secondary']) ?>
     </div>
 </div>
