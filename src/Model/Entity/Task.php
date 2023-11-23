@@ -98,7 +98,7 @@ class Task extends Entity
             return 'Tomorrow';
         }
         if ($delta < 7) {
-            return $this->due_on->i18nFormat('iiii');
+            return $this->due_on->i18nFormat('cccc');
         }
 
         return $this->due_on->i18nFormat('MMM d');

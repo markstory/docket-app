@@ -17,6 +17,7 @@ import 'app/extensions/sectionSorter';
 import 'app/webcomponents/dropDown.ts';
 import 'app/webcomponents/modalWindow.ts';
 import 'app/webcomponents/selectBox.ts';
+import 'app/webcomponents/dueOn.ts';
 
 // Expose htmx on window
 // @ts-ignore-next-line

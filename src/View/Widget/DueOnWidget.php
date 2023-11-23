@@ -39,7 +39,7 @@ class DueOnWidget extends BasicWidget
         assert($task instanceof Task, '`val` is required to be a Task');
 
         $inputAttrs = $data['inputAttrs'] ?? [];
-        unset($data['data-validity-message'], $data['oninvalid'], $data['oninput'], $data['inputAttrs']);
+        unset($data['data-validity-message'], $data['oninvalid'], $data['oninput'], $data['inputAttrs'], $data['val']);
 
         $inputAttrs += ['style' => 'display:none'];
 
