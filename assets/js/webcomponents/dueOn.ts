@@ -1,114 +1,102 @@
-import htmx from 'htmx.org';
+import {formatCompactDate, parseDateInput, toDateString} from 'app/utils/dates';
 
-// TODO can components inherit from each other?
+type OpenEvent = {
+  menu: HTMLElement;
+};
+
+/**
+ * Provides logic to update a set of hidden inputs
+ * based on button clicks in the menu
+ */
 class DueOn extends HTMLElement {
-  private revealBackup: Node | undefined = undefined;
-
   connectedCallback() {
-    const triggerTarget = this.getAttribute('trigger') ?? '& > button';
-
-    const trigger = this.querySelector(triggerTarget) as HTMLElement | null;
-    let reveal = this.querySelector('due-on-menu') as HTMLElement | null;
-    if (trigger === null || reveal === null) {
-      throw new Error(
-        `Could not find one of trigger=${triggerTarget} due-on-menu elements.`
-      );
+    const menu = this.querySelector('[role="menu"]');
+    if (!menu) {
+      console.error('Missing role=menu element');
+      return;
     }
-    const portal = this.makePortal();
+    const dueOnInput = this.querySelector('input[name="due_on"]');
+    const eveningInput = this.querySelector('input[name="evening"]');
+    const dueOnString = this.querySelector('input[name="due_on_string"]');
+    if (
+      !(dueOnInput instanceof HTMLInputElement) ||
+      !(eveningInput instanceof HTMLInputElement) ||
+      !(dueOnString instanceof HTMLInputElement)
+    ) {
+      console.error('Missing an input for due_on or evening');
+      return;
+    }
+    const display = this.querySelector('[data-dueon-display]');
+    if (!display) {
+      console.error('Missing data-dueon-display element');
+      return;
+    }
 
-    // Handle clicks outside the root parent element.
-    const removeMenu = () => {
-      // Remove this listener
-      document.removeEventListener('click', removeMenu);
-      document.removeEventListener('close', removeMenu);
-      document.removeEventListener('reposition', reposition);
+    // Listen for button clicks
+    const handleSelection = (event: Event) => {
+      const target = event.target;
 
-      if (!reveal || !portal) {
+      const accept =
+        (target instanceof HTMLButtonElement && event.type === 'click') ||
+        (target instanceof HTMLInputElement && event.type === 'change');
+
+      if (!accept) {
         return;
       }
-      portal.style.display = 'none';
-      portal.innerHTML = '';
+      event.preventDefault();
+      event.stopPropagation();
 
-      if (this.revealBackup) {
-        reveal = this.revealBackup.cloneNode(true) as HTMLElement;
-        htmx.process(reveal);
-        attachRevealEvents(reveal);
-        this.appendChild(reveal);
+      // Update inputs in form.
+      let dueon = target.getAttribute('value');
+      if (target instanceof HTMLInputElement) {
+        const dateVal = parseDateInput(target.value);
+        if (dateVal) {
+          dueon = toDateString(dateVal);
+        }
       }
+
+      const evening = target.dataset.evening;
+      dueon ??= dueOnInput.value;
+      dueOnInput.value = dueon;
+      eveningInput.value = evening ?? eveningInput.value;
+
+      // Update display state
+      display.textContent = formatCompactDate(dueon);
+      dueOnString.value = dueon;
+
+      this.updateCalendar(menu, dueon);
+
+      // Close the dropdown.
+      const close = new CustomEvent('close', {
+        bubbles: true,
+        cancelable: true,
+      });
+      document.dispatchEvent(close);
     };
 
-    function attachRevealEvents(element) {
-      element.addEventListener('click', function (evt) {
-        evt.stopPropagation();
-        const target = evt.target;
-        if (target instanceof HTMLElement && target.getAttribute('dropdown-close')) {
-          removeMenu();
-        }
-      });
-    }
-
-    function reposition() {
-      if (!trigger || !reveal || !portal) {
+    this.addEventListener('open', ((event: CustomEvent<OpenEvent>) => {
+      const menu = event.detail.menu;
+      if (!menu) {
         return;
       }
-      const triggerRect = trigger.getBoundingClientRect();
-
-      // position portal left aligned and below trigger.
-      portal.style.left = `${triggerRect.left + 5}px`;
-      portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
-      portal.style.display = 'block';
-      portal.style.position = 'absolute';
-
-      // TODO solve for scroll offsets
-      const menuRect = reveal.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      // If the menu would overflow, align to the right
-      if (menuRect.right> bodyRect.right) {
-        const rightEdge = triggerRect.left + triggerRect.width;
-        portal.style.left = `${rightEdge - menuRect.width}px`;
-      }
-    }
-
-    attachRevealEvents(reveal);
-    trigger.addEventListener('click', evt => {
-      evt.stopPropagation();
-      if (reveal) {
-        this.revealBackup = reveal.cloneNode(true);
-      }
-
-      if (portal.style.display !== 'none') {
-        // If the portal is open force it closed.
-        const close = new CustomEvent('close', {
-          bubbles: true,
-          cancelable: true,
-        });
-        document.dispatchEvent(close);
-      }
-      // Move menu contents to portal element
-      if (reveal) {
-        portal.appendChild(reveal);
-        reposition();
-      }
-
-      // Setup hide handler and menu reposition event
-      // for menus that change the shape of the contents.
-      document.addEventListener('click', removeMenu);
-      document.addEventListener('close', removeMenu);
-      document.addEventListener('reposition', reposition);
-    });
+      menu.addEventListener('click', handleSelection);
+      dueOnString.addEventListener('change', handleSelection);
+    }) as EventListener);
   }
 
-  makePortal() {
-    const id = 'drop-down-portal';
-    let portal = document.getElementById(id);
-    if (portal) {
-      return portal;
+  updateCalendar(menu: Element | null, value: string | null) {
+    if (!menu) {
+      return;
     }
-    portal = document.createElement('div');
-    portal.setAttribute('id', id);
+    const selected = menu.querySelector('[aria-selected]');
+    if (selected) {
+      selected.removeAttribute('aria-selected');
+    }
 
-    document.body.appendChild(portal);
-    return portal;
+    const selection = menu.querySelector(`[value="${value}"]`);
+    if (selection) {
+      selection.setAttribute('aria-selected', 'true');
+    }
   }
 }
 

@@ -7,9 +7,10 @@ use Cake\I18n\FrozenDate;
  * @var \App\Model\Entity\Task $task
  * @var string $referer
  * @var \Closure $itemFormatter
- * @var boolean $showCalendarForm
+ * @var boolean $renderForms
  */
 $taskEditUrl = ['_name' => 'tasks:edit', 'id' => $task->id];
+$renderForms ??= true;
 
 $taskDue = $task->due_on;
 $today = FrozenDate::today();
@@ -49,18 +50,22 @@ $menuItem = $itemFormatter ?? function (string $title, string $icon, string $id,
 
 ?>
 <div role="menuitem">
+<?php if ($renderForms) : ?>
     <?= $this->Form->create($task, [
         'hx-post' => $this->Url->build($taskEditUrl),
         'url' => $taskEditUrl,
         'hx-target' => 'main.main',
     ]) ?>
     <?= $this->Form->hidden('redirect', ['value' => $referer]) ?>
+<?php endif; ?>
     <?= $this->Form->input('due_on_string', [
         'class' => 'form-input-like',
         'placeholder' => 'Type a due date',
-        'value' => $taskDue ? $taskDue->format('Y-m-d') : ''
+        'value' => $taskDue ? $taskDue->format('Y-m-d') : '',
     ]) ?>
+<?php if ($renderForms) : ?>
     <?= $this->Form->end() ?>
+<?php endif; ?>
 </div>
 <?php if (!$isToday) : ?>
 <div role="menuitem" class="today">
@@ -107,8 +112,7 @@ $menuItem = $itemFormatter ?? function (string $title, string $icon, string $id,
 </div>
 
 <?php
-$current = $today;
-$begin = $current;
+$begin = $today;
 
 if (!$begin->isSunday()) {
     $begin = $begin->modify('previous sunday');
@@ -116,7 +120,7 @@ if (!$begin->isSunday()) {
 $next = $begin;
 
 // Guess at how much time folks need. Could be a setting later?
-$end = FrozenDate::parse($current->format('Y-m-t'))->modify('+30 days');
+$end = FrozenDate::parse($today->format('Y-m-t'))->modify('+30 days');
 
 /**
  * The list of cells to render
@@ -124,8 +128,8 @@ $end = FrozenDate::parse($current->format('Y-m-t'))->modify('+30 days');
 $grouped = [];
 $curVal = $begin;
 while ($curVal <= $end) {
-    $selected = $curVal == $current;
-    $available = $curVal >= $current;
+    $selected = $curVal == $taskDue;
+    $available = $curVal >= $today;
     $month = $curVal->format('F Y');
     // Get iso day/week number.
     $weekNum = (int)$curVal->format('W');
@@ -150,9 +154,7 @@ while ($curVal <= $end) {
 ?>
 <div class="day-picker-menuitem">
 <?php
-$calendarForm ??= true;
-
-if ($calendarForm) :
+if ($renderForms) :
     echo $this->Form->create($task, [
         'url' => $taskEditUrl,
         'hx-post' => $this->Url->build($taskEditUrl),
@@ -185,20 +187,9 @@ endif;
                         continue;
                     endif;
                     $attributes = [
+                        'class' => 'day-picker-day',
                         'aria-label' => $cell['date']->format('d M D Y'),
                     ];
-                    $class = ['day-picker-day'];
-                    $disabled = false;
-                    if (!$cell['available']) :
-                        $disabled = true;
-                        $class[] = 'disabled';
-                        $attributes['aria-disabled'] = true;
-                    endif;
-                    if ($cell['selected']) :
-                        $class[] = 'selected';
-                        $attributes['aria-selected'] = true;
-                    endif;
-                    $attributes['class'] = $class;
                     ?>
                     <td <?= $this->Html->templater()->formatAttributes($attributes) ?>>
                         <?= $this->Form->button(
@@ -206,7 +197,8 @@ endif;
                             [
                                 'name' => 'due_on',
                                 'value' => $cell['date']->format('Y-m-d'),
-                                'disabled' => $disabled,
+                                'disabled' => !$cell['available'],
+                                'aria-selected' => $cell['selected'] ? 'true' : 'false',
                             ]
                         ) ?>
                     </td>
@@ -216,7 +208,7 @@ endif;
         </tbody>
     </table>
 <?php endforeach; ?>
-<?php if ($calendarForm) : ?>
+<?php if ($renderForms) : ?>
     <?= $this->Form->end() ?>
 <?php endif; ?>
 </div>

@@ -23,10 +23,19 @@ return [
     'due-on' => <<<HTML
     <due-on {{attrs}}>
         {{hidden}}
-        <button type="button" class="button button-secondary">
-            {{label}}
-        </button>
-        <due-on-menu>{{options}}</due-on-menu>
+        <drop-down clonemenu="false">
+            <button type="button"
+                class="button button-secondary"
+                aria-haspopup="true"
+                aria-controls="dueon-{{id}}"
+                data-dueon-display
+            >
+                {{label}}
+            </button>
+            <drop-down-menu id="dueon-{{id}}" role="menu">
+                {{options}}
+            </drop-down-menu>
+        </drop-down>
     </due-on>
     HTML,
 ];

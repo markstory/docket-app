@@ -1,10 +1,21 @@
 import htmx from 'htmx.org';
 
+/**
+ * Acts as a dropdown menu.
+ *
+ * Triggers events `open` and `close` when the menu is opened and closed.
+ * By default menu contents are snapshot from their original position
+ * in the DOM and the cloned into a portal element. Each time the menu
+ * is open state will be reset to the state on page load.
+ * Use the `clonemenu=false` attribute to disable this behavior and
+ * have stateful dom nodes.
+ */
 class DropDown extends HTMLElement {
   private revealBackup: Node | undefined = undefined;
 
   connectedCallback() {
     const triggerTarget = this.getAttribute('trigger') ?? 'button';
+    const clonemenu = this.getAttribute('clonemenu') ?? 'true';
 
     const trigger = this.querySelector(triggerTarget) as HTMLElement | null;
     let reveal = this.querySelector('drop-down-menu') as HTMLElement | null;
@@ -26,16 +37,19 @@ class DropDown extends HTMLElement {
         return;
       }
       portal.style.display = 'none';
-      portal.innerHTML = '';
-      if (this.revealBackup) {
+
+      if (this.revealBackup && clonemenu === 'true') {
+        portal.innerHTML = '';
         reveal = this.revealBackup.cloneNode(true) as HTMLElement;
         htmx.process(reveal);
         attachRevealEvents(reveal);
         this.appendChild(reveal);
+      } else {
+        this.appendChild(reveal);
       }
     };
 
-    function attachRevealEvents(element) {
+    function attachRevealEvents(element: HTMLElement) {
       element.addEventListener('click', function (evt) {
         evt.stopPropagation();
         const target = evt.target;
@@ -66,11 +80,11 @@ class DropDown extends HTMLElement {
         portal.style.left = `${rightEdge - menuRect.width}px`;
       }
     }
-
     attachRevealEvents(reveal);
+
     trigger.addEventListener('click', evt => {
       evt.stopPropagation();
-      if (reveal) {
+      if (reveal && clonemenu === 'true') {
         this.revealBackup = reveal.cloneNode(true);
       }
 
@@ -93,6 +107,16 @@ class DropDown extends HTMLElement {
       document.addEventListener('click', removeMenu);
       document.addEventListener('close', removeMenu);
       document.addEventListener('reposition', reposition);
+
+      // Let parents know that the menu is open
+      const open = new CustomEvent('open', {
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          menu: reveal,
+        },
+      });
+      this.dispatchEvent(open);
     });
   }
 

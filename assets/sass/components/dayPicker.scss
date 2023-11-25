@@ -1,4 +1,5 @@
 .day-picker-menuitem {
+  padding: 0 calc($space / 2) $space;
   &:hover {
     background: none;
   }
@@ -123,11 +124,11 @@
     background: var(--color-menu-hover);
   }
 }
-.day-picker-day.selected button {
+.day-picker-day button[aria-selected="true"] {
   font-weight: bold;
   background: var(--color-menu-selected);
 }
-.day-picker-day.disabled button {
+.day-picker-day button[disabled] {
   color: var(--color-disabled);
   &:hover {
     background: none;

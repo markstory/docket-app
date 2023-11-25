@@ -46,15 +46,20 @@ class DueOnWidget extends BasicWidget
         $hidden = [
             $this->templates->format('input', [
                 'name' => 'due_on',
-                'value' => $task->due_on ? $task->due_on->format('Y-m-d') : null,
                 'type' => 'text',
-                'attrs' => $this->templates->formatAttributes($inputAttrs),
+                'attrs' => $this->templates->formatAttributes(
+                    $inputAttrs + [
+                        'value' => $task->due_on ? $task->due_on->format('Y-m-d') : null,
+                    ],
+                ),
             ]),
             $this->templates->format('input', [
                 'name' => 'evening',
-                'value' => $task->evening,
+                'value' => $task->evening ? 1 : 0,
                 'type' => 'text',
-                'attrs' => $this->templates->formatAttributes($inputAttrs),
+                'attrs' => $this->templates->formatAttributes(
+                    $inputAttrs + ['value' => $task->evening ? 1 : 0]
+                ),
             ]),
         ];
         $attrs = $this->templates->formatAttributes($data);
@@ -67,7 +72,7 @@ class DueOnWidget extends BasicWidget
             'options' => $this->view->element('task_dueon_menu', [
                 'task' => $task,
                 'referer' => '',
-                'calendarForm' => false,
+                'renderForms' => false,
                 'itemFormatter' => function (string $title, string $icon, string $id, array $data) {
                     $title = $this->view->element("icons/{$icon}16") . ' ' . $title;
                     echo $this->view->Form->button($title, [
