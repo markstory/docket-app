@@ -8,7 +8,6 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\BasicWidget;
-use RuntimeException;
 
 class DueOnWidget extends BasicWidget
 {
@@ -26,10 +25,8 @@ class DueOnWidget extends BasicWidget
         'inputAttrs' => [],
     ];
 
-    public function __construct(
-    private StringTemplate $templates,
-    private View $view,
-    ) {
+    public function __construct(private StringTemplate $templates, private View $view)
+    {
     }
 
     public function render(array $data, ContextInterface $context): string

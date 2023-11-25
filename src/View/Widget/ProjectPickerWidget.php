@@ -27,10 +27,8 @@ class ProjectPickerWidget extends BasicWidget
         'inputAttrs' => [],
     ];
 
-    public function __construct(
-    private StringTemplate $templates,
-    private View $view,
-    ) {
+    public function __construct(private StringTemplate $templates, private View $view)
+    {
     }
 
     public function render(array $data, ContextInterface $context): string
@@ -42,7 +40,13 @@ class ProjectPickerWidget extends BasicWidget
         $selected = $data['val'] ?? null;
         $projects = $data['projects'];
         $inputAttrs = $data['inputAttrs'] ?? [];
-        unset($data['projects'], $data['data-validity-message'], $data['oninvalid'], $data['oninput'], $data['inputAttrs']);
+        unset(
+            $data['projects'],
+            $data['data-validity-message'],
+            $data['oninvalid'],
+            $data['oninput'],
+            $data['inputAttrs']
+        );
 
         $inputAttrs += ['style' => 'display:none'];
 

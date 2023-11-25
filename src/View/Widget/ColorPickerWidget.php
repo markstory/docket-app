@@ -27,10 +27,8 @@ class ColorPickerWidget extends BasicWidget
         'templateVars' => [],
     ];
 
-    public function __construct(
-    private StringTemplate $templates,
-    private View $view
-    ) {
+    public function __construct(private StringTemplate $templates, private View $view)
+    {
     }
 
     public function render(array $data, ContextInterface $context): string
