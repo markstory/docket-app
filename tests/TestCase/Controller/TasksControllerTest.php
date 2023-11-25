@@ -763,6 +763,41 @@ class TasksControllerTest extends TestCase
         $this->assertEquals(FrozenDate::parse('tomorrow'), $updated->due_on);
     }
 
+    public function testEditRedirect(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            'redirect' => '/tasks/today',
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $this->assertFlashElement('flash/success');
+    }
+
+    public function testEditSubtaskAddRedirect(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            'subtask_add' => '1',
+            'redirect' => '/tasks/today',
+        ]);
+        $this->assertRedirect("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+    }
+
     public function testEditApiToken(): void
     {
         $token = $this->makeApiToken(1);

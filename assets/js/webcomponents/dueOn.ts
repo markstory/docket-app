@@ -81,6 +81,7 @@ class DueOn extends HTMLElement {
       }
       menu.addEventListener('click', handleSelection);
       dueOnString.addEventListener('change', handleSelection);
+      dueOnString.focus();
     }) as EventListener);
   }
 

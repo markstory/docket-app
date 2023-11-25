@@ -384,6 +384,7 @@ class TasksController extends AppController
                 $task->setError('due_on', 'Invalid date string.');
             }
         }
+
         // Remove the last subtask if it has no title.
         // The view form contains a blank subtask
         if (!empty($task->subtasks)) {
@@ -403,8 +404,11 @@ class TasksController extends AppController
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
-        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
         $redirect = null;
+        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
+        if ($this->request->getData('subtask_add')) {
+            $hxRedirect = ['_name' => 'tasks:view', 'id' => $id];
+        }
         if ($hxRedirect) {
             $redirect = $hxRedirect;
         }
