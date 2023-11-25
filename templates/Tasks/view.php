@@ -84,7 +84,10 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
             <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
             <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
-            <?= $this->element('task_checkbox', ['name' => "subtasks.{$i}.completed", 'checked' => $subtask->completed]) ?>
+            <?= $this->element('task_checkbox', [
+                'name' => "subtasks.{$i}.completed",
+                'checked' => $subtask->completed,
+            ]) ?>
             <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
             <!--
             Could do an hx-post to subtask remove endpoint.
