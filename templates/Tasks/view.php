@@ -78,24 +78,29 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         Sub-tasks
     </h3>
     <?php if (count($task->subtasks)) : ?>
-        <ul class="task-subtask-list">
+        <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter">
         <?php foreach ($task->subtasks as $i => $subtask) : ?>
-            <li class="task-subtask">
-                <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
-                <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
-                <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
-                <?= $this->element('task_checkbox', [
-                    'name' => "subtasks.{$i}.completed",
-                    'checked' => $subtask->completed,
-                ]) ?>
-                <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
-                <?= $this->Form->button($this->element('icons/trash16'), [
-                    'type' => 'button',
-                    'value' => $subtask->id,
-                    'class' => 'icon-overdue button-icon',
-                    'escapeTitle' => false,
-                    'hx-ext' => 'remove-row',
-                ]) ?>
+            <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
+                <button class="dnd-handle" role="button" aria-roledescription="sortable">
+                    <?= $this->element('icons/grabber24') ?>
+                </button>
+                <div class="subtask-item">
+                    <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
+                    <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
+                    <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
+                    <?= $this->element('task_checkbox', [
+                        'name' => "subtasks.{$i}.completed",
+                        'checked' => $subtask->completed,
+                    ]) ?>
+                    <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
+                    <?= $this->Form->button($this->element('icons/trash16'), [
+                        'type' => 'button',
+                        'value' => $subtask->id,
+                        'class' => 'icon-overdue button-icon',
+                        'escapeTitle' => false,
+                        'hx-ext' => 'remove-row',
+                    ]) ?>
+                </div>
             </li>
         <?php endforeach ?>
         </ul>

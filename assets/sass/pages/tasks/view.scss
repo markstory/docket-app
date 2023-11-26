@@ -5,7 +5,7 @@
   .task-quickform,
   .task-subtasks,
   .task-notes {
-    margin: 0 0 $space * 3;
+    margin: 0 0 $space * 2;
   }
   .task-quickform {
     padding-top: 0;
@@ -73,9 +73,11 @@
   }
 }
 
+// Subtasks
 .task-subtask-list {
   list-style: none;
   padding-left: 0;
+  margin: calc($space * 2) 0 0 0;
 
   li {
     list-style: none;
@@ -87,5 +89,22 @@
 .task-subtask {
   display: flex;
   align-items: center;
+  gap: $space;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.subtask-item {
+  display: flex;
+  gap: $space;
+  align-items: center;
+}
+
+.subtask-addform {
+  margin: 0 0 24px 32px ;
+  display: grid;
+  grid-template-columns: max(20%, 200px) min-content;
   gap: $space;
 }

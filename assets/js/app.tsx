@@ -18,6 +18,7 @@ import 'app/extensions/flashMessage';
 import 'app/extensions/projectSorter';
 import 'app/extensions/taskSorter';
 import 'app/extensions/sectionSorter';
+import 'app/extensions/subtaskSorter';
 import 'app/extensions/removeRow';
 
 // Webcomponents
