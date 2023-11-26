@@ -16,17 +16,39 @@ class DateHelper extends Helper
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected $_defaultConfig = [
+        'timezone' => null,
+    ];
 
-    public function formatCompact(FrozenDate $date): string
+    /**
+     * Get today in the user's timezone.
+     */
+    public function today(): FrozenDate
     {
-        $diff = FrozenDate::today()->diffInDays($date, false);
+        return FrozenDate::today($this->getConfig('timezone'));
+    }
+
+    /**
+     * Format a date into the compact date format used across the app.
+     */
+    public function formatCompact(
+        FrozenDate | null $date,
+        bool $evening = false
+    ): string {
+        if (!$date) {
+            return 'No due date';
+        }
+        $diff = $this->today()->diffInDays($date, false);
         // In the past? Show the date
         if ($diff < -90) {
             return $date->i18nFormat('MMM d yyyy');
         }
         if ($diff < 0) {
             return $date->i18nFormat('MMM d');
+        }
+        // TODO should this include the icon?
+        if ($diff < 1 && $evening) {
+            return 'This evening';
         }
         if ($diff < 1) {
             return 'Today';
@@ -35,7 +57,7 @@ class DateHelper extends Helper
             return 'Tomorrow';
         }
         if ($diff < 7) {
-            return $date->i18nFormat('EEEE');
+            return $date->i18nFormat('cccc');
         }
 
         return $date->i18nFormat('MMM d');

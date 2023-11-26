@@ -5,15 +5,16 @@ use Cake\I18n\FrozenDate;
 
 /**
  * @var \App\Model\Entity\Task $task
+ * @var \App\Model\Entity\User $identity
  * @var string $referer
  * @var \Closure $itemFormatter
- * @var boolean $renderForms
+ * @var bool $renderForms
  */
 $taskEditUrl = ['_name' => 'tasks:edit', 'id' => $task->id];
 $renderForms ??= true;
 
 $taskDue = $task->due_on;
-$today = FrozenDate::today();
+$today = $this->Date->today();
 $tomorrow = $today->modify('+1 days');
 
 $isEvening = $task->evening;
@@ -74,7 +75,7 @@ $menuItem = $itemFormatter ?? function (string $title, string $icon, string $id,
 <?php endif; ?>
 <?php if (!$isThisEvening) : ?>
 <div role="menuitem" class="evening">
-    <?php $menuItem('This Evening', 'moon', 'evening', ['due_on' => $today->format('Y-m-d'), 'evening' => '1']) ?>
+    <?php $menuItem('This evening', 'moon', 'evening', ['due_on' => $today->format('Y-m-d'), 'evening' => '1']) ?>
 </div>
 <?php endif; ?>
 <?php if (!$isTomorrow) : ?>
@@ -90,7 +91,7 @@ $menuItem = $itemFormatter ?? function (string $title, string $icon, string $id,
 <?php if ($futureDate && $isEvening && $taskDue) : ?>
 <div role="menuitem" class="tomorrow">
     <?php $menuItem(
-        $task->getCompactDueOn() . ' day',
+        $this->Date->formatCompact($taskDue, false) . ' day',
         'sun',
         'to-day',
         ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '0']
@@ -100,7 +101,7 @@ $menuItem = $itemFormatter ?? function (string $title, string $icon, string $id,
 <?php if ($futureDate && !$isEvening && $taskDue) : ?>
 <div role="menuitem" class="evening">
     <?php $menuItem(
-        $task->getCompactDueOn() . ' evening',
+        $this->Date->formatCompact($taskDue, true) . ' evening',
         'moon',
         'to-evening',
         ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '1']

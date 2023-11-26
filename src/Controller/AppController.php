@@ -55,6 +55,8 @@ class AppController extends Controller
     {
         parent::beforeRender($event);
 
+        $identity = $this->request->getAttribute('identity');
+
         $this->viewBuilder()
             ->addHelper('ViteAsset')
             ->addHelper('Form', [
@@ -64,10 +66,10 @@ class AppController extends Controller
                     'projectpicker' => [ProjectPickerWidget::class, '_view'],
                     'dueon' => [DueOnWidget::class, '_view'],
                 ],
-            ]);
+            ])
+            ->addHelper('Date', ['timezone' => $identity->timezone]);
 
         // Load common data.
-        $identity = $this->request->getAttribute('identity');
         $this->set('identity', $identity);
 
         $isApiResponse = !empty($this->viewBuilder()->getOption('serialize'));

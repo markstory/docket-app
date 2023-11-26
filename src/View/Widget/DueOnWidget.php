@@ -60,12 +60,16 @@ class DueOnWidget extends BasicWidget
             ]),
         ];
         $attrs = $this->templates->formatAttributes($data);
+        $icon = '';
+        if ($task->evening) {
+            $icon = $this->view->element('icons/moon16');
+        }
 
         return $this->templates->format('due-on', [
             'templateVars' => $data['templateVars'],
             'attrs' => $attrs,
             'hidden' => implode("\n", $hidden),
-            'label' => h($task->getCompactDueOn()),
+            'label' => $icon . $this->view->Date->formatCompact($task->due_on, $task->evening),
             'options' => $this->view->element('task_dueon_menu', [
                 'task' => $task,
                 'referer' => '',

@@ -8,14 +8,14 @@ use Cake\I18n\FrozenDate;
  * @var bool $showNull
  */
 if ($task->due_on) :
-    $diff = FrozenDate::today()->diffInDays($task->due_on, false);
+    $diff = $this->Date->today()->diffInDays($task->due_on, false);
     $className = 'due-on ';
-    $thisEvening = $diff >= 0 && $diff < 1 && $task->evening;
+    $thisEvening = $diff == 0 && $task->evening;
 
     // TODO this formats overdue values wrong
     if ($diff < 0) :
         $className .= 'overdue';
-    elseif ($diff >= 0 && $diff < 1 && !$task->evening) :
+    elseif ($diff == 0 && !$task->evening) :
         $className .= 'today';
     elseif ($thisEvening) :
         $className .= 'evening';
