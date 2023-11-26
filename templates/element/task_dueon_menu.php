@@ -30,7 +30,15 @@ $futureDate = $task->due_on !== null && $task->due_on != $today;
 
 $monday = $today->modify('next monday');
 
-$menuItem = $itemFormatter ?? function (string $title, string $icon, string $id, array $data) use ($referer, $taskEditUrl) {
+$menuItem = $itemFormatter ?? function (
+    string $title,
+    string $icon,
+    string $id,
+    array $data
+) use (
+    $referer,
+    $taskEditUrl
+) {
     $data['redirect'] = $referer;
     echo $this->Form->create(null, [
         'url' => $taskEditUrl,
