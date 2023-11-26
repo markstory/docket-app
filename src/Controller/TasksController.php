@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\View\JsonView;
@@ -50,6 +51,13 @@ class TasksController extends AppController
         } catch (\Exception $e) {
             throw new BadRequestException("Invalid date value of {$value}.");
         }
+    }
+
+    protected function getTask($id): Task
+    {
+        return $this->Tasks->get($id, [
+            'contain' => ['Projects', 'Subtasks'],
+        ]);
     }
 
     /**
@@ -243,9 +251,7 @@ class TasksController extends AppController
      */
     public function complete($id = null)
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
 
         $template = null;
@@ -360,9 +366,7 @@ class TasksController extends AppController
     public function edit($id = null)
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Subtasks'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task);
         $task = $this->Tasks->patchEntity($task, $this->request->getData(), [
             'associated' => ['Subtasks'],
@@ -376,29 +380,16 @@ class TasksController extends AppController
             $task->section_id = null;
             $task->project = $project;
         }
-        $dueString = $this->request->getData('due_on_string');
-        if ($dueString) {
-            try {
-                $task->due_on = FrozenDate::parse($dueString);
-            } catch (Exception $e) {
-                $task->setError('due_on', 'Invalid date string.');
-            }
-        }
-
-        // Remove the last subtask if it has no title.
-        // The view form contains a blank subtask
-        if (!empty($task->subtasks)) {
-            $lastIndex = count($task->subtasks) - 1;
-            if (trim($task->subtasks[$lastIndex]->title) === '') {
-                unset($task->subtasks[$lastIndex]);
-            }
-        }
+        $task->setDueOnFromString($this->request->getData('due_on_string'));
+        $task->removeTrailingEmptySubtask();
 
         $success = false;
         $serialize = [];
         if ($this->Tasks->save($task, ['associated' => ['Subtasks']])) {
             $success = true;
             $serialize[] = 'task';
+            // Reload to get fresh counter cache values.
+            $task = $this->getTask($task->id);
             $this->set('task', $task);
         } else {
             $serialize[] = 'errors';
@@ -432,9 +423,7 @@ class TasksController extends AppController
      */
     public function view($id = null, $mode = null)
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Subtasks'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task);
 
         $template = 'view';

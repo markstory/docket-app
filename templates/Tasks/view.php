@@ -81,24 +81,21 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <ul class="task-subtask-list">
         <?php foreach ($task->subtasks as $i => $subtask) : ?>
             <li class="task-subtask">
-            <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
-            <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
-            <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
-            <?= $this->element('task_checkbox', [
-                'name' => "subtasks.{$i}.completed",
-                'checked' => $subtask->completed,
-            ]) ?>
-            <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
-            <!--
-            Could do an hx-post to subtask remove endpoint.
-            Could also remove the element locally and have endpoint overwrite association data.
-            Removing the row locally could be done with the htmx remove-me extension
-            -->
-            <?= $this->Form->button($this->element('icons/trash16'), [
-                'value' => $subtask->id,
-                'class' => 'icon-overdue button-icon',
-                'escapeTitle' => false,
-            ]) ?>
+                <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
+                <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
+                <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
+                <?= $this->element('task_checkbox', [
+                    'name' => "subtasks.{$i}.completed",
+                    'checked' => $subtask->completed,
+                ]) ?>
+                <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
+                <?= $this->Form->button($this->element('icons/trash16'), [
+                    'type' => 'button',
+                    'value' => $subtask->id,
+                    'class' => 'icon-overdue button-icon',
+                    'escapeTitle' => false,
+                    'hx-ext' => 'remove-row',
+                ]) ?>
             </li>
         <?php endforeach ?>
         </ul>

@@ -7,21 +7,24 @@ import '../sass/app.scss';
 
 // Htmx setup
 import htmx from 'htmx.org';
+
+// Expose htmx on window
+// @ts-ignore-next-line
+window.htmx = htmx;
+
+// htmx extensions
 import 'app/extensions/ajax';
 import 'app/extensions/flashMessage';
 import 'app/extensions/projectSorter';
 import 'app/extensions/taskSorter';
 import 'app/extensions/sectionSorter';
+import 'app/extensions/removeRow';
 
-// Import webcomponents
+// Webcomponents
 import 'app/webcomponents/dropDown.ts';
 import 'app/webcomponents/modalWindow.ts';
 import 'app/webcomponents/selectBox.ts';
 import 'app/webcomponents/dueOn.ts';
-
-// Expose htmx on window
-// @ts-ignore-next-line
-window.htmx = htmx;
 
 // Setup CSRF tokens.
 axios.defaults.xsrfCookieName = 'csrfToken';

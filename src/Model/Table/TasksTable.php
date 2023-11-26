@@ -5,7 +5,9 @@ namespace App\Model\Table;
 
 use App\Model\Entity\Task;
 use App\Model\Entity\User;
+use ArrayObject;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
@@ -426,6 +428,15 @@ class TasksTable extends Table
             !($operation['section_id'] === '' || Validation::isInteger($operation['section_id']))
         ) {
             throw new InvalidArgumentException('section_id must be a number or ""');
+        }
+    }
+
+    public function beforeSave(EventInterface $event, Task $task, ArrayObject $options)
+    {
+        if ($task->isDirty('subtasks') && count($task->subtasks)) {
+            // Force a dirty field so that counter cache always runs.
+            // This isn't ideal but it works for now
+            $task->subtasks[0]->setDirty('title');
         }
     }
 }

@@ -905,15 +905,18 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(200);
         $this->assertFlashElement('flash/success');
 
+        /** @var \App\Model\Entity\Task $updated */
         $updated = $this->viewVariable('task');
         $this->assertCount(2, $updated->subtasks);
+        $this->assertEquals(2, $updated->subtask_count);
+        $this->assertEquals(0, $updated->complete_subtask_count);
         $this->assertSame('first step', $updated->subtasks[0]->title);
         $this->assertEquals(1, $updated->subtasks[0]->ranking);
-        $this->assertNull($updated->subtasks[0]->completed);
+        $this->assertFalse($updated->subtasks[0]->completed);
 
         $this->assertSame('second step', $updated->subtasks[1]->title);
         $this->assertEquals(2, $updated->subtasks[1]->ranking);
-        $this->assertNull($updated->subtasks[1]->completed);
+        $this->assertFalse($updated->subtasks[1]->completed);
     }
 
     public function testEditCreateSubtasksNoBlank(): void
@@ -939,7 +942,7 @@ class TasksControllerTest extends TestCase
         $this->assertCount(1, $updated->subtasks);
         $this->assertSame('first step', $updated->subtasks[0]->title);
         $this->assertEquals(1, $updated->subtasks[0]->ranking);
-        $this->assertNull($updated->subtasks[0]->completed);
+        $this->assertFalse($updated->subtasks[0]->completed);
     }
 
     public function testEditUpdateSubtasks(): void
@@ -968,7 +971,36 @@ class TasksControllerTest extends TestCase
 
         $this->assertSame('step three', $updated->subtasks[1]->title);
         $this->assertEquals(1, $updated->subtasks[1]->ranking);
-        $this->assertNull($updated->subtasks[1]->completed);
+        $this->assertFalse($updated->subtasks[1]->completed);
+    }
+
+    public function testEditUpdateSubtasksRemove(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $sub = $this->makeSubtask('first step', $first->id, 0);
+        // This subtask isn't part of the update.
+        $this->makeSubtask('second step', $first->id, 1);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'subtasks' => [
+                ['id' => $sub->id, 'title' => $sub->title],
+            ],
+        ]);
+        $this->assertResponseCode(200);
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        // TODO this fails because cake won't update the counter cache
+        // when the association has no modified records.
+        $this->assertEquals(1, $updated->subtask_count);
+        $this->assertSame($sub->title, $updated->subtasks[0]->title);
+        $this->assertFalse($updated->subtasks[0]->completed);
     }
 
     public function testEditPermissions(): void
@@ -986,7 +1018,7 @@ class TasksControllerTest extends TestCase
 
     public function testEditProjectPermission(): void
     {
-        $other = $this->makeProject('work', 2);
+        $other = $this->makeProject('other work', 2);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
 

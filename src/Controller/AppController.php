@@ -67,7 +67,7 @@ class AppController extends Controller
                     'dueon' => [DueOnWidget::class, '_view'],
                 ],
             ])
-            ->addHelper('Date', ['timezone' => $identity->timezone]);
+            ->addHelper('Date', ['timezone' => $identity->timezone ?? 'UTC']);
 
         // Load common data.
         $this->set('identity', $identity);
