@@ -2,9 +2,10 @@
 .task-row {
   position: relative;
   display: flex;
+  gap: $space;
+  align-items: flex-start;
   width: 100%;
 
-  align-items: flex-start;
   padding-top: $space;
   padding-left: calc($space / 4);
   padding-bottom: $space;

@@ -29,13 +29,15 @@ endif;
         <?= $this->element('icons/grabber24') ?>
     </button>
     <div class="<?= h($className) ?>">
-        <?= $this->Form->checkbox('completed', [
+        <?= $this->element('task_checkbox', [
+            'name' => 'completed',
             'checked' => $task->completed,
-            'hiddenField' => false,
-            'value' => 1,
-            'hx-delete' => $taskCheckboxUrl,
-            'hx-target' => 'closest .dnd-item',
-            'hx-swap' => 'outerHTML swap:500ms',
+            'attrs' => [
+                'value' => 1,
+                'hx-delete' => $taskCheckboxUrl,
+                'hx-target' => 'closest .dnd-item',
+                'hx-swap' => 'outerHTML swap:500ms',
+             ],
         ]) ?>
         <a href="<?= h($taskUrl) ?>">
             <span class="title">
