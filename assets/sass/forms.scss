@@ -76,7 +76,6 @@ textarea {
 
 .form-label-group {
   margin-right: calc($space * 2);
-  width: 33%;
   display: flex;
   flex-direction: column;
   gap: calc($space);
@@ -150,7 +149,7 @@ textarea {
     margin-bottom: 0;
   }
   .form-label-group {
-    margin: none;
+    margin: 0;
   }
   .tomorrow svg {
     color: var(--color-tomorrow);

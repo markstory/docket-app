@@ -26,39 +26,37 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <?= $this->element('task_checkbox') ?>
         <?= $this->Form->text('title', [
             'class' => 'task-title-input',
+            'aria-label' => 'Task Title',
         ]) ?>
     </div>
-    <?= $this->Form->control('project_id', [
-        'label' => [
-            'class' => 'form-section-heading icon-today',
-            'text' => $this->element('icons/directory16') . 'Project',
-            'escape' => false,
-        ],
-        'type' => 'projectpicker',
-        'projects' => $projects,
-        'inputAttrs' => [
-            'hx-get' => $this->Url->build($sectionPickerUrl),
-            'hx-target' => '#task-section-container',
-        ],
-        // TODO add loading indicator
-    ]) ?>
-    <div id="task-section-container">
-        <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
+    <div class="task-attributes">
+        <?= $this->Form->control('project_id', [
+            'label' => [
+                'class' => 'form-section-heading icon-today',
+                'text' => $this->element('icons/directory16') . 'Project',
+                'escape' => false,
+            ],
+            'type' => 'projectpicker',
+            'projects' => $projects,
+            'inputAttrs' => [
+                'hx-get' => $this->Url->build($sectionPickerUrl),
+                'hx-target' => '#task-section-container',
+            ],
+            // TODO add loading indicator
+        ]) ?>
+        <div id="task-section-container">
+            <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
+        </div>
+        <?= $this->Form->control('due_on', [
+            'label' => [
+                'class' => 'form-section-heading icon-tomorrow',
+                'text' => $this->element('icons/calendar16') . 'Due On',
+                'escape' => false,
+            ],
+            'type' => 'dueon',
+            'value' => $task,
+        ]) ?>
     </div>
-    <!--
-    Could make a custom component for this 
-    Have a dropdown (in a portal) that listens for form submission
-    event, swallows it and updates the form in the parent form.
-    -->
-    <?= $this->Form->control('due_on', [
-        'label' => [
-            'class' => 'form-section-heading icon-tomorrow',
-            'text' => $this->element('icons/calendar16') . 'Due On',
-            'escape' => false,
-        ],
-        'type' => 'dueon',
-        'value' => $task,
-    ]) ?>
 </div>
 
 <div class="task-notes">
@@ -72,7 +70,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 ]) ?>
 </div>
 
-<div class="form-control">
+<div class="form-control task-subtasks">
     <h3 class="form-section-heading icon-week">
         <?= $this->element('icons/workflow16') ?>
         Sub-tasks
@@ -116,6 +114,8 @@ $newSubtaskIndex = count($task->subtasks) + 1;
     </div>
 </div>
 
-<?= $this->Form->button('Save', ['class' => 'button-primary']) ?>
+<div class="button-bar">
+    <?= $this->Form->button('Save', ['class' => 'button-primary']) ?>
+</div>
 <?= $this->Form->end() ?>
 </div>
