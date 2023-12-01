@@ -26,6 +26,7 @@ import 'app/webcomponents/dropDown.ts';
 import 'app/webcomponents/modalWindow.ts';
 import 'app/webcomponents/selectBox.ts';
 import 'app/webcomponents/dueOn.ts';
+import 'app/webcomponents/markdownText.ts';
 
 // Setup CSRF tokens.
 axios.defaults.xsrfCookieName = 'csrfToken';

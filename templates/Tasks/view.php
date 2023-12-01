@@ -60,14 +60,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 </div>
 
 <div class="task-notes">
-<?= $this->Form->control('body', [
-    'label' => [
-        'class' => 'form-section-heading icon-not-due',
-        'text' => $this->element('icons/note16') . 'Notes',
-        'escape' => false,
-    ],
-    'rows' => 5,
-]) ?>
+    <?= $this->element('task_body') ?>
 </div>
 
 <div class="form-control task-subtasks">

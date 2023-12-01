@@ -90,6 +90,11 @@
   textarea {
     height: auto;
     width: 100%;
+    resize: none;
+    overflow: hidden;
+  }
+  .markdown-text-preview {
+    margin-left: calc(var(--shift-width) * -1 + 5px);
   }
 }
 
