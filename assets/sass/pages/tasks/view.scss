@@ -94,6 +94,7 @@
     overflow: hidden;
   }
   .markdown-text-preview {
+    margin-top: $space;
     margin-left: calc(var(--shift-width) * -1 + 5px);
   }
 }

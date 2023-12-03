@@ -12,7 +12,7 @@ class MarkdownText extends HTMLElement {
     }
     // Setup input events.
     input.style.height = input.scrollHeight + 'px';
-    input.addEventListener('keydown', evt => {
+    input.addEventListener('input', evt => {
       const el = evt.target as HTMLInputElement;
       el.style.height = '0';
       el.style.height = el.scrollHeight + 'px';
@@ -26,6 +26,12 @@ class MarkdownText extends HTMLElement {
     preview.addEventListener('click', () => {
       this.showPreview = false;
       this.update();
+    });
+    preview.addEventListener('keyup', evt => {
+      if (evt.key === ' ' || evt.key === 'Enter') {
+        this.showPreview = false;
+        this.update();
+      }
     });
 
     this.update();
@@ -41,9 +47,18 @@ class MarkdownText extends HTMLElement {
     if (this.showPreview) {
       let contents = '';
       if (input.value.trim() === '') {
-        contents = '<p><span class="button button-muted">Add notes</span></p>';
+        contents = `
+<p>
+  <span role="button" class="button-muted" tabindex="0"
+    aria-label="Click or Press Enter to add notes to this task"
+  >
+    Add notes
+  </span>
+</p>`;
       } else {
         contents = await marked.parse(input.value);
+        contents += `
+<a tabindex="0" href="" class="button button-muted button-narrow button-focusreveal">Edit Body</a>`;
       }
       preview.innerHTML = contents;
       preview.style.display = 'block';
@@ -61,6 +76,7 @@ class MarkdownText extends HTMLElement {
     }
     const preview = document.createElement('div');
     preview.classList.add('markdown-text-preview');
+    preview.role = 'button';
 
     this.appendChild(preview);
     this.previewElement = preview;

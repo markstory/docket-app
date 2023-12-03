@@ -1,3 +1,8 @@
+markdown-text .form-input {
+  margin-top: $space;
+}
+
+.markdown-text-preview,
 .markdown-text {
   h1, h2, h3 {
     color: var(--color-low-emphasis);
@@ -7,3 +12,15 @@
     padding-left: calc($space * 2);
   }
 }
+
+.markdown-text-preview {
+  position: relative;
+  padding-bottom: 22px;
+
+  .button-focusreveal {
+    position: absolute;
+    right: $space;
+    bottom: $space;
+  }
+}
+

@@ -131,6 +131,18 @@ button,
   height: $button-narrow-height;
 }
 
+// Buttons that only show on focus for accessibility
+.button-focusreveal {
+  // position: absolute;
+  // height: 0px;
+  // width: 0px;
+
+  &:focus {
+    height: auto;
+    width: auto;
+  }
+}
+
 // Buttons that only have an icon inside.
 .button-icon-primary,
 .button-icon {
