@@ -20,14 +20,14 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit Project',
             ['_name' => 'projects:edit', 'slug' => $project->slug],
-            ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
+            ['class' => 'icon-edit', 'escape' => false, 'role' => 'menuitem']
         ) ?>
         <?php if (!empty($showDetailed)) : ?>
             <?= $this->Html->link(
                 $this->element('icons/plus16') . ' Add Section',
                 ['_name' => 'projectsections:add', 'projectSlug' => $project->slug],
                 [
-                    'class' => 'complete',
+                    'class' => 'icon-complete',
                     'escape' => false,
                     'role' => 'menuitem',
                     'data-testid' => 'add-section',
@@ -39,7 +39,7 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
             <?= $this->Html->link(
                 $this->element('icons/check16') . ' View Completed Tasks',
                 ['_name' => 'projects:view', 'slug' => $project->slug, '?' => ['completed' => 1]],
-                ['class' => 'complete', 'escape' => false, 'role' => 'menuitem']
+                ['class' => 'icon-complete', 'escape' => false, 'role' => 'menuitem']
             ) ?>
         <?php endif ?>
         <div class="separator"></div>
@@ -47,21 +47,21 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
             <?= $this->Form->postLink(
                 $this->element('icons/archive16') . ' Unarchive Project',
                 ['_name' => 'projects:unarchive', 'slug' => $project->slug],
-                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem']
+                ['class' => 'icon-archive', 'escape' => false, 'role' => 'menuitem']
             ) ?>
 
         <?php else : ?>
             <?= $this->Form->postLink(
                 $this->element('icons/archive16') . ' Archive Project',
                 ['_name' => 'projects:archive', 'slug' => $project->slug],
-                ['class' => 'archive', 'escape' => false, 'role' => 'menuitem']
+                ['class' => 'icon-archive', 'escape' => false, 'role' => 'menuitem']
             ) ?>
         <?php endif ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Project',
             $deleteConfirm,
             [
-                'class' => 'delete',
+                'class' => 'icon-delete',
                 'escape' => false,
                 'role' => 'menuitem',
                 'dropdown-close' => true,

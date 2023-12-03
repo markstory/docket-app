@@ -31,7 +31,7 @@ $deleteConfirm = [
             $this->element('icons/pencil16') . ' Edit Section',
             ['_name' => 'projectsections:edit', 'projectSlug' => $project->slug, 'id' => $section->id],
             [
-                'class' => 'edit',
+                'class' => 'icon-edit',
                 'escape' => false,
                 'role' => 'menuitem',
                 'dropdown-close' => true,
@@ -43,7 +43,7 @@ $deleteConfirm = [
             $this->element('icons/trash16') . ' Delete Section',
             $deleteConfirm,
             [
-                'class' => 'delete',
+                'class' => 'icon-delete',
                 'escape' => false,
                 'role' => 'menuitem',
                 'dropdown-close' => true,

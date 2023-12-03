@@ -82,42 +82,8 @@ drop-down-menu [role="menuitem"],
   &:hover {
     background: var(--color-menu-hover);
   }
-
   & svg {
     margin-right: $space;
-  }
-
-  // Action specific styles
-  &.delete svg,
-  &.delete:hover {
-    color: var(--color-action-delete);
-  }
-  &.archive svg {
-    color: var(--color-low-emphasis);
-  }
-  &.calendar svg {
-    color: var(--color-due-today);
-  }
-  &.edit svg {
-    color: var(--color-action-edit);
-  }
-  &.lock svg {
-    color: var(--color-action-lock);
-  }
-  &.complete svg {
-    color: var(--color-action-complete);
-  }
-  &.today svg {
-    color: var(--color-due-today);
-  }
-  &.tomorrow svg {
-    color: var(--color-due-tomorrow);
-  }
-  &.evening svg {
-    color: var(--color-due-evening);
-  }
-  &.not-due svg {
-    color: var(--color-due-none);
   }
 
   // Form buttons inside menu items are special

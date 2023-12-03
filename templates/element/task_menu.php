@@ -28,7 +28,7 @@ $taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 
             $this->element('icons/pencil16') . ' Move',
             $taskEditProjectUrl,
             [
-                'class' => 'edit',
+                'class' => 'icon-edit',
                 'escape' => false,
                 'data-testid' => 'move',
                 'role' => 'menuitem',
@@ -41,7 +41,7 @@ $taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 
             $this->element('icons/calendar16') . ' Reschedule',
             $taskRescheduleUrl,
             [
-                'class' => 'calendar',
+                'class' => 'icon-today',
                 'escape' => false,
                 'data-testid' => 'reschedule',
                 'role' => 'menuitem',
@@ -54,7 +54,7 @@ $taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 
             $this->element('icons/trash16') . ' Delete Task',
             $deleteConfirmUrl,
             [
-                'class' => 'delete',
+                'class' => 'icon-delete',
                 'escape' => false,
                 'role' => 'menuitem',
                 'data-testid' => 'delete',

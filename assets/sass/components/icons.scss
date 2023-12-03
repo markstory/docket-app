@@ -34,3 +34,19 @@
 .fortnight {
   color: var(--color-due-fortnight);
 }
+.icon-delete svg {
+  color: var(--color-action-delete);
+}
+.icon-archive svg {
+  color: var(--color-low-emphasis);
+}
+.icon-edit svg {
+  color: var(--color-action-edit);
+}
+.icon-lock svg {
+  color: var(--color-action-lock);
+}
+.icon-complete svg {
+  color: var(--color-action-complete);
+}
+

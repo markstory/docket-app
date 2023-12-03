@@ -21,17 +21,17 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit Profile',
             ['_path' => 'Users::edit'],
-            ['class' => 'edit', 'escape' => false, 'role' => 'menuitem']
+            ['class' => 'icon-edit', 'escape' => false, 'role' => 'menuitem']
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/calendar16') . ' Calendars',
             ['_path' => 'CalendarProviders::index'],
-            ['class' => 'calendar', 'escape' => false, 'role' => 'menuitem']
+            ['class' => 'icon-today', 'escape' => false, 'role' => 'menuitem']
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/lock16') . ' Update Password',
             ['_path' => 'Users::updatePassword'],
-            ['class' => 'lock', 'escape' => false, 'role' => 'menuitem']
+            ['class' => 'icon-lock', 'escape' => false, 'role' => 'menuitem']
         ) ?>
         <div class="separator"></div>
         <?= $this->Html->link(
