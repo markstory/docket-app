@@ -1003,6 +1003,27 @@ class TasksControllerTest extends TestCase
         $this->assertFalse($updated->subtasks[0]->completed);
     }
 
+    public function testEditRemoveSubtaskLast(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->makeSubtask('first step', $first->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => $first->title,
+            'subtasks' => [],
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
+        $this->assertSame('first', $todo->title);
+        $this->assertCount(0, $todo->subtasks);
+        $this->assertEquals(0, $todo->subtask_count);
+        $this->assertEquals(0, $todo->complete_subtask_count);
+    }
+
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);

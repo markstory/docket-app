@@ -55,7 +55,7 @@ endif;
                     echo $this->element('task_due_on', ['task' => $task]);
                 endif;
                 ?>
-                <?php if ($task->subtask_count > 1) : ?>
+                <?php if ($task->subtask_count > 0) : ?>
                     <span class="counter">
                         <?= $this->element('icons/workflow16') ?>
                         <?= h($task->complete_subtask_count) ?>
