@@ -12,9 +12,10 @@ class MarkdownText extends HTMLElement {
     }
     // Setup input events.
     input.style.height = input.scrollHeight + 'px';
-    input.addEventListener('keyup', evt => {
-      var input = evt.target as HTMLTextAreaElement;
-      input.style.height = input.scrollHeight + 'px';
+    input.addEventListener('keydown', evt => {
+      const el = evt.target as HTMLInputElement;
+      el.style.height = '0';
+      el.style.height = el.scrollHeight + 'px';
     });
     input.addEventListener('blur', () => {
       this.showPreview = true;
@@ -22,7 +23,7 @@ class MarkdownText extends HTMLElement {
     });
 
     const preview = this.getPreviewElement();
-    preview.addEventListener('click', (evt) => {
+    preview.addEventListener('click', () => {
       this.showPreview = false;
       this.update();
     });
@@ -30,7 +31,7 @@ class MarkdownText extends HTMLElement {
     this.update();
   }
 
-  update() {
+  async update() {
     const input = this.querySelector('textarea');
     const preview = this.querySelector('.markdown-text-preview') as HTMLElement;
     if (!input || !preview) {
@@ -38,7 +39,13 @@ class MarkdownText extends HTMLElement {
       return;
     }
     if (this.showPreview) {
-      preview.innerHTML = marked.parse(input.value);
+      let contents = '';
+      if (input.value.trim() === '') {
+        contents = '<p><span class="button button-muted">Add notes</span></p>';
+      } else {
+        contents = await marked.parse(input.value);
+      }
+      preview.innerHTML = contents;
       preview.style.display = 'block';
       input.style.display = 'none';
     } else {

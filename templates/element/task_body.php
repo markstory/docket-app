@@ -5,7 +5,7 @@
         'text' => $this->element('icons/note16') . 'Notes',
         'escape' => false,
     ],
-    'rows' => 5,
+    'rows' => 1,
     'templates' => [
         'inputContainer' => '<markdown-text>{{content}}</markdown-text>',
     ],
