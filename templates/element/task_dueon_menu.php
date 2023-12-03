@@ -41,7 +41,6 @@ $menuItem = $itemFormatter ?? function (
     $options += ['icon' => 'sun', 'class' => '', 'testId' => ''];
     $data['redirect'] = $referer;
     echo $this->Form->create(null, [
-        'class' => $options['class'],
         'role' => 'menuitem',
         'url' => $taskEditUrl,
         'hx-post' => $this->Url->build($taskEditUrl),
@@ -54,7 +53,7 @@ $menuItem = $itemFormatter ?? function (
     echo $this->Form->button($title, [
         'escapeTitle' => false,
         'data-testid' => $options['testId'],
-        'class' => 'menu-item-button',
+        'class' => "menu-item-button {$options['class']}",
     ]);
     echo $this->Form->end();
 };
@@ -82,48 +81,48 @@ $menuItem = $itemFormatter ?? function (
 if (!$isToday) :
     $menuItem(
         'Today',
-        ['icon' => 'clippy', 'testId' => 'today', 'class' => 'today'],
+        ['icon' => 'clippy', 'testId' => 'today', 'class' => 'icon-today'],
         ['due_on' => $today->format('Y-m-d'), 'evening' => '0']
     );
 endif;
 if (!$isThisEvening) :
     $menuItem(
         'This evening',
-        ['icon' => 'moon', 'testId' => 'evening', 'class' => 'evening'],
+        ['icon' => 'moon', 'testId' => 'evening', 'class' => 'icon-evening'],
         ['due_on' => $today->format('Y-m-d'), 'evening' => '1']
     );
 endif;
 if (!$isTomorrow) :
     $menuItem(
         'Tomorrow',
-        ['icon' => 'sun', 'testId' => 'tomorrow', 'class' => 'tomrrow'],
+        ['icon' => 'sun', 'testId' => 'tomorrow', 'class' => 'icon-tomorrow'],
         ['due_on' => $tomorrow->format('Y-m-d')]
     );
 endif;
 if ($isWeekend || $isFriday) :
     $menuItem(
         'Monday',
-        ['icon' => 'calendar', 'testId' => 'monday', 'class' => 'tomorrow'],
+        ['icon' => 'calendar', 'testId' => 'monday', 'class' => 'icon-week'],
         ['due_on' => $monday->format('Y-m-d')]
     );
 endif;
 if ($futureDate && $isEvening && $taskDue) :
     $menuItem(
         $this->Date->formatCompact($taskDue, false) . ' day',
-        ['icon' => 'sun', 'testId' => 'to-day', 'class' => 'tommorrow'],
+        ['icon' => 'sun', 'testId' => 'to-day', 'class' => 'icon-tommorrow'],
         ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '0']
     );
 endif;
 if ($futureDate && !$isEvening && $taskDue) :
     $menuItem(
         $this->Date->formatCompact($taskDue, true) . ' evening',
-        ['icon' => 'moon', 'testId' => 'to-evening', 'class' => 'evening'],
+        ['icon' => 'moon', 'testId' => 'to-evening', 'class' => 'icon-evening'],
         ['due_on' => $taskDue->format('Y-m-d'), 'evening' => '1']
     );
 endif;
 $menuItem(
     'Later',
-    ['icon' => 'clock', 'testId' => 'later', 'class' => 'not-due'],
+    ['icon' => 'clock', 'testId' => 'later', 'class' => 'icon-not-due'],
     ['due_on' => '']
 );
 
