@@ -74,14 +74,16 @@ class DueOnWidget extends BasicWidget
                 'task' => $task,
                 'referer' => '',
                 'renderForms' => false,
-                'itemFormatter' => function (string $title, string $icon, string $id, array $data) {
-                    $title = $this->view->element("icons/{$icon}16") . ' ' . $title;
+                'itemFormatter' => function (string $title, array $options, array $data) {
+                    $options += ['icon' => 'sun', 'class' => '', 'testId' => ''];
+                    $title = $this->view->element("icons/{$options['icon']}16") . ' ' . $title;
                     echo $this->view->Form->button($title, [
+                        'role' => 'menuitem',
                         'escapeTitle' => false,
-                        'data-testid' => $id,
+                        'data-testid' => $options['testId'],
                         'value' => $data['due_on'],
                         'data-evening' => $data['evening'] ?? 0,
-                        'class' => 'menu-item-button',
+                        'class' => "menu-item-button {$options['class']}",
                     ]);
                 },
             ]),
