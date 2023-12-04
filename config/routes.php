@@ -50,7 +50,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/day/{date}', ['action' => 'daily'], 'tasks:daily')
             ->setPass(['date']);
 
-        $builder->post('/add', ['action' => 'add'], 'tasks:add');
+        $builder->connect('/add', ['action' => 'add'], ['_name' => 'tasks:add']);
+
         // HTMX uses delete to change completion status as the success
         // means the element needs to be removed from the client state.
         $builder->post('/{id}/complete', ['action' => 'complete'], 'tasks:complete')

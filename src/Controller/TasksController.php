@@ -34,7 +34,7 @@ class TasksController extends AppController
 
         return !in_array(
             $this->request->getParam('action'),
-            ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view']
+            ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add']
         );
     }
 
@@ -196,12 +196,16 @@ class TasksController extends AppController
     public function add()
     {
         $task = $this->Tasks->newEmptyEntity();
-        $success = false;
+        $task->subtasks = [];
+        $task->evening = false;
+
+        $success = true;
         $redirect = null;
         $errors = [];
         $serialize = [];
 
         if ($this->request->is('post')) {
+            $success = false;
             $options = ['associated' => ['Subtasks']];
             $task->setAccess('subtasks', true);
             $task = $this->Tasks->patchEntity($task, $this->request->getData(), $options);
@@ -219,19 +223,28 @@ class TasksController extends AppController
                 $redirect = $this->referer(['_name' => 'tasks:today']);
 
                 $serialize[] = 'task';
-                $this->set('task', $task);
             } else {
                 $redirect = $this->referer(['_name' => 'tasks:today']);
 
                 $serialize[] = 'errors';
                 $errors = $this->flattenErrors($task->getErrors());
-                $this->set('errors', $errors);
             }
         }
 
         if ($errors) {
             $this->request->getSession()->write('errors', $errors);
         }
+
+        $projects = [];
+        if (!$this->request->is('json')) {
+            $projects = $this->Tasks->Projects->find('active')->find('top');
+            $projects = $this->Authorization->applyScope($projects, 'index');
+        }
+        $this->set('projects', $projects);
+        $this->set('sections', []);
+        $this->set('task', $task);
+        $this->set('errors', $errors);
+        $this->set('referer', $this->request->referer());
 
         return $this->respond([
             'success' => $success,
@@ -431,7 +444,9 @@ class TasksController extends AppController
             $template = $mode;
         }
         if ($template === 'editproject' || $template === 'view') {
-            $this->set('projects', $this->Tasks->Projects->find('active')->find('top'));
+            $projects = $this->Tasks->Projects->find('active')->find('top');
+            $projects = $this->Authorization->applyScope($projects, 'index');
+            $this->set('projects', $projects);
         }
         $sections = [];
         if ($task->project_id) {

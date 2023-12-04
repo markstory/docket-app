@@ -24,6 +24,8 @@ class DropDown extends HTMLElement {
         `Could not find one of trigger=${triggerTarget} drop-down-menu elements.`
       );
     }
+
+    // TODO Portal is interacting poorly with up with modal based task creation.
     const portal = this.makePortal();
 
     // Handle clicks outside the root parent element.

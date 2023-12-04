@@ -77,12 +77,12 @@ endif;
         <?php if (isset($showGlobalAdd) && $showGlobalAdd) : ?>
             <?= $this->Html->link(
                 $this->element('icons/plus16', ['size' => 64]),
-                ['_name' => 'tasks:add', '?' => $taskAddContext ?? []],
+                ['_name' => 'tasks:add', '?' => $globalAddContext ?? []],
                 [
                     'escape' => false,
                     'class' => 'button-global-add button-primary',
                     'data-testid' => 'global-task-add',
-                    'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $taskAddContext ?? []]),
+                    'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $globalAddContext ?? []]),
                     'hx-target' => 'main.main',
                     'hx-swap' => 'beforeend',
                 ]

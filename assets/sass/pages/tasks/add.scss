@@ -1,0 +1,14 @@
+// Page specific CSS for task add modal.
+.task-add {
+  position: fixed;
+  top: 80px;
+  left: 10%;
+  right: 10%;
+  bottom: auto;
+  padding: calc($space * 2);
+  z-index: $z-modal;
+
+  border-radius: $border-radius-large;
+  border: none;
+  box-shadow: var(--shadow-high);
+}

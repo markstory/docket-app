@@ -186,7 +186,7 @@ class AppController extends Controller
             ->getAuthenticationService()
             ->getAuthenticationProvider();
 
-        $setFlashMessages = ($authenticator instanceof SessionAuthenticator);
+        $setFlashMessages = (!$this->request->is('get') && $authenticator instanceof SessionAuthenticator);
         $viewBuilder = $this->viewBuilder();
         $isApi = $this->request->is('json');
 
