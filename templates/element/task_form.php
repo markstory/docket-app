@@ -89,6 +89,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                         'value' => $subtask->id,
                         'class' => 'icon-overdue button-icon',
                         'escapeTitle' => false,
+                        // TODO this needs to remove the li element as well.
                         'hx-ext' => 'remove-row',
                     ]) ?>
                 </div>
@@ -97,6 +98,11 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         </ul>
     <?php endif; ?>
 
+    <!--
+    TODO: Move this to a client template that adds a row to the table.
+    Submitting the subtasks as they are added acts differently than edits
+    and deletes too.
+    -->
     <div class="subtask-addform">
         <?= $this->Form->hidden("subtasks.{$newSubtaskIndex}.task_id", ['value' => $task->id]) ?>
         <?= $this->Form->text("subtasks.{$newSubtaskIndex}.title", [
