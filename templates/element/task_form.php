@@ -68,48 +68,78 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <?= $this->element('icons/workflow16') ?>
         Sub-tasks
     </h3>
-    <?php if (count($task->subtasks)) : ?>
-        <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter">
-        <?php foreach ($task->subtasks as $i => $subtask) : ?>
-            <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
-                <button class="dnd-handle" role="button" aria-roledescription="sortable">
-                    <?= $this->element('icons/grabber24') ?>
-                </button>
-                <div class="subtask-item">
-                    <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
-                    <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
-                    <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
-                    <?= $this->element('task_checkbox', [
-                        'name' => "subtasks.{$i}.completed",
-                        'checked' => $subtask->completed,
-                    ]) ?>
-                    <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
-                    <?= $this->Form->button($this->element('icons/trash16'), [
-                        'type' => 'button',
-                        'value' => $subtask->id,
-                        'class' => 'icon-overdue button-icon',
-                        'escapeTitle' => false,
-                        // TODO this needs to remove the li element as well.
-                        'hx-ext' => 'remove-row',
-                    ]) ?>
-                </div>
-            </li>
-        <?php endforeach ?>
-        </ul>
-    <?php endif; ?>
-
-    <!--
-    TODO: Move this to a client template that adds a row to the table.
-    Submitting the subtasks as they are added acts differently than edits
-    and deletes too.
-    -->
+    <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter" id="subtask-list">
+    <?php foreach ($task->subtasks as $i => $subtask) : ?>
+        <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
+            <button class="dnd-handle" role="button" aria-roledescription="sortable">
+                <?= $this->element('icons/grabber24') ?>
+            </button>
+            <div class="subtask-item">
+                <?= $this->Form->hidden("subtasks.{$i}.id", ['value' => $subtask->id]) ?>
+                <?= $this->Form->hidden("subtasks.{$i}.task_id", ['value' => $subtask->task_id]) ?>
+                <?= $this->Form->hidden("subtasks.{$i}.ranking", ['value' => $subtask->ranking]) ?>
+                <?= $this->element('task_checkbox', [
+                    'name' => "subtasks.{$i}.completed",
+                    'checked' => $subtask->completed,
+                ]) ?>
+                <?= $this->Form->text("subtasks.{$i}.title", ['value' => $subtask->title]) ?>
+                <?= $this->Form->button($this->element('icons/trash16'), [
+                    'type' => 'button',
+                    'value' => $subtask->id,
+                    'class' => 'icon-overdue button-icon',
+                    'escapeTitle' => false,
+                    'hx-ext' => 'remove-row',
+                ]) ?>
+            </div>
+        </li>
+    <?php endforeach ?>
+    </ul>
     <div class="subtask-addform">
-        <?= $this->Form->hidden("subtasks.{$newSubtaskIndex}.task_id", ['value' => $task->id]) ?>
-        <?= $this->Form->text("subtasks.{$newSubtaskIndex}.title", [
+        <?= $this->Form->text("_subtaskadd", [
+            'id' => 'subtask-add-text',
             'value' => '',
             'placeholder' => 'Create a subtask',
         ]) ?>
-        <?= $this->Form->button('Add', ['class' => 'button button-secondary', 'name' => 'subtask_add', 'value' => 1]) ?>
+        <?= $this->Form->button('Add', ['class' => 'button button-secondary', 'id' => 'subtask-add']) ?>
+        <script type="text/template" id="subtask-template">
+            <button class="dnd-handle" role="button" aria-roledescription="sortable">
+                <?= $this->element('icons/grabber24') ?>
+            </button>
+            <div class="subtask-item">
+                <?= $this->element('task_checkbox', [
+                    'name' => 'subtasks.{index}.completed',
+                    'checked' => false,
+                ]) ?>
+                <?= $this->Form->text('subtasks.{index}.title', ['value' => '{value}']) ?>
+                <?= $this->Form->button($this->element('icons/trash16'), [
+                    'type' => 'button',
+                    'value' => '',
+                    'class' => 'icon-overdue button-icon',
+                    'escapeTitle' => false,
+                    'hx-ext' => 'remove-row',
+                ]) ?>
+            </div>
+        </script>
+        <?= $this->Html->scriptStart(['type' => 'module']) ?>
+        (function () {
+            const button = document.getElementById('subtask-add');
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const list = document.getElementById('subtask-list');
+                const input = document.getElementById('subtask-add-text');
+                const index = list.querySelectorAll('li').length;
+
+                let template = document.getElementById('subtask-template').textContent;
+                template = template.replaceAll('{index}', index).replaceAll('{value}', input.value);
+                const item = document.createElement('li');
+                item.classList = 'task-subtask dnd-item';
+                item.innerHTML = template;
+
+                list.appendChild(item);
+                input.value = '';
+            });
+        }());
+        <?= $this->Html->scriptEnd() ?>
     </div>
 </div>
 
