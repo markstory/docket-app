@@ -609,6 +609,26 @@ class TasksControllerTest extends TestCase
         $this->assertEquals(1, $project->incomplete_task_count);
     }
 
+    public function testAddWithDefaultValues(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $tomorrow = FrozenDate::parse('tomorrow');
+        $tomorrowStr = $tomorrow->format('Y-m-d');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/tasks/add?title=first+todo&project_id={$project->id}&due_on={$tomorrowStr}");
+        $this->assertResponseOk();
+
+        $task = $this->viewVariable('task');
+        $this->assertSame('first todo', $task->title);
+        $this->assertSame($project->id, $task->project_id);
+        $this->assertEquals($tomorrow, $task->due_on);
+
+        $project = $this->Tasks->Projects->get($project->id);
+        $this->assertEquals(0, $project->incomplete_task_count);
+    }
+
     public function testAddApiToken(): void
     {
         $project = $this->makeProject('work', 1);
@@ -996,8 +1016,6 @@ class TasksControllerTest extends TestCase
 
         $updated = $this->viewVariable('task');
         $this->assertCount(1, $updated->subtasks);
-        // TODO this fails because cake won't update the counter cache
-        // when the association has no modified records.
         $this->assertEquals(1, $updated->subtask_count);
         $this->assertSame($sub->title, $updated->subtasks[0]->title);
         $this->assertFalse($updated->subtasks[0]->completed);

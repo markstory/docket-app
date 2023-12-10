@@ -196,7 +196,7 @@ class TasksController extends AppController
     public function add()
     {
         // TODO add support for query string default values.
-        $task = $this->Tasks->newEmptyEntity();
+        $task = $this->Tasks->newEntity($this->request->getQueryParams());
         $task->subtasks = [];
         $task->evening = false;
 

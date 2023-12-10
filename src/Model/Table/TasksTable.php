@@ -438,7 +438,7 @@ class TasksTable extends Table
             // This isn't ideal but it works for now
             $task->subtasks[0]->setDirty('title');
         }
-        if ($task->isDirty('subtasks') && empty($task->subtasks)) {
+        if ($task->id && $task->isDirty('subtasks') && empty($task->subtasks)) {
             $this->Subtasks->deleteAll(['task_id' => $task->id]);
             $task->subtask_count = 0;
             $task->complete_subtask_count = 0;

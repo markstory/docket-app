@@ -9,6 +9,9 @@ declare(strict_types=1);
  */
 
 // TODO: this needs to change as we don't have a taskid yet.
+// The section picker URL might need to come from the project sections controller
+// and have a project id provided. Alternative solution is to go to projects controller
+// and get the sections for a project.
 $sectionPickerUrl = ['_name' => 'tasks:viewmode', 'mode' => 'projectsection', 'id' => $task->id];
 
 $newSubtaskIndex = count($task->subtasks) + 1;
@@ -68,6 +71,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <?= $this->element('icons/workflow16') ?>
         Sub-tasks
     </h3>
+
     <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter" id="subtask-list">
     <?php foreach ($task->subtasks as $i => $subtask) : ?>
         <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
@@ -94,6 +98,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         </li>
     <?php endforeach ?>
     </ul>
+
     <div class="subtask-addform">
         <?= $this->Form->text("_subtaskadd", [
             'id' => 'subtask-add-text',
