@@ -305,4 +305,27 @@ class ProjectSectionsControllerTest extends TestCase
             $this->assertEquals($id, $results[$i]->id);
         }
     }
+
+    public function testOptionsNotFound()
+    {
+        $project = $this->makeProject('Home', 1);
+        $this->makeProjectSection('Reading', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get('/projectsections/options?project_id=999');
+        $this->assertResponseCode(404);
+    }
+
+    public function testOptionsOk()
+    {
+        $project = $this->makeProject('Home', 1);
+        $this->makeProjectSection('Reading', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/projectsections/options?project_id={$project->id}");
+        $this->assertResponseOk();
+        $this->assertResponseContains('Reading</option>');
+    }
 }
