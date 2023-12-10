@@ -13,35 +13,45 @@ import {SortableJsEvent} from 'app/types';
       if (element.getAttribute('hx-ext') !== 'task-sorter') {
         return;
       }
+      const putAttr = element.getAttribute('task-sorter-put');
+      let group: Sortable.SortableOptions['group'] = 'tasks';
+      if (putAttr === 'false') {
+        group = {name: 'tasks', put: false};
+      }
 
       // Implementing elements listen to the `end` event
       // triggered on this element and submits a form.
       new Sortable(element, {
-        group: 'tasks',
+        group: group,
         animation: 150,
         ghostClass: 'dnd-ghost',
         dragClass: 'dnd-item-dragging',
         handle: '.dnd-handle',
       });
       const orderAttr = element.getAttribute('task-sorter-attr');
-      if (orderAttr === null) {
-        throw new Error('Missing required parameter task-sorter-attr');
-      }
 
       element.addEventListener('end', function (event: SortableJsEvent) {
         event.stopPropagation();
-
         const taskEl = event.item as HTMLElement;
         const toEl = event.to as HTMLElement;
         const newIndex = event.newIndex;
         const taskId = taskEl.getAttribute('data-id');
 
-        const updateData: Record<string, string | number | undefined> = {
-          [orderAttr]: newIndex,
-        };
+        let updateData: Record<string, string | number | undefined> = {};
+        if (orderAttr) {
+          updateData[orderAttr] = newIndex;
+        }
         const sectionId = toEl.getAttribute('task-sorter-section');
         if (sectionId != null) {
           updateData.section_id = sectionId;
+        }
+        const evening = toEl.getAttribute('task-sorter-evening');
+        if (evening != null) {
+          updateData.evening = evening;
+        }
+        const dueon = toEl.getAttribute('task-sorter-dueon');
+        if (dueon != null) {
+          updateData.due_on = dueon;
         }
 
         // URL could be attribute driven if that makes sense

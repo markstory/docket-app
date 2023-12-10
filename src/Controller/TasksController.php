@@ -34,7 +34,7 @@ class TasksController extends AppController
 
         return !in_array(
             $this->request->getParam('action'),
-            ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add']
+            ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add', 'daily']
         );
     }
 
@@ -86,10 +86,7 @@ class TasksController extends AppController
             'end' => $date,
             'timezone' => $timezone,
         ]);
-
-        $this->set('component', 'Tasks/Daily');
-        $this->set('date', $date->format('Y-m-d'));
-
+        $this->set('date', $date);
         $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
         $tasks = $query->all();
