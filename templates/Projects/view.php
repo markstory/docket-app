@@ -28,9 +28,18 @@ foreach ($tasks as $task) {
                 <?= h($project->name) ?>
             </h1>
             <?php if (!$project->archived) : ?>
-                <a class="button-icon-primary" data-testid="add-task" href="<?= $taskAddUrl ?>">
-                    <?= $this->element('icons/plus16') ?>
-                </a>
+                <?= $this->Html->link(
+                    $this->element('icons/plus16'),
+                    $taskAddUrl,
+                    [
+                        'escape' => false,
+                        'class' => 'button-icon-primary',
+                        'data-testid' => 'add-task',
+                        'hx-get' => $taskAddUrl,
+                        'hx-target' => 'main.main',
+                        'hx-swap' => 'beforeend',
+                    ]
+                ) ?>
             <?php endif; ?>
         </div>
         <?= $this->element('project_menu', ['project' => $project, 'showDetailed' => true]) ?>

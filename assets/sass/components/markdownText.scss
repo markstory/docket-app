@@ -1,11 +1,12 @@
 markdown-text {
+  width: 100%;
   padding-bottom: calc($space * 3);
 
   textarea {
     height: auto;
-    width: 100%;
+    max-width: 100%;
+    width: calc(100% - $form-icon-input-margin);
     resize: none;
-    overflow: hidden;
 
     margin-top: $space;
     min-height: 36px;
@@ -29,7 +30,7 @@ markdown-text {
   .button-focusreveal {
     position: absolute;
     right: $space;
-    bottom: $space;
+    bottom: -4px;
   }
 }
 

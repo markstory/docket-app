@@ -28,8 +28,17 @@ $taskAddUrl = $this->Url->build([
         <?= h($section->name) ?>
     </span>
 
-    <a class="button-icon-primary" data-testid="add-task" href="<?= $taskAddUrl ?>">
-        <?= $this->element('icons/plus16') ?>
-    </a>
+    <?= $this->Html->link(
+        $this->element('icons/plus16'),
+        $taskAddUrl,
+        [
+            'escape' => false,
+            'class' => 'button-icon-primary',
+            'data-testid' => 'section-add-task',
+            'hx-get' => $taskAddUrl,
+            'hx-target' => 'main.main',
+            'hx-swap' => 'beforeend',
+        ]
+    ) ?>
 </h3>
 <?= $this->element('section_menu', ['section' => $section, 'project' => $project]) ?>
