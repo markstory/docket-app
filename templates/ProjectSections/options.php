@@ -2,8 +2,9 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\ProjectSection[] $sections
- * @var \App\Model\Entity\Task $task
+ * @var ?string $value
  */
+
 if (!empty($sections)) :
     $options = collection($sections)->combine('id', 'name')->toArray();
     echo $this->Form->control('section_id', [
@@ -14,7 +15,7 @@ if (!empty($sections)) :
         ],
         'options' => $options,
         'empty' => true,
-        'value' => $task->section_id,
+        'value' => $value,
     ]);
 else :
     echo $this->Form->control('section_id', [

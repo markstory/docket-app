@@ -160,13 +160,11 @@ textarea {
 // icon. The icons are all 16px wide. The layout will shift the inputs to align with the
 // label text, and then shift the form to the right equal to the icon size.
 .form-icon-headers {
-  --shift-width: -16px;
-
   .task-header,
   .form-control {
-    margin-left: var(--shift-width);
+    margin-left: $form-icon-group-margin;
   }
   .form-input {
-    margin-left: calc(var(--shift-width) * -1 + 5px);
+    margin-left: $form-icon-input-margin;
   }
 }

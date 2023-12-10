@@ -7,12 +7,7 @@ declare(strict_types=1);
  * @var string $referer
  * @var array $url
  */
-
-// TODO: this needs to change as we don't have a taskid yet.
-// The section picker URL might need to come from the project sections controller
-// and have a project id provided. Alternative solution is to go to projects controller
-// and get the sections for a project.
-$sectionPickerUrl = ['_name' => 'tasks:viewmode', 'mode' => 'projectsection', 'id' => $task->id];
+$sectionPickerUrl = ['_name' => 'projectsections:options'];
 
 $newSubtaskIndex = count($task->subtasks) + 1;
 ?>
@@ -47,8 +42,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             // TODO add loading indicator
         ]) ?>
         <div id="task-section-container">
-            <?php // TODO: I don't think this works correctly. ?>
-            <?= $this->element('../Tasks/projectsection', ['sections' => $sections]) ?>
+            <?= $this->element('../ProjectSections/options', ['sections' => $sections, 'value' => $task->id]) ?>
         </div>
         <?= $this->Form->control('due_on', [
             'label' => [

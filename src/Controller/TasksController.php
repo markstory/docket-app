@@ -19,7 +19,7 @@ use InvalidArgumentException;
  */
 class TasksController extends AppController
 {
-    public const EDIT_MODES = ['editproject', 'reschedule', 'projectsection'];
+    public const EDIT_MODES = ['editproject', 'reschedule'];
 
     public function viewClasses(): array
     {
@@ -237,12 +237,19 @@ class TasksController extends AppController
         }
 
         $projects = [];
+        $sections = [];
         if (!$this->request->is('json')) {
             $projects = $this->Tasks->Projects->find('active')->find('top');
             $projects = $this->Authorization->applyScope($projects, 'index');
+            if ($task->project_id) {
+                $sections = $this->Tasks->Projects->Sections
+                    ->find()
+                    ->where(['Sections.project_id' => $task->project_id])
+                    ->toArray();
+            }
         }
         $this->set('projects', $projects);
-        $this->set('sections', []);
+        $this->set('sections', $sections);
         $this->set('task', $task);
         $this->set('errors', $errors);
         $this->set('referer', $this->request->referer());

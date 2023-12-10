@@ -1,5 +1,15 @@
-markdown-text .form-input {
-  margin-top: $space;
+markdown-text {
+  padding-bottom: calc($space * 3);
+
+  textarea {
+    height: auto;
+    width: 100%;
+    resize: none;
+    overflow: hidden;
+
+    margin-top: $space;
+    min-height: 36px;
+  }
 }
 
 .markdown-text-preview,
@@ -15,7 +25,6 @@ markdown-text .form-input {
 
 .markdown-text-preview {
   position: relative;
-  padding-bottom: 22px;
 
   .button-focusreveal {
     position: absolute;

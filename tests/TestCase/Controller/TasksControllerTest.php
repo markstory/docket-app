@@ -612,6 +612,7 @@ class TasksControllerTest extends TestCase
     public function testAddWithDefaultValues(): void
     {
         $project = $this->makeProject('work', 1);
+        $section = $this->makeProjectSection('long term', $project->id);
         $tomorrow = FrozenDate::parse('tomorrow');
         $tomorrowStr = $tomorrow->format('Y-m-d');
 
@@ -624,6 +625,10 @@ class TasksControllerTest extends TestCase
         $this->assertSame('first todo', $task->title);
         $this->assertSame($project->id, $task->project_id);
         $this->assertEquals($tomorrow, $task->due_on);
+
+        $sections = $this->viewVariable('sections');
+        $this->assertCount(1, $sections);
+        $this->assertEquals($section->id, $sections[0]->id);
 
         $project = $this->Tasks->Projects->get($project->id);
         $this->assertEquals(0, $project->incomplete_task_count);

@@ -3,8 +3,7 @@
   max-width: 800px;
   padding-left: $space * 2;
 
-  .task-quickform,
-  .task-notes {
+  .task-quickform {
     margin: 0 0 $space * 2;
   }
   .task-quickform {
@@ -21,6 +20,11 @@
     align-items: center;
 
     margin-bottom: calc($space * 3);
+  }
+
+  .form-section-heading {
+    display: flex;
+    gap: $space;
   }
   .button-bar {
     flex-direction: row-reverse;
@@ -82,20 +86,17 @@
 }
 
 .task-notes {
-  --shift-width: -16px;
+  margin-left: $form-icon-group-margin;
 
   .form-input {
     width: 97%;
   }
+  .markdown-text-preview,
   textarea {
-    height: auto;
-    width: 100%;
-    resize: none;
-    overflow: hidden;
+    margin-left: $form-icon-input-margin;
   }
   .markdown-text-preview {
     margin-top: $space;
-    margin-left: calc(var(--shift-width) * -1 + 5px);
   }
 }
 
@@ -113,10 +114,13 @@
 .form-control.task-subtasks {
   align-items: stretch;
 }
+.task-subtasks .form-section-heading {
+  margin-bottom: calc($space * 2 - $space);
+}
 .task-subtask-list {
   list-style: none;
   padding-left: 0;
-  margin: calc($space * 2) 0 0 0;
+  margin: 0;
   width: 100%;
 
   li {
@@ -130,6 +134,13 @@
   display: flex;
   align-items: center;
   gap: $space;
+
+  .dnd-handle {
+    margin-right: 0;
+  }
+  &.dnd-item {
+    margin-left: -40px;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -148,7 +159,7 @@
 }
 
 .subtask-addform {
-  margin: 0 0 24px 32px ;
+  margin: 0 0 24px 22px ;
   display: flex;
   flex: 1;
   gap: $space;

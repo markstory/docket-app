@@ -116,8 +116,19 @@ $routes->scope('/', function (RouteBuilder $builder) {
                 ->setPass(['projectSlug', 'id']);
             $builder->post('/{id}/delete', ['action' => 'delete'], 'projectsections:delete')
                 ->setPass(['projectSlug', 'id']);
-            $builder->connect('/{id}/delete/confirm', ['action' => 'deleteConfirm'], ['_name' => 'projectsections:deleteconfirm'])
-                ->setPass(['projectSlug', 'id']);
+            $builder->connect(
+                '/{id}/delete/confirm',
+                ['action' => 'deleteConfirm'],
+                ['_name' => 'projectsections:deleteconfirm']
+            )
+            ->setPass(['projectSlug', 'id']);
+        }
+    );
+    $builder->scope(
+        '/projectsections',
+        ['controller' => 'ProjectSections'],
+        function (RouteBuilder $builder) {
+            $builder->get('/options', ['action' => 'options'], 'projectsections:options');
         }
     );
 

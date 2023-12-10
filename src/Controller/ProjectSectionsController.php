@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Project;
+use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
 
 /**
@@ -15,7 +16,7 @@ class ProjectSectionsController extends AppController
 {
     protected function useInertia()
     {
-        return !in_array($this->request->getParam('action'), ['edit', 'view', 'deleteConfirm', 'add']);
+        return !in_array($this->request->getParam('action'), ['edit', 'view', 'deleteConfirm', 'add', 'options']);
     }
 
     protected function getProject(string $slug): Project
@@ -25,6 +26,24 @@ class ProjectSectionsController extends AppController
 
         /** @var \App\Model\Entity\Project */
         return $query->firstOrFail();
+    }
+
+    public function options()
+    {
+        $projectId = $this->request->getQuery('project_id');
+        if (!$projectId) {
+            throw new NotFoundException();
+        }
+        $project = $this->ProjectSections->Projects->get($projectId);
+        $this->Authorization->authorize($project, 'view');
+
+        $sections = $this->ProjectSections
+            ->find()
+            ->where(['ProjectSections.project_id' => $project->id])
+            ->toArray();
+        $this->set('sections', $sections);
+        $this->set('value', $sections);
+        $this->viewBuilder()->setLayout('ajax');
     }
 
     public function add(string $projectSlug)
