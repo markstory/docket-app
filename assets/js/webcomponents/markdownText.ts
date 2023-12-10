@@ -23,8 +23,8 @@ class MarkdownText extends HTMLElement {
     });
 
     const preview = this.getPreviewElement();
-    preview.addEventListener('click', (e) => {
-      e.preventDefault();
+    preview.addEventListener('click', evt => {
+      evt.preventDefault();
       this.showPreview = false;
       this.update();
     });
