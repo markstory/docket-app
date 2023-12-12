@@ -107,6 +107,12 @@ textarea {
 }
 
 
+.form-standard {
+  .form-label-group {
+    width: 275px;
+  }
+}
+
 // Forms that pivots to a stacked layout in narrow viewports.
 .form-narrow {
   .form-label-group {

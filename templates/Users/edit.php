@@ -13,7 +13,7 @@ $this->assign('title', 'Edit Profile');
 ?>
 <h2>Edit Profile</h2>
 <?php
-echo $this->Form->create($user);
+echo $this->Form->create($user, ['class' => 'form-standard']);
 echo $this->Form->control('name');
 echo $this->Form->control('unverified_email', [
     'label' => 'Email',

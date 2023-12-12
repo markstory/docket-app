@@ -12,7 +12,7 @@ $this->assign('title', 'Update Password');
 <?= $this->Form->create(
     $user,
     [
-        'class' => 'form-narrow',
+        'class' => 'form-standard',
         'url' => ['controller' => 'Users', 'action' => 'updatePassword'],
     ]
 ) ?>
