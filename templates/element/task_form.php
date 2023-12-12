@@ -44,17 +44,27 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <div id="task-section-container">
             <?= $this->element('../ProjectSections/options', ['sections' => $sections, 'value' => $task->id]) ?>
         </div>
-        <?= $this->Form->control('due_on', [
-            'label' => [
-                'class' => 'form-section-heading icon-tomorrow',
-                'text' => $this->element('icons/calendar16') . 'Due On',
-                'escape' => false,
-            ],
-            'type' => 'dueon',
-            'value' => $task,
-        ]) ?>
+        <div class="form-control form-dueon-control">
+            <label for="due-on" class="form-section-heading icon-tomorrow">
+                <?= $this->element('icons/calendar16') ?> Due On
+            </label>
+            <div class="form-input form-dueon-control">
+                <?= $this->Form->input('due_on', [
+                    'type' => 'dueon',
+                    'value' => $task,
+                ]) ?>
+                <label class="toggle-evening" for="task-evening">
+                    <?= $this->Form->input('evening', [
+                        'id' => 'task-evening',
+                        'type' => 'checkbox',
+                        'checked' => $task->evening,
+                    ]) ?>
+                    <span class="icon-evening"><?= $this->element('icons/moon16') ?></span>
+                    <span class="icon-tomorrow"><?= $this->element('icons/sun16') ?></span>
+                </label>
+            </div>
+        </div>
     </div>
-</div>
 
 <div class="task-notes">
     <?= $this->element('task_body') ?>

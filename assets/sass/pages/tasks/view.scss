@@ -168,3 +168,27 @@
     flex-grow: 1;
   }
 }
+
+// Custom UI component for doing day/evening
+.toggle-evening {
+  display: flex;
+  gap: $space;
+  align-items: center;
+
+  svg {
+    cursor: pointer;
+  }
+
+  // Hide the input without removing tabindex.
+  input {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  input:checked ~ .icon-tomorrow svg {
+    color: var(--color-low-emphasis);
+  }
+  input:not(:checked) ~ .icon-evening svg {
+    color: var(--color-low-emphasis);
+  }
+}

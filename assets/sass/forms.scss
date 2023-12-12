@@ -174,3 +174,10 @@ textarea {
     margin-left: $form-icon-input-margin;
   }
 }
+
+.form-dueon-control {
+  display: flex;
+  align-items: center;
+  gap: calc($space * 2);
+
+}
