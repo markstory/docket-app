@@ -59,8 +59,12 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                         'type' => 'checkbox',
                         'checked' => $task->evening,
                     ]) ?>
-                    <span class="icon-evening"><?= $this->element('icons/moon16') ?></span>
-                    <span class="icon-tomorrow"><?= $this->element('icons/sun16') ?></span>
+                    <span class="icon-evening" title="Set task to evening" tabindex="0" role="button">
+                        <?= $this->element('icons/moon16') ?>
+                    </span>
+                    <span class="icon-tomorrow" title="Set task to daytime" tabindex="0" role="button">
+                        <?= $this->element('icons/sun16') ?>
+                    </span>
                 </label>
             </div>
         </div>
