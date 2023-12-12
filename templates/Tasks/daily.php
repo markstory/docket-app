@@ -34,12 +34,13 @@ foreach ($tasks as $task) {
     if ($task->evening) {
         $key = 'evening';
     }
-    if ($task->due_on && $task->due_on->isPast($date)) {
+    if ($task->due_on && $task->due_on->lessThan($date)) {
         $key = 'overdue';
     }
     $groupedTasks[$key][] = $task;
 }
 
+// Overdue section
 if (!empty($groupedTasks['overdue'])) : ?>
     <h2 class="heading-icon overdue">
         <?= $this->element('icons/alert16') ?>
@@ -58,6 +59,8 @@ if (!empty($groupedTasks['overdue'])) : ?>
     ?>
     </div>
 <?php endif; ?>
+
+<?php // TODO display calendar items ?>
 
 <?php // Today section ?>
 <h2 class="heading-icon today">

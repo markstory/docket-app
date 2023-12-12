@@ -34,7 +34,7 @@ class TasksController extends AppController
 
         return !in_array(
             $this->request->getParam('action'),
-            ['deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add', 'daily']
+            ['index', 'deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add', 'daily']
         );
     }
 
@@ -102,6 +102,10 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
         }
 
+        if ($this->request->is('htmx')) {
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
+        }
+
         return $this->respond([
             'success' => true,
             'serialize' => $serialize,
@@ -153,6 +157,10 @@ class TasksController extends AppController
         $session = $this->request->getSession();
         if ($session->check('errors')) {
             $this->set('errors', $session->consume('errors'));
+        }
+
+        if ($this->request->is('htmx')) {
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
         }
 
         $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
@@ -238,6 +246,9 @@ class TasksController extends AppController
         if (!$this->request->is('json')) {
             $projects = $this->Tasks->Projects->find('active')->find('top');
             $projects = $this->Authorization->applyScope($projects, 'index');
+            if (!$task->project_id) {
+                $task->project_id = $projects->first()->id;
+            }
             if ($task->project_id) {
                 $sections = $this->Tasks->Projects->Sections
                     ->find()

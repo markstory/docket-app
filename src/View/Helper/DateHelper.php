@@ -62,4 +62,20 @@ class DateHelper extends Helper
 
         return $date->i18nFormat('MMM d');
     }
+
+    public function formatDateHeading(
+        FrozenDate | null $date,
+    ): array {
+        $delta = $date->diffInDays($this->today());
+        $shortDate = $date->i18nFormat('MMM d');
+        if ($delta < 1) {
+            return ['Today', $shortDate];
+        } elseif ($delta < 2) {
+            return ['Tomorrow', $shortDate];
+        } elseif ($delta < 7) {
+            return [$date->i18nFormat('EEEE'), $shortDate];
+        }
+
+        return [$shortDate, ''];
+    }
 }
