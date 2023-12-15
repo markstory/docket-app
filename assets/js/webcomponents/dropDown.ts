@@ -12,6 +12,7 @@ import htmx from 'htmx.org';
  */
 class DropDown extends HTMLElement {
   private revealBackup: Node | undefined = undefined;
+  private portalId: string = ''
 
   connectedCallback() {
     const triggerTarget = this.getAttribute('trigger') ?? 'button';
@@ -24,8 +25,6 @@ class DropDown extends HTMLElement {
         `Could not find one of trigger=${triggerTarget} drop-down-menu elements.`
       );
     }
-
-    // TODO Portal is interacting poorly with up with modal based task creation.
     const portal = this.makePortal();
 
     // Handle clicks outside the root parent element.
@@ -41,7 +40,7 @@ class DropDown extends HTMLElement {
       portal.style.display = 'none';
 
       if (this.revealBackup && clonemenu === 'true') {
-        portal.innerHTML = '';
+        portal.innerHTML = ' ';
         reveal = this.revealBackup.cloneNode(true) as HTMLElement;
         htmx.process(reveal);
         attachRevealEvents(reveal);
@@ -61,17 +60,26 @@ class DropDown extends HTMLElement {
       });
     }
 
-    function reposition() {
+    const reposition = () => {
       if (!trigger || !reveal || !portal) {
         return;
       }
       const triggerRect = trigger.getBoundingClientRect();
 
-      // position portal left aligned and below trigger.
-      portal.style.left = `${triggerRect.left + 5}px`;
-      portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
+      // Show the portal
       portal.style.display = 'block';
       portal.style.position = 'absolute';
+
+      const portalScope = this.portalScope;
+      const isGlobal = portalScope === 'global';
+      if (isGlobal) {
+        // position portal left aligned and below trigger.
+        portal.style.left = `${triggerRect.left + 5}px`;
+        portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
+      } else {
+        portal.style.left = '0px';
+        portal.style.top = '18px';
+      }
 
       // TODO solve for scroll offsets
       const menuRect = reveal.getBoundingClientRect();
@@ -81,7 +89,8 @@ class DropDown extends HTMLElement {
         const rightEdge = triggerRect.left + triggerRect.width;
         portal.style.left = `${rightEdge - menuRect.width}px`;
       }
-    }
+      portal.style.display = 'block';
+    };
     attachRevealEvents(reveal);
 
     trigger.addEventListener('click', evt => {
@@ -122,16 +131,36 @@ class DropDown extends HTMLElement {
     });
   }
 
+  get portalScope() {
+    return this.getAttribute('portalscope') ?? 'global';
+  }
+
   makePortal() {
-    const id = 'drop-down-portal';
+    const portalScope = this.portalScope;
+    const isGlobal = portalScope === 'global';
+    const isLocal = portalScope === 'local';
+    let id = '';
+    if (isGlobal) {
+      id = 'drop-down-portal';
+    }
+    if (isLocal) {
+      id = 'drop-down-portal-local-' + (Math.random() * 1000).toFixed(5);
+    }
+
     let portal = document.getElementById(id);
     if (portal) {
       return portal;
     }
     portal = document.createElement('div');
     portal.setAttribute('id', id);
+    portal.classList.add('drop-down-portal');
 
-    document.body.appendChild(portal);
+    if (isGlobal) {
+      document.body.appendChild(portal);
+    }
+    if (isLocal) {
+      this.append(portal);
+    }
     return portal;
   }
 }

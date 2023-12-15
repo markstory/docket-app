@@ -1,7 +1,3 @@
-#dropdown-portal {
-  position: absolute;
-}
-
 [data-reach-menu-button] {
   display: flex;
   align-items: center;
@@ -13,11 +9,20 @@
   }
 }
 
+drop-down {
+  position: relative;
+}
+
 drop-down-menu {
   position: absolute;
   display: none;
 }
-#drop-down-portal > drop-down-menu {
+
+.drop-down-portal {
+  position: absolute;
+  display: none;
+}
+.drop-down-portal > drop-down-menu {
   display: block;
 }
 

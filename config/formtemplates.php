@@ -23,7 +23,7 @@ return [
     'due-on' => <<<HTML
     <due-on {{attrs}}>
         {{hidden}}
-        <drop-down clonemenu="false">
+        <drop-down clonemenu="false" portalscope="local">
             <button type="button"
                 class="button button-secondary"
                 aria-haspopup="true"
