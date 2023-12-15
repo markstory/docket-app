@@ -1,11 +1,10 @@
 import {defineConfig} from 'vite';
 import path from 'path';
-import reactRefresh from '@vitejs/plugin-react-refresh';
 
 const projectRootDir = path.resolve(__dirname);
 
 export default defineConfig({
-  plugins: [reactRefresh()],
+  plugins: [],
   build: {
     emptyOutDir: false,
     outDir: './webroot/',
@@ -27,12 +26,9 @@ export default defineConfig({
       },
     ],
   },
-  esbuild: {
-    // Simulate react17 style jsx usage.
-    jsxInject: `import React from 'react';`,
-  },
+  esbuild: {},
   optimizeDeps: {
-    include: ['react', 'axios', '@inertiajs/inertia', '@inertiajs/inertia-react'],
+    include: [],
   },
   server: {
     watch: {

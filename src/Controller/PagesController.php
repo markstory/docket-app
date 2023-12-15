@@ -40,11 +40,6 @@ class PagesController extends AppController
         $this->Authorization->skipAuthorization();
     }
 
-    public function useInertia()
-    {
-        return false;
-    }
-
     public function beforeFilter(EventInterface $event): ?Response
     {
         if ($this->request->getUri()->getPath() == '/' && $this->request->getAttribute('identity')) {

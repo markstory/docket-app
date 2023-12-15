@@ -20,11 +20,6 @@ class CalendarSourcesController extends AppController
         return [JsonView::class];
     }
 
-    public function useInertia(): bool
-    {
-        return in_array($this->request->getParam('action'), ['confirmDelete']);
-    }
-
     protected function getSource(): CalendarSource
     {
         $query = $this->CalendarSources

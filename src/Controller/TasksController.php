@@ -26,18 +26,6 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
-    protected function useInertia(): bool
-    {
-        if ($this->request->getParam('action') == 'view' && $this->request->getParam('mode')) {
-            return false;
-        }
-
-        return !in_array(
-            $this->request->getParam('action'),
-            ['index', 'deleted', 'complete', 'incomplete', 'deleteConfirm', 'view', 'add', 'daily']
-        );
-    }
-
     protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
     {
         if ($value !== null && !is_string($value)) {

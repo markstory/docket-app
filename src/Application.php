@@ -71,7 +71,6 @@ class Application extends BaseApplication implements
         if (Configure::read('debug') && !Configure::read('App.inTest')) {
             $this->addPlugin('DebugKit');
         }
-        $this->addPlugin('Inertia', ['routes' => false]);
         $this->addPlugin('Authentication');
         $this->addPlugin('Authorization');
     }

@@ -128,7 +128,7 @@
   font-weight: bold;
   background: var(--color-menu-selected);
 }
-.day-picker-day button[disabled] {
+.day-picker-day button[disabled],
 .day-picker-day button[disabled][aria-selected="true"] {
   color: var(--color-disabled);
   &:hover {

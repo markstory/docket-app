@@ -57,6 +57,7 @@ class MarkdownText extends HTMLElement {
   </span>
 </p>`;
       } else {
+        // TODO apply dom purify
         contents = await marked.parse(input.value);
         contents += `
 <a tabindex="0" href="" class="button button-muted button-narrow button-focusreveal">Edit Body</a>`;

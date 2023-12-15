@@ -11,7 +11,6 @@ use Authentication\Authenticator\SessionAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
-use Inertia\Controller\InertiaResponseTrait;
 
 /**
  * Application Controller
@@ -26,10 +25,6 @@ use Inertia\Controller\InertiaResponseTrait;
  */
 class AppController extends Controller
 {
-    use InertiaResponseTrait {
-        beforeRender as protected inertiaBeforeRender;
-    }
-
     public ProjectsTable $Projects;
 
     /**
@@ -44,11 +39,6 @@ class AppController extends Controller
         $this->loadComponent('Flash');
         $this->loadComponent('Authentication.Authentication');
         $this->loadComponent('Authorization.Authorization');
-    }
-
-    protected function useInertia()
-    {
-        return true;
     }
 
     public function beforeRender(EventInterface $event)
@@ -71,22 +61,6 @@ class AppController extends Controller
 
         // Load common data.
         $this->set('identity', $identity);
-
-        $isApiResponse = !empty($this->viewBuilder()->getOption('serialize'));
-        $useInertia = $this->useInertia();
-        if (!$isApiResponse && $useInertia && $identity) {
-            // Use a function to defer query exection on partial loads.
-            $this->set('projects', function () use ($identity) {
-                $this->loadModel('Projects');
-
-                return $identity->applyScope('index', $this->Projects->find('active')->find('top'));
-            });
-        }
-
-        // Use inertia if we aren't making a custom JSON response.
-        if ($useInertia && !$isApiResponse) {
-            $this->inertiaBeforeRender($event);
-        }
     }
 
     protected function flattenErrors(array $errors): array

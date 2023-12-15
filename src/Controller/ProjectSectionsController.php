@@ -14,11 +14,6 @@ use InvalidArgumentException;
  */
 class ProjectSectionsController extends AppController
 {
-    protected function useInertia()
-    {
-        return !in_array($this->request->getParam('action'), ['edit', 'view', 'deleteConfirm', 'add', 'options']);
-    }
-
     protected function getProject(string $slug): Project
     {
         $query = $this->ProjectSections->Projects->findBySlug($slug);

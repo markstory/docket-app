@@ -24,11 +24,6 @@ class CalendarProvidersController extends AppController
         return [JsonView::class];
     }
 
-    protected function useInertia()
-    {
-        return !in_array($this->request->getParam('action'), ['index']);
-    }
-
     public function createFromGoogle(GoogleClient $client)
     {
         $token = $this->request->getData('accessToken');
