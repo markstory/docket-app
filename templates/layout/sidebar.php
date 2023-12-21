@@ -11,9 +11,9 @@ declare(strict_types=1);
 // If we're not handling an HX-Request wrap the layout
 // in page chrome. When we're handling htmx requests,
 // we swap main.main.
-if ($this->request->is('htmx')):
+if ($this->request->is('htmx')) :
     echo $this->Flash->render();
-else:
+else :
     $this->extend('default');
 endif;
 
@@ -69,7 +69,7 @@ endif;
             class="expander"
             title="Show project menu"
         >
-            <?= $this->element('icons/kebab16') ?> 
+            <?= $this->element('icons/kebab16') ?>
         </button>
     </section>
     <section class="content">
