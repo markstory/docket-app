@@ -413,10 +413,10 @@ class TasksController extends AppController
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
         $redirect = null;
-        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
-        if ($this->request->getData('subtask_add')) {
-            $hxRedirect = ['_name' => 'tasks:view', 'id' => $id];
+        if (!$this->request->is('json')) {
+            $redirect = ['_name' => 'tasks:view', 'id' => $task->id];
         }
+        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
         if ($hxRedirect) {
             $redirect = $hxRedirect;
         }

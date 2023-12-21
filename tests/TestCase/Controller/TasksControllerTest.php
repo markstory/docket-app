@@ -187,7 +187,7 @@ class TasksControllerTest extends TestCase
      *
      * @return void
      */
-    public function testTodayRoute(): void
+    public function testToday(): void
     {
         $today = new FrozenDate('today');
         $tomorrow = $today->modify('+1 day');
@@ -210,7 +210,7 @@ class TasksControllerTest extends TestCase
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
         $this->assertCount(2, $tasks);
-        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date')->format('Y-m-d'));
 
         $ids = collection($tasks)->extract('id')->toList();
         $this->assertEquals([$overdue->id, $first->id], $ids);
@@ -304,7 +304,7 @@ class TasksControllerTest extends TestCase
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
         $this->assertCount(1, $tasks);
-        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date')->format('Y-m-d'));
 
         $ids = collection($tasks)->extract('id')->toList();
         $this->assertEquals([$first->id], $ids);
@@ -759,7 +759,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
             'evening' => true,
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirect("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -781,7 +781,7 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/edit", [
             'due_on_string' => 'tomorrow',
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirect("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -819,7 +819,7 @@ class TasksControllerTest extends TestCase
             'subtask_add' => '1',
             'redirect' => '/tasks/today',
         ]);
-        $this->assertRedirect("/tasks/{$first->id}/view");
+        $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
     }
 
@@ -927,7 +927,7 @@ class TasksControllerTest extends TestCase
                 ['title' => 'second step'],
             ],
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         /** @var \App\Model\Entity\Task $updated */
@@ -960,7 +960,7 @@ class TasksControllerTest extends TestCase
                 ['title' => ''],
             ],
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -986,7 +986,7 @@ class TasksControllerTest extends TestCase
                 ['title' => 'step three'],
             ],
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -1016,7 +1016,7 @@ class TasksControllerTest extends TestCase
                 ['id' => $sub->id, 'title' => $sub->title],
             ],
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -1038,7 +1038,7 @@ class TasksControllerTest extends TestCase
             'title' => $first->title,
             'subtasks' => [],
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
 
         $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
         $this->assertSame('first', $todo->title);
@@ -1091,7 +1091,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
             'project_id' => $other->id,
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
 
         $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);

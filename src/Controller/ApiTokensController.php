@@ -94,6 +94,7 @@ class ApiTokensController extends AppController
         $this->Authorization->authorize($apiToken, 'delete');
 
         $this->ApiTokens->delete($apiToken);
-        $this->response = $this->response->withStatus(204);
+
+        return $this->response->withStatus(204);
     }
 }

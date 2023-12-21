@@ -168,6 +168,7 @@ class CalendarProvidersControllerTest extends TestCase
         ]);
 
         $this->login();
+        $this->requestJson();
         $this->get("/calendars/{$ownProvider->id}/view");
         $this->assertResponseOk();
         $provider = $this->viewVariable('provider');
@@ -186,6 +187,7 @@ class CalendarProvidersControllerTest extends TestCase
         // Owned by a different user.
         $provider = $this->makeCalendarProvider(2, 'other@example.com');
         $this->login();
+        $this->requestJson();
         $this->get("/calendars/{$provider->id}/view");
         $this->assertResponseError();
     }
@@ -206,6 +208,7 @@ class CalendarProvidersControllerTest extends TestCase
         ]);
 
         $this->login();
+        $this->requestJson();
         $this->get("/calendars/{$ownProvider->id}/view");
         $this->assertResponseOk();
         $provider = $this->viewVariable('provider');

@@ -168,6 +168,7 @@ class CalendarProvidersController extends AppController
 
         return $this->respond([
             'success' => $success,
+            'statusSuccess' => 204,
             'flashSuccess' => __('The calendar account has been deleted.'),
             'flashError' => __('The calendar account could not be deleted. Please try again.'),
             'redirect' => ['action' => 'index'],
