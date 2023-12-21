@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\Acceptance;
 
 use Cake\ORM\TableRegistry;
+use Symfony\Component\Panther\Client;
 
 class ProjectsTest extends AcceptanceTestCase
 {
@@ -11,6 +12,27 @@ class ProjectsTest extends AcceptanceTestCase
     {
         parent::setUp();
         $this->Projects = TableRegistry::get('Projects');
+    }
+
+    protected function openSectionMenu(Client $client)
+    {
+        $crawler = $client->getCrawler();
+
+        // Open the section menu
+        $client->getMouse()->mouseMoveTo('.section-container');
+
+        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
+        $sectionMenu->click();
+        $client->waitFor('drop-down-menu');
+    }
+
+    protected function confirmDialog(Client $client)
+    {
+        // Click proceed in the modal.
+        $crawler = $client->getCrawler();
+        $client->waitFor('dialog');
+        $button = $crawler->filter('dialog [data-testid="confirm-proceed"]')->first();
+        $button->click();
     }
 
     public function testCreate()
@@ -44,15 +66,11 @@ class ProjectsTest extends AcceptanceTestCase
         // Open the header menu
         $headerMenu = $crawler->filter('.heading-actions .button-icon')->first();
         $headerMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
+        $client->waitFor('drop-down-menu');
 
         // Click delete
-        $this->clickWithMouse('.delete[data-reach-menu-item]');
-
-        // Click proceed in the modal.
-        $client->waitFor('[aria-modal="true"]');
-        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
-        $button->click();
+        $this->clickWithMouse('drop-down-menu .icon-delete');
+        $this->confirmDialog($client);
 
         $this->assertEquals(0, $this->Projects->find()->count());
     }
@@ -143,20 +161,14 @@ class ProjectsTest extends AcceptanceTestCase
         $client = $this->login();
         $client->get('/projects/home');
         $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
 
-        // Open the header menu
-        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
-        $sectionMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
+        $this->openSectionMenu($client);
 
         // Click the delete action
-        $this->clickWithMouse('.delete[data-reach-menu-item]');
+        $client->waitFor('.icon-delete');
+        $client->clickLink('Delete Section');
 
-        // Click proceed in the modal.
-        $client->waitFor('[aria-modal="true"]');
-        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
-        $button->click();
+        $this->confirmDialog($client);
 
         $this->assertEquals(0, $this->Projects->Sections->find()->count());
     }

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @var string $description Body copy
  */
 ?>
-<dialog class="confirm-dialog">
+<dialog class="confirm-dialog" data-testid="confirm-dialog">
     <?= $this->Form->create(null, ['url' => $target]) ?>
     <h2><?= $title ?></h2>
     <p><?= $description ?></p>

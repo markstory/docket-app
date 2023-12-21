@@ -22,6 +22,7 @@ $deleteConfirm = [
         class="button-icon button-default"
         aria-haspopup="true"
         aria-controls="<?= h($menuId) ?>"
+        aria-label="Section actions"
         type="button"
     >
         <?= $this->element('icons/kebab16') ?>
