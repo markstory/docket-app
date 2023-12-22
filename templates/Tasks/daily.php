@@ -94,7 +94,7 @@ endforeach;
 </div>
 
 <?php // Evening section ?>
-<h2 class="heading-icon today">
+<h2 class="heading-icon icon-evening">
     <?= $this->element('icons/moon16') ?>
     This Evening
     <?= $this->Html->link(
@@ -103,7 +103,7 @@ endforeach;
         [
             'escape' => false,
             'class' => 'button-icon-primary',
-            'data-testid' => 'add-task',
+            'data-testid' => 'add-task-evening',
             'hx-get' => $taskAddEveningUrl,
             'hx-target' => 'main.main',
             'hx-swap' => 'beforeend',

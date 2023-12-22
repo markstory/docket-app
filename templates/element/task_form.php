@@ -113,7 +113,12 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             'value' => '',
             'placeholder' => 'Create a subtask',
         ]) ?>
-        <?= $this->Form->button('Add', ['class' => 'button button-secondary', 'id' => 'subtask-add']) ?>
+        <?= $this->Form->button('Add', [
+            'type' => 'button',
+            'class' => 'button button-secondary',
+            'id' => 'subtask-add',
+            'data-testid' => 'subtask-add',
+        ]) ?>
         <script type="text/template" id="subtask-template">
             <button class="dnd-handle" role="button" aria-roledescription="sortable">
                 <?= $this->element('icons/grabber24') ?>

@@ -32,6 +32,7 @@ endif;
         <?= $this->element('task_checkbox', [
             'name' => 'completed',
             'checked' => $task->completed,
+            // TODO perhaps this should be a POST -> redirect flow so flash messages can be shown.
             'attrs' => [
                 'value' => 1,
                 'hx-delete' => $taskCheckboxUrl,
