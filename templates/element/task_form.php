@@ -157,7 +157,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 </div>
 
 <div class="button-bar">
-    <?= $this->Form->button('Save', ['class' => 'button-primary']) ?>
+    <?= $this->Form->button('Save', ['class' => 'button-primary', 'data-testid' => 'save-task']) ?>
 </div>
 <?= $this->Form->end() ?>
 </div>

@@ -12,6 +12,7 @@ $deleteConfirm = ['_name' => 'projects:deleteConfirm', 'slug' => $project->slug]
         class="button-icon button-default"
         aria-haspopup="true"
         aria-controls="<?= h($menuId) ?>"
+        aria-label="Project actions"
         type="button"
     >
         <?= $this->element('icons/kebab16') ?>
