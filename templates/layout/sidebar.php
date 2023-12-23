@@ -17,6 +17,9 @@ else :
     $this->extend('default');
 endif;
 
+$todayActive = strpos($this->request->getPath(), '/tasks/today') !== false;
+$upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false;
+
 // TODO make expanded work. Perhaps with an htmx
 // extension that maintains the state?
 ?>
@@ -32,16 +35,18 @@ endif;
                 <div class="project-filter">
                     <ul class="links">
                         <li>
-                            <a href="<?= $this->Url->build(['_name' => 'tasks:today']) ?>">
-                                <i class="icon-today"><?= $this->element('icons/clippy16') ?></i>
-                                Today
-                            </a>
+                            <?= $this->Html->link(
+                                '<i class="icon-today">' . $this->element('icons/clippy16') . '</i> Today',
+                                ['_name' => 'tasks:today'],
+                                ['escape' => false, 'class' => $todayActive ? 'active' : '']
+                            ) ?>
                         </li>
                         <li>
-                            <a href="<?= $this->Url->build(['_name' => 'tasks:upcoming']) ?>">
-                                <i class="icon-tomorrow"><?= $this->element('icons/calendar16') ?></i>
-                                Upcoming
-                            </a>
+                            <?= $this->Html->link(
+                                '<i class="icon-tomorrow">' . $this->element('icons/calendar16') . '</i> Upcoming',
+                                ['_name' => 'tasks:upcoming'],
+                                ['escape' => false, 'class' => $upcomingActive ? 'active' : '']
+                            ) ?>
                         </li>
                     </ul>
                     <h3>Projects</h3>

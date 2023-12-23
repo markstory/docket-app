@@ -3,12 +3,13 @@ declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Project> $project
  * @var bool|null $showMenu
+ * @var string $url
  */
-// TODO implement active page highlight
-
 $url = $this->Url->build(['_path' => 'Projects::view', 'slug' => $project->slug]);
+
+$active = strpos($this->request->getPath(), $url) !== false;
 ?>
-<div class="project-item">
+<div class="project-item <?= $active ? 'active' : '' ?>">
     <a href="<?= $url ?>">
         <span class="project-badge">
             <?= $this->element('icons/dot16', ['color' => $project->color_hex]) ?>

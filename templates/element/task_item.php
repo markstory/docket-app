@@ -22,7 +22,6 @@ if ($task->completed) :
 endif;
 
 // TODO add/remove `is-completed` class on checkbox change.
-// TODO use custom CSS checkbox
 ?>
 <div class="dnd-item" data-id="<?= $task->id ?>">
     <button class="dnd-handle" role="button" aria-roledescription="sortable">

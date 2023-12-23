@@ -9,7 +9,6 @@ if ($task->due_on) :
     $className = 'due-on ';
     $thisEvening = $diff == 0 && $task->evening;
 
-    // TODO this formats overdue values wrong
     if ($diff < 0) :
         $className .= 'overdue';
     elseif ($diff == 0 && !$task->evening) :
