@@ -60,8 +60,6 @@ if (!empty($groupedTasks['overdue'])) : ?>
     </div>
 <?php endif; ?>
 
-<?php // TODO display calendar items ?>
-
 <?php // Today section ?>
 <h2 class="heading-icon today">
     <?= $this->element('icons/calendar16') ?>
@@ -79,6 +77,11 @@ if (!empty($groupedTasks['overdue'])) : ?>
         ]
     ) ?>
 </h2>
+<?php
+if (!empty($calendarItems)) :
+    echo $this->element('calendaritems', ['calendarItems' => $calendarItems]);
+endif;
+?>
 <div
     class="task-group dnd-dropper-left-offset"
     hx-ext="task-sorter"

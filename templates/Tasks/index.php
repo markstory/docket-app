@@ -10,7 +10,7 @@ use Cake\I18n\FrozenDate;
  * @var string $nextStart
  */
 $this->setLayout('sidebar');
-$this->assign('title', "Upcoming Tasks");
+$this->assign('title', 'Upcoming Tasks');
 
 $this->set('showGlobalAdd', true);
 
@@ -20,23 +20,28 @@ $duration = $nextStart->diffInDays($start);
 
 $groupedTasks = [];
 $current = $start;
-while ($current < $nextStart) {
+while ($current < $nextStart) :
     $groupedTasks[$current->format('Y-m-d')] = [];
     $current = $current->addDays(1);
-}
+endwhile;
 
-foreach ($tasks as $task) {
+foreach ($tasks as $task) :
     $key = '';
-    if ($task->due_on) {
+    if ($task->due_on) :
         $key = $task->due_on->format('Y-m-d');
-    }
-    if ($task->evening) {
+    endif;
+    if ($task->evening) :
         $key = "evening:{$key}";
-    }
+    endif;
     $groupedTasks[$key][] = $task;
-}
+endforeach;
 
-// TODO group calendarItems
+$groupedCalendarItems = [];
+foreach ($calendarItems as $item) :
+    $key = ($item->start_date ?? $item->start_time ?? $start)->format('Y-m-d');
+    $groupedCalendarItems[$key][] = $item;
+endforeach;
+
 ?>
 <h1>Upcoming</h1>
 
@@ -56,8 +61,6 @@ foreach ($tasks as $task) {
     [$heading, $subheading] = $this->Date->formatDateHeading($currentDate);
 
     ?>
-    <?php // TODO display calendar items ?>
-
     <?php // Task day section ?>
     <?php if ($isEvening) : ?>
         <h5 class="heading-evening-group">
@@ -96,6 +99,11 @@ foreach ($tasks as $task) {
                 ]
             ) ?>
         </h3>
+        <?php
+        if (!empty($groupedCalendarItems[$key])) :
+            echo $this->element('calendaritems', ['calendarItems' => $groupedCalendarItems[$key]]);
+        endif;
+        ?>
         <div
             class="task-group dnd-dropper-left-offset"
             hx-ext="task-sorter"
