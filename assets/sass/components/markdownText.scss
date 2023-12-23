@@ -13,6 +13,12 @@ markdown-text {
   }
 }
 
+@media (max-width: $breakpoint-phone) {
+  markdown-text {
+    padding-bottom: $space;
+  }
+}
+
 .markdown-text-preview,
 .markdown-text {
   h1, h2, h3 {

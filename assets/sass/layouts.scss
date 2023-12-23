@@ -39,7 +39,7 @@ $sidebar-width: 250px;
     display: none;
     svg {
       position: relative;
-      left: -6px;
+      left: -4px;
       transform: rotate(90deg);
       color: var(--color-primary);
     }
@@ -66,6 +66,8 @@ $sidebar-width: 250px;
 
     .expander {
       display: block;
+      justify-content: center;
+
       position: absolute;
       top: 0;
       right: 0;
@@ -86,11 +88,8 @@ $sidebar-width: 250px;
       }
     }
   }
-
-  .layout-three-quarter[data-expanded="true"] {
-    .sidebar {
-      transform: translateX(0px);
-    }
+  .sidebar[data-expanded="true"] {
+    transform: translateX(0px);
   }
 }
 

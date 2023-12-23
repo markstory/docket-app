@@ -51,14 +51,6 @@
     text-decoration: none;
   }
 
-  // TODO remove this with react
-  .title {
-    display: flex;
-    align-items: center;
-
-    margin-bottom: $space;
-  }
-
   .checkbox {
     margin-right: $space;
   }
@@ -76,12 +68,17 @@
 
 .task-attributes {
   display: flex;
-  gap: 32px;
+  gap: calc($space * 4);
   flex-direction: row;
   flex-flow: wrap;
 
   .form-control {
     min-width: 200px;
+  }
+}
+@media (max-width: $breakpoint-phone) {
+  .task-attributes {
+    gap: $space;
   }
 }
 

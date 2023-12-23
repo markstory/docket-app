@@ -23,12 +23,8 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
 // TODO make expanded work. Perhaps with an htmx
 // extension that maintains the state?
 ?>
-<div
-    class="layout-three-quarter"
-    data-expanded="false"
-    data-testid="loggedin"
->
-    <section class="sidebar">
+<div class="layout-three-quarter" data-testid="loggedin">
+    <section id="sidebar" class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
                 <?= $this->element('profile_menu') ?>
@@ -70,10 +66,7 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
             </div>
             <?= $this->Html->image('docket-logo-translucent.svg', ['width' => 30, 'height' => 30]) ?>
         </div>
-        <button
-            class="expander"
-            title="Show project menu"
-        >
+        <button class="expander" title="Show project menu" id="sidebar-expander">
             <?= $this->element('icons/kebab16') ?>
         </button>
     </section>
@@ -95,3 +88,14 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
         <?php endif; ?>
     </section>
 </div>
+<?= $this->Html->scriptStart() ?>
+(function () {
+    const button = document.getElementById('sidebar-expander');
+    const sidebar = document.getElementById('sidebar');
+    button.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        const current = sidebar.dataset.expanded;
+        sidebar.dataset.expanded = current === 'false' ? 'true' : 'false';
+    });
+})();
+<?= $this->Html->scriptEnd() ?>
