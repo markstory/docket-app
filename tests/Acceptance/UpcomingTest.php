@@ -48,8 +48,6 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testUpcomingDisplaysCalendarEvents()
     {
-        $this->markTestIncomplete('Calendar events are not built yet.');
-
         $twodays = FrozenDate::parse('+2 days', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $twodays]);

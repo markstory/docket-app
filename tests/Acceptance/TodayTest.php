@@ -40,8 +40,6 @@ class TodayTest extends AcceptanceTestCase
 
     public function testTodayDisplaysCalendarEvents()
     {
-        $this->markTestIncomplete('Calendar item display is not done');
-
         $today = new FrozenDate('today', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
