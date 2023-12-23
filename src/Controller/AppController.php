@@ -168,16 +168,17 @@ class AppController extends Controller
             $viewBuilder->setTemplate($config['template']);
         }
 
+        $success = $config['success'] ?? false;
         if ($setFlashMessages) {
-            if ($config['success'] && $config['flashSuccess']) {
+            if ($success && !empty($config['flashSuccess'])) {
                 $this->Flash->success($config['flashSuccess']);
             }
-            if ($config['success'] === false && $config['flashError']) {
+            if ($success === false && !empty($config['flashError'])) {
                 $this->Flash->error($config['flashError']);
             }
         }
 
-        $code = $config['success'] ? $config['statusSuccess'] : $config['statusError'];
+        $code = $success ? $config['statusSuccess'] : $config['statusError'];
         if ($isApi) {
             $this->viewBuilder()->setOption('serialize', $config['serialize']);
 

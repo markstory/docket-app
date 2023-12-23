@@ -14,7 +14,7 @@ class ProjectsMenuCell extends Cell
      * List of valid options that can be passed into this
      * cell's constructor.
      *
-     * @var array<string, mixed>
+     * @var array<string>
      */
     protected $_validCellOptions = ['identity'];
 
@@ -24,23 +24,15 @@ class ProjectsMenuCell extends Cell
     protected $identity;
 
     /**
-     * Initialization logic run at the end of object construction.
-     *
-     * @return void
-     */
-    public function initialize(): void
-    {
-        $this->Projects = $this->fetchTable('Projects');
-    }
-
-    /**
      * Default display method.
      *
      * @return void
      */
     public function display($identity)
     {
-        $projects = $identity->applyScope('index', $this->Projects->find('active')->find('top'));
-        $this->set('projects', $projects->all());
+        $projects = $this->fetchTable('Projects');
+
+        $query = $identity->applyScope('index', $projects->find('active')->find('top'));
+        $this->set('projects', $query->all());
     }
 }

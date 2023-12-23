@@ -101,7 +101,7 @@ class Task extends Entity
             return;
         }
         $lastIndex = count($this->subtasks) - 1;
-        if (trim($this->subtasks[$lastIndex]->title) === '') {
+        if (isset($this->subtasks[$lastIndex]) && trim((string)$this->subtasks[$lastIndex]->title) === '') {
             unset($this->subtasks[$lastIndex]);
         }
     }

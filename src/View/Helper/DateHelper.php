@@ -32,19 +32,19 @@ class DateHelper extends Helper
      * Format a date into the compact date format used across the app.
      */
     public function formatCompact(
-        FrozenDate | null $date,
+        ?FrozenDate $date,
         bool $evening = false
     ): string {
-        if (!$date) {
+        if ($date === null) {
             return 'No due date';
         }
         $diff = $this->today()->diffInDays($date, false);
         // In the past? Show the date
         if ($diff < -90) {
-            return $date->i18nFormat('MMM d yyyy');
+            return (string)$date->i18nFormat('MMM d yyyy');
         }
         if ($diff < 0) {
-            return $date->i18nFormat('MMM d');
+            return (string)$date->i18nFormat('MMM d');
         }
         // TODO should this include the icon?
         if ($diff < 1 && $evening) {
@@ -57,14 +57,14 @@ class DateHelper extends Helper
             return 'Tomorrow';
         }
         if ($diff < 7) {
-            return $date->i18nFormat('cccc');
+            return (string)$date->i18nFormat('cccc');
         }
 
-        return $date->i18nFormat('MMM d');
+        return (string)$date->i18nFormat('MMM d');
     }
 
     public function formatDateHeading(
-        FrozenDate | null $date,
+        FrozenDate $date,
     ): array {
         $delta = $date->diffInDays($this->today());
         $shortDate = $date->i18nFormat('MMM d');

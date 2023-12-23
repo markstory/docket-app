@@ -1,46 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="dev-master@">
+<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
   <file src="src/Controller/ApiTokensController.php">
-    <InvalidArgument occurrences="1">
+    <InvalidArgument>
       <code>[$token]</code>
     </InvalidArgument>
   </file>
   <file src="src/Controller/CalendarProvidersController.php">
-    <RiskyCast occurrences="1">
+    <RiskyCast>
       <code>$this-&gt;request-&gt;getQuery('provider', null)</code>
     </RiskyCast>
   </file>
+  <file src="src/Controller/ProjectsController.php">
+    <RiskyCast>
+      <code>$this-&gt;request-&gt;getQuery('completed', '0')</code>
+    </RiskyCast>
+  </file>
   <file src="src/Model/Table/ProjectSectionsTable.php">
-    <NoInterfaceProperties occurrences="1">
+    <NoInterfaceProperties>
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
-    <PossiblyInvalidPropertyFetch occurrences="1">
+    <PossiblyInvalidPropertyFetch>
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/ProjectsTable.php">
-    <NoInterfaceProperties occurrences="1">
+    <NoInterfaceProperties>
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </NoInterfaceProperties>
-    <PossiblyInvalidPropertyFetch occurrences="1">
+    <PossiblyInvalidPropertyFetch>
       <code>$query-&gt;firstOrFail()-&gt;count</code>
     </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/SubtasksTable.php">
-    <NoInterfaceProperties occurrences="1">
+    <NoInterfaceProperties>
       <code>$result-&gt;max</code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/TasksTable.php">
-    <NoInterfaceProperties occurrences="3">
+    <NoInterfaceProperties>
       <code>$result-&gt;max</code>
       <code>$result-&gt;max_child</code>
       <code>$result-&gt;max_day</code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/UsersTable.php">
-    <UndefinedMagicPropertyFetch occurrences="1">
+    <UndefinedMagicPropertyFetch>
       <code>$entity-&gt;current_password</code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="src/View/Widget/DueOnWidget.php">
+    <UndefinedMagicPropertyFetch>
+      <code>$this-&gt;view-&gt;Date</code>
     </UndefinedMagicPropertyFetch>
   </file>
 </files>

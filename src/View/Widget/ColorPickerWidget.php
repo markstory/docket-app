@@ -44,7 +44,7 @@ class ColorPickerWidget extends BasicWidget
         $options = [];
         foreach ($colors as $color) {
             $optionBody = $this->view->element('icons/dot16', ['color' => $color['code']]);
-            if ($data['showName']) {
+            if (isset($data['showName']) && $data['showName']) {
                 $optionBody .= ' ' . h($color['name']);
             }
             $optAttrs = [
