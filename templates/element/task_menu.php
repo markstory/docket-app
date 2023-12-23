@@ -19,6 +19,7 @@ $taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 
         class="button-icon button-default"
         aria-haspopup="true"
         aria-controls="<?= h($menuId) ?>"
+        aria-label="Task actions"
         type="button"
     >
         <?= $this->element('icons/kebab16') ?>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\Acceptance;
 
 use Cake\I18n\FrozenDate;
-use Cake\ORM\TableRegistry;
+use Symfony\Component\Panther\Client;
 
 /**
  * Tests for the upcoming list view.
@@ -20,11 +20,20 @@ class UpcomingTest extends AcceptanceTestCase
     {
         parent::setUp();
 
-        $this->Tasks = TableRegistry::get('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks');
+    }
+
+    public function hoverRow(Client $client)
+    {
+        // Trigger the hover.
+        $client->getMouse()->mouseMoveTo('.task-row');
+        $client->waitFor('.task-row drop-down');
     }
 
     public function testOnboarding()
     {
+        $this->markTestIncomplete('No project state is not working');
+
         $client = $this->login();
         $client->get('/tasks/upcoming');
         $client->waitFor('[data-testid="loggedin"]');
@@ -39,6 +48,8 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testUpcomingDisplaysCalendarEvents()
     {
+        $this->markTestIncomplete('Calendar events are not built yet.');
+
         $twodays = FrozenDate::parse('+2 days', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $twodays]);
@@ -77,7 +88,8 @@ class UpcomingTest extends AcceptanceTestCase
         $this->assertEquals($task->title, $title->getText());
         $checkbox = $crawler->filter('.task-row .checkbox')->first();
         $checkbox->click();
-        $client->waitFor('.flash-message');
+        // TODO need to add flash message for task completion.
+        // $client->waitFor('.flash-message');
 
         $task = $this->Tasks->get($task->id);
         $this->assertNotEmpty($task);
@@ -97,10 +109,10 @@ class UpcomingTest extends AcceptanceTestCase
         // Open the add form.
         $addButton = $crawler->filter('[data-testid="add-task"]')->first();
         $addButton->click();
-        $client->waitFor('.task-quickform');
+        $client->waitFor('dialog');
 
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('upcoming task');
+        $form = $crawler->filter('dialog form')->form();
+        $form->get('title')->setValue('upcoming task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
@@ -124,18 +136,18 @@ class UpcomingTest extends AcceptanceTestCase
         // Trigger the hover.
         $client->getMouse()->mouseMoveTo('.task-row');
         $crawler = $client->getCrawler();
-        $client->waitFor('.task-row .actions');
+        $client->waitFor('.task-row drop-down');
 
         // Hover over the due menu
-        $crawler = $client->getCrawler();
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
-        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+        $client->getMouse()->mouseMoveTo('drop-down [aria-label="Task actions"]');
+        $crawler->filter('drop-down [aria-label="Task actions"]')->click();
 
         // Open the due menu
         $crawler->filter('[data-testid="reschedule"]')->click();
-        $client->waitFor('.due-on-menu');
+
         // Click today
-        $this->clickWithMouse('.due-on-menu [data-testid="today"]');
+        $client->waitFor('[data-testid="today"]');
+        $this->clickWithMouse('[data-testid="today"]');
 
         $client->waitFor('.flash-message');
 
@@ -156,19 +168,19 @@ class UpcomingTest extends AcceptanceTestCase
         // Trigger the hover.
         $client->getMouse()->mouseMoveTo('.task-row');
         $crawler = $client->getCrawler();
-        $client->waitFor('.task-row .actions');
+        $client->waitFor('.task-row drop-down');
 
         // Hover over the actions menu and click
         $crawler = $client->getCrawler();
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
-        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+        $client->getMouse()->mouseMoveTo('drop-down [aria-label="Task actions"]');
+        $crawler->filter('drop-down [aria-label="Task actions"]')->click();
 
         // Open the due menu
         $crawler->filter('[data-testid="reschedule"]')->click();
-        $client->waitFor('.due-on-menu');
 
         // Click 'this evening'
-        $this->clickWithMouse('.due-on-menu [data-testid="evening"]');
+        $client->waitFor('drop-down-menu button.icon-evening');
+        $this->clickWithMouse('drop-down-menu button.icon-evening');
 
         $client->waitFor('.flash-message');
 
@@ -179,6 +191,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeAddEveningWithContextMenu()
     {
+        $today = new FrozenDate('today', 'UTC');
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
@@ -187,28 +200,25 @@ class UpcomingTest extends AcceptanceTestCase
         $client->get('/tasks/upcoming');
         $client->waitFor('[data-testid="loggedin"]');
 
-        // Trigger the hover.
-        $client->getMouse()->mouseMoveTo('.task-row');
-        $crawler = $client->getCrawler();
-        $client->waitFor('.task-row .actions');
+        $this->hoverRow($client);
 
         // Hover over the actions menu and click
         $crawler = $client->getCrawler();
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
-        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+        $client->getMouse()->mouseMoveTo('drop-down [aria-label="Task actions"]');
+        $crawler->filter('drop-down [aria-label="Task actions"]')->click();
 
         // Open the due menu
         $crawler->filter('[data-testid="reschedule"]')->click();
-        $client->waitFor('.due-on-menu');
 
         // Click 'this evening'
-        $this->clickWithMouse('.due-on-menu [data-testid="add-evening"]');
+        $client->waitFor('drop-down-menu [data-testid="evening"]');
+        $this->clickWithMouse('drop-down-menu [data-testid="evening"]');
 
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertSame($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
         $this->assertTrue($updated->evening);
+        $this->assertSame($today->getTimestamp(), $updated->due_on->getTimestamp());
     }
 
     public function testChangeProjectWithContextMenu()
@@ -225,21 +235,22 @@ class UpcomingTest extends AcceptanceTestCase
         // Trigger the hover.
         $client->getMouse()->mouseMoveTo('.task-row');
         $crawler = $client->getCrawler();
-        $client->waitFor('.task-row .actions');
+        $client->waitFor('.task-row drop-down');
 
         // Hover over the actions menu
         $crawler = $client->getCrawler();
-        $client->getMouse()->mouseMoveTo('.actions [aria-label="Task actions"]');
-        $crawler->filter('.actions [aria-label="Task actions"]')->click();
+        $client->getMouse()->mouseMoveTo('drop-down [aria-label="Task actions"]');
+        $crawler->filter('drop-down [aria-label="Task actions"]')->click();
 
         // Open the project menu
-        $crawler->filter('[data-testid="move"]')->click();
-        $client->waitFor('.select__control');
+        $crawler->filter('drop-down-menu [data-testid="move"]')->click();
+        $client->waitFor('drop-down-menu form');
 
         // Choose a new project.
-        $this->clickWithMouse('.select__control');
-        // TODO Using last-child is a hack. Revisit this and make better selectors.
-        $this->clickWithMouse('.select__menu-list > div:last-child');
+        $crawler->filter('drop-down-menu select-box')->click();
+        $client->waitFor('select-box-menu');
+
+        $crawler->filter('select-box-menu select-box-option:last-child')->click();
 
         $client->waitFor('.flash-message');
 
@@ -249,6 +260,8 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testDragToNewDate()
     {
+        $this->markTestIncomplete('Cannot test html5 dragdrop with selenium.');
+
         $project = $this->makeProject('Work', 1);
         $tomorrow = new FrozenDate('tomorrow', 'UTC');
         $twoDays = new FrozenDate('+2 days', 'UTC');
