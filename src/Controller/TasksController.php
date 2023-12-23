@@ -7,7 +7,6 @@ use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\View\JsonView;
-use Exception;
 use InvalidArgumentException;
 
 /**

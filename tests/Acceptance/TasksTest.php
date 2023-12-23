@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\Acceptance;
 
 use Cake\I18n\FrozenDate;
-use Cake\ORM\TableRegistry;
 use Facebook\WebDriver\WebDriverKeys;
 use Symfony\Component\Panther\Client;
 
