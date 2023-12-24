@@ -1,4 +1,4 @@
-[data-reach-dialog-content] {
+.modal-float {
   outline: none;
 
   position: absolute;
@@ -7,29 +7,30 @@
   right: 5vh;
   bottom: 0;
 
+  border: none;
   padding: 45px 20px 20px 20px;
   background: var(--color-bg);
   border-radius: $border-radius-large $border-radius-large 0 0;
   box-shadow: var(--shadow-high);
+}
 
-  .modal-close {
-    @extend .button-bare;
+.modal-close {
+  @extend .button-bare;
 
-    display: flex;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    font-size: $font-size-large;
-    line-height: $font-size-large;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 30px;
-    width: 30px;
-    padding: 5px;
-    margin: 0;
-    box-shadow: none;
-  }
+  display: flex;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  font-size: $font-size-large;
+  line-height: $font-size-large;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  margin: 0;
+  box-shadow: none;
 }
 
 .modal-contents {
@@ -38,6 +39,7 @@
 }
 
 @media (max-width: $breakpoint-phone) {
+  .modal-float,
   [data-reach-dialog-content] {
     top: $space * 2;
     left: 5px;
@@ -45,17 +47,6 @@
 
     padding: 45px $space $space $space;
   }
-}
-
-[data-reach-dialog-overlay] {
-  background: var(--color-modal-overlay);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  z-index: $z-modal;
 }
 
 .modal-float {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Renders the view within a card centered in the viewport.
  */

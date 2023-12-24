@@ -138,71 +138,56 @@ class ProjectSectionsControllerTest extends TestCase
         $this->assertNotEmpty($this->viewVariable('errors'));
     }
 
-    public function testEditProjectPermissionError()
-    {
-        $other = $this->makeProject('Other Home', 2);
-        $project = $this->makeProject('Home', 1);
-        $section = $this->makeProjectSection('Day trips', $project->id);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/edit", [
-            'name' => 'Reading list',
-            'project_id' => $other->id,
-        ]);
-        $this->assertResponseCode(403);
-    }
-
-    public function testArchive()
+    public function testEditGet()
     {
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Day trips', $project->id);
 
         $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/archive");
-        $this->assertRedirect('/projects/home');
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/edit");
 
-        $updated = $this->ProjectSections->get($section->id);
-        $this->assertTrue($updated->archived);
+        $this->assertResponseCode(200);
+        $this->assertContentType('text/html');
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('section'));
     }
 
-    public function testArchivePermission()
+    public function testView()
+    {
+        $project = $this->makeProject('Home', 1);
+        $section = $this->makeProjectSection('Day trips', $project->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/view");
+
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('section'));
+    }
+
+    public function testViewPermissions()
     {
         $project = $this->makeProject('Home', 2);
         $section = $this->makeProjectSection('Day trips', $project->id);
 
         $this->login();
         $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/archive");
+        $this->post("/projects/{$project->slug}/sections/{$section->id}/view");
         $this->assertResponseCode(404);
     }
 
-    public function testUnarchive()
+    public function testDeleteConfirm()
     {
         $project = $this->makeProject('Home', 1);
-        $section = $this->makeProjectSection('Day trips', $project->id, 0, [
-            'archived' => true,
-        ]);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/unarchive");
-        $this->assertRedirect('/projects/home');
-
-        $updated = $this->ProjectSections->get($section->id);
-        $this->assertFalse($updated->archived);
-    }
-
-    public function testUnarchivePermission()
-    {
-        $project = $this->makeProject('Home', 2);
         $section = $this->makeProjectSection('Day trips', $project->id);
 
         $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$project->slug}/sections/{$section->id}/unarchive");
-        $this->assertResponseCode(404);
+        $this->get("/projects/{$project->slug}/sections/{$section->id}/delete/confirm");
+
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertNotEmpty($this->viewVariable('section'));
     }
 
     public function testDelete()
@@ -319,5 +304,28 @@ class ProjectSectionsControllerTest extends TestCase
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);
         }
+    }
+
+    public function testOptionsNotFound()
+    {
+        $project = $this->makeProject('Home', 1);
+        $this->makeProjectSection('Reading', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get('/projectsections/options?project_id=999');
+        $this->assertResponseCode(404);
+    }
+
+    public function testOptionsOk()
+    {
+        $project = $this->makeProject('Home', 1);
+        $this->makeProjectSection('Reading', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/projectsections/options?project_id={$project->id}");
+        $this->assertResponseOk();
+        $this->assertResponseContains('Reading</option>');
     }
 }

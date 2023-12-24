@@ -1,3 +1,25 @@
+markdown-text {
+  width: 100%;
+  padding-bottom: calc($space * 3);
+
+  textarea {
+    height: auto;
+    max-width: 100%;
+    width: calc(100% - $form-icon-input-margin);
+    resize: none;
+
+    margin-top: $space;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: $breakpoint-phone) {
+  markdown-text {
+    padding-bottom: $space;
+  }
+}
+
+.markdown-text-preview,
 .markdown-text {
   h1, h2, h3 {
     color: var(--color-low-emphasis);
@@ -7,3 +29,14 @@
     padding-left: calc($space * 2);
   }
 }
+
+.markdown-text-preview {
+  position: relative;
+
+  .button-focusreveal {
+    position: absolute;
+    right: $space;
+    bottom: -4px;
+  }
+}
+

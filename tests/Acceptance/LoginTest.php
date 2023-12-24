@@ -18,6 +18,6 @@ class LoginTest extends AcceptanceTestCase
             'password' => 'password123',
         ]);
         $client->waitFor('[data-testid="loggedin"]');
-        $this->assertTextContains('Today Tasks', $client->getTitle());
+        $this->assertTextContains("Today's Tasks", $client->getTitle());
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use DateTimeInterface;
 
@@ -21,6 +22,8 @@ use DateTimeInterface;
  * @property string|null $html_link
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
+ * @property string $color
+ * @property string $color_hex
  *
  * @property \App\Model\Entity\CalendarSource $calendar_source
  * @property \App\Model\Entity\Provider $provider
@@ -87,5 +90,12 @@ class CalendarItem extends Entity
         }
 
         return 1;
+    }
+
+    protected function _getColorHex(): string
+    {
+        $colors = Configure::read('Colors');
+
+        return $colors[$this->color]['code'];
     }
 }

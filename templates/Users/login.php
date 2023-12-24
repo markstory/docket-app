@@ -8,7 +8,7 @@ $this->assign('title', 'Login');
 </h1>
 <?= $this->Form->create(null, [
     'class' => 'form-narrow',
-    'url' => ['controller' => 'Users', 'action' =>'login']
+    'url' => ['controller' => 'Users', 'action' => 'login'],
 ]) ?>
 <?= $this->Form->control('email', ['type' => 'email', 'required' => true]) ?>
 <?= $this->Form->control('password', ['type' => 'password', 'required' => true]) ?>
@@ -27,6 +27,7 @@ $this->assign('title', 'Login');
 </div>
 <?= $this->Form->end() ?>
 
+<?php // TODO Make sure this works with csp ?>
 <script type="text/javascript">
 try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;

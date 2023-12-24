@@ -6,6 +6,7 @@
     color: var(--color-low-emphasis);
   }
 
+  .dnd-dropper-left-offset,
   > ul {
     list-style: none;
     padding: 0;
@@ -31,13 +32,6 @@
     svg {
       margin-right: $icon-gap;
     }
-  }
-
-  .today {
-    color: var(--color-due-today);
-  }
-  .upcoming {
-    color: var(--color-due-tomorrow);
   }
 
   .dnd-item {

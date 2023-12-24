@@ -4,6 +4,7 @@ $checkbox-size: 16px;
   position: relative;
   min-width: $checkbox-size;
   width: $checkbox-size;
+  margin: 0;
 
   .box {
     display: block;
@@ -31,6 +32,8 @@ $checkbox-size: 16px;
   }
   svg {
     color: var(--color-success-fg);
+    width: 14px;
+    height: 14px;
   }
 
   .check {

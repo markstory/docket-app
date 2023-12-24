@@ -1,3 +1,30 @@
+.modal-overlay,
+.confirm-overlay {
+  background: var(--color-modal-overlay);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  z-index: $z-modal;
+}
+
+.confirm-dialog {
+  position: fixed;
+  top: 80px;
+  left: 25%;
+  right: 25%;
+  bottom: auto;
+  padding-top: 20px;
+  z-index: $z-modal;
+
+  border-radius: $border-radius-large;
+  border: none;
+  box-shadow: var(--shadow-high);
+}
+
+
 [data-reach-dialog-content][data-reach-alert-dialog-content] {
   top: 80px;
   left: 25%;
@@ -6,11 +33,13 @@
   border-radius: $border-radius-large;
   padding-top: 20px;
 }
+.confirm-dialog h2,
 [data-reach-alert-dialog-label] {
   font-size: $font-size-large;
   font-weight: bold;
-  margin-bottom: $space * 2;
+  margin: 0 0 $space * 2 0;
 }
+.confirm-dialog p,
 [data-reach-alert-dialog-description] {
   margin-bottom: $space;
 }

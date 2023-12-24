@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenDate;
 use Cake\View\JsonView;
@@ -17,6 +18,8 @@ use InvalidArgumentException;
  */
 class TasksController extends AppController
 {
+    public const EDIT_MODES = ['editproject', 'reschedule'];
+
     public function viewClasses(): array
     {
         return [JsonView::class];
@@ -35,6 +38,13 @@ class TasksController extends AppController
         } catch (\Exception $e) {
             throw new BadRequestException("Invalid date value of {$value}.");
         }
+    }
+
+    protected function getTask($id): Task
+    {
+        return $this->Tasks->get($id, [
+            'contain' => ['Projects', 'Subtasks'],
+        ]);
     }
 
     /**
@@ -63,10 +73,7 @@ class TasksController extends AppController
             'end' => $date,
             'timezone' => $timezone,
         ]);
-
-        $this->set('component', 'Tasks/Daily');
-        $this->set('date', $date->format('Y-m-d'));
-
+        $this->set('date', $date);
         $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
         $tasks = $query->all();
@@ -80,6 +87,10 @@ class TasksController extends AppController
         $session = $this->request->getSession();
         if ($session->check('errors')) {
             $this->set('errors', $session->consume('errors'));
+        }
+
+        if ($this->request->is('htmx')) {
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
         }
 
         return $this->respond([
@@ -135,6 +146,10 @@ class TasksController extends AppController
             $this->set('errors', $session->consume('errors'));
         }
 
+        if ($this->request->is('htmx')) {
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
+        }
+
         $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
 
         return $this->respond([
@@ -172,13 +187,17 @@ class TasksController extends AppController
      */
     public function add()
     {
-        $task = $this->Tasks->newEmptyEntity();
-        $success = false;
+        $task = $this->Tasks->newEntity($this->request->getQueryParams());
+        $task->subtasks = [];
+        $task->evening ??= false;
+
+        $success = true;
         $redirect = null;
         $errors = [];
         $serialize = [];
 
         if ($this->request->is('post')) {
+            $success = false;
             $options = ['associated' => ['Subtasks']];
             $task->setAccess('subtasks', true);
             $task = $this->Tasks->patchEntity($task, $this->request->getData(), $options);
@@ -196,19 +215,38 @@ class TasksController extends AppController
                 $redirect = $this->referer(['_name' => 'tasks:today']);
 
                 $serialize[] = 'task';
-                $this->set('task', $task);
             } else {
                 $redirect = $this->referer(['_name' => 'tasks:today']);
 
                 $serialize[] = 'errors';
                 $errors = $this->flattenErrors($task->getErrors());
-                $this->set('errors', $errors);
             }
         }
 
         if ($errors) {
             $this->request->getSession()->write('errors', $errors);
         }
+
+        $projects = [];
+        $sections = [];
+        if (!$this->request->is('json')) {
+            $projects = $this->Tasks->Projects->find('active')->find('top');
+            $projects = $this->Authorization->applyScope($projects, 'index');
+            if (!$task->project_id) {
+                $task->project_id = $projects->first()->id;
+            }
+            if ($task->project_id) {
+                $sections = $this->Tasks->Projects->Sections
+                    ->find()
+                    ->where(['Sections.project_id' => $task->project_id])
+                    ->toArray();
+            }
+        }
+        $this->set('projects', $projects);
+        $this->set('sections', $sections);
+        $this->set('task', $task);
+        $this->set('errors', $errors);
+        $this->set('referer', $this->request->referer());
 
         return $this->respond([
             'success' => $success,
@@ -228,23 +266,29 @@ class TasksController extends AppController
      */
     public function complete($id = null)
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
 
+        $template = null;
         $success = false;
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['patch', 'post', 'put', 'delete'])) {
             $task->complete();
             $success = $this->Tasks->save($task);
+        }
+        $status = 204;
+        $redirect = $this->referer(['_name' => 'tasks:today']);
+        if ($this->request->is('htmx')) {
+            $redirect = null;
+            $template = 'delete_ok';
+            $status = 200;
         }
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Task completed'),
             'flashError' => __('The task could not be completed. Please try again.'),
-            'statusSuccess' => 204,
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
+            'statusSuccess' => $status,
+            'redirect' => $redirect,
+            'template' => $template,
         ]);
     }
 
@@ -261,21 +305,29 @@ class TasksController extends AppController
             'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task, 'edit');
+        $template = null;
         $success = false;
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['delete', 'patch', 'post', 'put'])) {
             $task->incomplete();
             if ($this->Tasks->save($task)) {
                 $success = true;
             }
         }
+        $redirect = $this->referer(['_name' => 'tasks:today']);
+        $status = 204;
+        if ($this->request->is('htmx')) {
+            $redirect = null;
+            $template = 'delete_ok';
+            $status = 200;
+        }
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Task updated'),
             'flashError' => __('The task could not be updated. Please try again.'),
-            'statusSuccess' => 204,
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
+            'statusSuccess' => $status,
+            'redirect' => $redirect,
+            'template' => $template,
         ]);
     }
 
@@ -291,7 +343,8 @@ class TasksController extends AppController
             'evening' => $this->request->getData('evening') ?? null,
         ];
         if (array_key_exists('section_id', $this->request->getData())) {
-            $operation['section_id'] = $this->request->getData('section_id');
+            $sectionId = $this->request->getData('section_id');
+            $operation['section_id'] = $sectionId === '' ? null : $sectionId;
         }
 
         $serialize = [];
@@ -328,11 +381,11 @@ class TasksController extends AppController
     public function edit($id = null)
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task);
-        $task = $this->Tasks->patchEntity($task, $this->request->getData());
+        $task = $this->Tasks->patchEntity($task, $this->request->getData(), [
+            'associated' => ['Subtasks'],
+        ]);
 
         // If the project has changed ensure the new project belongs
         // to the current user.
@@ -342,19 +395,32 @@ class TasksController extends AppController
             $task->section_id = null;
             $task->project = $project;
         }
+        $task->setDueOnFromString($this->request->getData('due_on_string'));
+        $task->removeTrailingEmptySubtask();
 
         $success = false;
         $serialize = [];
-        if ($this->Tasks->save($task)) {
+        if ($this->Tasks->save($task, ['associated' => ['Subtasks']])) {
             $success = true;
             $serialize[] = 'task';
+            // Reload to get fresh counter cache values.
+            $task = $this->getTask($task->id);
             $this->set('task', $task);
         } else {
             $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
+        $redirect = null;
+        if (!$this->request->is('json')) {
+            $redirect = ['_name' => 'tasks:view', 'id' => $task->id];
+        }
+        $hxRedirect = $this->sanitizeRedirect($this->request->getData('redirect'));
+        if ($hxRedirect) {
+            $redirect = $hxRedirect;
+        }
 
         return $this->respond([
+            'redirect' => $redirect,
             'success' => $success,
             'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),
@@ -370,12 +436,29 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($id = null, $mode = null)
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Subtasks'],
-        ]);
+        $task = $this->getTask($id);
         $this->Authorization->authorize($task);
+
+        $template = 'view';
+        if (in_array($mode, static::EDIT_MODES, true)) {
+            $template = $mode;
+        }
+        if ($template === 'editproject' || $template === 'view') {
+            $projects = $this->Tasks->Projects->find('active')->find('top');
+            $projects = $this->Authorization->applyScope($projects, 'index');
+            $this->set('projects', $projects);
+        }
+        $sections = [];
+        if ($task->project_id) {
+            $projectId = $this->request->getQuery('project_id', $task->project_id);
+            $sections = $this->Tasks->Projects->Sections
+                ->find()
+                ->where(['Sections.project_id' => $projectId])
+                ->toArray();
+        }
+        $this->set('sections', $sections);
 
         $this->set('task', $task);
         $this->set('referer', $this->getReferer('tasks:today'));
@@ -383,6 +466,7 @@ class TasksController extends AppController
         return $this->respond([
             'success' => true,
             'serialize' => ['task'],
+            'template' => $template,
         ]);
     }
 
@@ -412,6 +496,14 @@ class TasksController extends AppController
             'flashError' => __('The task could not be deleted. Please, try again.'),
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
+    }
+
+    public function deleteConfirm(string $id)
+    {
+        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $this->Authorization->authorize($task, 'delete');
+
+        $this->set('task', $task);
     }
 
     /**

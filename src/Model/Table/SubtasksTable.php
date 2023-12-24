@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Entity\Subtask;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -95,6 +96,13 @@ class SubtasksTable extends Table
         $rules->add($rules->existsIn(['task_id'], 'Tasks'), ['errorField' => 'task_id']);
 
         return $rules;
+    }
+
+    public function beforeSave(EventInterface $event, Subtask $subtask)
+    {
+        if ($subtask->ranking === null) {
+            $subtask->ranking = $this->getNextRanking($subtask->task_id);
+        }
     }
 
     public function getNextRanking(int $todoId)

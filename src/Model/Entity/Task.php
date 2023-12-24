@@ -6,6 +6,7 @@ namespace App\Model\Entity;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
+use Exception;
 
 /**
  * Task Entity
@@ -23,6 +24,9 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime|null $deleted_at
  * @property \Cake\I18n\FrozenTime|null $created
  * @property \Cake\I18n\FrozenTime $modified
+ *
+ * @property int $subtask_count
+ * @property int $complete_subtask_count
  *
  * @property \App\Model\Entity\Project $project
  * @property \App\Model\Entity\Subtask[] $subtasks
@@ -47,13 +51,13 @@ class Task extends Entity
         'due_on' => true,
         'completed' => true,
         'evening' => true,
+        'subtasks' => true,
         'child_order' => false,
         'day_order' => false,
         'created' => false,
         'modified' => false,
         'deleted_at' => false,
         'project' => false,
-        'subtasks' => false,
         'labels' => false,
     ];
 
@@ -77,5 +81,28 @@ class Task extends Entity
     public function undelete(): void
     {
         $this->deleted_at = null;
+    }
+
+    public function setDueOnFromString(?string $value)
+    {
+        if (!$value) {
+            return;
+        }
+        try {
+            $this->due_on = FrozenDate::parse($value);
+        } catch (Exception $e) {
+            $this->setError('due_on', 'Invalid date string.');
+        }
+    }
+
+    public function removeTrailingEmptySubtask()
+    {
+        if (empty($this->subtasks)) {
+            return;
+        }
+        $lastIndex = count($this->subtasks) - 1;
+        if (isset($this->subtasks[$lastIndex]) && trim((string)$this->subtasks[$lastIndex]->title) === '') {
+            unset($this->subtasks[$lastIndex]);
+        }
     }
 }

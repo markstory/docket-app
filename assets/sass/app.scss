@@ -23,6 +23,7 @@
 @import 'components/icons';
 @import 'components/markdownText';
 @import 'components/modal';
+@import 'components/niceSelect';
 @import 'components/noProjects';
 @import 'components/profileMenu';
 @import 'components/projectBadge';
@@ -31,6 +32,7 @@
 @import 'components/sectionContainer';
 @import 'components/sectionQuickForm';
 @import 'components/select';
+@import 'components/selectBox';
 @import 'components/smartTaskInput';
 @import 'components/subtaskEditForm';
 @import 'components/taskGroup';
@@ -41,6 +43,7 @@
 @import 'components/toggleCheckbox';
 @import 'components/tooltip';
 
+@import 'pages/tasks/add.scss';
 @import 'pages/tasks/view.scss';
 @import 'pages/projects/view.scss';
 @import 'pages/calendars/add.scss';

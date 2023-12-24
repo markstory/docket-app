@@ -19,10 +19,12 @@
   visibility: hidden;
   touch-action: none;
 
+  &:active,
   &:hover {
     color: var(--color-primary);
     background: transparent;
     box-shadow: none;
+    border: none;
   }
 }
 

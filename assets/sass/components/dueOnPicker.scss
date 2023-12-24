@@ -1,30 +1,28 @@
-.due-on-menu {
-  padding-bottom: $space;
+due-on {
+  display: flex;
+  gap: $space;
+}
+
+// Custom UI component for doing day/evening
+.toggle-evening {
+  display: flex;
+  gap: $space;
+  align-items: center;
 
   svg {
-    margin-right: calc($space / 2);
-  }
-  .today svg {
-    color: var(--color-due-today);
-  }
-  .tomorrow svg {
-    color: var(--color-due-tomorrow);
-  }
-  .evening svg {
-    color: var(--color-due-evening);
-  }
-  .not-due svg {
-    color: var(--color-due-none);
+    cursor: pointer;
   }
 
-  input[type="text"] {
-    padding: $space;
+  // Hide the input without removing tabindex.
+  input {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
   }
-
-  .DayPicker {
-    padding: 0 $space;
+  input:checked ~ .icon-tomorrow svg {
+    color: var(--color-low-emphasis);
   }
-  .DayPicker-NavButton {
-    right: $space;
+  input:not(:checked) ~ .icon-evening svg {
+    color: var(--color-low-emphasis);
   }
 }

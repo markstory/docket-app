@@ -90,6 +90,22 @@ class ProjectsControllerTest extends TestCase
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
+    public function testViewHtmx(): void
+    {
+        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->makeTask('first post', $home->id, 0);
+
+        $this->login();
+        $this->useHtmx();
+        $this->get("/projects/{$home->slug}");
+
+        $this->assertResponseOk();
+        // Important to close menus like move project and reschedule.
+        $this->assertHeader('Hx-Trigger', 'close');
+        $this->assertSame($home->id, $this->viewVariable('project')->id);
+        $this->assertCount(1, $this->viewVariable('tasks'));
+    }
+
     public function testViewApiToken(): void
     {
         $token = $this->makeApiToken(1);
@@ -134,7 +150,6 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
         $this->assertCount(1, $this->viewVariable('tasks'));
-        $this->assertCount(1, $this->viewVariable('completed'));
     }
 
     public function testAddGet(): void
@@ -147,6 +162,7 @@ class ProjectsControllerTest extends TestCase
         $this->get('/projects/add');
 
         $this->assertResponseOk();
+        $this->assertTemplate('Projects/add');
         $this->assertSame('/tasks/today', $this->viewVariable('referer'));
     }
 
@@ -530,6 +546,77 @@ class ProjectsControllerTest extends TestCase
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$fun->id, $home->id, $work->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testReorderOk()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 3);
+        $fun = $this->makeProject('Fun', 1, 6);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/projects/reorder', [
+            'id' => [$fun->id, $work->id, $home->id],
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Home');
+        $this->assertResponseContains('Work');
+
+        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $expected = [$fun->id, $work->id, $home->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testReorderPermissions()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 3);
+        $nope = $this->makeProject('Other Home', 2, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/projects/reorder', [
+            'id' => [$nope->id, $work->id, $home->id],
+        ]);
+        $this->assertResponseCode(400);
+
+        $results = $this->Projects->find()
+            ->orderAsc('user_id')
+            ->orderAsc('ranking')
+            ->toArray();
+        $expected = [$home->id, $work->id, $nope->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testReorderPartialUpdates()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 3);
+        $other = $this->makeProject('Other', 1, 6);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/projects/reorder', [
+            'id' => [$other->id, $work->id],
+        ]);
+        $this->assertResponseOk();
+
+        $results = $this->Projects->find()
+            ->orderAsc('ranking')
+            ->orderAsc('name')
+            ->toArray();
+        $expected = [$home->id, $other->id, $work->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);

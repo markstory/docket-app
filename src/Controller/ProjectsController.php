@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Model\Entity\Project;
 use App\Model\Table\ProjectsTable;
 use App\Model\Table\TasksTable;
+use Cake\Http\Exception\BadRequestException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -70,22 +71,30 @@ class ProjectsController extends AppController
     {
         $project = $this->getProject($slug, ['Sections']);
 
-        $tasks = $this->Authorization
-            ->applyScope($this->Tasks->find(), 'index')
-            ->contain('Projects') ->find('incomplete')
-            ->find('forProjectDetails', ['slug' => $slug])
-            ->limit(250);
-
-        $completed = null;
-        if ($this->request->getQuery('completed')) {
-            $completedQuery = $this->Authorization
+        $completed = (int)$this->request->getQuery('completed', '0');
+        if ($completed) {
+            $query = $this->Authorization
                ->applyScope($this->Tasks->find(), 'index')
                ->contain('Projects')
                ->find('complete')
                ->where(['Projects.slug' => $slug])
                ->orderDesc('Tasks.due_on')
                ->orderAsc('title');
-            $completed = $this->paginate($completedQuery, ['scope' => 'completed']);
+            $tasks = $this->paginate($query, ['scope' => 'completed']);
+
+            $this->viewBuilder()->setTemplate('completed');
+        } else {
+            $tasks = $this->Authorization
+                ->applyScope($this->Tasks->find(), 'index')
+                ->contain('Projects')
+                ->find('incomplete')
+                ->find('forProjectDetails', ['slug' => $slug])
+                ->limit(250);
+        }
+
+        if ($this->request->is('htmx')) {
+            // Close any open menus/modals
+            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
         }
 
         $this->set(compact('project', 'tasks', 'completed'));
@@ -107,9 +116,8 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project, 'create');
 
         $referer = $this->getReferer();
-        $this->set('referer', $referer);
 
-        $success = false;
+        $success = null;
         $serialize = [];
         $redirect = null;
 
@@ -125,10 +133,13 @@ class ProjectsController extends AppController
                 $serialize[] = 'project';
                 $this->set('project', $project);
             } else {
+                $success = false;
                 $serialize[] = 'errors';
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
         }
+        $this->set('project', $project);
+        $this->set('referer', $referer);
 
         return $this->respond([
             'success' => $success,
@@ -151,7 +162,7 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         $referer = $this->getReferer();
-        $success = false;
+        $success = null;
         $serialize = [];
         $redirect = null;
 
@@ -167,6 +178,7 @@ class ProjectsController extends AppController
                     'slug' => $project->slug,
                 ];
             } else {
+                $success = false;
                 $serialize[] = 'errors';
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
@@ -207,6 +219,16 @@ class ProjectsController extends AppController
             'success' => true,
             'serialize' => $serialize,
         ]);
+    }
+
+    /**
+     * Render a confirmation dialog for a delete operation.
+     */
+    public function deleteConfirm(string $slug)
+    {
+        $project = $this->getProject($slug);
+        $this->Authorization->authorize($project, 'delete');
+        $this->set('project', $project);
     }
 
     /**
@@ -302,5 +324,24 @@ class ProjectsController extends AppController
             'flashError' => $error,
             'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
+    }
+
+    /**
+     * Reorder a users active projects as a group.
+     */
+    public function reorder()
+    {
+        $this->request->allowMethod(['post']);
+        $ids = (array)$this->request->getData('id');
+
+        $query = $this->Projects
+            ->find('active')->find('top')
+            ->where(['Projects.id IN' => $ids]);
+        $query = $this->Authorization->applyScope($query, 'index');
+        $projects = $query->all();
+        if (count($projects) != count($ids)) {
+            throw new BadRequestException('Invalid id values provided');
+        }
+        $this->Projects->reorder($ids);
     }
 }

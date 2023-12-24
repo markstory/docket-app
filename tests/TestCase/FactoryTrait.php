@@ -38,6 +38,9 @@ trait FactoryTrait
         $this->configRequest(['headers' => $headers]);
     }
 
+    /**
+     * Send a request as a JSON api
+     */
     protected function requestJson()
     {
         $headers = $this->_request['headers'] ?? [];
@@ -48,9 +51,20 @@ trait FactoryTrait
         ]);
     }
 
+    /**
+     * Send a request as htmx
+     */
+    protected function useHtmx()
+    {
+        $this->configRequest([
+            'headers' => ['Hx-Request' => 'true'],
+        ]);
+    }
+
     protected function makeApiToken($userId = 1, $props = []): ApiToken
     {
         $apiTokens = $this->fetchTable('ApiTokens');
+        /** @var \App\Model\Entity\ApiToken $token */
         $token = $apiTokens->newEntity(array_merge([
             'last_used' => null,
         ], $props));
@@ -60,9 +74,20 @@ trait FactoryTrait
         return $apiTokens->saveOrFail($token);
     }
 
+    protected function getUser($email): User
+    {
+        $users = $this->fetchTable('Users');
+
+        /** @var \App\Model\Entity\User $user */
+        $user = $users->findByEmail($email)->firstOrFail();
+
+        return $user;
+    }
+
     protected function makeUser($email, $props = []): User
     {
         $users = $this->fetchTable('Users');
+        /** @var \App\Model\Entity\User $user */
         $user = $users->newEntity(array_merge([
             'name' => 'Unknown',
             'email' => $email,
@@ -82,6 +107,7 @@ trait FactoryTrait
             'color' => 1,
             'ranking' => $ranking,
         ], $props);
+        /** @var \App\Model\Entity\Project $project */
         $project = $projects->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $projects->saveOrFail($project);
@@ -95,6 +121,7 @@ trait FactoryTrait
             'name' => $name,
             'ranking' => $ranking,
         ], $props);
+        /** @var \App\Model\Entity\ProjectSection $section */
         $section = $sections->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $sections->saveOrFail($section);
@@ -109,6 +136,7 @@ trait FactoryTrait
             'day_order' => $order,
             'child_order' => $order,
         ], $props);
+        /** @var \App\Model\Entity\Task $task */
         $task = $tasks->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $tasks->saveOrFail($task);
@@ -117,6 +145,7 @@ trait FactoryTrait
     protected function makeSubtask($title, $taskId, $ranking, $props = []): Subtask
     {
         $subtasks = $this->fetchTable('Subtasks');
+        /** @var \App\Model\Entity\Subtask $subtask */
         $subtask = $subtasks->newEntity(array_merge([
             'task_id' => $taskId,
             'title' => $title,
@@ -129,6 +158,7 @@ trait FactoryTrait
     protected function makeCalendarProvider($userId, $identifier, $props = []): CalendarProvider
     {
         $providers = $this->fetchTable('CalendarProviders');
+        /** @var \App\Model\Entity\CalendarProvider $provider */
         $provider = $providers->newEntity(array_merge([
             'user_id' => $userId,
             'kind' => 'google',
@@ -145,6 +175,7 @@ trait FactoryTrait
     protected function makeCalendarSource($providerId, $name = 'primary', $props = []): CalendarSource
     {
         $sources = $this->fetchTable('CalendarSources');
+        /** @var \App\Model\Entity\CalendarSource $source */
         $source = $sources->newEntity(array_merge([
             'calendar_provider_id' => $providerId,
             'provider_id' => $name,

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\Core\Configure;
 use Cake\ORM\Entity;
 
 /**
@@ -36,7 +37,7 @@ class Project extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
-        'user_id' => true,
+        'user_id' => false,
         'name' => true,
         'slug' => true,
         'color' => true,
@@ -59,5 +60,12 @@ class Project extends Entity
     public function unarchive()
     {
         $this->archived = false;
+    }
+
+    protected function _getColorHex(): string
+    {
+        $colors = Configure::read('Colors');
+
+        return $colors[$this->color]['code'];
     }
 }

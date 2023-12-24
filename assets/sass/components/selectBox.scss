@@ -1,0 +1,108 @@
+select-box {
+  display: block;
+  min-width: 208px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+
+  // We don't have any multi-line select boxes so forcing the height is ok
+  min-height: auto;
+  box-shadow: var(--shadow-inset);
+
+  &:hover {
+    border-color:var(--color-border-med);
+  }
+}
+
+select-box-current {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  height: 100%;
+  cursor: pointer;
+
+  input[type="text"] {
+    border: none;
+    box-sizing: border-box;
+    box-shadow: none;
+    min-width: auto;
+    width: 8px;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  &[open="true"] input {
+    width: auto;
+  }
+
+  .select-box-value {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding-left: calc($space);
+  }
+  &[open="true"] .select-box-value {
+    display: none;
+  }
+
+  &::after {
+    position: absolute;
+    display: block;
+    top: 8px;
+    right: 8px;
+
+    // base64 encoded icons/chevron16
+    content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik02IDguODI1Yy0uMiAwLS40LS4xLS41LS4ybC0zLjMtMy4zYy0uMy0uMy0uMy0uOCAwLTEuMWMuMy0uMy44LS4zIDEuMSAwbDIuNyAyLjdsMi43LTIuN2MuMy0uMy44LS4zIDEuMSAwYy4zLjMuMy44IDAgMS4xbC0zLjIgMy4yYy0uMi4yLS40LjMtLjYuM1oiLz48L3N2Zz4=');
+    font-size: 18px;
+    line-height: 18px;
+  }
+}
+
+select-box.select-box-mini {
+  min-width: 50px;
+
+  select-box-current[open="true"] input {
+    width: 20px;
+  }
+}
+
+
+select-box-menu {
+  display: none;
+  position: absolute;
+  margin-top: calc($space / 2);
+  min-width: 200px;
+  max-height: 400px;
+  overflow: auto;
+
+  border: 1px solid var(--color-border-med);
+  border-radius: $border-radius;
+  box-shadow: var(--shadow-med);
+  background: var(--color-bg);
+  z-index: $z-menu;
+}
+
+select-box-option {
+  display: flex;
+  align-items: center;
+  gap: calc($space / 2);
+
+  width: 100%;
+  height: 36px;
+  padding: calc($space / 2) $space;
+  cursor: pointer;
+
+  &[aria-current="true"],
+  &:hover {
+    background: var(--color-menu-hover);
+  }
+
+  &[aria-selected="true"] {
+    background: var(--color-menu-selected);
+  }
+  &[aria-hidden="true"] {
+    display: none;
+  }
+}

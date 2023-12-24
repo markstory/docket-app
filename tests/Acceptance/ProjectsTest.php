@@ -3,14 +3,52 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use Cake\ORM\TableRegistry;
+use Symfony\Component\Panther\Client;
 
 class ProjectsTest extends AcceptanceTestCase
 {
+    /**
+     * @var \App\Model\Table\ProjectsTable
+     */
+    protected $Projects;
+
     public function setUp(): void
     {
         parent::setUp();
-        $this->Projects = TableRegistry::get('Projects');
+        $this->Projects = $this->fetchTable('Projects');
+    }
+
+    protected function openSectionMenu(Client $client)
+    {
+        $crawler = $client->getCrawler();
+
+        // Open the section menu
+        $client->getMouse()->mouseMoveTo('.section-container');
+
+        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
+        $sectionMenu->click();
+        $client->waitFor('drop-down-menu');
+    }
+
+    protected function openProjectMenu(Client $client)
+    {
+        $crawler = $client->getCrawler();
+
+        // Open the section menu
+        $client->getMouse()->mouseMoveTo('.heading-actions');
+
+        $sectionMenu = $crawler->filter('.heading-actions [aria-label="Project actions"]')->first();
+        $sectionMenu->click();
+        $client->waitFor('drop-down-menu');
+    }
+
+    protected function confirmDialog(Client $client)
+    {
+        // Click proceed in the modal.
+        $crawler = $client->getCrawler();
+        $client->waitFor('dialog');
+        $button = $crawler->filter('dialog [data-testid="confirm-proceed"]')->first();
+        $button->click();
     }
 
     public function testCreate()
@@ -44,15 +82,11 @@ class ProjectsTest extends AcceptanceTestCase
         // Open the header menu
         $headerMenu = $crawler->filter('.heading-actions .button-icon')->first();
         $headerMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
+        $client->waitFor('drop-down-menu');
 
         // Click delete
-        $this->clickWithMouse('.delete[data-reach-menu-item]');
-
-        // Click proceed in the modal.
-        $client->waitFor('[aria-modal="true"]');
-        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
-        $button->click();
+        $this->clickWithMouse('drop-down-menu .icon-delete');
+        $this->confirmDialog($client);
 
         $this->assertEquals(0, $this->Projects->find()->count());
     }
@@ -90,17 +124,15 @@ class ProjectsTest extends AcceptanceTestCase
         $client->waitFor('[data-testid="loggedin"]');
         $crawler = $client->getCrawler();
 
-        $headerMenu = $crawler->filter('.heading-actions .button-icon')->first();
-        // Open the header menu
-        $headerMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
-
+        $this->openProjectMenu($client);
         $this->clickWithMouse('[data-testid="add-section"]');
 
-        $form = $crawler->filter('.section-quickform')->form();
+        $client->waitFor('dialog');
+        $form = $crawler->filter('dialog form')->form();
         $form->get('name')->setValue('books to read');
         $crawler->filter('[data-testid="save-section"]')->click();
 
+        /** @var \App\Model\Entity\ProjectSection $section */
         $section = $this->Projects->Sections->find()->firstOrFail();
         $this->assertEquals('books to read', $section->name);
         $this->assertSame($project->id, $section->project_id);
@@ -116,13 +148,10 @@ class ProjectsTest extends AcceptanceTestCase
         $client->waitFor('[data-testid="loggedin"]');
         $crawler = $client->getCrawler();
 
-        // Open the header menu
-        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
-        $sectionMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
+        $this->openSectionMenu($client);
 
         // Click the edit action
-        $this->clickWithMouse('.edit[data-reach-menu-item]');
+        $this->clickWithMouse('.drop-down-portal .icon-edit');
 
         // Update the section name.
         $client->waitFor('.section-quickform');
@@ -130,6 +159,7 @@ class ProjectsTest extends AcceptanceTestCase
         $form->get('name')->setValue('books to read');
         $crawler->filter('[data-testid="save-section"]')->click();
 
+        /** @var \App\Model\Entity\ProjectSection $section */
         $section = $this->Projects->Sections->find()->firstOrFail();
         $this->assertEquals('books to read', $section->name);
         $this->assertSame($project->id, $section->project_id);
@@ -143,26 +173,22 @@ class ProjectsTest extends AcceptanceTestCase
         $client = $this->login();
         $client->get('/projects/home');
         $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
 
-        // Open the header menu
-        $sectionMenu = $crawler->filter('.section-container [aria-label="Section actions"]')->first();
-        $sectionMenu->click();
-        $client->waitFor('[data-reach-menu-item]');
+        $this->openSectionMenu($client);
 
         // Click the delete action
-        $this->clickWithMouse('.delete[data-reach-menu-item]');
+        $client->waitFor('.drop-down-portal .icon-delete');
+        $client->clickLink('Delete Section');
 
-        // Click proceed in the modal.
-        $client->waitFor('[aria-modal="true"]');
-        $button = $crawler->filter('[aria-modal] [data-testid="confirm-proceed"]')->first();
-        $button->click();
+        $this->confirmDialog($client);
 
         $this->assertEquals(0, $this->Projects->Sections->find()->count());
     }
 
     public function testDragTaskToSection()
     {
+        $this->markTestSkipped("Selenium doesn't support html5 drag and drop currently.");
+
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Books', $project->id);
         $one = $this->makeTask('First', $project->id, 0);
@@ -174,13 +200,17 @@ class ProjectsTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Get the last task
-        $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);
+        $last = $crawler->filter('.task-group .dnd-handle')->getElement(1);
         $mouse = $client->getMouse();
 
         // Do a drag from the top to the bottom
+        $position = $last->getCoordinates();
         $mouse->mouseDownTo('.task-group .dnd-item:first-child .dnd-handle')
-            ->mouseMove($last->getCoordinates(), 0, 20)
-            ->mouseUp($last->getCoordinates(), 0, 20);
+            ->mouseMove($position, 0, 20)
+            ->mouseUpTo('.task-group .dnd-item:last-child .dnd-handle');
+
+        // $newPosition = $target->getCoordinates();
+        // $mouse->mouseUpTo($newPosition);
         $client->waitFor('.flash-message');
 
         $task = $this->Projects->Tasks->get($one->id);
@@ -198,11 +228,11 @@ class ProjectsTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Click add task in the section.
-        $addTask = $crawler->filter('.section-container [data-testid="add-task"]')->first();
+        $addTask = $crawler->filter('[data-testid="section-add-task"]')->first();
         $addTask->click();
-        $client->waitFor('.task-quickform');
+        $client->waitFor('dialog');
 
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
+        $title = $crawler->filter('.task-title-input');
         $title->sendKeys('A new task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');

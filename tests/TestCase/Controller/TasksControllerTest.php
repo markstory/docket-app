@@ -187,7 +187,7 @@ class TasksControllerTest extends TestCase
      *
      * @return void
      */
-    public function testTodayRoute(): void
+    public function testToday(): void
     {
         $today = new FrozenDate('today');
         $tomorrow = $today->modify('+1 day');
@@ -210,7 +210,7 @@ class TasksControllerTest extends TestCase
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
         $this->assertCount(2, $tasks);
-        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date')->format('Y-m-d'));
 
         $ids = collection($tasks)->extract('id')->toList();
         $this->assertEquals([$overdue->id, $first->id], $ids);
@@ -304,7 +304,7 @@ class TasksControllerTest extends TestCase
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
         $this->assertCount(1, $tasks);
-        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date'));
+        $this->assertEquals($today->format('Y-m-d'), $this->viewVariable('date')->format('Y-m-d'));
 
         $ids = collection($tasks)->extract('id')->toList();
         $this->assertEquals([$first->id], $ids);
@@ -398,7 +398,6 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->disableErrorHandlerMiddleware();
         $this->get("/tasks/day/{$startOfDay->format('Y-m-d')}");
 
         $this->assertResponseOk();
@@ -435,7 +434,6 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->login();
-        $this->disableErrorHandlerMiddleware();
         $this->get('/tasks');
 
         $this->assertResponseOk();
@@ -572,6 +570,24 @@ class TasksControllerTest extends TestCase
         $this->assertSame($var->title, $first->title);
     }
 
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testViewModeEditProject(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/view/editproject");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertSame($var->title, $first->title);
+        $this->assertTemplate('Tasks/editproject');
+    }
+
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);
@@ -591,6 +607,31 @@ class TasksControllerTest extends TestCase
 
         $project = $this->Tasks->Projects->get($project->id);
         $this->assertEquals(1, $project->incomplete_task_count);
+    }
+
+    public function testAddWithDefaultValues(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $section = $this->makeProjectSection('long term', $project->id);
+        $tomorrow = FrozenDate::parse('tomorrow');
+        $tomorrowStr = $tomorrow->format('Y-m-d');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/tasks/add?title=first+todo&project_id={$project->id}&due_on={$tomorrowStr}");
+        $this->assertResponseOk();
+
+        $task = $this->viewVariable('task');
+        $this->assertSame('first todo', $task->title);
+        $this->assertSame($project->id, $task->project_id);
+        $this->assertEquals($tomorrow, $task->due_on);
+
+        $sections = $this->viewVariable('sections');
+        $this->assertCount(1, $sections);
+        $this->assertEquals($section->id, $sections[0]->id);
+
+        $project = $this->Tasks->Projects->get($project->id);
+        $this->assertEquals(0, $project->incomplete_task_count);
     }
 
     public function testAddApiToken(): void
@@ -718,7 +759,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
             'evening' => true,
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirect("/tasks/{$first->id}/view");
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
@@ -726,6 +767,60 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($updated->evening);
         // Need to have the project as well.
         $this->assertSame('work', $updated->project->slug);
+    }
+
+    public function testEditDueOnString(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+        ]);
+        $this->assertRedirect("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertEquals(FrozenDate::parse('tomorrow'), $updated->due_on);
+    }
+
+    public function testEditRedirect(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            'redirect' => '/tasks/today',
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $this->assertFlashElement('flash/success');
+    }
+
+    public function testEditSubtaskAddRedirect(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            'subtask_add' => '1',
+            'redirect' => '/tasks/today',
+        ]);
+        $this->assertRedirect('/tasks/today');
+        $this->assertFlashElement('flash/success');
     }
 
     public function testEditApiToken(): void
@@ -757,6 +852,7 @@ class TasksControllerTest extends TestCase
 
         $this->useApiToken($token->token);
         $this->requestJson();
+
         $this->post("/tasks/{$first->id}/edit", [
             'project_id' => $home->id,
         ]);
@@ -765,6 +861,22 @@ class TasksControllerTest extends TestCase
         $updated = $this->viewVariable('task');
         $this->assertEquals($updated->project_id, $home->id);
         $this->assertEquals($updated->project->id, $home->id);
+    }
+
+    public function testEditHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $home = $this->makeProject('home', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->useHtmx();
+        $this->post("/tasks/{$first->id}/edit", [
+            'project_id' => $home->id,
+            'redirect' => '/projects/home',
+        ]);
+        $this->assertRedirect('/projects/home');
     }
 
     public function testEditValidation(): void
@@ -799,6 +911,142 @@ class TasksControllerTest extends TestCase
         $this->assertResponseContains('errors');
     }
 
+    public function testEditCreateSubtasks(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'evening' => true,
+            'subtasks' => [
+                ['title' => 'first step'],
+                ['title' => 'second step'],
+            ],
+        ]);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+
+        /** @var \App\Model\Entity\Task $updated */
+        $updated = $this->viewVariable('task');
+        $this->assertCount(2, $updated->subtasks);
+        $this->assertEquals(2, $updated->subtask_count);
+        $this->assertEquals(0, $updated->complete_subtask_count);
+        $this->assertSame('first step', $updated->subtasks[0]->title);
+        $this->assertEquals(1, $updated->subtasks[0]->ranking);
+        $this->assertFalse($updated->subtasks[0]->completed);
+
+        $this->assertSame('second step', $updated->subtasks[1]->title);
+        $this->assertEquals(2, $updated->subtasks[1]->ranking);
+        $this->assertFalse($updated->subtasks[1]->completed);
+    }
+
+    public function testEditCreateSubtasksNoBlank(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'evening' => true,
+            'subtasks' => [
+                ['title' => 'first step'],
+                ['title' => ''],
+            ],
+        ]);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        $this->assertSame('first step', $updated->subtasks[0]->title);
+        $this->assertEquals(1, $updated->subtasks[0]->ranking);
+        $this->assertFalse($updated->subtasks[0]->completed);
+    }
+
+    public function testEditUpdateSubtasks(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $sub = $this->makeSubtask('first step', $first->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'subtasks' => [
+                ['id' => $sub->id, 'title' => 'step one!', 'completed' => true],
+                ['title' => 'step three'],
+            ],
+        ]);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(2, $updated->subtasks);
+        $this->assertSame('step one!', $updated->subtasks[0]->title);
+        $this->assertTrue($updated->subtasks[0]->completed);
+
+        $this->assertSame('step three', $updated->subtasks[1]->title);
+        $this->assertEquals(1, $updated->subtasks[1]->ranking);
+        $this->assertFalse($updated->subtasks[1]->completed);
+    }
+
+    public function testEditUpdateSubtasksRemove(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $sub = $this->makeSubtask('first step', $first->id, 0);
+        // This subtask isn't part of the update.
+        $this->makeSubtask('second step', $first->id, 1);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => 'updated',
+            'subtasks' => [
+                ['id' => $sub->id, 'title' => $sub->title],
+            ],
+        ]);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
+        $this->assertFlashElement('flash/success');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        $this->assertEquals(1, $updated->subtask_count);
+        $this->assertSame($sub->title, $updated->subtasks[0]->title);
+        $this->assertFalse($updated->subtasks[0]->completed);
+    }
+
+    public function testEditRemoveSubtaskLast(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->makeSubtask('first step', $first->id, 0);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/edit", [
+            'title' => $first->title,
+            'subtasks' => [],
+        ]);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
+
+        $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
+        $this->assertSame('first', $todo->title);
+        $this->assertCount(0, $todo->subtasks);
+        $this->assertEquals(0, $todo->subtask_count);
+        $this->assertEquals(0, $todo->complete_subtask_count);
+    }
+
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);
@@ -814,7 +1062,7 @@ class TasksControllerTest extends TestCase
 
     public function testEditProjectPermission(): void
     {
-        $other = $this->makeProject('work', 2);
+        $other = $this->makeProject('other work', 2);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
 
@@ -843,7 +1091,7 @@ class TasksControllerTest extends TestCase
             'title' => 'updated',
             'project_id' => $other->id,
         ]);
-        $this->assertResponseCode(200);
+        $this->assertRedirectContains("/tasks/{$first->id}/view");
 
         $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);
@@ -901,6 +1149,35 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/delete");
 
         $deleted = $this->Tasks->get($first->id);
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testDeleteConfirm(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/delete/confirm");
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Are you sure?');
+
+        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
+        $this->assertNull($deleted->deleted_at);
+    }
+
+    public function testDeleteConfirmPermissions(): void
+    {
+        $project = $this->makeProject('work', 2);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/delete/confirm");
+
+        $this->assertResponseCode(403);
+
+        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
         $this->assertNull($deleted->deleted_at);
     }
 
@@ -975,6 +1252,24 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->completed);
     }
 
+    public function testCompleteHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+
+        $this->login();
+        $this->configRequest([
+            'headers' => ['Hx-Request' => 'true'],
+        ]);
+        $this->enableCsrfToken();
+        $this->delete("/tasks/{$first->id}/complete");
+        $this->assertResponseCode(200);
+        $this->assertResponseEquals('');
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertTrue($todo->completed);
+    }
+
     public function testCompleteApiToken(): void
     {
         $token = $this->makeApiToken(1);
@@ -1013,6 +1308,24 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/incomplete");
         $this->assertResponseCode(302);
+
+        $todo = $this->Tasks->get($first->id);
+        $this->assertFalse($todo->completed);
+    }
+
+    public function testIncompleteHtmx(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+
+        $this->login();
+        $this->configRequest([
+            'headers' => ['HX-Request' => 'true'],
+        ]);
+        $this->enableCsrfToken();
+        $this->delete("/tasks/{$first->id}/incomplete");
+        $this->assertResponseCode(200);
+        $this->assertResponseEquals('');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);

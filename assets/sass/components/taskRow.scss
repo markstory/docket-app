@@ -1,9 +1,11 @@
+
 .task-row {
   position: relative;
   display: flex;
+  gap: $space;
+  align-items: flex-start;
   width: 100%;
 
-  align-items: flex-start;
   padding-top: $space;
   padding-left: calc($space / 4);
   padding-bottom: $space;
@@ -27,10 +29,15 @@
     color: var(--color-fg);
     display: block;
   }
+  .body {
+    flex-grow: 1;
+  }
 
   .attributes {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    row-gap: calc($space / 2);
 
     font-size: $font-size-normal;
     color: var(--color-low-emphasis);
@@ -63,10 +70,20 @@
     margin-left: $space;
   }
 
+  drop-down {
+    visibility: hidden;
+  }
+
   .actions.visible,
+  &:hover drop-down,
   &:hover .actions {
     visibility: visible;
   }
+}
+
+.htmx-swapping > .task-row {
+  opacity: 0;
+  transition: opacity 500ms ease-out;
 }
 
 @media(max-width: $breakpoint-phone) {

@@ -35,11 +35,6 @@ class GoogleOauthController extends AppController
         return null;
     }
 
-    protected function useInertia()
-    {
-        return false;
-    }
-
     public function authorize(GoogleClient $client)
     {
         // Ensure that the user is stored in the session even

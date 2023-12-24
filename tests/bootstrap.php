@@ -57,7 +57,6 @@ ConnectionManager::setConfig('test_debug_kit', [
 
 ConnectionManager::alias('test_debug_kit', 'debug_kit');
 
-// Simple setup for with no plugins
 (new Migrator())->run();
 
 // Fixate sessionid early on, as php7.2+

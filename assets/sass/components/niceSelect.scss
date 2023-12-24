@@ -1,0 +1,32 @@
+.nice-select {
+  border-color: var(--color-border-med);
+  min-width: 180px;
+  padding-left: $space;
+}
+.nice-select-dropdown {
+  min-width: 180px;
+
+  .list {
+    margin: 0;
+  }
+
+  // Nice select CSS has high specficity
+  .selected {
+    background: var(--color-menu-selected) !important;
+  }
+  .option:hover,
+  .focus {
+    background: var(--color-menu-hover) !important;
+  }
+}
+
+.nice-select-dropdown .option,
+.nice-select .current {
+  gap: calc($space / 2);
+  display: flex;
+  align-items: center;
+}
+
+.nice-select-dropdown .option {
+  padding-left: $space;
+}

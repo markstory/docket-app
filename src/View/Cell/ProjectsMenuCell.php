@@ -1,0 +1,38 @@
+<?php
+declare(strict_types=1);
+
+namespace App\View\Cell;
+
+use Cake\View\Cell;
+
+/**
+ * ProjectsMenu cell
+ */
+class ProjectsMenuCell extends Cell
+{
+    /**
+     * List of valid options that can be passed into this
+     * cell's constructor.
+     *
+     * @var array<string>
+     */
+    protected $_validCellOptions = ['identity'];
+
+    /**
+     * @var \App\Model\Entity\User
+     */
+    protected $identity;
+
+    /**
+     * Default display method.
+     *
+     * @return void
+     */
+    public function display($identity)
+    {
+        $projects = $this->fetchTable('Projects');
+
+        $query = $identity->applyScope('index', $projects->find('active')->find('top'));
+        $this->set('projects', $query->all());
+    }
+}

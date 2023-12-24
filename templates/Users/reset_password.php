@@ -10,7 +10,7 @@ $this->assign('title', 'Forgot your password');
     null,
     [
         'class' => 'form-narrow',
-        'url' => ['controller' => 'Users', 'action' => 'resetPassword']
+        'url' => ['controller' => 'Users', 'action' => 'resetPassword'],
     ],
 ) ?>
 <?= $this->Form->control('email', ['required' => true, 'type' => 'email']) ?>

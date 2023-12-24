@@ -171,3 +171,8 @@ ServerRequest::addDetector('inertia', function () {
 ServerRequest::addDetector('inertia-partial-data', function () {
     return false;
 });
+
+// HTMX detectors
+ServerRequest::addDetector('htmx', function (ServerRequest $request) {
+    return $request->getHeaderLine('HX-Request') === 'true';
+});

@@ -1,6 +1,52 @@
-.icon-evening {
-  color: var(--color-due-evening);
-}
 .icon-error {
   color: var(--color-error-fg);
 }
+
+// Colored icon utilities
+.icon-today svg,
+.today svg {
+  color: var(--color-due-today);
+}
+.icon-tomorrow svg,
+.tomorrow svg {
+  color: var(--color-due-tomorrow);
+}
+.icon-evening svg,
+.evening svg {
+  color: var(--color-due-evening);
+}
+.icon-not-due svg,
+.not-due svg {
+  color: var(--color-due-none);
+}
+.none {
+  color: var(--color-due-none);
+}
+.icon-overdue svg,
+.overdue {
+  color: var(--color-due-overdue);
+}
+.icon-week svg,
+.week {
+  color: var(--color-due-week);
+}
+.icon-fortnight svg,
+.fortnight {
+  color: var(--color-due-fortnight);
+}
+.icon-delete svg {
+  color: var(--color-action-delete);
+}
+.icon-archive svg {
+  color: var(--color-low-emphasis);
+}
+.icon-edit svg {
+  color: var(--color-action-edit);
+}
+.icon-lock svg {
+  color: var(--color-action-lock);
+}
+.icon-complete svg {
+  color: var(--color-action-complete);
+}
+

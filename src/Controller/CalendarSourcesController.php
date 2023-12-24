@@ -194,4 +194,12 @@ class CalendarSourcesController extends AppController
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
         ]);
     }
+
+    public function deleteConfirm()
+    {
+        $calendarSource = $this->getSource();
+        $this->Authorization->authorize($calendarSource->calendar_provider, 'edit');
+
+        $this->set('calendarSource', $calendarSource);
+    }
 }

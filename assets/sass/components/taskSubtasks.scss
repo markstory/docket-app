@@ -28,18 +28,11 @@
     background: var(--color-bg);
   }
 }
-
 .task-subtasks.is-new {
   margin-top: calc($space * 3);
 }
-
 .subtask-sorter {
   padding: 0;
   margin-left: -12px;
 }
-.subtask-addform {
-  margin-left: calc(($space * 3) - 2px);
-  display: grid;
-  grid-template-columns: max(20%, 200px) min-content;
-  gap: $space;
-}
+

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\Acceptance;
 
 use Cake\I18n\FrozenDate;
-use Cake\ORM\TableRegistry;
 
 /**
  * Tests for the today view
@@ -20,11 +19,13 @@ class TodayTest extends AcceptanceTestCase
     {
         parent::setUp();
 
-        $this->Tasks = TableRegistry::get('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks');
     }
 
     public function testTodayOnboarding()
     {
+        $this->markTestIncomplete('Onboarding view not complete');
+
         $client = $this->login();
         $client->get('/tasks/today');
         $client->waitFor('[data-testid="loggedin"]');
@@ -74,14 +75,11 @@ class TodayTest extends AcceptanceTestCase
         // Open the add form
         $button = $crawler->filter('[data-testid="add-task"]');
         $button->click();
-        $client->waitFor('.task-quickform');
+        $client->waitFor('dialog');
 
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('A new task');
+        $form = $crawler->filter('dialog form')->form();
+        $form->get('title')->setValue('A new task');
 
-        // Use the default project value as it is hard to automate with webdriver.
-        // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
-        // when needing to automate that component comes up again.
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
 
@@ -101,12 +99,12 @@ class TodayTest extends AcceptanceTestCase
         $crawler = $client->getCrawler();
 
         // Open the add form in the evening section.
-        $button = $crawler->filter('[data-testid="evening-group"] [data-testid="add-task"]');
+        $button = $crawler->filter('[data-testid="add-task-evening"]');
         $button->click();
-        $client->waitFor('.task-quickform');
+        $client->waitFor('dialog');
 
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('evening task');
+        $form = $crawler->filter('dialog form')->form();
+        $form->get('title')->setValue('evening task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
@@ -129,23 +127,17 @@ class TodayTest extends AcceptanceTestCase
         // Open the add form
         $button = $crawler->filter('[data-testid="add-task"]');
         $button->click();
-        $client->waitFor('.task-quickform');
+        $client->waitFor('dialog');
 
-        $title = $crawler->filter('.task-quickform .smart-task-input input');
-        $title->sendKeys('A new task');
-
-        $crawler->filter('[data-testid="add-subtasks"]')->click();
-        $client->waitFor('.task-subtasks');
+        // Fill out the task title
+        $form = $crawler->filter('dialog form')->form();
+        $form->get('title')->setValue('A new task');
 
         // Add a subtask
-        $form = $crawler->filter('.task-quickform')->form();
-        $form->get('subtask_title')->setValue('First subtask');
-        $button = $crawler->filter('[data-testid="save-subtask"]');
+        $form->get('_subtaskadd')->setValue('First subtask');
+        $button = $crawler->filter('[data-testid="subtask-add"]');
         $button->click();
 
-        // Use the default project value as it is hard to automate with webdriver.
-        // Consider https://stackoverflow.com/questions/41991077/testing-react-select-component
-        // when needing to automate that component comes up again.
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
 
@@ -175,7 +167,9 @@ class TodayTest extends AcceptanceTestCase
         $this->assertEquals($task->title, $title->getText());
         $checkbox = $crawler->filter('.task-row .checkbox')->first();
         $checkbox->click();
-        $client->waitFor('.flash-message');
+
+        // TODO perhaps task completion should have a flash message again?
+        // $client->waitFor('.flash-message');
 
         $task = $this->Tasks->get($task->id);
         $this->assertNotEmpty($task);

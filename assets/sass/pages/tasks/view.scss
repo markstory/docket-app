@@ -1,14 +1,33 @@
 .task-view {
   height: 100%;
+  max-width: 800px;
   padding-left: $space * 2;
 
-  .task-quickform,
-  .task-subtasks,
-  .task-notes {
-    margin: 0 0 $space * 3;
+  .task-quickform {
+    margin: 0 0 $space * 2;
   }
   .task-quickform {
     padding-top: 0;
+  }
+
+  .task-title-input {
+    font-size: $font-size-med;
+    font-weight: bold;
+    width: 100%;
+  }
+  .task-header {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: calc($space * 3);
+  }
+
+  .form-section-heading {
+    display: flex;
+    gap: $space;
+  }
+  .button-bar {
+    flex-direction: row-reverse;
   }
 }
 
@@ -22,7 +41,6 @@
 .task-view-summary {
   display: flex;
   flex-direction: column;
-  margin-bottom: $space * 3;
 
   h3 {
     margin: 0;
@@ -30,13 +48,6 @@
   }
   a {
     text-decoration: none;
-  }
-
-  .title {
-    display: flex;
-    align-items: center;
-
-    margin-bottom: $space;
   }
 
   .checkbox {
@@ -54,9 +65,102 @@
   }
 }
 
+.task-attributes {
+  display: flex;
+  gap: calc($space * 4);
+  flex-direction: row;
+  flex-flow: wrap;
+
+  .form-control {
+    min-width: 200px;
+  }
+}
+@media (max-width: $breakpoint-phone) {
+  .task-attributes {
+    gap: $space;
+  }
+}
+
+.task-notes {
+  margin-left: $form-icon-group-margin;
+
+  .form-input {
+    width: 97%;
+  }
+  .markdown-text-preview,
+  textarea {
+    margin-left: $form-icon-input-margin;
+  }
+  .markdown-text-preview {
+    margin-top: $space;
+  }
+}
+
 @media (max-width: $breakpoint-phone) {
   .task-view .task-quickform {
     margin-right: 0;
     margin-bottom: $space * 3;
+  }
+  .task-attributes {
+    flex-direction: column;
+  }
+}
+
+// Subtasks
+.form-control.task-subtasks {
+  align-items: stretch;
+}
+.task-subtasks .form-section-heading {
+  margin-bottom: calc($space * 2 - $space);
+}
+.task-subtask-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  width: 100%;
+
+  li {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: $space;
+  }
+}
+
+.task-subtask {
+  display: flex;
+  align-items: center;
+  gap: $space;
+
+  .dnd-handle {
+    margin-right: 0;
+  }
+  &.dnd-item {
+    margin-left: -40px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.subtask-item {
+  display: flex;
+  gap: $space;
+  align-items: center;
+  flex-grow: 1;
+
+  input[type="text"] {
+    flex-grow: 1;
+  }
+}
+
+.subtask-addform {
+  margin: 0 0 calc($space * 3) 30px;
+  display: flex;
+  flex: 1;
+  gap: $space;
+
+  input[type="text"] {
+    flex-grow: 1;
   }
 }
