@@ -22,6 +22,8 @@ use DateTimeInterface;
  * @property string|null $html_link
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
+ * @property string $color
+ * @property string $color_hex
  *
  * @property \App\Model\Entity\CalendarSource $calendar_source
  * @property \App\Model\Entity\Provider $provider
