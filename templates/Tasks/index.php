@@ -22,6 +22,7 @@ $groupedTasks = [];
 $current = $start;
 while ($current < $nextStart) :
     $groupedTasks[$current->format('Y-m-d')] = [];
+    $groupedTasks[$current->format('Y-m-d') . ':evening'] = [];
     $current = $current->addDays(1);
 endwhile;
 
@@ -31,7 +32,7 @@ foreach ($tasks as $task) :
         $key = $task->due_on->format('Y-m-d');
     endif;
     if ($task->evening) :
-        $key = "evening:{$key}";
+        $key = "{$key}:evening";
     endif;
     $groupedTasks[$key][] = $task;
 endforeach;
@@ -49,8 +50,8 @@ endforeach;
     <?php
     $dateStr = $key;
     $isEvening = false;
-    if (str_starts_with($dateStr, 'evening:')) {
-        $dateStr = substr($dateStr, 8);
+    if (str_contains($dateStr, ':evening')) {
+        $dateStr = substr($dateStr, 0, strpos($dateStr, ':'));
         $isEvening = true;
     }
     $taskAddUrl = $this->Url->build([
