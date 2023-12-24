@@ -53,9 +53,6 @@
     "minimum-stability": "beta",
     "config": {
         "sort-packages": true,
-        "platform": {
-            "php": "7.4.23"
-        },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "cakephp/plugin-installer": true,
