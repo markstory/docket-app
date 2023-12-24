@@ -126,14 +126,9 @@ class Application extends BaseApplication implements
      */
     protected function bootstrapCli(): void
     {
-        try {
-            $this->addPlugin('Bake');
-        } catch (MissingPluginException $e) {
-            // Do not halt if the plugin is missing
-        }
-
         $this->addPlugin('Migrations');
-        $this->addPlugin('Cake/Repl');
+        $this->addOptionalPlugin('Cake/Repl');
+        $this->addOptionalPlugin('Bake');
     }
 
     public function services(ContainerInterface $container): void
