@@ -45,9 +45,9 @@ jobs:
     - name: composer install
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
-          composer update --no-progress --prefer-lowest --prefer-stable
+          composer update --no-progress --prefer-lowest --prefer-stable --ignore-platform-req=php
         else
-          composer update --no-progress
+          composer update --no-progress --ignore-platform-req=php
         fi
         cp ./tests/Fixture/google-auth.json ./config/google-auth.json
 
@@ -113,7 +113,7 @@ jobs:
 
     - name: Install dependencies & build javascript
       run: |
-        composer update --no-progress
+        composer update --no-progress --ignore-platform-req=php
         yarn install
         yarn build
 
@@ -171,7 +171,7 @@ jobs:
         tools: phive
 
     - name: composer install
-      run: composer update --no-progress
+      run: composer update --no-progress --ignore-platform-req=php
 
     - name: Install PHP tools with phive.
       run: phive install --trust-gpg-keys '12CE0F1D262429A5'
