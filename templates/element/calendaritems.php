@@ -2,7 +2,6 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
- * @var \Cake\I18n\FrozenDate $date
  */
 ?>
 <div class="calendar-item-list">
