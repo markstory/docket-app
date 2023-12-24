@@ -1,14 +1,3 @@
-[data-reach-menu-button] {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-
-  &[aria-expanded="true"] {
-    // Tweak the active button backdown.
-    z-index: $z-active-ui;
-  }
-}
-
 drop-down {
   position: relative;
 }
@@ -26,8 +15,7 @@ drop-down-menu {
   display: block;
 }
 
-drop-down-menu,
-[data-reach-menu-list] {
+drop-down-menu {
   width: max-content;
   position: relative;
   z-index: $z-menu;
@@ -44,8 +32,7 @@ drop-down-menu,
 }
 
 drop-down-menu [role="menuitem"],
-.dropdown-item-text,
-[data-reach-menu-item] {
+.dropdown-item-text {
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -81,8 +68,7 @@ drop-down-menu [role="menuitem"],
   margin: 0;
 }
 
-drop-down-menu [role="menuitem"],
-[data-reach-menu-item] {
+drop-down-menu [role="menuitem"] {
   &[data-selected],
   &:hover {
     background: var(--color-menu-hover);

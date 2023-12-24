@@ -18,8 +18,9 @@ if ($isHtmx) {
 $this->assign('title', 'New Task');
 
 if ($isHtmx) : ?>
-<dialog class="task-add">
+<dialog class="dialog-task-add">
 <?php endif ?>
+<div class="task-add-contents">
     <h2>Create a Task</h2>
     <button class="modal-close" modal-close="true">&#x2715;</button>
     <?= $this->element('task_form', [
@@ -29,6 +30,7 @@ if ($isHtmx) : ?>
         'referer' => $referer,
         'url' => ['_name' => 'tasks:add'],
     ]); ?>
+</div>
 <?php if ($isHtmx) : ?>
 </dialog>
 <?php endif ?>

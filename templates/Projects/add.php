@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use Cake\Core\Configure;
+
 /**
  * @var \App\Model\Entity\Project $project
  * @var string $referer
@@ -13,10 +16,11 @@ echo $this->Form->create(
     $project,
     ['class' => 'form-narrow']
 );
+echo $this->Form->hidden('referer', ['value' => $referer]);
 echo $this->Form->control('name');
 echo $this->Form->control('color', [
     'type' => 'colorpicker',
-    'colors' => $project->getColors(),
+    'colors' => Configure::read('Colors'),
 ]);
 ?>
 <div class="button-bar">

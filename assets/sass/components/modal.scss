@@ -1,5 +1,4 @@
-.modal-float,
-[data-reach-dialog-content] {
+.modal-float {
   outline: none;
 
   position: absolute;
@@ -48,17 +47,6 @@
 
     padding: 45px $space $space $space;
   }
-}
-
-[data-reach-dialog-overlay] {
-  background: var(--color-modal-overlay);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  z-index: $z-modal;
 }
 
 .modal-float {

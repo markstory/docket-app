@@ -116,7 +116,6 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project, 'create');
 
         $referer = $this->getReferer();
-        $this->set('referer', $referer);
 
         $success = null;
         $serialize = [];
@@ -140,6 +139,7 @@ class ProjectsController extends AppController
             }
         }
         $this->set('project', $project);
+        $this->set('referer', $referer);
 
         return $this->respond([
             'success' => $success,

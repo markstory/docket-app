@@ -1,5 +1,5 @@
 // Page specific CSS for task add modal.
-.task-add {
+.dialog-task-add {
   position: fixed;
   top: 80px;
   left: 10%;
@@ -12,5 +12,14 @@
   border: none;
   box-shadow: var(--shadow-high);
 
-  overflow: visible;
+  overflow-y: scroll;
+}
+
+@media (max-width: $breakpoint-phone) {
+  .dialog-task-add {
+    top: calc($space * 2);
+    left: calc($space * 2);
+    right: calc($space * 2);
+    padding: calc($space * 3);
+  }
 }

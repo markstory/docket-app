@@ -3,25 +3,6 @@ due-on {
   gap: $space;
 }
 
-.due-on-menu {
-  padding-bottom: $space;
-
-  svg {
-    margin-right: calc($space / 2);
-  }
-
-  input[type="text"] {
-    padding: $space;
-  }
-
-  .DayPicker {
-    padding: 0 $space;
-  }
-  .DayPicker-NavButton {
-    right: $space;
-  }
-}
-
 // Custom UI component for doing day/evening
 .toggle-evening {
   display: flex;
