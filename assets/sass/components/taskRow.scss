@@ -35,7 +35,9 @@
 
   .attributes {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    row-gap: calc($space / 2);
 
     font-size: $font-size-normal;
     color: var(--color-low-emphasis);
