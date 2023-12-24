@@ -20,7 +20,7 @@ class DueOn extends HTMLElement {
       return;
     }
     const dueOnInput = this.querySelector('input[name="due_on"]');
-    const eveningInput = this.querySelector('input[name="evening"]');
+    const eveningInput = this.querySelector('input:not([type="hidden"])[name="evening"]');
     const dueOnString = this.querySelector('input[name="due_on_string"]');
     if (
       !(dueOnInput instanceof HTMLInputElement) ||
@@ -36,6 +36,17 @@ class DueOn extends HTMLElement {
       return;
     }
 
+    const update = (dueon: string, evening: boolean) => {
+      dueOnInput.value = dueon;
+      dueOnString.value = dueon;
+      eveningInput.checked = evening;
+
+      // Update display state
+      display.innerHTML = this.displayValue(dueon, evening);
+
+      this.updateCalendar(menu, dueon);
+    };
+
     // Listen for button clicks
     const handleSelection = (event: Event) => {
       const target = event.target;
@@ -50,26 +61,20 @@ class DueOn extends HTMLElement {
       event.preventDefault();
       event.stopPropagation();
 
-      // Update inputs in form.
-      let dueon = target.getAttribute('value');
-      if (target instanceof HTMLInputElement) {
-        const dateVal = parseDateInput(target.value);
-        if (dateVal) {
-          dueon = toDateString(dateVal);
-        }
+      let dueon = target.value;
+      const dateVal  = parseDateInput(dueon);
+      if (dateVal) {
+        dueon = toDateString(dateVal);
       }
-
-      const evening = Number(target.dataset.evening ?? eveningInput.value);
+      let evening = eveningInput.checked;
+      if (target.dataset.evening !== undefined) {
+        evening = target.dataset.evening === '1' ? true : false;
+      }
       dueon ??= dueOnInput.value;
+      update(dueon, evening)
 
-      dueOnInput.value = dueon;
-      dueOnString.value = dueon;
-      eveningInput.value = evening.toString();
-
-      // Update display state
-      display.innerHTML = this.displayValue(dueon, evening);
-
-      this.updateCalendar(menu, dueon);
+      menu.removeEventListener('click', handleSelection);
+      dueOnString.removeEventListener('change', handleSelection);
 
       // Close the dropdown.
       const close = new CustomEvent('close', {
@@ -88,6 +93,16 @@ class DueOn extends HTMLElement {
       dueOnString.addEventListener('change', handleSelection);
       dueOnString.focus();
     }) as EventListener);
+
+    // TODO this isn't great as clicking an active icon
+    // shouldn't change state.
+    const eveningToggle = this.querySelector('.toggle-evening');
+    if (eveningToggle) {
+      eveningToggle.addEventListener('click', function () {
+        eveningInput.checked = !eveningInput.checked;
+        update(dueOnInput.value, eveningInput.checked);
+      });
+    }
   }
 
   updateCalendar(menu: Element | null, value: string | null) {
@@ -105,10 +120,10 @@ class DueOn extends HTMLElement {
     }
   }
 
-  displayValue(dueon: string, evening: number): string {
-    const formatted = formatCompactDate(dueon);
+  displayValue(dueon: string, evening: boolean): string {
+    let formatted = formatCompactDate(dueon);
     if (formatted === 'Today' && evening) {
-      return 'This evening';
+      formatted = 'This evening';
     }
     let icon = '';
     if (evening) {

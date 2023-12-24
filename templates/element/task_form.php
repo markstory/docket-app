@@ -52,20 +52,8 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                 <?= $this->Form->input('due_on', [
                     'type' => 'dueon',
                     'value' => $task,
+                    'aria-label' => 'Change the due date',
                 ]) ?>
-                <label class="toggle-evening" for="task-evening">
-                    <?= $this->Form->input('evening', [
-                        'id' => 'task-evening',
-                        'type' => 'checkbox',
-                        'checked' => $task->evening,
-                    ]) ?>
-                    <span class="icon-evening" title="Set task to evening" tabindex="0" role="button">
-                        <?= $this->element('icons/moon16') ?>
-                    </span>
-                    <span class="icon-tomorrow" title="Set task to daytime" tabindex="0" role="button">
-                        <?= $this->element('icons/sun16') ?>
-                    </span>
-                </label>
             </div>
         </div>
     </div>
@@ -108,7 +96,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
     </ul>
 
     <div class="subtask-addform">
-        <?= $this->Form->text("_subtaskadd", [
+        <?= $this->Form->text('_subtaskadd', [
             'id' => 'subtask-add-text',
             'value' => '',
             'placeholder' => 'Create a subtask',

@@ -14,7 +14,7 @@ return [
     <select-box name="{{name}}"{{attrs}}>
         {{hidden}}
         <select-box-current>
-            <span class="select-box-value"></span> 
+            <span class="select-box-value"></span>
             <input type="text" class="select-box-input" />
         </select-box-current>
         <select-box-menu>{{options}}</select-box-menu>
@@ -23,6 +23,7 @@ return [
     'due-on' => <<<HTML
     <due-on {{attrs}}>
         {{hidden}}
+        <input type="hidden" name="evening" value="0" />
         <drop-down clonemenu="false" portalscope="local">
             <button type="button"
                 class="button button-secondary"
@@ -36,6 +37,15 @@ return [
                 {{options}}
             </drop-down-menu>
         </drop-down>
+        <label class="toggle-evening" for="task-evening-{{id}}">
+            {{inputEvening}}
+            <span class="icon-evening" title="Set task to evening" tabindex="0" role="button">
+                {{iconEvening}}
+            </span>
+            <span class="icon-tomorrow" title="Set task to daytime" tabindex="0" role="button">
+                {{iconDay}}
+            </span>
+        </label>
     </due-on>
     HTML,
 ];

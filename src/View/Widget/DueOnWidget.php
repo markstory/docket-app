@@ -39,26 +39,34 @@ class DueOnWidget extends BasicWidget
         unset($data['data-validity-message'], $data['oninvalid'], $data['oninput'], $data['inputAttrs'], $data['val']);
 
         $inputAttrs += ['style' => 'display:none'];
+        $templateVars = $data['templateVars'] ?? [];
 
-        $hidden = [
-            $this->templates->format('input', [
-                'name' => 'due_on',
-                'type' => 'text',
-                'attrs' => $this->templates->formatAttributes(
-                    $inputAttrs + [
-                        'value' => $task->due_on ? $task->due_on->format('Y-m-d') : null,
-                    ],
-                ),
-            ]),
-            $this->templates->format('input', [
+        $hidden = $this->templates->format('input', [
+            'name' => 'due_on',
+            'type' => 'text',
+            'attrs' => $this->templates->formatAttributes(
+                $inputAttrs + [
+                    'value' => $task->due_on ? $task->due_on->format('Y-m-d') : null,
+                ],
+            ),
+        ]);
+        $id = $data['id'] ?? 'task-evening-' . uniqid();
+
+        $templateVars += [
+            'id' => $id,
+            'iconEvening' => $this->view->element('icons/moon16'),
+            'iconDay' => $this->view->element('icons/sun16'),
+            'inputEvening' => $this->templates->format('input', [
                 'name' => 'evening',
-                'value' => $task->evening ? 1 : 0,
-                'type' => 'text',
-                'attrs' => $this->templates->formatAttributes(
-                    $inputAttrs + ['value' => $task->evening ? 1 : 0]
-                ),
+                'type' => 'checkbox',
+                'attrs' => $this->templates->formatAttributes([
+                    'id' => $id,
+                    'value' => 1,
+                    'checked' => $task->evening ? 1 : 0,
+                ]),
             ]),
         ];
+
         $attrs = $this->templates->formatAttributes($data);
         $icon = '';
         if ($task->evening) {
@@ -66,9 +74,9 @@ class DueOnWidget extends BasicWidget
         }
 
         return $this->templates->format('due-on', [
-            'templateVars' => $data['templateVars'],
+            'templateVars' => $templateVars,
             'attrs' => $attrs,
-            'hidden' => implode("\n", $hidden),
+            'hidden' => $hidden,
             'label' => $icon . $this->view->Date->formatCompact($task->due_on, $task->evening),
             'options' => $this->view->element('task_dueon_menu', [
                 'task' => $task,
