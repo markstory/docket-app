@@ -17,7 +17,7 @@ echo $this->Form->create(
     ['class' => 'form-narrow']
 );
 echo $this->Form->hidden('referer', ['value' => $referer]);
-echo $this->Form->control('name');
+echo $this->Form->control('name', ['autofocus' => true]);
 echo $this->Form->control('color', [
     'type' => 'colorpicker',
     'colors' => Configure::read('Colors'),
