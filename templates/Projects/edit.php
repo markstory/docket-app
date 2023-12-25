@@ -14,7 +14,7 @@ $this->assign('title', 'Edit Project');
 <?php
 echo $this->Form->create($project, ['class' => 'form-narrow']);
 echo $this->Form->hidden('referer', ['value' => $referer]);
-echo $this->Form->control('name');
+echo $this->Form->control('name', ['autofocus' => true]);
 echo $this->Form->control('color', [
     'type' => 'colorpicker',
     'colors' => Configure::read('Colors'),

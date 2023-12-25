@@ -24,6 +24,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         <?= $this->Form->text('title', [
             'class' => 'task-title-input',
             'aria-label' => 'Task Title',
+            'autofocus' => true,
         ]) ?>
     </div>
     <div class="task-attributes">
