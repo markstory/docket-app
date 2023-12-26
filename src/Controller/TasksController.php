@@ -79,7 +79,7 @@ class TasksController extends AppController
         $tasks = $query->all();
         $calendarItems = $this->Authorization
             ->applyScope($eventsQuery, 'index')
-            ->all();
+            ->toArray();
         $this->set(compact('tasks', 'calendarItems'));
         $this->set('generation', uniqid());
 
@@ -231,9 +231,9 @@ class TasksController extends AppController
         $sections = [];
         if (!$this->request->is('json')) {
             $projects = $this->Tasks->Projects->find('active')->find('top');
-            $projects = $this->Authorization->applyScope($projects, 'index');
-            if (!$task->project_id) {
-                $task->project_id = $projects->first()->id;
+            $projects = $this->Authorization->applyScope($projects, 'index')->toArray();
+            if (!$task->project_id && count($projects) > 0) {
+                $task->project_id = $projects[0]->id;
             }
             if ($task->project_id) {
                 $sections = $this->Tasks->Projects->Sections
