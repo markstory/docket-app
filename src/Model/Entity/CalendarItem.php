@@ -83,6 +83,31 @@ class CalendarItem extends Entity
         return $this->end_time;
     }
 
+    public function getKey(?string $timezone = null): string
+    {
+        if ($this->start_date) {
+            return $this->start_date->format('Y-m-d');
+        }
+        $start = $this->start_time;
+        if ($timezone) {
+            $start = $this->start_time->setTimezone($timezone);
+        }
+
+        return $start->format('Y-m-d');
+    }
+
+    public function getFormattedTime(?string $timezone = null): string
+    {
+        if ($this->start_date) {
+            return '';
+        }
+        if ($timezone) {
+            $start = $this->start_time->setTimezone($timezone);
+        }
+
+        return $start->format('H:i');
+    }
+
     protected function _getColor()
     {
         if (isset($this->calendar_source)) {

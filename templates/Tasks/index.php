@@ -6,6 +6,7 @@ use Cake\I18n\FrozenDate;
 /**
  * @var \App\Model\Entity\Task[] $tasks
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
+ * @var \App\Model\Entity\User $identity
  * @var string $start
  * @var string $nextStart
  */
@@ -39,7 +40,7 @@ endforeach;
 
 $groupedCalendarItems = [];
 foreach ($calendarItems as $item) :
-    $key = ($item->start_date ?? $item->start_time ?? $start)->format('Y-m-d');
+    $key = $item->getKey($identity->timezone);
     $groupedCalendarItems[$key][] = $item;
 endforeach;
 
@@ -102,7 +103,10 @@ endforeach;
         </h3>
         <?php
         if (!empty($groupedCalendarItems[$key])) :
-            echo $this->element('calendaritems', ['calendarItems' => $groupedCalendarItems[$key]]);
+            echo $this->element('calendaritems', [
+                'calendarItems' => $groupedCalendarItems[$key],
+                'identity' => $identity,
+            ]);
         endif;
         ?>
         <div

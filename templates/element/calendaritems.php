@@ -2,6 +2,7 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
+ * @var \App\Model\Entity\User $identity
  */
 ?>
 <div class="calendar-item-list">
@@ -9,8 +10,9 @@ declare(strict_types=1);
     <?php
     $start = '';
     $allDay = $item->all_day;
-    if ($item->start_time !== null) :
-        $start = '<time date-time="' . '">' . $item->start_time->format('H:i') . '</time>';
+    $startTime = $item->getFormattedTime($identity->timezone);
+    if ($startTime) :
+        $start = '<time date-time="' . '">' . h($startTime) . '</time>';
     endif;
     $class = 'calendar-item';
     if ($allDay) :

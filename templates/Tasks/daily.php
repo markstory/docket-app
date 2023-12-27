@@ -4,6 +4,7 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Task[] $tasks
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
  * @var \Cake\I18n\FrozenDate $date
+ * @var \App\Model\Entity\User $identity
  */
 $this->setLayout('sidebar');
 $this->assign('title', "Today's Tasks");
@@ -79,7 +80,10 @@ if (!empty($groupedTasks['overdue'])) : ?>
 </h2>
 <?php
 if (!empty($calendarItems)) :
-    echo $this->element('calendaritems', ['calendarItems' => $calendarItems]);
+    echo $this->element('calendaritems', [
+        'calendarItems' => $calendarItems,
+        'identity' => $identity,
+    ]);
 endif;
 ?>
 <div
