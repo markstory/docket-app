@@ -402,10 +402,18 @@ class TasksControllerTest extends TestCase
 
         $this->assertResponseOk();
 
-        $items = $this->viewVariable('calendarItems')->toArray();
+        // Check the view variables.
+        $items = $this->viewVariable('calendarItems');
         $this->assertCount(3, $items);
         $itemIds = collection($items)->extract('id')->toList();
         $this->assertEquals([$allDay->id, $early->id, $late->id], $itemIds);
+
+        // Check the time formatting
+        $this->assertResponseContains('early event');
+        $this->assertResponseContains($startOfDay->format('H:i'));
+
+        $this->assertResponseContains('late event');
+        $this->assertResponseContains($endOfDay->modify('-1 hour')->format('H:i'));
     }
 
     public function testIndexCalendarItems(): void
