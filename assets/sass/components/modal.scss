@@ -39,8 +39,7 @@
 }
 
 @media (max-width: $breakpoint-phone) {
-  .modal-float,
-  [data-reach-dialog-content] {
+  .modal-float {
     top: $space * 2;
     left: 5px;
     right: 5px;

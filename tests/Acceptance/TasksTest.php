@@ -125,6 +125,7 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('.task-quickform');
 
         // Fill out the form and submit it.
+        // TODO update this to use a better selector
         $title = $crawler->filter('.task-quickform .smart-task-input input');
         $title->sendKeys([WebDriverKeys::CONTROL, 'a']);
         $title->sendKeys('Do dishes ');
@@ -158,6 +159,7 @@ class TasksTest extends AcceptanceTestCase
         $client->waitFor('.task-quickform');
 
         // Fill out the form and submit it.
+        // TODO update this to use a better selector
         $title = $crawler->filter('.task-quickform .smart-task-input input');
         $title->sendKeys([WebDriverKeys::CONTROL, 'a']);
         $title->sendKeys('Do dishes ');

@@ -82,6 +82,9 @@
 }
 
 .task-notes {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
   margin-left: $form-icon-group-margin;
 
   .form-input {

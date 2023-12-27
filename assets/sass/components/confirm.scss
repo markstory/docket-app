@@ -25,22 +25,12 @@
 }
 
 
-[data-reach-dialog-content][data-reach-alert-dialog-content] {
-  top: 80px;
-  left: 25%;
-  right: 25%;
-  bottom: auto;
-  border-radius: $border-radius-large;
-  padding-top: 20px;
-}
-.confirm-dialog h2,
-[data-reach-alert-dialog-label] {
+.confirm-dialog h2 {
   font-size: $font-size-large;
   font-weight: bold;
   margin: 0 0 $space * 2 0;
 }
-.confirm-dialog p,
-[data-reach-alert-dialog-description] {
+.confirm-dialog p {
   margin-bottom: $space;
 }
 

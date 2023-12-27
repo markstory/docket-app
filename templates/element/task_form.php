@@ -64,7 +64,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 </div>
 
 <div class="form-control task-subtasks">
-    <h3 class="form-section-heading icon-week">
+    <h3 class="form-section-heading icon-complete">
         <?= $this->element('icons/workflow16') ?>
         Sub-tasks
     </h3>

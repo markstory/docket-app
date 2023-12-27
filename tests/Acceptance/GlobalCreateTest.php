@@ -21,6 +21,7 @@ class GlobalCreateTest extends AcceptanceTestCase
 
         $crawler = $client->getCrawler();
         // Fill out title
+        // TODO update this to use a better selector
         $crawler->filter('.task-quickform .smart-task-input input')
             ->sendKeys('task title');
 
@@ -53,6 +54,7 @@ class GlobalCreateTest extends AcceptanceTestCase
         $client->waitFor('[aria-modal="true"]');
 
         // Fill out title
+        // TODO update this to use a better selector
         $crawler->filter('.task-quickform .smart-task-input input')
             ->sendKeys('task title');
 
