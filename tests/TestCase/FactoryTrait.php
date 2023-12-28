@@ -201,13 +201,15 @@ trait FactoryTrait
     protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null, $expires = null): CalendarSubscription
     {
         $subs = $this->fetchTable('CalendarSubscriptions');
+        /** @var \App\Model\Entity\CalendarSubscription $sub */
         $sub = $subs->newEntity([
             'calendar_source_id' => $sourceId,
             'identifier' => $identifier ?? Text::uuid(),
             'verifier' => $verifier ?? Text::uuid(),
             'expires_at' => $expires ?? strtotime('+1 week'),
         ]);
+        $subs->saveOrFail($sub);
 
-        return $subs->saveOrFail($sub);
+        return $sub;
     }
 }

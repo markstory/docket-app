@@ -89,8 +89,11 @@ class CalendarItem extends Entity
             return $this->start_date->format('Y-m-d');
         }
         $start = $this->start_time;
+        if (!$start) {
+            return '';
+        }
         if ($timezone) {
-            $start = $this->start_time->setTimezone($timezone);
+            $start = $start->setTimezone($timezone);
         }
 
         return $start->format('Y-m-d');
@@ -101,8 +104,12 @@ class CalendarItem extends Entity
         if ($this->start_date) {
             return '';
         }
+        $start = $this->start_time;
+        if (!$start) {
+            return '';
+        }
         if ($timezone) {
-            $start = $this->start_time->setTimezone($timezone);
+            $start = $start->setTimezone($timezone);
         }
 
         return $start->format('H:i');
