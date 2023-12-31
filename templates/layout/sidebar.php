@@ -23,25 +23,33 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
 // TODO make expanded work. Perhaps with an htmx
 // extension that maintains the state?
 ?>
-<div class="layout-three-quarter" data-testid="loggedin">
+<div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
     <section id="sidebar" class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
                 <?= $this->element('profile_menu') ?>
                 <div class="project-filter">
                     <ul class="links">
-                        <li>
+                        <li class="icon-today">
                             <?= $this->Html->link(
-                                '<i class="icon-today">' . $this->element('icons/clippy16') . '</i> Today',
+                                $this->element('icons/clippy16') . ' Today',
                                 ['_name' => 'tasks:today'],
-                                ['escape' => false, 'class' => $todayActive ? 'active' : '']
+                                [
+                                    'escape' => false,
+                                    'class' => $todayActive ? 'active' : '',
+                                    'data-hotkey' => 't',
+                                ]
                             ) ?>
                         </li>
-                        <li>
+                        <li class="icon-tomorrow">
                             <?= $this->Html->link(
-                                '<i class="icon-tomorrow">' . $this->element('icons/calendar16') . '</i> Upcoming',
+                                $this->element('icons/calendar16') . ' Upcoming',
                                 ['_name' => 'tasks:upcoming'],
-                                ['escape' => false, 'class' => $upcomingActive ? 'active' : '']
+                                [
+                                    'escape' => false,
+                                    'class' => $upcomingActive ? 'active' : '',
+                                    'data-hotkey' => 'u',
+                                ]
                             ) ?>
                         </li>
                     </ul>
@@ -80,12 +88,19 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                     'escape' => false,
                     'class' => 'button-global-add button-primary',
                     'data-testid' => 'global-task-add',
+                    'data-hotkey' => 'c',
                     'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $globalAddContext ?? []]),
                     'hx-target' => 'main.main',
                     'hx-swap' => 'beforeend',
                 ]
             ) ?>
         <?php endif; ?>
+        <a href="#"
+            hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
+            hx-target="main.main"
+            hx-swap="beforeend"
+            data-hotkey="shift+?"
+        >Show keyboard shortcuts</a>
     </section>
 </div>
 <?= $this->Html->scriptStart() ?>

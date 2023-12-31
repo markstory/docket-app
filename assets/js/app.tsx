@@ -12,6 +12,7 @@ window.htmx = htmx;
 // htmx extensions
 import 'app/extensions/ajax';
 import 'app/extensions/flashMessage';
+import 'app/extensions/hotkeys';
 import 'app/extensions/projectSorter';
 import 'app/extensions/taskSorter';
 import 'app/extensions/sectionSorter';

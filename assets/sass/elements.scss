@@ -54,3 +54,13 @@ a {
     color: var(--color-active);
   }
 }
+
+dialog {
+  position: fixed;
+  padding: calc($space * 2) calc($space * 3);
+  z-index: $z-modal;
+
+  border-radius: $border-radius-large;
+  border: none;
+  box-shadow: var(--shadow-high);
+}

@@ -21,8 +21,10 @@ if ($isHtmx) : ?>
 <dialog class="dialog-task-add">
 <?php endif ?>
 <div class="task-add-contents">
-    <h2>Create a Task</h2>
-    <button class="modal-close" modal-close="true">&#x2715;</button>
+    <div class="modal-title">
+        <h2>Create a Task</h2>
+        <button class="modal-close" modal-close="true">&#x2715;</button>
+    </div>
     <?= $this->element('task_form', [
         'task' => $task,
         'projects' => $projects,

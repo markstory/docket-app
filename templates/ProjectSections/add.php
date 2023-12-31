@@ -10,8 +10,10 @@ $this->set('open', true);
 $this->setLayout('modal');
 ?>
 <dialog class="modal-float">
-    <button class="modal-close" modal-close="true">&#x2715;</button>
-    <h1>Create a section</h1>
+    <div class="modal-title">
+        <h1>Create a section</h1>
+        <button class="modal-close" modal-close="true">&#x2715;</button>
+    </div>
     <p>
         Sections help organize tasks in a project into logical chunks.
         When a section is deleted, all the tasks within that section are also deleted.
