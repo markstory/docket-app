@@ -9,7 +9,6 @@
         "lint": "eslint 'assets/js/*' 'tests/js/*' --quiet --fix"
     },
     "dependencies": {
-        "classnames": "^2.2.6",
         "date-fns": "2.27.*",
         "dompurify": "^2.2.6",
         "htmx.org": "^1.9.6",
