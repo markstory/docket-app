@@ -41,7 +41,7 @@ foreach ($tasks as $task) {
     $groupedTasks[$key][] = $task;
 }
 ?>
-<reload-after datetime="<?= strtotime('+30 minutes') ?>"></reload-after>
+<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
 
 <?php // Overdue section ?>
 <?php if (!empty($groupedTasks['overdue'])) : ?>

@@ -17,7 +17,7 @@ foreach ($tasks as $task) {
     $groupedTasks[$task->section_id ?? ''][] = $task;
 }
 ?>
-<reload-after datetime="<?= strtotime('+30 minutes') ?>"></reload-after>
+<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
 <div class="project-view">
     <div class="heading-actions" data-archived="<?= $project->archived ?>">
         <div class="heading-actions-item">
