@@ -126,3 +126,4 @@ endforeach;
 <?php endforeach; ?>
 
 <?php // TODO build pagination ?>
+<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
