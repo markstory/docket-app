@@ -69,6 +69,16 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                             <?= $this->element('icons/trash16') ?>
                             Trash Bin
                         </a>
+
+                        <a href="#"
+                            class="layout-show-help"
+                            hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
+                            hx-target="main.main"
+                            hx-swap="beforeend"
+                            data-hotkey="shift+?"
+                        >
+                            Show keyboard shortcuts
+                        </a>
                     </div>
                 </div>
             </div>
@@ -95,12 +105,6 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                 ]
             ) ?>
         <?php endif; ?>
-        <a href="#"
-            hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
-            hx-target="main.main"
-            hx-swap="beforeend"
-            data-hotkey="shift+?"
-        >Show keyboard shortcuts</a>
     </section>
 </div>
 <?= $this->Html->scriptStart() ?>
