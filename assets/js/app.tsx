@@ -22,6 +22,7 @@ import 'app/extensions/removeRow';
 // Webcomponents
 import 'app/webcomponents/dropDown.ts';
 import 'app/webcomponents/dueOn.ts';
+import 'app/webcomponents/keyboardList';
 import 'app/webcomponents/markdownText.ts';
 import 'app/webcomponents/modalWindow.ts';
 import 'app/webcomponents/reloadAfter.ts';

@@ -43,6 +43,11 @@ foreach ($tasks as $task) {
 ?>
 <reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
 
+<keyboard-list
+    itemselector=".task-row"
+    toggleselector="input[type='checkbox']"
+    openselector="a"
+>
 <?php // Overdue section ?>
 <?php if (!empty($groupedTasks['overdue'])) : ?>
     <h2 class="heading-icon overdue">
@@ -132,3 +137,4 @@ foreach ($groupedTasks['evening'] ?? [] as $task) :
 endforeach;
 ?>
 </div>
+</keyboard-list>
