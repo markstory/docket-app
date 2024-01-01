@@ -269,7 +269,6 @@ class TasksController extends AppController
         $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
 
-        $template = null;
         $success = false;
         if ($this->request->is(['patch', 'post', 'put', 'delete'])) {
             $task->complete();
@@ -278,22 +277,20 @@ class TasksController extends AppController
         $status = 204;
         $redirect = $this->referer(['_name' => 'tasks:today']);
         if ($this->request->is('htmx')) {
-            $redirect = null;
-            $template = 'delete_ok';
             $status = 200;
         }
 
         return $this->respond([
             'success' => $success,
             'flashError' => __('The task could not be completed. Please try again.'),
+            'flashSuccess' => __('Task complete'),
             'statusSuccess' => $status,
             'redirect' => $redirect,
-            'template' => $template,
         ]);
     }
 
     /**
-     * Complete a task as incomplete.
+     * Mark a task as incomplete.
      *
      * @param string|null $id Task id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
@@ -305,9 +302,7 @@ class TasksController extends AppController
             'contain' => ['Projects'],
         ]);
         $this->Authorization->authorize($task, 'edit');
-        $template = null;
         $success = false;
-
         if ($this->request->is(['delete', 'patch', 'post', 'put'])) {
             $task->incomplete();
             if ($this->Tasks->save($task)) {
@@ -317,17 +312,15 @@ class TasksController extends AppController
         $redirect = $this->referer(['_name' => 'tasks:today']);
         $status = 204;
         if ($this->request->is('htmx')) {
-            $redirect = null;
-            $template = 'delete_ok';
             $status = 200;
         }
 
         return $this->respond([
             'success' => $success,
             'flashError' => __('The task could not be updated. Please try again.'),
+            'flashSuccess' => __('Task incomplete'),
             'statusSuccess' => $status,
             'redirect' => $redirect,
-            'template' => $template,
         ]);
     }
 

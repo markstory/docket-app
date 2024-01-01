@@ -1267,12 +1267,14 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->configRequest([
-            'headers' => ['Hx-Request' => 'true'],
+            'headers' => [
+                'Hx-Request' => 'true',
+                'Referer' => 'http://localhost/tasks/upcoming',
+            ],
         ]);
         $this->enableCsrfToken();
         $this->delete("/tasks/{$first->id}/complete");
-        $this->assertResponseCode(200);
-        $this->assertResponseEquals('');
+        $this->assertRedirect('/tasks/upcoming');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertTrue($todo->completed);
@@ -1328,12 +1330,14 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->configRequest([
-            'headers' => ['HX-Request' => 'true'],
+            'headers' => [
+                'HX-Request' => 'true',
+                'Referer' => 'http://localhost/projects/work',
+            ],
         ]);
         $this->enableCsrfToken();
         $this->delete("/tasks/{$first->id}/incomplete");
-        $this->assertResponseCode(200);
-        $this->assertResponseEquals('');
+        $this->assertRedirect('/projects/work');
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);
