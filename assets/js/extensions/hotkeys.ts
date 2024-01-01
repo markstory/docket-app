@@ -68,9 +68,11 @@ type Hotkey = {
 
   function addListener() {
     window.addEventListener('keydown', function (event) {
+      if (event.target && event.target !== document.body) {
+        return;
+      }
       for (var hotkey of hotkeys) {
         if (matchHotkey(hotkey, event)) {
-          console.debug('matched hotkey', hotkey);
           hotkey.action(hotkey.binding);
         }
       }

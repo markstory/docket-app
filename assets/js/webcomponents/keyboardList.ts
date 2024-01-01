@@ -48,6 +48,9 @@ class KeyboardList extends HTMLElement {
   }
 
   handleKeydown = (event: KeyboardEvent) => {
+    if (event.target && event.target !== document.body) {
+      return;
+    }
     const currentFocus = this.focusedItem;
     if (currentFocus) {
       currentFocus.classList.remove(FOCUS_CLASS);
@@ -80,7 +83,6 @@ class KeyboardList extends HTMLElement {
       this.focusIndex = Math.min(this.focusIndex, maxIndex - 1);
       this.focusIndex = Math.max(0, this.focusIndex);
     }
-    console.log(this.focusIndex, maxIndex);
     this.updateFocus();
   };
 
