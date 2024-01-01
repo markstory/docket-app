@@ -62,14 +62,14 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DATABASE_TEST_URL=$MYSQL_URL; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DATABASE_TEST_URL=$POSTGRES_URL; fi
 
-        if [[ ${{ matrix.php-version }} == '7.4' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.1' ]]; then
           export CODECOVERAGE=1 && vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
         else
           vendor/bin/phpunit
         fi
 
     - name: Submit code coverage
-      if: matrix.php-version == '7.4'
+      if: matrix.php-version == '8.1'
       uses: codecov/codecov-action@v1
       with:
         flags: phpunit
