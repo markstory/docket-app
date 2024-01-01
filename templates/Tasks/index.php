@@ -47,6 +47,13 @@ endforeach;
 ?>
 <h1>Upcoming</h1>
 
+<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
+
+<keyboard-list
+    itemselector=".task-row"
+    toggleselector="input[type='checkbox']"
+    openselector="a"
+>
 <?php foreach ($groupedTasks as $key => $taskGroup) : ?>
     <?php
     $dateStr = $key;
@@ -124,6 +131,6 @@ endforeach;
         </div>
     <?php endif ?>
 <?php endforeach; ?>
+</keyboard-list>
 
 <?php // TODO build pagination ?>
-<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>

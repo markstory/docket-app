@@ -18,7 +18,13 @@ foreach ($tasks as $task) {
 }
 ?>
 <reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
-<div class="project-view">
+
+<keyboard-list
+    class="project-view"
+    itemselector=".task-row"
+    toggleselector="input[type='checkbox']"
+    openselector="a"
+>
     <div class="heading-actions" data-archived="<?= $project->archived ?>">
         <div class="heading-actions-item">
             <h1 class="heading-icon">
@@ -85,4 +91,4 @@ foreach ($tasks as $task) {
         </div>
         <?php endforeach; ?>
     </div>
-</div>
+</keyboard-list>
