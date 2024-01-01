@@ -71,8 +71,6 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListMarkComplete()
     {
-        // TODO fix this
-        $this->markTestIncomplete('Need a good way to determine when task is gone');
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('Home', 1);
         $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
@@ -87,10 +85,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
         // Mark done
         $client->getKeyboard()->sendKeys('x');
 
-        // This used to be waitFor(.flash-message)
-        $client->waitFor(':not(.task-row)');
-        // sleep works, but is janky
-        sleep(2);
+        $client->waitFor('.flash-message');
         $task = $this->getTableLocator()->get('Tasks')->get($task->id);
         $this->assertTrue($task->completed);
     }
