@@ -18,6 +18,7 @@ if ($isHtmx) : ?>
     <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
 <div class="help-view">
+    <h3>Global shortcuts</h3>
     <dl class="shortcut-list">
         <dt><kbd>u</kbd></dt>
         <dd>Go to Upcoming View</dd>
@@ -30,6 +31,20 @@ if ($isHtmx) : ?>
 
         <dt><kbd>?</kbd></dt>
         <dd>Show this help dialog</dd>
+    </dl>
+    <h3>Task list shortcuts</h3>
+    <dl class="shortcut-list">
+        <dt><kbd>j</kbd></dt>
+        <dd>Move focus down</dd>
+
+        <dt><kbd>k</kbd></dt>
+        <dd>Move focus up</dd>
+
+        <dt><kbd>o</kbd></dt>
+        <dd>Open focused task</dd>
+
+        <dt><kbd>x</kbd></dt>
+        <dd>Complete current task</dd>
     </dl>
 </div>
 <?php if ($isHtmx) : ?>
