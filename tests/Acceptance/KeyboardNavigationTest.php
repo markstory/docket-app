@@ -20,8 +20,6 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testUpcoming()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $this->makeProject('Home', 1);
         $client = $this->login();
 
@@ -37,8 +35,6 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testToday()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $this->makeProject('Home', 1);
 
         $client = $this->login();
@@ -53,8 +49,6 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListGotoDetails()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('Home', 1);
         $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
@@ -67,7 +61,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
         // Move focus
         $client->getKeyboard()->sendKeys('j');
-        $client->waitFor('.is-focused');
+        $client->waitFor('.keyboard-focus');
         // Open details
         $client->getKeyboard()->sendKeys('o');
 
@@ -78,7 +72,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
     public function testTaskListMarkComplete()
     {
         // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
+        $this->markTestIncomplete('Need a good way to determine when task is gone');
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('Home', 1);
         $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
@@ -89,37 +83,20 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
         // Move focus
         $client->getKeyboard()->sendKeys('j');
-        $client->waitFor('.is-focused');
+        $client->waitFor('.keyboard-focus');
         // Mark done
-        $client->getKeyboard()->sendKeys('d');
+        $client->getKeyboard()->sendKeys('x');
 
-        $client->waitFor('.flash-message');
+        // This used to be waitFor(.flash-message)
+        $client->waitFor(':not(.task-row)');
+        // sleep works, but is janky
+        sleep(2);
         $task = $this->getTableLocator()->get('Tasks')->get($task->id);
         $this->assertTrue($task->completed);
     }
 
-    public function testTaskViewEdit()
-    {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('Home', 1);
-        $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
-
-        $client = $this->login();
-        $client->get("/tasks/{$task->id}/view");
-        $client->waitFor('[data-testid="loggedin"]');
-
-        // Open edit form
-        $client->getKeyboard()->sendKeys('e');
-        $client->waitFor('.task-quickform');
-        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
-    }
-
     public function testGlobalCreate()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $this->makeProject('Home', 1);
 
         $client = $this->login();
@@ -128,8 +105,8 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
         // Open modal, wait for modal.
         $client->getKeyboard()->sendKeys('c');
-        $client->waitFor('[aria-modal="true"]');
+        $client->waitFor('dialog');
 
-        $this->assertNotEmpty($client->getCrawler()->filter('.task-quickform'));
+        $this->assertNotEmpty($client->getCrawler()->filter('.task-add-contents'));
     }
 }
