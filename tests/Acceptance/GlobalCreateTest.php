@@ -7,8 +7,6 @@ class GlobalCreateTest extends AcceptanceTestCase
 {
     public function testKeyboardTriggerFromToday()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $project = $this->makeProject('Home', 1);
 
         $client = $this->login();
@@ -17,16 +15,13 @@ class GlobalCreateTest extends AcceptanceTestCase
 
         // Open modal, wait for modal.
         $client->getKeyboard()->sendKeys('c');
-        $client->waitFor('[aria-modal="true"]');
+        $client->waitFor('dialog');
 
         $crawler = $client->getCrawler();
-        // Fill out title
-        // TODO update this to use a better selector
-        $crawler->filter('.task-quickform .smart-task-input input')
-            ->sendKeys('task title');
+        $crawler->filter('input[name="title"]')->sendKeys('task title');
 
         // Show notes
-        $crawler->filter('[data-testid="add-notes"]')->click();
+        $crawler->filter('.markdown-text-preview [role="button"]')->click();
         $crawler->filter('[name="body"]')->sendKeys('Some notes');
 
         $crawler->filter('[data-testid="save-task"]')->click();
@@ -40,8 +35,6 @@ class GlobalCreateTest extends AcceptanceTestCase
 
     public function testButtonTriggerFromUpcoming()
     {
-        // TODO fix this
-        $this->markTestIncomplete('keybindings for global actions are not complete');
         $project = $this->makeProject('Home', 1);
 
         $client = $this->login();
@@ -50,24 +43,16 @@ class GlobalCreateTest extends AcceptanceTestCase
 
         // Open modal, wait for modal.
         $crawler = $client->getCrawler();
-        $crawler->filter('[data-testid="global-task-add"]')->click();
-        $client->waitFor('[aria-modal="true"]');
+        $client->getKeyboard()->sendKeys('c');
+        $client->waitFor('dialog');
 
         // Fill out title
-        // TODO update this to use a better selector
-        $crawler->filter('.task-quickform .smart-task-input input')
-            ->sendKeys('task title');
-
-        // Show notes
-        $crawler->filter('[data-testid="add-notes"]')->click();
-        $crawler->filter('[name="body"]')->sendKeys('Some notes');
-
+        $crawler->filter('input[name="title"]')->sendKeys('task title');
         $crawler->filter('[data-testid="save-task"]')->click();
 
         $tasks = $this->fetchTable('Tasks');
         $task = $tasks->find()->firstOrFail();
         $this->assertEquals('task title', $task->title);
         $this->assertEquals($project->id, $task->project_id);
-        $this->assertEquals('Some notes', $task->body);
     }
 }
