@@ -141,7 +141,6 @@ class AppController extends Controller
      * - serialize - The view variables to serialize into an API response.
      * - template - The view template to use if one is.
      *
-     * @TODO use this in other endpoints as well.
      * @return null|\Cake\Http\Response Either a response or null if we're not skipping view rendering.
      */
     protected function respond(array $config)

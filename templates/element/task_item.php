@@ -2,9 +2,9 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Task $task
- * @var bool? $showProject
- * @var bool? showDueOn
- * @var bool? $restore
+ * @var ?bool $showProject
+ * @var ?bool showDueOn
+ * @var ?bool $restore
  */
 $taskUrl = $this->Url->build(['_name' => 'tasks:view', $task->id]);
 

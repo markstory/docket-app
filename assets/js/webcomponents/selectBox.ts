@@ -266,8 +266,6 @@ class SelectBoxCurrent extends HTMLElement {
       });
       this.dispatchEvent(open);
     });
-    // TODO consider using shadowdom with a link element
-    // to the application CSS file. How to get that file path is unknown.
   }
 
   updateSelected() {

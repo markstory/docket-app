@@ -86,8 +86,7 @@ class UpcomingTest extends AcceptanceTestCase
         $this->assertEquals($task->title, $title->getText());
         $checkbox = $crawler->filter('.task-row .checkbox')->first();
         $checkbox->click();
-        // TODO need to add flash message for task completion.
-        // $client->waitFor('.flash-message');
+        $client->waitFor('.flash-message');
 
         $task = $this->Tasks->get($task->id);
         $this->assertNotEmpty($task);

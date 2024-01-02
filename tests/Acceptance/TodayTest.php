@@ -168,8 +168,7 @@ class TodayTest extends AcceptanceTestCase
         $checkbox = $crawler->filter('.task-row .checkbox')->first();
         $checkbox->click();
 
-        // TODO perhaps task completion should have a flash message again?
-        // $client->waitFor('.flash-message');
+        $client->waitFor('.flash-message');
 
         $task = $this->Tasks->get($task->id);
         $this->assertNotEmpty($task);

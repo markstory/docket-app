@@ -19,9 +19,6 @@ endif;
 
 $todayActive = strpos($this->request->getPath(), '/tasks/today') !== false;
 $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false;
-
-// TODO make expanded work. Perhaps with an htmx
-// extension that maintains the state?
 ?>
 <div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
     <section id="sidebar" class="sidebar" data-expanded="false">

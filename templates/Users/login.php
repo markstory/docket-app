@@ -27,12 +27,11 @@ $this->assign('title', 'Login');
 </div>
 <?= $this->Form->end() ?>
 
-<?php // TODO Make sure this works with csp ?>
-<script type="text/javascript">
+<?= $this->Html->scriptStart() ?>
 try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     document.getElementById('input-timezone').value = timezone;
 } catch (e) {
     // Do nothing we'll use their last timezone.
 }
-</script>
+<?= $this->Html->scriptEnd() ?>

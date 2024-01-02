@@ -7,12 +7,6 @@ $menuId = 'task-menu-' . uniqid();
 $deleteConfirmUrl = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];
 $taskEditProjectUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 'editproject'];
 $taskRescheduleUrl = ['_name' => 'tasks:viewmode', 'id' => $task->id, 'mode' => 'reschedule'];
-
-// TODO one weakness of the current menu content swapping approach is that
-// if an action is ever aborted, the menu is stuck in its previous state.
-// I don't want to solve this by getting the task menu from the server,
-// but that could be a gross solution.
-// Maybe `DropDown` can have a 'snapshot and restore' flow enabled by an attribute?
 ?>
 <drop-down>
     <button
