@@ -16,18 +16,12 @@ $taskCheckboxUrl = $this->Url->build([
     '_name' => $task->completed ? 'tasks:incomplete' : 'tasks:complete',
     'id' => $task->id,
 ]);
-$className = 'task-row';
-if ($task->completed) :
-    $className .= ' is-completed';
-endif;
-
-// TODO add/remove `is-completed` class on checkbox change.
 ?>
 <div class="dnd-item" data-id="<?= $task->id ?>">
     <button class="dnd-handle" role="button" aria-roledescription="sortable">
         <?= $this->element('icons/grabber24') ?>
     </button>
-    <div class="<?= h($className) ?>">
+    <div class="task-row">
         <?= $this->element('task_checkbox', [
             'name' => 'completed',
             'checked' => $task->completed,

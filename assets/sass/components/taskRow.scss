@@ -48,11 +48,6 @@
     }
   }
 
-  &.is-completed .title {
-    color: var(--color-muted);
-    text-decoration: line-through;
-  }
-
   // Context menu for tasks that shows on hover.
   .actions {
     display: flex;
@@ -79,6 +74,12 @@
   &:hover .actions {
     visibility: visible;
   }
+}
+
+// Completed tasks are rendered differently.
+.task-row:has(input:checked) .title {
+  color: var(--color-muted);
+  text-decoration: line-through;
 }
 
 .htmx-swapping > .task-row {
