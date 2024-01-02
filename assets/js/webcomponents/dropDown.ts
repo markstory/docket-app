@@ -12,7 +12,6 @@ import htmx from 'htmx.org';
  */
 class DropDown extends HTMLElement {
   private revealBackup: Node | undefined = undefined;
-  private portalId: string = ''
 
   connectedCallback() {
     const triggerTarget = this.getAttribute('trigger') ?? 'button';
