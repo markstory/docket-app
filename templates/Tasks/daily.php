@@ -93,6 +93,11 @@ if (!empty($calendarItems)) :
     ]);
 endif;
 ?>
+
+<?php if (empty($groupedTasks)) : ?>
+    <?= $this->element('tasks_empty') ?>
+<?php endif ?>
+
 <div
     class="task-group dnd-dropper-left-offset"
     hx-ext="task-sorter"
@@ -107,34 +112,36 @@ endforeach;
 ?>
 </div>
 
-<?php // Evening section ?>
-<h2 class="heading-icon icon-evening">
-    <?= $this->element('icons/moon16') ?>
-    This Evening
-    <?= $this->Html->link(
-        $this->element('icons/plus16'),
-        $taskAddUrl,
-        [
-            'escape' => false,
-            'class' => 'button-icon-primary',
-            'data-testid' => 'add-task-evening',
-            'hx-get' => $taskAddEveningUrl,
-            'hx-target' => 'main.main',
-            'hx-swap' => 'beforeend',
-        ]
-    ) ?>
-</h2>
-<div
-    class="task-group dnd-dropper-left-offset"
-    hx-ext="task-sorter"
-    task-sorter-attr="day_order"
-    task-sorter-evening="1"
-    task-sorter-dueon="<?= $dateStr ?>"
->
-<?php
-foreach ($groupedTasks['evening'] ?? [] as $task) :
-    echo $this->element('task_item', ['task' => $task]);
-endforeach;
-?>
-</div>
+<?php if (!empty($groupedTasks)) : ?>
+    <?php // Evening section ?>
+    <h2 class="heading-icon icon-evening">
+        <?= $this->element('icons/moon16') ?>
+        This Evening
+        <?= $this->Html->link(
+            $this->element('icons/plus16'),
+            $taskAddUrl,
+            [
+                'escape' => false,
+                'class' => 'button-icon-primary',
+                'data-testid' => 'add-task-evening',
+                'hx-get' => $taskAddEveningUrl,
+                'hx-target' => 'main.main',
+                'hx-swap' => 'beforeend',
+            ]
+        ) ?>
+    </h2>
+    <div
+        class="task-group dnd-dropper-left-offset"
+        hx-ext="task-sorter"
+        task-sorter-attr="day_order"
+        task-sorter-evening="1"
+        task-sorter-dueon="<?= $dateStr ?>"
+    >
+    <?php
+    foreach ($groupedTasks['evening'] ?? [] as $task) :
+        echo $this->element('task_item', ['task' => $task]);
+    endforeach;
+    ?>
+    </div>
+<?php endif ?>
 </keyboard-list>

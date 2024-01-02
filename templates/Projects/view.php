@@ -52,6 +52,10 @@ foreach ($tasks as $task) {
         <?= $this->element('project_menu', ['project' => $project, 'showDetailed' => true]) ?>
     </div>
 
+    <?php if (empty($groupedTasks)) : ?>
+        <?= $this->element('tasks_empty') ?>
+    <?php endif ?>
+
     <?php // Tasks with no section ?>
     <div
         class="task-group dnd-dropper-left-offset"
