@@ -72,18 +72,18 @@ class DropDown extends HTMLElement {
 
       const portalScope = this.portalScope;
       const isGlobal = portalScope === 'global';
+      const bodyRect = document.body.getBoundingClientRect();
       if (isGlobal) {
         // position portal left aligned and below trigger.
+        const topOffset = bodyRect.top * -1 + triggerRect.top + triggerRect.height + 5;
         portal.style.left = `${triggerRect.left + 5}px`;
-        portal.style.top = `${triggerRect.top + triggerRect.height + 5}px`;
+        portal.style.top = `${topOffset}px`;
       } else {
         portal.style.left = '0px';
-        portal.style.top = '18px';
+        portal.style.top = `${triggerRect.height + 5}px`;
       }
 
-      // TODO solve for scroll offsets
       const menuRect = reveal.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
       // If the menu would overflow, align to the right
       if (menuRect.right > bodyRect.right) {
         const rightEdge = triggerRect.left + triggerRect.width;
