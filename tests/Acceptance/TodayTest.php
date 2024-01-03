@@ -91,7 +91,9 @@ class TodayTest extends AcceptanceTestCase
 
     public function testCreateInEvening()
     {
+        $today = new FrozenDate('today', 'UTC');
         $project = $this->makeProject('Work', 1);
+        $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
         $client = $this->login();
         $client->get('/tasks/today');
@@ -109,8 +111,7 @@ class TodayTest extends AcceptanceTestCase
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
         $button->click();
 
-        $task = $this->Tasks->find()->firstOrFail();
-        $this->assertEquals('evening task', $task->title);
+        $task = $this->Tasks->findByTitle('evening task')->firstOrFail();
         $this->assertEquals($project->id, $task->project_id);
         $this->assertTrue($task->evening);
     }
