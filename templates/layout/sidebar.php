@@ -35,6 +35,7 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                                     'escape' => false,
                                     'class' => $todayActive ? 'active' : '',
                                     'data-hotkey' => 't',
+                                    'hx-boost' => '1',
                                 ]
                             ) ?>
                         </li>
@@ -46,6 +47,7 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                                     'escape' => false,
                                     'class' => $upcomingActive ? 'active' : '',
                                     'data-hotkey' => 'u',
+                                    'hx-boost' => '1',
                                 ]
                             ) ?>
                         </li>
@@ -54,15 +56,15 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                     <?= $this->cell('ProjectsMenu', ['identity' => $identity]) ?>
 
                     <div className="secondary-actions">
-                        <a class="action-primary" href="<?= $this->Url->build(['_name' => 'projects:add']) ?>">
+                        <a class="action-primary" href="<?= $this->Url->build(['_name' => 'projects:add']) ?>" hx-boost="1">
                             <?= $this->element('icons/plus16') ?>
                             New Project
                         </a>
-                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>">
+                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>" hx-boost="1">
                             <?= $this->element('icons/archive16') ?>
                             Archived Projects
                         </a>
-                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>">
+                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>" hx-boost="1">
                             <?= $this->element('icons/trash16') ?>
                             Trash Bin
                         </a>

@@ -31,7 +31,7 @@ $taskCheckboxUrl = $this->Url->build([
                 'hx-target' => 'main.main',
              ],
         ]) ?>
-        <a href="<?= h($taskUrl) ?>">
+        <a href="<?= h($taskUrl) ?>" hx-boost="1">
             <span class="title">
                 <?= h($task->title) ?>
             </span>

@@ -10,7 +10,7 @@ $url = $this->Url->build(['_path' => 'Projects::view', 'slug' => $project->slug]
 $active = strpos($this->request->getPath(), $url) !== false;
 ?>
 <div class="project-item <?= $active ? 'active' : '' ?>">
-    <a href="<?= $url ?>">
+    <a href="<?= $url ?>" hx-boost="1">
         <span class="project-badge">
             <?= $this->element('icons/dot16', ['color' => $project->color_hex]) ?>
             <span><?= h($project->name) ?></span>
