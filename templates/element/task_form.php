@@ -144,6 +144,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 
                 list.appendChild(item);
                 input.value = '';
+                input.focus();
             });
         }());
         <?= $this->Html->scriptEnd() ?>
