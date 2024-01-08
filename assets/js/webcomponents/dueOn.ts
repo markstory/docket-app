@@ -53,7 +53,8 @@ class DueOn extends HTMLElement {
 
       const accept =
         (target instanceof HTMLButtonElement && event.type === 'click') ||
-        (target instanceof HTMLInputElement && event.type === 'change');
+        (target instanceof HTMLInputElement && event.type === 'change') ||
+        (target instanceof HTMLInputElement && event.type === 'keypress');
 
       if (!accept) {
         return;
@@ -74,14 +75,7 @@ class DueOn extends HTMLElement {
       update(dueon, evening)
 
       menu.removeEventListener('click', handleSelection);
-      dueOnString.removeEventListener('change', handleSelection);
-
-      // Close the dropdown.
-      const close = new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-      });
-      document.dispatchEvent(close);
+      this.close();
     };
 
     this.addEventListener('open', ((event: CustomEvent<OpenEvent>) => {
@@ -90,9 +84,21 @@ class DueOn extends HTMLElement {
         return;
       }
       menu.addEventListener('click', handleSelection);
-      dueOnString.addEventListener('change', handleSelection);
       dueOnString.focus();
     }) as EventListener);
+
+    dueOnString.addEventListener('change', handleSelection);
+    dueOnString.addEventListener('keypress', event => {
+      if (event.key === 'Enter') {
+        handleSelection(event);
+        event.preventDefault();
+      }
+    });
+
+    menu.addEventListener('submit', function (event) {
+      event.preventDefault();
+      update(dueOnInput.value, eveningInput.checked);
+    });
 
     // TODO this isn't great as clicking an active icon
     // shouldn't change state.
@@ -130,6 +136,15 @@ class DueOn extends HTMLElement {
       icon = MOON_ICON;
     }
     return icon + formatted;
+  }
+
+  close() {
+    // Close the dropdown.
+    const close = new CustomEvent('close', {
+      bubbles: true,
+      cancelable: true,
+    });
+    document.dispatchEvent(close);
   }
 }
 
