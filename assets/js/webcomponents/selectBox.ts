@@ -97,6 +97,10 @@ class SelectBox extends HTMLElement {
       menu.setAttribute('current', this.currentOffset.toString());
     }) as EventListener);
 
+    menu.addEventListener('changecurrent', ((evt: CustomEvent<number>) => {
+      this.currentOffset = evt.detail;
+    }) as EventListener);
+
     // Propagate filtering into menu updates;
     trigger.addEventListener('keyup', evt => {
       const target = evt.target;
@@ -196,16 +200,40 @@ class SelectBoxMenu extends HTMLElement {
   }
 
   filterOptions() {
-    const menuOptions: NodeListOf<SelectBoxOption> =
-      this.querySelectorAll('select-box-option');
-    const filter = this.getAttribute('filter');
+    const menuOptions: Array<SelectBoxOption> = Array.from(
+      this.querySelectorAll('select-box-option')
+    );
+    let filter = this.getAttribute('filter');
+    if (filter) {
+      filter = filter.toLowerCase();
+    }
 
-    for (var option of menuOptions) {
-      if (!filter || option.innerText.includes(filter)) {
+    let firstIndex: number | undefined = undefined;
+    for (let i = 0, len = menuOptions.length; i < len; i++) {
+      const option = menuOptions[i];
+      if (!filter || option.innerText.toLowerCase().includes(filter)) {
         option.removeAttribute('aria-hidden');
+        if (firstIndex === undefined) {
+          firstIndex = i;
+        }
       } else {
+        option.removeAttribute('aria-current');
         option.setAttribute('aria-hidden', 'true');
       }
+    }
+
+    if (firstIndex === undefined) {
+      return;
+    }
+    const current = menuOptions[firstIndex];
+    if (current) {
+      current.setAttribute('aria-current', 'true');
+      const changeCurrent = new CustomEvent('changecurrent', {
+        bubbles: true,
+        cancelable: true,
+        detail: firstIndex,
+      });
+      this.dispatchEvent(changeCurrent);
     }
   }
 }
