@@ -13,10 +13,10 @@
 .sheet-body {
   background: #fff;
   margin-top: 2vh;
-  width: 65%;
+  width: 85%;
   bottom: auto;
   padding: calc($space * 3) calc($space * 6);
-  overflow-y: scroll;
+  overflow-y: auto;
   z-index: $z-modal;
 
   border-radius: $border-radius-large;
