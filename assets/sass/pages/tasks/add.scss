@@ -2,8 +2,7 @@
 .dialog-task-add {
   position: fixed;
   top: 2vh;
-  left: 10%;
-  right: 10%;
+  width: 65%;
   bottom: auto;
   padding: calc($space * 3) calc($space * 6);
   z-index: $z-modal;
@@ -23,11 +22,16 @@
   overflow: visible;
 }
 
+@media (max-width: $breakpoint-tablet) {
+  .dialog-task-add {
+    width: 85%;
+  }
+}
+
 @media (max-width: $breakpoint-phone) {
   .dialog-task-add {
     top: calc($space * 2);
-    left: calc($space * 2);
-    right: calc($space * 2);
+    width: 100%;
     padding: calc($space * 3);
   }
 }
