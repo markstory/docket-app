@@ -1,37 +1,25 @@
 // Page specific CSS for task add modal.
-.dialog-task-add {
+.sheet-overlay {
   position: fixed;
-  top: 2vh;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: rgba(66, 66, 66, 0.3);
+
+  display: flex;
+  justify-content: center;
+}
+.sheet-body {
+  background: #fff;
+  margin-top: 2vh;
   width: 65%;
   bottom: auto;
   padding: calc($space * 3) calc($space * 6);
+  overflow-y: scroll;
   z-index: $z-modal;
 
   border-radius: $border-radius-large;
   border: none;
   box-shadow: var(--shadow-high);
-
-  // need overflow for long content
-  max-height: 96vh;
-  overflow: visible;
-}
-
-.task-add-contents {
-  // need scroll to constrain long contents
-  max-height: 90vh;
-  overflow: visible;
-}
-
-@media (max-width: $breakpoint-tablet) {
-  .dialog-task-add {
-    width: 85%;
-  }
-}
-
-@media (max-width: $breakpoint-phone) {
-  .dialog-task-add {
-    top: calc($space * 2);
-    width: 100%;
-    padding: calc($space * 3);
-  }
 }

@@ -106,9 +106,9 @@ class UpcomingTest extends AcceptanceTestCase
         // Open the add form.
         $addButton = $crawler->filter('[data-testid="add-task"]')->first();
         $addButton->click();
-        $client->waitFor('dialog');
+        $client->waitFor('.sheet-body');
 
-        $form = $crawler->filter('dialog form')->form();
+        $form = $crawler->filter('.sheet-body form')->form();
         $form->get('title')->setValue('upcoming task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');

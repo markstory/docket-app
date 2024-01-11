@@ -15,7 +15,7 @@ class GlobalCreateTest extends AcceptanceTestCase
 
         // Open modal, wait for modal.
         $client->getKeyboard()->sendKeys('c');
-        $client->waitFor('dialog');
+        $client->waitFor('.sheet-body');
 
         $crawler = $client->getCrawler();
         $crawler->filter('input[name="title"]')->sendKeys('task title');
@@ -44,7 +44,7 @@ class GlobalCreateTest extends AcceptanceTestCase
         // Open modal, wait for modal.
         $crawler = $client->getCrawler();
         $client->getKeyboard()->sendKeys('c');
-        $client->waitFor('dialog');
+        $client->waitFor('.sheet-body');
 
         // Fill out title
         $crawler->filter('input[name="title"]')->sendKeys('task title');

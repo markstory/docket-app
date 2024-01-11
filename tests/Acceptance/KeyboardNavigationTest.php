@@ -100,7 +100,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
         // Open modal, wait for modal.
         $client->getKeyboard()->sendKeys('c');
-        $client->waitFor('dialog');
+        $client->waitFor('.sheet-body');
 
         $this->assertNotEmpty($client->getCrawler()->filter('.task-add-contents'));
     }

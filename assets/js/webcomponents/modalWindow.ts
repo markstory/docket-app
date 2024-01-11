@@ -24,14 +24,16 @@ class ModalWindow extends HTMLElement {
 
   setupClose(dialog: HTMLDialogElement | null): void {
     const closer = this.querySelector('[modal-close="true"]');
-    if (!closer || !dialog) {
+    if (!closer) {
       return;
     }
     closer.addEventListener(
       'click',
       evt => {
         evt.preventDefault();
-        dialog.close();
+        if (dialog) {
+          dialog.close();
+        }
       },
       false
     );

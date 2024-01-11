@@ -230,7 +230,7 @@ class ProjectsTest extends AcceptanceTestCase
         // Click add task in the section.
         $addTask = $crawler->filter('[data-testid="section-add-task"]')->first();
         $addTask->click();
-        $client->waitFor('dialog');
+        $client->waitFor('.sheet-body');
 
         $title = $crawler->filter('.task-title-input');
         $title->sendKeys('A new task');
