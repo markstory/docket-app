@@ -63,7 +63,7 @@ class DueOn extends HTMLElement {
       event.stopPropagation();
 
       let dueon = target.value;
-      const dateVal  = parseDateInput(dueon);
+      const dateVal = parseDateInput(dueon);
       if (dateVal) {
         dueon = toDateString(dateVal);
       }
@@ -100,14 +100,21 @@ class DueOn extends HTMLElement {
       update(dueOnInput.value, eveningInput.checked);
     });
 
-    // TODO this isn't great as clicking an active icon
-    // shouldn't change state.
-    const eveningToggle = this.querySelector('.toggle-evening');
-    if (eveningToggle) {
-      eveningToggle.addEventListener('click', function () {
+    const eveningControl = this.querySelector('.due-on-evening');
+    if (eveningControl) {
+      eveningControl.addEventListener('click', function () {
         eveningInput.checked = !eveningInput.checked;
         update(dueOnInput.value, eveningInput.checked);
       });
+      eveningControl.addEventListener('keydown', function (event: KeyboardEvent) {
+        if (!eveningInput.value) {
+          return;
+        }
+        if (event.key == 'Enter' || event.key == ' ') {
+          eveningInput.checked = !eveningInput.checked;
+          update(dueOnInput.value, eveningInput.checked);
+        }
+      } as EventListener);
     }
   }
 

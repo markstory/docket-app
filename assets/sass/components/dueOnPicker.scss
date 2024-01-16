@@ -4,14 +4,17 @@ due-on {
 }
 
 // Custom UI component for doing day/evening
-.toggle-evening {
+.due-on-evening {
   display: flex;
   gap: $space;
   align-items: center;
 
-  svg {
-    cursor: pointer;
-  }
+  background: var(--color-bg-level1);
+  border: 1px solid var(--color-border);
+  border-radius: $space;
+  box-shadow: var(--shadow-inset);
+  padding: calc($space / 2);
+  min-width: auto;
 
   // Hide the input without removing tabindex.
   input {
@@ -19,10 +22,28 @@ due-on {
     position: absolute;
     pointer-events: none;
   }
-  input:checked ~ .icon-tomorrow svg {
-    color: var(--color-low-emphasis);
+  .toggle-evening,
+  .toggle-day {
+    cursor: pointer;
+    padding: calc($space / 2);
+    border: 1px solid transparent;
+    border-radius: calc($space);
+    box-shadow: none;
+    height: 26px;
   }
+
+  // Active button states
+  input:not(:checked) ~ .toggle-day,
+  input:checked ~ .toggle-evening {
+    background: var(--color-bg);
+    border-color: var(--color-border-med);
+    box-shadow: var(--shadow-button);
+  }
+
+  // Inactive button state
+  input:checked ~ .icon-tomorrow svg,
   input:not(:checked) ~ .icon-evening svg {
-    color: var(--color-low-emphasis);
+    color: var(--color-muted);
   }
+
 }
