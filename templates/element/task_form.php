@@ -43,7 +43,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
             // TODO add loading indicator
         ]) ?>
         <div id="task-section-container">
-            <?= $this->element('../ProjectSections/options', ['sections' => $sections, 'value' => $task->id]) ?>
+            <?= $this->element('../ProjectSections/options', ['sections' => $sections, 'value' => $task->section_id]) ?>
         </div>
         <div class="form-control form-dueon-control">
             <label for="due-on" class="form-section-heading icon-tomorrow">
