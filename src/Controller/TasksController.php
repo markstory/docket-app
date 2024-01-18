@@ -201,6 +201,11 @@ class TasksController extends AppController
             $options = ['associated' => ['Subtasks']];
             $task->setAccess('subtasks', true);
             $task = $this->Tasks->patchEntity($task, $this->request->getData(), $options);
+            $subtaskTitle = $this->request->getData('_subtaskadd');
+            if ($subtaskTitle) {
+                $task->setDirty('subtasks');
+                $task->subtasks[] = $this->Tasks->Subtasks->newEntity(['title' => $subtaskTitle]);
+            }
 
             // Ensure the project belongs to the current user.
             $project = $this->Tasks->Projects->get($task->project_id);
@@ -387,6 +392,11 @@ class TasksController extends AppController
             $this->Authorization->authorize($project, 'edit');
             $task->section_id = null;
             $task->project = $project;
+        }
+        $subtaskTitle = $this->request->getData('_subtaskadd');
+        if ($subtaskTitle) {
+            $task->setDirty('subtasks');
+            $task->subtasks[] = $this->Tasks->Subtasks->newEntity(['title' => $subtaskTitle, 'task_id' => $task->id]);
         }
         $task->setDueOnFromString($this->request->getData('due_on_string'));
         $task->removeTrailingEmptySubtask();

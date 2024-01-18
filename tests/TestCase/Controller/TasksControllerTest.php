@@ -725,6 +725,26 @@ class TasksControllerTest extends TestCase
         $this->assertEquals('first subtask', $todo->subtasks[0]->title);
     }
 
+    public function testAddWithIncompleteSubtask(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $token = $this->makeApiToken(1);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post('/tasks/add', [
+            'title' => 'first todo',
+            'project_id' => $project->id,
+            '_subtaskadd' => 'first subtask',
+        ]);
+        $this->assertResponseOk();
+
+        $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
+        $this->assertSame('first todo', $todo->title);
+        $this->assertCount(1, $todo->subtasks);
+        $this->assertEquals('first subtask', $todo->subtasks[0]->title);
+    }
+
     public function testAddToSectionInDifferentProject(): void
     {
         $home = $this->makeProject('home', 1);
@@ -811,6 +831,49 @@ class TasksControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
         $this->assertFlashElement('flash/success');
+    }
+
+    public function testEditSubtasks(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            'subtasks' => [
+                ['title' => 'first subtask'],
+                ['title' => 'second subtask'],
+            ],
+        ]);
+        $this->assertFlashElement('flash/success');
+        $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
+        $this->assertCount(2, $task->subtasks);
+        $this->assertEquals('first subtask', $task->subtasks[0]->title);
+        $this->assertEquals('second subtask', $task->subtasks[1]->title);
+    }
+
+    public function testEditSubtasksIncomplete(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->assertNull($first->due_on);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on_string' => 'tomorrow',
+            '_subtaskadd' => 'first subtask',
+        ]);
+        $this->assertFlashElement('flash/success');
+        $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
+        $this->assertNotEmpty($task);
+        $this->assertCount(1, $task->subtasks);
+        $this->assertEquals('first subtask', $task->subtasks[0]->title);
     }
 
     public function testEditSubtaskAddRedirect(): void
