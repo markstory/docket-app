@@ -914,6 +914,28 @@ class TasksControllerTest extends TestCase
         $this->assertSame('work', $updated->project->slug);
     }
 
+    public function testEditApiTokenDueOnEmptySubtasks(): void
+    {
+        $token = $this->makeApiToken(1);
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $subtask = $this->makeSubtask('first subtask', $first->id, 0);
+
+        $this->useApiToken($token->token);
+        $this->requestJson();
+        $this->post("/tasks/{$first->id}/edit", [
+            'due_on' => FrozenDate::parse('tomorrow')->format('Y-m-d'),
+            'subtasks' => [],
+        ]);
+        $this->assertResponseOk();
+        // $this->assertResponseContains('"first subtask"');
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        $reload = $this->Tasks->Subtasks->get($subtask->id);
+        $this->assertNotEmpty($reload);
+    }
+
     public function testEditProject(): void
     {
         $token = $this->makeApiToken(1);

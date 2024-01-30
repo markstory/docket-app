@@ -70,6 +70,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
     </h3>
 
     <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter" id="subtask-list">
+        <?= $this->Form->hidden('subtasks', ['value' => '']) ?>
     <?php foreach ($task->subtasks as $i => $subtask) : ?>
         <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
             <button class="dnd-handle" role="button" aria-roledescription="sortable">

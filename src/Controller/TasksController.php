@@ -381,7 +381,15 @@ class TasksController extends AppController
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->getTask($id);
         $this->Authorization->authorize($task);
-        $task = $this->Tasks->patchEntity($task, $this->request->getData(), [
+        $data = $this->request->getData();
+
+        // This is API specific behavior that mobile client relies on.
+        if ($this->request->is('json')) {
+            if (isset($data['subtasks']) && $data['subtasks'] === []) {
+                unset($data['subtasks']);
+            }
+        }
+        $task = $this->Tasks->patchEntity($task, $data, [
             'associated' => ['Subtasks'],
         ]);
 

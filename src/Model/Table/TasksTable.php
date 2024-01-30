@@ -433,7 +433,7 @@ class TasksTable extends Table
 
     public function beforeSave(EventInterface $event, Task $task, ArrayObject $options)
     {
-        if ($task->isDirty('subtasks') && count($task->subtasks)) {
+        if ($task->isDirty('subtasks') && is_array($task->subtasks) && count($task->subtasks)) {
             // Force a dirty field so that counter cache always runs.
             // This isn't ideal but it works for now
             $task->subtasks[0]->setDirty('title');
