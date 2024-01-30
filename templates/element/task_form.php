@@ -91,6 +91,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'class' => 'icon-overdue button-icon',
                     'escapeTitle' => false,
                     'hx-ext' => 'remove-row',
+                    'remove-row-target' => '.task-subtask',
                 ]) ?>
             </div>
         </li>

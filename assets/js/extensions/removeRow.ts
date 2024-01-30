@@ -8,7 +8,13 @@ import htmx from 'htmx.org';
       }
       const element = event.target as HTMLElement;
       element.addEventListener('click', function () {
-        const row = element.parentNode;
+        const selector = element.getAttribute('remove-row-target');
+        let row: HTMLElement | null = null;
+        if (selector) {
+          row = element.closest(selector);
+        } else {
+          row = element.parentNode as HTMLElement;
+        }
         if (row) {
           row.parentNode!.removeChild(row);
         }
