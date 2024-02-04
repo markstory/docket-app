@@ -77,7 +77,7 @@ class ValidationError implements Exception {
 /// the string value of the response data if available.
 class DecodeError implements Exception {
   final String message;
-  final String? responseData; 
+  final String? responseData;
   final StackTrace? stack;
 
   const DecodeError(this.message, {this.responseData, this.stack});
@@ -196,7 +196,7 @@ Future<ApiToken> doLogin(String email, String password) async {
 
 // Profile Methods {{{
 
-/// Update the timezone. Fired during application startup to automatically 
+/// Update the timezone. Fired during application startup to automatically
 /// sync the account timezone to where the user is.
 Future<void> updateTimezone(String apiToken) async {
   var url = _makeUrl('/users/profile');
@@ -285,11 +285,6 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
 
   return _decodeResponse(response.bodyBytes, (mapData) {
     List<Task> tasks = [];
-    if (mapData['completed'] != null) {
-      for (var item in mapData['completed']) {
-        tasks.add(Task.fromMap(item));
-      }
-    }
     if (mapData['tasks'] != null) {
       for (var item in mapData['tasks']) {
         tasks.add(Task.fromMap(item));
@@ -337,9 +332,9 @@ Future<Task> createTask(String apiToken, Task task) async {
   var url = _makeUrl('/tasks/add');
 
   var response = await httpPost(
-    url, 
-    apiToken: apiToken, 
-    body: task.toMap(), 
+    url,
+    apiToken: apiToken,
+    body: task.toMap(),
     errorMessage: 'Could not create task'
   );
   return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
@@ -481,8 +476,8 @@ Future<Project> createProject(String apiToken, Project project) async {
   var url = _makeUrl('/projects/add');
   var response = await httpPost(
     url,
-    apiToken: apiToken, 
-    body: project.toMap(), 
+    apiToken: apiToken,
+    body: project.toMap(),
     errorMessage: 'Could not create project');
   return _decodeResponse(response.bodyBytes, (mapData) => Project.fromMap(mapData['project']));
 }
