@@ -29,10 +29,6 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
     viewmodel.loadData();
   }
 
-  Future<void> _refresh(ProjectCompletedViewModel viewmodel) {
-    return viewmodel.refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectCompletedViewModel>(builder: (context, viewmodel, child) {
@@ -46,7 +42,7 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
               itemCount: viewmodel.tasks.length,
               prototypeItem: TaskItem(
                 key: const ValueKey('proto'),
-                task: viewmodel.tasks.isNotEmpty ? viewmodel.tasks.first : Task.blank(), 
+                task: viewmodel.tasks.isNotEmpty ? viewmodel.tasks.first : Task.blank(),
                 showDate: true
               ),
               itemBuilder: (BuildContext context, int index) {
@@ -68,7 +64,7 @@ class _ProjectCompletedScreenState extends State<ProjectCompletedScreen> {
       ),
       drawer: const AppDrawer(),
       body: RefreshIndicator(
-        onRefresh: () => _refresh(viewmodel),
+        onRefresh: () => viewmodel.refresh(),
         child: child,
       ),
     );
