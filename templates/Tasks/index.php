@@ -72,7 +72,7 @@ endforeach;
     ?>
     <?php // Task day section ?>
     <?php if ($isEvening) : ?>
-        <h5 class="heading-evening-group">
+        <h5 class="heading-evening-group icon-evening">
             <?= $this->element('icons/moon16') ?>
             Evening
         </h5>
