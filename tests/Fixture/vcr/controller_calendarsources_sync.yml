@@ -2,7 +2,7 @@
 -
     request:
         method: GET
-        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00'
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events?timeMin=2021-06-11T12%3A13%3A14%2B00%3A00&eventTypes=default&eventTypes=focusTime&eventTypes=outOfOffice'
         headers:
             content-type: application/json
             authorization: 'Bearer calendar-access-token'

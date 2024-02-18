@@ -2,7 +2,7 @@
 -
     request:
         method: POST
-        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch'
+        url: 'https://www.googleapis.com/calendar/v3/calendars/calendar-1/events/watch?eventTypes=default&eventTypes=focusTime&eventTypes=outOfOffice'
         headers:
             Host: www.googleapis.com
             content-type: application/json
@@ -12,7 +12,7 @@
             "address": "http:\/\/localhost\/google\/calendar\/notifications",
             "id": "dd9935b9-41c9-45b1-988f-992d1a57d032",
             "token": "verifier=581c0fb8-902d-4f67-9de3-08bb52557ca9",
-            "type": "web_hook"
+            "type": "webhook"
           }
     response:
         status:

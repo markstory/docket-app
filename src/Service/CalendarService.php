@@ -165,10 +165,11 @@ class CalendarService
         $channel->setId($sub->identifier);
         $channel->setAddress(Router::url(['_name' => 'googlenotification:update', '_full' => true]));
         $channel->setToken($sub->channel_token);
-        $channel->setType('web_hook');
+        $channel->setType('webhook');
 
         try {
-            $result = $calendar->events->watch($source->provider_id, $channel);
+            $opts = ['eventTypes' => ['default', 'focusTime', 'outOfOffice']];
+            $result = $calendar->events->watch($source->provider_id, $channel, $opts);
             $sub->expires_at = $result->getExpiration() / 1000;
             $this->CalendarSubscriptions->saveOrFail($sub);
 
@@ -221,6 +222,7 @@ class CalendarService
         $time = new FrozenTime('-1 month');
         $options = $defaults = [
             'timeMin' => $time->format(FrozenTime::RFC3339),
+            'eventTypes' => ['default', 'focusTime', 'outOfOffice'],
         ];
         // Check if the user has a sync token for this source.
         // If so use it to continue syncing.
