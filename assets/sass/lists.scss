@@ -20,15 +20,19 @@
     border-bottom: none;
   }
 
+  li.list-item-error,
   li.list-item-empty {
     border-bottom: 0;
     padding: calc($space * 2);
     justify-content: center;
 
     svg {
+      margin-bottom: -0.25em;
       color: var(--color-primary);
-      margin-right: $space;
     }
+  }
+  li.list-item-error svg {
+      color: var(--color-error);
   }
 }
 .list-items.full-width {

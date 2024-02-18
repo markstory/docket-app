@@ -13,22 +13,22 @@ $menuId = 'provider-menu-' . $provider->id;
 ?>
 <li class="list-item-panel" data-active="<?= $active ? 'true' : 'false'?>">
     <div class="list-item-panel-header">
-        <?php if ($active) : ?>
-            <span class="list-item-block">
-                <?= $this->element('calendarprovider_tile', ['provider' => $provider]) ?>
-            </span>
-        <?php else : ?>
-            <?= $this->Html->link(
-                $this->element('calendarprovider_tile', ['provider' => $provider]),
-                $expandUrl,
-                [
-                    'class' => 'list-item-block',
-                    'hx-get' => $this->Url->build($expandUrl),
-                    'hx-target' => 'main.main',
-                    'escape' => false,
-                ]
-            ) ?>
-        <?php endif ?>
+        <span class="list-item-block">
+            <?= $this->element('calendarprovider_tile', ['provider' => $provider]) ?>
+            <?php if (empty($unlinked)) : ?>
+                <?= $this->Html->link(
+                    'Fetch unlinked calendars',
+                    $expandUrl,
+                    [
+                        'class' => 'button-secondary button-narrow',
+                        'hx-get' => $this->Url->build($expandUrl),
+                        'hx-target' => 'main.main',
+                        'escape' => false,
+                    ]
+                ) ?>
+            <?php endif ?>
+        </span>
+
         <div class="list-item-block">
             <drop-down>
                 <button
@@ -58,6 +58,14 @@ $menuId = 'provider-menu-' . $provider->id;
     </div>
     <div class="list-item-panel-item">
         <ul class="list-items full-width">
+        <?php if ($provider->broken_auth) : ?>
+            <li class="list-item-error icon-error">
+                <span>
+                   <?= $this->element('icons/alert16') ?>
+                   Unable to load calendar data. Reconnect this provider.
+                </span>
+            </li>
+        <?php endif; ?>
         <?php if (empty($provider->calendar_sources)) : ?>
             <li class="list-item-empty">
                 <?= $this->element('icons/alert16') ?>

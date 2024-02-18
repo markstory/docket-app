@@ -95,6 +95,9 @@ class CalendarProvidersController extends AppController
         // API responses don't use activeProvider as the list and details views are separate.
         if (!empty($providers) && !$this->request->is('json')) {
             if ($this->request->getQuery('provider')) {
+                // TODO this should be moved to a sync method.
+                // The sync could be called from a dropdown action.
+                // Synced unlinked calendars will have local state stored in the database (expand CalendarSource)
                 $id = (int)$this->request->getQuery('provider', null);
                 // Relying on the single page number of results to find the 'active' provider.
                 // The active provider is rendered with a calendar list.
