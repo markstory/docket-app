@@ -44,10 +44,8 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
         $builder->get('/day/{date}', ['action' => 'daily'], 'tasks:daily')
             ->setPass(['date']);
 
-        $builder->connect('/add', ['action' => 'add'], ['_name' => 'tasks:add']);
+        $builder->post('/add', ['action' => 'add'], 'tasks:add');
 
-        // HTMX uses delete to change completion status as the success
-        // means the element needs to be removed from the client state.
         $builder->post('/{id}/complete', ['action' => 'complete'], 'tasks:complete')
             ->setPass(['id']);
         $builder->delete('/{id}/complete', ['action' => 'complete'])->setPass(['id']);
@@ -74,7 +72,7 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
 
     $builder->scope('/projects', ['controller' => 'Projects'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'projects:index');
-        $builder->connect('/add', 'Projects::add', ['_name' => 'projects:add']);
+        $builder->post('/add', ['action' => 'add'], 'projects:add');
         $builder->get('/archived', ['action' => 'archived'], 'projects:archived');
         $builder->post('/reorder', ['action' => 'reorder'], 'projects:reorder');
 
@@ -88,7 +86,7 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
             ->setPass(['slug']);
         $builder->post('/{slug}/move', ['action' => 'move'], 'projects:move')
             ->setPass(['slug']);
-        $builder->connect('/{slug}/edit', ['action' => 'edit'], ['_name' => 'projects:edit'])
+        $builder->post('/{slug}/edit', ['action' => 'edit'], 'projects:edit')
             ->setPass(['slug']);
     });
 

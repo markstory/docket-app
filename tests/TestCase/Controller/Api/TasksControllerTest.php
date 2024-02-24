@@ -10,9 +10,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\TasksController Test Case
- *
- * @uses \App\Controller\Api\TasksController
+ * App\Controller\Api\TasksController Test Case
  */
 class TasksControllerTest extends TestCase
 {
