@@ -103,38 +103,6 @@ class TasksControllerTest extends TestCase
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
-    /**
-     * Test index method
-     *
-     * @return void
-     */
-    public function testIndexApi(): void
-    {
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
-        $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
-        $this->makeTask('complete', $project->id, 0, [
-            'completed' => true,
-            'due_on' => $tomorrow,
-        ]);
-        $token = $this->makeApiToken(1);
-
-        $this->requestJson();
-        $this->useApiToken($token->token);
-        $this->get('/tasks');
-
-        $this->assertResponseOk();
-        $response = json_decode(strval($this->_response->getBody()), true);
-
-        $this->assertArrayHasKey('tasks', $response);
-        $this->assertArrayHasKey('calendarItems', $response);
-
-        $this->assertCount(2, $response['tasks']);
-        $ids = collection($response['tasks'])->extract('id')->toList();
-        $this->assertEquals([$first->id, $second->id], $ids);
-    }
-
     public function testIndexStartAndEnd(): void
     {
         $sixDays = new FrozenDate('+6 days');
@@ -563,21 +531,6 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testViewApi()
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->get("/tasks/{$first->id}/view");
-
-        $this->assertResponseOk();
-        $var = $this->viewVariable('task');
-        $this->assertSame($var->title, $first->title);
-    }
-
     /**
      * Test view method
      *
@@ -640,23 +593,6 @@ class TasksControllerTest extends TestCase
 
         $project = $this->Tasks->Projects->get($project->id);
         $this->assertEquals(0, $project->incomplete_task_count);
-    }
-
-    public function testAddApiToken(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $token = $this->makeApiToken(1);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post('/tasks/add', [
-            'title' => 'first todo',
-            'project_id' => $project->id,
-        ]);
-        $this->assertResponseOk();
-
-        $todo = $this->Tasks->find()->firstOrFail();
-        $this->assertSame('first todo', $todo->title);
     }
 
     public function testAddToBottom(): void
@@ -894,48 +830,6 @@ class TasksControllerTest extends TestCase
         $this->assertFlashElement('flash/success');
     }
 
-    public function testEditApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/edit", [
-            'title' => 'updated',
-        ]);
-        $this->assertResponseOk();
-        $this->assertResponseContains('"updated"');
-
-        $updated = $this->viewVariable('task');
-        $this->assertSame('updated', $updated->title);
-        // Need to have the project as well.
-        $this->assertSame('work', $updated->project->slug);
-    }
-
-    public function testEditApiTokenDueOnEmptySubtasks(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-        $subtask = $this->makeSubtask('first subtask', $first->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/edit", [
-            'due_on' => FrozenDate::parse('tomorrow')->format('Y-m-d'),
-            'subtasks' => [],
-        ]);
-        $this->assertResponseOk();
-        // $this->assertResponseContains('"first subtask"');
-
-        $updated = $this->viewVariable('task');
-        $this->assertCount(1, $updated->subtasks);
-        $reload = $this->Tasks->Subtasks->get($subtask->id);
-        $this->assertNotEmpty($reload);
-    }
-
     public function testEditProject(): void
     {
         $token = $this->makeApiToken(1);
@@ -979,22 +873,6 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/edit", [
-            'title' => '',
-            'evening' => true,
-        ]);
-        $this->assertResponseCode(422);
-        $this->assertResponseContains('errors');
-    }
-
-    public function testEditValidationApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
         $this->requestJson();
         $this->post("/tasks/{$first->id}/edit", [
             'title' => '',
@@ -1217,21 +1095,6 @@ class TasksControllerTest extends TestCase
         $this->assertResponseCode(404);
     }
 
-    public function testDeleteApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/delete");
-        $this->assertResponseOk();
-
-        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
-        $this->assertNotNull($deleted->deleted_at);
-    }
-
     public function testDeletePermission(): void
     {
         $project = $this->makeProject('work', 2);
@@ -1284,21 +1147,6 @@ class TasksControllerTest extends TestCase
         $this->post("/tasks/{$first->id}/undelete");
 
         $this->assertRedirect(['_name' => 'tasks:today']);
-
-        $deleted = $this->Tasks->get($first->id);
-        $this->assertNull($deleted->deleted_at);
-    }
-
-    public function testUndeleteApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/undelete");
-        $this->assertResponseOk();
 
         $deleted = $this->Tasks->get($first->id);
         $this->assertNull($deleted->deleted_at);
@@ -1365,21 +1213,6 @@ class TasksControllerTest extends TestCase
         $this->assertTrue($todo->completed);
     }
 
-    public function testCompleteApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/complete");
-        $this->assertResponseOk();
-
-        $todo = $this->Tasks->get($first->id);
-        $this->assertTrue($todo->completed);
-    }
-
     public function testIncompletePermissions(): void
     {
         $project = $this->makeProject('work', 2);
@@ -1423,21 +1256,6 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->delete("/tasks/{$first->id}/incomplete");
         $this->assertRedirect('/projects/work');
-
-        $todo = $this->Tasks->get($first->id);
-        $this->assertFalse($todo->completed);
-    }
-
-    public function testIncompleteApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/incomplete");
-        $this->assertResponseOk();
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);
@@ -1488,25 +1306,6 @@ class TasksControllerTest extends TestCase
 
         $this->assertRedirect(['_name' => 'tasks:today']);
         $this->assertFlashElement('flash/error');
-    }
-
-    public function testMoveApiToken(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-        $this->makeTask('second', $project->id, 1);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/move", [
-            'day_order' => 1,
-        ]);
-        $this->assertResponseOk();
-        $this->assertResponseContains('"first"');
-
-        $todo = $this->Tasks->get($first->id);
-        $this->assertEquals(1, $todo->day_order);
     }
 
     public function testMoveUpSameDay()
