@@ -30,6 +30,13 @@ trait FactoryTrait
         ]);
     }
 
+    protected function loginApi($userId = 1)
+    {
+        $token = $this->makeApiToken($userId);
+        $this->requestJson();
+        $this->useApiToken($token->token);
+    }
+
     protected function useApiToken(string $token)
     {
         $headers = $this->_request['headers'] ?? [];
