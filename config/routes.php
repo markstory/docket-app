@@ -131,8 +131,9 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
     });
 
-    $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
+    $builder->scope('/tokens', ['controller' => 'ApiTokens'], function ($builder) {
         $builder->get('/', ['action' => 'index'], 'apitokens:index');
+        $builder->post('/add', ['action' => 'add'], 'apitokens:add');
         $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
             ->setPass(['token']);
     });
@@ -284,12 +285,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/password', ['controller' => 'Users'], function ($builder) {
         $builder->connect('/reset', ['action' => 'resetPassword'], ['_name' => 'users:passwordReset']);
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
-            ->setPass(['token']);
-    });
-
-    $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
-        $builder->get('/', ['action' => 'index'], 'apitokens:index');
-        $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
             ->setPass(['token']);
     });
 

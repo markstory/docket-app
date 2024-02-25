@@ -34,6 +34,7 @@ use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CspMiddleware;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use ParagonIE\CSPBuilder\CSPBuilder;
@@ -193,8 +194,8 @@ class Application extends BaseApplication implements
         // There are two possible login URLs. The default one is for HTML views.
         // And the other is for the in-progress mobile app.
         $loginUrl = '/login';
-        if ($request->getUri()->getPath() === '/mobile/login') {
-            $loginUrl = '/mobile/login';
+        if (($request instanceof ServerRequest) && $request->getParam('prefix') == 'Api') {
+            $loginUrl = '/api/tokens/add';
         }
         $service->loadAuthenticator('Authentication.Form', [
             'loginUrl' => $loginUrl,

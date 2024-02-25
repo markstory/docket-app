@@ -35,6 +35,8 @@ trait FactoryTrait
         $token = $this->makeApiToken($userId);
         $this->requestJson();
         $this->useApiToken($token->token);
+
+        return $token;
     }
 
     protected function useApiToken(string $token)
