@@ -316,5 +316,4 @@ $routes->scope('/', function (RouteBuilder $builder) {
 // Routes in this scope don't have CSRF protection.
 $routes->scope('/', function (RouteBuilder $builder) {
     $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
-    $builder->post('/mobile/login', 'ApiTokens::add', 'apitokens:add');
 });
