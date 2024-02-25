@@ -128,10 +128,9 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
     });
 
     $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
-        $builder->connect('/add/', ['action' => 'add'], ['_name' => 'users:add']);
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
-        $builder->connect('/updatePassword/', ['action' => 'updatePassword'], ['_name' => 'users:updatePassword']);
     });
+
     $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
         $builder->get('/', ['action' => 'index'], 'apitokens:index');
         $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
@@ -251,6 +250,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['projectSlug', 'id']);
         }
     );
+
     $builder->scope(
         '/projectsections',
         ['controller' => 'ProjectSections'],
@@ -280,11 +280,13 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['token']);
         $builder->connect('/profileMenu/', ['action' => 'profileMenu'], ['_name' => 'users:profileMenu']);
     });
+
     $builder->scope('/password', ['controller' => 'Users'], function ($builder) {
         $builder->connect('/reset', ['action' => 'resetPassword'], ['_name' => 'users:passwordReset']);
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
             ->setPass(['token']);
     });
+
     $builder->scope('/apitokens', ['controller' => 'ApiTokens'], function ($builder) {
         $builder->get('/', ['action' => 'index'], 'apitokens:index');
         $builder->delete('/{token}/delete', ['action' => 'delete'], 'apitokens:delete')
