@@ -68,9 +68,6 @@ class SubtasksController extends AppController
         $this->Flash->success(__('Subtask updated.'));
 
         $this->set('subtask', $todoSubtask);
-        $this->viewBuilder()
-            ->setClassName(JsonView::class)
-            ->setOption('serialize', ['subtask']);
     }
 
     /**
@@ -157,7 +154,6 @@ class SubtasksController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'serialize' => [],
             'redirect' => $redirect,
             'flashSuccess' => __('Subtask deleted'),
             'flashError' => __('Subtask could not be deleted'),
@@ -176,15 +172,12 @@ class SubtasksController extends AppController
             'ranking' => $this->request->getData('ranking'),
         ];
         $success = false;
-        $serialize = [];
         try {
             $this->Subtasks->move($subtask, $operation);
             $success = true;
-            $serialize[] = 'subtask';
             $this->set('subtask', $subtask);
         } catch (InvalidArgumentException $e) {
             $this->set('errors', [$e->getMessage()]);
-            $serialize[] = 'errors';
         }
         $redirect = $this->referer([
             '_name' => 'tasks:view',
@@ -193,7 +186,6 @@ class SubtasksController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'serialize' => $serialize,
             'flashSuccess' => __('Subtask moved'),
             'flashError' => __('Could not move subtask'),
             'statusError' => 422,
