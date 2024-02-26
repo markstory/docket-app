@@ -48,9 +48,8 @@ class CalendarProvidersControllerTest extends TestCase
      */
     public function testCreateFromGoogle(): void
     {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
+        $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/calendars/google/new', [
             'accessToken' => 'goog-access-token',
@@ -72,9 +71,8 @@ class CalendarProvidersControllerTest extends TestCase
      */
     public function testCreateFromGoogleInvalidCredential(): void
     {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
+        $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/calendars/google/new', [
             'accessToken' => 'goog-access-token',
@@ -102,29 +100,6 @@ class CalendarProvidersControllerTest extends TestCase
 
         $this->assertCount(1, $records);
         $this->assertEquals($ownProvider->id, $records[0]->id);
-    }
-
-    /**
-     * Test index method
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
-     */
-    public function testIndexApi(): void
-    {
-        $token = $this->makeApiToken();
-        // Owned by a different user.
-        $provider = $this->makeCalendarProvider(1, 'other@example.com');
-
-        $this->requestJson();
-        $this->useApiToken($token->token);
-
-        $this->get('/calendars');
-        $this->assertResponseOk();
-        $records = $this->viewVariable('providers');
-
-        $this->assertCount(1, $records);
-        $this->assertEquals($provider->id, $records[0]->id);
     }
 
     /**
@@ -231,23 +206,6 @@ class CalendarProvidersControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/delete");
         $this->assertRedirect('/calendars');
-    }
-
-    /**
-     * Test delete a calendar provider.
-     *
-     * @return void
-     */
-    public function testDeleteApi(): void
-    {
-        $token = $this->makeApiToken();
-        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
-
-        $this->requestJson();
-        $this->useApiToken($token->token);
-        $this->enableCsrfToken();
-        $this->post("/calendars/{$provider->id}/delete");
-        $this->assertResponseOk();
     }
 
     /**

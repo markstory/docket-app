@@ -169,10 +169,8 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
-        $token = $this->makeApiToken(1);
 
-        $this->requestJson();
-        $this->useApiToken($token->token);
+        $this->login();
         $this->get('/tasks/today');
 
         $this->assertResponseOk();
@@ -192,10 +190,8 @@ class TasksControllerTest extends TestCase
     public function testDailyInvalidParam(): void
     {
         $this->makeProject('work', 1);
-        $token = $this->makeApiToken(1);
 
-        $this->requestJson();
-        $this->useApiToken($token->token);
+        $this->login();
         $this->get('/tasks/day/nope');
         $this->assertResponseError();
     }
@@ -263,10 +259,8 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
-        $token = $this->makeApiToken(1);
 
-        $this->requestJson();
-        $this->useApiToken($token->token);
+        $this->login();
         $this->get("/tasks/day/{$today->format('Y-m-d')}");
 
         $this->assertResponseOk();
@@ -290,12 +284,8 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
-        $token = $this->makeApiToken(1);
+        $this->login();
 
-        $this->requestJson();
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->useApiToken($token->token);
         $this->get("/tasks/day/{$today->format('Y-m-d')}?overdue=1");
 
         $this->assertResponseOk();
@@ -641,10 +631,8 @@ class TasksControllerTest extends TestCase
     public function testAddWithSubtasks(): void
     {
         $project = $this->makeProject('work', 1);
-        $token = $this->makeApiToken(1);
+        $this->login();
 
-        $this->useApiToken($token->token);
-        $this->requestJson();
         $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
@@ -664,10 +652,8 @@ class TasksControllerTest extends TestCase
     public function testAddWithIncompleteSubtask(): void
     {
         $project = $this->makeProject('work', 1);
-        $token = $this->makeApiToken(1);
+        $this->login();
 
-        $this->useApiToken($token->token);
-        $this->requestJson();
         $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
@@ -832,14 +818,12 @@ class TasksControllerTest extends TestCase
 
     public function testEditProject(): void
     {
-        $token = $this->makeApiToken(1);
         $project = $this->makeProject('work', 1);
         $home = $this->makeProject('home', 1);
         $first = $this->makeTask('first', $project->id, 0);
 
-        $this->useApiToken($token->token);
-        $this->requestJson();
-
+        $this->login();
+        $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/edit", [
             'project_id' => $home->id,
         ]);

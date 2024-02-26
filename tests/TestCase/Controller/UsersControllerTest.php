@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
@@ -154,44 +154,6 @@ class UsersControllerTest extends TestCase
 
         $this->assertMailCount(1);
         $this->assertMailSubjectContains('Verify your email');
-    }
-
-    public function testEditGetApi(): void
-    {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
-
-        $this->post('/users/profile');
-        $this->assertResponseOk();
-        $this->assertHeader('Content-Type', 'application/json');
-
-        $user = $this->viewVariable('user');
-        $this->assertEquals('Mark', $user->name);
-        $this->assertEquals('light', $user->theme);
-    }
-
-    public function testEditApi(): void
-    {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
-
-        $this->post('/users/profile', [
-            'name' => 'tester mc testerson',
-            'timezone' => 'America/New_York',
-            'theme' => 'dark',
-        ]);
-        $this->assertResponseOk();
-        $this->assertHeader('Content-Type', 'application/json');
-
-        $user = $this->viewVariable('user');
-        $this->assertEquals('tester mc testerson', $user->name);
-        $this->assertEquals('dark', $user->theme);
-
-        $user = $this->Users->get(1);
-        $this->assertNotEquals('badthings@example.com', $user->email);
-        $this->assertEquals('dark', $user->theme);
     }
 
     public function testEditNoEmailChange(): void
