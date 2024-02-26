@@ -74,7 +74,6 @@ class TasksController extends AppController
             'timezone' => $timezone,
         ]);
         $this->set('date', $date);
-        $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
         $tasks = $query->all();
         $calendarItems = $this->Authorization
@@ -95,7 +94,6 @@ class TasksController extends AppController
 
         return $this->respond([
             'success' => true,
-            'serialize' => $serialize,
         ]);
     }
 
@@ -150,11 +148,8 @@ class TasksController extends AppController
             $this->response = $this->response->withHeader('Hx-Trigger', 'close');
         }
 
-        $serialize = ['projects', 'tasks', 'calendarItems', 'start', 'nextStart'];
-
         return $this->respond([
             'success' => true,
-            'serialize' => $serialize,
         ]);
     }
 
@@ -172,11 +167,8 @@ class TasksController extends AppController
         $this->set('generation', uniqid());
         $this->set('component', 'Tasks/Deleted');
 
-        $serialize = ['projects', 'tasks'];
-
         return $this->respond([
             'success' => true,
-            'serialize' => $serialize,
         ]);
     }
 
@@ -194,7 +186,6 @@ class TasksController extends AppController
         $success = true;
         $redirect = null;
         $errors = [];
-        $serialize = [];
 
         if ($this->request->is('post')) {
             $success = false;
@@ -218,12 +209,8 @@ class TasksController extends AppController
             if ($this->Tasks->save($task, $options)) {
                 $success = true;
                 $redirect = $this->referer(['_name' => 'tasks:today']);
-
-                $serialize[] = 'task';
             } else {
                 $redirect = $this->referer(['_name' => 'tasks:today']);
-
-                $serialize[] = 'errors';
                 $errors = $this->flattenErrors($task->getErrors());
             }
         }
@@ -257,7 +244,6 @@ class TasksController extends AppController
             'success' => $success,
             'flashSuccess' => __('Task saved'),
             'flashError' => __('The task could not be saved. Please try again.'),
-            'serialize' => $serialize,
             'redirect' => $redirect,
         ]);
     }
@@ -345,23 +331,19 @@ class TasksController extends AppController
             $operation['section_id'] = $sectionId === '' ? null : $sectionId;
         }
 
-        $serialize = [];
         $success = false;
         $error = null;
         try {
             $this->Tasks->move($task, $operation);
             $success = true;
             $this->set('task', $task);
-            $serialize[] = 'task';
         } catch (InvalidArgumentException $e) {
             $error = $e->getMessage();
-            $serialize[] = ['errors'];
             $this->set('errors', [$error]);
         }
 
         return $this->respond([
             'success' => $success,
-            'serialize' => $serialize,
             'flashSuccess' => __('Task moved'),
             'flashError' => $error,
             'statusError' => 422,
@@ -410,15 +392,12 @@ class TasksController extends AppController
         $task->removeTrailingEmptySubtask();
 
         $success = false;
-        $serialize = [];
         if ($this->Tasks->save($task, ['associated' => ['Subtasks']])) {
             $success = true;
-            $serialize[] = 'task';
             // Reload to get fresh counter cache values.
             $task = $this->getTask($task->id);
             $this->set('task', $task);
         } else {
-            $serialize[] = 'errors';
             $this->set('errors', $this->flattenErrors($task->getErrors()));
         }
         $redirect = null;
@@ -433,7 +412,6 @@ class TasksController extends AppController
         return $this->respond([
             'redirect' => $redirect,
             'success' => $success,
-            'serialize' => $serialize,
             'flashSuccess' => __('Task updated'),
             'flashError' => __('Task could not be updated.'),
             'statusError' => 422,
@@ -476,7 +454,6 @@ class TasksController extends AppController
 
         return $this->respond([
             'success' => true,
-            'serialize' => ['task'],
             'template' => $template,
         ]);
     }
@@ -502,7 +479,6 @@ class TasksController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'serialize' => ['task'],
             'flashSuccess' => __('The task has been deleted.'),
             'flashError' => __('The task could not be deleted. Please, try again.'),
             'redirect' => $this->referer(['_name' => 'tasks:today']),
@@ -538,7 +514,6 @@ class TasksController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'serialize' => ['task'],
             'flashSuccess' => __('The task has been restored.'),
             'flashError' => __('The task could not be restored. Please, try again.'),
             'redirect' => $this->referer(['_name' => 'tasks:today']),

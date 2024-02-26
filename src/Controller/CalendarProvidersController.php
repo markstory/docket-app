@@ -38,8 +38,8 @@ class CalendarProvidersController extends AppController
         }
         $user = $this->request->getAttribute('identity');
 
-        $serialize = [];
         $success = false;
+        $serialize = [];
         try {
             $provider = $this->CalendarProviders->findOrCreate([
                 'user_id' => $user->id,
@@ -121,33 +121,6 @@ class CalendarProvidersController extends AppController
 
         return $this->respond([
             'success' => true,
-            'serialize' => ['providers'],
-        ]);
-    }
-
-    /**
-     * View method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function view(string $id, CalendarService $service)
-    {
-        $provider = $this->CalendarProviders->get($id, ['contain' => ['CalendarSources']]);
-        $this->Authorization->authorize($provider, 'view');
-
-        $service->setAccessToken($provider);
-        try {
-            $calendars = $service->listUnlinkedCalendars($provider->calendar_sources ?? []);
-        } catch (BadRequestException $e) {
-            $calendars = [];
-            $provider->broken_auth = true;
-        }
-
-        $this->set(compact('provider', 'calendars'));
-
-        return $this->respond([
-            'success' => true,
-            'serialize' => ['provider', 'calendars'],
         ]);
     }
 

@@ -73,13 +73,6 @@ class AppController extends Controller
         return $flattened;
     }
 
-    protected function validationErrorResponse(array $errors)
-    {
-        return $this->response
-            ->withStatus(422)
-            ->withStringBody(json_encode(['errors' => $this->flattenErrors($errors)]));
-    }
-
     protected function getReferer($default = 'tasks:today'): string
     {
         $defaultUrl = Router::url(['_name' => $default]);

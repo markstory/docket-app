@@ -182,7 +182,7 @@ class SubtasksControllerTest extends TestCase
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
         $this->loginApi(1);
 
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
 
         $this->assertResponseOk();
         $this->assertCount(0, $this->Subtasks->find()->all());

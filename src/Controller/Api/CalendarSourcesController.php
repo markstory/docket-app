@@ -117,6 +117,7 @@ class CalendarSourcesController extends AppController
             $this->set('source', $source);
             $serialize[] = 'source';
         } catch (\Exception $e) {
+            debug('error');
             $success = false;
             $error = __('Calendar not refreshed. %s', $e->getMessage());
             $this->set('errors', [$error]);
@@ -187,9 +188,8 @@ class CalendarSourcesController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Calendar deleted'),
-            'flashError' => __('Calendar not deleted. Please try again.'),
-            'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
+            'statusSuccess' => 204,
+            'statusError' => 400,
         ]);
     }
 

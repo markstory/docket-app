@@ -751,16 +751,16 @@ class TasksControllerTest extends TestCase
 
     public function testEditValidation(): void
     {
-        $token = $this->makeApiToken(1);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
+        $this->disableErrorHandlerMiddleware();
 
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => '',
             'evening' => true,
         ]);
+
         $this->assertResponseCode(422);
         $this->assertResponseContains('errors');
     }

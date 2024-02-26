@@ -260,19 +260,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
         }
     );
 
-    $builder->scope('/tasks/{taskId}/subtasks', ['controller' => 'Subtasks'], function ($builder) {
-        $builder->post('/', ['action' => 'add'], 'subtasks:add')
-            ->setPass(['taskId']);
-        $builder->post('/{id}/edit', ['action' => 'edit'], 'subtasks:edit')
-            ->setPass(['taskId', 'id']);
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'subtasks:delete')
-            ->setPass(['taskId', 'id']);
-        $builder->post('/{id}/toggle', ['action' => 'toggle'], 'subtasks:toggle')
-            ->setPass(['taskId', 'id']);
-        $builder->post('/{id}/move', ['action' => 'move'], 'subtasks:move')
-            ->setPass(['taskId', 'id']);
-    });
-
     $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
         $builder->connect('/add/', ['action' => 'add'], ['_name' => 'users:add']);
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
@@ -291,8 +278,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
         $builder->connect('/google/new', ['action' => 'createFromGoogle'], ['_name' => 'calendarproviders:createfromgoogle']);
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
-        $builder->connect('/{id}/view', ['action' => 'view'], ['_name' => 'calendarproviders:view'])
-            ->setPass(['id']);
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
             ->setPass(['id']);
     });

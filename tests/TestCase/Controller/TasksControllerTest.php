@@ -860,13 +860,12 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->requestJson();
+
         $this->post("/tasks/{$first->id}/edit", [
             'title' => '',
             'evening' => true,
         ]);
-        $this->assertResponseCode(422);
-        $this->assertResponseContains('errors');
+        $this->assertRedirect("/tasks/{$first->id}/view");
     }
 
     public function testEditCreateSubtasks(): void

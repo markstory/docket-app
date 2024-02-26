@@ -54,7 +54,6 @@ class ProjectSectionsController extends AppController
         $this->set('project', $project);
 
         if ($this->request->is(['post', 'put'])) {
-            $serialize = [];
             $redirect = null;
             $success = false;
 
@@ -71,7 +70,6 @@ class ProjectSectionsController extends AppController
 
             return $this->respond([
                 'success' => $success,
-                'serialize' => $serialize,
                 'redirect' => $redirect,
                 'flashSuccess' => __('The section has been saved.'),
                 'flashError' => __('The section could not be saved. Please, try again.'),
@@ -107,7 +105,6 @@ class ProjectSectionsController extends AppController
         $this->set('project', $project);
 
         if ($this->request->is(['post', 'put'])) {
-            $serialize = [];
             $redirect = null;
             $success = false;
 
@@ -120,12 +117,10 @@ class ProjectSectionsController extends AppController
                 $success = true;
             } else {
                 $this->set('errors', $this->flattenErrors($section->getErrors()));
-                $serialize[] = 'errors';
             }
 
             return $this->respond([
                 'success' => $success,
-                'serialize' => $serialize,
                 'flashSuccess' => __('The section has been saved.'),
                 'flashError' => __('The section could not be saved.'),
                 'redirect' => $redirect,
