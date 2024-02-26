@@ -27,7 +27,7 @@ void main() {
 
     test('loadData() fetches from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -54,7 +54,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -70,11 +70,11 @@ void main() {
 
     test('syncEvents() makes a request', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
 
-        if (request.url.path == '/calendars/5/sources/28/sync') {
+        if (request.url.path == '/api/calendars/5/sources/28/sync') {
           return Response(calendarSourceResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -91,11 +91,11 @@ void main() {
 
     test('removeSource() makes a request', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
 
-        if (request.url.path == '/calendars/5/sources/28/delete') {
+        if (request.url.path == '/api/calendars/5/sources/28/delete') {
           return Response('', 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -112,11 +112,11 @@ void main() {
 
     test('linkSource() makes a request', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
 
-        if (request.url.path == '/calendars/5/sources/add') {
+        if (request.url.path == '/api/calendars/5/sources/add') {
           return Response(calendarSourceResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -132,10 +132,10 @@ void main() {
 
     test('updateSource() makes a request, and updates local state', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/view') {
+        if (request.url.path == '/api/calendars/5/view') {
           return Response(calendarDetailsResponse, 200);
         }
-        if (request.url.path == '/calendars/5/sources/28/edit') {
+        if (request.url.path == '/api/calendars/5/sources/28/edit') {
           return Response(calendarSourceResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";

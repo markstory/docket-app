@@ -36,10 +36,10 @@ void main() {
     testWidgets('saves task', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponse, 200);
         }
-        if (request.url.path == '/tasks/add') {
+        if (request.url.path == '/api/tasks/add') {
           callCount += 1;
           expect(request.body.contains("Rake leaves"), isTrue);
           return Response(taskDetails, 200);

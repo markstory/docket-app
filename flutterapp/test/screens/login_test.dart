@@ -72,7 +72,7 @@ void main() {
       var requestCount = 0;
       var navigated = false;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/mobile/login') {
+        if (request.url.path == '/api/tokens/add') {
           requestCount += 1;
           return Response(loginResponse, 200);
         }

@@ -24,7 +24,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/archived') {
+        if (request.url.path == '/api/projects/archived') {
           return Response(projectListResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -39,7 +39,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/archived') {
+        if (request.url.path == '/api/projects/archived') {
           return Response(projectListResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";

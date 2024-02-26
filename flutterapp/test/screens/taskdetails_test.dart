@@ -41,10 +41,10 @@ void main() {
     testWidgets('saves task', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskDetails, 200);
         }
-        if (request.url.path == '/tasks/1/edit') {
+        if (request.url.path == '/api/tasks/1/edit') {
           callCount += 1;
           expect(request.body.contains("Rake leaves"), isTrue);
           return Response(taskDetails, 200);
@@ -72,10 +72,10 @@ void main() {
     testWidgets('can mark task complete', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskDetails, 200);
         }
-        if (request.url.path == '/tasks/1/complete') {
+        if (request.url.path == '/api/tasks/1/complete') {
           callCount += 1;
           return Response('', 200);
         }
@@ -97,7 +97,7 @@ void main() {
 
     testWidgets('renders notes & subtasks', (tester) async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskDetails, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -117,10 +117,10 @@ void main() {
     testWidgets('can complete subtask', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskDetails, 200);
         }
-        if (request.url.path == '/tasks/1/subtasks/1/toggle') {
+        if (request.url.path == '/api/tasks/1/subtasks/1/toggle') {
           callCount += 1;
           return Response(taskDetails, 200);
         }

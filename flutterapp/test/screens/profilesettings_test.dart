@@ -44,7 +44,7 @@ void main() {
     testWidgets('form can submit', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/users/profile') {
+        if (request.url.path == '/api/users/profile') {
           callCount += 1;
           expect(request.body.contains('New Name'), isTrue);
 

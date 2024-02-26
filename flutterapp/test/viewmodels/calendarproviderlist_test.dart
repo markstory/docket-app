@@ -28,7 +28,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars') {
+        if (request.url.path == '/api/calendars') {
           return Response(calendarListResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -43,7 +43,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars') {
+        if (request.url.path == '/api/calendars') {
           return Response(calendarListResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -59,10 +59,10 @@ void main() {
     test('remove() send request to server, and remove from db', () async {
       var deleted = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars') {
+        if (request.url.path == '/api/calendars') {
           return Response(calendarListResponse, 200);
         }
-        if (request.url.path == '/calendars/5/delete') {
+        if (request.url.path == '/api/calendars/5/delete') {
           deleted();
           return Response('', 200);
         }
@@ -95,10 +95,10 @@ void main() {
 
       var created = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars') {
+        if (request.url.path == '/api/calendars') {
           return Response(calendarListResponse, 200);
         }
-        if (request.url.path == '/calendars/google/new') {
+        if (request.url.path == '/api/calendars/google/new') {
           created();
           return Response(calendarDetailsResponse, 200);
         }

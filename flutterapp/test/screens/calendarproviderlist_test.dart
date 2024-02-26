@@ -62,10 +62,10 @@ void main() {
     testWidgets('delete action confirms and sends request', (tester) async {
       var deleted = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars') {
+        if (request.url.path == '/api/calendars') {
           return Response(calendarsResponse, 200);
         }
-        if (request.url.path == '/calendars/5/delete') {
+        if (request.url.path == '/api/calendars/5/delete') {
           deleted();
           return Response('', 200);
         }

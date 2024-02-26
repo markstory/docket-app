@@ -26,12 +26,12 @@ void main() {
     testWidgets('set name and send request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/add') {
+        if (request.url.path == '/api/projects/add') {
           expect(request.body.contains('New name'), isTrue);
           callCount += 1;
           return Response(projectDetails, 200);
         }
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetails, 200);
         }
         throw "Unexpected request to ${request.url.path}";

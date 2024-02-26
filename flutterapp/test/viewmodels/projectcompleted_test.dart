@@ -35,7 +35,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectCompletedResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -52,7 +52,7 @@ void main() {
     test('loadData() refreshes with stale data', () async {
       var callCounter = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           callCounter();
           return Response(projectCompletedResponse, 200);
         }
@@ -77,7 +77,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectCompletedResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -96,7 +96,7 @@ void main() {
 
     test('refreshSilent() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectCompletedResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";

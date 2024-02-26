@@ -33,7 +33,7 @@ void main() {
 
     testWidgets('shows empty state', (tester) async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/deleted') {
+        if (request.url.path == '/api/tasks/deleted') {
           return Response('{"tasks":[]}', 200);
         }
         throw Exception('Request made to unmocked ${request.url.path}');
@@ -67,11 +67,11 @@ void main() {
       // This is skipped because it is locking on the database operations.
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/undelete') {
+        if (request.url.path == '/api/tasks/1/undelete') {
           callCount += 1;
           return Response("", 200);
         }
-        if (request.url.path == '/tasks/deleted') {
+        if (request.url.path == '/api/tasks/deleted') {
           return Response(todayResponse, 200);
         }
         throw Exception('Request made to unmocked ${request.url.path}');
