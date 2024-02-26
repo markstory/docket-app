@@ -5,7 +5,6 @@ namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;

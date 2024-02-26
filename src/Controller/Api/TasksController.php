@@ -411,7 +411,7 @@ class TasksController extends AppController
         }
         $this->set('sections', $sections);
         $this->set('task', $task);
-;
+
         return $this->respond([
             'success' => true,
             'serialize' => ['task'],

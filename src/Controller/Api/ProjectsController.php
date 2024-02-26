@@ -7,7 +7,6 @@ use App\Controller\AppController;
 use App\Model\Entity\Project;
 use App\Model\Table\ProjectsTable;
 use App\Model\Table\TasksTable;
-use Cake\Http\Exception\BadRequestException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 

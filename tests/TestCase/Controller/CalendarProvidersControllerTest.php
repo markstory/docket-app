@@ -55,7 +55,7 @@ class CalendarProvidersControllerTest extends TestCase
             'accessToken' => 'goog-access-token',
             'refreshToken' => 'goog-refresh-token',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect(['_name' => 'calendarproviders:index']);
 
         $provider = $this->viewVariable('provider');
         $this->assertNotEmpty($provider);

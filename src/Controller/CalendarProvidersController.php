@@ -72,6 +72,7 @@ class CalendarProvidersController extends AppController
             'serialize' => $serialize,
             'flashSuccess' => __('Provider created'),
             'flashError' => __('Provider not created.'),
+            'redirect' => ['_name' => 'calendarproviders:index'],
         ]);
     }
 
