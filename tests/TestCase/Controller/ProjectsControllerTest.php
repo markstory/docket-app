@@ -40,21 +40,6 @@ class ProjectsControllerTest extends TestCase
         $this->Projects = $this->fetchTable('Projects');
     }
 
-    public function testIndexPermissions(): void
-    {
-        $home = $this->makeProject('Home', 1, 0);
-        $this->makeProject('Work', 2, 1);
-        $this->login();
-
-        $this->get('/projects');
-
-        $this->assertResponseOk();
-
-        $projects = $this->viewVariable('projects')->toArray();
-        $this->assertCount(1, $projects);
-        $this->assertEquals($home->slug, $projects[0]->slug);
-    }
-
     public function testView(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);

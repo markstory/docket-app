@@ -632,6 +632,7 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/tasks/add', [
             'title' => 'first todo',
@@ -641,7 +642,7 @@ class TasksControllerTest extends TestCase
                 ['title' => 'second subtask', 'ranking' => 1],
             ],
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
         $this->assertSame('first todo', $todo->title);
@@ -653,13 +654,14 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/tasks/add', [
             'title' => 'first todo',
             'project_id' => $project->id,
             '_subtaskadd' => 'first subtask',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect(['_name' => 'tasks:today']);
 
         $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
         $this->assertSame('first todo', $todo->title);
@@ -824,10 +826,11 @@ class TasksControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
+
         $this->post("/tasks/{$first->id}/edit", [
             'project_id' => $home->id,
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect(['_name' => 'tasks:view', 'id' => $first->id]);
 
         $updated = $this->viewVariable('task');
         $this->assertEquals($updated->project_id, $home->id);
