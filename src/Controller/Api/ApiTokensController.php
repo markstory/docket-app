@@ -91,7 +91,7 @@ class ApiTokensController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         /** @var \App\Model\Entity\ApiToken $apiToken */
-        $apiToken = $this->ApiTokens->find('byToken', [$token])->firstOrFail();
+        $apiToken = $this->ApiTokens->find('byToken', ['token' => $token])->firstOrFail();
         $this->Authorization->authorize($apiToken, 'delete');
 
         $this->ApiTokens->delete($apiToken);
