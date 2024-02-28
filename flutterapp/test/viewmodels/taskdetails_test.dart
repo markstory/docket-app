@@ -19,9 +19,6 @@ void main() {
   var file = File('test_resources/task_details.json');
   final taskResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
 
-  file = File('test_resources/task_create_today.json');
-  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
-
   file = File('test_resources/subtask_update.json');
   final subtaskUpdateResponse = file.readAsStringSync();
 
@@ -35,7 +32,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -50,10 +47,10 @@ void main() {
 
     test('update() sends server request', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           return Response(taskResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/edit') {
+        if (request.url.path == '/api/tasks/1/edit') {
           return Response(taskResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -74,11 +71,11 @@ void main() {
     test('reorderSubtask() sends request, updates local', () async {
       var requestCounter = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/view') {
+        if (request.url.path == '/api/tasks/1/view') {
           requestCounter();
           return Response(taskResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/subtasks/1/move') {
+        if (request.url.path == '/api/tasks/1/subtasks/1/move') {
           return Response('', 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -97,7 +94,7 @@ void main() {
 
     test('saveSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/1/edit'));
 
         return Response(subtaskUpdateResponse, 200);
       });
@@ -126,7 +123,7 @@ void main() {
 
     test('saveSubtask() uses create API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks'));
 
         return Response(subtaskUpdateResponse, 200);
       });
@@ -152,7 +149,7 @@ void main() {
 
     test('deleteSubtask() uses API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/2/delete'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/2/delete'));
 
         return Response(subtaskUpdateResponse, 200);
       });

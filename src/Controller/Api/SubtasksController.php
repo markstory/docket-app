@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use App\Model\Entity\Task;
 use App\Model\Table\SubtasksTable;
 use App\Model\Table\TasksTable;
@@ -65,12 +66,13 @@ class SubtasksController extends AppController
         $todoSubtask->ranking = $this->Subtasks->getNextRanking($item->id);
 
         $this->Subtasks->saveOrFail($todoSubtask);
-        $this->Flash->success(__('Subtask updated.'));
 
         $this->set('subtask', $todoSubtask);
-        $this->viewBuilder()
-            ->setClassName(JsonView::class)
-            ->setOption('serialize', ['subtask']);
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => ['subtask'],
+        ]);
     }
 
     /**
@@ -88,16 +90,11 @@ class SubtasksController extends AppController
 
         $subtask->toggle();
         $this->Subtasks->saveOrFail($subtask);
-
-        $redirect = $this->referer([
-            'controller' => 'Tasks',
-            'action' => 'view',
-            'id' => $taskId,
-        ]);
+        $this->set('subtask', $subtask);
 
         return $this->respond([
             'success' => true,
-            'redirect' => $redirect,
+            'serialize' => ['subtask'],
         ]);
     }
 
@@ -129,8 +126,6 @@ class SubtasksController extends AppController
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'flashSuccess' => __('Subtask updated'),
-            'flashError' => __('Subtask could not be updated'),
             'statusError' => 422,
         ]);
     }
@@ -149,18 +144,9 @@ class SubtasksController extends AppController
         $subtask = $this->getSubtask($taskId, $id);
         $success = $this->Subtasks->delete($subtask);
 
-        $redirect = [
-            'controller' => 'Tasks',
-            'action' => 'view',
-            'id' => $taskId,
-        ];
-
         return $this->respond([
             'success' => $success,
             'serialize' => [],
-            'redirect' => $redirect,
-            'flashSuccess' => __('Subtask deleted'),
-            'flashError' => __('Subtask could not be deleted'),
             'statusError' => 422,
         ]);
     }
@@ -186,18 +172,11 @@ class SubtasksController extends AppController
             $this->set('errors', [$e->getMessage()]);
             $serialize[] = 'errors';
         }
-        $redirect = $this->referer([
-            '_name' => 'tasks:view',
-            'id' => $taskId,
-        ]);
 
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'flashSuccess' => __('Subtask moved'),
-            'flashError' => __('Could not move subtask'),
             'statusError' => 422,
-            'redirect' => $redirect,
         ]);
     }
 }

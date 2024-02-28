@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenTime;
@@ -46,21 +46,19 @@ class ApiTokenAuthenticationTest extends TestCase
         $this->project = $this->makeProject('work', 1);
         $this->task = $this->makeTask('first', $this->project->id, 0, ['due_on' => FrozenTime::parse('tomorrow')]);
 
-        $token = $this->makeApiToken();
-        $this->useApiToken($token->token);
-        $this->requestJson();
+        $this->loginApi(1);
     }
 
     public function testTaskViewInvalidToken(): void
     {
         $this->useApiToken('invalid');
-        $this->get('/tasks/upcoming');
+        $this->get('/api/tasks/upcoming');
         $this->assertResponseCode(401);
     }
 
     public function testTaskIndex(): void
     {
-        $this->get('/tasks/upcoming');
+        $this->get('/api/tasks/upcoming');
         $this->assertResponseOk();
         $var = $this->viewVariable('tasks');
         $this->assertCount(1, $var);
@@ -69,7 +67,7 @@ class ApiTokenAuthenticationTest extends TestCase
 
     public function testTaskView(): void
     {
-        $this->get("/tasks/{$this->task->id}/view");
+        $this->get("/api/tasks/{$this->task->id}/view");
         $this->assertResponseOk();
         $var = $this->viewVariable('task');
         $this->assertSame($var->title, $this->task->title);
@@ -77,7 +75,7 @@ class ApiTokenAuthenticationTest extends TestCase
 
     public function testTaskUpdate(): void
     {
-        $this->post("/tasks/{$this->task->id}/complete");
+        $this->post("/api/tasks/{$this->task->id}/complete");
         $this->assertResponseOk();
         $task = $this->fetchTable('Tasks')->get($this->task->id);
         $this->assertTrue($task->completed);

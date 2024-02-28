@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\ORM\TableRegistry;
@@ -9,9 +9,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\SubtasksController Test Case
- *
- * @uses \App\Controller\SubtasksController
+ * App\Controller\Api\SubtasksController Test Case
  */
 class SubtasksControllerTest extends TestCase
 {
@@ -51,10 +49,9 @@ class SubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $item = $this->makeTask('Cut grass', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks", [
+        $this->post("/api/tasks/{$item->id}/subtasks", [
             'title' => 'first subtask',
         ]);
         $this->assertResponseOk();
@@ -77,10 +74,9 @@ class SubtasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $item = $this->makeTask('Cut grass', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks", [
+        $this->post("/api/tasks/{$item->id}/subtasks", [
             'title' => 'first subtask',
         ]);
         $this->assertResponseCode(403);
@@ -93,10 +89,9 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $this->makeSubtask('get mower', $item->id, 4);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks", [
+        $this->post("/api/tasks/{$item->id}/subtasks", [
             'title' => 'start mower',
         ]);
         $this->assertResponseOk();
@@ -116,11 +111,11 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
-        $this->assertRedirect("/tasks/{$item->id}/view");
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
+
+        $this->assertResponseOk();
         $tasks = $this->Subtasks->find()->where(['Subtasks.task_id' => $item->id]);
         $this->assertTrue($tasks->first()->completed);
     }
@@ -135,10 +130,10 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 2);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/toggle");
+
         $this->assertResponseCode(403);
     }
 
@@ -152,36 +147,9 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->requestJson();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
-            'title' => 'Updated',
-        ]);
-        $this->assertResponseOk();
-        $this->assertNotEmpty($this->viewVariable('subtask'));
-        $this->assertContentType('application/json');
-
-        $update = $this->Subtasks->get($subtask->id);
-        $this->assertSame('Updated', $update->title);
-    }
-
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEditApi(): void
-    {
-        $token = $this->makeApiToken(1);
-        $project = $this->makeProject('work', 1);
-        $item = $this->makeTask('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
-
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
             'title' => 'Updated',
         ]);
         $this->assertResponseOk();
@@ -199,43 +167,23 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 2);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/edit", [
             'title' => 'Updated',
         ]);
         $this->assertResponseCode(403);
     }
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
     public function testDelete(): void
     {
         $project = $this->makeProject('work', 1);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
-        $this->assertRedirect("/tasks/{$item->id}/view");
-        $this->assertCount(0, $this->Subtasks->find()->all());
-    }
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
 
-    public function testDeleteApi(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $item = $this->makeTask('Cut grass', $project->id, 0);
-        $subtask = $this->makeSubtask('Get mower', $item->id, 0);
-
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
         $this->assertResponseOk();
         $this->assertCount(0, $this->Subtasks->find()->all());
     }
@@ -245,10 +193,9 @@ class SubtasksControllerTest extends TestCase
         $project = $this->makeProject('work', 2);
         $item = $this->makeTask('Cut grass', $project->id, 0);
         $subtask = $this->makeSubtask('Get mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
+        $this->post("/api/tasks/{$item->id}/subtasks/{$subtask->id}/delete");
         $this->assertResponseCode(403);
     }
 
@@ -257,13 +204,11 @@ class SubtasksControllerTest extends TestCase
         $home = $this->makeProject('Home', 1, 0);
         $item = $this->makeTask('Cut grass', $home->id, 0);
         $first = $this->makeSubtask('start mower', $item->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$item->id}/subtasks/{$first->id}/move");
-        $this->assertRedirect("/tasks/{$item->id}/view");
-        $this->assertFlashElement('flash/error');
+        $this->post("/api/tasks/{$item->id}/subtasks/{$first->id}/move");
+
+        $this->assertResponseCode(422);
     }
 
     public function testMoveDown()
@@ -273,13 +218,12 @@ class SubtasksControllerTest extends TestCase
         $first = $this->makeSubtask('start mower', $item->id, 0);
         $second = $this->makeSubtask('cut', $item->id, 1);
         $third = $this->makeSubtask('done', $item->id, 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$item->id}/subtasks/{$first->id}/move", [
             'ranking' => 1,
         ]);
-        $this->assertRedirect("/tasks/{$item->id}/view");
+        $this->assertResponseOk();
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$second->id, $first->id, $third->id];
@@ -296,13 +240,13 @@ class SubtasksControllerTest extends TestCase
         $first = $this->makeSubtask('start mower', $item->id, 0);
         $second = $this->makeSubtask('cut', $item->id, 1);
         $third = $this->makeSubtask('done', $item->id, 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$item->id}/subtasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$item->id}/subtasks/{$third->id}/move", [
             'ranking' => 0,
         ]);
-        $this->assertRedirect("/tasks/{$item->id}/view");
+        $this->assertResponseOk();
+        $this->assertNotEmpty($this->viewVariable('subtask'));
 
         $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
         $expected = [$third->id, $first->id, $second->id];

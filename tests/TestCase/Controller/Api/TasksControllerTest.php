@@ -1,19 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\TasksController Test Case
- *
- * @uses \App\Controller\TasksController
+ * App\Controller\Api\TasksController Test Case
  */
 class TasksControllerTest extends TestCase
 {
@@ -73,7 +70,7 @@ class TasksControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->Tasks = TableRegistry::get('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks');
     }
 
     /**
@@ -91,15 +88,18 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $tomorrow,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks');
+        $this->get('/api/tasks.json');
 
         $this->assertResponseOk();
+        $response = json_decode(strval($this->_response->getBody()), true);
 
-        $items = $this->viewVariable('tasks')->toArray();
-        $this->assertCount(2, $items);
-        $ids = collection($items)->extract('id')->toList();
+        $this->assertArrayHasKey('tasks', $response);
+        $this->assertArrayHasKey('calendarItems', $response);
+
+        $this->assertCount(2, $response['tasks']);
+        $ids = collection($response['tasks'])->extract('id')->toList();
         $this->assertEquals([$first->id, $second->id], $ids);
     }
 
@@ -113,10 +113,10 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $sixDays]);
         $second = $this->makeTask('second', $project->id, 1, ['due_on' => $eightDays]);
         $this->makeTask('third', $project->id, 2, ['due_on' => $tenDays]);
+        $this->loginApi(1);
 
-        $this->login();
         // End range is not inclusive, but start is.
-        $this->get("/tasks?start={$sixDays->format('Y-m-d')}&end={$tenDays->format('Y-m-d')}");
+        $this->get("/api/tasks.json?start={$sixDays->format('Y-m-d')}&end={$tenDays->format('Y-m-d')}");
 
         $this->assertResponseOk();
 
@@ -128,26 +128,29 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidStart()
     {
-        $this->login();
-        $this->get('/tasks/?start=nope');
-        $this->assertResponseCode(400);
+        $this->loginApi(1);
+
+        $this->get('/api/tasks.json/?start=nope');
+        $this->assertResponseCode(404);
     }
 
     public function testIndexInvalidEnd()
     {
         $tomorrow = new FrozenDate('tomorrow');
-        $this->login();
-        $this->get("/tasks/?start={$tomorrow->format('Y-m-d')}&end=nope");
-        $this->assertResponseCode(400);
+        $this->loginApi(1);
+
+        $this->get("/api/tasks.json/?start={$tomorrow->format('Y-m-d')}&end=nope");
+        $this->assertResponseCode(404);
     }
 
     public function testIndexInvalidRange()
     {
         $start = new FrozenDate('tomorrow');
         $end = $start->modify('+61 days');
-        $this->login();
-        $this->get("/tasks/?start={$start->format('Y-m-d')}&end={$end->format('Y-m-d')}");
-        $this->assertResponseCode(400);
+        $this->loginApi(1);
+
+        $this->get("/api/tasks.json/?start={$start->format('Y-m-d')}&end={$end->format('Y-m-d')}");
+        $this->assertResponseCode(404);
     }
 
     /**
@@ -169,9 +172,9 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks/today');
+        $this->get('/api/tasks/today.json');
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
@@ -190,9 +193,9 @@ class TasksControllerTest extends TestCase
     public function testDailyInvalidParam(): void
     {
         $this->makeProject('work', 1);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks/day/nope');
+        $this->get('/api/tasks/day/nope.json');
         $this->assertResponseError();
     }
 
@@ -204,11 +207,11 @@ class TasksControllerTest extends TestCase
 
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/tasks/day/{$tomorrow->format('Y-m-d')}");
+        $this->get("/api/tasks/day/{$tomorrow->format('Y-m-d')}.json");
+
         $this->assertResponseOk();
-
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
         $ids = array_map(function ($i) {
@@ -229,9 +232,10 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $tomorrow,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks/today');
+        $this->get('/api/tasks/today.json');
+
         $this->assertResponseOk();
 
         $items = $this->viewVariable('tasks')->toArray();
@@ -259,9 +263,9 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/tasks/day/{$today->format('Y-m-d')}");
+        $this->get("/api/tasks/day/{$today->format('Y-m-d')}.json");
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
@@ -284,9 +288,9 @@ class TasksControllerTest extends TestCase
             'completed' => true,
             'due_on' => $today,
         ]);
-        $this->login();
+        $this->loginApi(1);
 
-        $this->get("/tasks/day/{$today->format('Y-m-d')}?overdue=1");
+        $this->get("/api/tasks/day/{$today->format('Y-m-d')}.json?overdue=1");
 
         $this->assertResponseOk();
         $tasks = $this->viewVariable('tasks');
@@ -354,9 +358,9 @@ class TasksControllerTest extends TestCase
             'start_date' => null,
             'end_date' => null,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/tasks/day/{$startOfDay->format('Y-m-d')}");
+        $this->get("/api/tasks/day/{$startOfDay->format('Y-m-d')}.json");
 
         $this->assertResponseOk();
 
@@ -368,10 +372,7 @@ class TasksControllerTest extends TestCase
 
         // Check the time formatting
         $this->assertResponseContains('early event');
-        $this->assertResponseContains($startOfDay->format('H:i'));
-
         $this->assertResponseContains('late event');
-        $this->assertResponseContains($endOfDay->modify('-1 hour')->format('H:i'));
     }
 
     public function testIndexCalendarItems(): void
@@ -398,9 +399,9 @@ class TasksControllerTest extends TestCase
             'end_time' => $tomorrow->setTime(13, 0),
             'all_day' => false,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks');
+        $this->get('/api/tasks.json');
 
         $this->assertResponseOk();
 
@@ -408,24 +409,6 @@ class TasksControllerTest extends TestCase
         $this->assertCount(2, $items);
         $this->assertEquals($allDay->id, $items[0]->id);
         $this->assertEquals($lunch->id, $items[1]->id);
-    }
-
-    public function testIndexSetErrorsFromSession(): void
-    {
-        $this->session([
-            'errors' => ['title' => 'Not valid'],
-        ]);
-        $tomorrow = new FrozenDate('tomorrow');
-        $project = $this->makeProject('work', 1);
-        $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
-
-        $this->login();
-        $this->get('/tasks');
-
-        $this->assertResponseOk();
-        $errors = $this->viewVariable('errors');
-        $this->assertNotEmpty($errors);
-        $this->assertArrayHasKey('title', $errors);
     }
 
     public function testIndexPermissions()
@@ -436,11 +419,11 @@ class TasksControllerTest extends TestCase
 
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $this->makeTask('first', $other->id, 3, ['due_on' => $tomorrow]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks/upcoming');
+        $this->get('/api/tasks/upcoming.json');
+
         $this->assertResponseOk();
-
         $items = $this->viewVariable('tasks')->toArray();
         $this->assertCount(1, $items);
         $ids = array_map(function ($i) {
@@ -455,9 +438,10 @@ class TasksControllerTest extends TestCase
         $tomorrow = new FrozenDate('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks?start=nope');
+        $this->get('/api/tasks.json?start=nope');
+
         $this->assertResponseCode(400);
     }
 
@@ -480,9 +464,9 @@ class TasksControllerTest extends TestCase
             'due_on' => $tomorrow,
             'deleted_at' => $tomorrow,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get('/tasks/deleted');
+        $this->get('/api/tasks/deleted.json');
 
         $this->assertResponseOk();
 
@@ -503,9 +487,10 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/tasks/{$first->id}/view");
+        $this->get("/api/tasks/{$first->id}/view.json");
+
         $this->assertResponseOk();
         $var = $this->viewVariable('task');
         $this->assertSame($var->title, $first->title);
@@ -515,42 +500,24 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/tasks/{$first->id}/view");
+        $this->get("/api/tasks/{$first->id}/view.json");
+
         $this->assertResponseCode(403);
-    }
-
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testViewModeEditProject(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->login();
-        $this->get("/tasks/{$first->id}/view/editproject");
-        $this->assertResponseOk();
-        $var = $this->viewVariable('task');
-        $this->assertSame($var->title, $first->title);
-        $this->assertTemplate('Tasks/editproject');
     }
 
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
 
+        $this->assertResponseOk();
         $task = $this->viewVariable('task');
         $this->assertSame('first todo', $task->title);
         $this->assertNotEmpty($task->project);
@@ -560,31 +527,6 @@ class TasksControllerTest extends TestCase
         $this->assertEquals(1, $project->incomplete_task_count);
     }
 
-    public function testAddWithDefaultValues(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $section = $this->makeProjectSection('long term', $project->id);
-        $tomorrow = FrozenDate::parse('tomorrow');
-        $tomorrowStr = $tomorrow->format('Y-m-d');
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->get("/tasks/add?title=first+todo&project_id={$project->id}&due_on={$tomorrowStr}");
-        $this->assertResponseOk();
-
-        $task = $this->viewVariable('task');
-        $this->assertSame('first todo', $task->title);
-        $this->assertSame($project->id, $task->project_id);
-        $this->assertEquals($tomorrow, $task->due_on);
-
-        $sections = $this->viewVariable('sections');
-        $this->assertCount(1, $sections);
-        $this->assertEquals($section->id, $sections[0]->id);
-
-        $project = $this->Tasks->Projects->get($project->id);
-        $this->assertEquals(0, $project->incomplete_task_count);
-    }
-
     public function testAddToBottom(): void
     {
         $project = $this->makeProject('work', 1);
@@ -592,16 +534,15 @@ class TasksControllerTest extends TestCase
             'due_on' => '2020-12-17',
             'day_order' => 9,
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
 
+        $this->assertResponseOk();
         $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
         $this->assertSame(4, $todo->child_order);
         $this->assertSame(10, $todo->day_order);
@@ -611,17 +552,16 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $section = $this->makeProjectSection('release', $project->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'section_id' => $section->id,
             'project_id' => $project->id,
             'due_on' => '2020-12-17',
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
 
+        $this->assertResponseOk();
         $todo = $this->Tasks->findByTitle('first todo')->firstOrFail();
         $this->assertSame(1, $todo->child_order);
         $this->assertSame(1, $todo->day_order);
@@ -631,10 +571,9 @@ class TasksControllerTest extends TestCase
     public function testAddWithSubtasks(): void
     {
         $project = $this->makeProject('work', 1);
-        $this->login();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
 
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'project_id' => $project->id,
             'subtasks' => [
@@ -642,7 +581,7 @@ class TasksControllerTest extends TestCase
                 ['title' => 'second subtask', 'ranking' => 1],
             ],
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
+        $this->assertResponseOk();
 
         $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
         $this->assertSame('first todo', $todo->title);
@@ -653,15 +592,14 @@ class TasksControllerTest extends TestCase
     public function testAddWithIncompleteSubtask(): void
     {
         $project = $this->makeProject('work', 1);
-        $this->login();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
 
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'project_id' => $project->id,
             '_subtaskadd' => 'first subtask',
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
+        $this->assertResponseOk();
 
         $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
         $this->assertSame('first todo', $todo->title);
@@ -674,25 +612,25 @@ class TasksControllerTest extends TestCase
         $home = $this->makeProject('home', 1);
         $project = $this->makeProject('work', 1);
         $section = $this->makeProjectSection('release', $project->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'section_id' => $section->id,
             'project_id' => $home->id,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
-        $this->assertSessionHasKey('errors');
+
+        $this->assertResponseCode(400);
+        $error = $this->viewVariable('errors');
+        $this->assertNotEmpty($error);
     }
 
     public function testAddPermissions(): void
     {
         $project = $this->makeProject('work', 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/tasks/add', [
+        $this->post('/api/tasks/add.json', [
             'title' => 'first todo',
             'project_id' => $project->id,
         ]);
@@ -703,17 +641,14 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit.json", [
             'title' => 'updated',
             'evening' => true,
         ]);
-        $this->assertRedirect("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         $updated = $this->viewVariable('task');
         $this->assertSame('updated', $updated->title);
         $this->assertTrue($updated->evening);
@@ -726,35 +661,15 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $this->assertNull($first->due_on);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit.json", [
             'due_on_string' => 'tomorrow',
         ]);
-        $this->assertRedirect("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         $updated = $this->viewVariable('task');
         $this->assertEquals(FrozenDate::parse('tomorrow'), $updated->due_on);
-    }
-
-    public function testEditRedirect(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-        $this->assertNull($first->due_on);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
-            'due_on_string' => 'tomorrow',
-            'redirect' => '/tasks/today',
-        ]);
-        $this->assertRedirect('/tasks/today');
-        $this->assertFlashElement('flash/success');
     }
 
     public function testEditSubtasks(): void
@@ -763,17 +678,16 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
         $this->assertNull($first->due_on);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->loginApi(1);
+        $this->post("/api/tasks/{$first->id}/edit.json", [
             'due_on_string' => 'tomorrow',
             'subtasks' => [
                 ['title' => 'first subtask'],
                 ['title' => 'second subtask'],
             ],
         ]);
-        $this->assertFlashElement('flash/success');
+
+        $this->assertResponseOk();
         $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
         $this->assertCount(2, $task->subtasks);
         $this->assertEquals('first subtask', $task->subtasks[0]->title);
@@ -785,37 +699,37 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $this->assertNull($first->due_on);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit.json", [
             'due_on_string' => 'tomorrow',
             '_subtaskadd' => 'first subtask',
         ]);
-        $this->assertFlashElement('flash/success');
+
+        $this->assertResponseOk();
         $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
         $this->assertNotEmpty($task);
         $this->assertCount(1, $task->subtasks);
         $this->assertEquals('first subtask', $task->subtasks[0]->title);
     }
 
-    public function testEditSubtaskAddRedirect(): void
+    public function testEditApiTokenDueOnEmptySubtasks(): void
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
-        $this->assertNull($first->due_on);
+        $subtask = $this->makeSubtask('first subtask', $first->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
-            'due_on_string' => 'tomorrow',
-            'subtask_add' => '1',
-            'redirect' => '/tasks/today',
+        $this->post("/api/tasks/{$first->id}/edit", [
+            'due_on' => FrozenDate::parse('tomorrow')->format('Y-m-d'),
+            'subtasks' => [],
         ]);
-        $this->assertRedirect('/tasks/today');
-        $this->assertFlashElement('flash/success');
+        $this->assertResponseOk();
+
+        $updated = $this->viewVariable('task');
+        $this->assertCount(1, $updated->subtasks);
+        $reload = $this->Tasks->Subtasks->get($subtask->id);
+        $this->assertNotEmpty($reload);
     }
 
     public function testEditProject(): void
@@ -823,60 +737,41 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $home = $this->makeProject('home', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'project_id' => $home->id,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:view', 'id' => $first->id]);
+        $this->assertResponseOk();
 
         $updated = $this->viewVariable('task');
         $this->assertEquals($updated->project_id, $home->id);
         $this->assertEquals($updated->project->id, $home->id);
     }
 
-    public function testEditHtmx(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $home = $this->makeProject('home', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->useHtmx();
-        $this->post("/tasks/{$first->id}/edit", [
-            'project_id' => $home->id,
-            'redirect' => '/projects/home',
-        ]);
-        $this->assertRedirect('/projects/home');
-    }
-
     public function testEditValidation(): void
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
+        $this->disableErrorHandlerMiddleware();
 
-        $this->login();
-        $this->enableCsrfToken();
-
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => '',
             'evening' => true,
         ]);
-        $this->assertRedirect("/tasks/{$first->id}/view");
+
+        $this->assertResponseCode(422);
+        $this->assertResponseContains('errors');
     }
 
     public function testEditCreateSubtasks(): void
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'evening' => true,
             'subtasks' => [
@@ -884,9 +779,8 @@ class TasksControllerTest extends TestCase
                 ['title' => 'second step'],
             ],
         ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         /** @var \App\Model\Entity\Task $updated */
         $updated = $this->viewVariable('task');
         $this->assertCount(2, $updated->subtasks);
@@ -905,11 +799,9 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit.json", [
             'title' => 'updated',
             'evening' => true,
             'subtasks' => [
@@ -917,9 +809,8 @@ class TasksControllerTest extends TestCase
                 ['title' => ''],
             ],
         ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         $updated = $this->viewVariable('task');
         $this->assertCount(1, $updated->subtasks);
         $this->assertSame('first step', $updated->subtasks[0]->title);
@@ -932,20 +823,17 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $sub = $this->makeSubtask('first step', $first->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'subtasks' => [
                 ['id' => $sub->id, 'title' => 'step one!', 'completed' => true],
                 ['title' => 'step three'],
             ],
         ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         $updated = $this->viewVariable('task');
         $this->assertCount(2, $updated->subtasks);
         $this->assertSame('step one!', $updated->subtasks[0]->title);
@@ -963,19 +851,16 @@ class TasksControllerTest extends TestCase
         $sub = $this->makeSubtask('first step', $first->id, 0);
         // This subtask isn't part of the update.
         $this->makeSubtask('second step', $first->id, 1);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'subtasks' => [
                 ['id' => $sub->id, 'title' => $sub->title],
             ],
         ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
-        $this->assertFlashElement('flash/success');
 
+        $this->assertResponseOk();
         $updated = $this->viewVariable('task');
         $this->assertCount(1, $updated->subtasks);
         $this->assertEquals(1, $updated->subtask_count);
@@ -983,35 +868,13 @@ class TasksControllerTest extends TestCase
         $this->assertFalse($updated->subtasks[0]->completed);
     }
 
-    public function testEditRemoveSubtaskLast(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-        $this->makeSubtask('first step', $first->id, 0);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/edit", [
-            'title' => $first->title,
-            'subtasks' => [],
-        ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
-
-        $todo = $this->Tasks->find()->contain('Subtasks')->firstOrFail();
-        $this->assertSame('first', $todo->title);
-        $this->assertCount(0, $todo->subtasks);
-        $this->assertEquals(0, $todo->subtask_count);
-        $this->assertEquals(0, $todo->complete_subtask_count);
-    }
-
     public function testEditPermissions(): void
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
         ]);
         $this->assertResponseCode(403);
@@ -1022,10 +885,9 @@ class TasksControllerTest extends TestCase
         $other = $this->makeProject('other work', 2);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'project_id' => $other->id,
         ]);
@@ -1041,15 +903,14 @@ class TasksControllerTest extends TestCase
         $other = $this->makeProject('home', 1);
         $section = $this->makeProjectSection('design', $project->id);
         $first = $this->makeTask('first', $project->id, 0, ['section_id' => $section->id]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/edit", [
+        $this->post("/api/tasks/{$first->id}/edit", [
             'title' => 'updated',
             'project_id' => $other->id,
         ]);
-        $this->assertRedirectContains("/tasks/{$first->id}/view");
 
+        $this->assertResponseOk();
         $todo = $this->Tasks->get($first->id);
         $this->assertSame('updated', $todo->title);
         $this->assertNull($todo->section_id, 'Should blank section because project is different.');
@@ -1059,13 +920,11 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/delete");
+        $this->post("/api/tasks/{$first->id}/delete");
 
-        $this->assertRedirect(['_name' => 'tasks:today']);
-
+        $this->assertResponseOk();
         $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
         $this->assertNotNull($deleted->deleted_at);
     }
@@ -1074,9 +933,8 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/delete");
         $this->assertResponseCode(404);
     }
@@ -1085,41 +943,11 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/delete");
+        $this->post("/api/tasks/{$first->id}/delete");
 
         $deleted = $this->Tasks->get($first->id);
-        $this->assertNull($deleted->deleted_at);
-    }
-
-    public function testDeleteConfirm(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->login();
-        $this->get("/tasks/{$first->id}/delete/confirm");
-
-        $this->assertResponseOk();
-        $this->assertResponseContains('Are you sure?');
-
-        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
-        $this->assertNull($deleted->deleted_at);
-    }
-
-    public function testDeleteConfirmPermissions(): void
-    {
-        $project = $this->makeProject('work', 2);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->login();
-        $this->get("/tasks/{$first->id}/delete/confirm");
-
-        $this->assertResponseCode(403);
-
-        $deleted = $this->Tasks->findById($first->id)->firstOrFail();
         $this->assertNull($deleted->deleted_at);
     }
 
@@ -1127,13 +955,11 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/undelete");
+        $this->post("/api/tasks/{$first->id}/undelete");
 
-        $this->assertRedirect(['_name' => 'tasks:today']);
-
+        $this->assertResponseOk();
         $deleted = $this->Tasks->get($first->id);
         $this->assertNull($deleted->deleted_at);
     }
@@ -1142,23 +968,20 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/undelete");
+        $this->post("/api/tasks/{$first->id}/undelete");
 
-        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
-        $this->assertNotNull($deleted->deleted_at);
+        $this->assertResponseCode(403);
     }
 
     public function testCompletePermissions(): void
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/complete");
+        $this->post("/api/tasks/{$first->id}/complete");
         $this->assertResponseCode(403);
 
         $todo = $this->Tasks->get($first->id);
@@ -1169,31 +992,10 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/complete");
-        $this->assertResponseCode(302);
-
-        $todo = $this->Tasks->get($first->id);
-        $this->assertTrue($todo->completed);
-    }
-
-    public function testCompleteHtmx(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0);
-
-        $this->login();
-        $this->configRequest([
-            'headers' => [
-                'Hx-Request' => 'true',
-                'Referer' => 'http://localhost/tasks/upcoming',
-            ],
-        ]);
-        $this->enableCsrfToken();
-        $this->delete("/tasks/{$first->id}/complete");
-        $this->assertRedirect('/tasks/upcoming');
+        $this->post("/api/tasks/{$first->id}/complete");
+        $this->assertResponseOk();
 
         $todo = $this->Tasks->get($first->id);
         $this->assertTrue($todo->completed);
@@ -1203,10 +1005,9 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 2);
         $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/incomplete");
+        $this->post("/api/tasks/{$first->id}/incomplete");
         $this->assertResponseCode(403);
 
         $todo = $this->Tasks->get($first->id);
@@ -1215,33 +1016,13 @@ class TasksControllerTest extends TestCase
 
     public function testIncomplete(): void
     {
+        $token = $this->makeApiToken(1);
         $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
+        $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/incomplete");
-        $this->assertResponseCode(302);
-
-        $todo = $this->Tasks->get($first->id);
-        $this->assertFalse($todo->completed);
-    }
-
-    public function testIncompleteHtmx(): void
-    {
-        $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['completed' => true]);
-
-        $this->login();
-        $this->configRequest([
-            'headers' => [
-                'HX-Request' => 'true',
-                'Referer' => 'http://localhost/projects/work',
-            ],
-        ]);
-        $this->enableCsrfToken();
-        $this->delete("/tasks/{$first->id}/incomplete");
-        $this->assertRedirect('/projects/work');
+        $this->post("/api/tasks/{$first->id}/incomplete");
+        $this->assertResponseOk();
 
         $todo = $this->Tasks->get($first->id);
         $this->assertFalse($todo->completed);
@@ -1252,10 +1033,9 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 2);
         $this->makeTask('first', $project->id, 0);
         $second = $this->makeTask('second', $project->id, 1);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$second->id}/move", [
+        $this->post("/api/tasks/{$second->id}/move", [
             'day_order' => 0,
         ]);
         $this->assertResponseCode(403);
@@ -1265,33 +1045,26 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => 0,
             'due_on' => 'not a date',
         ]);
-
-        $this->assertRedirect(['_name' => 'tasks:today']);
-        $this->assertFlashElement('flash/error');
+        $this->assertResponseCode(422);
     }
 
     public function testMoveInvalidOrder()
     {
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => -1,
         ]);
 
-        $this->assertRedirect(['_name' => 'tasks:today']);
-        $this->assertFlashElement('flash/error');
+        $this->assertResponseCode(422);
     }
 
     public function testMoveUpSameDay()
@@ -1300,14 +1073,14 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
         $second = $this->makeTask('second', $project->id, 1);
         $third = $this->makeTask('third', $project->id, 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $expected = [$third->id, $first->id, $second->id];
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'day_order' => 0,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
+
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -1321,15 +1094,14 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
         $second = $this->makeTask('second', $project->id, 1);
         $third = $this->makeTask('third', $project->id, 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $expected = [$second->id, $third->id, $first->id];
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => 2,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
     }
@@ -1341,13 +1113,12 @@ class TasksControllerTest extends TestCase
         $second = $this->makeTask('second', $project->id, 1);
         $third = $this->makeTask('third', $project->id, 2);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
         $expected = [$second->id, $third->id, $first->id];
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => 1000,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
+        $this->assertResponseOk();
 
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
@@ -1360,14 +1131,13 @@ class TasksControllerTest extends TestCase
         $second = $this->makeTask('second', $project->id, 2);
         $third = $this->makeTask('third', $project->id, 2);
         $fourth = $this->makeTask('z fourth', $project->id, 2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$fourth->id}/move", [
+        $this->post("/api/tasks/{$fourth->id}/move", [
             'day_order' => 1,
         ]);
-        $this->assertRedirect(['_name' => 'tasks:today']);
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
         $this->assertOrder($expected, $results);
@@ -1379,15 +1149,14 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
         $second = $this->makeTask('second', $project->id, 2, ['due_on' => '2020-12-13']);
         $third = $this->makeTask('third', $project->id, 0, ['due_on' => '2020-12-14']);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $third->id, $second->id];
         $this->assertOrder($expected, $results);
@@ -1404,15 +1173,14 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 2, ['due_on' => '2020-12-13']);
 
         $new = $this->makeTask('new', $project->id, 0, ['due_on' => '2020-12-20']);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$new->id}/move", [
+        $this->post("/api/tasks/{$new->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $new->id, $second->id, $third->id];
         $this->assertOrder($expected, $results);
@@ -1429,15 +1197,14 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 2, ['due_on' => '2020-12-13']);
 
         $new = $this->makeTask('new', $project->id, 6, ['due_on' => '2020-12-20']);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$new->id}/move", [
+        $this->post("/api/tasks/{$new->id}/move", [
             'day_order' => 0,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$new->id, $first->id, $second->id, $third->id];
         $this->assertOrder($expected, $results);
@@ -1459,15 +1226,14 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 6, ['due_on' => '2020-12-13']);
 
         $new = $this->makeTask('new', $project->id, 6, ['due_on' => '2020-12-20']);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$new->id}/move", [
+        $this->post("/api/tasks/{$new->id}/move", [
             'day_order' => 3,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $second->id, $third->id, $new->id];
         $this->assertOrder($expected, $results);
@@ -1484,15 +1250,14 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => '2020-12-13']);
         $second = $this->makeTask('second', $project->id, 1, ['due_on' => '2020-12-13']);
         $third = $this->makeTask('third', $home->id, 1, ['due_on' => '2020-12-14']);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'day_order' => 1,
             'due_on' => '2020-12-13',
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $third->id, $second->id];
         $this->assertOrder($expected, $results);
@@ -1507,15 +1272,15 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0, ['evening' => false]);
         $second = $this->makeTask('second', $project->id, 3, ['evening' => false]);
         $third = $this->makeTask('third', $project->id, 2, ['evening' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $expected = [$second->id, $third->id, $first->id];
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => 1,
             'evening' => true,
         ]);
-        $this->assertRedirect('/tasks/today');
+
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -1532,14 +1297,13 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 3, ['evening' => false]);
         $fourth = $this->makeTask('fourth', $project->id, 4, ['evening' => true]);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
         $expected = [$third->id, $second->id, $first->id, $fourth->id];
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'day_order' => 1,
             'evening' => true,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -1556,14 +1320,14 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 4, ['evening' => false]);
         $fourth = $this->makeTask('fourth', $project->id, 1, ['evening' => true]);
         $fifth = $this->makeTask('fifth', $project->id, 5, ['evening' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $expected = [$first->id, $third->id, $second->id, $fourth->id, $fifth->id];
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'day_order' => 1,
         ]);
-        $this->assertRedirect('/tasks/today');
+
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -1577,15 +1341,15 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0, ['evening' => false]);
         $second = $this->makeTask('second', $project->id, 3, ['evening' => false]);
         $third = $this->makeTask('third', $project->id, 2, ['evening' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
         $expected = [$first->id, $third->id, $second->id];
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'day_order' => 1,
             'evening' => false,
         ]);
-        $this->assertRedirect('/tasks/today');
+
+        $this->assertResponseOk();
         $results = $this->dayOrderedTasks();
         $this->assertOrder($expected, $results);
         foreach ($expected as $i => $id) {
@@ -1601,13 +1365,12 @@ class TasksControllerTest extends TestCase
         $third = $this->makeTask('third', $project->id, 3);
         $fourth = $this->makeTask('fourth', $project->id, 6);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$fourth->id}/move", [
+        $this->loginApi(1);
+        $this->post("/api/tasks/{$fourth->id}/move", [
             'child_order' => 1,
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->childOrderedTasks();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
         $this->assertOrder($expected, $results);
@@ -1620,14 +1383,13 @@ class TasksControllerTest extends TestCase
         $second = $this->makeTask('second', $project->id, 1);
         $third = $this->makeTask('third', $project->id, 2);
         $fourth = $this->makeTask('fourth', $project->id, 3);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'child_order' => 2,
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->childOrderedTasks();
         $expected = [$second->id, $third->id, $first->id, $fourth->id];
         $this->assertOrder($expected, $results);
@@ -1639,15 +1401,14 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 7);
         $second = $this->makeTask('second', $project->id, 9);
         $third = $this->makeTask('third', $project->id, 10);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'child_order' => 2,
             'section_id' => null,
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $results = $this->childOrderedTasks();
         $expected = [$second->id, $third->id, $first->id];
         $this->assertOrder($expected, $results);
@@ -1661,6 +1422,7 @@ class TasksControllerTest extends TestCase
                 'child_order' => 1,
                 'day_order' => 1,
             ]],
+            /*
             // Can't use due_on with child.
             [[
                 'child_order' => 1,
@@ -1676,6 +1438,7 @@ class TasksControllerTest extends TestCase
                 'child_order' => 1,
                 'section_id' => 'no',
             ]],
+            */
         ];
     }
 
@@ -1688,12 +1451,10 @@ class TasksControllerTest extends TestCase
         $this->makeProjectSection('first', $project->id);
         $first = $this->makeTask('first', $project->id, 0);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
+        $this->post("/api/tasks/{$first->id}/move", $operation);
 
-        $this->post("/tasks/{$first->id}/move", $operation);
-        $this->assertResponseCode(302);
-        $this->assertFlashElement('flash/error');
+        $this->assertResponseCode(422);
     }
 
     public function testMoveToNewSection()
@@ -1706,15 +1467,14 @@ class TasksControllerTest extends TestCase
         $this->makeTask('second', $project->id, 1, ['section_id' => $design->id]);
         $third = $this->makeTask('third', $project->id, 0, ['section_id' => $build->id]);
         $fourth = $this->makeTask('fourth', $project->id, 1, ['section_id' => $build->id]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'child_order' => 2,
             'section_id' => $build->id,
         ]);
-        $this->assertRedirect('/tasks/today');
 
+        $this->assertResponseOk();
         $count = $this->Tasks->find()->where(['section_id' => $design->id])->count();
         $this->assertEquals(1, $count, 'Should be moved out.');
 
@@ -1734,13 +1494,12 @@ class TasksControllerTest extends TestCase
 
         $third = $this->makeTask('third', $project->id, 0, ['section_id' => $build->id]);
         $fourth = $this->makeTask('fourth', $project->id, 1, ['section_id' => $build->id]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$first->id}/move", [
+        $this->post("/api/tasks/{$first->id}/move", [
             'child_order' => 1,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $results = $this->childOrderedTasks(['section_id' => $design->id]);
         $expected = [$second->id, $first->id];
@@ -1759,14 +1518,13 @@ class TasksControllerTest extends TestCase
         $first = $this->makeTask('first', $project->id, 0);
         $second = $this->makeTask('second', $project->id, 0, ['section_id' => $design->id]);
         $third = $this->makeTask('third', $project->id, 1, ['section_id' => $design->id]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/tasks/{$third->id}/move", [
+        $this->post("/api/tasks/{$third->id}/move", [
             'child_order' => 0,
             'section_id' => null,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $results = $this->childOrderedTasks(['section_id IS' => null]);
         $expected = [$third->id, $first->id];

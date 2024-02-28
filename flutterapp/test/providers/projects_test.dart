@@ -31,7 +31,7 @@ void main() {
     test('fetchProjects() and getAll() work together', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects'));
+        expect(request.url.path, contains('/api/projects'));
         requestCounter += 1;
         return Response(projectsResponseFixture, 200);
       });
@@ -59,7 +59,7 @@ void main() {
     test('fetchProjects() will remove stale projects', () async {
       int requestCounter = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects'));
+        expect(request.url.path, contains('/api/projects'));
         requestCounter += 1;
         return Response(projectsResponseFixture, 200);
       });
@@ -86,7 +86,7 @@ void main() {
 
     test('fetchProjects() handles error on server error', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects'));
+        expect(request.url.path, contains('/api/projects'));
         return Response('{"errors": ["bad things"]}', 400);
       });
 
@@ -96,7 +96,7 @@ void main() {
     test('move() makes API request and expires local db', () async {
       var fetchCounter = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           fetchCounter++;
           return Response(projectsResponseFixture, 200);
         }
@@ -118,7 +118,7 @@ void main() {
 
     test('update() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects/home/edit'));
+        expect(request.url.path, contains('/api/projects/home/edit'));
         return Response(projectViewResponseFixture, 200);
       });
       var project = Project(id: 1, slug: 'home', name: 'Home');
@@ -138,7 +138,7 @@ void main() {
 
     test('unarchive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectsResponseFixture, 200);
         }
         expect(request.url.path, contains('/projects/home/unarchive'));

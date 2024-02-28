@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use App\Model\Entity\Project;
 use App\Model\Table\ProjectsTable;
 use App\Model\Table\TasksTable;
-use Cake\Http\Exception\BadRequestException;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -42,6 +42,27 @@ class ProjectsController extends AppController
     }
 
     /**
+     * Project list endpoint
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function index()
+    {
+        $projects = $this->Authorization
+            ->applyScope($this->Projects->find(), 'index')
+            ->contain('Sections');
+
+        $projects = $this->paginate($projects);
+
+        $this->set('projects', $projects);
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => ['projects'],
+        ]);
+    }
+
+    /**
      * View method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -70,12 +91,6 @@ class ProjectsController extends AppController
                 ->find('forProjectDetails', ['slug' => $slug])
                 ->limit(250);
         }
-
-        if ($this->request->is('htmx')) {
-            // Close any open menus/modals
-            $this->response = $this->response->withHeader('Hx-Trigger', 'close');
-        }
-
         $this->set(compact('project', 'tasks', 'completed'));
 
         return $this->respond([
@@ -93,12 +108,8 @@ class ProjectsController extends AppController
     {
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
-
-        $referer = $this->getReferer();
-
         $success = null;
         $serialize = [];
-        $redirect = null;
 
         if ($this->request->is('post')) {
             $userId = $this->request->getAttribute('identity')->getIdentifier();
@@ -108,7 +119,6 @@ class ProjectsController extends AppController
 
             if ($this->Projects->save($project)) {
                 $success = true;
-                $redirect = $referer;
                 $serialize[] = 'project';
                 $this->set('project', $project);
             } else {
@@ -118,14 +128,11 @@ class ProjectsController extends AppController
             }
         }
         $this->set('project', $project);
-        $this->set('referer', $referer);
 
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'flashSuccess' => __('Project created'),
-            'flashError' => __('Your project could not be saved'),
-            'redirect' => $redirect,
+            'statusError' => 422,
         ]);
     }
 
@@ -140,10 +147,8 @@ class ProjectsController extends AppController
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
 
-        $referer = $this->getReferer();
         $success = null;
         $serialize = [];
-        $redirect = null;
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $project = $this->Projects->patchEntity($project, $this->request->getData());
@@ -151,26 +156,18 @@ class ProjectsController extends AppController
                 $success = true;
                 $serialize[] = 'project';
                 $this->set('project', $project);
-
-                $redirect = [
-                    '_name' => 'projects:view',
-                    'slug' => $project->slug,
-                ];
             } else {
                 $success = false;
                 $serialize[] = 'errors';
                 $this->set('errors', $this->flattenErrors($project->getErrors()));
             }
         }
-        $this->set('referer', $referer);
         $this->set('project', $project);
 
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'flashSuccess' => __('Project updated'),
-            'flashError' => __('Your project could not be saved'),
-            'redirect' => $redirect,
+            'statusError' => 422,
         ]);
     }
 
@@ -223,19 +220,14 @@ class ProjectsController extends AppController
         $this->Authorization->authorize($project);
 
         $success = false;
-        $redirect = null;
 
         if ($this->Projects->delete($project)) {
             $success = true;
-            $redirect = $this->redirect(['_name' => 'tasks:today']);
         }
 
         return $this->respond([
             'success' => $success,
             'statusSuccess' => 204,
-            'flashSuccess' => __('Project deleted'),
-            'flashError' => __('Could not delete project'),
-            'redirect' => $redirect,
         ]);
     }
 
@@ -250,8 +242,6 @@ class ProjectsController extends AppController
         return $this->respond([
             'success' => true,
             'statusSuccess' => 204,
-            'flashSuccess' => __('Project archived'),
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
     }
 
@@ -266,8 +256,6 @@ class ProjectsController extends AppController
         return $this->respond([
             'success' => true,
             'statusSuccess' => 204,
-            'flashSuccess' => __('Project unarchived'),
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
     }
 
@@ -299,28 +287,6 @@ class ProjectsController extends AppController
             'success' => $success,
             'serialize' => $serialize,
             'statusError' => 400,
-            'flashSuccess' => __('Project moved'),
-            'flashError' => $error,
-            'redirect' => $this->referer(['_name' => 'tasks:today']),
         ]);
-    }
-
-    /**
-     * Reorder a users active projects as a group.
-     */
-    public function reorder()
-    {
-        $this->request->allowMethod(['post']);
-        $ids = (array)$this->request->getData('id');
-
-        $query = $this->Projects
-            ->find('active')->find('top')
-            ->where(['Projects.id IN' => $ids]);
-        $query = $this->Authorization->applyScope($query, 'index');
-        $projects = $query->all();
-        if (count($projects) != count($ids)) {
-            throw new BadRequestException('Invalid id values provided');
-        }
-        $this->Projects->reorder($ids);
     }
 }

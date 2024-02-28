@@ -139,11 +139,11 @@ void main() {
     testWidgets('task item can be completed', (tester) async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/complete') {
+        if (request.url.path == '/api/tasks/1/complete') {
           requestCount += 1;
           return Response('', 200);
         }
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(todayResponse, 200);
         }
         throw Exception('Unmocked request to ${request.url.path}');
@@ -174,11 +174,11 @@ void main() {
     testWidgets('task item can be deleted', (tester) async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/delete') {
+        if (request.url.path == '/api/tasks/1/delete') {
           requestCount += 1;
           return Response('', 200);
         }
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(todayResponse, 200);
         }
         throw Exception('Unmocked request to ${request.url.path}');

@@ -73,10 +73,10 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -117,7 +117,7 @@ void main() {
 
     test('loadData() refresh from server when expired', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -138,10 +138,10 @@ void main() {
 
     test('loadData() only sets today', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -158,13 +158,13 @@ void main() {
 
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/move') {
+        if (request.url.path == '/api/tasks/1/move') {
           return Response('', 200);
         }
         throw "Unknown request to ${request.url.path}";
@@ -185,10 +185,10 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -206,11 +206,11 @@ void main() {
 
     test('refresh() expires old data', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           // This fixture has old tasks that will be grouped as overdue
           return Response(tasksTodayWithOverdueResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -233,10 +233,10 @@ void main() {
 
     test('refreshTasks() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -254,13 +254,13 @@ void main() {
 
     test('moveOverdue() can add tasks', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/99/move') {
+        if (request.url.path == '/api/tasks/99/move') {
           return Response('', 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/day/$urlDate') {
+        if (request.url.path == '/api/tasks/day/$urlDate') {
           return Response(tasksTodayResponseFixture, 200);
         }
         throw "Unknown request to ${request.url.path}";

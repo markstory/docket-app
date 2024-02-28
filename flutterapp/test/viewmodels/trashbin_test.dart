@@ -39,7 +39,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/deleted') {
+        if (request.url.path == '/api/tasks/deleted') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -54,7 +54,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/deleted') {
+        if (request.url.path == '/api/tasks/deleted') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";

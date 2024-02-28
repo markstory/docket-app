@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\FrozenTime;
@@ -9,7 +9,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\CalendarSourcesController Test Case
+ * App\Controller\Api\CalendarSourcesController Test Case
  */
 class CalendarSourcesControllerTest extends TestCase
 {
@@ -61,21 +61,20 @@ class CalendarSourcesControllerTest extends TestCase
     /**
      * @vcr controller_calendarsources_sync.yml
      */
-    public function testSync(): void
+    public function testSyncApi(): void
     {
         FrozenTime::setTestNow('2021-07-11 12:13:14');
 
-        $this->enableRetainFlashMessages();
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/sync");
+
+        $source = $this->viewVariable('source');
+        $this->assertNotEmpty($source);
 
         $result = $this->CalendarItems->find()->where([
             'CalendarItems.calendar_source_id' => $source->id,
@@ -111,13 +110,11 @@ class CalendarSourcesControllerTest extends TestCase
             'title' => 'remove',
             'provider_id' => 'calendar-event-4',
         ]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/sync");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/sync");
 
+        $this->assertResponseOk();
         $this->assertFalse($this->CalendarItems->exists(['id' => $remove->id]));
 
         $updated = $this->CalendarItems->findById($update->id)->first();
@@ -137,12 +134,11 @@ class CalendarSourcesControllerTest extends TestCase
         $user = $this->Users->get(1);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/delete");
 
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertResponseCode(204);
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
@@ -158,12 +154,11 @@ class CalendarSourcesControllerTest extends TestCase
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
         $this->makeCalendarSubscription($source->id, 'subscription-id');
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/delete");
 
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertResponseCode(204);
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
@@ -177,11 +172,10 @@ class CalendarSourcesControllerTest extends TestCase
         $user = $this->Users->get(2);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/delete");
 
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
         $this->assertResponseCode(403);
     }
 
@@ -192,18 +186,16 @@ class CalendarSourcesControllerTest extends TestCase
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
+        $this->loginApi(1);
 
-        $this->post("/calendars/{$provider->id}/sources/add", [
+        $this->post("/api/calendars/{$provider->id}/sources/add", [
             'provider_id' => 'calendar-1',
             'color' => 1,
             'name' => 'Work Calendar',
         ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
+        $this->assertResponseOk();
 
+        $this->assertNotEmpty($this->viewVariable('source'));
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
         $this->assertSame('calendar-1', $source->provider_id);
 
@@ -239,25 +231,23 @@ class CalendarSourcesControllerTest extends TestCase
     }
 
     /**
-     * Test edit method
+     * Test edit with api token method
      *
      * @return void
      */
-    public function testEdit(): void
+    public function testEditApi(): void
     {
         $user = $this->Users->get(1);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/edit", [
             'color' => 3,
             'name' => 'new values',
         ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
+        $this->assertResponseOk();
+        $this->assertResponseContains('new values');
     }
 
     /**
@@ -270,11 +260,9 @@ class CalendarSourcesControllerTest extends TestCase
         $user = $this->Users->get(2);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/edit", [
             'color' => 3,
             'name' => 'new values',
         ]);

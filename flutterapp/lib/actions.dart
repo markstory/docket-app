@@ -184,7 +184,7 @@ T _decodeResponse<T>(
 /// The entity returned contains an API token
 /// that can be used until revoked serverside.
 Future<ApiToken> doLogin(String email, String password) async {
-  var url = _makeUrl('/mobile/login');
+  var url = _makeUrl('/api/tokens/add');
 
   var body = {'email': email, 'password': password};
 
@@ -199,7 +199,7 @@ Future<ApiToken> doLogin(String email, String password) async {
 /// Update the timezone. Fired during application startup to automatically
 /// sync the account timezone to where the user is.
 Future<void> updateTimezone(String apiToken) async {
-  var url = _makeUrl('/users/profile');
+  var url = _makeUrl('/api/users/profile');
   try {
     var date = DateTime.now();
     var body = {'timezone': date.timeZoneName};
@@ -211,7 +211,7 @@ Future<void> updateTimezone(String apiToken) async {
 
 /// Get the current user's profile
 Future<UserProfile> fetchUser(String apiToken) async {
-  var url = _makeUrl('/users/profile');
+  var url = _makeUrl('/api/users/profile');
 
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Failed to fetch user');
   return _decodeResponse(response.bodyBytes, (mapData) => UserProfile.fromMap(mapData['user']));
@@ -219,7 +219,7 @@ Future<UserProfile> fetchUser(String apiToken) async {
 
 /// Update a user's profile
 Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
-  var url = _makeUrl('/users/profile');
+  var url = _makeUrl('/api/users/profile');
 
   var body = profile.toMap();
   // TODO: Update the server to return the updated user.
@@ -235,7 +235,7 @@ Future<UserProfile> updateUser(String apiToken, UserProfile profile) async {
 /// Generally used for today view.
 Future<TaskRangeView> fetchDailyTasks(String apiToken, DateTime date, {bool overdue = true}) async {
   var urlDate = formatters.dateString(date);
-  var url = _makeUrl('/tasks/day/$urlDate?overdue=$overdue');
+  var url = _makeUrl('/api/tasks/day/$urlDate?overdue=$overdue');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -258,7 +258,7 @@ Future<TaskRangeView> fetchDailyTasks(String apiToken, DateTime date, {bool over
 
 /// Fetch the tasks and calendar items for the 'Upcoming' view
 Future<TaskRangeView> fetchUpcomingTasks(String apiToken) async {
-  var url = _makeUrl('/tasks/upcoming');
+  var url = _makeUrl('/api/tasks/upcoming');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -280,7 +280,7 @@ Future<TaskRangeView> fetchUpcomingTasks(String apiToken) async {
 
 /// Fetch completed tasks for a project
 Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async {
-  var url = _makeUrl('/projects/$slug?completed=1');
+  var url = _makeUrl('/api/projects/$slug?completed=1');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load completed tasks');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -300,7 +300,7 @@ Future<ProjectWithTasks> fetchCompletedTasks(String apiToken, String slug) async
 
 /// Fetch deleted tasks for a project
 Future<TaskViewData> fetchTrashbin(String apiToken) async {
-  var url = _makeUrl('/tasks/deleted');
+  var url = _makeUrl('/api/tasks/deleted');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load trash bin');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -322,14 +322,14 @@ Future<TaskViewData> fetchTrashbin(String apiToken) async {
 /// Update a task complete/incomplete state..
 Future<void> toggleTask(String apiToken, Task task) async {
   var operation = task.completed ? 'complete' : 'incomplete';
-  var url = _makeUrl('/tasks/${task.id}/$operation');
+  var url = _makeUrl('/api/tasks/${task.id}/$operation');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update task');
 }
 
 /// Create a task
 Future<Task> createTask(String apiToken, Task task) async {
-  var url = _makeUrl('/tasks/add');
+  var url = _makeUrl('/api/tasks/add');
 
   var response = await httpPost(
     url,
@@ -345,7 +345,7 @@ Future<Task> updateTask(String apiToken, Task task) async {
   if (task.id == null) {
     return createTask(apiToken, task);
   }
-  var url = _makeUrl('/tasks/${task.id}/edit');
+  var url = _makeUrl('/api/tasks/${task.id}/edit');
 
   var response = await httpPost(url, apiToken: apiToken, body: task.toMap(), errorMessage: 'Could not update task');
   return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
@@ -353,28 +353,28 @@ Future<Task> updateTask(String apiToken, Task task) async {
 
 /// Delete a task
 Future<void> deleteTask(String apiToken, Task task) async {
-  var url = _makeUrl('/tasks/${task.id}/delete');
+  var url = _makeUrl('/api/tasks/${task.id}/delete');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete task');
 }
 
 /// Undelete a task
 Future<void> undeleteTask(String apiToken, Task task) async {
-  var url = _makeUrl('/tasks/${task.id}/undelete');
+  var url = _makeUrl('/api/tasks/${task.id}/undelete');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not undelete task');
 }
 
 /// Move a task
 Future<void> moveTask(String apiToken, Task task, Map<String, dynamic> updates) async {
-  var url = _makeUrl('/tasks/${task.id}/move');
+  var url = _makeUrl('/api/tasks/${task.id}/move');
 
   await httpPost(url, apiToken: apiToken, body: updates, errorMessage: 'Could not move task');
 }
 
 /// Fetch a task by id
 Future<Task> fetchTaskById(String apiToken, int id) async {
-  var url = _makeUrl('/tasks/$id/view');
+  var url = _makeUrl('/api/tasks/$id/view');
 
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load tasks');
   return _decodeResponse(response.bodyBytes, (mapData) => Task.fromMap(mapData['task']));
@@ -385,14 +385,14 @@ Future<Task> fetchTaskById(String apiToken, int id) async {
 
 /// Update a subtask complete/incomplete state..
 Future<void> toggleSubtask(String apiToken, Task task, Subtask subtask) async {
-  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/toggle');
+  var url = _makeUrl('/api/tasks/${task.id}/subtasks/${subtask.id}/toggle');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not update subtask');
 }
 
 /// Move a subtask
 Future<void> moveSubtask(String apiToken, Task task, Subtask subtask) async {
-  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/move');
+  var url = _makeUrl('/api/tasks/${task.id}/subtasks/${subtask.id}/move');
   var updates = {'ranking': subtask.ranking};
 
   await httpPost(url, apiToken: apiToken, body: updates, errorMessage: 'Could not move subtask');
@@ -400,21 +400,21 @@ Future<void> moveSubtask(String apiToken, Task task, Subtask subtask) async {
 
 /// Update a subtask
 Future<Subtask> updateSubtask(String apiToken, Task task, Subtask subtask) async {
-  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/edit');
+  var url = _makeUrl('/api/tasks/${task.id}/subtasks/${subtask.id}/edit');
   var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not update subtask');
   return _decodeResponse(response.bodyBytes, (mapData) => Subtask.fromMap(mapData['subtask']));
 }
 
 /// Create a subtask
 Future<Subtask> createSubtask(String apiToken, Task task, Subtask subtask) async {
-  var url = _makeUrl('/tasks/${task.id}/subtasks');
+  var url = _makeUrl('/api/tasks/${task.id}/subtasks');
   var response = await httpPost(url, apiToken: apiToken, body: subtask.toMap(), errorMessage: 'Could not create subtask');
   return _decodeResponse(response.bodyBytes, (mapData) => Subtask.fromMap(mapData['subtask']));
 }
 
 /// Delete a subtask
 Future<void> deleteSubtask(String apiToken, Task task, Subtask subtask) async {
-  var url = _makeUrl('/tasks/${task.id}/subtasks/${subtask.id}/delete');
+  var url = _makeUrl('/api/tasks/${task.id}/subtasks/${subtask.id}/delete');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete subtask.');
 }
@@ -423,7 +423,7 @@ Future<void> deleteSubtask(String apiToken, Task task, Subtask subtask) async {
 
 // Project methods {{{
 Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async {
-  var url = _makeUrl('/projects/$slug');
+  var url = _makeUrl('/api/projects/$slug');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load project');
   return _decodeResponse(response.bodyBytes, (mapData) {
     var project = Project.fromMap(mapData['project']);
@@ -442,7 +442,7 @@ Future<ProjectWithTasks> fetchProjectBySlug(String apiToken, String slug) async 
 }
 
 Future<List<Project>> fetchProjects(String apiToken) async {
-  var url = _makeUrl('/projects');
+  var url = _makeUrl('/api/projects');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -459,7 +459,7 @@ Future<List<Project>> fetchProjects(String apiToken) async {
 
 /// Fetch archived projects
 Future<List<Project>> fetchProjectArchive(String apiToken) async {
-  var url = _makeUrl('/projects/archived');
+  var url = _makeUrl('/api/projects/archived');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load projects');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -473,7 +473,7 @@ Future<List<Project>> fetchProjectArchive(String apiToken) async {
 
 /// Create a project
 Future<Project> createProject(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/add');
+  var url = _makeUrl('/api/projects/add');
   var response = await httpPost(
     url,
     apiToken: apiToken,
@@ -484,7 +484,7 @@ Future<Project> createProject(String apiToken, Project project) async {
 
 /// Update a project
 Future<Project> updateProject(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/${project.slug}/edit');
+  var url = _makeUrl('/api/projects/${project.slug}/edit');
   var response = await httpPost(
     url,
     apiToken: apiToken,
@@ -496,7 +496,7 @@ Future<Project> updateProject(String apiToken, Project project) async {
 
 /// Move a project
 Future<Project> moveProject(String apiToken, Project project, int newRank) async {
-  var url = _makeUrl('/projects/${project.slug}/move');
+  var url = _makeUrl('/api/projects/${project.slug}/move');
   var response = await httpPost(
     url,
     apiToken: apiToken,
@@ -508,21 +508,21 @@ Future<Project> moveProject(String apiToken, Project project, int newRank) async
 
 /// Archive a project
 Future<void> archiveProject(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/${project.slug}/archive');
+  var url = _makeUrl('/api/projects/${project.slug}/archive');
 
   await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not archive project');
 }
 
 /// Unarchive a project
 Future<void> unarchiveProject(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/${project.slug}/unarchive');
+  var url = _makeUrl('/api/projects/${project.slug}/unarchive');
 
   await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not unarchive project');
 }
 
 /// Delete a project
 Future<void> deleteProject(String apiToken, Project project) async {
-  var url = _makeUrl('/projects/${project.slug}/delete');
+  var url = _makeUrl('/api/projects/${project.slug}/delete');
 
   await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete project');
 }
@@ -531,28 +531,28 @@ Future<void> deleteProject(String apiToken, Project project) async {
 // {{{ Section Methods
 /// Create a project section
 Future<void> createSection(String apiToken, Project project, Section section) async {
-  var url = _makeUrl('/projects/${project.slug}/sections');
+  var url = _makeUrl('/api/projects/${project.slug}/sections');
 
   await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not create section');
 }
 
 /// Delete a project section
 Future<void> deleteSection(String apiToken, Project project, Section section) async {
-  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/delete');
+  var url = _makeUrl('/api/projects/${project.slug}/sections/${section.id}/delete');
 
   await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete section');
 }
 
 /// Move a project section
 Future<void> moveSection(String apiToken, Project project, Section section, int newIndex) async {
-  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/move');
+  var url = _makeUrl('/api/projects/${project.slug}/sections/${section.id}/move');
 
   await httpPost(url, apiToken: apiToken, body: {'ranking': newIndex}, errorMessage: 'Could not move section');
 }
 
 /// Update a project section
 Future<void> updateSection(String apiToken, Project project, Section section) async {
-  var url = _makeUrl('/projects/${project.slug}/sections/${section.id}/edit');
+  var url = _makeUrl('/api/projects/${project.slug}/sections/${section.id}/edit');
 
   await httpPost(url, apiToken: apiToken, body: section.toMap(), errorMessage: 'Could not update section');
 }
@@ -565,7 +565,7 @@ Future<CalendarProvider> createCalendarProviderFromGoogle(
   String apiToken,
   {String? refreshToken, String? accessToken}
 ) async {
-  var url = _makeUrl('/calendars/google/new');
+  var url = _makeUrl('/api/calendars/google/new');
   var body = {
     'refreshToken': refreshToken,
     'accessToken': accessToken,
@@ -576,7 +576,7 @@ Future<CalendarProvider> createCalendarProviderFromGoogle(
 
 /// Fetch a list of calendar providers.
 Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
-  var url = _makeUrl('/calendars');
+  var url = _makeUrl('/api/calendars');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar settings');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -590,7 +590,7 @@ Future<List<CalendarProvider>> fetchCalendarProviders(String apiToken) async {
 
 /// Fetch a provider by details
 Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
-  var url = _makeUrl('/calendars/$id/view');
+  var url = _makeUrl('/api/calendars/$id/view');
   var response = await httpGet(url, apiToken: apiToken, errorMessage: 'Could not load calendar provider');
 
   return _decodeResponse(response.bodyBytes, (mapData) {
@@ -609,14 +609,14 @@ Future<CalendarProvider> fetchCalendarProvider(String apiToken, int id) async {
 
 /// Delete a Calendar Provider
 Future<void> deleteCalendarProvider(String apiToken, CalendarProvider provider) async {
-  var url = _makeUrl('/calendars/${provider.id}/delete');
+  var url = _makeUrl('/api/calendars/${provider.id}/delete');
 
   await httpPost(url, apiToken: apiToken, errorMessage: 'Could not delete calendar account');
 }
 
 /// Create a calendar source on the server.
 Future<CalendarSource> createSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/add');
+  var url = _makeUrl('/api/calendars/${source.calendarProviderId}/sources/add');
 
   var body = source.toMap();
   body.remove('id');
@@ -627,7 +627,7 @@ Future<CalendarSource> createSource(String apiToken, CalendarSource source) asyn
 
 /// Update the settings on a source.
 Future<CalendarSource> updateSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
+  var url = _makeUrl('/api/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
   var body = {'color': source.color, 'name': source.name};
   var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
   return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
@@ -635,14 +635,14 @@ Future<CalendarSource> updateSource(String apiToken, CalendarSource source) asyn
 
 /// Sync events on a source.
 Future<CalendarSource> syncSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/sync');
+  var url = _makeUrl('/api/calendars/${source.calendarProviderId}/sources/${source.id}/sync');
   var response = await httpPost(url, body: source.toMap(), apiToken: apiToken, errorMessage: 'Could not refresh calendar events');
   return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
 }
 
 /// Delete a source.
 Future<void> deleteSource(String apiToken, CalendarSource source) async {
-  var url = _makeUrl('/calendars/${source.calendarProviderId}/sources/${source.id}/delete');
+  var url = _makeUrl('/api/calendars/${source.calendarProviderId}/sources/${source.id}/delete');
 
   await httpPost(url, apiToken: apiToken, body: {}, errorMessage: 'Could not delete calendar');
 }

@@ -62,7 +62,7 @@ void main() {
 
     test('loadData() refreshes on stale local db', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -81,10 +81,10 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -102,10 +102,10 @@ void main() {
     test('reorderTask() updates state', () async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/move') {
+        if (request.url.path == '/api/tasks/1/move') {
           callCount += 1;
           expect(request.body, contains('child_order":1'));
           return Response('', 200);
@@ -126,11 +126,11 @@ void main() {
     test('refresh() loads data from the server', () async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           callCount += 1;
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectListResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -146,10 +146,10 @@ void main() {
 
     test('moveInto() can add tasks', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/99/move') {
+        if (request.url.path == '/api/tasks/99/move') {
           expect(request.body, contains('child_order":0'));
 
           return Response('', 200);
@@ -177,7 +177,7 @@ void main() {
 
     test('archive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/projects/home/archive'));
+        expect(request.url.path, contains('/api/projects/home/archive'));
         return Response("", 200);
       });
 
@@ -209,11 +209,11 @@ void main() {
       var fetchCount = 0;
       var addCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           fetchCount++;
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/projects/home/sections') {
+        if (request.url.path == '/api/projects/home/sections') {
           addCount += 1;
           expect(request.body, contains('name":"Repairs"'));
           return Response('', 200);
@@ -245,12 +245,12 @@ void main() {
       var deleteCount = 0;
       var fetchCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           fetchCount++;
           return Response(projectDetailsResponseFixture, 200);
         }
         deleteCount++;
-        expect(request.url.path, contains('/projects/home/sections/1/delete'));
+        expect(request.url.path, contains('/api/projects/home/sections/1/delete'));
         return Response("", 200);
       });
       var section = Section(id: 1, name: 'Repairs', ranking: 1);
@@ -275,11 +275,11 @@ void main() {
       var editCount = 0;
       var fetchCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           fetchCount++;
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/projects/home/sections/1/edit') {
+        if (request.url.path == '/api/projects/home/sections/1/edit') {
           editCount++;
           expect(request.body, contains('name":"Repairs"'));
           return Response('', 200);
@@ -308,10 +308,10 @@ void main() {
     test('moveSection() sends a request', () async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(projectDetailsResponseFixture, 200);
         }
-        if (request.url.path == '/projects/home/sections/1/move') {
+        if (request.url.path == '/api/projects/home/sections/1/move') {
           callCount += 1;
           expect(request.body, contains('ranking":1'));
           return Response('', 200);

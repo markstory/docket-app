@@ -19,7 +19,7 @@ void main() {
     test('updateTimezone()', () async {
       var counter = CallCounter();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/users/profile') {
+        if (request.url.path == '/api/users/profile') {
           counter.call();
           expect(request.body, contains('timezone'));
 

@@ -125,10 +125,10 @@ void main() {
     testWidgets('rename section sends requests', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home') {
+        if (request.url.path == '/api/projects/home') {
           return Response(detailsResponse, 200);
         }
-        if (request.url.path == '/projects/home/sections/1/edit') {
+        if (request.url.path == '/api/projects/home/sections/1/edit') {
           expect(request.body.contains('Renamed section'), isTrue);
           callCount += 1;
 
@@ -162,7 +162,7 @@ void main() {
     testWidgets('delete section sends requests', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/home/sections/1/delete') {
+        if (request.url.path == '/api/projects/home/sections/1/delete') {
           callCount += 1;
 
           return Response('', 200);

@@ -26,7 +26,7 @@ void main() {
     test('loadData() fetches from server', () async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/users/profile'));
+        expect(request.url.path, equals('/api/users/profile'));
         requestCount++;
 
         return Response(profileResponseFixture, 200);
@@ -47,7 +47,7 @@ void main() {
     test('refresh() loads from server', () async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/users/profile'));
+        expect(request.url.path, equals('/api/users/profile'));
         requestCount++;
 
         return Response(profileResponseFixture, 200);
@@ -62,7 +62,7 @@ void main() {
     test('update() sends request to server', () async {
       var requestCount = 0;
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/users/profile'));
+        expect(request.url.path, equals('/api/users/profile'));
         expect(request.method, equals('POST'));
         requestCount++;
 

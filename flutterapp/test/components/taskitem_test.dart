@@ -99,7 +99,7 @@ void main() {
     testWidgets('checkbox sends request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/complete') {
+        if (request.url.path == '/api/tasks/1/complete') {
           callCount += 1;
           return Response(taskDetails, 200);
         }
@@ -117,7 +117,7 @@ void main() {
     testWidgets('delete action confirms and sends request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/delete') {
+        if (request.url.path == '/api/tasks/1/delete') {
           callCount += 1;
           return Response('', 200);
         }
@@ -144,7 +144,7 @@ void main() {
     testWidgets('change project action shows dialog and sends request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/edit') {
+        if (request.url.path == '/api/tasks/1/edit') {
           callCount += 1;
           expect(request.body.contains('project_id":2'), isTrue);
           return Response(taskDetails, 200);
@@ -170,7 +170,7 @@ void main() {
     testWidgets('reschedule action shows dialog and sends request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/1/edit') {
+        if (request.url.path == '/api/tasks/1/edit') {
           callCount += 1;
           expect(request.body.contains('evening":true'), isTrue);
           return Response(taskDetails, 200);

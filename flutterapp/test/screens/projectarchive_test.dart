@@ -32,7 +32,7 @@ void main() {
     testWidgets('shows empty state', (tester) async {
       await db.projectArchive.clearSilent();
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects/archived') {
+        if (request.url.path == '/api/projects/archived') {
           return Response('{"projects":[]}', 200);
         }
         throw Exception('Request made to unmocked ${request.url.path}');
@@ -60,14 +60,14 @@ void main() {
     testWidgets('can unarchive', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/projects') {
+        if (request.url.path == '/api/projects') {
           return Response(projectList, 200);
         }
-        if (request.url.path == '/projects/home/unarchive') {
+        if (request.url.path == '/api/projects/home/unarchive') {
           callCount += 1;
           return Response('', 200);
         }
-        if (request.url.path == '/projects/archived') {
+        if (request.url.path == '/api/projects/archived') {
           return Response(projectList, 200);
         }
         throw "Unexpected request to ${request.url.path}";

@@ -77,7 +77,7 @@ void main() {
 
     test('toggleComplete() sends request and removes local data', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/tasks/1/complete'));
+        expect(request.url.path, contains('/api/tasks/1/complete'));
         return Response('', 204);
       });
       var tasks = parseTaskList(tasksTodayResponseFixture);
@@ -97,7 +97,7 @@ void main() {
 
     test('toggleComplete() removes from completed task list', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/tasks/1/incomplete'));
+        expect(request.url.path, contains('/api/tasks/1/incomplete'));
         return Response('', 204);
       });
       var tasks = parseTaskList(tasksTodayResponseFixture);
@@ -118,7 +118,7 @@ void main() {
 
     test('toggleComplete() sends request to incomplete and expires data', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/tasks/1/incomplete'));
+        expect(request.url.path, contains('/api/tasks/1/incomplete'));
         return Response('', 204);
       });
 
@@ -142,7 +142,7 @@ void main() {
 
     test('deleteTask() removes task and clears local db', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/tasks/1/delete'));
+        expect(request.url.path, contains('/api/tasks/1/delete'));
         return Response('', 204);
       });
 
@@ -160,7 +160,7 @@ void main() {
 
     test('deleteTask() reduces the local project incomplete task count', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/tasks/1/delete'));
+        expect(request.url.path, contains('/api/tasks/1/delete'));
         return Response('', 204);
       });
 
@@ -178,7 +178,7 @@ void main() {
 
     test('updateTask() call API and updates today view', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/edit'));
+        expect(request.url.path, equals('/api/tasks/1/edit'));
 
         return Response(taskCreateTodayResponseFixture, 200);
       });
@@ -204,7 +204,7 @@ void main() {
 
     test('toggleSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/2/toggle'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/2/toggle'));
 
         return Response('', 200);
       });
@@ -226,7 +226,7 @@ void main() {
 
     test('saveSubtask() call API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/1/edit'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/1/edit'));
 
         return Response(subtaskUpdateResponse, 200);
       });
@@ -250,7 +250,7 @@ void main() {
 
     test('saveSubtask() uses create API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks'));
 
         return Response(subtaskUpdateResponse, 200);
       });
@@ -275,7 +275,7 @@ void main() {
 
     test('deleteSubtask() uses API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/2/delete'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/2/delete'));
 
         return Response(subtaskUpdateResponse, 200);
       });
@@ -296,7 +296,7 @@ void main() {
 
     test('moveSubtask() uses API and update local task', () async {
       actions.client = MockClient((request) async {
-        expect(request.url.path, equals('/tasks/1/subtasks/2/move'));
+        expect(request.url.path, equals('/api/tasks/1/subtasks/2/move'));
         expect(request.body, contains('ranking'));
 
         return Response(subtaskUpdateResponse, 200);

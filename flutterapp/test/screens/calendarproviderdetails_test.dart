@@ -72,7 +72,7 @@ void main() {
     testWidgets('sync action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/sources/28/sync') {
+        if (request.url.path == '/api/calendars/5/sources/28/sync') {
           callCount += 1;
           return Response(calendarSourceResponse, 200);
         }
@@ -99,7 +99,7 @@ void main() {
     testWidgets('delete action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/sources/28/delete') {
+        if (request.url.path == '/api/calendars/5/sources/28/delete') {
           callCount += 1;
           return Response('', 200);
         }
@@ -132,7 +132,7 @@ void main() {
     testWidgets('link action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/sources/add') {
+        if (request.url.path == '/api/calendars/5/sources/add') {
           callCount += 1;
           return Response(calendarSourceResponse, 200);
         }
@@ -159,7 +159,7 @@ void main() {
     testWidgets('change color makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/calendars/5/sources/28/edit') {
+        if (request.url.path == '/api/calendars/5/sources/28/edit') {
           callCount += 1;
           expect(request.body.contains('color":2'), isTrue);
           return Response(calendarSourceResponse, 200);

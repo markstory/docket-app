@@ -77,7 +77,6 @@ class UsersController extends AppController
 
         $redirect = $flashSuccess = $flashError = null;
         $success = true;
-        $serialize = ['user'];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $allowedFields = ['name', 'timezone', 'theme'];
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
@@ -98,7 +97,6 @@ class UsersController extends AppController
                 $flashSuccess = __('Your profile has been updated');
             } else {
                 $success = false;
-                $serialize[] = 'errors';
                 $flashError = __('Your profile could not be saved');
                 $this->set('errors', $this->flattenErrors($user->getErrors()));
             }
@@ -108,7 +106,6 @@ class UsersController extends AppController
 
         $this->respond([
             'success' => $success,
-            'serialize' => $serialize,
             'redirect' => $redirect,
             'flashSuccess' => $flashSuccess,
             'flashError' => $flashError,

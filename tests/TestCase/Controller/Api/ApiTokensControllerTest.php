@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\ApiTokensController Test Case
+ * App\Controller\Api\ApiTokensController Test Case
  *
  * @uses \App\Controller\ApiTokensController
  */
@@ -29,14 +29,11 @@ class ApiTokensControllerTest extends TestCase
 
     public function testIndexPermissions(): void
     {
-        $token = $this->makeApiToken(1);
         // Token for another user.
         $this->makeApiToken(2);
+        $token = $this->loginApi(1);
 
-        $this->login();
-        $this->requestJson();
-
-        $this->get('/apitokens');
+        $this->get('/api/tokens');
         $this->assertResponseOk();
         $this->assertHeader('Content-Type', 'application/json');
 
@@ -49,7 +46,7 @@ class ApiTokensControllerTest extends TestCase
     {
         $this->requestJson();
 
-        $this->post('/mobile/login', [
+        $this->post('/api/tokens/add', [
             'email' => 'mark@example.com',
             'password' => 'password123',
         ]);
@@ -69,7 +66,7 @@ class ApiTokensControllerTest extends TestCase
     {
         $this->requestJson();
 
-        $this->post('/mobile/login', [
+        $this->post('/api/tokens/add', [
             'email' => 'mark@example.com',
             'password' => 'wrong value',
         ]);
@@ -82,13 +79,9 @@ class ApiTokensControllerTest extends TestCase
 
     public function testDelete(): void
     {
-        $token = $this->makeApiToken(1);
+        $token = $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->requestJson();
-
-        $this->delete("/apitokens/{$token->token}/delete");
+        $this->delete("/api/tokens/{$token->token}/delete");
         $this->assertResponseCode(204);
         $apiTokens = $this->fetchTable('ApiTokens');
         $this->assertCount(0, $apiTokens->find()->all());
@@ -97,15 +90,12 @@ class ApiTokensControllerTest extends TestCase
     public function testDeletePermissions(): void
     {
         $token = $this->makeApiToken(2);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->requestJson();
-
-        $this->delete("/apitokens/{$token->token}/delete");
+        $this->delete("/api/tokens/{$token->token}/delete");
         $this->assertResponseCode(403);
 
         $apiTokens = $this->fetchTable('ApiTokens');
-        $this->assertCount(1, $apiTokens->find()->all());
+        $this->assertCount(2, $apiTokens->find()->all());
     }
 }

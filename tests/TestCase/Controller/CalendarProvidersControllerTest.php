@@ -48,15 +48,14 @@ class CalendarProvidersControllerTest extends TestCase
      */
     public function testCreateFromGoogle(): void
     {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
+        $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/calendars/google/new', [
             'accessToken' => 'goog-access-token',
             'refreshToken' => 'goog-refresh-token',
         ]);
-        $this->assertResponseOk();
+        $this->assertRedirect(['_name' => 'calendarproviders:index']);
 
         $provider = $this->viewVariable('provider');
         $this->assertNotEmpty($provider);
@@ -72,9 +71,8 @@ class CalendarProvidersControllerTest extends TestCase
      */
     public function testCreateFromGoogleInvalidCredential(): void
     {
-        $token = $this->makeApiToken(1);
-        $this->useApiToken($token->token);
-        $this->requestJson();
+        $this->login();
+        $this->enableCsrfToken();
 
         $this->post('/calendars/google/new', [
             'accessToken' => 'goog-access-token',
@@ -105,29 +103,6 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
-     * Test index method
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
-     */
-    public function testIndexApi(): void
-    {
-        $token = $this->makeApiToken();
-        // Owned by a different user.
-        $provider = $this->makeCalendarProvider(1, 'other@example.com');
-
-        $this->requestJson();
-        $this->useApiToken($token->token);
-
-        $this->get('/calendars');
-        $this->assertResponseOk();
-        $records = $this->viewVariable('providers');
-
-        $this->assertCount(1, $records);
-        $this->assertEquals($provider->id, $records[0]->id);
-    }
-
-    /**
      * @vcr controller_calendarsources_add.yml
      */
     public function testIndexIncludeLinkedAndUnlinked(): void
@@ -153,72 +128,6 @@ class CalendarProvidersControllerTest extends TestCase
     }
 
     /**
-     * Test view
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
-     */
-    public function testView(): void
-    {
-        // Owned by a different user.
-        $this->makeCalendarProvider(2, 'other@example.com');
-        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
-        $this->makeCalendarSource($ownProvider->id, 'primary', [
-            'provider_id' => $ownProvider->id,
-        ]);
-
-        $this->login();
-        $this->requestJson();
-        $this->get("/calendars/{$ownProvider->id}/view");
-        $this->assertResponseOk();
-        $provider = $this->viewVariable('provider');
-
-        $this->assertEquals($ownProvider->id, $provider->id);
-        $this->assertNotEmpty($provider->calendar_sources);
-    }
-
-    /**
-     * Test view permissions
-     *
-     * @return void
-     */
-    public function testViewPermissions(): void
-    {
-        // Owned by a different user.
-        $provider = $this->makeCalendarProvider(2, 'other@example.com');
-        $this->login();
-        $this->requestJson();
-        $this->get("/calendars/{$provider->id}/view");
-        $this->assertResponseError();
-    }
-
-    /**
-     * Test view with broken auth
-     *
-     * @vcr controller_calendarsources_add_auth_fail.yml
-     * @return void
-     */
-    public function testViewBrokenGoogleAuth(): void
-    {
-        // Owned by a different user.
-        $this->makeCalendarProvider(2, 'other@example.com');
-        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
-        $this->makeCalendarSource($ownProvider->id, 'primary', [
-            'provider_id' => $ownProvider->id,
-        ]);
-
-        $this->login();
-        $this->requestJson();
-        $this->get("/calendars/{$ownProvider->id}/view");
-        $this->assertResponseOk();
-        $provider = $this->viewVariable('provider');
-
-        $this->assertEquals($ownProvider->id, $provider->id);
-        $this->assertTrue($provider->broken_auth);
-        $this->assertEquals([], $this->viewVariable('calendars'));
-    }
-
-    /**
      * Test delete method
      *
      * @return void
@@ -231,23 +140,6 @@ class CalendarProvidersControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/calendars/{$provider->id}/delete");
         $this->assertRedirect('/calendars');
-    }
-
-    /**
-     * Test delete a calendar provider.
-     *
-     * @return void
-     */
-    public function testDeleteApi(): void
-    {
-        $token = $this->makeApiToken();
-        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
-
-        $this->requestJson();
-        $this->useApiToken($token->token);
-        $this->enableCsrfToken();
-        $this->post("/calendars/{$provider->id}/delete");
-        $this->assertResponseOk();
     }
 
     /**

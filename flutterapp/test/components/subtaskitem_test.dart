@@ -51,7 +51,7 @@ void main() {
       var callCount = 0;
       actions.client = MockClient((request) async {
         callCount = 1;
-        if (request.url.path == '/tasks/1/subtasks/1/toggle') {
+        if (request.url.path == '/api/tasks/1/subtasks/1/toggle') {
           return Response('', 200);
         }
         throw Exception('Request to ${request.url.path} has no response defined');
@@ -72,7 +72,7 @@ void main() {
       var callCount = 0;
       actions.client = MockClient((request) async {
         callCount = 1;
-        if (request.url.path == '/tasks/1/subtasks/1/edit') {
+        if (request.url.path == '/api/tasks/1/subtasks/1/edit') {
           return Response(subtaskUpdate, 200);
         }
         throw Exception('Request to ${request.url.path} has no response defined');
@@ -94,7 +94,7 @@ void main() {
       var callCount = 0;
       actions.client = MockClient((request) async {
         callCount = 1;
-        if (request.url.path == '/tasks/1/subtasks/1/delete') {
+        if (request.url.path == '/api/tasks/1/subtasks/1/delete') {
           return Response('', 200);
         }
         throw Exception('Request to ${request.url.path} has no response defined');

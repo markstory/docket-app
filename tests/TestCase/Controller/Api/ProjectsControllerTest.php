@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Model\Table\ProjectsTable;
 use App\Test\TestCase\FactoryTrait;
@@ -9,9 +9,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\ProjectsController Test Case
- *
- * @uses \App\Controller\ProjectsController
+ * App\Controller\Api\ProjectsController Test Case
  */
 class ProjectsControllerTest extends TestCase
 {
@@ -26,6 +24,7 @@ class ProjectsControllerTest extends TestCase
      * @var array
      */
     protected $fixtures = [
+        'app.ApiTokens',
         'app.Projects',
         'app.ProjectSections',
         'app.Users',
@@ -40,31 +39,47 @@ class ProjectsControllerTest extends TestCase
         $this->Projects = $this->fetchTable('Projects');
     }
 
-    public function testView(): void
+    public function testIndexPermissions(): void
     {
-        $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
-        $this->makeTask('first post', $home->id, 0);
+        $home = $this->makeProject('Home', 1, 0);
+        $this->makeProject('Work', 2, 1);
 
-        $this->login();
-        $this->get("/projects/{$home->slug}");
+        $this->loginApi(1);
+        $this->get('/api/projects');
 
         $this->assertResponseOk();
-        $this->assertSame($home->id, $this->viewVariable('project')->id);
-        $this->assertCount(1, $this->viewVariable('tasks'));
+
+        $projects = $this->viewVariable('projects')->toArray();
+        $this->assertCount(1, $projects);
+        $this->assertEquals($home->slug, $projects[0]->slug);
     }
 
-    public function testViewHtmx(): void
+    public function testIndex(): void
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 1);
+        $this->makeTask('first post', $home->id, 0);
+        $this->loginApi(1);
+
+        $this->get('/api/projects');
+
+        $this->assertResponseOk();
+
+        $projects = $this->viewVariable('projects')->toArray();
+        $this->assertCount(2, $projects);
+        $this->assertEquals($home->slug, $projects[0]->slug);
+        $this->assertEquals($work->slug, $projects[1]->slug);
+    }
+
+    public function testViewApiToken(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
         $this->makeTask('first post', $home->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->useHtmx();
-        $this->get("/projects/{$home->slug}");
+        $this->get("/api/projects/{$home->slug}");
 
         $this->assertResponseOk();
-        // Important to close menus like move project and reschedule.
-        $this->assertHeader('Hx-Trigger', 'close');
         $this->assertSame($home->id, $this->viewVariable('project')->id);
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
@@ -77,9 +92,9 @@ class ProjectsControllerTest extends TestCase
         $home = $this->makeProject('Home', 1, 0);
         $this->makeTask('first post', $home->id, 0);
         $this->makeTask('second post', $home->id, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/projects/{$home->slug}");
+        $this->get("/api/projects/{$home->slug}");
 
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
@@ -91,55 +106,58 @@ class ProjectsControllerTest extends TestCase
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
         $this->makeTask('first post', $home->id, 0);
         $this->makeTask('done', $home->id, 0, ['completed' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->get("/projects/{$home->slug}/?completed=1");
+        $this->get("/api/projects/{$home->slug}/?completed=1");
 
         $this->assertResponseOk();
         $this->assertSame($home->id, $this->viewVariable('project')->id);
         $this->assertCount(1, $this->viewVariable('tasks'));
     }
 
-    public function testAddGet(): void
-    {
-        $this->login();
-        $this->enableCsrfToken();
-        $this->configRequest([
-            'headers' => ['Referer' => '/tasks/today'],
-        ]);
-        $this->get('/projects/add');
-
-        $this->assertResponseOk();
-        $this->assertTemplate('Projects/add');
-        $this->assertSame('/tasks/today', $this->viewVariable('referer'));
-    }
-
     public function testAddAppendRanking(): void
     {
         $this->makeProject('Home', 1, 0, ['archived' => true]);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/add', [
+        $this->loginApi(1);
+        $this->post('/api/projects/add', [
             'name' => 'second',
             'color' => '8',
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
         $this->assertEquals('second', $project->name);
         $this->assertEquals(1, $project->ranking);
     }
 
+    public function testAdd(): void
+    {
+        $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->loginApi(1);
+
+        $this->post('/api/projects/add', [
+            'name' => 'second',
+            'color' => '8',
+        ]);
+        $this->assertResponseOk();
+
+        $project = $this->viewVariable('project');
+        $this->assertEquals('second', $project->name);
+        $this->assertEquals(1, $project->ranking);
+
+        $project = $this->Projects->find()->where(['Projects.slug' => 'second'])->firstOrFail();
+        $this->assertNotEmpty($project->id);
+    }
+
     public function testAddReservedSlug(): void
     {
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/add', [
+        $this->loginApi(1);
+        $this->post('/api/projects/add', [
             'name' => 'add',
             'color' => '8',
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $project = $this->Projects->find()->first();
         $this->assertEquals('add', $project->name);
@@ -149,13 +167,13 @@ class ProjectsControllerTest extends TestCase
     public function testAddSlugScopedToUser()
     {
         $this->makeProject('Home', 2, 0);
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/add', [
+        $this->loginApi(1);
+
+        $this->post('/api/projects/add', [
             'name' => 'Home',
             'color' => '8',
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
         $homeCount = $this->Projects->find()->where(['Projects.slug' => 'home'])->count();
         $this->assertSame(2, $homeCount);
 
@@ -166,17 +184,19 @@ class ProjectsControllerTest extends TestCase
         $this->assertNotEmpty($new);
     }
 
-    public function testEdit(): void
+    public function testEditApiToken(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/edit", [
+        $this->post("/api/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => '8',
         ]);
-        $this->assertRedirect('/projects/home-too');
+        $this->assertResponseOk();
+
+        $this->assertNotEmpty($this->viewVariable('project'));
+        $this->assertEmpty($this->viewVariable('errors'));
 
         $project = $this->Projects->find()->where(['Projects.id' => $home->id])->firstOrFail();
         $this->assertEquals('Home too', $project->name);
@@ -187,27 +207,24 @@ class ProjectsControllerTest extends TestCase
     public function testEditValidationError(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/edit", [
+        $this->post("/api/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => 'not a color',
             'referer' => '/tasks/upcoming',
         ]);
-        $this->assertResponseOk();
 
-        $this->assertSame('/tasks/upcoming', $this->viewVariable('referer'));
+        $this->assertResponseCode(422);
         $this->assertArrayHasKey('color', $this->viewVariable('errors'));
     }
 
     public function testEditPermission(): void
     {
         $home = $this->makeProject('Home', 2, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/edit", [
+        $this->post("/api/projects/{$home->slug}/edit", [
             'name' => 'Home too',
             'color' => '999999',
         ]);
@@ -222,11 +239,11 @@ class ProjectsControllerTest extends TestCase
     public function testDelete(): void
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/delete");
-        $this->assertRedirect('/tasks/today');
+        $this->post("/api/projects/{$home->slug}/delete");
+
+        $this->assertResponseCode(204);
         $this->assertFalse($this->Projects->exists(['slug' => $home->slug]));
     }
 
@@ -238,10 +255,9 @@ class ProjectsControllerTest extends TestCase
     public function testDeletePermission(): void
     {
         $home = $this->makeProject('Home', 2, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/delete");
+        $this->post("/api/projects/{$home->slug}/delete");
         $this->assertResponseCode(404);
         $this->assertTrue($this->Projects->exists(['slug' => $home->slug]));
     }
@@ -250,10 +266,9 @@ class ProjectsControllerTest extends TestCase
     {
         $this->makeProject('Home', 1, 0, ['archived' => true]);
         $this->makeProject('Work', 1, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->get('/projects/archived');
+        $this->get('/api/projects/archived');
 
         $this->assertResponseOk();
         $archived = $this->viewVariable('archived');
@@ -263,11 +278,10 @@ class ProjectsControllerTest extends TestCase
     public function testArchive()
     {
         $home = $this->makeProject('Home', 1, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/archive");
-        $this->assertRedirect('/tasks/today');
+        $this->post("/api/projects/{$home->slug}/archive");
+        $this->assertResponseOk();
 
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertTrue($result->archived);
@@ -276,22 +290,20 @@ class ProjectsControllerTest extends TestCase
     public function testArchivePermission()
     {
         $home = $this->makeProject('Home', 2, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/archive");
+        $this->post("/api/projects/{$home->slug}/archive");
         $this->assertResponseCode(404);
     }
 
     public function testUnarchive()
     {
         $home = $this->makeProject('Home', 1, 0, ['archived' => true]);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/unarchive");
-        $this->assertRedirect('/tasks/today');
+        $this->post("/api/projects/{$home->slug}/unarchive");
 
+        $this->assertResponseOk();
         $result = $this->Projects->find()->where(['id' => $home->id])->first();
         $this->assertFalse($result->archived);
     }
@@ -299,10 +311,10 @@ class ProjectsControllerTest extends TestCase
     public function testUnArchivePermission()
     {
         $home = $this->makeProject('Home', 2, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/unarchive");
+        $this->post("/api/projects/{$home->slug}/unarchive");
+
         $this->assertResponseCode(404);
     }
 
@@ -310,10 +322,9 @@ class ProjectsControllerTest extends TestCase
     {
         $home = $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 2, 3);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$work->slug}/move", [
+        $this->post("/api/projects/{$work->slug}/move", [
             'ranking' => 0,
         ]);
         $this->assertResponseCode(404);
@@ -322,13 +333,32 @@ class ProjectsControllerTest extends TestCase
     public function testMoveNoData()
     {
         $home = $this->makeProject('Home', 1, 0);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->enableRetainFlashMessages();
-        $this->post("/projects/{$home->slug}/move");
-        $this->assertRedirect('/tasks/today');
-        $this->assertFlashElement('flash/error');
+        $this->post("/api/projects/{$home->slug}/move");
+        $this->assertResponseCode(400);
+        $this->assertNotEmpty($this->viewVariable('errors'));
+    }
+
+    public function testMove()
+    {
+        $home = $this->makeProject('Home', 1, 0);
+        $work = $this->makeProject('Work', 1, 3);
+        $fun = $this->makeProject('Fun', 1, 6);
+        $this->loginApi(1);
+
+        $this->post("/api/projects/{$home->slug}/move", [
+            'ranking' => 1,
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('"home"');
+
+        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $expected = [$work->id, $home->id, $fun->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
     }
 
     public function testMoveDown()
@@ -336,13 +366,12 @@ class ProjectsControllerTest extends TestCase
         $home = $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 1, 3);
         $fun = $this->makeProject('Fun', 1, 6);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$home->slug}/move", [
+        $this->post("/api/projects/{$home->slug}/move", [
             'ranking' => 1,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];
@@ -357,87 +386,15 @@ class ProjectsControllerTest extends TestCase
         $home = $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 1, 3);
         $fun = $this->makeProject('Fun', 1, 6);
+        $this->loginApi(1);
 
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post("/projects/{$fun->slug}/move", [
+        $this->post("/api/projects/{$fun->slug}/move", [
             'ranking' => 0,
         ]);
-        $this->assertRedirect('/tasks/today');
+        $this->assertResponseOk();
 
         $results = $this->Projects->find()->orderAsc('ranking')->toArray();
         $expected = [$fun->id, $home->id, $work->id];
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
-    }
-
-    public function testReorderOk()
-    {
-        $home = $this->makeProject('Home', 1, 0);
-        $work = $this->makeProject('Work', 1, 3);
-        $fun = $this->makeProject('Fun', 1, 6);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/reorder', [
-            'id' => [$fun->id, $work->id, $home->id],
-        ]);
-        $this->assertResponseOk();
-        $this->assertResponseContains('Home');
-        $this->assertResponseContains('Work');
-
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
-        $expected = [$fun->id, $work->id, $home->id];
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
-    }
-
-    public function testReorderPermissions()
-    {
-        $home = $this->makeProject('Home', 1, 0);
-        $work = $this->makeProject('Work', 1, 3);
-        $nope = $this->makeProject('Other Home', 2, 0);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/reorder', [
-            'id' => [$nope->id, $work->id, $home->id],
-        ]);
-        $this->assertResponseCode(400);
-
-        $results = $this->Projects->find()
-            ->orderAsc('user_id')
-            ->orderAsc('ranking')
-            ->toArray();
-        $expected = [$home->id, $work->id, $nope->id];
-        $this->assertCount(count($expected), $results);
-        foreach ($expected as $i => $id) {
-            $this->assertEquals($id, $results[$i]->id);
-        }
-    }
-
-    public function testReorderPartialUpdates()
-    {
-        $home = $this->makeProject('Home', 1, 0);
-        $work = $this->makeProject('Work', 1, 3);
-        $other = $this->makeProject('Other', 1, 6);
-
-        $this->login();
-        $this->enableCsrfToken();
-        $this->post('/projects/reorder', [
-            'id' => [$other->id, $work->id],
-        ]);
-        $this->assertResponseOk();
-
-        $results = $this->Projects->find()
-            ->orderAsc('ranking')
-            ->orderAsc('name')
-            ->toArray();
-        $expected = [$home->id, $other->id, $work->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
             $this->assertEquals($id, $results[$i]->id);

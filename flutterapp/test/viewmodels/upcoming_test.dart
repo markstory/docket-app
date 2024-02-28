@@ -65,7 +65,7 @@ void main() {
 
     test('loadData() refreshes from server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -100,7 +100,7 @@ void main() {
 
     test('loadData() refresh from server when expired', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -119,7 +119,7 @@ void main() {
 
     test('loadData() refresh from server when there are stale days', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -137,10 +137,10 @@ void main() {
 
     test('reorderTask() updates state', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/move') {
+        if (request.url.path == '/api/tasks/1/move') {
           var payload = jsonDecode(request.body);
           expect(payload['due_on'], equals(formatters.dateString(tomorrow)));
           expect(payload['day_order'], equals(0));
@@ -165,10 +165,10 @@ void main() {
       skip: 'need a fixture with a task in evening as you cannot drag into regions that do not exist',
       'reorderTask() moves tasks into evening', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/move') {
+        if (request.url.path == '/api/tasks/1/move') {
           var payload = jsonDecode(request.body);
           expect(payload['day_order'], equals(0));
           expect(payload['evening'], isTrue);
@@ -194,10 +194,10 @@ void main() {
 
     test('reorderTask() moves tasks between days', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/1/move') {
+        if (request.url.path == '/api/tasks/1/move') {
           var payload = jsonDecode(request.body);
           expect(payload['day_order'], equals(0));
           expect(payload['evening'], isFalse);
@@ -222,7 +222,7 @@ void main() {
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -240,7 +240,7 @@ void main() {
 
     test('refreshTasks() loads data from the server', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
         throw "Unexpected request to ${request.url.path}";
@@ -258,10 +258,10 @@ void main() {
 
     test('insertAt() can add tasks', () async {
       actions.client = MockClient((request) async {
-        if (request.url.path == '/tasks/upcoming') {
+        if (request.url.path == '/api/tasks/upcoming') {
           return Response(tasksResponseFixture, 200);
         }
-        if (request.url.path == '/tasks/99/move') {
+        if (request.url.path == '/api/tasks/99/move') {
           return Response('', 200);
         }
         throw "Unknown request to ${request.url.path}";

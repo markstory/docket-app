@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use App\Model\Entity\Project;
-use Cake\Http\Exception\NotFoundException;
+use Cake\View\JsonView;
 use InvalidArgumentException;
 
 /**
@@ -14,6 +15,11 @@ use InvalidArgumentException;
  */
 class ProjectSectionsController extends AppController
 {
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
     protected function getProject(string $slug): Project
     {
         $query = $this->ProjectSections->Projects->findBySlug($slug);
@@ -23,40 +29,15 @@ class ProjectSectionsController extends AppController
         return $query->firstOrFail();
     }
 
-    public function options()
-    {
-        $projectId = $this->request->getQuery('project_id');
-        if (!$projectId) {
-            throw new NotFoundException();
-        }
-        $project = $this->ProjectSections->Projects->get($projectId);
-        $this->Authorization->authorize($project, 'view');
-
-        $sections = $this->ProjectSections
-            ->find()
-            ->where(['ProjectSections.project_id' => $project->id])
-            ->toArray();
-        $this->set('sections', $sections);
-        $this->set('value', $sections);
-        $this->viewBuilder()->setLayout('ajax');
-    }
-
     public function add(string $projectSlug)
     {
         $project = $this->getProject($projectSlug);
         $this->Authorization->authorize($project, 'edit');
 
         $section = $this->ProjectSections->newEmptyEntity();
-        $referer = $this->getReferer();
-
-        $this->set('referer', $referer);
-        $this->set('section', $section);
-        $this->set('project', $project);
-
+        $serialize = [];
+        $success = false;
         if ($this->request->is(['post', 'put'])) {
-            $redirect = null;
-            $success = false;
-
             $section = $this->ProjectSections->patchEntity(
                 $section,
                 ['project_id' => $project->id] + $this->request->getData()
@@ -64,17 +45,19 @@ class ProjectSectionsController extends AppController
             $section->ranking = $this->ProjectSections->getNextRanking($project->id);
             if ($this->ProjectSections->save($section)) {
                 $success = true;
-                $redirect = $referer;
+                $serialize[] = 'section';
+            } else {
+                $this->set('errors', $this->flattenErrors($section->getErrors()));
+                $serialize[] = 'errors';
             }
-            $this->set('errors', $this->flattenErrors($section->getErrors()));
-
-            return $this->respond([
-                'success' => $success,
-                'redirect' => $redirect,
-                'flashSuccess' => __('The section has been saved.'),
-                'flashError' => __('The section could not be saved. Please, try again.'),
-            ]);
         }
+        $this->set('section', $section);
+
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'statusError' => 422,
+        ]);
     }
 
     /**
@@ -87,8 +70,12 @@ class ProjectSectionsController extends AppController
         $section = $this->ProjectSections->get($id);
         $this->Authorization->authorize($project, 'edit');
 
-        $this->set('project', $project);
         $this->set('section', $section);
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => ['section'],
+        ]);
     }
 
     /**
@@ -96,16 +83,14 @@ class ProjectSectionsController extends AppController
      */
     public function edit(string $projectSlug, int $id)
     {
-        $referer = $this->getReferer();
         $project = $this->getProject($projectSlug);
         $section = $this->ProjectSections->get($id);
         $this->Authorization->authorize($project, 'edit');
 
         $this->set('section', $section);
-        $this->set('project', $project);
 
         if ($this->request->is(['post', 'put'])) {
-            $redirect = null;
+            $serialize = [];
             $success = false;
 
             $section = $this->ProjectSections->patchEntity(
@@ -113,29 +98,20 @@ class ProjectSectionsController extends AppController
                 $this->request->getData()
             );
             if ($this->ProjectSections->save($section)) {
-                $redirect = $referer;
                 $success = true;
+                $this->set('section', $section);
+                $serialize[] = 'section';
             } else {
                 $this->set('errors', $this->flattenErrors($section->getErrors()));
+                $serialize[] = 'errors';
             }
 
             return $this->respond([
                 'success' => $success,
-                'flashSuccess' => __('The section has been saved.'),
-                'flashError' => __('The section could not be saved.'),
-                'redirect' => $redirect,
+                'serialize' => $serialize,
+                'statusError' => 422,
             ]);
         }
-    }
-
-    public function deleteConfirm(string $projectSlug, string $id)
-    {
-        $project = $this->getProject($projectSlug);
-        $section = $this->ProjectSections->get($id);
-
-        $this->Authorization->authorize($project, 'delete');
-        $this->set('project', $project);
-        $this->set('section', $section);
     }
 
     public function delete(string $projectSlug, string $id)
@@ -145,13 +121,21 @@ class ProjectSectionsController extends AppController
 
         $projectSection = $this->ProjectSections->get($id);
 
+        $success = false;
+        $serialize = null;
         if ($this->ProjectSections->delete($projectSection)) {
-            $this->Flash->success(__('The project section has been deleted.'));
+            $success = true;
         } else {
-            $this->Flash->error(__('The project section could not be deleted. Please, try again.'));
+            $serialize = ['errors'];
+            $this->set('errors', $this->flattenErrors($projectSection->getErrors()));
         }
 
-        return $this->redirect(['_name' => 'projects:view', $projectSlug]);
+        return $this->respond([
+            'success' => $success,
+            'statusSuccess' => 204,
+            'statusError' => 422,
+            'serialize' => $serialize,
+        ]);
     }
 
     public function move(string $projectSlug, string $id)
@@ -163,13 +147,22 @@ class ProjectSectionsController extends AppController
         $operation = [
             'ranking' => $this->request->getData('ranking'),
         ];
+        $success = false;
+        $serialize = [];
         try {
             $this->ProjectSections->move($projectSection, $operation);
-            $this->Flash->success(__('Project section reordered.'));
+            $success = true;
+            $serialize[] = 'section';
+            $this->set('section', $projectSection);
         } catch (InvalidArgumentException $e) {
-            $this->Flash->error($e->getMessage());
+            $serialize[] = 'errors';
+            $this->set('errors', $this->flattenErrors($projectSection->getErrors()));
         }
 
-        return $this->redirect($this->referer(['_name' => 'projects:view', $projectSlug]));
+        return $this->respond([
+            'success' => $success,
+            'serialize' => $serialize,
+            'statusError' => 422,
+        ]);
     }
 }

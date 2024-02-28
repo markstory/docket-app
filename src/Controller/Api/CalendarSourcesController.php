@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use App\Model\Entity\CalendarSource;
 use App\Service\CalendarService;
 use Cake\View\JsonView;
@@ -59,6 +60,7 @@ class CalendarSourcesController extends AppController
             'contain' => ['CalendarSources'],
         ]);
         $this->Authorization->authorize($provider, 'edit');
+        $serialize = [];
         $success = false;
         $error = '';
 
@@ -68,6 +70,7 @@ class CalendarSourcesController extends AppController
 
             $source = $this->CalendarSources->newEntity($data);
             if ($this->CalendarSources->save($source)) {
+                $serialize = ['source'];
                 $this->set('source', $source);
 
                 $service->setAccessToken($provider);
@@ -82,6 +85,7 @@ class CalendarSourcesController extends AppController
             }
         }
         if ($error) {
+            $serialize[] = 'error';
             $this->set('error', $error);
         }
 
@@ -89,6 +93,7 @@ class CalendarSourcesController extends AppController
             'success' => $success,
             'flashSuccess' => __('Your calendar was added and will be synced.'),
             'flashError' => $error,
+            'serialize' => $serialize,
             'redirect' => $this->urlToProvider($provider->id),
         ]);
     }
@@ -106,20 +111,21 @@ class CalendarSourcesController extends AppController
 
         $service->setAccessToken($source->calendar_provider);
         $success = true;
-        $error = '';
+        $serialize = [];
         try {
             $service->syncEvents($source);
             $this->set('source', $source);
+            $serialize[] = 'source';
         } catch (\Exception $e) {
-            $error = __('Calendar not refreshed. %s', $e->getMessage());
+            debug('error');
             $success = false;
+            $error = __('Calendar not refreshed. %s', $e->getMessage());
+            $this->set('errors', [$error]);
         }
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Calendar refreshed'),
-            'flashError' => $error,
-            'redirect' => $this->urlToProvider($source->calendar_provider_id),
+            'serialize' => $serialize,
         ]);
     }
 
@@ -134,6 +140,7 @@ class CalendarSourcesController extends AppController
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
+        $serialize = [];
         $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             // Only a subset of fields are user editable.
@@ -142,14 +149,17 @@ class CalendarSourcesController extends AppController
             ]);
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
+                $serialize = ['source'];
                 $this->set('source', $calendarSource);
             } else {
+                $serialize = ['errors'];
                 $this->set('errors', $this->flattenErrors($calendarSource->getErrors()));
             }
         }
 
         return $this->respond([
             'success' => $success,
+            'serialize' => $serialize,
             'flashSuccess' => __('The calendar has been updated.'),
             'flashError' => __('The calendar could not be modified. Please, try again.'),
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
@@ -178,9 +188,8 @@ class CalendarSourcesController extends AppController
 
         return $this->respond([
             'success' => $success,
-            'flashSuccess' => __('Calendar deleted'),
-            'flashError' => __('Calendar not deleted. Please try again.'),
-            'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
+            'statusSuccess' => 204,
+            'statusError' => 400,
         ]);
     }
 

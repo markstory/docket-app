@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use App\Controller\AppController;
 use App\Service\CalendarService;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\FrozenTime;
@@ -38,8 +39,8 @@ class CalendarProvidersController extends AppController
         }
         $user = $this->request->getAttribute('identity');
 
-        $success = false;
         $serialize = [];
+        $success = false;
         try {
             $provider = $this->CalendarProviders->findOrCreate([
                 'user_id' => $user->id,
@@ -60,19 +61,16 @@ class CalendarProvidersController extends AppController
             $this->set('provider', $provider);
         } catch (PersistenceFailedException $e) {
             $this->set(
-                'error',
+                'errors',
                 __('Could not link google account. Try removing authorization in google and re-connecting')
             );
-            $serialize[] = 'error';
+            $serialize[] = 'errors';
         }
         // end service block.
 
         return $this->respond([
             'success' => $success,
             'serialize' => $serialize,
-            'flashSuccess' => __('Provider created'),
-            'flashError' => __('Provider not created.'),
-            'redirect' => ['_name' => 'calendarproviders:index'],
         ]);
     }
 
@@ -88,40 +86,37 @@ class CalendarProvidersController extends AppController
 
         // There is no UI to go past 50 providers. I see no reasonable use case for this scenario.
         $providers = $this->paginate($query)->toArray();
-        $referer = $this->getReferer('tasks:today');
-
-        $calendars = [];
-        $activeProvider = null;
-
-        // API responses don't use activeProvider as the list and details views are separate.
-        if (!empty($providers) && !$this->request->is('json')) {
-            if ($this->request->getQuery('provider')) {
-                // TODO this should be moved to a sync method.
-                // The sync could be called from a dropdown action.
-                // Synced unlinked calendars will have local state stored in the database (expand CalendarSource)
-                $id = (int)$this->request->getQuery('provider', null);
-                // Relying on the single page number of results to find the 'active' provider.
-                // The active provider is rendered with a calendar list.
-                $activeProvider = array_filter($providers, function ($item) use ($id) {
-                    return $item->id === $id;
-                });
-                $activeProvider = array_pop($activeProvider);
-            }
-            if (!$activeProvider) {
-                $activeProvider = $providers[0];
-            }
-            $service->setAccessToken($activeProvider);
-            try {
-                $calendars = $service->listUnlinkedCalendars($activeProvider->calendar_sources);
-            } catch (BadRequestException $e) {
-                $activeProvider->broken_auth = true;
-            }
-        }
-        $this->set('unlinked', $calendars);
-        $this->set(compact('activeProvider', 'providers', 'referer'));
+        $this->set(compact('providers'));
 
         return $this->respond([
             'success' => true,
+            'serialize' => ['providers'],
+        ]);
+    }
+
+    /**
+     * View method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function view(string $id, CalendarService $service)
+    {
+        $provider = $this->CalendarProviders->get($id, ['contain' => ['CalendarSources']]);
+        $this->Authorization->authorize($provider, 'view');
+
+        $service->setAccessToken($provider);
+        try {
+            $calendars = $service->listUnlinkedCalendars($provider->calendar_sources ?? []);
+        } catch (BadRequestException $e) {
+            $calendars = [];
+            $provider->broken_auth = true;
+        }
+
+        $this->set(compact('provider', 'calendars'));
+
+        return $this->respond([
+            'success' => true,
+            'serialize' => ['provider', 'calendars'],
         ]);
     }
 
@@ -146,9 +141,6 @@ class CalendarProvidersController extends AppController
         return $this->respond([
             'success' => $success,
             'statusSuccess' => 204,
-            'flashSuccess' => __('The calendar account has been deleted.'),
-            'flashError' => __('The calendar account could not be deleted. Please try again.'),
-            'redirect' => ['action' => 'index'],
         ]);
     }
 }
