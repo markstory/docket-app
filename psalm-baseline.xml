@@ -1,56 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
-  <file src="src/Controller/ApiTokensController.php">
-    <InvalidArgument>
-      <code>[$token]</code>
-    </InvalidArgument>
+<files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
+  <file src="src/Console/Installer.php">
+    <PossiblyInvalidArgument>
+      <code><![CDATA[fopen('php://stdin', 'r')]]></code>
+    </PossiblyInvalidArgument>
+  </file>
+  <file src="src/Controller/Api/ProjectsController.php">
+    <RiskyCast>
+      <code><![CDATA[$this->request->getQuery('completed', '0')]]></code>
+    </RiskyCast>
   </file>
   <file src="src/Controller/CalendarProvidersController.php">
     <RiskyCast>
-      <code>$this-&gt;request-&gt;getQuery('provider', null)</code>
+      <code><![CDATA[$this->request->getQuery('provider', null)]]></code>
     </RiskyCast>
   </file>
   <file src="src/Controller/ProjectsController.php">
     <RiskyCast>
-      <code>$this-&gt;request-&gt;getQuery('completed', '0')</code>
+      <code><![CDATA[$this->request->getQuery('completed', '0')]]></code>
     </RiskyCast>
   </file>
   <file src="src/Model/Table/ProjectSectionsTable.php">
+    <InvalidPropertyFetch>
+      <code><![CDATA[$query->firstOrFail()->count]]></code>
+    </InvalidPropertyFetch>
     <NoInterfaceProperties>
-      <code>$query-&gt;firstOrFail()-&gt;count</code>
+      <code><![CDATA[$query->firstOrFail()->count]]></code>
     </NoInterfaceProperties>
-    <PossiblyInvalidPropertyFetch>
-      <code>$query-&gt;firstOrFail()-&gt;count</code>
-    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/ProjectsTable.php">
+    <InvalidPropertyFetch>
+      <code><![CDATA[$query->firstOrFail()->count]]></code>
+    </InvalidPropertyFetch>
     <NoInterfaceProperties>
-      <code>$query-&gt;firstOrFail()-&gt;count</code>
+      <code><![CDATA[$query->firstOrFail()->count]]></code>
     </NoInterfaceProperties>
-    <PossiblyInvalidPropertyFetch>
-      <code>$query-&gt;firstOrFail()-&gt;count</code>
-    </PossiblyInvalidPropertyFetch>
   </file>
   <file src="src/Model/Table/SubtasksTable.php">
     <NoInterfaceProperties>
-      <code>$result-&gt;max</code>
+      <code><![CDATA[$result->max]]></code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/TasksTable.php">
     <NoInterfaceProperties>
-      <code>$result-&gt;max</code>
-      <code>$result-&gt;max_child</code>
-      <code>$result-&gt;max_day</code>
+      <code><![CDATA[$result->max]]></code>
+      <code><![CDATA[$result->max_child]]></code>
+      <code><![CDATA[$result->max_day]]></code>
     </NoInterfaceProperties>
   </file>
   <file src="src/Model/Table/UsersTable.php">
     <UndefinedMagicPropertyFetch>
-      <code>$entity-&gt;current_password</code>
+      <code><![CDATA[$entity->current_password]]></code>
     </UndefinedMagicPropertyFetch>
   </file>
   <file src="src/View/Widget/DueOnWidget.php">
     <UndefinedMagicPropertyFetch>
-      <code>$this-&gt;view-&gt;Date</code>
+      <code><![CDATA[$this->view->Date]]></code>
     </UndefinedMagicPropertyFetch>
   </file>
 </files>
