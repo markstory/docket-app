@@ -46,18 +46,11 @@
     flex-grow: 1;
   }
 
-  .secondary-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .action-primary {
     display: flex;
     align-items: center;
 
     height: $item-height;
-    width: 100%;
     padding: $space 4px;
     text-decoration: none;
     margin-bottom: 1px;
@@ -72,12 +65,13 @@
     }
   }
 
-  .action-secondary {
+  .links .action-secondary {
     @extend .action-primary;
 
     color: var(--color-muted);
 
     &:hover {
+      background: var(--color-bg-low-active);
       color: var(--color-low-emphasis);
     }
   }

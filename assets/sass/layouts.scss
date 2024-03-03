@@ -16,7 +16,6 @@ $sidebar-width: 250px;
     width: $sidebar-width;
 
     padding-top: $space * 3;
-    padding-left: $space * 5;
     background: var(--color-bg-low);
     transition: left 0.26s ease-in-out;
   }
@@ -32,6 +31,7 @@ $sidebar-width: 250px;
     flex-direction: column;
     justify-content: space-between;
     gap: $space * 3;
+    padding-left: $space * 5;
 
     height: 100%;
     overflow-y: auto;

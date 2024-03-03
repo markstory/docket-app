@@ -17,8 +17,11 @@ else :
     $this->extend('default');
 endif;
 
-$todayActive = strpos($this->request->getPath(), '/tasks/today') !== false;
-$upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false;
+$calendarActive = str_contains($this->request->getPath(), '/calendars');
+$archivedActive = str_contains($this->request->getPath(), '/projects/archived');
+$todayActive = str_contains($this->request->getPath(), '/tasks/today');
+$upcomingActive = str_contains($this->request->getPath(), '/tasks/upcoming');
+$trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
 ?>
 <div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
     <section id="sidebar" class="sidebar" data-expanded="false">
@@ -55,30 +58,53 @@ $upcomingActive = strpos($this->request->getPath(), '/tasks/upcoming') !== false
                     <h3>Projects</h3>
                     <?= $this->cell('ProjectsMenu', ['identity' => $identity]) ?>
 
-                    <div className="secondary-actions">
-                        <a class="action-primary" href="<?= $this->Url->build(['_name' => 'projects:add']) ?>" hx-boost="1">
-                            <?= $this->element('icons/plus16') ?>
-                            New Project
-                        </a>
-                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>" hx-boost="1">
-                            <?= $this->element('icons/archive16') ?>
-                            Archived Projects
-                        </a>
-                        <a class="action-secondary" href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>" hx-boost="1">
-                            <?= $this->element('icons/trash16') ?>
-                            Trash Bin
-                        </a>
-
-                        <a href="#"
-                            class="layout-show-help"
-                            hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
-                            hx-target="main.main"
-                            hx-swap="beforeend"
-                            data-hotkey="shift+?"
-                        >
-                            Show keyboard shortcuts
-                        </a>
-                    </div>
+                    <ul class="links">
+                        <li>
+                            <a class="action-primary"
+                                href="<?= $this->Url->build(['_name' => 'projects:add']) ?>"
+                                hx-boost="1"
+                            >
+                                <?= $this->element('icons/plus16') ?>
+                                New Project
+                            </a>
+                            </li>
+                        <li>
+                            <a class="action-secondary <?= $archivedActive ? 'active' : '' ?>"
+                                href="<?= $this->Url->build(['_name' => 'projects:archived']) ?>"
+                                hx-boost="1"
+                            >
+                                <?= $this->element('icons/archive16') ?>
+                                Archived Projects
+                            </a>
+                        </li>
+                        <li>
+                            <a class="action-secondary <?= $calendarActive ? 'active' : '' ?>"
+                                href="<?= $this->Url->build(['_name' => 'calendarproviders:index']) ?>"
+                                hx-boost="1"
+                            >
+                                <?= $this->element('icons/calendar16') ?>
+                                Calendars
+                            </a>
+                        </li>
+                        <li>
+                            <a class="action-secondary <?= $trashActive ? 'active' : '' ?>"
+                               href="<?= $this->Url->build(['_name' => 'tasks:deleted']) ?>"
+                               hx-boost="1"
+                            >
+                                <?= $this->element('icons/trash16') ?>
+                                Trash Bin
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="#"
+                        class="layout-show-help"
+                        hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
+                        hx-target="main.main"
+                        hx-swap="beforeend"
+                        data-hotkey="shift+?"
+                    >
+                        Show keyboard shortcuts
+                    </a>
                 </div>
             </div>
             <?= $this->Html->image('docket-logo-translucent.svg', ['width' => 30, 'height' => 30]) ?>
