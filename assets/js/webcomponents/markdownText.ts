@@ -24,6 +24,12 @@ class MarkdownText extends HTMLElement {
 
     const preview = this.getPreviewElement();
     preview.addEventListener('click', evt => {
+      const target = evt.target;
+      // Don't change modes on links
+      if (target instanceof HTMLElement && target.nodeName == 'A') {
+        return;
+      }
+      // Toggle to update mode
       evt.preventDefault();
       this.showPreview = false;
       this.update();
