@@ -27,3 +27,4 @@ import 'app/webcomponents/markdownText.ts';
 import 'app/webcomponents/modalWindow.ts';
 import 'app/webcomponents/reloadAfter.ts';
 import 'app/webcomponents/selectBox.ts';
+import 'app/webcomponents/sideBar.ts';

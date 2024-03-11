@@ -24,7 +24,7 @@ $upcomingActive = str_contains($this->request->getPath(), '/tasks/upcoming');
 $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
 ?>
 <div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
-    <section id="sidebar" class="sidebar" data-expanded="false">
+    <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
                 <?= $this->element('profile_menu') ?>
@@ -109,10 +109,10 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
             </div>
             <?= $this->Html->image('docket-logo-translucent.svg', ['width' => 30, 'height' => 30]) ?>
         </div>
-        <button class="expander" title="Show project menu" id="sidebar-expander">
+        <button class="expander" title="Show project menu" data-expander="1">
             <?= $this->element('icons/kebab16') ?>
         </button>
-    </section>
+    </side-bar>
     <section class="content">
         <?= $this->fetch('content'); ?>
         <?php if (isset($showGlobalAdd) && $showGlobalAdd) : ?>
@@ -132,14 +132,3 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
         <?php endif; ?>
     </section>
 </div>
-<?= $this->Html->scriptStart() ?>
-(function () {
-    const button = document.getElementById('sidebar-expander');
-    const sidebar = document.getElementById('sidebar');
-    button.addEventListener('click', function (evt) {
-        evt.preventDefault();
-        const current = sidebar.dataset.expanded;
-        sidebar.dataset.expanded = current === 'false' ? 'true' : 'false';
-    });
-})();
-<?= $this->Html->scriptEnd() ?>
