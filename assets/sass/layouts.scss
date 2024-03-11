@@ -61,6 +61,7 @@ $sidebar-width: 250px;
     }
 
     .sidebar {
+      transition: transform 0.25s ease-in;
       transform: translateX($sidebar-width * -1 + 10px);
       z-index: $z-active-ui;
     }
