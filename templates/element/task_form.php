@@ -120,6 +120,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'checked' => false,
                 ]) ?>
                 <?= $this->Form->text('subtasks.{index}.title', ['value' => '{value}']) ?>
+                <?= $this->Form->hidden("subtasks.{index}.ranking", ['value' => '{index}']) ?>
                 <?= $this->Form->button($this->element('icons/trash16'), [
                     'type' => 'button',
                     'value' => '',

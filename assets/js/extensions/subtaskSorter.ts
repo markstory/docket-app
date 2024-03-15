@@ -24,12 +24,23 @@ import {SortableJsEvent} from 'app/types';
       element.addEventListener('end', function (event: SortableJsEvent) {
         event.stopPropagation();
 
-        // Update the ranking of all items in the list
-        const rankings = element.querySelectorAll('input[name*="ranking"]');
-        for (const index in rankings) {
-          const rankInput = rankings[index];
-          if (rankInput instanceof HTMLInputElement) {
-            rankInput.value = index;
+        // Update state in each item as the name attribute indicies and values matter
+        const items = element.querySelectorAll('li');
+        let index = -1;
+        for (const item of items) {
+          index++;
+          const ranking = item.querySelector('input[name*="ranking"]');
+          if (ranking && ranking instanceof HTMLInputElement) {
+            ranking.value = String(index);
+          }
+          // Update array indices as they matter
+          const inputs = item.querySelectorAll('input[name*="subtasks"]');
+          for (const input of inputs) {
+            let updated = input.getAttribute('name');
+            if (updated) {
+              updated = updated.replace(/\d+/, String(index));
+              input.setAttribute('name', updated);
+            }
           }
         }
       } as EventListener);
