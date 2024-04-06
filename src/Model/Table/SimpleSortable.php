@@ -42,7 +42,7 @@ class SimpleSortable
             ->offset($newIndex);
 
         foreach ($this->config['orderBy'] as $order) {
-            $query->orderAsc($order);
+            $query->orderByAsc($order);
         }
         $currentTask = $query->first();
 

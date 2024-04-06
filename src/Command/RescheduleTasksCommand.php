@@ -51,7 +51,7 @@ class RescheduleTasksCommand extends Command
         }
         $tasks = $this->fetchTable('Tasks');
         $query = $tasks->find('overdue');
-        $today = new FrozenDate();
+        $today = new \Cake\I18n\Date();
         $updated = 0;
         foreach ($query->all() as $task) {
             $days = rand(0, 14);

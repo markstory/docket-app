@@ -47,7 +47,7 @@ class CleanupCommand extends Command
     {
         $io->quiet('Starting cleanup');
 
-        $expires = FrozenTime::parse('-14 days');
+        $expires = \Cake\I18n\DateTime::parse('-14 days');
         $io->verbose("Going to remove tasks older than {$expires->toDateTimeString()}");
 
         $tasks = $this->fetchTable('Tasks');

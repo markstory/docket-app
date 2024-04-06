@@ -145,10 +145,10 @@ class CalendarItemsTable extends Table
             ]);
 
             // Create datetimes and set timezones to UTC to match storage.
-            $startTime = (new FrozenTime($startDate, $userTimezone))
+            $startTime = (new \Cake\I18n\DateTime($startDate, $userTimezone))
                 ->setTime(0, 0, 0)
                 ->setTimezone($serverTz);
-            $endTime = (new FrozenTime($endDate, $userTimezone))
+            $endTime = (new \Cake\I18n\DateTime($endDate, $userTimezone))
                 ->setTime(23, 59, 59)
                 ->setTimezone($serverTz);
             $dateTime = $exp->and([
@@ -159,9 +159,9 @@ class CalendarItemsTable extends Table
             return $exp->or([$date, $dateTime]);
         })
             ->contain('CalendarSources')
-            ->orderDesc('CalendarItems.all_day')
-            ->orderAsc('CalendarItems.start_date')
-            ->orderAsc('CalendarItems.start_time')
-            ->orderAsc('CalendarItems.title');
+            ->orderByDesc('CalendarItems.all_day')
+            ->orderByAsc('CalendarItems.start_date')
+            ->orderByAsc('CalendarItems.start_time')
+            ->orderByAsc('CalendarItems.title');
     }
 }

@@ -69,7 +69,7 @@ class CalendarSourceSyncCommand extends Command
         $this->loadModel('CalendarSources');
 
         $sourceId = $args->getArgument('calendarSourceId');
-        $source = $this->CalendarSources->get($sourceId, ['contain' => ['CalendarProviders']]);
+        $source = $this->CalendarSources->get($sourceId, contain: ['CalendarProviders']);
         if ($args->getOption('erase-local')) {
             $io->out('<info>Clearing sync token, and removing all events</info>');
             $source->sync_token = null;

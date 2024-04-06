@@ -25,7 +25,7 @@ class ProjectsControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Projects',
         'app.ProjectSections',
         'app.Users',
@@ -344,7 +344,7 @@ class ProjectsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -365,7 +365,7 @@ class ProjectsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/tasks/today');
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$fun->id, $home->id, $work->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -388,7 +388,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseContains('Home');
         $this->assertResponseContains('Work');
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$fun->id, $work->id, $home->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -410,8 +410,8 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseCode(400);
 
         $results = $this->Projects->find()
-            ->orderAsc('user_id')
-            ->orderAsc('ranking')
+            ->orderByAsc('user_id')
+            ->orderByAsc('ranking')
             ->toArray();
         $expected = [$home->id, $work->id, $nope->id];
         $this->assertCount(count($expected), $results);
@@ -434,8 +434,8 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseOk();
 
         $results = $this->Projects->find()
-            ->orderAsc('ranking')
-            ->orderAsc('name')
+            ->orderByAsc('ranking')
+            ->orderByAsc('name')
             ->toArray();
         $expected = [$home->id, $other->id, $work->id];
         $this->assertCount(count($expected), $results);

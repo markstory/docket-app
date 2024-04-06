@@ -54,7 +54,7 @@ class SluggableBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'label' => ['title'],
         'slug' => 'slug',
         'separator' => '-',

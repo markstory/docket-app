@@ -100,7 +100,7 @@ class CalendarSubscriptionsTable extends Table
 
     public function findExpiring(Query $query, array $options): Query
     {
-        $tomorrow = new FrozenTime('tomorrow');
+        $tomorrow = new \Cake\I18n\DateTime('tomorrow');
 
         return $query->where([
             'CalendarSubscriptions.expires_at <=' => $tomorrow,

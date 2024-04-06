@@ -135,7 +135,7 @@ class ProjectsTable extends Table
     public function findTop(Query $query): Query
     {
         return $query
-            ->orderAsc('Projects.ranking')
+            ->orderByAsc('Projects.ranking')
             ->limit(25);
     }
 

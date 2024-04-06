@@ -49,7 +49,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListGotoDetails()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new \Cake\I18n\Date('tomorrow');
         $project = $this->makeProject('Home', 1);
         $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
         $this->makeTask('Laundry', $project->id, 1, ['due_on' => $tomorrow]);
@@ -71,7 +71,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListMarkComplete()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new \Cake\I18n\Date('tomorrow');
         $project = $this->makeProject('Home', 1);
         $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
 

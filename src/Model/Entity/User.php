@@ -24,8 +24,8 @@ use RuntimeException;
  * @property string $theme
  * @property string $timezone
  * @property bool $email_verified
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Project[] $projects
  */
@@ -42,7 +42,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'name' => true,
         'unverified_email' => true,
         'modified' => true,
@@ -55,7 +55,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      *
      * @var array<array-key, string>
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'password',
         'email_verified',
     ];
@@ -63,7 +63,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * @var array<array-key, string>
      */
-    protected $_virtual = ['avatar_hash'];
+    protected array $_virtual = ['avatar_hash'];
 
     /**
      * @var \Authorization\AuthorizationServiceInterface|null
@@ -160,7 +160,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     public function passwordResetToken(): string
     {
         $emailHash = hash_hmac('sha256', $this->email, Configure::read('Security.emailSalt'));
-        $expires = new FrozenTime(static::PASSWORD_TOKEN_DURATION);
+        $expires = new \Cake\I18n\DateTime(static::PASSWORD_TOKEN_DURATION);
         $data = [
             'uid' => $this->id,
             'val' => $emailHash,
@@ -180,7 +180,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$data || !isset($data->uid, $data->val, $data->exp)) {
             throw new RuntimeException(__('Invalid password reset token provided.'));
         }
-        $now = (new FrozenTime('now'))->getTimestamp();
+        $now = (new \Cake\I18n\DateTime('now'))->getTimestamp();
         if ($data->exp < $now) {
             throw new RuntimeException(__('Expired password reset token provided.'));
         }

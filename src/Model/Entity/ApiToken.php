@@ -11,8 +11,8 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property int $user_id
  * @property string $token
- * @property \Cake\I18n\FrozenTime|null $last_used
- * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\DateTime|null $last_used
+ * @property \Cake\I18n\DateTime $created
  *
  * @property \App\Model\Entity\User $user
  */
@@ -27,7 +27,7 @@ class ApiToken extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'last_used' => true,
         'created' => true,
     ];
@@ -37,7 +37,7 @@ class ApiToken extends Entity
      *
      * @var array<string>
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'id',
         'user_id',
     ];

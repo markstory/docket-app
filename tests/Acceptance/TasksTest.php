@@ -23,7 +23,7 @@ class TasksTest extends AcceptanceTestCase
 
     protected function setupTask()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
 
         return $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
@@ -81,7 +81,7 @@ class TasksTest extends AcceptanceTestCase
 
     public function testViewUpdateTitleAndBody()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 

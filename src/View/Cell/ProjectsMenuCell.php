@@ -16,7 +16,7 @@ class ProjectsMenuCell extends Cell
      *
      * @var array<string>
      */
-    protected $_validCellOptions = ['identity'];
+    protected array $_validCellOptions = ['identity'];
 
     /**
      * @var \App\Model\Entity\User

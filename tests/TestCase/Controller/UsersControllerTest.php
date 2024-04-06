@@ -28,7 +28,7 @@ class UsersControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Projects',
     ];
@@ -372,10 +372,10 @@ class UsersControllerTest extends TestCase
 
     public function testNewPasswordResetGetTokenExpired()
     {
-        FrozenTime::setTestNow(new FrozenTime('-6 hours'));
+        \Cake\I18n\DateTime::setTestNow(new \Cake\I18n\DateTime('-6 hours'));
         $user = $this->Users->get(1);
         $token = $user->passwordResetToken();
-        FrozenTime::setTestNow(null);
+        \Cake\I18n\DateTime::setTestNow(null);
 
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
@@ -425,10 +425,10 @@ class UsersControllerTest extends TestCase
 
     public function testNewPasswordResetPostExpiredToken()
     {
-        FrozenTime::setTestNow(new FrozenTime('-6 hours'));
+        \Cake\I18n\DateTime::setTestNow(new \Cake\I18n\DateTime('-6 hours'));
         $user = $this->Users->get(1);
         $token = $user->passwordResetToken();
-        FrozenTime::setTestNow(null);
+        \Cake\I18n\DateTime::setTestNow(null);
 
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();

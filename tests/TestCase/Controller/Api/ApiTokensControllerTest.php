@@ -22,7 +22,7 @@ class ApiTokensControllerTest extends TestCase
      *
      * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.ApiTokens',
         'app.Users',
     ];

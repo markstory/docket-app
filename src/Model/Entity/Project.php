@@ -17,8 +17,8 @@ use Cake\ORM\Entity;
  * @property bool $favorite
  * @property bool $archived
  * @property int $ranking
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\Task[] $tasks
@@ -36,7 +36,7 @@ class Project extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'user_id' => false,
         'name' => true,
         'slug' => true,

@@ -18,7 +18,7 @@ class CleanupCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.Projects',
         'app.Tasks',
@@ -32,7 +32,6 @@ class CleanupCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->useCommandRunner();
     }
 
     /**
@@ -43,8 +42,8 @@ class CleanupCommandTest extends TestCase
      */
     public function testExecute(): void
     {
-        $expired = FrozenTime::parse('-15 days');
-        $ok = FrozenTime::parse('-1 hour');
+        $expired = \Cake\I18n\DateTime::parse('-15 days');
+        $ok = \Cake\I18n\DateTime::parse('-1 hour');
 
         $project = $this->makeProject('work', 1);
         $this->makeTask('first task', $project->id, 1, ['deleted_at' => $expired]);
@@ -57,7 +56,7 @@ class CleanupCommandTest extends TestCase
 
         $tasks = $this->fetchTable('Tasks');
         $result = $tasks->find()->all();
-        $this->assertNotEmpty($tasks->get($keepOne->id, ['deleted' => true]));
+        $this->assertNotEmpty($tasks->get($keepOne->id, deleted: true));
         $this->assertNotEmpty($tasks->get($keepTwo->id));
     }
 }

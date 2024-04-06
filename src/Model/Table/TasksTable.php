@@ -179,10 +179,10 @@ class TasksTable extends Table
         $query = $query
             ->leftJoinWith('ProjectSections')
             ->where(['Projects.slug' => $options['slug']])
-            ->orderAsc('ProjectSections.ranking')
-            ->orderAsc('ProjectSections.name')
-            ->orderAsc('Tasks.child_order')
-            ->orderAsc('Tasks.title');
+            ->orderByAsc('ProjectSections.ranking')
+            ->orderByAsc('ProjectSections.name')
+            ->orderByAsc('Tasks.child_order')
+            ->orderByAsc('Tasks.title');
 
         return $query;
     }
@@ -210,10 +210,10 @@ class TasksTable extends Table
         }
 
         return $query
-            ->orderAsc('Tasks.due_on')
-            ->orderAsc('Tasks.evening')
-            ->orderAsc('Tasks.day_order')
-            ->orderAsc('Tasks.title');
+            ->orderByAsc('Tasks.due_on')
+            ->orderByAsc('Tasks.evening')
+            ->orderByAsc('Tasks.day_order')
+            ->orderByAsc('Tasks.title');
     }
 
     public function findUpcoming(Query $query, array $options): Query
@@ -226,23 +226,23 @@ class TasksTable extends Table
             'Tasks.due_on >=' => $options['start'],
             'Tasks.due_on <' => $options['end'],
         ])
-            ->orderAsc('Tasks.due_on')
-            ->orderAsc('Tasks.evening')
-            ->orderAsc('Tasks.day_order')
-            ->orderAsc('Tasks.title');
+            ->orderByAsc('Tasks.due_on')
+            ->orderByAsc('Tasks.evening')
+            ->orderByAsc('Tasks.day_order')
+            ->orderByAsc('Tasks.title');
     }
 
     public function findOverdue(Query $query): Query
     {
-        $today = new FrozenDate('today');
+        $today = new \Cake\I18n\Date('today');
 
         return $query->where([
             'Tasks.due_on IS NOT' => null,
             'Tasks.due_on <' => $today,
         ])
-            ->orderAsc('Tasks.due_on')
-            ->orderAsc('Tasks.evening')
-            ->orderAsc('Tasks.day_order');
+            ->orderByAsc('Tasks.due_on')
+            ->orderByAsc('Tasks.evening')
+            ->orderByAsc('Tasks.day_order');
     }
 
     /**
@@ -336,8 +336,8 @@ class TasksTable extends Table
         // deleted/completed. Try to find the item at the target offset
         $currentItem = $this->find()
             ->where($conditions)
-            ->orderAsc($property)
-            ->orderAsc('title')
+            ->orderByAsc($property)
+            ->orderByAsc('title')
             ->offset($value)
             ->first();
 

@@ -82,9 +82,9 @@ class CalendarService
             $token = $this->client->getAccessToken();
             $provider->access_token = $token['access_token'];
             if (!empty($token['expires_in'])) {
-                $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
+                $provider->token_expiry = \Cake\I18n\DateTime::parse("+{$token['expires_in']} seconds");
             } else {
-                $provider->token_expiry = FrozenTime::parse('+7200 seconds');
+                $provider->token_expiry = \Cake\I18n\DateTime::parse('+7200 seconds');
             }
             $this->CalendarProviders->save($provider);
         }
@@ -219,9 +219,9 @@ class CalendarService
 
         $calendar = new Calendar($this->client);
 
-        $time = new FrozenTime('-1 month');
+        $time = new \Cake\I18n\DateTime('-1 month');
         $options = $defaults = [
-            'timeMin' => $time->format(FrozenTime::RFC3339),
+            'timeMin' => $time->format(\Cake\I18n\DateTime::RFC3339),
             'eventTypes' => ['default', 'focusTime', 'outOfOffice'],
         ];
         // Check if the user has a sync token for this source.
@@ -253,8 +253,8 @@ class CalendarService
                             throw $e;
                         }
                         $instanceOpts = [
-                            'timeMin' => $time->format(FrozenTime::RFC3339),
-                            'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                            'timeMin' => $time->format(\Cake\I18n\DateTime::RFC3339),
+                            'timeMax' => $time->modify('+3 months')->format(\Cake\I18n\DateTime::RFC3339),
                         ];
                         assert($results instanceof GoogleEvents);
                         foreach ($results as $event) {
@@ -285,7 +285,7 @@ class CalendarService
 
                     // Save the nextSyncToken for our next sync.
                     $source->sync_token = $results->getNextSyncToken();
-                    $source->last_sync = FrozenTime::now();
+                    $source->last_sync = \Cake\I18n\DateTime::now();
                     $this->CalendarSources->saveOrFail($source);
 
                     Log::info("Calendar sync complete. source={$source->id}");
@@ -325,10 +325,10 @@ class CalendarService
         foreach ($datetimes as $i => $value) {
             if ($value && $i < 2) {
                 // Dates don't have a timezone
-                $date = FrozenDate::parse($value);
+                $date = \Cake\I18n\Date::parse($value);
                 $datetimes[$i] = $date;
             } elseif ($value) {
-                $time = FrozenTime::parse($value, $eventTz ?? $tz);
+                $time = \Cake\I18n\DateTime::parse($value, $eventTz ?? $tz);
                 $time = $time->setTimezone($tz);
                 $datetimes[$i] = $time;
             }

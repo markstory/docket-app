@@ -18,7 +18,7 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -38,7 +38,6 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->useCommandRunner();
         $this->CalendarSubscriptions = TableRegistry::get('CalendarSubscriptions');
     }
 

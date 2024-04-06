@@ -14,12 +14,12 @@ class ViteAssetHelper extends Helper
     /**
      * @var array<array-key, mixed>
      */
-    protected $helpers = ['Html'];
+    protected array $helpers = ['Html'];
 
     /**
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'manifestFile' => WWW_ROOT . 'manifest.json',
     ];
 

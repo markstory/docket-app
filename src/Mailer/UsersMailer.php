@@ -16,7 +16,7 @@ class UsersMailer extends Mailer
      *
      * @var string
      */
-    public static $name = 'Users';
+    public static string $name = 'Users';
 
     public function resetPassword(User $user)
     {

@@ -14,14 +14,14 @@ use DateTimeInterface;
  * @property int $calendar_source_id
  * @property string $provider_id
  * @property string $title
- * @property \Cake\I18n\FrozenTime|null $start_time Stored in UTC
- * @property \Cake\I18n\FrozenTime|null $end_time Stored in UTC
- * @property \Cake\I18n\FrozenDate|null $start_date Stored as user timezone.
- * @property \Cake\I18n\FrozenDate|null $end_date Stored as user timezone.
+ * @property \Cake\I18n\DateTime|null $start_time Stored in UTC
+ * @property \Cake\I18n\DateTime|null $end_time Stored in UTC
+ * @property \Cake\I18n\Date|null $start_date Stored as user timezone.
+ * @property \Cake\I18n\Date|null $end_date Stored as user timezone.
  * @property bool $all_day
  * @property string|null $html_link
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  * @property string $color
  * @property string $color_hex
  *
@@ -39,7 +39,7 @@ class CalendarItem extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'calendar_source_id' => true,
         'provider_id' => true,
         'title' => true,
@@ -58,12 +58,12 @@ class CalendarItem extends Entity
     /**
      * @var array<array-key, string>
      */
-    protected $_hidden = ['calendar_source'];
+    protected array $_hidden = ['calendar_source'];
 
     /**
      * @var array<array-key, string>
      */
-    protected $_virtual = ['color'];
+    protected array $_virtual = ['color'];
 
     public function getStart(): ?DateTimeInterface
     {

@@ -49,7 +49,7 @@ class CalendarProvidersController extends AppController
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
                 $entity->access_token = $token;
                 $entity->refresh_token = $refresh;
-                $entity->token_expiry = FrozenTime::parse('+1800 seconds');
+                $entity->token_expiry = \Cake\I18n\DateTime::parse('+1800 seconds');
             });
             $this->Authorization->authorize($provider, 'edit');
 

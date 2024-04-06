@@ -13,10 +13,10 @@ use Cake\ORM\Entity;
  * @property int $calendar_provider_id
  * @property string $provider_id
  * @property string $color
- * @property \Cake\I18n\FrozenTime $last_sync
+ * @property \Cake\I18n\DateTime $last_sync
  * @property string|null $sync_token
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\CalendarProvider $calendar_provider
  * @property \App\Model\Entity\CalendarItem[] $calendar_items
@@ -33,7 +33,7 @@ class CalendarSource extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'name' => true,
         'calendar_provider_id' => true,
         'provider_id' => true,
@@ -47,7 +47,7 @@ class CalendarSource extends Entity
         'calendar_subscriptions' => false,
     ];
 
-    protected $_hidden = ['sync_token'];
+    protected array $_hidden = ['sync_token'];
 
     protected function _getColorHex(): string
     {

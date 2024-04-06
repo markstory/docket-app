@@ -13,8 +13,8 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property int $ranking
  * @property bool $archived
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Project $project
  * @property \App\Model\Entity\Task[] $tasks
@@ -30,7 +30,7 @@ class ProjectSection extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'project_id' => true,
         'name' => true,
         'archived' => true,

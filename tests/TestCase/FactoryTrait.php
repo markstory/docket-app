@@ -200,8 +200,8 @@ trait FactoryTrait
         $items = $this->fetchTable('CalendarItems');
         $item = $items->newEntity(array_merge([
             'calendar_source_id' => $sourceId,
-            'start_time' => FrozenTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
-            'end_time' => FrozenTime::parse('-1 day')->format('Y-m-d H:i:s'),
+            'start_time' => \Cake\I18n\DateTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
+            'end_time' => \Cake\I18n\DateTime::parse('-1 day')->format('Y-m-d H:i:s'),
         ], $props));
 
         return $items->saveOrFail($item);

@@ -26,7 +26,7 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
-    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
+    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): \Cake\I18n\Date
     {
         if ($value !== null && !is_string($value)) {
             throw new BadRequestException('Invalid date. Value must be a string.');
@@ -35,7 +35,7 @@ class TasksController extends AppController
             return $this->getDateParam($default, null, $timezone);
         }
         try {
-            return new FrozenDate($value, $timezone);
+            return new \Cake\I18n\Date($value, $timezone);
         } catch (\Exception $e) {
             throw new BadRequestException("Invalid date value of {$value}.");
         }
@@ -43,9 +43,7 @@ class TasksController extends AppController
 
     protected function getTask($id): Task
     {
-        return $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Subtasks'],
-        ]);
+        return $this->Tasks->get($id, contain: ['Projects', 'Subtasks']);
     }
 
     /**
@@ -65,15 +63,14 @@ class TasksController extends AppController
 
         $query = $this->Tasks
             ->find('incomplete')
-            ->find('forDate', ['date' => $date, 'overdue' => $overdue])
+            ->find('forDate', date: $date, overdue: $overdue)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
-        $eventsQuery = $calendarItems->find('upcoming', [
-            'start' => $date,
-            'end' => $date,
-            'timezone' => $timezone,
-        ]);
+        $eventsQuery = $calendarItems->find('upcoming',
+        start: $date,
+        end: $date,
+        timezone: $timezone);
         $this->set('date', $date);
         $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
@@ -116,15 +113,14 @@ class TasksController extends AppController
 
         $query = $this->Tasks
             ->find('incomplete')
-            ->find('upcoming', ['start' => $start, 'end' => $end])
+            ->find('upcoming', start: $start, end: $end)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query);
 
-        $eventsQuery = $calendarItemsTable->find('upcoming', [
-            'start' => $start,
-            'end' => $end,
-            'timezone' => $timezone,
-        ]);
+        $eventsQuery = $calendarItemsTable->find('upcoming',
+        start: $start,
+        end: $end,
+        timezone: $timezone);
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', $end->format('Y-m-d'));
         $this->set('tasks', $query->all());
@@ -144,7 +140,7 @@ class TasksController extends AppController
     public function deleted()
     {
         $query = $this->Tasks
-            ->find('all', ['deleted' => true])
+            ->find('all', deleted: true)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
@@ -265,9 +261,7 @@ class TasksController extends AppController
      */
     public function incomplete($id = null)
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
-        ]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
         $success = false;
         if ($this->request->is(['delete', 'patch', 'post', 'put'])) {
@@ -287,7 +281,7 @@ class TasksController extends AppController
     public function move(string $id)
     {
         $this->request->allowMethod(['post']);
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
         $operation = [
             'child_order' => $this->request->getData('child_order'),
@@ -429,7 +423,7 @@ class TasksController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task);
 
         $success = false;
@@ -449,7 +443,7 @@ class TasksController extends AppController
 
     public function deleteConfirm(string $id)
     {
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'delete');
 
         $this->set('task', $task);
@@ -465,7 +459,7 @@ class TasksController extends AppController
     public function undelete($id = null)
     {
         $this->request->allowMethod('post');
-        $task = $this->Tasks->get($id, ['contain' => ['Projects'], 'deleted' => true]);
+        $task = $this->Tasks->get($id, contain: ['Projects'], deleted: true);
         $this->Authorization->authorize($task);
 
         $success = false;

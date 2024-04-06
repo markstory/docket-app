@@ -35,7 +35,7 @@ class SubtasksController extends AppController
 
     protected function getTask(string $id): Task
     {
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
 
         return $task;

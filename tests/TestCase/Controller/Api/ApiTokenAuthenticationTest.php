@@ -21,7 +21,7 @@ class ApiTokenAuthenticationTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Tasks',
         'app.Projects',
@@ -44,7 +44,7 @@ class ApiTokenAuthenticationTest extends TestCase
         parent::setUp();
 
         $this->project = $this->makeProject('work', 1);
-        $this->task = $this->makeTask('first', $this->project->id, 0, ['due_on' => FrozenTime::parse('tomorrow')]);
+        $this->task = $this->makeTask('first', $this->project->id, 0, ['due_on' => \Cake\I18n\DateTime::parse('tomorrow')]);
 
         $this->loginApi(1);
     }

@@ -17,7 +17,7 @@ class CalendarServiceTest extends TestCase
 {
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -51,20 +51,20 @@ class CalendarServiceTest extends TestCase
         $this->calendarSources = TableRegistry::get('CalendarSources');
         $this->calendarItems = TableRegistry::get('CalendarItems');
 
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        \Cake\I18n\DateTime::setTestNow('2021-07-11 12:13:14');
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        FrozenTime::setTestNow(null);
+        \Cake\I18n\DateTime::setTestNow(null);
     }
 
     protected function getItems($source)
     {
         return $this->calendarItems->find()
             ->where(['calendar_source_id' => $source->id])
-            ->orderAsc('title')
+            ->orderByAsc('title')
             ->toArray();
     }
 
@@ -229,7 +229,7 @@ class CalendarServiceTest extends TestCase
         $this->calendar->syncEvents($source);
         $query = $this->calendarItems->find()
             ->where(['CalendarItems.calendar_source_id' => $source->id])
-            ->orderAsc('CalendarItems.provider_id');
+            ->orderByAsc('CalendarItems.provider_id');
         $results = $query->all();
         $this->assertCount(2, $results);
         $this->assertEquals(['calendar-event-3', 'calendar-event-4'], $results->extract('provider_id')->toList());

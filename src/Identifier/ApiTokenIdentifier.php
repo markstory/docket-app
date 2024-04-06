@@ -29,7 +29,7 @@ class ApiTokenIdentifier extends AbstractIdentifier
         }
 
         // Update the last used timestamp.
-        $tokenUser->last_used = new FrozenTime();
+        $tokenUser->last_used = new \Cake\I18n\DateTime();
         $apiTokens->save($tokenUser);
 
         return $tokenUser->user;

@@ -19,7 +19,7 @@ class CalendarSourcesControllerTest extends TestCase
     /**
      * @var string[]
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -55,7 +55,7 @@ class CalendarSourcesControllerTest extends TestCase
     {
         parent::tearDown();
 
-        FrozenTime::setTestNow(null);
+        \Cake\I18n\DateTime::setTestNow(null);
     }
 
     /**
@@ -63,7 +63,7 @@ class CalendarSourcesControllerTest extends TestCase
      */
     public function testSyncApi(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        \Cake\I18n\DateTime::setTestNow('2021-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
@@ -96,7 +96,7 @@ class CalendarSourcesControllerTest extends TestCase
      */
     public function testSyncReplaceExistingRemoveDeleted(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        \Cake\I18n\DateTime::setTestNow('2021-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [

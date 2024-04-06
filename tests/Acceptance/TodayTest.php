@@ -40,7 +40,7 @@ class TodayTest extends AcceptanceTestCase
 
     public function testTodayDisplaysCalendarEvents()
     {
-        $today = new FrozenDate('today', 'UTC');
+        $today = new \Cake\I18n\Date('today', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
@@ -91,7 +91,7 @@ class TodayTest extends AcceptanceTestCase
 
     public function testCreateInEvening()
     {
-        $today = new FrozenDate('today', 'UTC');
+        $today = new \Cake\I18n\Date('today', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
@@ -155,7 +155,7 @@ class TodayTest extends AcceptanceTestCase
 
     public function testCompleteTask()
     {
-        $today = new FrozenDate('today', 'UTC');
+        $today = new \Cake\I18n\Date('today', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 

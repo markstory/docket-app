@@ -50,7 +50,7 @@ class CalendarProvidersController extends AppController
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
                 $entity->access_token = $token;
                 $entity->refresh_token = $refresh;
-                $entity->token_expiry = FrozenTime::parse('+1800 seconds');
+                $entity->token_expiry = \Cake\I18n\DateTime::parse('+1800 seconds');
             });
             $this->Authorization->authorize($provider, 'edit');
 
@@ -101,7 +101,7 @@ class CalendarProvidersController extends AppController
      */
     public function view(string $id, CalendarService $service)
     {
-        $provider = $this->CalendarProviders->get($id, ['contain' => ['CalendarSources']]);
+        $provider = $this->CalendarProviders->get($id, contain: ['CalendarSources']);
         $this->Authorization->authorize($provider, 'view');
 
         $service->setAccessToken($provider);

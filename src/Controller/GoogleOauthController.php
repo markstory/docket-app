@@ -83,7 +83,7 @@ class GoogleOauthController extends AppController
             ], function ($entity) use ($data, $googleUser) {
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
                 $entity->access_token = $data['access_token'];
-                $entity->token_expiry = FrozenTime::parse("+{$data['expires_in']} seconds");
+                $entity->token_expiry = \Cake\I18n\DateTime::parse("+{$data['expires_in']} seconds");
 
                 if (!isset($data['refresh_token'])) {
                     throw new PersistenceFailedException($entity, 'Missing refresh_token');

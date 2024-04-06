@@ -39,8 +39,8 @@ class GoogleNotificationsController extends AppController
         $service->setAccessToken($source->calendar_provider);
         $service->syncEvents($source);
 
-        $expires = FrozenTime::parse($expiration);
-        $soon = FrozenTime::parse('+1 hour');
+        $expires = \Cake\I18n\DateTime::parse($expiration);
+        $soon = \Cake\I18n\DateTime::parse('+1 hour');
         if ($expires->lessThan($soon)) {
             $service->createSubscription($source);
         }
