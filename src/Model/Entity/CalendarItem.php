@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\Core\Configure;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
-use DateTimeInterface;
 
 /**
  * CalendarItem Entity
@@ -65,7 +66,7 @@ class CalendarItem extends Entity
      */
     protected array $_virtual = ['color'];
 
-    public function getStart(): ?DateTimeInterface
+    public function getStart(): Date|DateTime
     {
         if ($this->start_date) {
             return $this->start_date;
@@ -74,7 +75,7 @@ class CalendarItem extends Entity
         return $this->start_time;
     }
 
-    public function getEnd(): ?DateTimeInterface
+    public function getEnd(): Date|DateTime
     {
         if ($this->end_date) {
             return $this->end_date;

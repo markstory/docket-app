@@ -43,11 +43,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test create from mobile
-     *
-     * @vcr googleoauth_callback.yml
      */
     public function testCreateFromGoogle(): void
     {
+        $this->loadResponseMocks('googleoauth_callback.yml');
         $this->login();
         $this->enableCsrfToken();
 
@@ -66,11 +65,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test create from mobile
-     *
-     * @vcr googleoauth_callback_invalid.yml
      */
     public function testCreateFromGoogleInvalidCredential(): void
     {
+        $this->loadResponseMocks('googleoauth_callback_invalid.yml');
         $this->login();
         $this->enableCsrfToken();
 
@@ -83,12 +81,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test index method
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
      */
     public function testIndex(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         // Owned by a different user.
         $this->makeCalendarProvider(2, 'other@example.com');
         $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
@@ -102,11 +98,9 @@ class CalendarProvidersControllerTest extends TestCase
         $this->assertEquals($ownProvider->id, $records[0]->id);
     }
 
-    /**
-     * @vcr controller_calendarsources_add.yml
-     */
     public function testIndexIncludeLinkedAndUnlinked(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',

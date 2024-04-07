@@ -66,7 +66,7 @@ class CalendarSourceSyncCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        $this->loadModel('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
 
         $sourceId = $args->getArgument('calendarSourceId');
         $source = $this->CalendarSources->get($sourceId, contain: ['CalendarProviders']);

@@ -21,8 +21,8 @@ class ProjectsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadModel('Tasks');
-        $this->loadModel('Projects');
+        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Projects = $this->fetchTable('Projects');
     }
 
     public function viewClasses(): array
@@ -67,7 +67,7 @@ class ProjectsController extends AppController
                 ->applyScope($this->Tasks->find(), 'index')
                 ->contain('Projects')
                 ->find('incomplete')
-                ->find('forProjectDetails', ['slug' => $slug])
+                ->find('forProjectDetails', slug: $slug)
                 ->limit(250);
         }
 
@@ -227,7 +227,7 @@ class ProjectsController extends AppController
 
         if ($this->Projects->delete($project)) {
             $success = true;
-            $redirect = $this->redirect(['_name' => 'tasks:today']);
+            $redirect = ['_name' => 'tasks:today'];
         }
 
         return $this->respond([
@@ -290,7 +290,7 @@ class ProjectsController extends AppController
             $serialize[] = 'project';
             $this->set('project', $project);
         } catch (InvalidArgumentException $e) {
-            $error = [$e->getMessage()];
+            $error = $e->getMessage();
             $serialize[] = 'errors';
             $this->set('errors', [$error]);
         }

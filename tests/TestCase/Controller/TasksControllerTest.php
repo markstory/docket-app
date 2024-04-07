@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use function Cake\Collection\collection;
 
 /**
  * App\Controller\TasksController Test Case
@@ -73,17 +73,15 @@ class TasksControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->Tasks = TableRegistry::get('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks');
     }
 
     /**
      * Test index method
-     *
-     * @return void
      */
     public function testIndex(): void
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
@@ -105,7 +103,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexStartAndEnd(): void
     {
-        $sixDays = new \Cake\I18n\Date('+6 days');
+        $sixDays = new Date('+6 days');
         $eightDays = $sixDays->modify('+2 days');
         $tenDays = $eightDays->modify('+2 days');
 
@@ -135,7 +133,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidEnd()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $this->login();
         $this->get("/tasks/?start={$tomorrow->format('Y-m-d')}&end=nope");
         $this->assertResponseCode(400);
@@ -143,7 +141,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidRange()
     {
-        $start = new \Cake\I18n\Date('tomorrow');
+        $start = new Date('tomorrow');
         $end = $start->modify('+61 days');
         $this->login();
         $this->get("/tasks/?start={$start->format('Y-m-d')}&end={$end->format('Y-m-d')}");
@@ -157,7 +155,7 @@ class TasksControllerTest extends TestCase
      */
     public function testToday(): void
     {
-        $today = new \Cake\I18n\Date('today');
+        $today = new Date('today');
         $tomorrow = $today->modify('+1 day');
         $yesterday = $today->modify('-1 day');
 
@@ -198,7 +196,7 @@ class TasksControllerTest extends TestCase
 
     public function testDailyPermissions()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $other = $this->makeProject('work', 2);
         $project = $this->makeProject('work', 1);
 
@@ -304,7 +302,7 @@ class TasksControllerTest extends TestCase
         $user->timezone = $timezone;
         $users->saveOrFail($user);
 
-        $now = new \Cake\I18n\DateTime('now', $timezone);
+        $now = new DateTime('now', $timezone);
         $startOfDay = $now->setTime(0, 0, 1);
         $endOfDay = $now->setTime(23, 59, 58);
 
@@ -390,7 +388,7 @@ class TasksControllerTest extends TestCase
             'all_day' => true,
         ]);
 
-        $tomorrow = new \Cake\I18n\DateTime('tomorrow');
+        $tomorrow = new DateTime('tomorrow');
         $lunch = $this->makeCalendarItem($source->id, [
             'title' => 'Lunch',
             'provider_id' => 'event-2',
@@ -1073,7 +1071,7 @@ class TasksControllerTest extends TestCase
     public function testDeleteCannotDeleteAgain(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => \Cake\I18n\DateTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
 
         $this->login();
         $this->enableCsrfToken();
@@ -1126,7 +1124,7 @@ class TasksControllerTest extends TestCase
     public function testUndelete(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => \Cake\I18n\DateTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
 
         $this->login();
         $this->enableCsrfToken();
@@ -1141,7 +1139,7 @@ class TasksControllerTest extends TestCase
     public function testUndeletePermission(): void
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => \Cake\I18n\DateTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
 
         $this->login();
         $this->enableCsrfToken();

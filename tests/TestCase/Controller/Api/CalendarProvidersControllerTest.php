@@ -41,11 +41,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test create from mobile
-     *
-     * @vcr googleoauth_callback.yml
      */
     public function testCreateFromGoogle(): void
     {
+        $this->loadResponseMocks('googleoauth_callback.yml');
         $this->loginApi(1);
 
         $this->post('/api/calendars/google/new', [
@@ -63,11 +62,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test create from mobile
-     *
-     * @vcr googleoauth_callback_invalid.yml
      */
     public function testCreateFromGoogleInvalidCredential(): void
     {
+        $this->loadResponseMocks('googleoauth_callback_invalid.yml');
         $this->loginApi(1);
 
         $this->post('/api/calendars/google/new', [
@@ -79,12 +77,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test index method
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
      */
     public function testIndex(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         // Owned by a different user.
         $this->makeCalendarProvider(2, 'other@example.com');
         $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
@@ -100,12 +96,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test index method
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
      */
     public function testIndexApi(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         // Owned by a different user.
         $provider = $this->makeCalendarProvider(1, 'other@example.com');
         $this->loginApi(1);
@@ -120,12 +114,10 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test view
-     *
-     * @vcr controller_calendarsources_add.yml
-     * @return void
      */
     public function testView(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         // Owned by a different user.
         $this->makeCalendarProvider(2, 'other@example.com');
         $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
@@ -159,12 +151,11 @@ class CalendarProvidersControllerTest extends TestCase
 
     /**
      * Test view with broken auth
-     *
-     * @vcr controller_calendarsources_add_auth_fail.yml
-     * @return void
      */
     public function testViewBrokenGoogleAuth(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add_auth_fail.yml');
+
         // Owned by a different user.
         $this->makeCalendarProvider(2, 'other@example.com');
         $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');

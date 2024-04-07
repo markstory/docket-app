@@ -14,7 +14,7 @@ use Google\Service\Oauth2;
 
 class CalendarServiceProvider extends ServiceProvider
 {
-    protected $provides = [
+    protected array $provides = [
         CalendarSourceSyncCommand::class,
         CalendarSubscriptionRenewCommand::class,
         CalendarService::class,

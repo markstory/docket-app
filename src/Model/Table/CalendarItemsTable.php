@@ -120,15 +120,9 @@ class CalendarItemsTable extends Table
      * The `start` and `end` options are expected to be in
      * user timezone.
      */
-    public function findUpcoming(Query $query, array $options): Query
+    public function findUpcoming(Query $query, $start, $end, $timezone): Query
     {
-        assert(!empty($options['start']), 'Missing required `start` option');
-        assert(!empty($options['end']), 'Missing required `end` option');
-        assert(!empty($options['timezone']), 'Missing required `timezone` option');
-
-        $start = $options['start'];
-        $end = $options['end'];
-        $userTimezone = $options['timezone'];
+        $userTimezone = $timezone;
 
         return $query->where(function ($exp) use ($start, $end, $userTimezone) {
             $serverTz = Configure::read('App.defaultTimezone');

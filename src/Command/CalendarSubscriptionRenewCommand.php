@@ -8,6 +8,7 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Datasource\ModelAwareTrait;
 use RuntimeException;
 
 /**
@@ -15,6 +16,8 @@ use RuntimeException;
  */
 class CalendarSubscriptionRenewCommand extends Command
 {
+    use ModelAwareTrait;
+
     /**
      * @var \App\Model\Table\CalendarSubscriptionsTable
      */
@@ -54,7 +57,7 @@ class CalendarSubscriptionRenewCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $expiring = $this->CalendarSubscriptions->find('expiring')
             ->select(['CalendarSubscriptions.calendar_source_id']);

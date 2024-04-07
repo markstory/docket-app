@@ -5,11 +5,11 @@ namespace App\Service;
 
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\Log\Log;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Text;
 use DateTimeZone;
@@ -31,7 +31,7 @@ use RuntimeException;
  */
 class CalendarService
 {
-    use ModelAwareTrait;
+    use LocatorAwareTrait;
 
     /**
      * @var \Google\Client $client
@@ -73,7 +73,7 @@ class CalendarService
      */
     public function setAccessToken(CalendarProvider $provider): void
     {
-        $this->loadModel('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
         $this->client->setAccessToken($provider->access_token);
 
         // If the token would expire soon, update it.
@@ -82,7 +82,7 @@ class CalendarService
             $token = $this->client->getAccessToken();
             $provider->access_token = $token['access_token'];
             if (!empty($token['expires_in'])) {
-                $provider->token_expiry = \Cake\I18n\DateTime::parse("+{$token['expires_in']} seconds");
+                $provider->token_expiry = DateTime::parse("+{$token['expires_in']} seconds");
             } else {
                 $provider->token_expiry = \Cake\I18n\DateTime::parse('+7200 seconds');
             }
@@ -129,7 +129,7 @@ class CalendarService
 
     public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource
     {
-        $this->loadModel('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
         $source = $this->CalendarSources->find()
             ->innerJoinWith('CalendarSubscriptions')
             ->contain('CalendarProviders')
@@ -150,7 +150,7 @@ class CalendarService
      */
     public function createSubscription(CalendarSource $source)
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
         $sub->identifier = Text::uuid();
@@ -188,7 +188,7 @@ class CalendarService
      */
     public function cancelSubscriptions(CalendarSource $source)
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $subs = $this->CalendarSubscriptions
             ->find()
@@ -214,8 +214,8 @@ class CalendarService
      */
     public function syncEvents(CalendarSource $source)
     {
-        $this->loadModel('CalendarSources');
-        $this->loadModel('CalendarItems');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarItems = $this->fetchTable('CalendarItems');
 
         $calendar = new Calendar($this->client);
 

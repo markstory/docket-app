@@ -55,9 +55,10 @@ class CalendarSourcesController extends AppController
      */
     public function add(CalendarService $service, $providerId = null)
     {
-        $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
-            'contain' => ['CalendarSources'],
-        ]);
+        $provider = $this->CalendarSources->CalendarProviders->get(
+            $providerId,
+            contain: ['CalendarSources'],
+        );
         $this->Authorization->authorize($provider, 'edit');
         $success = false;
         $error = '';

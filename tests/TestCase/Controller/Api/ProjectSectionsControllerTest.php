@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -38,7 +37,7 @@ class ProjectSectionsControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ProjectSections = TableRegistry::get('ProjectSections');
+        $this->ProjectSections = $this->fetchTable('ProjectSections');
     }
 
     public function testAdd()

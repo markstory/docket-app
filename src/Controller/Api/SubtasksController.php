@@ -24,8 +24,8 @@ class SubtasksController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadModel('Tasks');
-        $this->loadModel('Subtasks');
+        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Subtasks = $this->fetchTable('Subtasks');
     }
 
     public function viewClasses(): array

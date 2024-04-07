@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\Fixture;
 
-use Cake\Auth\DefaultPasswordHasher;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**

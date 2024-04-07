@@ -89,9 +89,9 @@ class ApiTokensTable extends Table
         return $rules;
     }
 
-    public function findByToken(Query $query, array $options): Query
+    public function findByToken(Query $query, $token): Query
     {
-        $query->where(['ApiTokens.token' => $options['token']]);
+        $query->where(['ApiTokens.token' => $token]);
 
         return $query;
     }

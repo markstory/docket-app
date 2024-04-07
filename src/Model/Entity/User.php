@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use ArrayAccess;
 use Authentication\IdentityInterface as AuthenticationIdentity;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Authorization\AuthorizationServiceInterface;
 use Authorization\IdentityInterface as AuthorizationIdentity;
 use Authorization\Policy\ResultInterface;
-use Cake\Auth\DefaultPasswordHasher;
 use Cake\Core\Configure;
-use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use RuntimeException;
 
@@ -223,7 +223,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * Authorization\IdentityInterface method
      */
-    public function applyScope($action, $resource)
+    public function applyScope(string $action, mixed $resource, mixed ...$optionalArgs): mixed
     {
         if (!$this->authorization) {
             throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
@@ -235,7 +235,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * Authorization\IdentityInterface method
      */
-    public function getOriginalData()
+    public function getOriginalData(): ArrayAccess|array
     {
         return $this;
     }

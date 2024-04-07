@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 namespace App\Identifier;
 
+use ArrayAccess;
 use Authentication\Identifier\AbstractIdentifier;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
 class ApiTokenIdentifier extends AbstractIdentifier
 {
     use LocatorAwareTrait;
 
-    public function identify(array $credentials)
+    public function identify(array $credentials): ArrayAccess|array|null
     {
         if (!isset($credentials['token'])) {
             return null;
@@ -29,7 +30,7 @@ class ApiTokenIdentifier extends AbstractIdentifier
         }
 
         // Update the last used timestamp.
-        $tokenUser->last_used = new \Cake\I18n\DateTime();
+        $tokenUser->last_used = new DateTime();
         $apiTokens->save($tokenUser);
 
         return $tokenUser->user;

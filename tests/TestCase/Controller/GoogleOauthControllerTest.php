@@ -68,11 +68,10 @@ class GoogleOauthControllerTest extends TestCase
 
     /**
      * Test callback method
-     *
-     * @vcr googleoauth_callback.yml
      */
     public function testCallbackSuccess(): void
     {
+        $this->loadResponseMocks('googleoauth_callback.yml');
         $this->login();
         $this->get('/auth/google/callback?code=auth-code');
 
@@ -90,11 +89,10 @@ class GoogleOauthControllerTest extends TestCase
 
     /**
      * Test callback method with mobile response
-     *
-     * @vcr googleoauth_callback.yml
      */
     public function testCallbackSuccessMobile(): void
     {
+        $this->loadResponseMocks('googleoauth_callback.yml');
         $user = $this->fetchTable('Users')->get(1);
         $this->session([
             'Auth' => $user,
@@ -117,11 +115,10 @@ class GoogleOauthControllerTest extends TestCase
 
     /**
      * Test callback method
-     *
-     * @vcr googleoauth_callback_norefresh.yml
      */
     public function testCallbackNoRefreshToken(): void
     {
+        $this->loadResponseMocks('googleoauth_callback_norefresh.yml');
         $this->login();
         $this->enableRetainFlashMessages();
         $this->get('/auth/google/callback?code=auth-code');

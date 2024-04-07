@@ -79,6 +79,7 @@ class ApiTokensControllerTest extends TestCase
 
     public function testDelete(): void
     {
+        $this->disableErrorHandlerMiddleware();
         $token = $this->loginApi(1);
 
         $this->delete("/api/tokens/{$token->token}/delete");

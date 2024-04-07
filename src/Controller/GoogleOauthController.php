@@ -54,7 +54,7 @@ class GoogleOauthController extends AppController
 
     public function callback(GoogleClient $client)
     {
-        $this->loadModel('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
 
         $code = $this->request->getQuery('code');
         if (!is_string($code)) {

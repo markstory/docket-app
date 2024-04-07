@@ -320,7 +320,7 @@ return [
             'path' => LOGS,
             'file' => 'debug',
             'url' => env('LOG_DEBUG_URL', null),
-            'scopes' => false,
+            'scopes' => null,
             'levels' => ['notice', 'info', 'debug'],
         ],
         'error' => [
@@ -328,7 +328,7 @@ return [
             'path' => LOGS,
             'file' => 'error',
             'url' => env('LOG_ERROR_URL', null),
-            'scopes' => false,
+            'scopes' => null,
             'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         ],
     ],
@@ -381,8 +381,13 @@ return [
             'session.cookie_lifetime' => 60 * 60 * 24 * 14,
         ],
     ],
+
     'DebugKit' => [
         'ignoreAuthorization' => true,
+    ],
+
+    'Migrations' => [
+        'unsigned_primary_keys' => false,
     ],
 
     // Colors used for projects and calendars.

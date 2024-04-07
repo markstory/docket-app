@@ -32,23 +32,19 @@
         </testsuite>
     </testsuites>
 
-    <listeners>
-        <listener class="VCR\PHPUnit\TestListener\VCRTestListener" file="vendor/php-vcr/phpunit-testlistener-vcr/src/VCRTestListener.php" />
-    </listeners>
-
     <extensions>
-        <extension class="Symfony\Component\Panther\ServerExtension" />
-        <extension class="Cake\TestSuite\Fixture\PHPUnitExtension" />
+        <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
+        <bootstrap class="Symfony\Component\Panther\ServerExtension"/>
     </extensions>
 
     <!-- Ignore vendor tests in code coverage reports -->
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-            <directory suffix=".php">plugins/*/src/</directory>
-            <exclude>
-                <file>src/Console/Installer.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+    <source>
+      <include>
+        <directory suffix=".php">src/</directory>
+        <directory suffix=".php">plugins/*/src/</directory>
+      </include>
+      <exclude>
+        <file>src/Console/Installer.php</file>
+      </exclude>
+    </source>
 </phpunit>

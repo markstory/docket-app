@@ -56,9 +56,9 @@ class CalendarSourcesController extends AppController
      */
     public function add(CalendarService $service, $providerId = null)
     {
-        $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
-            'contain' => ['CalendarSources'],
-        ]);
+        $provider = $this->CalendarSources->CalendarProviders->get($providerId,
+            contain: ['CalendarSources'],
+        );
         $this->Authorization->authorize($provider, 'edit');
         $serialize = [];
         $success = false;
@@ -117,7 +117,7 @@ class CalendarSourcesController extends AppController
             $this->set('source', $source);
             $serialize[] = 'source';
         } catch (\Exception $e) {
-            debug('error');
+            debug($e->getMessage());
             $success = false;
             $error = __('Calendar not refreshed. %s', $e->getMessage());
             $this->set('errors', [$error]);

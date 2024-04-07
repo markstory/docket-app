@@ -8,9 +8,11 @@ use App\Model\Entity\User;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validation;
@@ -158,27 +160,24 @@ class TasksTable extends Table
     /**
      * @inheritDoc
      */
-    public function find(string $type = 'all', array $options = []): Query
+    public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
         // Add the default deleted condition unless the `deleted` option is set.
-        $operator = empty($options['deleted']) ? 'IS' : 'IS NOT';
+        $operator = empty($args['deleted']) ? 'IS' : 'IS NOT';
         $query = $this->selectQuery();
         $query->where(["Tasks.deleted_at {$operator}" => null]);
 
-        return $this->callFinder($type, $query, $options);
+        return $this->callFinder($type, $query, ...$args);
     }
 
     /**
      * Finder to fetch tasks in section order.
      */
-    public function findForProjectDetails(Query $query, array $options): Query
+    public function findForProjectDetails(SelectQuery $query, $slug): SelectQuery
     {
-        if (empty($options['slug'])) {
-            throw new RuntimeException('Missing required slug option');
-        }
         $query = $query
             ->leftJoinWith('ProjectSections')
-            ->where(['Projects.slug' => $options['slug']])
+            ->where(['Projects.slug' => $slug])
             ->orderByAsc('ProjectSections.ranking')
             ->orderByAsc('ProjectSections.name')
             ->orderByAsc('Tasks.child_order')
@@ -187,26 +186,23 @@ class TasksTable extends Table
         return $query;
     }
 
-    public function findComplete(Query $query): Query
+    public function findComplete(SelectQuery $query): SelectQuery
     {
         return $query->where(['Tasks.completed' => true]);
     }
 
-    public function findIncomplete(Query $query): Query
+    public function findIncomplete(SelectQuery $query): SelectQuery
     {
         return $query->where(['Tasks.completed' => false]);
     }
 
-    public function findForDate(Query $query, array $options): Query
+    public function findForDate(SelectQuery $query, $date, $overdue = false): SelectQuery
     {
-        if (empty($options['date'])) {
-            throw new RuntimeException('Missing required `date` option');
-        }
         $query = $query->where(['Tasks.due_on IS NOT' => null]);
-        if (!empty($options['overdue'])) {
-            $query = $query->where(['Tasks.due_on <=' => $options['date']]);
+        if ($overdue) {
+            $query = $query->where(['Tasks.due_on <=' => $date]);
         } else {
-            $query = $query->where(['Tasks.due_on =' => $options['date']]);
+            $query = $query->where(['Tasks.due_on =' => $date]);
         }
 
         return $query
@@ -216,15 +212,12 @@ class TasksTable extends Table
             ->orderByAsc('Tasks.title');
     }
 
-    public function findUpcoming(Query $query, array $options): Query
+    public function findUpcoming(SelectQuery $query, $start, $end): SelectQuery
     {
-        assert(!empty($options['start']), 'Missing required `start` option.');
-        assert(!empty($options['start']), 'Missing required `end` option.');
-
         return $query->where([
             'Tasks.due_on IS NOT' => null,
-            'Tasks.due_on >=' => $options['start'],
-            'Tasks.due_on <' => $options['end'],
+            'Tasks.due_on >=' => $start,
+            'Tasks.due_on <' => $end,
         ])
             ->orderByAsc('Tasks.due_on')
             ->orderByAsc('Tasks.evening')
@@ -232,9 +225,9 @@ class TasksTable extends Table
             ->orderByAsc('Tasks.title');
     }
 
-    public function findOverdue(Query $query): Query
+    public function findOverdue(SelectQuery $query): SelectQuery
     {
-        $today = new \Cake\I18n\Date('today');
+        $today = new Date('today');
 
         return $query->where([
             'Tasks.due_on IS NOT' => null,
@@ -275,11 +268,11 @@ class TasksTable extends Table
                 'Projects.user_id' => $user->id,
                 'Tasks.due_on' => $item->due_on,
             ])->firstOrFail();
-        assert($result instanceof EntityInterface);
+        assert($result instanceof Task);
         $item->day_order = $result->max_day + 1;
     }
 
-    public function move(Task $item, array $operation)
+    public function move(Task $item, array $operation): void
     {
         if (!isset($item->project)) {
             throw new InvalidArgumentException('Task cannot be moved, it has no project data loaded.');
@@ -338,7 +331,7 @@ class TasksTable extends Table
             ->where($conditions)
             ->orderByAsc($property)
             ->orderByAsc('title')
-            ->offset($value)
+            ->offset((int)$value)
             ->first();
 
         $appendToBottom = false;
@@ -357,10 +350,7 @@ class TasksTable extends Table
             $targetOffset = $result->max + 1;
         }
 
-        $query = $this->updateQuery()
-            ->innerJoinWith('Projects')
-            ->where($conditions);
-
+        $query = $this->updateQuery()->where($conditions);
         $current = $item->get($property);
 
         $item->set($property, $targetOffset);

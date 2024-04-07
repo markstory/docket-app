@@ -8,6 +8,7 @@ use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use function Cake\Collection\collection;
 
 /**
  * App\Controller\Api\TasksController Test Case

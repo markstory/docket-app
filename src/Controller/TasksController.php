@@ -66,10 +66,12 @@ class TasksController extends AppController
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
-        $eventsQuery = $calendarItems->find('upcoming',
-        start: $date,
-        end: $date,
-        timezone: $timezone);
+        $eventsQuery = $calendarItems->find(
+            'upcoming',
+            start: $date,
+            end: $date,
+            timezone: $timezone
+        );
         $this->set('date', $date);
 
         $tasks = $query->all();
@@ -124,10 +126,12 @@ class TasksController extends AppController
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query);
 
-        $eventsQuery = $calendarItemsTable->find('upcoming',
-        start: $start,
-        end: $end,
-        timezone: $timezone);
+        $eventsQuery = $calendarItemsTable->find(
+            'upcoming',
+            start: $start,
+            end: $end,
+            timezone: $timezone
+        );
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', $end->format('Y-m-d'));
         $this->set('generation', uniqid());

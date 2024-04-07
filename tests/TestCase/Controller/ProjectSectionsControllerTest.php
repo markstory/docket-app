@@ -38,7 +38,7 @@ class ProjectSectionsControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ProjectSections = TableRegistry::get('ProjectSections');
+        $this->ProjectSections = $this->fetchTable('ProjectSections');
     }
 
     public function testAdd()

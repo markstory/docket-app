@@ -39,7 +39,7 @@ class SimpleSortable
         // deleted/completed. Try to find the item at the target offset
         $query = $this->table->find()
             ->where($scopeConditions)
-            ->offset($newIndex);
+            ->offset((int)$newIndex);
 
         foreach ($this->config['orderBy'] as $order) {
             $query->orderByAsc($order);

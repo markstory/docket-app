@@ -21,8 +21,8 @@ class ProjectsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadModel('Tasks');
-        $this->loadModel('Projects');
+        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Projects = $this->fetchTable('Projects');
     }
 
     public function viewClasses(): array
@@ -88,7 +88,7 @@ class ProjectsController extends AppController
                 ->applyScope($this->Tasks->find(), 'index')
                 ->contain('Projects')
                 ->find('incomplete')
-                ->find('forProjectDetails', ['slug' => $slug])
+                ->find('forProjectDetails', slug: $slug)
                 ->limit(250);
         }
         $this->set(compact('project', 'tasks', 'completed'));

@@ -20,7 +20,7 @@ use App\Service\CalendarServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
-use Authentication\Identifier\IdentifierInterface;
+use Authentication\Identifier\AbstractIdentifier;
 use Authentication\Middleware\AuthenticationMiddleware;
 use Authorization\AuthorizationService;
 use Authorization\AuthorizationServiceInterface;
@@ -166,8 +166,8 @@ class Application extends BaseApplication implements
         $service = new AuthenticationService($config);
 
         $fields = [
-            IdentifierInterface::CREDENTIAL_USERNAME => 'email',
-            IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
+            AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+            AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
         ];
         // Load identifiers
         $service->loadIdentifier('Authentication.Password', [
@@ -183,7 +183,7 @@ class Application extends BaseApplication implements
         $service->loadAuthenticator('Authentication.Session', [
             'identify' => true,
             'fields' => [
-                IdentifierInterface::CREDENTIAL_USERNAME => 'email',
+                AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
             ],
         ]);
         $service->loadAuthenticator('Authentication.Token', [
@@ -200,8 +200,8 @@ class Application extends BaseApplication implements
         $service->loadAuthenticator('Authentication.Form', [
             'loginUrl' => $loginUrl,
             'fields' => [
-                IdentifierInterface::CREDENTIAL_USERNAME => 'email',
-                IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
+                AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+                AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
             ],
         ]);
         $service->loadAuthenticator('Authentication.Cookie', [

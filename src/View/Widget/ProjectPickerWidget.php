@@ -16,7 +16,7 @@ class ProjectPickerWidget extends BasicWidget
      *
      * @var array<string, mixed>
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'disabled' => null,
         'val' => null,
