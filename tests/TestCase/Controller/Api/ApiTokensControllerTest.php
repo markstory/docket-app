@@ -9,8 +9,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\Api\ApiTokensController Test Case
- *
- * @uses \App\Controller\ApiTokensController
  */
 class ApiTokensControllerTest extends TestCase
 {
