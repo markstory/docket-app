@@ -11,6 +11,7 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use function Cake\Collection\collection;
 
 class CalendarServiceTest extends TestCase
 {
@@ -50,7 +51,7 @@ class CalendarServiceTest extends TestCase
         $this->calendarSources = $this->fetchTable('CalendarSources');
         $this->calendarItems = $this->fetchTable('CalendarItems');
 
-        DateTime::setTestNow('2021-07-11 12:13:14');
+        DateTime::setTestNow('2032-07-11 12:13:14');
     }
 
     public function tearDown(): void
