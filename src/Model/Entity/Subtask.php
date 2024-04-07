@@ -41,7 +41,7 @@ class Subtask extends Entity
         'task' => true,
     ];
 
-    public function toggle()
+    public function toggle(): void
     {
         $this->completed = !$this->completed;
     }

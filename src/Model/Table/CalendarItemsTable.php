@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -139,10 +139,10 @@ class CalendarItemsTable extends Table
             ]);
 
             // Create datetimes and set timezones to UTC to match storage.
-            $startTime = (new \Cake\I18n\DateTime($startDate, $userTimezone))
+            $startTime = (new DateTime($startDate, $userTimezone))
                 ->setTime(0, 0, 0)
                 ->setTimezone($serverTz);
-            $endTime = (new \Cake\I18n\DateTime($endDate, $userTimezone))
+            $endTime = (new DateTime($endDate, $userTimezone))
                 ->setTime(23, 59, 59)
                 ->setTimezone($serverTz);
             $dateTime = $exp->and([

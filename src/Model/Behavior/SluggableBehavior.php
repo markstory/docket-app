@@ -70,7 +70,7 @@ class SluggableBehavior extends Behavior
     /**
      * Run before a model is saved, used to set up slug for model.
      */
-    public function beforeSave(Event $event, $entity)
+    public function beforeSave(Event $event, $entity): void
     {
         // Make label fields an array
         if (!is_array($this->_config['label'])) {
@@ -145,7 +145,7 @@ class SluggableBehavior extends Behavior
      * @return string Slug for given string
      * @access private
      */
-    public function slug($string)
+    public function slug(string $string): string
     {
         $length = $this->getConfig('length');
 

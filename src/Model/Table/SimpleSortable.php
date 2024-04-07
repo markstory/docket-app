@@ -14,12 +14,12 @@ class SimpleSortable
     /**
      * @var \Cake\ORM\Table
      */
-    protected $table;
+    protected Table $table;
 
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     public function __construct(Table $table, array $config)
     {
@@ -30,7 +30,7 @@ class SimpleSortable
         ];
     }
 
-    public function move(EntityInterface $record, $newIndex, array $scopeConditions)
+    public function move(EntityInterface $record, $newIndex, array $scopeConditions): void
     {
         $field = $this->config['field'];
 
@@ -75,7 +75,7 @@ class SimpleSortable
                     return $exp->between($field, $current, $targetOffset);
                 });
         }
-        $this->table->getConnection()->transactional(function () use ($record, $query) {
+        $this->table->getConnection()->transactional(function () use ($record, $query): void {
             if ($query->clause('set')) {
                 $query->execute();
             }

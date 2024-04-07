@@ -5,7 +5,7 @@ namespace App\Test\TestCase\Controller\Api;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -372,10 +372,10 @@ class UsersControllerTest extends TestCase
 
     public function testNewPasswordResetGetTokenExpired()
     {
-        \Cake\I18n\DateTime::setTestNow(new \Cake\I18n\DateTime('-6 hours'));
+        DateTime::setTestNow(new DateTime('-6 hours'));
         $user = $this->Users->get(1);
         $token = $user->passwordResetToken();
-        \Cake\I18n\DateTime::setTestNow(null);
+        DateTime::setTestNow(null);
 
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();
@@ -425,10 +425,10 @@ class UsersControllerTest extends TestCase
 
     public function testNewPasswordResetPostExpiredToken()
     {
-        \Cake\I18n\DateTime::setTestNow(new \Cake\I18n\DateTime('-6 hours'));
+        DateTime::setTestNow(new DateTime('-6 hours'));
         $user = $this->Users->get(1);
         $token = $user->passwordResetToken();
-        \Cake\I18n\DateTime::setTestNow(null);
+        DateTime::setTestNow(null);
 
         $this->enableRetainFlashMessages();
         $this->enableCsrfToken();

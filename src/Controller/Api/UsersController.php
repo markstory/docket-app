@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AppController;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\View\JsonView;
 
@@ -22,7 +23,7 @@ class UsersController extends AppController
         return [JsonView::class];
     }
 
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -37,7 +38,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit()
+    public function edit(): Response|null|null
     {
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);

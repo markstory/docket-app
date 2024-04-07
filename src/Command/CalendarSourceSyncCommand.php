@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Model\Table\CalendarSourcesTable;
+use App\Model\Table\UsersTable;
 use App\Service\CalendarService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
@@ -17,17 +19,17 @@ class CalendarSourceSyncCommand extends Command
     /**
      * @var \App\Model\Table\CalendarSourcesTable
      */
-    protected $CalendarSources;
+    protected CalendarSourcesTable $CalendarSources;
 
     /**
      * @var \App\Model\Table\UsersTable
      */
-    protected $Users;
+    protected UsersTable $Users;
 
     /**
      * @var \App\Service\CalendarService
      */
-    private $service;
+    private CalendarService $service;
 
     public function __construct(CalendarService $service)
     {
@@ -62,9 +64,9 @@ class CalendarSourceSyncCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int|null|void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): null|int|null
     {
         $this->CalendarSources = $this->fetchTable('CalendarSources');
 

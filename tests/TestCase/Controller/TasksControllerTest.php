@@ -218,8 +218,8 @@ class TasksControllerTest extends TestCase
 
     public function testDailyToday()
     {
-        $today = new \Cake\I18n\Date('today');
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $today = new Date('today');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
         $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
@@ -245,7 +245,7 @@ class TasksControllerTest extends TestCase
      */
     public function testDailyParam(): void
     {
-        $today = new \Cake\I18n\Date('today');
+        $today = new Date('today');
         $tomorrow = $today->modify('+1 day');
         $yesterday = $today->modify('-1 day');
 
@@ -272,7 +272,7 @@ class TasksControllerTest extends TestCase
 
     public function testDailyOverdueParam(): void
     {
-        $today = new \Cake\I18n\Date('today');
+        $today = new Date('today');
         $yesterday = $today->modify('-1 day');
 
         $project = $this->makeProject('work', 1);
@@ -327,8 +327,8 @@ class TasksControllerTest extends TestCase
         $allDay = $this->makeCalendarItem($source->id, [
             'title' => 'Bob birthday',
             'provider_id' => 'event-3',
-            'start_date' => new \Cake\I18n\Date($startOfDay),
-            'end_date' => (new \Cake\I18n\Date($startOfDay))->modify('+1 day'),
+            'start_date' => new Date($startOfDay),
+            'end_date' => (new Date($startOfDay))->modify('+1 day'),
             'start_time' => null,
             'end_time' => null,
             'all_day' => true,
@@ -338,8 +338,8 @@ class TasksControllerTest extends TestCase
         $this->makeCalendarItem($source->id, [
             'title' => 'Tomorrow day event',
             'provider_id' => 'event-4',
-            'start_date' => (new \Cake\I18n\Date($startOfDay))->modify('+1 day'),
-            'end_date' => (new \Cake\I18n\Date($startOfDay))->modify('+2 day'),
+            'start_date' => (new Date($startOfDay))->modify('+1 day'),
+            'end_date' => (new Date($startOfDay))->modify('+2 day'),
             'start_time' => null,
             'end_time' => null,
             'all_day' => true,
@@ -374,7 +374,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexCalendarItems(): void
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary');
@@ -413,7 +413,7 @@ class TasksControllerTest extends TestCase
         $this->session([
             'errors' => ['title' => 'Not valid'],
         ]);
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -428,7 +428,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexPermissions()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $other = $this->makeProject('work', 2);
         $project = $this->makeProject('work', 1);
 
@@ -450,7 +450,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidParameter()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -466,7 +466,7 @@ class TasksControllerTest extends TestCase
      */
     public function testDeleted(): void
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $second = $this->makeTask('second', $project->id, 3, [
@@ -562,7 +562,7 @@ class TasksControllerTest extends TestCase
     {
         $project = $this->makeProject('work', 1);
         $section = $this->makeProjectSection('long term', $project->id);
-        $tomorrow = \Cake\I18n\Date::parse('tomorrow');
+        $tomorrow = Date::parse('tomorrow');
         $tomorrowStr = $tomorrow->format('Y-m-d');
 
         $this->login();
@@ -735,7 +735,7 @@ class TasksControllerTest extends TestCase
         $this->assertFlashElement('flash/success');
 
         $updated = $this->viewVariable('task');
-        $this->assertEquals(\Cake\I18n\Date::parse('tomorrow'), $updated->due_on);
+        $this->assertEquals(Date::parse('tomorrow'), $updated->due_on);
     }
 
     public function testEditRedirect(): void

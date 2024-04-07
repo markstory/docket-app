@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\View\Helper;
 
 use App\View\Helper\DateHelper;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 
@@ -46,15 +46,15 @@ class DateHelperTest extends TestCase
 
     public static function formatCompactProvider()
     {
-        $past = new \Cake\I18n\Date('-93 days');
-        $recent = new \Cake\I18n\Date('-14 days');
-        $thisweek = new \Cake\I18n\Date('5 days');
-        $faraway = new \Cake\I18n\Date('30 days');
+        $past = new Date('-93 days');
+        $recent = new Date('-14 days');
+        $thisweek = new Date('5 days');
+        $faraway = new Date('30 days');
 
         return [
             // Input, output
-            [new \Cake\I18n\Date('today'), 'Today'],
-            [new \Cake\I18n\Date('tomorrow'), 'Tomorrow'],
+            [new Date('today'), 'Today'],
+            [new Date('tomorrow'), 'Tomorrow'],
             [$past, $past->i18nFormat('MMM d yyyy')],
             [$recent, $recent->i18nFormat('MMM d')],
             [$thisweek, $thisweek->i18nFormat('EEEE')],
@@ -67,7 +67,7 @@ class DateHelperTest extends TestCase
      */
     public function testFormatCompact($input, $output)
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $result = $this->Date->formatCompact($input);
         $this->assertSame($output, $result);
     }

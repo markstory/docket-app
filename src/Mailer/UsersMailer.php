@@ -18,7 +18,7 @@ class UsersMailer extends Mailer
      */
     public static string $name = 'Users';
 
-    public function resetPassword(User $user)
+    public function resetPassword(User $user): void
     {
         $token = $user->passwordResetToken();
         $this->setTo($user->email)
@@ -31,7 +31,7 @@ class UsersMailer extends Mailer
             ]);
     }
 
-    public function verifyEmail(User $user)
+    public function verifyEmail(User $user): void
     {
         $token = $user->emailVerificationToken();
         $unverified = $user->email_verified ? $user->unverified_email : $user->email;

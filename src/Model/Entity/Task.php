@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Exception;
 
@@ -64,18 +64,18 @@ class Task extends Entity
     public function complete(): void
     {
         $this->completed = true;
-        $this->due_on = new \Cake\I18n\Date();
+        $this->due_on = new Date();
     }
 
     public function incomplete(): void
     {
         $this->completed = false;
-        $this->due_on = new \Cake\I18n\Date();
+        $this->due_on = new Date();
     }
 
     public function softDelete(): void
     {
-        $this->deleted_at = new \Cake\I18n\DateTime();
+        $this->deleted_at = new DateTime();
     }
 
     public function undelete(): void
@@ -83,19 +83,19 @@ class Task extends Entity
         $this->deleted_at = null;
     }
 
-    public function setDueOnFromString(?string $value)
+    public function setDueOnFromString(?string $value): void
     {
         if (!$value) {
             return;
         }
         try {
-            $this->due_on = \Cake\I18n\Date::parse($value);
+            $this->due_on = Date::parse($value);
         } catch (Exception $e) {
             $this->setError('due_on', 'Invalid date string.');
         }
     }
 
-    public function removeTrailingEmptySubtask()
+    public function removeTrailingEmptySubtask(): void
     {
         if (empty($this->subtasks)) {
             return;

@@ -6,7 +6,8 @@ namespace App\Controller\Api;
 use App\Controller\AppController;
 use App\Service\CalendarService;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenTime;
+use Cake\Http\Response;
+use Cake\I18n\DateTime;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\View\JsonView;
 use Google\Client as GoogleClient;
@@ -46,11 +47,11 @@ class CalendarProvidersController extends AppController
                 'user_id' => $user->id,
                 'kind' => 'google',
                 'identifier' => $googleUser->id,
-            ], function ($entity) use ($token, $refresh, $googleUser) {
+            ], function ($entity) use ($token, $refresh, $googleUser): void {
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
                 $entity->access_token = $token;
                 $entity->refresh_token = $refresh;
-                $entity->token_expiry = \Cake\I18n\DateTime::parse('+1800 seconds');
+                $entity->token_expiry = DateTime::parse('+1800 seconds');
             });
             $this->Authorization->authorize($provider, 'edit');
 
@@ -79,7 +80,7 @@ class CalendarProvidersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index(CalendarService $service)
+    public function index(CalendarService $service): Response|null|null
     {
         $query = $this->CalendarProviders->find()->contain('CalendarSources');
         $query = $this->Authorization->applyScope($query);
@@ -99,7 +100,7 @@ class CalendarProvidersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function view(string $id, CalendarService $service)
+    public function view(string $id, CalendarService $service): Response|null|null
     {
         $provider = $this->CalendarProviders->get($id, contain: ['CalendarSources']);
         $this->Authorization->authorize($provider, 'view');
@@ -127,7 +128,7 @@ class CalendarProvidersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null): Response|null|null
     {
         $this->request->allowMethod(['post', 'delete']);
         $calendarProvider = $this->CalendarProviders->get($id);

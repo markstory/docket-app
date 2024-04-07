@@ -5,8 +5,10 @@ namespace App\Controller;
 
 use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenDate;
+use Cake\Http\Response;
+use Cake\I18n\Date;
 use Cake\View\JsonView;
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -25,7 +27,7 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
-    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): \Cake\I18n\Date
+    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): Date
     {
         if ($value !== null && !is_string($value)) {
             throw new BadRequestException('Invalid date. Value must be a string.');
@@ -34,8 +36,8 @@ class TasksController extends AppController
             return $this->getDateParam($default, null, $timezone);
         }
         try {
-            return new \Cake\I18n\Date($value, $timezone);
-        } catch (\Exception $e) {
+            return new Date($value, $timezone);
+        } catch (Exception $e) {
             throw new BadRequestException("Invalid date value of {$value}.");
         }
     }
@@ -104,7 +106,7 @@ class TasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index(string $view = 'upcoming')
+    public function index(string $view = 'upcoming'): Response|null|null
     {
         $calendarItemsTable = $this->fetchTable('CalendarItems');
 
@@ -177,7 +179,7 @@ class TasksController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): Response|null|null
     {
         $task = $this->Tasks->newEntity($this->request->getQueryParams());
         $task->subtasks = [];
@@ -255,7 +257,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function complete($id = null)
+    public function complete(?string $id = null): Response|null|null
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
@@ -287,7 +289,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function incomplete($id = null)
+    public function incomplete(?string $id = null): Response|null|null
     {
         $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
@@ -356,7 +358,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null): Response|null|null
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->getTask($id);
@@ -423,7 +425,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null, $mode = null)
+    public function view(?string $id = null, $mode = null): Response|null|null
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task);
@@ -463,7 +465,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null): Response|null|null
     {
         $this->request->allowMethod(['post', 'delete']);
         $task = $this->Tasks->get($id, contain: ['Projects']);
@@ -483,7 +485,7 @@ class TasksController extends AppController
         ]);
     }
 
-    public function deleteConfirm(string $id)
+    public function deleteConfirm(string $id): void
     {
         $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'delete');
@@ -498,7 +500,7 @@ class TasksController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function undelete($id = null)
+    public function undelete(?string $id = null): Response|null|null
     {
         $this->request->allowMethod('post');
         $task = $this->Tasks->get($id, contain: ['Projects'], deleted: true);

@@ -41,12 +41,12 @@ class ProjectSection extends Entity
         'tasks' => false,
     ];
 
-    public function archive()
+    public function archive(): void
     {
         $this->archived = true;
     }
 
-    public function unarchive()
+    public function unarchive(): void
     {
         $this->archived = false;
     }

@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Table\CalendarProvidersTable;
+use App\Model\Table\CalendarSourcesTable;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
@@ -19,12 +21,12 @@ class GoogleOauthController extends AppController
     /**
      * @var \App\Model\Table\CalendarProvidersTable
      */
-    protected $CalendarProviders;
+    protected CalendarProvidersTable $CalendarProviders;
 
     /**
      * @var \App\Model\Table\CalendarSourcesTable
      */
-    protected $CalendarSources;
+    protected CalendarSourcesTable $CalendarSources;
 
     public function beforeFilter(EventInterface $event): ?Response
     {
@@ -35,7 +37,7 @@ class GoogleOauthController extends AppController
         return null;
     }
 
-    public function authorize(GoogleClient $client)
+    public function authorize(GoogleClient $client): void
     {
         // Ensure that the user is stored in the session even
         // if the original request came in via an API token.
@@ -80,10 +82,10 @@ class GoogleOauthController extends AppController
                 'user_id' => $user->id,
                 'kind' => 'google',
                 'identifier' => $googleUser->id,
-            ], function ($entity) use ($data, $googleUser) {
+            ], function ($entity) use ($data, $googleUser): void {
                 $entity->display_name = "{$googleUser->name} ({$googleUser->email})";
                 $entity->access_token = $data['access_token'];
-                $entity->token_expiry = \Cake\I18n\DateTime::parse("+{$data['expires_in']} seconds");
+                $entity->token_expiry = DateTime::parse("+{$data['expires_in']} seconds");
 
                 if (!isset($data['refresh_token'])) {
                     throw new PersistenceFailedException($entity, 'Missing refresh_token');

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -55,13 +55,13 @@ class CalendarSourcesControllerTest extends TestCase
     {
         parent::tearDown();
 
-        \Cake\I18n\DateTime::setTestNow(null);
+        DateTime::setTestNow(null);
     }
 
     public function testSync(): void
     {
         $this->loadResponseMocks('controller_calendarsources_sync.yml');
-        \Cake\I18n\DateTime::setTestNow('2032-07-11 12:13:14');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $this->enableRetainFlashMessages();
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
@@ -93,7 +93,7 @@ class CalendarSourcesControllerTest extends TestCase
     public function testSyncReplaceExistingRemoveDeleted(): void
     {
         $this->loadResponseMocks('controller_calendarsources_sync.yml');
-        \Cake\I18n\DateTime::setTestNow('2032-07-11 12:13:14');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [

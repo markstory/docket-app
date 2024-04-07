@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AppController;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 
 /**
@@ -14,7 +15,7 @@ use Cake\View\JsonView;
  */
 class ApiTokensController extends AppController
 {
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -34,7 +35,7 @@ class ApiTokensController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(): Response|null|null
     {
         $query = $this->Authorization->applyScope($this->ApiTokens->find());
         $apiTokens = $this->paginate($query);
@@ -59,7 +60,7 @@ class ApiTokensController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): ?Response
     {
         $this->Authorization->skipAuthorization();
         $this->request->allowMethod(['post']);

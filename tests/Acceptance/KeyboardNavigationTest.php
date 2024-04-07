@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Symfony\Component\Panther\Client;
 
@@ -49,7 +49,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListGotoDetails()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('Home', 1);
         $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
         $this->makeTask('Laundry', $project->id, 1, ['due_on' => $tomorrow]);
@@ -71,7 +71,7 @@ class KeyboardNavigationTest extends AcceptanceTestCase
 
     public function testTaskListMarkComplete()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('Home', 1);
         $task = $this->makeTask('Clean', $project->id, 0, ['due_on' => $tomorrow]);
 

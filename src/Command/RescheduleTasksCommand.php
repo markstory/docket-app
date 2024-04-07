@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
 /**
@@ -42,16 +42,16 @@ class RescheduleTasksCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int|null|void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): null|int|null
     {
         if (Configure::read('debug') !== true) {
             throw new StopException('Cannot rescheule tasks in non-dev environment.');
         }
         $tasks = $this->fetchTable('Tasks');
         $query = $tasks->find('overdue');
-        $today = new \Cake\I18n\Date();
+        $today = new Date();
         $updated = 0;
         foreach ($query->all() as $task) {
             $days = rand(0, 14);

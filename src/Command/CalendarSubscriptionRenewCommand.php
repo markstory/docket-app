@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Model\Table\CalendarSubscriptionsTable;
 use App\Service\CalendarService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
@@ -21,12 +22,12 @@ class CalendarSubscriptionRenewCommand extends Command
     /**
      * @var \App\Model\Table\CalendarSubscriptionsTable
      */
-    protected $CalendarSubscriptions;
+    protected CalendarSubscriptionsTable $CalendarSubscriptions;
 
     /**
      * @var \App\Service\CalendarService
      */
-    protected $calendarService;
+    protected CalendarService $calendarService;
 
     public function __construct(CalendarService $service)
     {
@@ -53,9 +54,9 @@ class CalendarSubscriptionRenewCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int|null|void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): null|int|null
     {
         $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 

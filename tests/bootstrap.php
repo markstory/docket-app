@@ -18,6 +18,7 @@ declare(strict_types=1);
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Migrations\TestSuite\Migrator;
+use VCR\Request;
 use VCR\VCR;
 
 /**
@@ -69,7 +70,7 @@ VCR::configure()
     ->setCassettePath(__DIR__ . '/Fixture/vcr')
     ->setStorage('yaml')
     ->setWhitelist(['vendor/guzzlehttp', 'vendor/google', 'vendor/cakephp/cakephp/src/Http/Client'])
-    ->addRequestMatcher('sloppy_body', function (\VCR\Request $first, \VCR\Request $second) {
+    ->addRequestMatcher('sloppy_body', function (Request $first, Request $second) {
         $bodies = [$first->getBody(), $second->getBody()];
         foreach ($bodies as $i => $body) {
             if ($body === null) {

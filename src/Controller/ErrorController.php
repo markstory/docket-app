@@ -18,6 +18,7 @@ namespace App\Controller;
 
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 
 /**
  * Error Handling Controller
@@ -42,7 +43,7 @@ class ErrorController extends AppController
      * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): Response|null|null
     {
     }
 
@@ -52,7 +53,7 @@ class ErrorController extends AppController
      * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): Response|null|null
     {
         if (!Configure::read('debug')) {
             parent::beforeRender($event);
@@ -66,7 +67,7 @@ class ErrorController extends AppController
      * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null|void
      */
-    public function afterFilter(EventInterface $event)
+    public function afterFilter(EventInterface $event): Response|null|null
     {
     }
 }

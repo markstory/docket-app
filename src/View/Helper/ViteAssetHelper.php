@@ -26,7 +26,7 @@ class ViteAssetHelper extends Helper
     /**
      * @var array
      */
-    protected $manifest = [];
+    protected array $manifest = [];
 
     public function initialize(array $config): void
     {

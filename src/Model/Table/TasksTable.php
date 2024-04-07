@@ -9,16 +9,13 @@ use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\Date;
-use Cake\I18n\FrozenDate;
 use Cake\ORM\Association\HasMany;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Tasks Model
@@ -242,7 +239,7 @@ class TasksTable extends Table
      * Update an item so that it is appended to
      * both the day and project.
      */
-    public function setNextOrderProperties(User $user, Task $item)
+    public function setNextOrderProperties(User $user, Task $item): void
     {
         $query = $this->find();
         $result = $query
@@ -389,7 +386,7 @@ class TasksTable extends Table
                     return $exp->between($property, $current, $targetOffset);
                 });
         }
-        $this->getConnection()->transactional(function () use ($item, $query) {
+        $this->getConnection()->transactional(function () use ($item, $query): void {
             if ($query->clause('set')) {
                 $query->execute();
             }
@@ -397,7 +394,7 @@ class TasksTable extends Table
         });
     }
 
-    protected function validateMoveOperation(array $operation)
+    protected function validateMoveOperation(array $operation): void
     {
         if (isset($operation['due_on'])) {
             if (!Validation::date($operation['due_on'], 'ymd')) {
@@ -421,7 +418,7 @@ class TasksTable extends Table
         }
     }
 
-    public function beforeSave(EventInterface $event, Task $task, ArrayObject $options)
+    public function beforeSave(EventInterface $event, Task $task, ArrayObject $options): void
     {
         if ($task->isDirty('subtasks') && is_array($task->subtasks) && count($task->subtasks)) {
             // Force a dirty field so that counter cache always runs.

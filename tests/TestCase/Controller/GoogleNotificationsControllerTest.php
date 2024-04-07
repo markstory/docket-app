@@ -38,8 +38,6 @@ class GoogleNotificationsControllerTest extends TestCase
         DateTime::setTestNow(null);
     }
 
-    /**
-     */
     public function testUpdateSuccess(): void
     {
         $this->loadResponseMocks('controller_calendarsources_sync.yml');
@@ -85,8 +83,6 @@ class GoogleNotificationsControllerTest extends TestCase
         $this->assertResponseCode(400);
     }
 
-    /**
-     */
     public function testUpdateExpiresSoon(): void
     {
         $this->loadResponseMocks('calendarservice_sync_and_sub.yml');

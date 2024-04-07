@@ -5,7 +5,7 @@ namespace App\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -42,8 +42,8 @@ class CleanupCommandTest extends TestCase
      */
     public function testExecute(): void
     {
-        $expired = \Cake\I18n\DateTime::parse('-15 days');
-        $ok = \Cake\I18n\DateTime::parse('-1 hour');
+        $expired = DateTime::parse('-15 days');
+        $ok = DateTime::parse('-1 hour');
 
         $project = $this->makeProject('work', 1);
         $this->makeTask('first task', $project->id, 1, ['deleted_at' => $expired]);

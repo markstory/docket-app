@@ -7,6 +7,7 @@ use App\Model\Entity\Project;
 use App\Model\Table\ProjectsTable;
 use App\Model\Table\TasksTable;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -46,7 +47,7 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function view(string $slug)
+    public function view(string $slug): Response|null|null
     {
         $project = $this->getProject($slug, ['Sections']);
 
@@ -89,7 +90,7 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): Response|null|null
     {
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
@@ -135,7 +136,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $slug)
+    public function edit(string $slug): Response|null|null
     {
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
@@ -180,7 +181,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function archived()
+    public function archived(): Response|null|null
     {
         $query = $this->Projects->find('archived');
         $query = $this->Authorization->applyScope($query, 'index');
@@ -203,7 +204,7 @@ class ProjectsController extends AppController
     /**
      * Render a confirmation dialog for a delete operation.
      */
-    public function deleteConfirm(string $slug)
+    public function deleteConfirm(string $slug): void
     {
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project, 'delete');
@@ -216,7 +217,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $slug)
+    public function delete(string $slug): Response|null|null
     {
         $this->request->allowMethod(['post', 'delete']);
         $project = $this->getProject($slug);
@@ -308,7 +309,7 @@ class ProjectsController extends AppController
     /**
      * Reorder a users active projects as a group.
      */
-    public function reorder()
+    public function reorder(): void
     {
         $this->request->allowMethod(['post']);
         $ids = (array)$this->request->getData('id');

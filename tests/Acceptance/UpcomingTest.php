@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Symfony\Component\Panther\Client;
 
 /**
@@ -48,7 +48,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testUpcomingDisplaysCalendarEvents()
     {
-        $twodays = \Cake\I18n\Date::parse('+2 days', 'UTC');
+        $twodays = Date::parse('+2 days', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $twodays]);
 
@@ -73,7 +73,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testCompleteTask()
     {
-        $today = new \Cake\I18n\Date('tomorrow', 'UTC');
+        $today = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
@@ -122,7 +122,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeDateWithContextMenu()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -154,7 +154,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeDateAndEveningWithContextMenu()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -188,8 +188,8 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeAddEveningWithContextMenu()
     {
-        $today = new \Cake\I18n\Date('today', 'UTC');
-        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
+        $today = new Date('today', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -220,7 +220,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeProjectWithContextMenu()
     {
-        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $zoo = $this->makeProject('Zoo', 1);
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
@@ -260,8 +260,8 @@ class UpcomingTest extends AcceptanceTestCase
         $this->markTestIncomplete('Cannot test html5 dragdrop with selenium.');
 
         $project = $this->makeProject('Work', 1);
-        $tomorrow = new \Cake\I18n\Date('tomorrow', 'UTC');
-        $twoDays = new \Cake\I18n\Date('+2 days', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
+        $twoDays = new Date('+2 days', 'UTC');
 
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
         $other = $this->makeTask('Vacuum', $project->id, 0, ['due_on' => $twoDays]);
