@@ -149,7 +149,7 @@ class UpcomingTest extends AcceptanceTestCase
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertLessThan($tomorrow->toDateString(), $updated->due_on->toDateString());
     }
 
     public function testChangeDateAndEveningWithContextMenu()
@@ -182,7 +182,7 @@ class UpcomingTest extends AcceptanceTestCase
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertLessThan($tomorrow->toDateString(), $updated->due_on->toDateString());
         $this->assertTrue($updated->evening);
     }
 
@@ -215,7 +215,7 @@ class UpcomingTest extends AcceptanceTestCase
 
         $updated = $this->Tasks->get($task->id);
         $this->assertTrue($updated->evening);
-        $this->assertSame($today->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertSame($today->toDateString(), $updated->due_on->toDateString());
     }
 
     public function testChangeProjectWithContextMenu()
