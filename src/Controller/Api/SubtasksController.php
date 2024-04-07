@@ -57,7 +57,7 @@ class SubtasksController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add(string $taskId): Response|null
+    public function add(string $taskId): ?Response
     {
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
@@ -84,7 +84,7 @@ class SubtasksController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function toggle(string $taskId, string $id): Response|null
+    public function toggle(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post']);
         $subtask = $this->getSubtask($taskId, $id);
@@ -107,7 +107,7 @@ class SubtasksController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $taskId, string $id): Response|null
+    public function edit(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
 
@@ -139,7 +139,7 @@ class SubtasksController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $taskId, string $id): Response|null
+    public function delete(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $subtask = $this->getSubtask($taskId, $id);

@@ -43,7 +43,7 @@ class ErrorController extends AppController
      * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null
      */
-    public function beforeFilter(EventInterface $event): Response|null
+    public function beforeFilter(EventInterface $event): ?Response
     {
     }
 
@@ -67,7 +67,7 @@ class ErrorController extends AppController
      * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null
      */
-    public function afterFilter(EventInterface $event): Response|null
+    public function afterFilter(EventInterface $event): ?Response
     {
     }
 }

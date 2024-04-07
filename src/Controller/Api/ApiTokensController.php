@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 
 use App\Controller\AppController;
 use Cake\Event\EventInterface;
-use Cake\Http\Response;
 use Cake\View\JsonView;
 
 /**

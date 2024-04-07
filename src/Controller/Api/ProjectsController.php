@@ -47,7 +47,7 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
-    public function index(): Response|null
+    public function index(): ?Response
     {
         $projects = $this->Authorization
             ->applyScope($this->Projects->find(), 'index')
@@ -68,7 +68,7 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function view(string $slug): Response|null
+    public function view(string $slug): ?Response
     {
         $project = $this->getProject($slug, ['Sections']);
 
@@ -105,7 +105,7 @@ class ProjectsController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add(): Response|null
+    public function add(): ?Response
     {
         $project = $this->Projects->newEmptyEntity();
         $this->Authorization->authorize($project, 'create');
@@ -143,7 +143,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $slug): Response|null
+    public function edit(string $slug): ?Response
     {
         $project = $this->getProject($slug);
         $this->Authorization->authorize($project);
@@ -178,7 +178,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function archived(): Response|null
+    public function archived(): ?Response
     {
         $query = $this->Projects->find('archived');
         $query = $this->Authorization->applyScope($query, 'index');
@@ -214,7 +214,7 @@ class ProjectsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $slug): Response|null
+    public function delete(string $slug): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $project = $this->getProject($slug);

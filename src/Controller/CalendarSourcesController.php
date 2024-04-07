@@ -55,7 +55,7 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function add(CalendarService $service, $providerId = null): Response|null
+    public function add(CalendarService $service, $providerId = null): ?Response
     {
         $provider = $this->CalendarSources->CalendarProviders->get(
             $providerId,
@@ -132,7 +132,7 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(): Response|null
+    public function edit(): ?Response
     {
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
@@ -165,7 +165,7 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(CalendarService $service): Response|null
+    public function delete(CalendarService $service): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $calendarSource = $this->getSource();
