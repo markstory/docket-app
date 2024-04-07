@@ -180,7 +180,7 @@ class AppController extends Controller
                 return $this->response;
             }
 
-            return;
+            return null;
         }
         if ($this->request->is('htmx') && $config['statusSuccess'] === 204) {
             $this->response = $this->response->withStatus($code);
@@ -192,5 +192,7 @@ class AppController extends Controller
         if ($config['redirect']) {
             return $this->redirect($config['redirect']);
         }
+
+        return null;
     }
 }

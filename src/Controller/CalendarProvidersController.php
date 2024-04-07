@@ -80,9 +80,9 @@ class CalendarProvidersController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      */
-    public function index(CalendarService $service): Response|null|null
+    public function index(CalendarService $service): Response|null
     {
         $query = $this->CalendarProviders->find()->contain('CalendarSources');
         $query = $this->Authorization->applyScope($query);
@@ -130,10 +130,10 @@ class CalendarProvidersController extends AppController
      * Delete method
      *
      * @param string|null $id Calendar Provider id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(?string $id = null): Response|null|null
+    public function delete(?string $id = null): Response|null
     {
         $this->request->allowMethod(['post', 'delete']);
         $calendarProvider = $this->CalendarProviders->get($id);

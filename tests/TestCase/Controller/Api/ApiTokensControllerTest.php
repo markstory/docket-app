@@ -33,6 +33,7 @@ class ApiTokensControllerTest extends TestCase
         $this->makeApiToken(2);
         $token = $this->loginApi(1);
 
+        $this->disableErrorHandlerMiddleware();
         $this->get('/api/tokens');
         $this->assertResponseOk();
         $this->assertHeader('Content-Type', 'application/json');

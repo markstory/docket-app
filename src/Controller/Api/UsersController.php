@@ -35,10 +35,10 @@ class UsersController extends AppController
     /**
      * Edit method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(): Response|null|null
+    public function edit(): void
     {
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller\Api;
+namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;

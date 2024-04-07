@@ -104,9 +104,9 @@ class TasksController extends AppController
      * Supports two query string parameters. `start` indicates the start of the range.
      * `end` indicates the end. You cannot query more than 31 days at time.
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      */
-    public function index(string $view = 'upcoming'): Response|null|null
+    public function index(string $view = 'upcoming'): Response|null
     {
         $calendarItemsTable = $this->fetchTable('CalendarItems');
 
@@ -177,9 +177,9 @@ class TasksController extends AppController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add(): Response|null|null
+    public function add(): Response|null
     {
         $task = $this->Tasks->newEntity($this->request->getQueryParams());
         $task->subtasks = [];
@@ -254,10 +254,10 @@ class TasksController extends AppController
      * Complete a task as complete.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function complete(?string $id = null): Response|null|null
+    public function complete(?string $id = null): Response|null
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
@@ -286,10 +286,10 @@ class TasksController extends AppController
      * Mark a task as incomplete.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function incomplete(?string $id = null): Response|null|null
+    public function incomplete(?string $id = null): Response|null
     {
         $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
@@ -355,10 +355,10 @@ class TasksController extends AppController
      * Called as an XHR request from the view page.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(?string $id = null): Response|null|null
+    public function edit(?string $id = null): Response|null
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->getTask($id);
@@ -422,10 +422,10 @@ class TasksController extends AppController
      * View method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view(?string $id = null, $mode = null): Response|null|null
+    public function view(?string $id = null, $mode = null): Response|null
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task);
@@ -462,10 +462,10 @@ class TasksController extends AppController
      * Delete method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(?string $id = null): Response|null|null
+    public function delete(?string $id = null): Response|null
     {
         $this->request->allowMethod(['post', 'delete']);
         $task = $this->Tasks->get($id, contain: ['Projects']);
@@ -497,10 +497,10 @@ class TasksController extends AppController
      * Undelete method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function undelete(?string $id = null): Response|null|null
+    public function undelete(?string $id = null): Response|null
     {
         $this->request->allowMethod('post');
         $task = $this->Tasks->get($id, contain: ['Projects'], deleted: true);

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace App\Test\TestCase\Controller\Api;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
@@ -10,7 +10,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\UsersController Test Case
+ * App\Controller\Api\UsersController Test Case
  *
  * @uses \App\Controller\UsersController
  */
