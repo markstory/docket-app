@@ -55,7 +55,6 @@ class CleanupCommandTest extends TestCase
         $this->assertExitSuccess();
 
         $tasks = $this->fetchTable('Tasks');
-        $result = $tasks->find()->all();
         $this->assertNotEmpty($tasks->get($keepOne->id, deleted: true));
         $this->assertNotEmpty($tasks->get($keepTwo->id));
     }

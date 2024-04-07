@@ -269,7 +269,6 @@ class UpcomingTest extends AcceptanceTestCase
         $client = $this->login();
         $client->get('/tasks/upcoming');
         $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
 
         // Get the last item. It will be in a different group than the first.
         $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);

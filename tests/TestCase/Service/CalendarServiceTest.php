@@ -260,7 +260,7 @@ class CalendarServiceTest extends TestCase
     public function testGetSourceForSubscriptionInvalid(): void
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
-        $source = $this->makeCalendarSource($provider->id, 'primary', [
+        $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
         ]);
         $this->expectException(RecordNotFoundException::class);

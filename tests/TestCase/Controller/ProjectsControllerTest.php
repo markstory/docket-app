@@ -308,7 +308,7 @@ class ProjectsControllerTest extends TestCase
 
     public function testMovePermission()
     {
-        $home = $this->makeProject('Home', 1, 0);
+        $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 2, 3);
 
         $this->login();

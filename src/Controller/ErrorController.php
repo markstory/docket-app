@@ -41,9 +41,9 @@ class ErrorController extends AppController
      * beforeFilter callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null
+     * @return void
      */
-    public function beforeFilter(EventInterface $event): ?Response
+    public function beforeFilter(EventInterface $event): void
     {
     }
 
@@ -65,9 +65,9 @@ class ErrorController extends AppController
      * afterFilter callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null
+     * @return void
      */
-    public function afterFilter(EventInterface $event): ?Response
+    public function afterFilter(EventInterface $event): void
     {
     }
 }

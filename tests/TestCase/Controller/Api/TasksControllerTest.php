@@ -1017,7 +1017,7 @@ class TasksControllerTest extends TestCase
 
     public function testIncomplete(): void
     {
-        $token = $this->makeApiToken(1);
+        $this->makeApiToken(1);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $this->loginApi(1);

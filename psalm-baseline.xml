@@ -9,9 +9,6 @@
     <ArgumentTypeCoercion>
       <code>$source</code>
     </ArgumentTypeCoercion>
-    <InvalidReturnType>
-      <code>int|null|void</code>
-    </InvalidReturnType>
     <NoInterfaceProperties>
       <code><![CDATA[$source->calendar_provider]]></code>
       <code><![CDATA[$source->id]]></code>
@@ -23,28 +20,14 @@
     </PropertyTypeCoercion>
   </file>
   <file src="src/Command/CalendarSubscriptionRenewCommand.php">
-    <InvalidReturnType>
-      <code>int|null|void</code>
-    </InvalidReturnType>
     <PropertyTypeCoercion>
       <code><![CDATA[$this->fetchTable('CalendarSubscriptions')]]></code>
     </PropertyTypeCoercion>
-  </file>
-  <file src="src/Command/CleanupCommand.php">
-    <InvalidReturnType>
-      <code>int|null|void</code>
-    </InvalidReturnType>
   </file>
   <file src="src/Console/Installer.php">
     <PossiblyInvalidArgument>
       <code><![CDATA[fopen('php://stdin', 'r')]]></code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Controller/Api/ApiTokensController.php">
-    <InvalidReturnType>
-      <code>\Cake\Http\Response|null</code>
-      <code>\Cake\Http\Response|null|void</code>
-    </InvalidReturnType>
   </file>
   <file src="src/Controller/Api/CalendarProvidersController.php">
     <UndefinedInterfaceMethod>
@@ -68,19 +51,6 @@
       <code>$value</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Controller/Api/UsersController.php">
-    <InvalidReturnType>
-      <code>\Cake\Http\Response|null|void</code>
-    </InvalidReturnType>
-  </file>
-  <file src="src/Controller/AppController.php">
-    <InvalidReturnStatement>
-      <code>return;</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType>
-      <code>\Cake\Http\Response|null</code>
-    </InvalidReturnType>
-  </file>
   <file src="src/Controller/CalendarProvidersController.php">
     <UndefinedInterfaceMethod>
       <code>toArray</code>
@@ -90,17 +60,6 @@
     <ArgumentTypeCoercion>
       <code>$event</code>
     </ArgumentTypeCoercion>
-    <ImplementedReturnTypeMismatch>
-      <code>\Cake\Http\Response|null|void</code>
-    </ImplementedReturnTypeMismatch>
-    <InvalidReturnType>
-      <code>\Cake\Http\Response|null|void</code>
-      <code>\Cake\Http\Response|null|void</code>
-      <code>\Cake\Http\Response|null|void</code>
-    </InvalidReturnType>
-    <MethodSignatureMismatch>
-      <code>public function beforeRender(EventInterface $event): Response|null|null</code>
-    </MethodSignatureMismatch>
   </file>
   <file src="src/Controller/GoogleOauthController.php">
     <PropertyTypeCoercion>
@@ -117,12 +76,6 @@
     <PossiblyNullArgument>
       <code>$value</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Controller/UsersController.php">
-    <InvalidReturnType>
-      <code>\Cake\Http\Response|null|void</code>
-      <code>\Cake\Http\Response|null|void</code>
-    </InvalidReturnType>
   </file>
   <file src="src/Model/Entity/ApiToken.php">
     <NonInvariantDocblockPropertyType>

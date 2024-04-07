@@ -67,7 +67,6 @@ class DateHelperTest extends TestCase
      */
     public function testFormatCompact($input, $output)
     {
-        $tomorrow = new Date('tomorrow');
         $result = $this->Date->formatCompact($input);
         $this->assertSame($output, $result);
     }
