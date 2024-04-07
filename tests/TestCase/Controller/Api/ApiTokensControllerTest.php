@@ -9,8 +9,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\Api\ApiTokensController Test Case
- *
- * @uses \App\Controller\ApiTokensController
  */
 class ApiTokensControllerTest extends TestCase
 {
@@ -22,7 +20,7 @@ class ApiTokensControllerTest extends TestCase
      *
      * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.ApiTokens',
         'app.Users',
     ];
@@ -33,6 +31,7 @@ class ApiTokensControllerTest extends TestCase
         $this->makeApiToken(2);
         $token = $this->loginApi(1);
 
+        $this->disableErrorHandlerMiddleware();
         $this->get('/api/tokens');
         $this->assertResponseOk();
         $this->assertHeader('Content-Type', 'application/json');
@@ -79,6 +78,7 @@ class ApiTokensControllerTest extends TestCase
 
     public function testDelete(): void
     {
+        $this->disableErrorHandlerMiddleware();
         $token = $this->loginApi(1);
 
         $this->delete("/api/tokens/{$token->token}/delete");

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -120,15 +120,9 @@ class CalendarItemsTable extends Table
      * The `start` and `end` options are expected to be in
      * user timezone.
      */
-    public function findUpcoming(Query $query, array $options): Query
+    public function findUpcoming(Query $query, $start, $end, $timezone): Query
     {
-        assert(!empty($options['start']), 'Missing required `start` option');
-        assert(!empty($options['end']), 'Missing required `end` option');
-        assert(!empty($options['timezone']), 'Missing required `timezone` option');
-
-        $start = $options['start'];
-        $end = $options['end'];
-        $userTimezone = $options['timezone'];
+        $userTimezone = $timezone;
 
         return $query->where(function ($exp) use ($start, $end, $userTimezone) {
             $serverTz = Configure::read('App.defaultTimezone');
@@ -145,10 +139,10 @@ class CalendarItemsTable extends Table
             ]);
 
             // Create datetimes and set timezones to UTC to match storage.
-            $startTime = (new FrozenTime($startDate, $userTimezone))
+            $startTime = (new DateTime($startDate, $userTimezone))
                 ->setTime(0, 0, 0)
                 ->setTimezone($serverTz);
-            $endTime = (new FrozenTime($endDate, $userTimezone))
+            $endTime = (new DateTime($endDate, $userTimezone))
                 ->setTime(23, 59, 59)
                 ->setTimezone($serverTz);
             $dateTime = $exp->and([
@@ -159,9 +153,9 @@ class CalendarItemsTable extends Table
             return $exp->or([$date, $dateTime]);
         })
             ->contain('CalendarSources')
-            ->orderDesc('CalendarItems.all_day')
-            ->orderAsc('CalendarItems.start_date')
-            ->orderAsc('CalendarItems.start_time')
-            ->orderAsc('CalendarItems.title');
+            ->orderByDesc('CalendarItems.all_day')
+            ->orderByAsc('CalendarItems.start_date')
+            ->orderByAsc('CalendarItems.start_time')
+            ->orderByAsc('CalendarItems.title');
     }
 }

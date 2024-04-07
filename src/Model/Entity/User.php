@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use ArrayAccess;
 use Authentication\IdentityInterface as AuthenticationIdentity;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Authorization\AuthorizationServiceInterface;
 use Authorization\IdentityInterface as AuthorizationIdentity;
 use Authorization\Policy\ResultInterface;
-use Cake\Auth\DefaultPasswordHasher;
 use Cake\Core\Configure;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use RuntimeException;
 
@@ -24,8 +25,8 @@ use RuntimeException;
  * @property string $theme
  * @property string $timezone
  * @property bool $email_verified
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Project[] $projects
  */
@@ -42,7 +43,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'name' => true,
         'unverified_email' => true,
         'modified' => true,
@@ -55,7 +56,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
      *
      * @var array<array-key, string>
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'password',
         'email_verified',
     ];
@@ -63,12 +64,12 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * @var array<array-key, string>
      */
-    protected $_virtual = ['avatar_hash'];
+    protected array $_virtual = ['avatar_hash'];
 
     /**
      * @var \Authorization\AuthorizationServiceInterface|null
      */
-    protected $authorization = null;
+    protected ?AuthorizationServiceInterface $authorization = null;
 
     protected function _getAvatarHash()
     {
@@ -122,7 +123,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         return base64_encode(json_encode($data));
     }
 
-    public function updateEmailIfMatch(string $hmac)
+    public function updateEmailIfMatch(string $hmac): void
     {
         $current = $this->unverifiedEmailChecksum();
         if (!hash_equals($current, $hmac)) {
@@ -160,7 +161,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     public function passwordResetToken(): string
     {
         $emailHash = hash_hmac('sha256', $this->email, Configure::read('Security.emailSalt'));
-        $expires = new FrozenTime(static::PASSWORD_TOKEN_DURATION);
+        $expires = new DateTime(static::PASSWORD_TOKEN_DURATION);
         $data = [
             'uid' => $this->id,
             'val' => $emailHash,
@@ -180,7 +181,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
         if (!$data || !isset($data->uid, $data->val, $data->exp)) {
             throw new RuntimeException(__('Invalid password reset token provided.'));
         }
-        $now = (new FrozenTime('now'))->getTimestamp();
+        $now = (new DateTime('now'))->getTimestamp();
         if ($data->exp < $now) {
             throw new RuntimeException(__('Expired password reset token provided.'));
         }
@@ -223,7 +224,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * Authorization\IdentityInterface method
      */
-    public function applyScope($action, $resource)
+    public function applyScope(string $action, mixed $resource, mixed ...$optionalArgs): mixed
     {
         if (!$this->authorization) {
             throw new RuntimeException('Cannot check authorization. AuthorizationService has not been set.');
@@ -235,7 +236,7 @@ class User extends Entity implements AuthenticationIdentity, AuthorizationIdenti
     /**
      * Authorization\IdentityInterface method
      */
-    public function getOriginalData()
+    public function getOriginalData(): ArrayAccess|array
     {
         return $this;
     }

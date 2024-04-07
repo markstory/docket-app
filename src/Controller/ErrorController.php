@@ -40,9 +40,9 @@ class ErrorController extends AppController
      * beforeFilter callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
     }
 
@@ -50,9 +50,9 @@ class ErrorController extends AppController
      * beforeRender callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         if (!Configure::read('debug')) {
             parent::beforeRender($event);
@@ -64,9 +64,9 @@ class ErrorController extends AppController
      * afterFilter callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      */
-    public function afterFilter(EventInterface $event)
+    public function afterFilter(EventInterface $event): void
     {
     }
 }

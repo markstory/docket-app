@@ -5,7 +5,9 @@ namespace App\Controller;
 
 use App\Model\Entity\CalendarSource;
 use App\Service\CalendarService;
+use Cake\Http\Response;
 use Cake\View\JsonView;
+use Exception;
 use RuntimeException;
 
 /**
@@ -50,14 +52,15 @@ class CalendarSourcesController extends AppController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function add(CalendarService $service, $providerId = null)
+    public function add(CalendarService $service, $providerId = null): ?Response
     {
-        $provider = $this->CalendarSources->CalendarProviders->get($providerId, [
-            'contain' => ['CalendarSources'],
-        ]);
+        $provider = $this->CalendarSources->CalendarProviders->get(
+            $providerId,
+            contain: ['CalendarSources'],
+        );
         $this->Authorization->authorize($provider, 'edit');
         $success = false;
         $error = '';
@@ -110,7 +113,7 @@ class CalendarSourcesController extends AppController
         try {
             $service->syncEvents($source);
             $this->set('source', $source);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = __('Calendar not refreshed. %s', $e->getMessage());
             $success = false;
         }
@@ -126,10 +129,10 @@ class CalendarSourcesController extends AppController
     /**
      * Edit method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit()
+    public function edit(): ?Response
     {
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
@@ -159,10 +162,10 @@ class CalendarSourcesController extends AppController
     /**
      * Delete method
      *
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(CalendarService $service)
+    public function delete(CalendarService $service): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $calendarSource = $this->getSource();
@@ -184,7 +187,7 @@ class CalendarSourcesController extends AppController
         ]);
     }
 
-    public function deleteConfirm()
+    public function deleteConfirm(): void
     {
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider, 'edit');

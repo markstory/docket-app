@@ -87,7 +87,7 @@ class UsersTable extends Table
           ->add('timezone', 'validtimezone', [
               'rule' => function ($value) {
                 try {
-                    $tz = new DateTimeZone($value);
+                    new DateTimeZone($value);
 
                     return true;
                 } catch (Exception $e) {

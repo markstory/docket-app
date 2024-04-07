@@ -5,7 +5,7 @@ namespace App\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\Core\Configure;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -19,7 +19,7 @@ class RescheduleTasksCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.Projects',
         'app.Tasks',
@@ -33,7 +33,6 @@ class RescheduleTasksCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->useCommandRunner();
     }
 
     /**
@@ -57,7 +56,7 @@ class RescheduleTasksCommandTest extends TestCase
     {
         Configure::write('debug', true);
         $project = $this->makeProject('Home', 1);
-        $task = $this->makeTask('Do dishes', $project->id, 1, ['due_on' => new FrozenDate('-1 day')]);
+        $task = $this->makeTask('Do dishes', $project->id, 1, ['due_on' => new Date('-1 day')]);
 
         $this->exec('reschedule_tasks');
         $this->assertExitSuccess();

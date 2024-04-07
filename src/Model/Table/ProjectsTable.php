@@ -135,7 +135,7 @@ class ProjectsTable extends Table
     public function findTop(Query $query): Query
     {
         return $query
-            ->orderAsc('Projects.ranking')
+            ->orderByAsc('Projects.ranking')
             ->limit(25);
     }
 
@@ -159,14 +159,14 @@ class ProjectsTable extends Table
         return (int)$query->firstOrFail()->count;
     }
 
-    public function createDefaultProject(User $user)
+    public function createDefaultProject(User $user): void
     {
         $project = $this->newEntity(['name' => 'Tasks', 'color' => 10]);
         $project->user_id = $user->id;
         $this->saveOrFail($project);
     }
 
-    public function move(Project $project, array $operation)
+    public function move(Project $project, array $operation): void
     {
         if (!isset($operation['ranking'])) {
             throw new InvalidArgumentException('A ranking is required');
@@ -187,7 +187,7 @@ class ProjectsTable extends Table
      */
     public function reorder(array $ids): void
     {
-        $this->getConnection()->transactional(function () use ($ids) {
+        $this->getConnection()->transactional(function () use ($ids): void {
             foreach ($ids as $ranking => $id) {
                 $this->updateQuery()
                     ->set(['ranking' => $ranking])

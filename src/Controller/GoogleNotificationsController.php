@@ -6,14 +6,14 @@ namespace App\Controller;
 use App\Service\CalendarService;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 
 /**
  * Receives push notifications from google calendar to sync events
  */
 class GoogleNotificationsController extends AppController
 {
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
         $this->Authentication->allowUnauthenticated(['update']);
@@ -39,8 +39,8 @@ class GoogleNotificationsController extends AppController
         $service->setAccessToken($source->calendar_provider);
         $service->syncEvents($source);
 
-        $expires = FrozenTime::parse($expiration);
-        $soon = FrozenTime::parse('+1 hour');
+        $expires = DateTime::parse($expiration);
+        $soon = DateTime::parse('+1 hour');
         if ($expires->lessThan($soon)) {
             $service->createSubscription($source);
         }

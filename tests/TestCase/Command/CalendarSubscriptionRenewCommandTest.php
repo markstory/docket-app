@@ -5,7 +5,6 @@ namespace App\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -18,7 +17,7 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -38,18 +37,15 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->useCommandRunner();
-        $this->CalendarSubscriptions = TableRegistry::get('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
     }
 
     /**
      * Test execute method
-     *
-     * @vcr calendarservice_createsubscription_success.yml
-     * @return void
      */
     public function testExecute(): void
     {
+        $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
         $provider = $this->makeCalendarProvider(1, 'me@example.com');
         $source = $this->makeCalendarSource($provider->id, 'calendar-1');
         $sub = $this->makeCalendarSubscription($source->id, 'abc-123', 'abc-456', strtotime('-6 hours'));
@@ -68,13 +64,11 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     }
 
     /**
-     * Test execute method
-     *
-     * @vcr calendarservice_createsubscription_success.yml
-     * @return void
+     * Test execute method create missing subscriptions
      */
     public function testExecuteCreateMissing(): void
     {
+        $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
         $provider = $this->makeCalendarProvider(1, 'me@example.com');
         $this->makeCalendarSource($provider->id, 'calendar-1');
         $this->exec('calendar_subscription_renew');
@@ -88,13 +82,11 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     }
 
     /**
-     * Test execute method
-     *
-     * @vcr calendarservice_createsubscription_success.yml
-     * @return void
+     * Test execute method will not create duplicates
      */
     public function testExecuteNoDuplicates(): void
     {
+        $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
         $provider = $this->makeCalendarProvider(1, 'me@example.com');
         $source = $this->makeCalendarSource($provider->id, 'calendar-1');
         $this->makeCalendarSubscription($source->id, 'abc123', 'verifier-val');

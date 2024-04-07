@@ -98,7 +98,7 @@ class SubtasksTable extends Table
         return $rules;
     }
 
-    public function beforeSave(EventInterface $event, Subtask $subtask)
+    public function beforeSave(EventInterface $event, Subtask $subtask): void
     {
         if ($subtask->ranking === null) {
             $subtask->ranking = $this->getNextRanking($subtask->task_id);
@@ -132,7 +132,7 @@ class SubtasksTable extends Table
         return $query->where(['Subtasks.completed' => false]);
     }
 
-    public function move(Subtask $subtask, array $operation)
+    public function move(Subtask $subtask, array $operation): void
     {
         if (!isset($operation['ranking'])) {
             throw new InvalidArgumentException('A ranking is required');

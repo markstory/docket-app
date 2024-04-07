@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Exception;
 
@@ -16,14 +16,14 @@ use Exception;
  * @property int|null $section_id
  * @property string|null $title
  * @property string|null $body
- * @property \Cake\I18n\FrozenDate|null $due_on This date is in the user's timezone.
+ * @property \Cake\I18n\Date|null $due_on This date is in the user's timezone.
  * @property int $child_order
  * @property int $day_order
  * @property bool $evening
  * @property bool $completed
- * @property \Cake\I18n\FrozenTime|null $deleted_at
- * @property \Cake\I18n\FrozenTime|null $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime|null $deleted_at
+ * @property \Cake\I18n\DateTime|null $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property int $subtask_count
  * @property int $complete_subtask_count
@@ -43,7 +43,7 @@ class Task extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'project_id' => true,
         'section_id' => true,
         'title' => true,
@@ -64,18 +64,18 @@ class Task extends Entity
     public function complete(): void
     {
         $this->completed = true;
-        $this->due_on = new FrozenDate();
+        $this->due_on = new Date();
     }
 
     public function incomplete(): void
     {
         $this->completed = false;
-        $this->due_on = new FrozenDate();
+        $this->due_on = new Date();
     }
 
     public function softDelete(): void
     {
-        $this->deleted_at = new FrozenTime();
+        $this->deleted_at = new DateTime();
     }
 
     public function undelete(): void
@@ -83,19 +83,19 @@ class Task extends Entity
         $this->deleted_at = null;
     }
 
-    public function setDueOnFromString(?string $value)
+    public function setDueOnFromString(?string $value): void
     {
         if (!$value) {
             return;
         }
         try {
-            $this->due_on = FrozenDate::parse($value);
+            $this->due_on = Date::parse($value);
         } catch (Exception $e) {
             $this->setError('due_on', 'Invalid date string.');
         }
     }
 
-    public function removeTrailingEmptySubtask()
+    public function removeTrailingEmptySubtask(): void
     {
         if (empty($this->subtasks)) {
             return;

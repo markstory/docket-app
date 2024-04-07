@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use App\Model\Entity\User;
 use Cake\View\Cell;
 
 /**
@@ -16,19 +17,19 @@ class ProjectsMenuCell extends Cell
      *
      * @var array<string>
      */
-    protected $_validCellOptions = ['identity'];
+    protected array $_validCellOptions = ['identity'];
 
     /**
      * @var \App\Model\Entity\User
      */
-    protected $identity;
+    protected User $identity;
 
     /**
      * Default display method.
      *
      * @return void
      */
-    public function display($identity)
+    public function display($identity): void
     {
         $projects = $this->fetchTable('Projects');
 

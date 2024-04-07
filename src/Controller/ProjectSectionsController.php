@@ -23,7 +23,7 @@ class ProjectSectionsController extends AppController
         return $query->firstOrFail();
     }
 
-    public function options()
+    public function options(): void
     {
         $projectId = $this->request->getQuery('project_id');
         if (!$projectId) {
@@ -81,7 +81,7 @@ class ProjectSectionsController extends AppController
      * Used by html views to load reload a section when editing
      * is cancelled.
      */
-    public function view(string $projectSlug, int $id)
+    public function view(string $projectSlug, int $id): void
     {
         $project = $this->getProject($projectSlug);
         $section = $this->ProjectSections->get($id);
@@ -128,7 +128,7 @@ class ProjectSectionsController extends AppController
         }
     }
 
-    public function deleteConfirm(string $projectSlug, string $id)
+    public function deleteConfirm(string $projectSlug, string $id): void
     {
         $project = $this->getProject($projectSlug);
         $section = $this->ProjectSections->get($id);

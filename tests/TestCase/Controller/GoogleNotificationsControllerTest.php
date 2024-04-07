@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -23,7 +23,7 @@ class GoogleNotificationsControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -35,15 +35,13 @@ class GoogleNotificationsControllerTest extends TestCase
     {
         parent::tearDown();
 
-        FrozenTime::setTestNow(null);
+        DateTime::setTestNow(null);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
     public function testUpdateSuccess(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
@@ -59,6 +57,7 @@ class GoogleNotificationsControllerTest extends TestCase
                 'X-Goog-Channel-Expiration' => '2021-07-11 22:00:00',
             ],
         ]);
+        $this->disableErrorHandlerMiddleware();
         $this->post('/google/calendar/notifications');
         $this->assertResponseOk();
 
@@ -84,12 +83,10 @@ class GoogleNotificationsControllerTest extends TestCase
         $this->assertResponseCode(400);
     }
 
-    /**
-     * @vcr calendarservice_sync_and_sub.yml
-     */
     public function testUpdateExpiresSoon(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        $this->loadResponseMocks('calendarservice_sync_and_sub.yml');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [

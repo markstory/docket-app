@@ -18,7 +18,7 @@ class ApiTokenPolicy
      * @param \App\Model\Entity\ApiToken $apiToken
      * @return bool
      */
-    public function canDelete(User $user, ApiToken $apiToken)
+    public function canDelete(User $user, ApiToken $apiToken): bool
     {
         return $user->id === $apiToken->user_id;
     }

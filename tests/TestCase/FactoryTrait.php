@@ -13,10 +13,10 @@ use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
 use App\Model\Entity\Task;
 use App\Model\Entity\User;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
-use DateTime;
+use VCR\VCR;
 
 trait FactoryTrait
 {
@@ -200,8 +200,8 @@ trait FactoryTrait
         $items = $this->fetchTable('CalendarItems');
         $item = $items->newEntity(array_merge([
             'calendar_source_id' => $sourceId,
-            'start_time' => FrozenTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
-            'end_time' => FrozenTime::parse('-1 day')->format('Y-m-d H:i:s'),
+            'start_time' => DateTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
+            'end_time' => DateTime::parse('-1 day')->format('Y-m-d H:i:s'),
         ], $props));
 
         return $items->saveOrFail($item);
@@ -220,5 +220,26 @@ trait FactoryTrait
         $subs->saveOrFail($sub);
 
         return $sub;
+    }
+
+    /**
+     * Load a VCR cassette for http response stubs.
+     *
+     * @param string $name The name of the fixture to load including extension.
+     */
+    protected function loadResponseMocks(string $name): void
+    {
+        VCR::turnOn();
+        VCR::insertCassette($name);
+    }
+
+    /**
+     * After hook that clears VCR cassettes that have been loaded.
+     *
+     * @after
+     */
+    protected function clearResponseMocks(): void
+    {
+        VCR::turnOff();
     }
 }

@@ -30,7 +30,7 @@ class PagesControllerTest extends TestCase
     use FactoryTrait;
     use IntegrationTestTrait;
 
-    public $fixtures = ['app.Users'];
+    public array $fixtures = ['app.Users'];
 
     /**
      * testMultipleGet method

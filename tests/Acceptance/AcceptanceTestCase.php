@@ -16,7 +16,7 @@ abstract class AcceptanceTestCase extends TestCase
     public const CHROME = 'chrome';
     public const FIREFOX = 'firefox';
 
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Projects',
         'app.ProjectSections',

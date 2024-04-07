@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -21,7 +21,7 @@ class ApiTokenAuthenticationTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Tasks',
         'app.Projects',
@@ -44,7 +44,7 @@ class ApiTokenAuthenticationTest extends TestCase
         parent::setUp();
 
         $this->project = $this->makeProject('work', 1);
-        $this->task = $this->makeTask('first', $this->project->id, 0, ['due_on' => FrozenTime::parse('tomorrow')]);
+        $this->task = $this->makeTask('first', $this->project->id, 0, ['due_on' => DateTime::parse('tomorrow')]);
 
         $this->loginApi(1);
     }

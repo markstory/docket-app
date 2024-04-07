@@ -23,7 +23,7 @@ class ProjectsControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.ApiTokens',
         'app.Projects',
         'app.ProjectSections',
@@ -320,7 +320,7 @@ class ProjectsControllerTest extends TestCase
 
     public function testMovePermission()
     {
-        $home = $this->makeProject('Home', 1, 0);
+        $this->makeProject('Home', 1, 0);
         $work = $this->makeProject('Work', 2, 3);
         $this->loginApi(1);
 
@@ -353,7 +353,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('"home"');
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -373,7 +373,7 @@ class ProjectsControllerTest extends TestCase
         ]);
         $this->assertResponseOk();
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$work->id, $home->id, $fun->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -393,7 +393,7 @@ class ProjectsControllerTest extends TestCase
         ]);
         $this->assertResponseOk();
 
-        $results = $this->Projects->find()->orderAsc('ranking')->toArray();
+        $results = $this->Projects->find()->orderByAsc('ranking')->toArray();
         $expected = [$fun->id, $home->id, $work->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {

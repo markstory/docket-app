@@ -16,7 +16,7 @@ use Cake\ORM\Entity;
  * @property string $access_token
  * @property string $refresh_token
  * @property ?bool $broken_auth
- * @property \Cake\I18n\FrozenTime $token_expiry
+ * @property \Cake\I18n\DateTime $token_expiry
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\CalendarSource[] $calendar_sources
@@ -32,7 +32,7 @@ class CalendarProvider extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'user_id' => true,
         'kind' => true,
         'identifier' => true,
@@ -44,12 +44,12 @@ class CalendarProvider extends Entity
         'calendar_sources' => true,
     ];
 
-    protected $_virtual = ['broken_auth'];
+    protected array $_virtual = ['broken_auth'];
 
     /**
      * @var array<array-key, string>
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'user_id',
         'access_token',
         'refresh_token',

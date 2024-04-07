@@ -19,7 +19,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function canAdd(IdentityInterface $user, Task $task)
+    public function canAdd(IdentityInterface $user, Task $task): bool
     {
         return true;
     }
@@ -31,7 +31,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function ownsProject(IdentityInterface $user, Task $task)
+    public function ownsProject(IdentityInterface $user, Task $task): bool
     {
         if (empty($task->project)) {
             throw new RuntimeException('Cannot check todo item permission, no project is set.');
@@ -47,7 +47,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function canEdit(IdentityInterface $user, Task $task)
+    public function canEdit(IdentityInterface $user, Task $task): bool
     {
         return $this->ownsProject($user, $task);
     }
@@ -59,7 +59,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function canDelete(IdentityInterface $user, Task $task)
+    public function canDelete(IdentityInterface $user, Task $task): bool
     {
         return $this->ownsProject($user, $task) && $task->deleted_at == null;
     }
@@ -71,7 +71,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function canUndelete(IdentityInterface $user, Task $task)
+    public function canUndelete(IdentityInterface $user, Task $task): bool
     {
         return $this->ownsProject($user, $task) && $task->deleted_at != null;
     }
@@ -83,7 +83,7 @@ class TaskPolicy
      * @param \App\Model\Entity\Task $task
      * @return bool
      */
-    public function canView(IdentityInterface $user, Task $task)
+    public function canView(IdentityInterface $user, Task $task): bool
     {
         return $this->ownsProject($user, $task);
     }

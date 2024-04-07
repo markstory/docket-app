@@ -4,17 +4,20 @@ declare(strict_types=1);
 namespace App\Policy;
 
 use App\Model\Entity\User;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 
 /**
  * CalendarItems policy
  */
 class CalendarItemsTablePolicy
 {
+    use LocatorAwareTrait;
+
     public function scopeIndex(User $user, Query $query): Query
     {
-        $sources = TableRegistry::get('CalendarSources');
+        $sources = $this->fetchTable('CalendarSources');
+
         $sourceQuery = $sources
             ->subquery()
             ->select(['CalendarSources.id'])

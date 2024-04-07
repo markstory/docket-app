@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Symfony\Component\Panther\Client;
 
 /**
@@ -48,7 +48,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testUpcomingDisplaysCalendarEvents()
     {
-        $twodays = FrozenDate::parse('+2 days', 'UTC');
+        $twodays = Date::parse('+2 days', 'UTC');
         $project = $this->makeProject('Work', 1);
         $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $twodays]);
 
@@ -73,7 +73,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testCompleteTask()
     {
-        $today = new FrozenDate('tomorrow', 'UTC');
+        $today = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $today]);
 
@@ -122,7 +122,7 @@ class UpcomingTest extends AcceptanceTestCase
 
     public function testChangeDateWithContextMenu()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -149,12 +149,12 @@ class UpcomingTest extends AcceptanceTestCase
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertLessThan($tomorrow->toDateString(), $updated->due_on->toDateString());
     }
 
     public function testChangeDateAndEveningWithContextMenu()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -182,14 +182,14 @@ class UpcomingTest extends AcceptanceTestCase
         $client->waitFor('.flash-message');
 
         $updated = $this->Tasks->get($task->id);
-        $this->assertLessThan($tomorrow->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertLessThan($tomorrow->toDateString(), $updated->due_on->toDateString());
         $this->assertTrue($updated->evening);
     }
 
     public function testChangeAddEveningWithContextMenu()
     {
-        $today = new FrozenDate('today', 'UTC');
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $today = new Date('today', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 
@@ -215,12 +215,12 @@ class UpcomingTest extends AcceptanceTestCase
 
         $updated = $this->Tasks->get($task->id);
         $this->assertTrue($updated->evening);
-        $this->assertSame($today->getTimestamp(), $updated->due_on->getTimestamp());
+        $this->assertSame($today->toDateString(), $updated->due_on->toDateString());
     }
 
     public function testChangeProjectWithContextMenu()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $zoo = $this->makeProject('Zoo', 1);
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
@@ -260,8 +260,8 @@ class UpcomingTest extends AcceptanceTestCase
         $this->markTestIncomplete('Cannot test html5 dragdrop with selenium.');
 
         $project = $this->makeProject('Work', 1);
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
-        $twoDays = new FrozenDate('+2 days', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
+        $twoDays = new Date('+2 days', 'UTC');
 
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
         $other = $this->makeTask('Vacuum', $project->id, 0, ['due_on' => $twoDays]);
@@ -269,7 +269,6 @@ class UpcomingTest extends AcceptanceTestCase
         $client = $this->login();
         $client->get('/tasks/upcoming');
         $client->waitFor('[data-testid="loggedin"]');
-        $crawler = $client->getCrawler();
 
         // Get the last item. It will be in a different group than the first.
         $last = $client->getCrawler()->filter('.task-group .dnd-handle')->getElement(1);

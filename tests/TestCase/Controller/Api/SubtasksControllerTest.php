@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +25,7 @@ class SubtasksControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Subtasks',
         'app.Tasks',
         'app.Projects',
@@ -37,7 +36,7 @@ class SubtasksControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->Subtasks = TableRegistry::get('Subtasks');
+        $this->Subtasks = $this->fetchTable('Subtasks');
     }
 
     /**
@@ -225,7 +224,7 @@ class SubtasksControllerTest extends TestCase
         ]);
         $this->assertResponseOk();
 
-        $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
+        $results = $this->Subtasks->find()->orderByAsc('ranking')->toArray();
         $expected = [$second->id, $first->id, $third->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -248,7 +247,7 @@ class SubtasksControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertNotEmpty($this->viewVariable('subtask'));
 
-        $results = $this->Subtasks->find()->orderAsc('ranking')->toArray();
+        $results = $this->Subtasks->find()->orderByAsc('ranking')->toArray();
         $expected = [$third->id, $first->id, $second->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {

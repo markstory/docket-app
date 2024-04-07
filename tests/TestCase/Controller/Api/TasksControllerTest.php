@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use function Cake\Collection\collection;
 
 /**
  * App\Controller\Api\TasksController Test Case
@@ -27,7 +28,7 @@ class TasksControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Tasks',
         'app.Projects',
@@ -45,8 +46,8 @@ class TasksControllerTest extends TestCase
         return $this->Tasks
             ->find()
             ->where($conditions)
-            ->orderAsc('evening')
-            ->orderAsc('day_order')
+            ->orderByAsc('evening')
+            ->orderByAsc('day_order')
             ->toArray();
     }
 
@@ -55,7 +56,7 @@ class TasksControllerTest extends TestCase
         return $this->Tasks
             ->find()
             ->where($conditions)
-            ->orderAsc('child_order')
+            ->orderByAsc('child_order')
             ->toArray();
     }
 
@@ -80,7 +81,7 @@ class TasksControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $second = $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
@@ -105,7 +106,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexStartAndEnd(): void
     {
-        $sixDays = new FrozenDate('+6 days');
+        $sixDays = new Date('+6 days');
         $eightDays = $sixDays->modify('+2 days');
         $tenDays = $eightDays->modify('+2 days');
 
@@ -136,7 +137,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidEnd()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $this->loginApi(1);
 
         $this->get("/api/tasks.json/?start={$tomorrow->format('Y-m-d')}&end=nope");
@@ -145,7 +146,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidRange()
     {
-        $start = new FrozenDate('tomorrow');
+        $start = new Date('tomorrow');
         $end = $start->modify('+61 days');
         $this->loginApi(1);
 
@@ -160,7 +161,7 @@ class TasksControllerTest extends TestCase
      */
     public function testToday(): void
     {
-        $today = new FrozenDate('today');
+        $today = new Date('today');
         $tomorrow = $today->modify('+1 day');
         $yesterday = $today->modify('-1 day');
 
@@ -201,7 +202,7 @@ class TasksControllerTest extends TestCase
 
     public function testDailyPermissions()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $other = $this->makeProject('work', 2);
         $project = $this->makeProject('work', 1);
 
@@ -223,8 +224,8 @@ class TasksControllerTest extends TestCase
 
     public function testDailyToday()
     {
-        $today = new FrozenDate('today');
-        $tomorrow = new FrozenDate('tomorrow');
+        $today = new Date('today');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $today]);
         $this->makeTask('second', $project->id, 3, ['due_on' => $tomorrow]);
@@ -251,7 +252,7 @@ class TasksControllerTest extends TestCase
      */
     public function testDailyParam(): void
     {
-        $today = new FrozenDate('today');
+        $today = new Date('today');
         $tomorrow = $today->modify('+1 day');
         $yesterday = $today->modify('-1 day');
 
@@ -278,7 +279,7 @@ class TasksControllerTest extends TestCase
 
     public function testDailyOverdueParam(): void
     {
-        $today = new FrozenDate('today');
+        $today = new Date('today');
         $yesterday = $today->modify('-1 day');
 
         $project = $this->makeProject('work', 1);
@@ -308,7 +309,7 @@ class TasksControllerTest extends TestCase
         $user->timezone = $timezone;
         $users->saveOrFail($user);
 
-        $now = new FrozenTime('now', $timezone);
+        $now = new DateTime('now', $timezone);
         $startOfDay = $now->setTime(0, 0, 1);
         $endOfDay = $now->setTime(23, 59, 58);
 
@@ -333,8 +334,8 @@ class TasksControllerTest extends TestCase
         $allDay = $this->makeCalendarItem($source->id, [
             'title' => 'Bob birthday',
             'provider_id' => 'event-3',
-            'start_date' => new FrozenDate($startOfDay),
-            'end_date' => (new FrozenDate($startOfDay))->modify('+1 day'),
+            'start_date' => new Date($startOfDay),
+            'end_date' => (new Date($startOfDay))->modify('+1 day'),
             'start_time' => null,
             'end_time' => null,
             'all_day' => true,
@@ -344,8 +345,8 @@ class TasksControllerTest extends TestCase
         $this->makeCalendarItem($source->id, [
             'title' => 'Tomorrow day event',
             'provider_id' => 'event-4',
-            'start_date' => (new FrozenDate($startOfDay))->modify('+1 day'),
-            'end_date' => (new FrozenDate($startOfDay))->modify('+2 day'),
+            'start_date' => (new Date($startOfDay))->modify('+1 day'),
+            'end_date' => (new Date($startOfDay))->modify('+2 day'),
             'start_time' => null,
             'end_time' => null,
             'all_day' => true,
@@ -377,7 +378,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexCalendarItems(): void
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary');
@@ -391,7 +392,7 @@ class TasksControllerTest extends TestCase
             'all_day' => true,
         ]);
 
-        $tomorrow = new FrozenTime('tomorrow');
+        $tomorrow = new DateTime('tomorrow');
         $lunch = $this->makeCalendarItem($source->id, [
             'title' => 'Lunch',
             'provider_id' => 'event-2',
@@ -413,7 +414,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexPermissions()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $other = $this->makeProject('work', 2);
         $project = $this->makeProject('work', 1);
 
@@ -435,7 +436,7 @@ class TasksControllerTest extends TestCase
 
     public function testIndexInvalidParameter()
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $this->loginApi(1);
@@ -452,7 +453,7 @@ class TasksControllerTest extends TestCase
      */
     public function testDeleted(): void
     {
-        $tomorrow = new FrozenDate('tomorrow');
+        $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
         $second = $this->makeTask('second', $project->id, 3, [
@@ -669,7 +670,7 @@ class TasksControllerTest extends TestCase
 
         $this->assertResponseOk();
         $updated = $this->viewVariable('task');
-        $this->assertEquals(FrozenDate::parse('tomorrow'), $updated->due_on);
+        $this->assertEquals(Date::parse('tomorrow'), $updated->due_on);
     }
 
     public function testEditSubtasks(): void
@@ -688,7 +689,7 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->assertResponseOk();
-        $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
+        $task = $this->Tasks->get($first->id, contain: 'Subtasks');
         $this->assertCount(2, $task->subtasks);
         $this->assertEquals('first subtask', $task->subtasks[0]->title);
         $this->assertEquals('second subtask', $task->subtasks[1]->title);
@@ -707,7 +708,7 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->assertResponseOk();
-        $task = $this->Tasks->get($first->id, ['contain' => 'Subtasks']);
+        $task = $this->Tasks->get($first->id, contain: 'Subtasks');
         $this->assertNotEmpty($task);
         $this->assertCount(1, $task->subtasks);
         $this->assertEquals('first subtask', $task->subtasks[0]->title);
@@ -721,7 +722,7 @@ class TasksControllerTest extends TestCase
         $this->loginApi(1);
 
         $this->post("/api/tasks/{$first->id}/edit", [
-            'due_on' => FrozenDate::parse('tomorrow')->format('Y-m-d'),
+            'due_on' => Date::parse('tomorrow')->format('Y-m-d'),
             'subtasks' => [],
         ]);
         $this->assertResponseOk();
@@ -925,14 +926,14 @@ class TasksControllerTest extends TestCase
         $this->post("/api/tasks/{$first->id}/delete");
 
         $this->assertResponseOk();
-        $deleted = $this->Tasks->get($first->id, ['deleted' => true]);
+        $deleted = $this->Tasks->get($first->id, deleted: true);
         $this->assertNotNull($deleted->deleted_at);
     }
 
     public function testDeleteCannotDeleteAgain(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
         $this->loginApi(1);
 
         $this->post("/tasks/{$first->id}/delete");
@@ -954,7 +955,7 @@ class TasksControllerTest extends TestCase
     public function testUndelete(): void
     {
         $project = $this->makeProject('work', 1);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
         $this->loginApi(1);
 
         $this->post("/api/tasks/{$first->id}/undelete");
@@ -967,7 +968,7 @@ class TasksControllerTest extends TestCase
     public function testUndeletePermission(): void
     {
         $project = $this->makeProject('work', 2);
-        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => FrozenTime::now()]);
+        $first = $this->makeTask('first', $project->id, 0, ['deleted_at' => DateTime::now()]);
         $this->loginApi(1);
 
         $this->post("/api/tasks/{$first->id}/undelete");
@@ -1016,7 +1017,7 @@ class TasksControllerTest extends TestCase
 
     public function testIncomplete(): void
     {
-        $token = $this->makeApiToken(1);
+        $this->makeApiToken(1);
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
         $this->loginApi(1);

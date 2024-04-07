@@ -100,7 +100,7 @@ class ProjectSectionsTable extends Table
         return $rules;
     }
 
-    public function beforeDelete(EventInterface $event, ProjectSection $section)
+    public function beforeDelete(EventInterface $event, ProjectSection $section): void
     {
         $this->Tasks->updateAll(['section_id' => null], ['section_id' => $section->id]);
     }
@@ -115,7 +115,7 @@ class ProjectSectionsTable extends Table
         return (int)$query->firstOrFail()->count;
     }
 
-    public function move(ProjectSection $projectSection, array $operation)
+    public function move(ProjectSection $projectSection, array $operation): void
     {
         if (!isset($operation['ranking'])) {
             throw new InvalidArgumentException('A ranking is required');

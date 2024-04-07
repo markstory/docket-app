@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -19,7 +19,7 @@ class CalendarSourcesControllerTest extends TestCase
     /**
      * @var string[]
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -55,15 +55,14 @@ class CalendarSourcesControllerTest extends TestCase
     {
         parent::tearDown();
 
-        FrozenTime::setTestNow(null);
+        DateTime::setTestNow(null);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
     public function testSyncApi(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        $this->disableErrorHandlerMiddleware();
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
@@ -91,12 +90,10 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertSame('next-sync-token', $source->sync_token);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
     public function testSyncReplaceExistingRemoveDeleted(): void
     {
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
+        DateTime::setTestNow('2032-07-11 12:13:14');
 
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
@@ -144,12 +141,10 @@ class CalendarSourcesControllerTest extends TestCase
 
     /**
      * Test delete cancel subscription
-     *
-     * @vcr controller_calendarsources_delete.yml
-     * @return void
      */
     public function testDeleteCancelSubscription(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_delete.yml');
         $user = $this->Users->get(1);
         $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id);
@@ -164,8 +159,6 @@ class CalendarSourcesControllerTest extends TestCase
 
     /**
      * Test delete method
-     *
-     * @return void
      */
     public function testDeleteNoPermission(): void
     {
@@ -179,11 +172,9 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    /**
-     * @vcr controller_calendarsources_add_post.yml
-     */
     public function testAddPost()
     {
+        $this->loadResponseMocks('controller_calendarsources_add_post.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
         $this->loginApi(1);
@@ -204,11 +195,9 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertNotEmpty($sub->identifier);
     }
 
-    /**
-     * @vcr controller_calendarsources_add_post_fail.yml
-     */
     public function testAddPostSubscriptionFail()
     {
+        $this->loadResponseMocks('controller_calendarsources_add_post_fail.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
         $this->login();

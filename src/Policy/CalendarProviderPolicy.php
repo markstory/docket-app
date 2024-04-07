@@ -18,7 +18,7 @@ class CalendarProviderPolicy
      * @param \App\Model\Entity\CalendarProvider $calendarProvider
      * @return bool
      */
-    public function canSync(User $user, CalendarProvider $calendarProvider)
+    public function canSync(User $user, CalendarProvider $calendarProvider): bool
     {
         return $user->id === $calendarProvider->user_id;
     }
@@ -30,7 +30,7 @@ class CalendarProviderPolicy
      * @param \App\Model\Entity\CalendarProvider $calendarProvider
      * @return bool
      */
-    public function canDelete(User $user, CalendarProvider $calendarProvider)
+    public function canDelete(User $user, CalendarProvider $calendarProvider): bool
     {
         return $user->id === $calendarProvider->user_id;
     }
@@ -42,7 +42,7 @@ class CalendarProviderPolicy
      * @param \App\Model\Entity\CalendarProvider $calendarProvider
      * @return bool
      */
-    public function canEdit(User $user, CalendarProvider $calendarProvider)
+    public function canEdit(User $user, CalendarProvider $calendarProvider): bool
     {
         return $user->id === $calendarProvider->user_id;
     }
@@ -54,7 +54,7 @@ class CalendarProviderPolicy
      * @param \App\Model\Entity\CalendarProvider $calendarProvider
      * @return bool
      */
-    public function canView(User $user, CalendarProvider $calendarProvider)
+    public function canView(User $user, CalendarProvider $calendarProvider): bool
     {
         return $user->id === $calendarProvider->user_id;
     }

@@ -13,9 +13,9 @@ use Cake\ORM\Entity;
  * @property string $identifier
  * @property string $verifier
  * @property string $channel_token
- * @property \Cake\I18n\FrozenTime|null $expires_at
- * @property \Cake\I18n\FrozenTime|null $created
- * @property \Cake\I18n\FrozenTime|null $modified
+ * @property \Cake\I18n\DateTime|null $expires_at
+ * @property \Cake\I18n\DateTime|null $created
+ * @property \Cake\I18n\DateTime|null $modified
  *
  * @property \App\Model\Entity\CalendarSource $calendar_source
  */
@@ -30,7 +30,7 @@ class CalendarSubscription extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'calendar_source_id' => true,
         'identifier' => true,
         'verifier' => true,

@@ -14,7 +14,7 @@ use Cake\View\JsonView;
  */
 class ApiTokensController extends AppController
 {
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -32,9 +32,9 @@ class ApiTokensController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return void Renders view
      */
-    public function index()
+    public function index(): void
     {
         $query = $this->Authorization->applyScope($this->ApiTokens->find());
         $apiTokens = $this->paginate($query);
@@ -57,9 +57,9 @@ class ApiTokensController extends AppController
      * 200 - Created a new token. See the `apiToken.token` response attribute.
      * 401 - Incorrect credentials.
      *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): void
     {
         $this->Authorization->skipAuthorization();
         $this->request->allowMethod(['post']);
@@ -71,7 +71,7 @@ class ApiTokensController extends AppController
             $this->viewBuilder()->setOption('serialize', ['errors']);
             $this->response = $this->response->withStatus(401);
 
-            return null;
+            return;
         }
 
         if ($this->request->is('post')) {
@@ -91,7 +91,7 @@ class ApiTokensController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         /** @var \App\Model\Entity\ApiToken $apiToken */
-        $apiToken = $this->ApiTokens->find('byToken', ['token' => $token])->firstOrFail();
+        $apiToken = $this->ApiTokens->find('byToken', token: $token)->firstOrFail();
         $this->Authorization->authorize($apiToken, 'delete');
 
         $this->ApiTokens->delete($apiToken);

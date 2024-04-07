@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Facebook\WebDriver\WebDriverKeys;
 use Symfony\Component\Panther\Client;
 
@@ -23,7 +23,7 @@ class TasksTest extends AcceptanceTestCase
 
     protected function setupTask()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
 
         return $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
@@ -81,7 +81,7 @@ class TasksTest extends AcceptanceTestCase
 
     public function testViewUpdateTitleAndBody()
     {
-        $tomorrow = new FrozenDate('tomorrow', 'UTC');
+        $tomorrow = new Date('tomorrow', 'UTC');
         $project = $this->makeProject('Work', 1);
         $task = $this->makeTask('Do dishes', $project->id, 0, ['due_on' => $tomorrow]);
 

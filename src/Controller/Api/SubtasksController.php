@@ -7,6 +7,7 @@ use App\Controller\AppController;
 use App\Model\Entity\Task;
 use App\Model\Table\SubtasksTable;
 use App\Model\Table\TasksTable;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
 
@@ -24,8 +25,8 @@ class SubtasksController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadModel('Tasks');
-        $this->loadModel('Subtasks');
+        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Subtasks = $this->fetchTable('Subtasks');
     }
 
     public function viewClasses(): array
@@ -35,7 +36,7 @@ class SubtasksController extends AppController
 
     protected function getTask(string $id): Task
     {
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
 
         return $task;
@@ -54,9 +55,9 @@ class SubtasksController extends AppController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add(string $taskId)
+    public function add(string $taskId): ?Response
     {
         $this->request->allowMethod(['post']);
         $item = $this->getTask($taskId);
@@ -80,10 +81,10 @@ class SubtasksController extends AppController
      *
      * @param string $taskId Todo Item id.
      * @param string $id Subtask id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function toggle(string $taskId, string $id)
+    public function toggle(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post']);
         $subtask = $this->getSubtask($taskId, $id);
@@ -103,10 +104,10 @@ class SubtasksController extends AppController
      *
      * @param string $taskId Todo id.
      * @param string $id Todo Subtask id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $taskId, string $id)
+    public function edit(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
 
@@ -135,10 +136,10 @@ class SubtasksController extends AppController
      *
      * @param string $taskId Todo id.
      * @param string $id Todo Subtask id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $taskId, string $id)
+    public function delete(string $taskId, string $id): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $subtask = $this->getSubtask($taskId, $id);

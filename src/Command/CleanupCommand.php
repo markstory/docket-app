@@ -7,7 +7,7 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 
 /**
  * Cleanup command.
@@ -41,13 +41,13 @@ class CleanupCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->quiet('Starting cleanup');
 
-        $expires = FrozenTime::parse('-14 days');
+        $expires = DateTime::parse('-14 days');
         $io->verbose("Going to remove tasks older than {$expires->toDateTimeString()}");
 
         $tasks = $this->fetchTable('Tasks');
@@ -60,5 +60,7 @@ class CleanupCommand extends Command
         $io->out("{$result->rowCount()} tasks were deleted");
 
         $io->quiet('Cleanup complete');
+
+        return static::CODE_SUCCESS;
     }
 }

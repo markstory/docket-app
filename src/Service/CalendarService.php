@@ -5,11 +5,15 @@ namespace App\Service;
 
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
-use Cake\Datasource\ModelAwareTrait;
+use App\Model\Table\CalendarItemsTable;
+use App\Model\Table\CalendarProvidersTable;
+use App\Model\Table\CalendarSourcesTable;
+use App\Model\Table\CalendarSubscriptionsTable;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\Log\Log;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Text;
 use DateTimeZone;
@@ -20,6 +24,7 @@ use Google\Service\Calendar\Channel as GoogleChannel;
 use Google\Service\Calendar\Event as GoogleEvent;
 use Google\Service\Calendar\Events as GoogleEvents;
 use RuntimeException;
+use function Sentry\captureException;
 
 /**
  * Provides Calendar syncing.
@@ -31,32 +36,32 @@ use RuntimeException;
  */
 class CalendarService
 {
-    use ModelAwareTrait;
+    use LocatorAwareTrait;
 
     /**
      * @var \Google\Client $client
      */
-    private $client;
+    private GoogleClient $client;
 
     /**
      * @var \App\Model\Table\CalendarSourcesTable
      */
-    private $CalendarSources;
+    private CalendarSourcesTable $CalendarSources;
 
     /**
      * @var \App\Model\Table\CalendarSubscriptionsTable
      */
-    private $CalendarSubscriptions;
+    private CalendarSubscriptionsTable $CalendarSubscriptions;
 
     /**
      * @var \App\Model\Table\CalendarProvidersTable
      */
-    private $CalendarProviders;
+    private CalendarProvidersTable $CalendarProviders;
 
     /**
      * @var \App\Model\Table\CalendarItemsTable
      */
-    private $CalendarItems;
+    private CalendarItemsTable $CalendarItems;
 
     public function __construct(GoogleClient $client)
     {
@@ -73,7 +78,7 @@ class CalendarService
      */
     public function setAccessToken(CalendarProvider $provider): void
     {
-        $this->loadModel('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
         $this->client->setAccessToken($provider->access_token);
 
         // If the token would expire soon, update it.
@@ -82,9 +87,9 @@ class CalendarService
             $token = $this->client->getAccessToken();
             $provider->access_token = $token['access_token'];
             if (!empty($token['expires_in'])) {
-                $provider->token_expiry = FrozenTime::parse("+{$token['expires_in']} seconds");
+                $provider->token_expiry = DateTime::parse("+{$token['expires_in']} seconds");
             } else {
-                $provider->token_expiry = FrozenTime::parse('+7200 seconds');
+                $provider->token_expiry = DateTime::parse('+7200 seconds');
             }
             $this->CalendarProviders->save($provider);
         }
@@ -96,10 +101,10 @@ class CalendarService
      * This is used to build the list of calendars that the user can
      * add to their task views.
      *
-     * @param \App\Model\Entity\CalendarSource[] $linked Existing calendar links for a provider.
-     * @return \App\Model\Entity\CalendarSource[]
+     * @param array<\App\Model\Entity\CalendarSource> $linked Existing calendar links for a provider.
+     * @return array<\App\Model\Entity\CalendarSource>
      */
-    public function listUnlinkedCalendars(array $linked)
+    public function listUnlinkedCalendars(array $linked): array
     {
         $calendar = new Calendar($this->client);
         try {
@@ -129,7 +134,7 @@ class CalendarService
 
     public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource
     {
-        $this->loadModel('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
         $source = $this->CalendarSources->find()
             ->innerJoinWith('CalendarSubscriptions')
             ->contain('CalendarProviders')
@@ -150,7 +155,7 @@ class CalendarService
      */
     public function createSubscription(CalendarSource $source)
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
         $sub->identifier = Text::uuid();
@@ -186,9 +191,9 @@ class CalendarService
     /**
      * @see https://developers.google.com/calendar/v3/reference/channels/stop
      */
-    public function cancelSubscriptions(CalendarSource $source)
+    public function cancelSubscriptions(CalendarSource $source): void
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $subs = $this->CalendarSubscriptions
             ->find()
@@ -212,16 +217,16 @@ class CalendarService
      *
      * @see https://developers.google.com/calendar/api/guides/sync
      */
-    public function syncEvents(CalendarSource $source)
+    public function syncEvents(CalendarSource $source): void
     {
-        $this->loadModel('CalendarSources');
-        $this->loadModel('CalendarItems');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarItems = $this->fetchTable('CalendarItems');
 
         $calendar = new Calendar($this->client);
 
-        $time = new FrozenTime('-1 month');
+        $time = new DateTime('-1 month');
         $options = $defaults = [
-            'timeMin' => $time->format(FrozenTime::RFC3339),
+            'timeMin' => $time->format(DateTime::RFC3339),
             'eventTypes' => ['default', 'focusTime', 'outOfOffice'],
         ];
         // Check if the user has a sync token for this source.
@@ -232,7 +237,7 @@ class CalendarService
 
         try {
             $this->CalendarItems->getConnection()->transactional(
-                function () use ($calendar, $defaults, $options, $source, $time) {
+                function () use ($calendar, $defaults, $options, $source, $time): void {
                     $pageToken = null;
 
                     do {
@@ -253,8 +258,8 @@ class CalendarService
                             throw $e;
                         }
                         $instanceOpts = [
-                            'timeMin' => $time->format(FrozenTime::RFC3339),
-                            'timeMax' => $time->modify('+3 months')->format(FrozenTime::RFC3339),
+                            'timeMin' => $time->format(DateTime::RFC3339),
+                            'timeMax' => $time->modify('+3 months')->format(DateTime::RFC3339),
                         ];
                         assert($results instanceof GoogleEvents);
                         foreach ($results as $event) {
@@ -285,7 +290,7 @@ class CalendarService
 
                     // Save the nextSyncToken for our next sync.
                     $source->sync_token = $results->getNextSyncToken();
-                    $source->last_sync = FrozenTime::now();
+                    $source->last_sync = DateTime::now();
                     $this->CalendarSources->saveOrFail($source);
 
                     Log::info("Calendar sync complete. source={$source->id}");
@@ -297,13 +302,13 @@ class CalendarService
                 // Permission denied error, likely a rate limit
                 Log::info('Calendar sync failed, rate limit hit. ' . $e->getMessage());
             } else {
-                \Sentry\captureException($e);
+                captureException($e);
                 Log::info('Calendar sync failed. ' . $e->getMessage());
             }
         }
     }
 
-    private function syncEvent(CalendarSource $source, GoogleEvent $event)
+    private function syncEvent(CalendarSource $source, GoogleEvent $event): void
     {
         if ($event->status === 'cancelled' || $this->declinedAsAttendee($source, $event)) {
             Log::info("Remove cancelled event {$event->id}");
@@ -325,10 +330,10 @@ class CalendarService
         foreach ($datetimes as $i => $value) {
             if ($value && $i < 2) {
                 // Dates don't have a timezone
-                $date = FrozenDate::parse($value);
+                $date = Date::parse($value);
                 $datetimes[$i] = $date;
             } elseif ($value) {
-                $time = FrozenTime::parse($value, $eventTz ?? $tz);
+                $time = DateTime::parse($value, $eventTz ?? $tz);
                 $time = $time->setTimezone($tz);
                 $datetimes[$i] = $time;
             }

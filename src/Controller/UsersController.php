@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Model\Entity\User;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\View\JsonView;
 use RuntimeException;
@@ -24,7 +25,7 @@ class UsersController extends AppController
         return [JsonView::class];
     }
 
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -36,9 +37,9 @@ class UsersController extends AppController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): ?Response
     {
         $this->Authorization->skipAuthorization();
 
@@ -60,15 +61,17 @@ class UsersController extends AppController
             $this->set('errors', $this->flattenErrors($user->getErrors()));
         }
         $this->set(compact('user'));
+
+        return null;
     }
 
     /**
      * Edit method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit()
+    public function edit(): void
     {
         $identity = $this->request->getAttribute('identity');
         $user = $this->Users->get($identity->id);
@@ -117,7 +120,7 @@ class UsersController extends AppController
      * Update password for a logged in User.
      * Commonly accessed via edit profile.
      */
-    public function updatePassword()
+    public function updatePassword(): void
     {
         $referer = $this->getReferer();
         $identity = $this->request->getAttribute('identity');
@@ -160,7 +163,7 @@ class UsersController extends AppController
         $this->redirect(['_name' => 'tasks:today']);
     }
 
-    public function resetPassword()
+    public function resetPassword(): void
     {
         $this->Authorization->skipAuthorization();
         if ($this->request->is('post')) {
@@ -175,7 +178,7 @@ class UsersController extends AppController
         }
     }
 
-    public function newPassword(string $token)
+    public function newPassword(string $token): void
     {
         $this->set('token', $token);
         $this->Authorization->skipAuthorization();

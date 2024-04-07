@@ -6,8 +6,10 @@ namespace App\Controller\Api;
 use App\Controller\AppController;
 use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\FrozenDate;
+use Cake\Http\Response;
+use Cake\I18n\Date;
 use Cake\View\JsonView;
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -26,7 +28,7 @@ class TasksController extends AppController
         return [JsonView::class];
     }
 
-    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): FrozenDate
+    protected function getDateParam($value, ?string $default = null, ?string $timezone = null): Date
     {
         if ($value !== null && !is_string($value)) {
             throw new BadRequestException('Invalid date. Value must be a string.');
@@ -35,17 +37,15 @@ class TasksController extends AppController
             return $this->getDateParam($default, null, $timezone);
         }
         try {
-            return new FrozenDate($value, $timezone);
-        } catch (\Exception $e) {
+            return new Date($value, $timezone);
+        } catch (Exception $e) {
             throw new BadRequestException("Invalid date value of {$value}.");
         }
     }
 
     protected function getTask($id): Task
     {
-        return $this->Tasks->get($id, [
-            'contain' => ['Projects', 'Subtasks'],
-        ]);
+        return $this->Tasks->get($id, contain: ['Projects', 'Subtasks']);
     }
 
     /**
@@ -65,15 +65,16 @@ class TasksController extends AppController
 
         $query = $this->Tasks
             ->find('incomplete')
-            ->find('forDate', ['date' => $date, 'overdue' => $overdue])
+            ->find('forDate', date: $date, overdue: $overdue)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
-        $eventsQuery = $calendarItems->find('upcoming', [
-            'start' => $date,
-            'end' => $date,
-            'timezone' => $timezone,
-        ]);
+        $eventsQuery = $calendarItems->find(
+            'upcoming',
+            start: $date,
+            end: $date,
+            timezone: $timezone
+        );
         $this->set('date', $date);
         $serialize = ['projects', 'tasks', 'calendarItems', 'date'];
 
@@ -96,9 +97,9 @@ class TasksController extends AppController
      * Supports two query string parameters. `start` indicates the start of the range.
      * `end` indicates the end. You cannot query more than 31 days at time.
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      */
-    public function index(string $view = 'upcoming')
+    public function index(string $view = 'upcoming'): ?Response
     {
         $calendarItemsTable = $this->fetchTable('CalendarItems');
 
@@ -116,15 +117,16 @@ class TasksController extends AppController
 
         $query = $this->Tasks
             ->find('incomplete')
-            ->find('upcoming', ['start' => $start, 'end' => $end])
+            ->find('upcoming', start: $start, end: $end)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query);
 
-        $eventsQuery = $calendarItemsTable->find('upcoming', [
-            'start' => $start,
-            'end' => $end,
-            'timezone' => $timezone,
-        ]);
+        $eventsQuery = $calendarItemsTable->find(
+            'upcoming',
+            start: $start,
+            end: $end,
+            timezone: $timezone
+        );
         $this->set('start', $start->format('Y-m-d'));
         $this->set('nextStart', $end->format('Y-m-d'));
         $this->set('tasks', $query->all());
@@ -144,7 +146,7 @@ class TasksController extends AppController
     public function deleted()
     {
         $query = $this->Tasks
-            ->find('all', ['deleted' => true])
+            ->find('all', deleted: true)
             ->contain('Projects');
         $query = $this->Authorization->applyScope($query, 'index');
 
@@ -161,9 +163,9 @@ class TasksController extends AppController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): ?Response
     {
         $task = $this->Tasks->newEntity($this->request->getQueryParams());
         $task->subtasks = [];
@@ -235,10 +237,10 @@ class TasksController extends AppController
      * Complete a task as complete.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function complete($id = null)
+    public function complete(?string $id = null): ?Response
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task, 'edit');
@@ -260,14 +262,12 @@ class TasksController extends AppController
      * Mark a task as incomplete.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function incomplete($id = null)
+    public function incomplete(?string $id = null): ?Response
     {
-        $task = $this->Tasks->get($id, [
-            'contain' => ['Projects'],
-        ]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
         $success = false;
         if ($this->request->is(['delete', 'patch', 'post', 'put'])) {
@@ -287,7 +287,7 @@ class TasksController extends AppController
     public function move(string $id)
     {
         $this->request->allowMethod(['post']);
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'edit');
         $operation = [
             'child_order' => $this->request->getData('child_order'),
@@ -325,10 +325,10 @@ class TasksController extends AppController
      * Called as an XHR request from the view page.
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $task = $this->getTask($id);
@@ -384,10 +384,10 @@ class TasksController extends AppController
      * View method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response|null Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null, $mode = null)
+    public function view(?string $id = null, $mode = null): ?Response
     {
         $task = $this->getTask($id);
         $this->Authorization->authorize($task);
@@ -423,13 +423,13 @@ class TasksController extends AppController
      * Delete method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task);
 
         $success = false;
@@ -447,9 +447,9 @@ class TasksController extends AppController
         ]);
     }
 
-    public function deleteConfirm(string $id)
+    public function deleteConfirm(string $id): void
     {
-        $task = $this->Tasks->get($id, ['contain' => ['Projects']]);
+        $task = $this->Tasks->get($id, contain: ['Projects']);
         $this->Authorization->authorize($task, 'delete');
 
         $this->set('task', $task);
@@ -459,13 +459,13 @@ class TasksController extends AppController
      * Undelete method
      *
      * @param string|null $id Task id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
+     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function undelete($id = null)
+    public function undelete(?string $id = null): ?Response
     {
         $this->request->allowMethod('post');
-        $task = $this->Tasks->get($id, ['contain' => ['Projects'], 'deleted' => true]);
+        $task = $this->Tasks->get($id, contain: ['Projects'], deleted: true);
         $this->Authorization->authorize($task);
 
         $success = false;

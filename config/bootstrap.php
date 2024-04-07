@@ -30,6 +30,8 @@ require __DIR__ . '/paths.php';
  * - Setting the default application paths.
  */
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
+require CORE_PATH . 'src/Core/functions_global.php';
+require CORE_PATH . 'src/I18n/functions_global.php';
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;

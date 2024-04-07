@@ -8,16 +8,16 @@ use App\Service\CalendarServiceProvider;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Core\Container;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use function Cake\Collection\collection;
 
 class CalendarServiceTest extends TestCase
 {
     use FactoryTrait;
 
-    public $fixtures = [
+    public array $fixtures = [
         'app.Users',
         'app.CalendarProviders',
         'app.CalendarSources',
@@ -48,31 +48,29 @@ class CalendarServiceTest extends TestCase
         $container = new Container();
         $container->addServiceProvider(new CalendarServiceProvider());
         $this->calendar = $container->get(CalendarService::class);
-        $this->calendarSources = TableRegistry::get('CalendarSources');
-        $this->calendarItems = TableRegistry::get('CalendarItems');
+        $this->calendarSources = $this->fetchTable('CalendarSources');
+        $this->calendarItems = $this->fetchTable('CalendarItems');
 
-        FrozenTime::setTestNow('2021-07-11 12:13:14');
+        DateTime::setTestNow('2032-07-11 12:13:14');
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        FrozenTime::setTestNow(null);
+        DateTime::setTestNow(null);
     }
 
-    protected function getItems($source)
+    protected function getItems($source): array
     {
         return $this->calendarItems->find()
             ->where(['calendar_source_id' => $source->id])
-            ->orderAsc('title')
+            ->orderByAsc('title')
             ->toArray();
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
-    public function testSyncCreateNew()
+    public function testSyncCreateNew(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -121,11 +119,9 @@ class CalendarServiceTest extends TestCase
         $this->assertSame('Moving Day', $items[2]->title);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
-    public function testSyncUpdateExisting()
+    public function testSyncUpdateExisting(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -154,11 +150,9 @@ class CalendarServiceTest extends TestCase
         );
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
-    public function testSyncRemoveCancelled()
+    public function testSyncRemoveCancelled(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -178,11 +172,9 @@ class CalendarServiceTest extends TestCase
         $this->assertNotContains($remove->provider_id, $ids);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync_pagination.yml
-     */
-    public function testSyncMultiplePages()
+    public function testSyncMultiplePages(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_sync_pagination.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -203,11 +195,9 @@ class CalendarServiceTest extends TestCase
         $this->assertNotContains($remove->provider_id, $ids);
     }
 
-    /**
-     * @vcr controller_calendarsources_sync.yml
-     */
-    public function testSyncUpdateSyncToken()
+    public function testSyncUpdateSyncToken(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_sync.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -217,11 +207,9 @@ class CalendarServiceTest extends TestCase
         $this->assertSame('next-sync-token', $source->sync_token);
     }
 
-    /**
-     * @vcr calendarservice_instances.yml
-     */
-    public function testSyncUpdateRecurringInstances()
+    public function testSyncUpdateRecurringInstances(): void
     {
+        $this->loadResponseMocks('calendarservice_instances.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -229,17 +217,15 @@ class CalendarServiceTest extends TestCase
         $this->calendar->syncEvents($source);
         $query = $this->calendarItems->find()
             ->where(['CalendarItems.calendar_source_id' => $source->id])
-            ->orderAsc('CalendarItems.provider_id');
+            ->orderByAsc('CalendarItems.provider_id');
         $results = $query->all();
         $this->assertCount(2, $results);
         $this->assertEquals(['calendar-event-3', 'calendar-event-4'], $results->extract('provider_id')->toList());
     }
 
-    /**
-     * @vcr controller_calendarsources_add.yml
-     */
-    public function testListUnsyncedCalendars()
+    public function testListUnsyncedCalendars(): void
     {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
@@ -271,17 +257,17 @@ class CalendarServiceTest extends TestCase
         $this->assertEquals($provider->identifier, $found->calendar_provider->identifier);
     }
 
-    public function testGetSourceForSubscriptionInvalid()
+    public function testGetSourceForSubscriptionInvalid(): void
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
-        $source = $this->makeCalendarSource($provider->id, 'primary', [
+        $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
         ]);
         $this->expectException(RecordNotFoundException::class);
         $this->calendar->getSourceForSubscription('nope', 'also nope');
     }
 
-    public function testGetSourceForSubscriptionInvalidVerifier()
+    public function testGetSourceForSubscriptionInvalidVerifier(): void
     {
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
@@ -292,16 +278,14 @@ class CalendarServiceTest extends TestCase
         $this->calendar->getSourceForSubscription($sub->identifier, 'nope');
     }
 
-    /**
-     * @vcr calendarservice_createsubscription_success.yml
-     */
-    public function testCreateSubscriptionSuccess()
+    public function testCreateSubscriptionSuccess(): void
     {
+        $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
         ]);
-        $sub = $this->calendar->createSubscription($source, 'random-string', 'verifier-string');
+        $sub = $this->calendar->createSubscription($source);
         $this->assertNotEmpty($sub);
         $this->assertSame($source->id, $sub->calendar_source_id);
         $this->assertNotEmpty($sub->identifier);
@@ -309,16 +293,14 @@ class CalendarServiceTest extends TestCase
         $this->assertNotEmpty($sub->expires_at);
     }
 
-    /**
-     * @vcr calendarservice_createsubscription_failure.yml
-     */
-    public function testCreateSubscriptionFailure()
+    public function testCreateSubscriptionFailure(): void
     {
+        $this->loadResponseMocks('calendarservice_createsubscription_failure.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
         ]);
         $this->expectException(RuntimeException::class);
-        $this->calendar->createSubscription($source, 'random-string', 'verifier-string');
+        $this->calendar->createSubscription($source);
     }
 }

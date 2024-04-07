@@ -16,7 +16,7 @@ class DueOnWidget extends BasicWidget
      *
      * @var array<string, mixed>
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'disabled' => null,
         'val' => null,
@@ -82,7 +82,7 @@ class DueOnWidget extends BasicWidget
                 'task' => $task,
                 'referer' => '',
                 'renderForms' => false,
-                'itemFormatter' => function (string $title, array $options, array $data) {
+                'itemFormatter' => function (string $title, array $options, array $data): void {
                     $options += ['icon' => 'sun', 'class' => '', 'testId' => ''];
                     $title = $this->view->element("icons/{$options['icon']}16") . ' ' . $title;
                     echo $this->view->Form->button($title, [

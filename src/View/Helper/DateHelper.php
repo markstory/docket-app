@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Helper;
 
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\View\Helper;
 
 /**
@@ -16,22 +16,22 @@ class DateHelper extends Helper
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'timezone' => null,
     ];
 
     /**
      * Get today in the user's timezone.
      */
-    public function today(): FrozenDate
+    public function today(): Date
     {
-        return FrozenDate::today($this->getConfig('timezone'));
+        return Date::today($this->getConfig('timezone'));
     }
 
     /**
      * Format a date into the compact date format used across the app.
      */
-    public function formatCompact(?FrozenDate $date, bool $evening = false): string
+    public function formatCompact(?Date $date, bool $evening = false): string
     {
         if ($date === null) {
             return 'No due date';
@@ -61,7 +61,7 @@ class DateHelper extends Helper
         return (string)$date->i18nFormat('MMM d');
     }
 
-    public function formatDateHeading(FrozenDate $date): array
+    public function formatDateHeading(Date $date): array
     {
         $delta = $date->diffInDays($this->today());
         $shortDate = $date->i18nFormat('MMM d');

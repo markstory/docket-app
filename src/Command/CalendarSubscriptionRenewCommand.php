@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Model\Table\CalendarSubscriptionsTable;
 use App\Service\CalendarService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Datasource\ModelAwareTrait;
 use RuntimeException;
 
 /**
@@ -15,15 +17,17 @@ use RuntimeException;
  */
 class CalendarSubscriptionRenewCommand extends Command
 {
+    use ModelAwareTrait;
+
     /**
      * @var \App\Model\Table\CalendarSubscriptionsTable
      */
-    protected $CalendarSubscriptions;
+    protected CalendarSubscriptionsTable $CalendarSubscriptions;
 
     /**
      * @var \App\Service\CalendarService
      */
-    protected $calendarService;
+    protected CalendarService $calendarService;
 
     public function __construct(CalendarService $service)
     {
@@ -50,11 +54,11 @@ class CalendarSubscriptionRenewCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->loadModel('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
         $expiring = $this->CalendarSubscriptions->find('expiring')
             ->select(['CalendarSubscriptions.calendar_source_id']);
@@ -102,5 +106,7 @@ class CalendarSubscriptionRenewCommand extends Command
             }
         }
         $io->verbose('All Done.');
+
+        return static::CODE_SUCCESS;
     }
 }

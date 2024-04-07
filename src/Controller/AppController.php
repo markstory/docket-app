@@ -10,6 +10,7 @@ use App\View\Widget\ProjectPickerWidget;
 use Authentication\Authenticator\SessionAuthenticator;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 
 /**
@@ -41,7 +42,7 @@ class AppController extends Controller
         $this->loadComponent('Authorization.Authorization');
     }
 
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         parent::beforeRender($event);
 
@@ -134,9 +135,9 @@ class AppController extends Controller
      * - serialize - The view variables to serialize into an API response.
      * - template - The view template to use if one is.
      *
-     * @return null|\Cake\Http\Response Either a response or null if we're not skipping view rendering.
+     * @return \Cake\Http\Response|null Either a response or null if we're not skipping view rendering.
      */
-    protected function respond(array $config)
+    protected function respond(array $config): ?Response
     {
         $config += [
             'success' => false,
@@ -179,7 +180,7 @@ class AppController extends Controller
                 return $this->response;
             }
 
-            return;
+            return null;
         }
         if ($this->request->is('htmx') && $config['statusSuccess'] === 204) {
             $this->response = $this->response->withStatus($code);
@@ -191,5 +192,7 @@ class AppController extends Controller
         if ($config['redirect']) {
             return $this->redirect($config['redirect']);
         }
+
+        return null;
     }
 }

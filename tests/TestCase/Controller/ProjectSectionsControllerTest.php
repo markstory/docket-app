@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -23,7 +22,7 @@ class ProjectSectionsControllerTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Users',
         'app.Projects',
         'app.ProjectSections',
@@ -38,7 +37,7 @@ class ProjectSectionsControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ProjectSections = TableRegistry::get('ProjectSections');
+        $this->ProjectSections = $this->fetchTable('ProjectSections');
     }
 
     public function testAdd()
@@ -276,7 +275,7 @@ class ProjectSectionsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/projects/home');
 
-        $results = $this->ProjectSections->find()->orderAsc('ranking')->toArray();
+        $results = $this->ProjectSections->find()->orderByAsc('ranking')->toArray();
         $expected = [$repairs->id, $cleaning->id, $reading->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
@@ -298,7 +297,7 @@ class ProjectSectionsControllerTest extends TestCase
         ]);
         $this->assertRedirect('/projects/home');
 
-        $results = $this->ProjectSections->find()->orderAsc('ranking')->toArray();
+        $results = $this->ProjectSections->find()->orderByAsc('ranking')->toArray();
         $expected = [$cleaning->id, $reading->id, $repairs->id];
         $this->assertCount(count($expected), $results);
         foreach ($expected as $i => $id) {
