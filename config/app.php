@@ -387,6 +387,7 @@ return [
     ],
 
     'Migrations' => [
+        'backend' => 'builtin',
         'unsigned_primary_keys' => false,
     ],
 
