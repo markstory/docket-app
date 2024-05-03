@@ -25,7 +25,9 @@ jobs:
     steps:
     - name: Setup MySQL
       if: matrix.db-type == 'mysql'
-      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=docket -p 3306:3306 -d mysql:8 --default-authentication-plugin=mysql_native_password --disable-log-bin
+      run: |
+          sudo service mysql start
+          mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE docket;'
 
     - name: Setup PostgreSQL
       if: matrix.db-type == 'pgsql'
