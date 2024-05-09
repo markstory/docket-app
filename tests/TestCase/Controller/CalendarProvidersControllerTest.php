@@ -7,6 +7,8 @@ use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
+use function Cake\Collection\collection;
+
 /**
  * App\Controller\CalendarProvidersController Test Case
  *
@@ -119,6 +121,31 @@ class CalendarProvidersControllerTest extends TestCase
         $unlinked = $this->viewVariable('unlinked');
         $this->assertCount(1, $unlinked);
         $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
+    }
+
+    /**
+     * Test sync method
+     */
+    public function testSyncAddsSources(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
+        // Owned by a different user.
+        $this->makeCalendarProvider(2, 'other@example.com');
+        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->disableErrorHandlerMiddleware();
+        $this->post("/calendars/{$ownProvider->id}/sync");
+        $this->assertRedirect('/calendars');
+        $provider = $this->viewVariable('provider');
+
+        $this->assertCount(2, $provider->calendar_sources);
+        $sourceNames = collection($provider->calendar_sources)->extract('name')->toArray();
+        $this->assertContains('Birthdays Calendar', $sourceNames);
+        $this->assertContains('Primary Calendar', $sourceNames);
+        $this->assertFalse($provider->calendar_sources[0]->synced);
+        $this->assertFalse($provider->calendar_sources[1]->synced);
     }
 
     /**

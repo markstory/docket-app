@@ -38,6 +38,7 @@ class CalendarSource extends Entity
         'calendar_provider_id' => true,
         'provider_id' => true,
         'color' => true,
+        'synced' => true,
         'last_sync' => true,
         'sync_token' => true,
         'created' => true,

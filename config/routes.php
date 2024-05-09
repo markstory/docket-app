@@ -280,6 +280,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
             ->setPass(['id']);
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarproviders:sync')
+            ->setPass(['id']);
     });
 
     $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function ($builder) {

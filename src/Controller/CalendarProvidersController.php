@@ -127,6 +127,25 @@ class CalendarProvidersController extends AppController
     }
 
     /**
+     * Sync the calendar sources for a provider
+     *
+     * @param string|null $id Calendar provider id
+     */
+    public function sync(?string $id, CalendarService $service): ?Response
+    {
+        $this->request->allowMethod(['post']);
+        $calendarProvider = $this->CalendarProviders->get($id, contain: ['CalendarSources']);
+        $this->Authorization->authorize($calendarProvider, 'edit');
+
+        $calendarProvider = $service->syncSources($calendarProvider);
+        $this->set('provider', $calendarProvider);
+
+        return $this->respond([
+            'redirect' => ['_name' => 'calendarproviders:index'],
+        ]);
+    }
+
+    /**
      * Delete method
      *
      * @param string|null $id Calendar Provider id.

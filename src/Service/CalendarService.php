@@ -24,6 +24,7 @@ use Google\Service\Calendar\Channel as GoogleChannel;
 use Google\Service\Calendar\Event as GoogleEvent;
 use Google\Service\Calendar\Events as GoogleEvents;
 use RuntimeException;
+use function Cake\Collection\collection;
 use function Sentry\captureException;
 
 /**
@@ -93,6 +94,60 @@ class CalendarService
             }
             $this->CalendarProviders->save($provider);
         }
+    }
+
+    /**
+     * Sync sources from the remote calendar service.
+     */
+    public function syncSources(CalendarProvider $calendarProvider): CalendarProvider
+    {
+        $calendar = new Calendar($this->client);
+        try {
+            $results = $calendar->calendarList->listCalendarList();
+        } catch (GoogleException $e) {
+            Log::warning("Calendar list failed. error={$e->getMessage()}");
+            throw new BadRequestException('Could not fetch calendars.', null, $e);
+        }
+        $existing = collection($calendarProvider->calendar_sources)->indexBy('provider_id')->toArray();
+
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
+
+        $this->CalendarProviders->getConnection()->transactional(function () use ($results, $existing, $calendarProvider): void {
+            /** @var array<\App\Model\Entity\CalendarSource> $newSources */
+            $newSources = [];
+            foreach ($results as $record) {
+                // Update or create
+                if (isset($existing[$record->id])) {
+                    $source = $existing[$record->id];
+                    $source->name = $record->summary;
+                    $this->CalendarSources->saveOrFail($source);
+
+                    // Remove from existing records so that remainder can be deleted.
+                    unset($existing[$record->id]);
+                    $newSources[] = $source;
+                } else {
+                    $source = $this->CalendarSources->newEntity([
+                        'calendar_provider_id' => $calendarProvider->id,
+                        'name' => $record->summary,
+                        'provider_id' => $record->id,
+                        'color' => 1,
+                        'synced' => false,
+                    ]);
+                    $this->CalendarSources->saveOrFail($source);
+                    $newSources[] = $source;
+                }
+            }
+            // Any existing sources that are no longer present in the remote
+            // must have been deleted there.
+            if (!empty($existing)) {
+                $this->CalendarSources->deleteAll(['id IN' => array_keys($existing)]);
+            }
+
+            $calendarProvider->calendar_sources = $newSources;
+        });
+
+        return $calendarProvider;
     }
 
     /**
