@@ -537,6 +537,28 @@ class TasksControllerTest extends TestCase
         $this->assertTemplate('Tasks/editproject');
     }
 
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testViewCompleted(): void
+    {
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 0);
+        $first->completed = true;
+        $this->Tasks->saveOrFail($first);
+
+        $this->login();
+        $this->get("/tasks/{$first->id}/view");
+        $this->assertResponseOk();
+        $var = $this->viewVariable('task');
+        $this->assertSame($var->title, $first->title);
+        $this->assertTrue($var->completed);
+        $this->assertTemplate('Tasks/view');
+        $this->assertResponseContains('checked="checked"');
+    }
+
     public function testAdd(): void
     {
         $project = $this->makeProject('work', 1);

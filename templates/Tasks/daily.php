@@ -95,6 +95,7 @@ endif;
 ?>
 
 <?php if (empty($groupedTasks)) : ?>
+    <?php // TODO add empty state for no projects ?>
     <?= $this->element('tasks_empty') ?>
 <?php endif ?>
 

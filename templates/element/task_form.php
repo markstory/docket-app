@@ -20,7 +20,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 
 <div class="task-view-summary">
     <div class="task-header">
-        <?= $this->element('task_checkbox') ?>
+        <?= $this->element('task_checkbox', ['checked' => $task->completed]) ?>
         <?= $this->Form->text('title', [
             'class' => 'task-title-input',
             'aria-label' => 'Task Title',
