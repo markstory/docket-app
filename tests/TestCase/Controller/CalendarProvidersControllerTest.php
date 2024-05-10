@@ -135,9 +135,9 @@ class CalendarProvidersControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->disableErrorHandlerMiddleware();
         $this->post("/calendars/{$ownProvider->id}/sync");
         $this->assertRedirect('/calendars');
+        /** @var \App\Model\Entity\CalendarProvider */
         $provider = $this->viewVariable('provider');
 
         $this->assertCount(2, $provider->calendar_sources);
@@ -146,6 +146,27 @@ class CalendarProvidersControllerTest extends TestCase
         $this->assertContains('Primary Calendar', $sourceNames);
         $this->assertFalse($provider->calendar_sources[0]->synced);
         $this->assertFalse($provider->calendar_sources[1]->synced);
+    }
+
+    public function testSyncUpdatesAndRemoves(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
+        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
+        $keepSource = $this->makeCalendarSource($provider->id, 'keeper', ['provider_id' => 'calendar-1']);
+        $remove = $this->makeCalendarSource($provider->id, 'delete me', ['provider_id' => 'remove']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->disableErrorHandlerMiddleware();
+        $this->post("/calendars/{$provider->id}/sync");
+        $this->assertRedirect('/calendars');
+        /** @var \App\Model\Entity\CalendarProvider */
+        $provider = $this->viewVariable('provider');
+
+        $sources = $provider->calendar_sources;
+        $this->assertCount(2, $sources);
+        $this->assertEquals($keepSource->id, $sources[0]->id);
+        $this->assertNotEquals($remove->id, $sources[1]->id);
     }
 
     /**

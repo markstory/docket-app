@@ -141,7 +141,8 @@ class CalendarService
             // Any existing sources that are no longer present in the remote
             // must have been deleted there.
             if (!empty($existing)) {
-                $this->CalendarSources->deleteAll(['id IN' => array_keys($existing)]);
+                $ids = collection($existing)->extract('id')->toList();
+                $this->CalendarSources->deleteAll(['id IN' => $ids]);
             }
 
             $calendarProvider->calendar_sources = $newSources;

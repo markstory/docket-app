@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string $color
  * @property \Cake\I18n\DateTime $last_sync
  * @property string|null $sync_token
+ * @property bool $synced
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
