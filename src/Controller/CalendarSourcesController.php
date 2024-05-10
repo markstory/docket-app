@@ -132,17 +132,24 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(): ?Response
+    public function edit(CalendarService $service): ?Response
     {
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
+        $service->setAccessToken($calendarSource->calendar_provider);
 
         $success = false;
         if ($this->request->is(['patch', 'post', 'put'])) {
             // Only a subset of fields are user editable.
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
-                'fields' => ['color', 'name'],
+                'fields' => ['color', 'name', 'synced'],
             ]);
+            if ($calendarSource->isDirty('synced')) {
+                $message = $this->editSynced($service, $calendarSource);
+                if ($message) {
+                    $this->Flash->error($message);
+                }
+            }
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
                 $this->set('source', $calendarSource);
@@ -157,6 +164,25 @@ class CalendarSourcesController extends AppController
             'flashError' => __('The calendar could not be modified. Please, try again.'),
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
         ]);
+    }
+
+    protected function editSynced(CalendarService $service, CalendarSource $source): string
+    {
+        if ($source->synced) {
+            $message = "";
+            try {
+                $service->createSubscription($source);
+            } catch (RuntimeException $e) {
+                $message = __('Your calendar was added but will not automatically synchronize.');
+            }
+
+            return $message;
+        }
+
+        // Cancel subscription so that it can be regenerated on next edit
+        $service->cancelSubscriptions($source);
+
+        return "";
     }
 
     /**
