@@ -119,6 +119,7 @@ class CalendarService
             foreach ($results as $record) {
                 // Update or create
                 if (isset($existing[$record->id])) {
+                    /** @var \App\Model\Entity\CalendarSource $source */
                     $source = $existing[$record->id];
                     $source->name = $record->summary;
                     $this->CalendarSources->saveOrFail($source);
@@ -127,6 +128,7 @@ class CalendarService
                     unset($existing[$record->id]);
                     $newSources[] = $source;
                 } else {
+                    /** @var \App\Model\Entity\CalendarSource $source */
                     $source = $this->CalendarSources->newEntity([
                         'calendar_provider_id' => $calendarProvider->id,
                         'name' => $record->summary,

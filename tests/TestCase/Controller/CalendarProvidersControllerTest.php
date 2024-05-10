@@ -165,8 +165,9 @@ class CalendarProvidersControllerTest extends TestCase
 
         $sources = $provider->calendar_sources;
         $this->assertCount(2, $sources);
-        $this->assertEquals($keepSource->id, $sources[0]->id);
-        $this->assertNotEquals($remove->id, $sources[1]->id);
+        $this->assertEquals($keepSource->id, $sources[0]->id, 'Should exist from before');
+        $this->assertEquals('Primary Calendar', $sources[0]->name, 'Should update');
+        $this->assertNotEquals($remove->id, $sources[1]->id, 'Remove is not a record anymore.');
     }
 
     /**
