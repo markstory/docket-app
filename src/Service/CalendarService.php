@@ -99,8 +99,9 @@ class CalendarService
     /**
      * Sync sources from the remote calendar service.
      */
-    public function syncSources(CalendarProvider $calendarProvider): CalendarProvider
+    public function syncSources(CalendarProvider $provider): CalendarProvider
     {
+        $this->client->setAccessToken($provider->access_token);
         $calendar = new Calendar($this->client);
         try {
             $results = $calendar->calendarList->listCalendarList();
@@ -108,12 +109,12 @@ class CalendarService
             Log::warning("Calendar list failed. error={$e->getMessage()}");
             throw new BadRequestException('Could not fetch calendars.', null, $e);
         }
-        $existing = collection($calendarProvider->calendar_sources)->indexBy('provider_id')->toArray();
+        $existing = collection($provider->calendar_sources)->indexBy('provider_id')->toArray();
 
         $this->CalendarProviders = $this->fetchTable('CalendarProviders');
         $this->CalendarSources = $this->fetchTable('CalendarSources');
 
-        $this->CalendarProviders->getConnection()->transactional(function () use ($results, $existing, $calendarProvider): void {
+        $this->CalendarProviders->getConnection()->transactional(function () use ($results, $existing, $provider): void {
             /** @var array<\App\Model\Entity\CalendarSource> $newSources */
             $newSources = [];
             foreach ($results as $record) {
@@ -130,7 +131,7 @@ class CalendarService
                 } else {
                     /** @var \App\Model\Entity\CalendarSource $source */
                     $source = $this->CalendarSources->newEntity([
-                        'calendar_provider_id' => $calendarProvider->id,
+                        'calendar_provider_id' => $provider->id,
                         'name' => $record->summary,
                         'provider_id' => $record->id,
                         'color' => 1,
@@ -147,10 +148,10 @@ class CalendarService
                 $this->CalendarSources->deleteAll(['id IN' => $ids]);
             }
 
-            $calendarProvider->calendar_sources = $newSources;
+            $provider->calendar_sources = $newSources;
         });
 
-        return $calendarProvider;
+        return $provider;
     }
 
     /**

@@ -11,9 +11,11 @@ declare(strict_types=1);
 // If we're not handling an HX-Request wrap the layout
 // in page chrome. When we're handling htmx requests,
 // we swap main.main.
-if ($this->request->is('htmx')) :
-    echo $this->Flash->render();
-else :
+if ($this->request->is('htmx')) : ?>
+<div class="flash-messages">
+    <?= $this->Flash->render() ?>
+</div>
+<?php else :
     $this->extend('default');
 endif;
 

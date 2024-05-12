@@ -22,7 +22,9 @@ declare(strict_types=1);
 </head>
 <body hx-ext="ajax-header">
     <main class="main">
-        <?= $this->Flash->render() ?>
+        <div class="flash-messages">
+            <?= $this->Flash->render() ?>
+        </div>
         <?= $this->fetch('content') ?>
     </main>
     <footer>
