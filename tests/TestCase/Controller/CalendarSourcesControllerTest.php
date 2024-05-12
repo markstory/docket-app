@@ -179,55 +179,6 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testAddPost(): void
-    {
-        $this->loadResponseMocks('controller_calendarsources_add_post.yml');
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/add", [
-            'provider_id' => 'calendar-1',
-            'color' => 1,
-            'name' => 'Work Calendar',
-        ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
-
-        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
-        $this->assertSame('calendar-1', $source->provider_id);
-
-        $subs = $this->fetchTable('CalendarSubscriptions');
-        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
-        $this->assertNotEmpty($sub->identifier);
-    }
-
-    public function testAddPostSubscriptionFail(): void
-    {
-        $this->loadResponseMocks('controller_calendarsources_add_post_fail.yml');
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/add", [
-            'provider_id' => 'calendar-1',
-            'color' => 1,
-            'name' => 'Work Calendar',
-        ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/error');
-
-        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
-        $this->assertSame('calendar-1', $source->provider_id);
-
-        $subs = $this->fetchTable('CalendarSubscriptions');
-        $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
-    }
-
     /**
      * Test edit method
      *

@@ -49,53 +49,6 @@ class CalendarSourcesController extends AppController
         ];
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function add(CalendarService $service, $providerId = null): ?Response
-    {
-        $provider = $this->CalendarSources->CalendarProviders->get(
-            $providerId,
-            contain: ['CalendarSources'],
-        );
-        $this->Authorization->authorize($provider, 'edit');
-        $success = false;
-        $error = '';
-
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data['calendar_provider_id'] = $providerId;
-
-            $source = $this->CalendarSources->newEntity($data);
-            if ($this->CalendarSources->save($source)) {
-                $this->set('source', $source);
-
-                $service->setAccessToken($provider);
-                try {
-                    $service->createSubscription($source);
-                    $success = true;
-                } catch (RuntimeException $e) {
-                    $error = __('Your calendar was added but will not automatically synchronize.');
-                }
-            } else {
-                $error = __('Could not add that calendar.');
-            }
-        }
-        if ($error) {
-            $this->set('error', $error);
-        }
-
-        return $this->respond([
-            'success' => $success,
-            'flashSuccess' => __('Your calendar was added and will be synced.'),
-            'flashError' => $error,
-            'redirect' => $this->urlToProvider($provider->id),
-        ]);
-    }
-
     public function sync(CalendarService $service)
     {
         $source = $this->getSource();
@@ -145,10 +98,7 @@ class CalendarSourcesController extends AppController
                 'fields' => ['color', 'name', 'synced'],
             ]);
             if ($calendarSource->isDirty('synced')) {
-                $message = $this->editSynced($service, $calendarSource);
-                if ($message) {
-                    $this->Flash->error($message);
-                }
+                $this->editSynced($service, $calendarSource);
             }
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
@@ -166,23 +116,25 @@ class CalendarSourcesController extends AppController
         ]);
     }
 
-    protected function editSynced(CalendarService $service, CalendarSource $source): string
+    protected function editSynced(CalendarService $service, CalendarSource $source): void
     {
         if ($source->synced) {
-            $message = "";
             try {
                 $service->createSubscription($source);
+                $message = __('Subscription created, calendar will now automatically sychronize.');
+                $this->Flash->success($message);
             } catch (RuntimeException $e) {
                 $message = __('Your calendar was added but will not automatically synchronize.');
+                $this->Flash->error($message);
             }
 
-            return $message;
+            return;
         }
 
         // Cancel subscription so that it can be regenerated on next edit
         $service->cancelSubscriptions($source);
 
-        return "";
+        $this->Flash->success(__('Calendar synchronization stopped.'));
     }
 
     /**
