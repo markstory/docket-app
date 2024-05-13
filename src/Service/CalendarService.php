@@ -114,42 +114,44 @@ class CalendarService
         $this->CalendarProviders = $this->fetchTable('CalendarProviders');
         $this->CalendarSources = $this->fetchTable('CalendarSources');
 
-        $this->CalendarProviders->getConnection()->transactional(function () use ($results, $existing, $provider): void {
-            /** @var array<\App\Model\Entity\CalendarSource> $newSources */
-            $newSources = [];
-            foreach ($results as $record) {
-                // Update or create
-                if (isset($existing[$record->id])) {
-                    /** @var \App\Model\Entity\CalendarSource $source */
-                    $source = $existing[$record->id];
-                    $source->name = $record->summary;
-                    $this->CalendarSources->saveOrFail($source);
+        $this->CalendarProviders->getConnection()->transactional(
+            function () use ($results, $existing, $provider): void {
+                /** @var array<\App\Model\Entity\CalendarSource> $newSources */
+                $newSources = [];
+                foreach ($results as $record) {
+                    // Update or create
+                    if (isset($existing[$record->id])) {
+                        /** @var \App\Model\Entity\CalendarSource $source */
+                        $source = $existing[$record->id];
+                        $source->name = $record->summary;
+                        $this->CalendarSources->saveOrFail($source);
 
-                    // Remove from existing records so that remainder can be deleted.
-                    unset($existing[$record->id]);
-                    $newSources[] = $source;
-                } else {
-                    /** @var \App\Model\Entity\CalendarSource $source */
-                    $source = $this->CalendarSources->newEntity([
-                        'calendar_provider_id' => $provider->id,
-                        'name' => $record->summary,
-                        'provider_id' => $record->id,
-                        'color' => 1,
-                        'synced' => false,
-                    ]);
-                    $this->CalendarSources->saveOrFail($source);
-                    $newSources[] = $source;
+                        // Remove from existing records so that remainder can be deleted.
+                        unset($existing[$record->id]);
+                        $newSources[] = $source;
+                    } else {
+                        /** @var \App\Model\Entity\CalendarSource $source */
+                        $source = $this->CalendarSources->newEntity([
+                            'calendar_provider_id' => $provider->id,
+                            'name' => $record->summary,
+                            'provider_id' => $record->id,
+                            'color' => 1,
+                            'synced' => false,
+                        ]);
+                        $this->CalendarSources->saveOrFail($source);
+                        $newSources[] = $source;
+                    }
                 }
-            }
-            // Any existing sources that are no longer present in the remote
-            // must have been deleted there.
-            if (!empty($existing)) {
-                $ids = collection($existing)->extract('id')->toList();
-                $this->CalendarSources->deleteAll(['id IN' => $ids]);
-            }
+                // Any existing sources that are no longer present in the remote
+                // must have been deleted there.
+                if (!empty($existing)) {
+                    $ids = collection($existing)->extract('id')->toList();
+                    $this->CalendarSources->deleteAll(['id IN' => $ids]);
+                }
 
-            $provider->calendar_sources = $newSources;
-        });
+                $provider->calendar_sources = $newSources;
+            }
+        );
 
         return $provider;
     }

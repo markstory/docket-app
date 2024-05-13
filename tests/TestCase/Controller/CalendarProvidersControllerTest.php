@@ -6,7 +6,6 @@ namespace App\Test\TestCase\Controller;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
-
 use function Cake\Collection\collection;
 
 /**
@@ -106,6 +105,11 @@ class CalendarProvidersControllerTest extends TestCase
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
         $source = $this->makeCalendarSource($provider->id, 'primary', [
             'provider_id' => 'calendar-1',
+            'synced' => true,
+        ]);
+        $other = $this->makeCalendarSource($provider->id, 'birthdays', [
+            'provider_id' => 'calendar-2',
+            'synced' => false,
         ]);
 
         $this->login();
@@ -113,14 +117,18 @@ class CalendarProvidersControllerTest extends TestCase
         $this->assertResponseOk();
 
         $this->assertNotEmpty($this->viewVariable('referer'));
-        $resultProvider = $this->viewVariable('activeProvider');
+        $providers = $this->viewVariable('providers');
+        $this->assertCount(1, $providers);
+        $resultProvider = $providers[0];
         $this->assertSame($provider->identifier, $resultProvider->identifier);
-        $this->assertCount(1, $resultProvider->calendar_sources);
+        $this->assertCount(2, $resultProvider->calendar_sources);
         $this->assertEquals($source->id, $resultProvider->calendar_sources[0]->id);
 
-        $unlinked = $this->viewVariable('unlinked');
-        $this->assertCount(1, $unlinked);
-        $this->assertEquals('Birthdays Calendar', $unlinked[0]->name);
+        $sourceNames = collection($resultProvider->calendar_sources)->extract('name')->toArray();
+        $this->assertContains($source->name, $sourceNames);
+        $this->assertContains($other->name, $sourceNames);
+        $this->assertTrue($resultProvider->calendar_sources[0]->synced);
+        $this->assertFalse($resultProvider->calendar_sources[1]->synced);
     }
 
     /**
@@ -137,7 +145,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/calendars/{$ownProvider->id}/sync");
         $this->assertRedirect('/calendars');
-        /** @var \App\Model\Entity\CalendarProvider */
+        /** @var \App\Model\Entity\CalendarProvider $provider */
         $provider = $this->viewVariable('provider');
 
         $this->assertCount(2, $provider->calendar_sources);
@@ -160,7 +168,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->disableErrorHandlerMiddleware();
         $this->post("/calendars/{$provider->id}/sync");
         $this->assertRedirect('/calendars');
-        /** @var \App\Model\Entity\CalendarProvider */
+        /** @var \App\Model\Entity\CalendarProvider $provider */
         $provider = $this->viewVariable('provider');
 
         $sources = $provider->calendar_sources;

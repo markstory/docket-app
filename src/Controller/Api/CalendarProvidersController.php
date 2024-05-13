@@ -162,5 +162,4 @@ class CalendarProvidersController extends AppController
             'statusSuccess' => 204,
         ]);
     }
-
 }

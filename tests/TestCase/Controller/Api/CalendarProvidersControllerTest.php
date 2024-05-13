@@ -6,7 +6,6 @@ namespace App\Test\TestCase\Controller\Api;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
-
 use function Cake\Collection\collection;
 
 /**
@@ -218,7 +217,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseCode(204);
 
-        /** @var \App\Model\Entity\CalendarProvider */
+        /** @var \App\Model\Entity\CalendarProvider $provider */
         $provider = $this->viewVariable('provider');
 
         $provider = $this->CalendarProviders->get($ownProvider->id, contain: 'CalendarSources');
@@ -241,7 +240,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->post("/api/calendars/{$provider->id}/sync");
         $this->assertResponseCode(204);
 
-        /** @var \App\Model\Entity\CalendarProvider */
+        /** @var \App\Model\Entity\CalendarProvider $provider */
         $provider = $this->CalendarProviders->get($provider->id, contain: 'CalendarSources');
 
         $sources = $provider->calendar_sources;
