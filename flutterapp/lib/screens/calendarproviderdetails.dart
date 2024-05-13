@@ -78,7 +78,7 @@ class _CalendarProviderDetailsScreenState extends State<CalendarProviderDetailsS
   }
 }
 
-enum Menu { link, sync, delete }
+enum Menu { link, sync, delete, unlink }
 
 class CalendarSourceItem extends StatelessWidget {
   final CalendarSource source;
@@ -97,7 +97,7 @@ class CalendarSourceItem extends StatelessWidget {
     }
 
     late Widget leading;
-    if (source.isLinked) {
+    if (source.synced) {
       leading = CalendarColourPicker(
         key: const ValueKey("source-color"),
         color: source.color,
@@ -138,6 +138,11 @@ class CalendarSourceItem extends StatelessWidget {
           await viewmodel.linkSource(source);
           messenger.showSnackBar(successSnackBar(context: context, text: "Calendar linked"));
         },
+        Menu.unlink: () async {
+          var messenger = ScaffoldMessenger.of(context);
+          await viewmodel.unlinkSource(source);
+          messenger.showSnackBar(successSnackBar(context: context, text: "Calendar unlinked"));
+        },
         Menu.sync: () async {
           var messenger = ScaffoldMessenger.of(context);
           await viewmodel.syncEvents(source);
@@ -157,12 +162,21 @@ class CalendarSourceItem extends StatelessWidget {
       actions[item]?.call();
     }, itemBuilder: (BuildContext context) {
       List<PopupMenuEntry<Menu>> items = [];
-      if (source.isLinked) {
+      if (source.synced) {
         items.add(
           PopupMenuItem<Menu>(
             value: Menu.sync,
             child: ListTile(
               leading: Icon(Icons.sync, color: customColors.actionComplete),
+              title: const Text('Sync'),
+            ),
+          )
+        );
+        items.add(
+          PopupMenuItem<Menu>(
+            value: Menu.unlink,
+            child: ListTile(
+              leading: Icon(Icons.link_off, color: customColors.actionEdit),
               title: const Text('Sync'),
             ),
           )

@@ -116,7 +116,7 @@ void main() {
           return Response(calendarDetailsResponse, 200);
         }
 
-        if (request.url.path == '/api/calendars/5/sources/add') {
+        if (request.url.path == '/api/calendars/5/sources/29/edit') {
           return Response(calendarSourceResponse, 200);
         }
         throw "Unexpected request to ${request.url.path} ${request.url.query}";
@@ -128,6 +128,28 @@ void main() {
 
       await viewmodel.linkSource(viewmodel.provider.sources[1]);
       expect(viewmodel.loading, isFalse);
+      expect(viewmodel.provider.sources[1].synced, isTrue);
+    });
+
+    test('unlinkSource() makes a request', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/api/calendars/5/view') {
+          return Response(calendarDetailsResponse, 200);
+        }
+
+        if (request.url.path == '/api/calendars/5/sources/29/edit') {
+          return Response(calendarSourceResponse, 200);
+        }
+        throw "Unexpected request to ${request.url.path} ${request.url.query}";
+      });
+
+      var viewmodel = CalendarProviderDetailsViewModel(db);
+      viewmodel.setId(5);
+      await viewmodel.loadData();
+
+      await viewmodel.unlinkSource(viewmodel.provider.sources[1]);
+      expect(viewmodel.loading, isFalse);
+      expect(viewmodel.provider.sources[1].synced, isFalse);
     });
 
     test('updateSource() makes a request, and updates local state', () async {
