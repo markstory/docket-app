@@ -142,4 +142,25 @@ class CalendarProvidersController extends AppController
             'statusSuccess' => 204,
         ]);
     }
+
+    /**
+     * Sync the calendar sources for a provider
+     *
+     * @param string|null $id Calendar provider id
+     */
+    public function sync(?string $id, CalendarService $service): ?Response
+    {
+        $this->request->allowMethod(['post']);
+        $calendarProvider = $this->CalendarProviders->get($id, contain: ['CalendarSources']);
+        $this->Authorization->authorize($calendarProvider, 'edit');
+
+        $calendarProvider = $service->syncSources($calendarProvider);
+        $this->set('provider', $calendarProvider);
+
+        return $this->respond([
+            'success' => true,
+            'statusSuccess' => 204,
+        ]);
+    }
+
 }

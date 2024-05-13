@@ -55,6 +55,7 @@ class CalendarSourcesController extends AppController
      *
      * @return \Cake\Http\Response|null Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @deprecated use /api/calendars/:id/sync instead.
      */
     public function add(CalendarService $service, $providerId = null): ?Response
     {

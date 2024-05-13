@@ -7,6 +7,8 @@ use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
+use function Cake\Collection\collection;
+
 /**
  * App\Controller\Api\CalendarProvidersController Test Case
  */
@@ -199,5 +201,53 @@ class CalendarProvidersControllerTest extends TestCase
 
         $this->post("/api/calendars/{$provider->id}/delete");
         $this->assertResponseCode(403);
+    }
+
+    /**
+     * Test sync method
+     */
+    public function testSyncAddsSources(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
+        // Owned by a different user.
+        $this->makeCalendarProvider(2, 'other@example.com');
+        $ownProvider = $this->makeCalendarProvider(1, 'owner@example.com');
+
+        $this->loginApi(1);
+        $this->post("/api/calendars/{$ownProvider->id}/sync");
+        $this->assertResponseOk();
+        $this->assertResponseCode(204);
+
+        /** @var \App\Model\Entity\CalendarProvider */
+        $provider = $this->viewVariable('provider');
+
+        $provider = $this->CalendarProviders->get($ownProvider->id, contain: 'CalendarSources');
+        $this->assertCount(2, $provider->calendar_sources);
+        $sourceNames = collection($provider->calendar_sources)->extract('name')->toArray();
+        $this->assertContains('Birthdays Calendar', $sourceNames);
+        $this->assertContains('Primary Calendar', $sourceNames);
+        $this->assertFalse($provider->calendar_sources[0]->synced);
+        $this->assertFalse($provider->calendar_sources[1]->synced);
+    }
+
+    public function testSyncUpdatesAndRemoves(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add.yml');
+        $provider = $this->makeCalendarProvider(1, 'owner@example.com');
+        $keepSource = $this->makeCalendarSource($provider->id, 'keeper', ['provider_id' => 'calendar-1']);
+        $remove = $this->makeCalendarSource($provider->id, 'delete me', ['provider_id' => 'remove']);
+
+        $this->loginApi(1);
+        $this->post("/api/calendars/{$provider->id}/sync");
+        $this->assertResponseCode(204);
+
+        /** @var \App\Model\Entity\CalendarProvider */
+        $provider = $this->CalendarProviders->get($provider->id, contain: 'CalendarSources');
+
+        $sources = $provider->calendar_sources;
+        $this->assertCount(2, $sources);
+        $this->assertEquals($keepSource->id, $sources[0]->id, 'Should exist from before');
+        $this->assertEquals('Primary Calendar', $sources[0]->name, 'Should update');
+        $this->assertNotEquals($remove->id, $sources[1]->id, 'Remove is not a record anymore.');
     }
 }

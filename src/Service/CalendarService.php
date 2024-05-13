@@ -200,9 +200,9 @@ class CalendarService
         try {
             $calendar->calendarList->listCalendarList();
 
-            return true;
-        } catch (GoogleException $e) {
             return false;
+        } catch (GoogleException $e) {
+            return true;
         }
     }
 
