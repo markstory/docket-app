@@ -177,7 +177,7 @@ class CalendarSourceItem extends StatelessWidget {
             value: Menu.unlink,
             child: ListTile(
               leading: Icon(Icons.link_off, color: customColors.actionEdit),
-              title: const Text('Sync'),
+              title: const Text('Unlink'),
             ),
           )
         );

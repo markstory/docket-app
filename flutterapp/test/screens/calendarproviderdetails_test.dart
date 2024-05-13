@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:docket/models/apitoken.dart';
 import 'package:docket/models/calendarprovider.dart';
-import 'package:docket/models/calendarsource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -23,11 +22,6 @@ void main() {
   final calendarResponse = file.readAsStringSync();
   var decoded = jsonDecode(calendarResponse) as Map<String, dynamic>;
   CalendarProvider provider = CalendarProvider.fromMap(decoded["provider"]);
-  provider.sources.add(CalendarSource.fromMap({
-    "name": "unlinked",
-    "provider_id": "fake-google.com",
-    "color": 1,
-  }));
 
   group('$CalendarProviderDetailsScreen', () {
     var db = LocalDatabase(inTest: true);
@@ -69,33 +63,6 @@ void main() {
       );
     });
 
-    testWidgets('sync action makes request', (tester) async {
-      var callCount = 0;
-      actions.client = MockClient((request) async {
-        if (request.url.path == '/api/calendars/5/sources/28/sync') {
-          callCount += 1;
-          return Response(calendarSourceResponse, 200);
-        }
-        throw Exception('Request made to ${request.url.path} has no response');
-      });
-
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
-      await tester.pumpAndSettle();
-
-      // Open menu
-      var menu = find.byKey(const ValueKey('source-actions')).first;
-      await tester.tap(menu);
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Sync'));
-      await tester.pumpAndSettle();
-
-      expect(callCount, equals(1));
-    });
-
     testWidgets('delete action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
@@ -132,7 +99,7 @@ void main() {
     testWidgets('link action makes request', (tester) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
-        if (request.url.path == '/api/calendars/5/sources/add') {
+        if (request.url.path == '/api/calendars/5/sources/30/edit') {
           callCount += 1;
           return Response(calendarSourceResponse, 200);
         }
@@ -151,6 +118,33 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Link'));
+      await tester.pumpAndSettle();
+
+      expect(callCount, equals(1));
+    });
+
+    testWidgets('unlink action makes request', (tester) async {
+      var callCount = 0;
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/api/calendars/5/sources/28/edit') {
+          callCount += 1;
+          return Response(calendarSourceResponse, 200);
+        }
+        throw Exception('Request made to ${request.url.path} has no response');
+      });
+
+      await tester.pumpWidget(EntryPoint(
+        database: db,
+        child: CalendarProviderDetailsScreen(provider),
+      ));
+      await tester.pumpAndSettle();
+
+      // Open menu
+      var menu = find.byKey(const ValueKey('source-actions')).first;
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Unlink').first);
       await tester.pumpAndSettle();
 
       expect(callCount, equals(1));
