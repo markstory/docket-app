@@ -106,13 +106,11 @@ class CalendarProvidersController extends AppController
         $this->Authorization->authorize($provider, 'view');
 
         $service->setAccessToken($provider);
-        try {
-            $calendars = $service->listUnlinkedCalendars($provider->calendar_sources ?? []);
-        } catch (BadRequestException $e) {
-            $calendars = [];
-            $provider->broken_auth = true;
-        }
+        // TODO add rate limiting, and only check periodically.
+        $provider->broken_auth = $service->isAuthBroken();
 
+        // Backwards compatibility
+        $calendars = [];
         $this->set(compact('provider', 'calendars'));
 
         return $this->respond([

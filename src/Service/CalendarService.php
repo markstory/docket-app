@@ -191,6 +191,21 @@ class CalendarService
         return $out;
     }
 
+    /**
+     * Check if a read operation can be performed with the credentials
+     */
+    public function isAuthBroken(): bool
+    {
+        $calendar = new Calendar($this->client);
+        try {
+            $calendar->calendarList->listCalendarList();
+
+            return true;
+        } catch (GoogleException $e) {
+            return false;
+        }
+    }
+
     public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource
     {
         $this->CalendarSources = $this->fetchTable('CalendarSources');

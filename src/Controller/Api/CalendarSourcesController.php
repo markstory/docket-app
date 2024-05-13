@@ -81,7 +81,7 @@ class CalendarSourcesController extends AppController
                     $service->createSubscription($source);
                     $success = true;
                 } catch (RuntimeException $e) {
-                    $error = __('Your calendar was added but will not automatically synchronize.');
+                    $error = __('Your calendar was added, but will not automatically synchronize.');
                 }
             } else {
                 $error = __('Could not add that calendar.');
@@ -138,26 +138,40 @@ class CalendarSourcesController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(): ?Response
+    public function edit(CalendarService $service): ?Response
     {
+        $this->request->allowMethod(['post', 'put', 'patch']);
+
         $calendarSource = $this->getSource();
         $this->Authorization->authorize($calendarSource->calendar_provider);
 
         $serialize = [];
+        $errors = [];
         $success = false;
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            // Only a subset of fields are user editable.
-            $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
-                'fields' => ['color', 'name'],
-            ]);
-            if ($this->CalendarSources->save($calendarSource)) {
-                $success = true;
-                $serialize = ['source'];
-                $this->set('source', $calendarSource);
-            } else {
-                $serialize = ['errors'];
-                $this->set('errors', $this->flattenErrors($calendarSource->getErrors()));
+
+        // Only a subset of fields are user editable.
+        $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
+            'fields' => ['color', 'name', 'synced'],
+        ]);
+        $syncedChanged = $calendarSource->isDirty('synced');
+        if ($this->CalendarSources->save($calendarSource)) {
+            $success = true;
+            $serialize = ['source'];
+            $this->set('source', $calendarSource);
+        } else {
+            $success = false;
+            $errors[] = $this->flattenErrors($calendarSource->getErrors());
+        }
+        if ($success && $syncedChanged) {
+            $syncError = $this->editSynced($service, $calendarSource);
+            if ($syncError !== null) {
+                $success = false;
+                $errors[] = $syncError;
             }
+        }
+        if ($errors) {
+            $serialize = ['errors'];
+            $this->set('errors', $errors);
         }
 
         return $this->respond([
@@ -167,6 +181,24 @@ class CalendarSourcesController extends AppController
             'flashError' => __('The calendar could not be modified. Please, try again.'),
             'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
         ]);
+    }
+
+    protected function editSynced(CalendarService $service, CalendarSource $source): ?string
+    {
+        if ($source->synced) {
+            try {
+                $service->createSubscription($source);
+
+                return null;
+            } catch (RuntimeException $e) {
+                return __('Your calendar will not automatically synchronize.');
+            }
+        }
+
+        // Cancel subscription so that it can be regenerated on next edit
+        $service->cancelSubscriptions($source);
+
+        return null;
     }
 
     /**

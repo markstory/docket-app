@@ -200,17 +200,15 @@ class CalendarSourcesControllerTest extends TestCase
         $this->loadResponseMocks('controller_calendarsources_add_post_fail.yml');
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/add", [
+        $this->loginApi(1);
+        $this->disableErrorHandlerMiddleware();
+        $this->post("/api/calendars/{$provider->id}/sources/add", [
             'provider_id' => 'calendar-1',
             'color' => 1,
             'name' => 'Work Calendar',
         ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/error');
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('"error": "Your calendar was added, but will not');
 
         $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
         $this->assertSame('calendar-1', $source->provider_id);
@@ -256,5 +254,61 @@ class CalendarSourcesControllerTest extends TestCase
             'name' => 'new values',
         ]);
         $this->assertResponseCode(403);
+    }
+
+    /**
+     * Test edit with enabling sync
+     *
+     * @return void
+     */
+    public function testEditEnableSync(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add_post.yml');
+
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'calendar-1', ['synced' => false]);
+
+        $this->loginApi($user->id);
+
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'synced' => true,
+        ]);
+        $this->assertResponseOk();
+
+        $source = $this->CalendarSources->findById($source->id)->firstOrFail();
+        $this->assertSame('calendar-1', $source->provider_id);
+        $this->assertTrue($source->synced);
+
+        $subs = $this->fetchTable('CalendarSubscriptions');
+        $this->assertNotEmpty($subs->findByCalendarSourceId($source->id)->first());
+    }
+
+    /**
+     * Test edit disabling sync
+     *
+     * @return void
+     */
+    public function testEditDisableSync(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_delete.yml');
+
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'original', ['synced' => true]);
+
+        $this->loginApi($user->id);
+
+        $this->post("/api/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'synced' => false,
+        ]);
+        $this->assertResponseOk();
+
+        $source = $this->CalendarSources->findById($source->id)->firstOrFail();
+        $this->assertSame('original', $source->provider_id);
+        $this->assertFalse($source->synced);
+
+        $subs = $this->fetchTable('CalendarSubscriptions');
+        $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
     }
 }

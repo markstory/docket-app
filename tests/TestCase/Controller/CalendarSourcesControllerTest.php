@@ -217,7 +217,6 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
 
-        $this->disableErrorHandlerMiddleware();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
             'synced' => true,
         ]);

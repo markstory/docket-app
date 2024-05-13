@@ -97,14 +97,16 @@ class CalendarSourcesController extends AppController
             $calendarSource = $this->CalendarSources->patchEntity($calendarSource, $this->request->getData(), [
                 'fields' => ['color', 'name', 'synced'],
             ]);
-            if ($calendarSource->isDirty('synced')) {
-                $this->editSynced($service, $calendarSource);
-            }
+            $syncedChanged = $calendarSource->isDirty('synced');
             if ($this->CalendarSources->save($calendarSource)) {
                 $success = true;
                 $this->set('source', $calendarSource);
             } else {
+                $success = false;
                 $this->set('errors', $this->flattenErrors($calendarSource->getErrors()));
+            }
+            if ($success && $syncedChanged) {
+                $this->editSynced($service, $calendarSource);
             }
         }
 
