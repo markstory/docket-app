@@ -111,9 +111,9 @@ class CalendarService
         }
         $existing = collection($provider->calendar_sources)->indexBy('provider_id')->toArray();
 
-        /** @var \App\Model\Table\CalendarProvidersTable */
+        /** @var \App\Model\Table\CalendarProvidersTable $this->CalendarProviders */
         $this->CalendarProviders = $this->fetchTable('CalendarProviders');
-        /** @var \App\Model\Table\CalendarSourcesTable */
+        /** @var \App\Model\Table\CalendarSourcesTable $this->CalendarSources */
         $this->CalendarSources = $this->fetchTable('CalendarSources');
 
         $this->CalendarProviders->getConnection()->transactional(
