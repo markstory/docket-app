@@ -179,55 +179,6 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertResponseCode(403);
     }
 
-    public function testAddPost(): void
-    {
-        $this->loadResponseMocks('controller_calendarsources_add_post.yml');
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/add", [
-            'provider_id' => 'calendar-1',
-            'color' => 1,
-            'name' => 'Work Calendar',
-        ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/success');
-
-        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
-        $this->assertSame('calendar-1', $source->provider_id);
-
-        $subs = $this->fetchTable('CalendarSubscriptions');
-        $sub = $subs->findByCalendarSourceId($source->id)->firstOrFail();
-        $this->assertNotEmpty($sub->identifier);
-    }
-
-    public function testAddPostSubscriptionFail(): void
-    {
-        $this->loadResponseMocks('controller_calendarsources_add_post_fail.yml');
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-
-        $this->login();
-        $this->enableRetainFlashMessages();
-        $this->enableCsrfToken();
-
-        $this->post("/calendars/{$provider->id}/sources/add", [
-            'provider_id' => 'calendar-1',
-            'color' => 1,
-            'name' => 'Work Calendar',
-        ]);
-        $this->assertRedirect("/calendars?provider={$provider->id}");
-        $this->assertFlashElement('flash/error');
-
-        $source = $this->CalendarSources->findByName('Work Calendar')->firstOrFail();
-        $this->assertSame('calendar-1', $source->provider_id);
-
-        $subs = $this->fetchTable('CalendarSubscriptions');
-        $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
-    }
-
     /**
      * Test edit method
      *
@@ -248,6 +199,66 @@ class CalendarSourcesControllerTest extends TestCase
         ]);
         $this->assertRedirect("/calendars?provider={$provider->id}");
         $this->assertFlashElement('flash/success');
+    }
+
+    /**
+     * Test edit with enabling sync
+     *
+     * @return void
+     */
+    public function testEditEnableSync(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_add_post.yml');
+
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'calendar-1', ['synced' => false]);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'synced' => true,
+        ]);
+        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertFlashElement('flash/success');
+
+        $source = $this->CalendarSources->findById($source->id)->firstOrFail();
+        $this->assertSame('calendar-1', $source->provider_id);
+        $this->assertTrue($source->synced);
+
+        $subs = $this->fetchTable('CalendarSubscriptions');
+        $this->assertNotEmpty($subs->findByCalendarSourceId($source->id)->first());
+    }
+
+    /**
+     * Test edit disabling sync
+     *
+     * @return void
+     */
+    public function testEditDisableSync(): void
+    {
+        $this->loadResponseMocks('controller_calendarsources_delete.yml');
+
+        $user = $this->Users->get(1);
+        $provider = $this->makeCalendarProvider($user->id, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'original', ['synced' => true]);
+
+        $this->login();
+        $this->enableCsrfToken();
+
+        $this->post("/calendars/{$provider->id}/sources/{$source->id}/edit", [
+            'synced' => false,
+        ]);
+        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertFlashElement('flash/success');
+
+        $source = $this->CalendarSources->findById($source->id)->firstOrFail();
+        $this->assertSame('original', $source->provider_id);
+        $this->assertFalse($source->synced);
+
+        $subs = $this->fetchTable('CalendarSubscriptions');
+        $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
     }
 
     /**

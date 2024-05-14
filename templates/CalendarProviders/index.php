@@ -8,28 +8,23 @@ declare(strict_types=1);
 $this->setLayout('sidebar');
 $this->assign('title', 'Synced Calendars');
 ?>
-<h2>Synced Calendars</h2>
-<p>
-    Events from linked calendars will be displayed in "today" and "upcoming" views.
-</p>
-<div class="button-bar">
+<div class="heading-actions">
+    <h2 class="heading-actions-item">Synced Calendars</h2>
     <a class="button-primary" href="/auth/google/authorize">
         <?= $this->element('icons/plus16') ?>
         Add Google Account
     </a>
 </div>
+<p>
+    Events from linked calendars will be displayed in "today" and "upcoming" views.
+</p>
 <h3>Connected Calendar Accounts</h3>
 <ul class="list-items">
     <?php foreach ($providers as $provider) : ?>
-        <?php
-        $isActive = $activeProvider && $provider->id === $activeProvider->id;
-        $unlinked = $isActive ? $unlinked : [];
-        echo $this->element(
+        <?= $this->element(
             'calendarprovider_item',
             [
                 'provider' => $provider,
-                'active' => $isActive,
-                'unlinked' => $unlinked,
             ]
         );
         ?>

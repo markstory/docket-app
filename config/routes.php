@@ -143,6 +143,8 @@ $routes->prefix('Api', ['_namePrefix' => 'api:'], function (RouteBuilder $builde
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
         $builder->connect('/{id}/view', ['action' => 'view'], ['_name' => 'calendarproviders:view'])
             ->setPass(['id']);
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarproviders:sync')
+            ->setPass(['id']);
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
             ->setPass(['id']);
     });
@@ -279,6 +281,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/google/new', ['action' => 'createFromGoogle'], ['_name' => 'calendarproviders:createfromgoogle']);
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
+            ->setPass(['id']);
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarproviders:sync')
             ->setPass(['id']);
     });
 

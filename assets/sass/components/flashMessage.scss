@@ -6,20 +6,26 @@
     top: 16px;
   }
 }
+.flash-messages {
+  display: flex;
+  flex-direction: column;
+  gap: $space;
 
-.flash-message {
-  animation: 0.5s ease-out 0s 1 flash-message-append;
   position: fixed;
   left: 50%;
   top: 16px;
   width: max-content;
   transform: translateX(-50%);
+  z-index: $z-flash;
+}
+
+.flash-message {
+  animation: 0.5s ease-out 0s 1 flash-message-append;
 
   padding: $space * 2;
   background: var(--color-bg);
   box-shadow: var(--shadow-med);
   border-radius: $border-radius;
-  z-index: $z-flash;
 
   svg {
     margin-right: $space;
@@ -34,6 +40,7 @@
   &[data-state="hidden"] {
     top: -60px;
     opacity: 0;
+    display: none;
   }
 }
 

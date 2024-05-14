@@ -6,6 +6,7 @@ class CalendarSource {
   int calendarProviderId;
   String providerId;
   int color;
+  bool synced;
   DateTime? lastSync;
 
   CalendarSource({
@@ -14,8 +15,9 @@ class CalendarSource {
     required this.calendarProviderId,
     required this.providerId,
     this.color = 0,
+    this.synced = true,
     this.lastSync,
-  }); 
+  });
 
   factory CalendarSource.fromMap(Map<String, dynamic> json) {
     DateTime? lastSync;
@@ -30,13 +32,14 @@ class CalendarSource {
       calendarProviderId: json['calendar_provider_id'] ?? 0,
       providerId: json['provider_id'] ?? '',
       color: json['color'] ?? 0,
+      synced: json['synced'] ?? true,
       lastSync: lastSync,
     );
   }
 
   /// Linked sources are those with ids or providers.
   get isLinked {
-    return id != 0 || calendarProviderId != 0;
+    return synced;
   }
 
   Map<String, Object?> toMap() {
@@ -50,6 +53,7 @@ class CalendarSource {
       'provider_id': providerId,
       'name': name,
       'color': color,
+      'synced': synced,
       'last_sync': syncStr,
     };
   }

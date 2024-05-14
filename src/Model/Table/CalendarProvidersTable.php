@@ -96,6 +96,8 @@ class CalendarProvidersTable extends Table
             ->requirePresence('token_expiry', 'create')
             ->notEmptyDateTime('token_expiry');
 
+        $validator->boolean('synced');
+
         return $validator;
     }
 

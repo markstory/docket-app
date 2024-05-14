@@ -106,13 +106,11 @@ class CalendarProvidersController extends AppController
         $this->Authorization->authorize($provider, 'view');
 
         $service->setAccessToken($provider);
-        try {
-            $calendars = $service->listUnlinkedCalendars($provider->calendar_sources ?? []);
-        } catch (BadRequestException $e) {
-            $calendars = [];
-            $provider->broken_auth = true;
-        }
+        // TODO add rate limiting, and only check periodically.
+        $provider->broken_auth = $service->isAuthBroken();
 
+        // Backwards compatibility
+        $calendars = [];
         $this->set(compact('provider', 'calendars'));
 
         return $this->respond([
@@ -141,6 +139,26 @@ class CalendarProvidersController extends AppController
 
         return $this->respond([
             'success' => $success,
+            'statusSuccess' => 204,
+        ]);
+    }
+
+    /**
+     * Sync the calendar sources for a provider
+     *
+     * @param string|null $id Calendar provider id
+     */
+    public function sync(?string $id, CalendarService $service): ?Response
+    {
+        $this->request->allowMethod(['post']);
+        $calendarProvider = $this->CalendarProviders->get($id, contain: ['CalendarSources']);
+        $this->Authorization->authorize($calendarProvider, 'edit');
+
+        $calendarProvider = $service->syncSources($calendarProvider);
+        $this->set('provider', $calendarProvider);
+
+        return $this->respond([
+            'success' => true,
             'statusSuccess' => 204,
         ]);
     }

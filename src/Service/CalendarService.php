@@ -24,6 +24,7 @@ use Google\Service\Calendar\Channel as GoogleChannel;
 use Google\Service\Calendar\Event as GoogleEvent;
 use Google\Service\Calendar\Events as GoogleEvents;
 use RuntimeException;
+use function Cake\Collection\collection;
 use function Sentry\captureException;
 
 /**
@@ -96,6 +97,68 @@ class CalendarService
     }
 
     /**
+     * Sync sources from the remote calendar service.
+     */
+    public function syncSources(CalendarProvider $provider): CalendarProvider
+    {
+        $this->client->setAccessToken($provider->access_token);
+        $calendar = new Calendar($this->client);
+        try {
+            $results = $calendar->calendarList->listCalendarList();
+        } catch (GoogleException $e) {
+            Log::warning("Calendar list failed. error={$e->getMessage()}");
+            throw new BadRequestException('Could not fetch calendars.', null, $e);
+        }
+        $existing = collection($provider->calendar_sources)->indexBy('provider_id')->toArray();
+
+        /** @var \App\Model\Table\CalendarProvidersTable $this->CalendarProviders */
+        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        /** @var \App\Model\Table\CalendarSourcesTable $this->CalendarSources */
+        $this->CalendarSources = $this->fetchTable('CalendarSources');
+
+        $this->CalendarProviders->getConnection()->transactional(
+            function () use ($results, $existing, $provider): void {
+                /** @var array<\App\Model\Entity\CalendarSource> $newSources */
+                $newSources = [];
+                foreach ($results as $record) {
+                    // Update or create
+                    if (isset($existing[$record->id])) {
+                        /** @var \App\Model\Entity\CalendarSource $source */
+                        $source = $existing[$record->id];
+                        $source->name = $record->summary;
+                        $this->CalendarSources->saveOrFail($source);
+
+                        // Remove from existing records so that remainder can be deleted.
+                        unset($existing[$record->id]);
+                        $newSources[] = $source;
+                    } else {
+                        /** @var \App\Model\Entity\CalendarSource $source */
+                        $source = $this->CalendarSources->newEntity([
+                            'calendar_provider_id' => $provider->id,
+                            'name' => $record->summary,
+                            'provider_id' => $record->id,
+                            'color' => 1,
+                            'synced' => false,
+                        ]);
+                        $this->CalendarSources->saveOrFail($source);
+                        $newSources[] = $source;
+                    }
+                }
+                // Any existing sources that are no longer present in the remote
+                // must have been deleted there.
+                if (!empty($existing)) {
+                    $ids = collection($existing)->extract('id')->toList();
+                    $this->CalendarSources->deleteAll(['id IN' => $ids]);
+                }
+
+                $provider->calendar_sources = $newSources;
+            }
+        );
+
+        return $provider;
+    }
+
+    /**
      * Get a list of calendars in the user's account.
      *
      * This is used to build the list of calendars that the user can
@@ -130,6 +193,21 @@ class CalendarService
         }
 
         return $out;
+    }
+
+    /**
+     * Check if a read operation can be performed with the credentials
+     */
+    public function isAuthBroken(): bool
+    {
+        $calendar = new Calendar($this->client);
+        try {
+            $calendar->calendarList->listCalendarList();
+
+            return false;
+        } catch (GoogleException $e) {
+            return true;
+        }
     }
 
     public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource

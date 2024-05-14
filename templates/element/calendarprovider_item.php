@@ -2,31 +2,19 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\CalendarProvider $provider
- * @var \App\Model\Entity\CalendarSource[] $unlinked
  * @var bool $active
  * @var string $referer
+ * @var \Cake\View\View $this
  */
-$expandUrl = ['_name' => 'calendarproviders:index', '?' => ['provider' => $provider->id]];
+$syncUrl = ['_name' => 'calendarproviders:sync', 'id' => $provider->id];
 $deleteUrl = ['_name' => 'calendarproviders:delete', 'id' => $provider->id];
 $menuId = 'provider-menu-' . $provider->id;
 
 ?>
-<li class="list-item-panel" data-active="<?= $active ? 'true' : 'false'?>">
+<li class="list-item-panel" data-active="true">
     <div class="list-item-panel-header">
         <span class="list-item-block">
             <?= $this->element('calendarprovider_tile', ['provider' => $provider]) ?>
-            <?php if (empty($unlinked)) : ?>
-                <?= $this->Html->link(
-                    'Fetch unlinked calendars',
-                    $expandUrl,
-                    [
-                        'class' => 'button-secondary button-narrow',
-                        'hx-get' => $this->Url->build($expandUrl),
-                        'hx-target' => 'main.main',
-                        'escape' => false,
-                    ]
-                ) ?>
-            <?php endif ?>
         </span>
 
         <div class="list-item-block">
@@ -40,16 +28,26 @@ $menuId = 'provider-menu-' . $provider->id;
                     <?= $this->element('icons/kebab16') ?>
                 </button>
                 <drop-down-menu id="<?= h($menuId) ?>">
-                    <?= $this->Form->postButton(
+                    <?= $this->Form->postLink(
+                        $this->element('icons/sync16') . ' Refresh calendars',
+                        $syncUrl,
+                        [
+                            'class' => 'icon-complete',
+                            'escape' => false,
+                            'data-testid' => 'sync',
+                            'role' => 'menuitem',
+                            'hx-post' => $this->Url->build($syncUrl),
+                        ]
+                    ) ?>
+                    <?= $this->Form->postLink(
                         $this->element('icons/trash16') . ' Unlink',
                         $deleteUrl,
                         [
-                            'class' => 'button-danger',
-                            'escapeTitle' => false,
+                            'class' => 'icon-delete',
+                            'escape' => false,
                             'data-testid' => 'delete',
                             'role' => 'menuitem',
                             'hx-post' => $this->Url->build($deleteUrl),
-                            'hx-target' => 'main.main',
                         ]
                     ) ?>
                 </drop-down-menu>
@@ -69,16 +67,26 @@ $menuId = 'provider-menu-' . $provider->id;
         <?php if (empty($provider->calendar_sources)) : ?>
             <li class="list-item-empty">
                 <?= $this->element('icons/alert16') ?>
-                You have no synchronized calendars in this provider. Add one below.
+                You have no calendars in this provider.
+                <?= $this->Form->postButton(
+                    'Refresh calendars',
+                    $syncUrl,
+                    [
+                        'class' => 'button button-primary',
+                        'data-testid' => 'sync',
+                        'hx-post' => $this->Url->build($syncUrl),
+                    ]
+                ) ?>
             </li>
         <?php else : ?>
             <?php foreach ($provider->calendar_sources as $source) : ?>
-                <?= $this->element('calendarprovider_source', ['source' => $source, 'mode' => 'edit', 'providerId' => $provider->id]) ?>
+                <?= $this->element('calendarprovider_source', [
+                    'source' => $source,
+                    'mode' => 'edit',
+                    'providerId' => $provider->id
+                ]) ?>
             <?php endforeach ?>
         <?php endif ?>
-        <?php foreach ($unlinked as $source) : ?>
-            <?= $this->element('calendarprovider_source', ['source' => $source, 'mode' => 'create', 'providerId' => $provider->id]) ?>
-        <?php endforeach ?>
         </ul>
     </div>
 </li>

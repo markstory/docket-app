@@ -1,7 +1,5 @@
-.calendar-add {
-  .calendar-name {
-    display: flex;
-    flex-direction: column;
-    gap: calc($space / 2);
-  }
+.calendar-name {
+  display: flex;
+  align-items: center;
+  gap: calc($space / 2);
 }
