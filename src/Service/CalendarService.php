@@ -235,6 +235,7 @@ class CalendarService
     {
         $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
 
+        /** @var \App\Model\Entity\CalendarSubscription $sub */
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
         $sub->identifier = Text::uuid();
         $sub->verifier = Text::uuid();
@@ -253,7 +254,6 @@ class CalendarService
         try {
             $opts = ['eventTypes' => ['default', 'focusTime', 'outOfOffice']];
             $result = $calendar->events->watch($source->provider_id, $channel, $opts);
-            Log::info("Watch response " . var_export($result, true));
             $sub->identifier = $result->getId();
             $sub->resource_id = $result->getResourceId();
             $sub->expires_at = $result->getExpiration() / 1000;
