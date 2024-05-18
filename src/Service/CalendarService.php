@@ -246,7 +246,6 @@ class CalendarService
         $calendar = new Calendar($this->client);
         $channel = new GoogleChannel();
         $channel->setId($sub->identifier);
-        $channel->setResourceId($sub->identifier);
         $channel->setAddress(Router::url(['_name' => 'googlenotification:update', '_full' => true]));
         $channel->setToken($sub->channel_token);
         $channel->setType('webhook');
@@ -254,6 +253,7 @@ class CalendarService
         try {
             $opts = ['eventTypes' => ['default', 'focusTime', 'outOfOffice']];
             $result = $calendar->events->watch($source->provider_id, $channel, $opts);
+            Log::info("Watch response " . var_export($result, true));
             $sub->identifier = $result->getId();
             $sub->expires_at = $result->getExpiration() / 1000;
             $this->CalendarSubscriptions->saveOrFail($sub);
