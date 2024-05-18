@@ -15,8 +15,8 @@
 </head>
 <body>
   <div class="layout-card-bg">
-    <main className="layout-card">
-      <section className="content">
+    <main class="layout-card">
+      <section class="content">
       <?= $this->Flash->render() ?>
       <?= $this->fetch('content') ?>
       <?= $this->Html->link(__('Back'), 'javascript:history.back()') ?>

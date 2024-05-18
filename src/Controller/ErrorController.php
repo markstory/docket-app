@@ -33,7 +33,7 @@ class ErrorController extends AppController
      */
     public function initialize(): void
     {
-        $this->loadComponent('RequestHandler');
+        // Don't call parent as it loads components that cause problems.
     }
 
     /**
