@@ -138,7 +138,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->enableCsrfToken();
 
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertRedirect("/calendars");
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 
@@ -156,8 +156,9 @@ class CalendarSourcesControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
 
+        $this->disableErrorHandlerMiddleware();
         $this->post("/calendars/{$provider->id}/sources/{$source->id}/delete");
-        $this->assertRedirect("/calendars?provider={$provider->id}");
+        $this->assertRedirect("/calendars");
         $this->assertFalse($this->CalendarSources->exists(['CalendarSources.id' => $source->id]));
     }
 

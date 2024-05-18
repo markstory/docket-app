@@ -85,7 +85,7 @@ VCR::configure()
         }
 
         $special = [
-            '/calendar/v3/calendars/calendar-1/events/watch' => ['id', 'token'],
+            '/calendar/v3/calendars/calendar-1/events/watch' => ['id', 'resourceId', 'token'],
         ];
         foreach ($special as $url => $fields) {
             if (strpos($first->getUrl(), $url) !== false) {

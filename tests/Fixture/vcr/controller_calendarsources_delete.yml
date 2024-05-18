@@ -6,7 +6,7 @@
         headers:
             content-type: application/json
             authorization: 'Bearer calendar-access-token'
-        body: '{"id":"subscription-id"}'
+        body: '{"id":"subscription-id","resourceId":"subscription-id"}'
     response:
         status:
             http_version: '1.1'

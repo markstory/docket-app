@@ -163,7 +163,7 @@ class CalendarSourcesController extends AppController
             'success' => $success,
             'flashSuccess' => __('Calendar deleted'),
             'flashError' => __('Calendar not deleted. Please try again.'),
-            'redirect' => $this->urlToProvider($calendarSource->calendar_provider_id),
+            'redirect' => ['_name' => 'calendarproviders:index'],
         ]);
     }
 
