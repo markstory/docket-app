@@ -145,11 +145,16 @@ void main() {
 
       var viewmodel = CalendarProviderDetailsViewModel(db);
       viewmodel.setId(5);
+      var updateCount = 0;
+      viewmodel.addListener(() {
+        updateCount += 1;
+      });
       await viewmodel.loadData();
 
       await viewmodel.unlinkSource(viewmodel.provider.sources[1]);
       expect(viewmodel.loading, isFalse);
       expect(viewmodel.provider.sources[1].synced, isFalse);
+      expect(updateCount, greaterThan(2));
     });
 
     test('updateSource() makes a request, and updates local state', () async {

@@ -629,8 +629,15 @@ Future<CalendarSource> createSource(String apiToken, CalendarSource source) asyn
 Future<CalendarSource> updateSource(String apiToken, CalendarSource source) async {
   var url = _makeUrl('/api/calendars/${source.calendarProviderId}/sources/${source.id}/edit');
   var body = {'color': source.color, 'name': source.name, 'synced': source.synced};
-  var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
-  return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
+  try {
+      var response = await httpPost(url, body: body, apiToken: apiToken, errorMessage: 'Could not update calendar settings');
+
+      return _decodeResponse(response.bodyBytes, (mapData) => CalendarSource.fromMap(mapData['source']));
+  } catch (e) {
+      developer.log("Failed to update source. Likely an issue with google. ${e}");
+
+      return source;
+  }
 }
 
 /// Sync events on a source.

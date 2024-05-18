@@ -27,7 +27,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   }
 
   void listener() {
-    refresh();
+    refreshFromDatabase();
   }
 
   bool get loading => _loading;
@@ -67,6 +67,8 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     await fetchProvider();
     if (!_loading && _provider == null) {
       return refresh();
+    } else {
+        return refreshFromDatabase();
     }
   }
 
@@ -78,6 +80,13 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     await _database.calendarDetails.set(result);
     _provider = result;
     _loading = false;
+
+    notifyListeners();
+  }
+
+  Future<void> refreshFromDatabase() async {
+    var result = await _database.calendarDetails.get(id);
+    _provider = result;
 
     notifyListeners();
   }
@@ -107,10 +116,13 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   Future<void> linkSource(source) async {
     source.calendarProviderId = provider.id;
     source.synced = true;
+    print('start action');
     source = await actions.updateSource(_database.apiToken.token, source);
+    print('action complete');
 
     provider.replaceSource(source);
     await _database.calendarDetails.set(provider);
+    print('database updated');
 
     notifyListeners();
   }
@@ -121,7 +133,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     source.synced = false;
     source = await actions.updateSource(_database.apiToken.token, source);
 
-    provider.removeSource(source);
+    provider.replaceSource(source);
     await _database.calendarDetails.set(provider);
 
     notifyListeners();
