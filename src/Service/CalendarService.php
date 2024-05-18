@@ -255,6 +255,7 @@ class CalendarService
             $result = $calendar->events->watch($source->provider_id, $channel, $opts);
             Log::info("Watch response " . var_export($result, true));
             $sub->identifier = $result->getId();
+            $sub->resource_id = $result->getResourceId();
             $sub->expires_at = $result->getExpiration() / 1000;
             $this->CalendarSubscriptions->saveOrFail($sub);
 
@@ -283,7 +284,7 @@ class CalendarService
         foreach ($subs as $sub) {
             $channel = new GoogleChannel();
             $channel->setId($sub->identifier);
-            $channel->setResourceId($sub->identifier);
+            $channel->setResourceId($sub->resource_id);
             try {
                 $calendar->channels->stop($channel);
                 $this->CalendarSubscriptions->delete($sub);

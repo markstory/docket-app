@@ -11,6 +11,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property int $calendar_source_id
  * @property string $identifier
+ * @property string $resource_id
  * @property string $verifier
  * @property string $channel_token
  * @property \Cake\I18n\DateTime|null $expires_at
@@ -33,6 +34,7 @@ class CalendarSubscription extends Entity
     protected array $_accessible = [
         'calendar_source_id' => true,
         'identifier' => true,
+        'resource_id' => true,
         'verifier' => true,
         'expires_at' => true,
         'created' => true,
