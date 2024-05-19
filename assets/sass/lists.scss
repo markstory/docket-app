@@ -75,10 +75,6 @@
   align-items: flex-start;
   flex-direction: column;
   margin-bottom: calc($space * 2);
-
-  &[data-active="true"] {
-    border-color: var(--color-menu-selected);
-  }
 }
 
 // Item within a panel that has horizontal layout.

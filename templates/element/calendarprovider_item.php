@@ -11,7 +11,7 @@ $deleteUrl = ['_name' => 'calendarproviders:delete', 'id' => $provider->id];
 $menuId = 'provider-menu-' . $provider->id;
 
 ?>
-<li class="list-item-panel" data-active="true">
+<li class="list-item-panel">
     <div class="list-item-panel-header">
         <span class="list-item-block">
             <?= $this->element('calendarprovider_tile', ['provider' => $provider]) ?>
