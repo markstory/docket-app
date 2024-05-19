@@ -190,14 +190,6 @@
     </UndefinedMagicPropertyFetch>
   </file>
   <file src="src/Service/CalendarService.php">
-    <NoInterfaceProperties>
-      <code><![CDATA[$sub->calendar_source_id]]></code>
-      <code><![CDATA[$sub->channel_token]]></code>
-      <code><![CDATA[$sub->expires_at]]></code>
-      <code><![CDATA[$sub->identifier]]></code>
-      <code><![CDATA[$sub->identifier]]></code>
-      <code><![CDATA[$sub->verifier]]></code>
-    </NoInterfaceProperties>
     <PropertyTypeCoercion>
       <code><![CDATA[$this->fetchTable('CalendarItems')]]></code>
       <code><![CDATA[$this->fetchTable('CalendarProviders')]]></code>
