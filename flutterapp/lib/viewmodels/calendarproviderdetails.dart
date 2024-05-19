@@ -116,13 +116,10 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   Future<void> linkSource(source) async {
     source.calendarProviderId = provider.id;
     source.synced = true;
-    print('start action');
     source = await actions.updateSource(_database.apiToken.token, source);
-    print('action complete');
 
     provider.replaceSource(source);
     await _database.calendarDetails.set(provider);
-    print('database updated');
 
     notifyListeners();
   }
