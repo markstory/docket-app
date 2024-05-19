@@ -218,7 +218,7 @@ class UsersController extends AppController
 
         // regardless of POST or GET, redirect if user is logged in
         if ($result && $result->isValid()) {
-            $redirect = $this->request->getQuery('redirect', ['_name' => 'tasks:today']);
+            $redirect = $this->Authentication->getLoginRedirect() ?? ['_name' => 'tasks:today'];
             $identity = $this->request->getAttribute('identity');
             if ($this->request->getData('timezone')) {
                 $identity = $this->Users->patchEntity($identity, $this->request->getData());
