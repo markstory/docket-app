@@ -6,18 +6,6 @@ class ModalWindow extends HTMLElement {
       dialog.showModal();
     }
 
-    this.addEventListener(
-      'click',
-      evt => {
-        const target = evt.target;
-        if (target instanceof HTMLElement && target.getAttribute('modal-close')) {
-          evt.preventDefault();
-          this.remove();
-        }
-      },
-      false
-    );
-
     this.setupClose(dialog);
     this.closeOnSubmit(dialog);
   }
@@ -33,6 +21,7 @@ class ModalWindow extends HTMLElement {
         evt.preventDefault();
         if (dialog) {
           dialog.close();
+          dialog.remove();
         }
       },
       false
