@@ -13,7 +13,7 @@
         "cakephp/plugin-installer": "^2.0",
         "google/apiclient": "^2.0",
         "paragonie/csp-builder": "^2.5",
-        "sentry/sdk": "^3.1"
+        "sentry/sentry": "^4.8"
     },
     "require-dev": {
         "ext-zip": "*",
@@ -56,8 +56,7 @@
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "cakephp/plugin-installer": true,
-            "php-http/discovery": true
+            "cakephp/plugin-installer": true
         }
     }
 }
