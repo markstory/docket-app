@@ -201,9 +201,12 @@ return [
      * Configuration for Sentry error handling
      */
     'Sentry' => [
-      'dsn' => '',
-      'environment' => 'dev',
-      'release' => 'unknown',
+        'dsn' => '',
+        'environment' => 'dev',
+        'release' => 'unknown',
+        'in_app_exclude' => [
+            ROOT . DS . 'vendor',
+        ],
     ],
 
     /*
