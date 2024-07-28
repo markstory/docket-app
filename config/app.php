@@ -171,6 +171,7 @@ return [
             'Cake\Http\Exception\ForbiddenException',
             'Cake\Http\Exception\InvalidCsrfTokenException',
             'Cake\Http\Exception\NotFoundException',
+            'Cake\Routing\Exception\MissingRouteException',
         ],
         'ignoredDeprecationPaths' => [
             'vendor/ishanvyas22/asset-mix/config/routes.php',
