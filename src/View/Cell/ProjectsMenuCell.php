@@ -15,7 +15,7 @@ class ProjectsMenuCell extends Cell
      * List of valid options that can be passed into this
      * cell's constructor.
      *
-     * @var array<array-key, string>
+     * @var list<string>
      */
     protected array $_validCellOptions = ['identity'];
 
