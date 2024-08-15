@@ -34,6 +34,7 @@ $_SERVER['PHP_SELF'] = '/';
 
 Configure::write('App.fullBaseUrl', 'http://localhost');
 Configure::write('App.inTest', true);
+Configure::write('debug', true);
 
 // Set security salt
 Configure::write('Security.salt', 'a-random-value-that-you-cannot-guess');

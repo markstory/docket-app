@@ -201,7 +201,6 @@ class CalendarSourcesControllerTest extends TestCase
         $provider = $this->makeCalendarProvider(1, 'test@example.com');
 
         $this->loginApi(1);
-        $this->disableErrorHandlerMiddleware();
         $this->post("/api/calendars/{$provider->id}/sources/add", [
             'provider_id' => 'calendar-1',
             'color' => 1,
