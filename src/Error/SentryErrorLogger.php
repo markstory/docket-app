@@ -49,14 +49,6 @@ class SentryErrorLogger extends ErrorLogger
     }
 
     /**
-     * Capture an exception with Sentry
-     */
-    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
-    {
-        throw new RuntimeException('This method should not be called anymore.');
-    }
-
-    /**
      * Capture an error message with Sentry.
      */
     public function logMessage($level, string $message, array $context = []): bool

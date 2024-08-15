@@ -8,7 +8,7 @@
         "php": ">=8.1",
         "cakephp/authentication": "^3.0",
         "cakephp/authorization": "^3.0",
-        "cakephp/cakephp": "^5.0.6",
+        "cakephp/cakephp": "^5.1.0-RC2",
         "cakephp/migrations": "^4.3.0",
         "cakephp/plugin-installer": "^2.0",
         "google/apiclient": "^2.0",
@@ -56,7 +56,8 @@
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "cakephp/plugin-installer": true
+            "cakephp/plugin-installer": true,
+            "php-http/discovery": true
         }
     }
 }
