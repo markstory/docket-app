@@ -74,19 +74,19 @@ class AddFeedModels extends AbstractMigration
         // Subscriptions a user has to their feeds.
         $table = $this->table('feed_subscriptions');
         $table->addColumn('feed_id', 'integer', [
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('user_id', 'integer', [
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('feed_category_id', 'integer', [
                 'null' => false,
             ])
             ->addColumn('alias', 'string', [
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('ranking', 'int', [
-                'null' => false
+                'null' => false,
             ])
             ->addTimestamps();
         $table->addForeignKey(['feed_id'], 'feeds');
@@ -97,10 +97,10 @@ class AddFeedModels extends AbstractMigration
         // Read/saved state for each item in a feed per subscription.
         $table = $this->table('feed_subscriptions_feed_items');
         $table->addColumn('feed_subscription_id', 'integer', [
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('feed_item_id', 'integer', [
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('is_read', 'boolean', [
                 'null' => false,
@@ -120,7 +120,7 @@ class AddFeedModels extends AbstractMigration
         $table->create();
 
         // Saved items that a user wants retained forever.
-        $table = $this->table("saved_feed_items");
+        $table = $this->table('saved_feed_items');
         $table->addColumn('feed_subscription_id', 'integer', [
                 'null' => false,
             ])
