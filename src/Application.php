@@ -37,6 +37,8 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use FeatureFlags\FeatureManagerInterface;
+use FeatureFlags\Simple\FeatureManager;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -152,6 +154,9 @@ class Application extends BaseApplication implements
         });
 
         $container->addServiceProvider(new CalendarServiceProvider());
+        $container->addShared(FeatureManagerInterface::class, function () {
+            return new FeatureManager(Configure::read('Features'));
+        });
     }
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
