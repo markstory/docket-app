@@ -12,6 +12,7 @@
         "cakephp/migrations": "^4.3.0",
         "cakephp/plugin-installer": "^2.0",
         "google/apiclient": "^2.0",
+        "markstory/cakephp-feature-flags": "dev-main",
         "paragonie/csp-builder": "^2.5",
         "sentry/sentry": "^4.8"
     },
@@ -48,7 +49,6 @@
         "psalm": "tools/psalm --show-info=false",
         "test": "phpunit --colors=always"
     },
-    "prefer-stable": true,
     "config": {
         "sort-packages": true,
         "platform": {
