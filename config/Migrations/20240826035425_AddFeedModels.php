@@ -70,6 +70,7 @@ class AddFeedModels extends AbstractMigration
             ])
             ->addTimestamps();
         $table->addForeignKey(['user_id'], 'users');
+        $table->create();
 
         // Subscriptions a user has to their feeds.
         $table = $this->table('feed_subscriptions');
@@ -85,7 +86,7 @@ class AddFeedModels extends AbstractMigration
             ->addColumn('alias', 'string', [
                 'null' => false,
             ])
-            ->addColumn('ranking', 'int', [
+            ->addColumn('ranking', 'integer', [
                 'null' => false,
             ])
             ->addTimestamps();
