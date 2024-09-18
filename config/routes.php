@@ -262,7 +262,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         }
     );
 
-    $builder->scope('/users', ['controller' => 'Users'], function ($builder) {
+    $builder->scope('/users', ['controller' => 'Users'], function (RouteBuilder $builder) {
         $builder->connect('/add/', ['action' => 'add'], ['_name' => 'users:add']);
         $builder->connect('/profile/', ['action' => 'edit'], ['_name' => 'users:edit']);
         $builder->connect('/updatePassword/', ['action' => 'updatePassword'], ['_name' => 'users:updatePassword']);
@@ -271,13 +271,13 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/profileMenu/', ['action' => 'profileMenu'], ['_name' => 'users:profileMenu']);
     });
 
-    $builder->scope('/password', ['controller' => 'Users'], function ($builder) {
+    $builder->scope('/password', ['controller' => 'Users'], function (RouteBuilder $builder) {
         $builder->connect('/reset', ['action' => 'resetPassword'], ['_name' => 'users:passwordReset']);
         $builder->connect('/new/{token}', ['action' => 'newPassword'], ['_name' => 'users:newPassword'])
             ->setPass(['token']);
     });
 
-    $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function ($builder) {
+    $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function (RouteBuilder $builder) {
         $builder->connect('/google/new', ['action' => 'createFromGoogle'], ['_name' => 'calendarproviders:createfromgoogle']);
         $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
         $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
@@ -286,7 +286,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['id']);
     });
 
-    $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function ($builder) {
+    $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function (RouteBuilder $builder) {
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'calendarsources:add'])
             ->setPass(['providerId']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete');
@@ -299,6 +299,15 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
         $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
+    });
+
+    // Feeds routes
+    $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {
+        $builder->get('/', ['action' => 'index'], 'feedcategories:index');
+        $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedcategories:add']);
+        $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedcategories:edit']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'feedcategories:delete');
+        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedcategories:deleteconfirm');
     });
 });
 

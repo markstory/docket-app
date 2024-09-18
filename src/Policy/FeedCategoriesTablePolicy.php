@@ -7,12 +7,12 @@ use App\Model\Entity\User;
 use Cake\ORM\Query\SelectQuery;
 
 /**
- * Projects policy
+ * FeedCategories policy
  */
-class ProjectsTablePolicy
+class FeedCategoriesTablePolicy
 {
     public function scopeIndex(User $user, SelectQuery $query): SelectQuery
     {
-        return $query->where(['Projects.user_id' => $user->id]);
+        return $query->where(['FeedCategories.user_id' => $user->id]);
     }
 }

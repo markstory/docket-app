@@ -44,7 +44,9 @@ class FeedCategoriesController extends AppController
             $this->Flash->error(__('The feed category could not be saved. Please, try again.'));
         }
         $this->Authorization->authorize($feedCategory);
-        $this->set(compact('feedCategory'));
+
+        $referer = $this->request->referer();
+        $this->set(compact('feedCategory', 'referer'));
     }
 
     /**
@@ -69,6 +71,21 @@ class FeedCategoriesController extends AppController
         }
         $this->Authorization->authorize($feedCategory);
         $this->set(compact('feedCategory'));
+    }
+
+    /**
+     * Delete confirmation
+     *
+     * @param string|null $id Feed Category id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function deleteConfirm($id = null)
+    {
+        $feedCategory = $this->FeedCategories->get($id);
+        $this->Authorization->authorize($feedCategory);
+
+        $this->set('feedCategory', $feedCategory);
     }
 
     /**
