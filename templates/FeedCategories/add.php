@@ -2,14 +2,22 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\FeedCategory $feedCategory
- * @var \Cake\Collection\CollectionInterface|string[] $users
  */
 use Cake\Core\Configure;
 
+$isHtmx = $this->request->is('htmx');
+
 $this->setLayout('sidebar');
-$this->assign('title', 'New Category');
+if ($isHtmx) {
+    $this->setLayout('sheet');
+}
+
+$this->assign('title', 'Create Category');
 ?>
-<h2>Create Category</h2>
+<div class="modal-title">
+    <h2>Create Category</h2>
+    <button class="modal-close" modal-close="true">&#x2715;</button>
+</div>
 <?php
 echo $this->Form->create($feedCategory);
 echo $this->Form->control('color', [

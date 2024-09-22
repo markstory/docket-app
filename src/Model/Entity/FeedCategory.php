@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\Core\Configure;
 use Cake\ORM\Entity;
 
 /**
@@ -31,13 +32,20 @@ class FeedCategory extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
-        'user_id' => true,
+        'user_id' => false,
         'title' => true,
         'color' => true,
         'ranking' => true,
         'created' => true,
         'modified' => true,
-        'user' => true,
-        'feed_subscriptions' => true,
+        'user' => false,
+        'feed_subscriptions' => false,
     ];
+
+    protected function _getColorHex(): string
+    {
+        $colors = Configure::read('Colors');
+
+        return $colors[$this->color]['code'];
+    }
 }

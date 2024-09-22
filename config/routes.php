@@ -305,9 +305,12 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'feedcategories:index');
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedcategories:add']);
-        $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedcategories:edit']);
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'feedcategories:delete');
-        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedcategories:deleteconfirm');
+        $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedcategories:edit'])
+            ->setPass(['id']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'feedcategories:delete')
+            ->setPass(['id']);
+        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedcategories:deleteconfirm')
+            ->setPass(['id']);
     });
 });
 

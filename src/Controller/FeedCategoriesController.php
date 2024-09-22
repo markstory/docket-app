@@ -35,6 +35,7 @@ class FeedCategoriesController extends AppController
         $feedCategory = $this->FeedCategories->newEmptyEntity();
         if ($this->request->is('post')) {
             $feedCategory = $this->FeedCategories->patchEntity($feedCategory, $this->request->getData());
+            $feedCategory->user_id = $this->request->getAttribute('identity')->getIdentifier();
             $this->Authorization->authorize($feedCategory);
             if ($this->FeedCategories->save($feedCategory)) {
                 $this->Flash->success(__('The feed category has been saved.'));
@@ -70,7 +71,9 @@ class FeedCategoriesController extends AppController
             $this->Flash->error(__('The feed category could not be saved. Please, try again.'));
         }
         $this->Authorization->authorize($feedCategory);
-        $this->set(compact('feedCategory'));
+
+        $referer = $this->request->referer();
+        $this->set(compact('feedCategory', 'referer'));
     }
 
     /**
@@ -83,7 +86,7 @@ class FeedCategoriesController extends AppController
     public function deleteConfirm($id = null)
     {
         $feedCategory = $this->FeedCategories->get($id);
-        $this->Authorization->authorize($feedCategory);
+        $this->Authorization->authorize($feedCategory, 'delete');
 
         $this->set('feedCategory', $feedCategory);
     }
