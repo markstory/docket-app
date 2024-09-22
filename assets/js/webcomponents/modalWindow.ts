@@ -1,10 +1,7 @@
 class ModalWindow extends HTMLElement {
   connectedCallback() {
-    const open = this.getAttribute('open');
     const dialog = this.querySelector('dialog');
-    if (open && dialog) {
-      dialog.showModal();
-    }
+    dialog.showModal();
 
     this.setupClose(dialog);
     this.closeOnSubmit(dialog);
