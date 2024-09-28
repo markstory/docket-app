@@ -36,16 +36,16 @@ class FeedSubscription extends Entity
      */
     protected array $_accessible = [
         'feed_id' => true,
-        'user_id' => true,
+        'user_id' => false,
         'feed_category_id' => true,
         'alias' => true,
         'ranking' => true,
         'created' => true,
         'modified' => true,
         'feed' => true,
-        'user' => true,
+        'user' => false,
         'feed_category' => true,
-        'saved_feed_items' => true,
-        'feed_items' => true,
+        'saved_feed_items' => false,
+        'feed_items' => false,
     ];
 }

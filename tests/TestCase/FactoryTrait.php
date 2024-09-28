@@ -8,6 +8,7 @@ use App\Model\Entity\CalendarItem;
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
 use App\Model\Entity\CalendarSubscription;
+use App\Model\Entity\FeedCategory;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
@@ -134,6 +135,22 @@ trait FactoryTrait
         $section = $sections->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $sections->saveOrFail($section);
+    }
+
+    protected function makeFeedCategory($name, $userId = 1, $props = []): FeedCategory
+    {
+        $categories = $this->fetchTable('FeedCategories');
+
+        $props = array_merge([
+            'user_id' => $userId,
+            'title' => $name,
+            'ranking' => 0,
+            'color' => 1,
+        ], $props);
+        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        $feedCategory = $categories->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $categories->saveOrFail($feedCategory);
     }
 
     protected function makeTask($title, $projectId, $order, $props = []): Task

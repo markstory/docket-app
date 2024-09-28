@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\FeedSubscriptionsController;
+use App\Model\Table\FeedsTable;
+use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -15,6 +16,7 @@ use Cake\TestSuite\TestCase;
 class FeedSubscriptionsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use FactoryTrait;
 
     /**
      * Fixtures
@@ -30,6 +32,14 @@ class FeedSubscriptionsControllerTest extends TestCase
         'app.FeedItems',
         'app.FeedSubscriptionsFeedItems',
     ];
+
+    private FeedsTable $Feeds;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->Feeds = $this->fetchTable('Feeds');
+    }
 
     /**
      * Test index method
@@ -59,9 +69,27 @@ class FeedSubscriptionsControllerTest extends TestCase
      * @return void
      * @uses \App\Controller\FeedSubscriptionsController::add()
      */
-    public function testAdd(): void
+    public function testAddSuccess(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/add', [
+            'url' => 'https://example.com/feed.xml',
+            'alias' => 'Example site',
+            'feed_category_id' => $category->id,
+        ]);
+        $this->assertFlashMessage('Feed subscription added', 'success');
+        $this->assertRedirect('/feeds');
+
+        $feed = $this->Feeds->findByUrl('https://example.com/feed.xml')->firstOrFail();
+        $this->assertNotEmpty($feed);
+
+        $sub = $this->Feeds->FeedSubscriptions->findByFeedId($feed->id)->firstOrFail();
+        $this->assertNotEmpty($sub);
+        $this->assertEquals(1, $sub->user_id);
+        $this->assertEquals('Example site', $sub->alias);
     }
 
     /**
