@@ -36,6 +36,11 @@ use Cake\Validation\Validator;
 class FeedSubscriptionsTable extends Table
 {
     /**
+     * @var array
+     */
+    public const VIEW_CONTAIN = ['Feeds', 'FeedCategories'];
+
+    /**
      * Initialize method
      *
      * @param array<string, mixed> $config The configuration for the Table.

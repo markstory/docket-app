@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Table\FeedSubscriptionsTable;
+
 /**
  * FeedSubscriptions Controller
  *
@@ -19,6 +21,7 @@ class FeedSubscriptionsController extends AppController
     {
         $query = $this->FeedSubscriptions->find()
             ->contain(['Feeds', 'Users', 'FeedCategories']);
+        $query = $this->Authorization->applyScope($query);
         $feedSubscriptions = $this->paginate($query);
 
         $this->set(compact('feedSubscriptions'));
@@ -33,7 +36,8 @@ class FeedSubscriptionsController extends AppController
      */
     public function view($id = null)
     {
-        $feedSubscription = $this->FeedSubscriptions->get($id, contain: ['Feeds', 'Users', 'FeedCategories', 'FeedItems', 'SavedFeedItems']);
+        $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
+        $this->Authorization->authorize($feedSubscription);
         $this->set(compact('feedSubscription'));
     }
 
@@ -47,6 +51,8 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         if ($this->request->is('post')) {
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
+            $feedSubscription->user_id = $this->request->getAttribute('identity')->getIdentifier();
+            $this->Authorization->authorize($feedSubscription);
             if ($this->FeedSubscriptions->save($feedSubscription)) {
                 $this->Flash->success(__('The feed subscription has been saved.'));
 
@@ -54,11 +60,12 @@ class FeedSubscriptionsController extends AppController
             }
             $this->Flash->error(__('The feed subscription could not be saved. Please, try again.'));
         }
-        $feeds = $this->FeedSubscriptions->Feeds->find('list', limit: 200)->all();
-        $users = $this->FeedSubscriptions->Users->find('list', limit: 200)->all();
+        $feedSubscription->user_id = $this->request->getAttribute('identity')->getIdentifier();
+
+        $this->Authorization->authorize($feedSubscription);
+        $referer = $this->request->referer();
         $feedCategories = $this->FeedSubscriptions->FeedCategories->find('list', limit: 200)->all();
-        $feedItems = $this->FeedSubscriptions->FeedItems->find('list', limit: 200)->all();
-        $this->set(compact('feedSubscription', 'feeds', 'users', 'feedCategories', 'feedItems'));
+        $this->set(compact('feedSubscription', 'feedCategories', 'referer'));
     }
 
     /**
@@ -70,8 +77,9 @@ class FeedSubscriptionsController extends AppController
      */
     public function edit($id = null)
     {
-        $feedSubscription = $this->FeedSubscriptions->get($id, contain: ['FeedItems']);
+        $feedSubscription = $this->FeedSubscriptions->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $this->Authorization->authorize($feedSubscription);
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             if ($this->FeedSubscriptions->save($feedSubscription)) {
                 $this->Flash->success(__('The feed subscription has been saved.'));
@@ -80,11 +88,9 @@ class FeedSubscriptionsController extends AppController
             }
             $this->Flash->error(__('The feed subscription could not be saved. Please, try again.'));
         }
-        $feeds = $this->FeedSubscriptions->Feeds->find('list', limit: 200)->all();
-        $users = $this->FeedSubscriptions->Users->find('list', limit: 200)->all();
         $feedCategories = $this->FeedSubscriptions->FeedCategories->find('list', limit: 200)->all();
-        $feedItems = $this->FeedSubscriptions->FeedItems->find('list', limit: 200)->all();
-        $this->set(compact('feedSubscription', 'feeds', 'users', 'feedCategories', 'feedItems'));
+        $this->Authorization->authorize($feedSubscription);
+        $this->set(compact('feedSubscription', 'feedCategories'));
     }
 
     /**
@@ -98,6 +104,7 @@ class FeedSubscriptionsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $feedSubscription = $this->FeedSubscriptions->get($id);
+        $this->Authorization->authorize($feedSubscription);
         if ($this->FeedSubscriptions->delete($feedSubscription)) {
             $this->Flash->success(__('The feed subscription has been deleted.'));
         } else {
@@ -105,5 +112,13 @@ class FeedSubscriptionsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function deleteConfirm($id = null)
+    {
+        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $this->Authorization->authorize($feedSubscription, 'delete');
+
+        $this->set('feedCategory', $feedSubscription);
     }
 }

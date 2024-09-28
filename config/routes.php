@@ -302,6 +302,16 @@ $routes->scope('/', function (RouteBuilder $builder) {
     });
 
     // Feeds routes
+    $builder->scope('/feeds/', ['controller' => 'FeedSubscriptions'], function (RouteBuilder $builder) {
+        $builder->get('/', ['action' => 'index'], 'feedsubscriptions:index');
+        $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedsubscriptions:add']);
+        $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedsubscriptions:edit'])
+            ->setPass(['id']);
+        $builder->post('/{id}/delete', ['action' => 'delete'], 'feedsubscriptions:delete')
+            ->setPass(['id']);
+        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedsubscriptions:deleteconfirm')
+            ->setPass(['id']);
+    });
     $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'feedcategories:index');
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedcategories:add']);
