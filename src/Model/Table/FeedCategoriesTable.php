@@ -77,7 +77,9 @@ class FeedCategoriesTable extends Table
 
         $validator
             ->integer('color')
-            ->notEmptyString('color');
+            ->requirePresence('color', 'create')
+            ->greaterThanOrEqual('color', 0)
+            ->lessThanOrEqual('color', 17);
 
         $validator
             ->integer('ranking')

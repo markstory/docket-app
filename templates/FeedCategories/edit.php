@@ -14,7 +14,10 @@ if ($isHtmx) {
 }
 
 ?>
-<h2>Edit Category</h2>
+<div class="modal-title">
+    <h2>Create Category</h2>
+    <button class="modal-close" modal-close="true">&#x2715;</button>
+</div>
 <?php
 echo $this->Form->create($feedCategory);
 echo $this->Form->control('color', [
