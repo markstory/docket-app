@@ -38,11 +38,11 @@ class FeedCategoriesController extends AppController
             $feedCategory->user_id = $this->request->getAttribute('identity')->getIdentifier();
             $this->Authorization->authorize($feedCategory);
             if ($this->FeedCategories->save($feedCategory)) {
-                $this->Flash->success(__('The feed category has been saved.'));
+                $this->Flash->success(__('Feed category saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['_name' => 'feedsubscriptions:index']);
             }
-            $this->Flash->error(__('The feed category could not be saved. Please, try again.'));
+            $this->Flash->error(__('Feed category could not be saved. Please try again.'));
         }
         $this->Authorization->authorize($feedCategory);
 
@@ -59,16 +59,16 @@ class FeedCategoriesController extends AppController
      */
     public function edit($id = null)
     {
-        $feedCategory = $this->FeedCategories->get($id, contain: []);
+        $feedCategory = $this->FeedCategories->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $feedCategory = $this->FeedCategories->patchEntity($feedCategory, $this->request->getData());
             $this->Authorization->authorize($feedCategory);
             if ($this->FeedCategories->save($feedCategory)) {
-                $this->Flash->success(__('The feed category has been saved.'));
+                $this->Flash->success(__('Feed category saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['_name' => 'feedsubscriptions:index']);
             }
-            $this->Flash->error(__('The feed category could not be saved. Please, try again.'));
+            $this->Flash->error(__('Feed category could not be saved. Please try again.'));
         }
         $this->Authorization->authorize($feedCategory);
 
@@ -104,11 +104,11 @@ class FeedCategoriesController extends AppController
         $feedCategory = $this->FeedCategories->get($id);
         $this->Authorization->authorize($feedCategory);
         if ($this->FeedCategories->delete($feedCategory)) {
-            $this->Flash->success(__('The feed category has been deleted.'));
+            $this->Flash->success(__('Feed category has been deleted.'));
         } else {
-            $this->Flash->error(__('The feed category could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Feed category could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['_name' => 'feedsubscriptions:index']);
     }
 }
