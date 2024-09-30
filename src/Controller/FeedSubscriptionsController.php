@@ -51,10 +51,13 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         if ($this->request->is('post')) {
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
+            $feedSubscription->feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
             $feedSubscription->user_id = $this->request->getAttribute('identity')->getIdentifier();
+            $feedSubscription->ranking = $this->FeedSubscriptions->getNextRanking($feedSubscription->feed_category_id);
+
             $this->Authorization->authorize($feedSubscription);
             if ($this->FeedSubscriptions->save($feedSubscription)) {
-                $this->Flash->success(__('The feed subscription has been saved.'));
+                $this->Flash->success(__('Feed subscription added'));
 
                 return $this->redirect(['action' => 'index']);
             }

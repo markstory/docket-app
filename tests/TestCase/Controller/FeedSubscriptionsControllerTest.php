@@ -80,11 +80,41 @@ class FeedSubscriptionsControllerTest extends TestCase
             'alias' => 'Example site',
             'feed_category_id' => $category->id,
         ]);
-        $this->assertFlashMessage('Feed subscription added', 'success');
+        $this->assertFlashMessage('Feed subscription added');
         $this->assertRedirect('/feeds');
 
         $feed = $this->Feeds->findByUrl('https://example.com/feed.xml')->firstOrFail();
         $this->assertNotEmpty($feed);
+
+        $sub = $this->Feeds->FeedSubscriptions->findByFeedId($feed->id)->firstOrFail();
+        $this->assertNotEmpty($sub);
+        $this->assertEquals(1, $sub->user_id);
+        $this->assertEquals('Example site', $sub->alias);
+    }
+
+    /**
+     * Test add with existing feed
+     *
+     * @return void
+     * @uses \App\Controller\FeedSubscriptionsController::add()
+     */
+    public function testAddSuccessExistingFeed(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/add', [
+            'url' => $feed->url,
+            'alias' => 'Example site',
+            'feed_category_id' => $category->id,
+        ]);
+        $this->assertFlashMessage('Feed subscription added');
+        $this->assertRedirect('/feeds');
+
+        $feedCount = $this->Feeds->findByUrl($feed->url)->count();
+        $this->assertEquals(1, $feedCount);
 
         $sub = $this->Feeds->FeedSubscriptions->findByFeedId($feed->id)->firstOrFail();
         $this->assertNotEmpty($sub);

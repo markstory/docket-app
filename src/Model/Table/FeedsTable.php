@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\Feed;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -80,5 +81,21 @@ class FeedsTable extends Table
             ->allowEmptyDateTime('last_refresh');
 
         return $validator;
+    }
+
+    public function findByUrlOrNew(mixed $url): Feed
+    {
+        $existing = $this->findByUrl($url)->first();
+        if ($existing) {
+            return $existing;
+        }
+
+        $feed = $this->newEntity([
+            'url' => $url,
+            // TODO figure out a better default for refreshing than 7 days.
+            'refresh_interval' => 60 * 60 * 24 * 7,
+        ]);
+
+        return $feed;
     }
 }

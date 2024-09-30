@@ -112,6 +112,16 @@ class FeedSubscriptionsTable extends Table
         return $validator;
     }
 
+    public function getNextRanking(int $feedCategoryId): int
+    {
+        $query = $this->find();
+        $query
+            ->select(['count' => $query->func()->count('*')])
+            ->where(['FeedSubscriptions.feed_category_id' => $feedCategoryId]);
+
+        return (int)$query->firstOrFail()->count;
+    }
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.

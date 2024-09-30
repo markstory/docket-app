@@ -35,7 +35,7 @@ class Feed extends Entity
         'last_refresh' => true,
         'created' => true,
         'modified' => true,
-        'feed_items' => true,
-        'feed_subscriptions' => true,
+        'feed_items' => false,
+        'feed_subscriptions' => false,
     ];
 }
