@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\BadRequestException;
+
 /**
  * FeedCategories Controller
  *
@@ -23,6 +25,18 @@ class FeedCategoriesController extends AppController
         $feedCategories = $this->paginate($query);
 
         $this->set(compact('feedCategories'));
+    }
+
+    public function view($id = null)
+    {
+        // TODO add slug to feedcategory and use it
+        $feedCategory = $this->FeedCategories->get($id);
+        $this->Authorization->authorize($feedCategory);
+
+        // TODO fetch all the feed items for subscriptions in this category
+        // order by date published and feed name. contain the subscription
+
+        $this->set('feedCategory', $feedCategory);
     }
 
     /**
@@ -110,5 +124,24 @@ class FeedCategoriesController extends AppController
         }
 
         return $this->redirect(['_name' => 'feedsubscriptions:index']);
+    }
+
+    /**
+     * Reorder feed categories for a user
+     */
+    public function reorder(): void
+    {
+        $this->request->allowMethod(['post']);
+        $ids = (array)$this->request->getData('id');
+
+        $query = $this->FeedCategories
+            ->find()
+            ->where(['FeedCategories.id IN' => $ids]);
+        $query = $this->Authorization->applyScope($query, 'index');
+        $categories = $query->all();
+        if (count($categories) != count($ids)) {
+            throw new BadRequestException('Invalid id values provided');
+        }
+        $this->FeedCategories->reorder($ids);
     }
 }

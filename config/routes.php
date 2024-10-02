@@ -317,10 +317,14 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedcategories:add']);
         $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedcategories:edit'])
             ->setPass(['id']);
+        // TODO use slug here.
+        $builder->connect('/{id}/view', ['action' => 'view'], ['_name' => 'feedcategories:view'])
+            ->setPass(['id']);
         $builder->post('/{id}/delete', ['action' => 'delete'], 'feedcategories:delete')
             ->setPass(['id']);
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedcategories:deleteconfirm')
             ->setPass(['id']);
+        $builder->post('/reorder', ['action' => 'reorder'], 'feedcategories:reorder');
     });
 });
 

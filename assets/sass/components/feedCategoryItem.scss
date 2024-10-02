@@ -1,6 +1,5 @@
-// Should be similar to .links a in projectFilter as well.
-// TODO Could be generalized with feed-category-item
-.project-item {
+// TODO Could be generalized with project-item
+.feed-category-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,11 +20,11 @@
     background: var(--color-bg-low-active);
   }
 
-  .project-badge {
+  .feed-category-badge {
     height: 40px;
     flex-grow: 1;
   }
-  .project-badge svg {
+  .feed-category-badge svg {
     margin: 0 4px 0 2px;
   }
 
@@ -44,6 +43,15 @@
   }
 }
 
-.drag-ghost .project-item {
+.feed-category-badge {
+  display: flex;
+  align-items: center;
+
+  // Nudge icon to the left so that it lines up with
+  // any text above it.
+  margin-left: calc($space / 2 * -1);
+}
+
+.drag-ghost .feed-category-item {
     width: 200px;
 }

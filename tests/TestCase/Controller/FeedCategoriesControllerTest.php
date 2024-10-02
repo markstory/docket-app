@@ -248,4 +248,76 @@ class FeedCategoriesControllerTest extends TestCase
         $this->assertResponseCode(403);
         $this->assertTrue($this->FeedCategories->exists(['id' => $category->id]));
     }
+
+    public function testReorderOk()
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $music = $this->makeFeedCategory('Music', 1, ['ranking' => 3]);
+        $comics = $this->makeFeedCategory('Comics', 1, ['ranking' => 6]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/categories/reorder', [
+            'id' => [$blogs->id, $music->id, $comics->id],
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Blogs');
+        $this->assertResponseContains('Music');
+        $this->assertResponseContains('Comics');
+
+        $results = $this->FeedCategories->find()->orderByAsc('ranking')->toArray();
+        $expected = [$blogs->id, $music->id, $comics->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testReorderPermissions()
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $music = $this->makeFeedCategory('Music', 1, ['ranking' => 3]);
+        $nope = $this->makeFeedCategory('Blogs Other', 2, ['ranking' => 0]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/categories/reorder', [
+            'id' => [$nope->id, $music->id, $blogs->id],
+        ]);
+        $this->assertResponseCode(400);
+
+        $results = $this->FeedCategories->find()
+            ->orderByAsc('user_id')
+            ->orderByAsc('ranking')
+            ->toArray();
+        $expected = [$blogs->id, $music->id, $nope->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
+
+    public function testReorderPartialUpdates()
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $music = $this->makeFeedCategory('Music', 1, ['ranking' => 3]);
+        $comics = $this->makeFeedCategory('Comics', 1, ['ranking' => 6]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/categories/reorder', [
+            'id' => [$comics->id, $blogs->id],
+        ]);
+        $this->assertResponseOk();
+
+        $results = $this->FeedCategories->find()
+            ->orderByAsc('ranking')
+            ->orderByAsc('title')
+            ->toArray();
+        $expected = [$comics->id, $blogs->id, $music->id];
+        $this->assertCount(count($expected), $results);
+        foreach ($expected as $i => $id) {
+            $this->assertEquals($id, $results[$i]->id);
+        }
+    }
 }

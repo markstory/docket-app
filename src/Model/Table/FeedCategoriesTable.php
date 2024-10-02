@@ -101,4 +101,19 @@ class FeedCategoriesTable extends Table
 
         return $rules;
     }
+
+    /**
+     * Update the ranking on a list of category ids to match the provided order.
+     */
+    public function reorder(array $ids): void
+    {
+        $this->getConnection()->transactional(function () use ($ids): void {
+            foreach ($ids as $ranking => $id) {
+                $this->updateQuery()
+                    ->set(['ranking' => $ranking])
+                    ->where(['id' => $id])
+                    ->execute();
+            }
+        });
+    }
 }
