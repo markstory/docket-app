@@ -25,7 +25,33 @@ endif;
             <div>
                 <?= $this->element('profile_menu') ?>
                 <div class="project-filter">
-                    <h3>Feeds</h3>
+                    <ul class="links">
+                        <li class="icon-secondary">
+                            <?= $this->Html->link(
+                                $this->element('icons/clippy16') . ' Today',
+                                ['_name' => 'tasks:today'],
+                                [
+                                    'escape' => false,
+                                    'class' => 'button-muted button',
+                                    'data-hotkey' => 't',
+                                    'hx-boost' => '1',
+                                ]
+                            ) ?>
+                        </li>
+                        <li class="icon-today">
+                            <?= $this->Html->link(
+                                $this->element('icons/rss16') . ' All Feeds',
+                                ['_name' => 'feedsubscriptions:index'],
+                                [
+                                    'escape' => false,
+                                    'class' => 'button-muted button',
+                                    'data-hotkey' => 'f',
+                                    'hx-boost' => '1',
+                                ]
+                            ) ?>
+                        </li>
+                    </ul>
+                    <h3>Categories</h3>
                     <?= $this->cell('FeedCategoryMenu', ['identity' => $identity]) ?>
 
                     <ul class="links">
