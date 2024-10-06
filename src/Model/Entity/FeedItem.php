@@ -33,6 +33,8 @@ class FeedItem extends Entity
      */
     protected array $_accessible = [
         'feed_id' => true,
+        // TODO need an external guid for unique article tracking. Needs a feed_id, guid UNIQUE on it too
+        // TODO need a URL for the feed item
         'title' => true,
         'summary' => true,
         'published_at' => true,
