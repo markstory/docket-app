@@ -87,13 +87,13 @@ class FeedServiceTest extends TestCase
         $this->assertEquals(0, $this->feedItemCount($feed));
     }
 
-    public function testRefreshFeedSuccess()
+    public function testRefreshFeedSuccessSimpleRss()
     {
         $client = new Client();
         $url = 'https://example.org/rss';
         $feed = $this->makeFeed($url);
 
-        // Empty response
+        // Simple RSS
         $res = $this->newClientResponse(
             200,
             ['Content-Type: application/rss'],
@@ -117,5 +117,35 @@ class FeedServiceTest extends TestCase
 
     public function testRefreshFeedUpdateExisting()
     {
+        $client = new Client();
+        $url = 'https://example.org/rss';
+        $feed = $this->makeFeed($url);
+        $item = $this->makeFeedItem($feed->id, [
+            'guid' => 'https://mark-story.com/posts/view/' .
+                'server-rendered-components-with-template-fragments-and-webcomponents?utm_source=rss',
+            'url' => 'https://mark-story.com/wrong',
+            'title' => 'replace me',
+            'summary' => 'replace me',
+        ]);
+
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet($url, $res);
+        $service = new FeedService($client);
+        $service->refreshFeed($feed);
+
+        $this->assertEquals(20, $this->feedItemCount($feed));
+        $feeditems = $this->fetchTable('FeedItems');
+        $refresh = $feeditems->findById($item->id)->firstOrFail();
+
+        $this->assertEquals($item->guid, $refresh->guid);
+        $this->assertTrue(Validation::url($refresh->url));
+        $this->assertNotEquals('replace me', $refresh->title);
+        $this->assertNotEquals('replace me', $refresh->summary);
+        $this->assertNotEmpty($refresh->published_at);
+        $this->assertEquals($feed->id, $refresh->feed_id);
     }
 }

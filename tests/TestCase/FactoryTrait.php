@@ -10,6 +10,7 @@ use App\Model\Entity\CalendarSource;
 use App\Model\Entity\CalendarSubscription;
 use App\Model\Entity\Feed;
 use App\Model\Entity\FeedCategory;
+use App\Model\Entity\FeedItem;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
@@ -165,6 +166,23 @@ trait FactoryTrait
         $feed = $feeds->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $feeds->saveOrFail($feed);
+    }
+
+    protected function makeFeedItem(int $feedId, $props = []): FeedItem
+    {
+        $items = $this->fetchTable('FeedItems');
+        $props = array_merge([
+            'feed_id' => $feedId,
+            'guid' => md5((string)rand()),
+            'url' => 'http://example.org/blog/hello-world',
+            'title' => 'hello world',
+            'summary' => 'first post!',
+            'published_at' => DateTime::parse('-3 days'),
+        ], $props);
+        /** @var \App\Model\Entity\FeedItem $item */
+        $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $items->saveOrFail($item);
     }
 
     protected function makeTask($title, $projectId, $order, $props = []): Task
