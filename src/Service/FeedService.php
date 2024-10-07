@@ -82,26 +82,26 @@ class FeedService
                 $items = [];
                 /** @var \SimpleXMLElement $xml */
                 $xml = Xml::build($body);
-                $xmlItems = $xml->xpath('/channel/item');
+                $xmlItems = $xml->channel->item;
                 // No items in the feed, abort
                 if (!$xmlItems) {
                     return [];
                 }
                 foreach ($xmlItems as $xmlItem) {
                     $item = $this->feeds->FeedItems->newEmptyEntity();
-                    $item->guid = $readValue($xmlItem, '/guid');
-                    $item->title = $readValue($xmlItem, '/title');
-                    $item->summary = $readValue($xmlItem, '/description');
-                    $item->published_at = new DateTime($readValue($xmlItem, '/pubDate'));
+                    $item->guid = (string)$xmlItem->guid;
+                    $item->title = (string)$xmlItem->title;
+                    $item->url = (string)$xmlItem->link;
+                    $item->summary = (string)$xmlItem->description;
+                    $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
                     $item->feed_id = $feed->id;
 
                     $items[] = $item;
                 }
 
                 return $items;
-                break;
             default:
-                throw RuntimeException("Unknown content type of $contentType");
+                throw new FeedSyncException("Unknown content type of $contentType");
         }
     }
 
