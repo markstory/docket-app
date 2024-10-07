@@ -10,6 +10,8 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $feed_id
+ * @property string $guid
+ * @property string $url
  * @property string $title
  * @property string $summary
  * @property \Cake\I18n\DateTime $published_at
@@ -33,8 +35,8 @@ class FeedItem extends Entity
      */
     protected array $_accessible = [
         'feed_id' => true,
-        // TODO need an external guid for unique article tracking. Needs a feed_id, guid UNIQUE on it too
-        // TODO need a URL for the feed item
+        'guid' => true,
+        'url' => true,
         'title' => true,
         'summary' => true,
         'published_at' => true,
