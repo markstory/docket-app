@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Service\CalendarServiceProvider;
+use App\Service\FeedServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -154,6 +155,7 @@ class Application extends BaseApplication implements
         });
 
         $container->addServiceProvider(new CalendarServiceProvider());
+        $container->addServiceProvider(new FeedServiceProvider());
         $container->addShared(FeatureManagerInterface::class, function () {
             return new FeatureManager(Configure::read('Features'));
         });

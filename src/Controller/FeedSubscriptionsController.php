@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Table\FeedSubscriptionsTable;
+use App\Service\FeedService;
 
 /**
  * FeedSubscriptions Controller
@@ -38,7 +39,13 @@ class FeedSubscriptionsController extends AppController
     {
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription);
-        $this->set(compact('feedSubscription'));
+
+        // TODO add in subscription read state.
+        $feedItems = $this->FeedSubscriptions->FeedItems->find();
+        $feedItems->where(['FeedItems.feed_id' => $id]);
+        $feedItems = $this->paginate($feedItems);
+
+        $this->set(compact('feedSubscription', 'feedItems'));
     }
 
     /**
@@ -123,5 +130,17 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription, 'delete');
 
         $this->set('feedCategory', $feedSubscription);
+    }
+
+    public function sync($id, FeedService $feedService)
+    {
+        // TODO add rate-limit/abuse
+        $subscription = $this->FeedSubscriptions->get($id, contain: ['Feeds']);
+        $this->Authorization->authorize($subscription, 'view');
+
+        $feedService->refreshFeed($subscription->feed);
+
+        $this->Flash->success(__('Feed refresh complete'));
+        $this->redirect(['action' => 'view', 'id' => $id]);
     }
 }

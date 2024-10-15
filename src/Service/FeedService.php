@@ -61,7 +61,7 @@ class FeedService
         $contentType = $res->getHeaderLine('Content-Type');
         $colonPos = strpos($contentType, ';');
         if ($colonPos !== false) {
-            $contentType = substr($contentType, $colonPos);
+            $contentType = substr($contentType, 0, $colonPos);
         }
         $body = (string)$res->getBody();
         // No items in an empty response.

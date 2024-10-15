@@ -304,6 +304,10 @@ $routes->scope('/', function (RouteBuilder $builder) {
     // Feeds routes
     $builder->scope('/feeds/', ['controller' => 'FeedSubscriptions'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'feedsubscriptions:index');
+        $builder->get('/{id}/view', ['action' => 'view'], 'feedsubscriptions:view')
+            ->setPass(['id']);
+        $builder->post('/{id}/sync', ['action' => 'sync'], 'feedsubscriptions:sync')
+            ->setPass(['id']);
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedsubscriptions:add']);
         $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedsubscriptions:edit'])
             ->setPass(['id']);
