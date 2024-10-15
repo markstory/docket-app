@@ -11,7 +11,6 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Xml;
-use RuntimeException;
 use SimpleXMLElement;
 
 class FeedService
@@ -77,32 +76,69 @@ class FeedService
             return (string)$found[0];
         };
         switch ($contentType) {
+            case 'application/atom+xml':
+                return $this->parseAtom($feed, $body);
             case 'application/rss':
             case 'application/rss+xml':
-                $items = [];
-                /** @var \SimpleXMLElement $xml */
-                $xml = Xml::build($body);
-                $xmlItems = $xml->channel->item;
-                // No items in the feed, abort
-                if (!$xmlItems) {
-                    return [];
-                }
-                foreach ($xmlItems as $xmlItem) {
-                    $item = $this->feeds->FeedItems->newEmptyEntity();
-                    $item->guid = (string)$xmlItem->guid;
-                    $item->title = (string)$xmlItem->title;
-                    $item->url = (string)$xmlItem->link;
-                    $item->summary = (string)$xmlItem->description;
-                    $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
-                    $item->feed_id = $feed->id;
-
-                    $items[] = $item;
-                }
-
-                return $items;
+                return $this->parseRss($feed, $body);
             default:
                 throw new FeedSyncException("Unknown content type of $contentType");
         }
+    }
+
+    protected function parseAtom(Feed $feed, string $body): array
+    {
+        $items = [];
+        /** @var \SimpleXMLElement $xml */
+        $xml = Xml::build($body);
+        $xmlEntries = $xml->entry;
+        // No items in the feed, abort
+        if (!$xmlEntries) {
+            return [];
+        }
+        foreach ($xmlEntries as $entry) {
+            $item = $this->feeds->FeedItems->newEmptyEntity();
+            $item->guid = (string)$entry->id;
+            $item->title = (string)$entry->title;
+            $item->url = $entry->link['href'];
+            $entryContent = $entry->content;
+            if ($entryContent['type'] === 'html') {
+                $item->summary = html_entity_decode((string)$entryContent);
+            } else {
+                $item->summary = (string)$entryContent;
+            }
+            $item->published_at = DateTime::parse((string)$entry->updated[0]);
+            $item->feed_id = $feed->id;
+
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    protected function parseRss(Feed $feed, string $body): array
+    {
+        $items = [];
+        /** @var \SimpleXMLElement $xml */
+        $xml = Xml::build($body);
+        $xmlItems = $xml->channel->item;
+        // No items in the feed, abort
+        if (!$xmlItems) {
+            return [];
+        }
+        foreach ($xmlItems as $xmlItem) {
+            $item = $this->feeds->FeedItems->newEmptyEntity();
+            $item->guid = (string)$xmlItem->guid;
+            $item->title = (string)$xmlItem->title;
+            $item->url = (string)$xmlItem->link;
+            $item->summary = (string)$xmlItem->description;
+            $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
+            $item->feed_id = $feed->id;
+
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
     protected function saveNewItems(array $items): void

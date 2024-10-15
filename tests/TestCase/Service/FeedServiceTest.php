@@ -115,6 +115,36 @@ class FeedServiceTest extends TestCase
         $this->assertEquals($feed->id, $item->feed_id);
     }
 
+    public function testRefreshFeedSuccessSimpleAtom()
+    {
+        $client = new Client();
+        $url = 'https://example.org/rss';
+        $feed = $this->makeFeed($url);
+
+        // Simple RSS
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/atom+xml'],
+            $this->readFeedFixture('github-releases.atom')
+        );
+        $this->mockClientGet($url, $res);
+        $service = new FeedService($client);
+        $service->refreshFeed($feed);
+
+        $this->assertEquals(10, $this->feedItemCount($feed));
+        $feeditems = $this->fetchTable('FeedItems');
+        $item = $feeditems->find()->firstOrFail();
+
+        $this->assertNotEmpty($item->guid);
+        $this->assertTrue(Validation::url($item->url));
+        $this->assertNotEmpty($item->title);
+        $this->assertNotEmpty($item->summary);
+        $this->assertStringNotContainsString('&gt;', $item->summary);
+        $this->assertStringContainsString('<ul>', $item->summary);
+        $this->assertNotEmpty($item->published_at);
+        $this->assertEquals($feed->id, $item->feed_id);
+    }
+
     public function testRefreshFeedUpdateExisting()
     {
         $client = new Client();
