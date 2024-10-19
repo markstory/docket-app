@@ -26,7 +26,7 @@ class MarkdownText extends HTMLElement {
     preview.addEventListener('click', evt => {
       const target = evt.target;
       // Don't change modes on links
-      if (target instanceof HTMLElement && target.nodeName == 'A') {
+      if (target instanceof HTMLElement && target.nodeName == 'A' && !target.classList.contains('button-focusreveal')) {
         return;
       }
       // Toggle to update mode
