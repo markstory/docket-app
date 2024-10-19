@@ -18,7 +18,7 @@ $this->setLayout('feedreader');
 </div>
 
 <div class="feed-items">
-<?php foreach ($feedItems as $item): ?>
+<?php foreach ($feedItems as $item) : ?>
     <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $feedSubscription]) ?>
 <?php endforeach; ?>
 </div>
