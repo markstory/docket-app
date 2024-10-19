@@ -11,21 +11,31 @@ class ModalWindow extends HTMLElement {
   }
 
   setupClose(dialog: HTMLDialogElement | null): void {
-    const closer = this.querySelector('[modal-close="true"]');
+    const closer = this.querySelector('[modal-close]');
     if (!closer) {
+      return;
+    }
+    const attrVal = closer.getAttribute('modal-close');
+    if (attrVal !== '1' && attrVal !== 'true') {
       return;
     }
     closer.addEventListener(
       'click',
       evt => {
         evt.preventDefault();
-        if (dialog) {
-          dialog.close();
-          dialog.remove();
-        }
+        this._close(dialog);
       },
       false
     );
+  }
+
+  _close(dialog: HTMLDialogElement | null): void {
+    if (dialog) {
+      dialog.close();
+      dialog.remove();
+    } else {
+      this.remove();
+    }
   }
 
   closeOnSubmit(dialog: HTMLDialogElement | null): void {
@@ -33,7 +43,7 @@ class ModalWindow extends HTMLElement {
     if (!form || !dialog) {
       return;
     }
-    dialog.addEventListener('submit', () => dialog.close(), false);
+    dialog.addEventListener('submit', () => this._close(dialog), false);
   }
 }
 
