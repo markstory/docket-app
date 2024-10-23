@@ -177,6 +177,7 @@ trait FactoryTrait
             'url' => 'http://example.org/blog/hello-world',
             'title' => 'hello world',
             'summary' => 'first post!',
+            'content' => '',
             'published_at' => DateTime::parse('-3 days'),
         ], $props);
         /** @var \App\Model\Entity\FeedItem $item */
