@@ -316,6 +316,12 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedsubscriptions:deleteconfirm')
             ->setPass(['id']);
     });
+
+    $builder->scope('/feeds/{feedId}/items/', ['controller' => 'FeedItems'], function (RouteBuilder $builder) {
+        $builder->get('/view/{id}', ['action' => 'view'], 'feeditems:view')
+            ->setPass(['feedId', 'id']);
+    });
+
     $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'index'], 'feedcategories:index');
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedcategories:add']);

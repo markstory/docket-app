@@ -56,6 +56,7 @@ class FeedItemsTable extends Table
             'foreignKey' => 'feed_item_id',
             'targetForeignKey' => 'feed_subscription_id',
             'joinTable' => 'feed_subscriptions_feed_items',
+            'through' => 'FeedSubscriptionItem'
         ]);
     }
 
@@ -107,5 +108,26 @@ class FeedItemsTable extends Table
         $rules->add($rules->existsIn(['feed_id'], 'Feeds'), ['errorField' => 'feed_id']);
 
         return $rules;
+    }
+
+    public function findForFeed(SelectQuery $query, string $feedId, string|int $userId, string $id): SelectQuery
+    {
+        return $query->where([
+            'FeedItems.feed_id' => $feedId,
+            'FeedItems.id' => $id,
+        ])->formatResults(function ($results) use ($userId, $feedId) {
+            $sub = $this->FeedSubscriptions->find()
+                ->where([
+                    'FeedSubscriptions.user_id' => $userId,
+                    'FeedSubscriptions.feed_id' => $feedId
+                ])->first();
+
+            return $results->map(function ($item) use ($sub) {
+                if ($sub) {
+                    $item->feed_subscriptions = [$sub];
+                }
+                return $item;
+            });
+        });
     }
 }

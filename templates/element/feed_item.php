@@ -10,10 +10,17 @@
         <?= $this->Html->link($feedSubscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $feedSubscription->id]) ?> |
         <?= $this->Time->timeAgoInWords($feedItem->published_at) ?>
     </p>
-    <p><?= $feedItem->summary ?></p>
-    <p><?= $this->Html->link(
-        'View more',
-        $feedItem->url,
-        ['noreferrer' => true, 'target' => '_blank']
-    ) ?></p>
+    <p><?= h($feedItem->summary) ?></p>
+    <?php if (!$feedItem->content) : ?>
+        <p><?= $this->Html->link(
+            'Read more',
+            $feedItem->url,
+            ['noreferrer' => true, 'target' => '_blank']
+        ) ?></p>
+    <?php else : ?>
+        <p><?= $this->Html->link(
+            'Read more',
+            ['_name' => 'feeditems:view', 'id' => $feedItem->id, 'feedId' => $feedItem->feed_id],
+        ) ?></p>
+    <?php endif; ?>
 </div>

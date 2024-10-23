@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string $url
  * @property string $title
  * @property string $summary
+ * @property string $content
  * @property \Cake\I18n\DateTime $published_at
  * @property string|null $thumbnail_image_url
  * @property \Cake\I18n\DateTime $created
@@ -34,16 +35,17 @@ class FeedItem extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
-        'feed_id' => true,
+        'feed_id' => false,
         'guid' => true,
         'url' => true,
         'title' => true,
         'summary' => true,
+        'content' => true,
         'published_at' => true,
         'thumbnail_image_url' => true,
-        'created' => true,
-        'modified' => true,
-        'feed' => true,
-        'feed_subscriptions' => true,
+        'created' => false,
+        'modified' => false,
+        'feed' => false,
+        'feed_subscriptions' => false,
     ];
 }
