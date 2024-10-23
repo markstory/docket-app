@@ -14,7 +14,8 @@
         "google/apiclient": "^2.0",
         "markstory/cakephp-feature-flags": "dev-main",
         "paragonie/csp-builder": "^2.5",
-        "sentry/sentry": "^4.8"
+        "sentry/sentry": "^4.8",
+        "symfony/html-sanitizer": "^6.4"
     },
     "require-dev": {
         "ext-zip": "*",

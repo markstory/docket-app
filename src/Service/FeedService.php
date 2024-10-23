@@ -10,8 +10,10 @@ use Cake\Http\Client\Response;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Utility\Text;
 use Cake\Utility\Xml;
 use SimpleXMLElement;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class FeedService
 {
@@ -19,15 +21,17 @@ class FeedService
 
     private FeedsTable $feeds;
     private Client $client;
+    private HtmlSanitizerInterface $cleaner;
     /**
      * Timeout to fetch feeds in seconds
      */
     private int $fetchTimeout = 2;
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, HtmlSanitizerInterface $cleaner)
     {
         $this->feeds = $this->fetchTable('Feeds');
         $this->client = $client;
+        $this->cleaner = $cleaner;
     }
 
     /**
@@ -101,12 +105,13 @@ class FeedService
             $item->guid = (string)$entry->id;
             $item->title = (string)$entry->title;
             $item->url = $entry->link['href'];
-            $entryContent = $entry->content;
-            if ($entryContent['type'] === 'html') {
-                $item->summary = html_entity_decode((string)$entryContent);
-            } else {
-                $item->summary = (string)$entryContent;
-            }
+
+            // Assume HTML. If its not HTML, it will be >:^)
+            $entryContent = (string)$entry->content;
+            $safeHtml = $this->cleaner->sanitize($entryContent);
+            $item->summary = Text::truncate(strip_tags($safeHtml), 200);
+            $item->content = $safeHtml;
+
             $item->published_at = DateTime::parse((string)$entry->updated[0]);
             $item->feed_id = $feed->id;
 
@@ -132,6 +137,7 @@ class FeedService
             $item->title = (string)$xmlItem->title;
             $item->url = (string)$xmlItem->link;
             $item->summary = (string)$xmlItem->description;
+            $item->content = '';
             $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
             $item->feed_id = $feed->id;
 

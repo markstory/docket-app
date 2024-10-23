@@ -12,6 +12,10 @@ use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use RuntimeException;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerAction;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class FeedServiceTest extends TestCase
 {
@@ -23,6 +27,17 @@ class FeedServiceTest extends TestCase
         'app.Feeds',
         'app.FeedItems',
     ];
+
+    private ?HtmlSanitizerInterface $cleaner = null;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $config = new HtmlSanitizerConfig();
+        $config = $config->allowSafeElements();
+
+        $this->cleaner = new HtmlSanitizer($config);
+    }
 
     public function feedItemCount(Feed $feed): int
     {
@@ -50,7 +65,7 @@ class FeedServiceTest extends TestCase
         // Empty response
         $res = $this->newClientResponse();
         $this->mockClientGet($url, $res);
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
         $this->assertEquals(0, $this->feedItemCount($feed));
@@ -66,7 +81,7 @@ class FeedServiceTest extends TestCase
         $res = $this->newClientResponse(200, ['Content-Type: lolnope'], 'some junk');
         $this->mockClientGet($url, $res);
 
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $this->expectException(FeedSyncException::class);
         $service->refreshFeed($feed);
     }
@@ -81,7 +96,7 @@ class FeedServiceTest extends TestCase
         $res = $this->newClientResponse(200, ['Content-Type: application/rss+xml; charset=UTF-8'], '');
         $this->mockClientGet($url, $res);
 
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
         $this->assertEquals(0, $this->feedItemCount($feed));
@@ -100,7 +115,7 @@ class FeedServiceTest extends TestCase
             $this->readFeedFixture('mark-story-com.rss')
         );
         $this->mockClientGet($url, $res);
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
         $this->assertEquals(20, $this->feedItemCount($feed));
@@ -128,7 +143,7 @@ class FeedServiceTest extends TestCase
             $this->readFeedFixture('github-releases.atom')
         );
         $this->mockClientGet($url, $res);
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
         $this->assertEquals(10, $this->feedItemCount($feed));
@@ -139,8 +154,8 @@ class FeedServiceTest extends TestCase
         $this->assertTrue(Validation::url($item->url));
         $this->assertNotEmpty($item->title);
         $this->assertNotEmpty($item->summary);
-        $this->assertStringNotContainsString('&gt;', $item->summary);
-        $this->assertStringContainsString('<ul>', $item->summary);
+        $this->assertStringNotContainsString('&gt;', $item->content);
+        $this->assertStringContainsString('<ul>', $item->content);
         $this->assertNotEmpty($item->published_at);
         $this->assertEquals($feed->id, $item->feed_id);
     }
@@ -164,7 +179,7 @@ class FeedServiceTest extends TestCase
             $this->readFeedFixture('mark-story-com.rss')
         );
         $this->mockClientGet($url, $res);
-        $service = new FeedService($client);
+        $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
         $this->assertEquals(20, $this->feedItemCount($feed));
