@@ -56,7 +56,6 @@ class FeedItemsTable extends Table
             'foreignKey' => 'feed_item_id',
             'targetForeignKey' => 'feed_subscription_id',
             'joinTable' => 'feed_subscriptions_feed_items',
-            'through' => 'FeedSubscriptionItem'
         ]);
     }
 
@@ -110,24 +109,88 @@ class FeedItemsTable extends Table
         return $rules;
     }
 
-    public function findForFeed(SelectQuery $query, string $feedId, string|int $userId, string $id): SelectQuery
+    /**
+     * Find a specific item in a feed that a user has a subscription to.
+     */
+    public function findFeedItem(SelectQuery $query, string $feedId, string|int $userId, string $id): SelectQuery
     {
         return $query->where([
-            'FeedItems.feed_id' => $feedId,
-            'FeedItems.id' => $id,
-        ])->formatResults(function ($results) use ($userId, $feedId) {
-            $sub = $this->FeedSubscriptions->find()
-                ->where([
-                    'FeedSubscriptions.user_id' => $userId,
-                    'FeedSubscriptions.feed_id' => $feedId
-                ])->first();
+                'FeedItems.feed_id' => $feedId,
+                'FeedItems.id' => $id,
+            ])
+            ->orderByDesc('FeedItems.published_at')
+            ->formatResults(function ($results) use ($userId, $feedId) {
+                $sub = $this->FeedSubscriptions->find()
+                    ->where([
+                        'FeedSubscriptions.user_id' => $userId,
+                        'FeedSubscriptions.feed_id' => $feedId
+                    ])->first();
 
-            return $results->map(function ($item) use ($sub) {
-                if ($sub) {
-                    $item->feed_subscriptions = [$sub];
-                }
-                return $item;
+                return $results->map(function ($item) use ($sub) {
+                    if ($sub) {
+                        $item->feed_subscriptions = [$sub];
+                    }
+
+                    return $item;
+                });
             });
-        });
+    }
+
+    /**
+     * Find all items in a feed
+     */
+    public function findFeedItems(SelectQuery $query, string|int $feedId, string|int $userId): SelectQuery
+    {
+        return $query->where([
+                'FeedItems.feed_id' => $feedId,
+            ])
+            ->orderByDesc('FeedItems.published_at')
+            ->formatResults(function ($results) use ($userId, $feedId) {
+                $sub = $this->FeedSubscriptions->find()
+                    ->where([
+                        'FeedSubscriptions.user_id' => $userId,
+                        'FeedSubscriptions.feed_id' => $feedId
+                    ])->first();
+
+                return $results->map(function ($item) use ($sub) {
+                    if ($sub) {
+                        $item->feed_subscriptions = [$sub];
+                    }
+
+                    return $item;
+                });
+            });
+    }
+
+    public function findForCategory(SelectQuery $query, string|int $categoryId, string|int $userId): SelectQuery
+    {
+        $subscriptions = $this->FeedSubscriptions->find()
+            ->innerJoinWith('FeedCategories')
+            ->where([
+                'FeedSubscriptions.user_id' => $userId,
+                'FeedCategories.id' => $categoryId,
+            ]);
+        $feedIds = [];
+        $subscriptionMap = [];
+        foreach ($subscriptions as $sub) {
+            $feedIds []= $sub->feed_id;
+            $subscriptionMap[$sub->feed_id] = $sub;
+        }
+        $feedIds = $subscriptions->all()->extract('feed_id')->toList();
+
+        return $query
+            ->where([
+                'FeedItems.feed_id IN' => $feedIds,
+            ])
+            ->orderByDesc('FeedItems.published_at')
+            ->formatResults(function ($results) use ($subscriptionMap) {
+                return $results->map(function ($item) use ($subscriptionMap) {
+                    if (isset($subscriptionMap[$item->feed_id])) {
+                        $item->feed_subscriptions = [$subscriptionMap[$item->feed_id]];
+                    }
+
+                    return $item;
+                });
+            });
     }
 }

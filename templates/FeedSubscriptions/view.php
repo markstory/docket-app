@@ -10,7 +10,7 @@ $this->setLayout('feedreader');
 <div class="heading-actions">
     <div class="heading-actions-item">
         <h1 class="heading-icon">
-            <?= $this->element('icons/directory16', ['color' => $feedSubscription->feed_category->color_hex]) ?>
+            <?= $this->element('icons/rss16', ['color' => $feedSubscription->feed_category->color_hex]) ?>
             <?= h($feedSubscription->alias) ?>
         </h1>
     </div>
@@ -21,4 +21,11 @@ $this->setLayout('feedreader');
 <?php foreach ($feedItems as $item) : ?>
     <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $feedSubscription]) ?>
 <?php endforeach; ?>
+</div>
+<div class="paginator">
+    <ul class="pagination">
+        <?= $this->Paginator->prev('< ' . __('previous')) ?>
+        <?= $this->Paginator->numbers() ?>
+        <?= $this->Paginator->next(__('next') . ' >') ?>
+    </ul>
 </div>

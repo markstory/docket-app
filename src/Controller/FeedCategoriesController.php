@@ -33,10 +33,13 @@ class FeedCategoriesController extends AppController
         $feedCategory = $this->FeedCategories->get($id);
         $this->Authorization->authorize($feedCategory);
 
-        // TODO fetch all the feed items for subscriptions in this category
-        // order by date published and feed name. contain the subscription
+        $identityId = $this->Authentication->getIdentity()->id;
+        $itemsTable = $this->fetchTable('FeedItems');
+        $itemsQuery = $itemsTable->find('forCategory', categoryId: $id, userId: $identityId);
+        $result = $this->paginate($itemsQuery);
 
         $this->set('feedCategory', $feedCategory);
+        $this->set('feedItems', $result);
     }
 
     /**

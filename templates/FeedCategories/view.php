@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\FeedCategory $feedCategory
+ * @var array<\App\Model\Entity\FeedItem> $feedItems
  */
 $this->setLayout('feedreader');
 
@@ -27,4 +28,10 @@ $subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:add', '?'
         ) ?>
     </div>
     <?= $this->element('feed_category_menu', ['feedCategory' => $feedCategory]) ?>
+</div>
+
+<div class="feed-items">
+<?php foreach ($feedItems as $item) : ?>
+    <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $item->feed_subscriptions[0]]) ?>
+<?php endforeach; ?>
 </div>

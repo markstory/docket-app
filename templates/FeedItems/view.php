@@ -4,59 +4,43 @@
  * @var \App\Model\Entity\FeedItem $feedItem
  */
 $this->setLayout('feedreader');
+
+$feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscriptions[0]->id];
+$menuId = 'feed-item-' . uniqid();
 ?>
-<div class="row">
-    <div class="column column-80">
-        <div class="feedItems view content">
-            <h3><?= h($feedItem->title) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('Feed') ?></th>
-                    <td><?= $feedItem->hasValue('feed') ? $this->Html->link($feedItem->feed->url, ['controller' => 'Feeds', 'action' => 'view', $feedItem->feed->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Title') ?></th>
-                    <td><?= h($feedItem->title) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Thumbnail Image Url') ?></th>
-                    <td><?= h($feedItem->thumbnail_image_url) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Guid') ?></th>
-                    <td><?= h($feedItem->guid) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Url') ?></th>
-                    <td><?= h($feedItem->url) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($feedItem->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Published At') ?></th>
-                    <td><?= h($feedItem->published_at) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Created') ?></th>
-                    <td><?= h($feedItem->created) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Modified') ?></th>
-                    <td><?= h($feedItem->modified) ?></td>
-                </tr>
-            </table>
-            <div class="text">
-                <strong><?= __('Summary') ?></strong>
-                <blockquote>
-                    <?= $this->Text->autoParagraph(h($feedItem->summary)); ?>
-                </blockquote>
-            </div>
-            <div class="text">
-                <strong><?= __('Content') ?></strong>
-                <blockquote>
-                    <?= $this->Text->autoParagraph(h($feedItem->content)); ?>
-                </blockquote>
-            </div>
+<div class="heading-actions">
+    <div class="heading-actions-item">
+        <h1><?= h($feedItem->title) ?></h1>
+    </div>
+    <drop-down>
+        <button
+            class="button-icon button-default"
+            aria-haspopup="true"
+            aria-controls="<?= h($menuId) ?>"
+            aria-label="Post actions"
+            type="button"
+        >
+            <?= $this->element('icons/kebab16') ?>
+        </button>
+        <drop-down-menu id="<?= h($menuId) ?>" role="menu">
+            menu goes here?
+        </drop-down-menu>
+    </drop-down>
+</div>
+<div class="feed-item-meta">
+    <span class="feed-name"><?= $this->Html->link(
+        $feedItem->feed_subscriptions[0]->alias,
+        $feedUrl,
+    ) ?></span>
+    <span class="feed-published-at"><?= $this->Time->nice($feedItem->published_at) ?></span>
+</div>
+<div class="feed-item-body">
+    <?= $feedItem->content ?>
+</div>
+<div class="feed-item-footer">
+    <?= $this->Html->link(
+        'View website',
+        $feedItem->url,
+        ['target' => '_blank']
+    ) ?>
 </div>

@@ -21,7 +21,7 @@ class FeedSubscriptionsController extends AppController
     public function index()
     {
         $query = $this->FeedSubscriptions->find()
-            ->contain(['Feeds', 'Users', 'FeedCategories']);
+            ->contain(['FeedCategories']);
         $query = $this->Authorization->applyScope($query);
         $feedSubscriptions = $this->paginate($query);
 
@@ -41,8 +41,13 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription);
 
         // TODO add in subscription read state.
-        $feedItems = $this->FeedSubscriptions->FeedItems->find();
-        $feedItems->where(['FeedItems.feed_id' => $id]);
+        $identityId = $this->Authentication->getIdentity()->id;
+        // TODO This is a jank query as it re-reads the subscription
+        $feedItems = $this->FeedSubscriptions->FeedItems->find(
+            'feedItems',
+            feedId: $feedSubscription->feed_id,
+            userId: $identityId
+        );
         $feedItems = $this->paginate($feedItems);
 
         $this->set(compact('feedSubscription', 'feedItems'));

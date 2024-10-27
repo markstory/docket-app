@@ -81,6 +81,7 @@ class FeedService
         };
         switch ($contentType) {
             case 'application/atom+xml':
+            case 'text/xml':
                 return $this->parseAtom($feed, $body);
             case 'application/rss':
             case 'application/rss+xml':
@@ -102,6 +103,7 @@ class FeedService
         }
         foreach ($xmlEntries as $entry) {
             $item = $this->feeds->FeedItems->newEmptyEntity();
+            // TODO add author byline
             $item->guid = (string)$entry->id;
             $item->title = (string)$entry->title;
             $item->url = $entry->link['href'];
