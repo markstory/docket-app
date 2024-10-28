@@ -21,7 +21,14 @@ declare(strict_types=1);
         <button class="dnd-handle" role="button" aria-roledescription="sortable">
             <?= $this->element('icons/grabber24') ?>
         </button>
-        <?= $this->element('feed_category_item', ['feedCategory' => $category]) ?>
+        <div>
+            <?= $this->element('feed_category_item', ['feedCategory' => $category]) ?>
+            <ul>
+            <?php foreach ($category->feed_subscriptions as $subscription) : ?>
+                <li><?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?></li>
+            <?php endforeach; ?>
+            </ul>
+        </div>
     </div>
 <?php endforeach; ?>
 <?= $this->Form->end() ?>

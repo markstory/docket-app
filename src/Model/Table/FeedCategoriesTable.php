@@ -116,4 +116,9 @@ class FeedCategoriesTable extends Table
             }
         });
     }
+
+    public function findMenu(SelectQuery $query, array $options = [])
+    {
+        return $query->contain('FeedSubscriptions');
+    }
 }

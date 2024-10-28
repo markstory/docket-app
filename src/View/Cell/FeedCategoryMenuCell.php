@@ -33,7 +33,7 @@ class FeedCategoryMenuCell extends Cell
     {
         $categories = $this->fetchTable('FeedCategories');
 
-        $query = $identity->applyScope('index', $categories->find());
+        $query = $identity->applyScope('index', $categories->find('menu'));
         $this->set('feedCategories', $query->all());
     }
 }
