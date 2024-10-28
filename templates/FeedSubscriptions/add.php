@@ -3,8 +3,6 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\FeedSubscription $feedSubscription
  */
-use Cake\Core\Configure;
-
 $isHtmx = $this->request->is('htmx');
 
 $this->setLayout('sidebar');
@@ -32,3 +30,4 @@ echo $this->Form->control('feed_category_id', [
         Cancel
     </a>
 </div>
+<?= $this->Form->end() ?>

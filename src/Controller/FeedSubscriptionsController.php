@@ -117,7 +117,7 @@ class FeedSubscriptionsController extends AppController
      */
     public function edit($id = null)
     {
-        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $this->Authorization->authorize($feedSubscription);
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());

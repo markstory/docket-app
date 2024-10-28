@@ -7,35 +7,28 @@
  * @var string[]|\Cake\Collection\CollectionInterface $feedCategories
  * @var string[]|\Cake\Collection\CollectionInterface $feedItems
  */
+$isHtmx = $this->request->is('htmx');
+
+$this->setLayout('sidebar');
+if ($isHtmx) {
+    $this->setLayout('sheet');
+}
+
+$this->assign('title', 'Add Feed');
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $feedSubscription->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $feedSubscription->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Feed Subscriptions'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column column-80">
-        <div class="feedSubscriptions form content">
-            <?= $this->Form->create($feedSubscription) ?>
-            <fieldset>
-                <legend><?= __('Edit Feed Subscription') ?></legend>
-                <?php
-                    echo $this->Form->control('feed_id', ['options' => $feeds]);
-                    echo $this->Form->control('user_id', ['options' => $users]);
-                    echo $this->Form->control('feed_category_id', ['options' => $feedCategories]);
-                    echo $this->Form->control('alias');
-                    echo $this->Form->control('ranking');
-                    echo $this->Form->control('feed_items._ids', ['options' => $feedItems]);
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
+<div class="modal-title">
+    <h2>Add feed</h2>
+    <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
+<?php
+echo $this->Form->create($feedSubscription);
+echo $this->Form->control('url', ['label' => 'Feed URL', 'value' => $feedSubscription->feed->url]);
+echo $this->Form->control('alias', ['label' => 'Name']);
+echo $this->Form->control('feed_category_id', [
+    'options' => $feedCategories,
+]);
+?>
+<div class="button-bar">
+    <?= $this->Form->submit('Save', ['class' => 'button button-primary']) ?>
+</div>
+<?= $this->Form->end() ?>
