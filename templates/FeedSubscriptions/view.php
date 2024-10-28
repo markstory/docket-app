@@ -6,6 +6,7 @@
  */
 $this->setLayout('feedreader');
 
+$this->assign('title', $feedSubscription->alias);
 ?>
 <div class="heading-actions">
     <div class="heading-actions-item">

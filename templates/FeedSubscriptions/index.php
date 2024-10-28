@@ -4,6 +4,7 @@
  * @var iterable<\App\Model\Entity\FeedSubscription> $feedSubscriptions
  */
 $this->setLayout('feedreader');
+$this->assign('title', 'All Feeds');
 
 $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:add']);
 ?>

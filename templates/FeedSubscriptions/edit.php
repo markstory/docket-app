@@ -14,7 +14,7 @@ if ($isHtmx) {
     $this->setLayout('sheet');
 }
 
-$this->assign('title', 'Add Feed');
+$this->assign('title', 'Edit Feed');
 ?>
 <div class="modal-title">
     <h2>Add feed</h2>

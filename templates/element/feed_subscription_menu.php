@@ -9,7 +9,10 @@ $deleteConfirmUrl = [
     '_name' => 'feedsubscriptions:deleteconfirm',
     'id' => $feedSubscription->id,
 ];
-
+$editUrl = [
+    '_name' => 'feedsubscriptions:edit',
+    'id' => $feedSubscription->id,
+];
 $feedSyncUrl = $this->Url->build([
     '_name' => 'feedsubscriptions:sync',
     'id' => $feedSubscription->id
@@ -38,11 +41,14 @@ $feedSyncUrl = $this->Url->build([
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit',
-            ['action' => 'edit', 'id' => $feedSubscription->id],
+            $editUrl,
             [
                 'class' => 'icon-edit',
                 'escape' => false,
                 'role' => 'menuitem',
+                'hx-get' => $this->Url->build($editUrl),
+                'hx-target' => 'main.main',
+                'hx-swap' => 'beforeend',
             ]
         ) ?>
         <?= $this->Html->link(
