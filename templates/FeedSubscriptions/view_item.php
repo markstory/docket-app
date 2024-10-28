@@ -5,7 +5,7 @@
  */
 $this->setLayout('feedreader');
 
-$feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscriptions[0]->id];
+$feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscription->id];
 $menuId = 'feed-item-' . uniqid();
 ?>
 <div class="heading-actions">
@@ -29,7 +29,7 @@ $menuId = 'feed-item-' . uniqid();
 </div>
 <div class="feed-item-meta">
     <span class="feed-name"><?= $this->Html->link(
-        $feedItem->feed_subscriptions[0]->alias,
+        $feedItem->feed_subscription->alias,
         $feedUrl,
     ) ?></span>
     <span class="feed-published-at"><?= $this->Time->nice($feedItem->published_at) ?></span>

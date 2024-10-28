@@ -315,11 +315,9 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['id']);
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedsubscriptions:deleteconfirm')
             ->setPass(['id']);
-    });
 
-    $builder->scope('/feeds/{feedId}/items/', ['controller' => 'FeedItems'], function (RouteBuilder $builder) {
-        $builder->get('/view/{id}', ['action' => 'view'], 'feeditems:view')
-            ->setPass(['feedId', 'id']);
+        $builder->get('{id}/items/{itemId}', ['action' => 'viewItem'], 'feedsubscriptions:viewitem')
+            ->setPass(['id', 'itemId']);
     });
 
     $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {

@@ -45,12 +45,37 @@ class FeedSubscriptionsController extends AppController
         // TODO This is a jank query as it re-reads the subscription
         $feedItems = $this->FeedSubscriptions->FeedItems->find(
             'feedItems',
-            feedId: $feedSubscription->feed_id,
+            subscriptionId: $feedSubscription->id,
             userId: $identityId
         );
         $feedItems = $this->paginate($feedItems);
 
         $this->set(compact('feedSubscription', 'feedItems'));
+    }
+
+    /**
+     * View item method
+     *
+     * @param int $id Feed Subscription id.
+     * @param int $itemId Feed Item id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function viewItem(int $id, int $itemId)
+    {
+        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $this->Authorization->authorize($feedSubscription, 'view');
+
+        // TODO move this to feedsubscriptions. It is dumb to have a controller with a single action
+        $identity = $this->Authentication->getIdentity();
+        $feedItem = $this->FeedSubscriptions->FeedItems->find(
+            'feedItem',
+            subscriptionId: $feedSubscription->id,
+            id: $itemId,
+        )->firstOrFail();
+        $this->Authorization->authorize($feedItem, 'view');
+
+        $this->set(compact('feedItem'));
     }
 
     /**

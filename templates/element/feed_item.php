@@ -20,7 +20,7 @@
     <?php else : ?>
         <p><?= $this->Html->link(
             'Read more',
-            ['_name' => 'feeditems:view', 'id' => $feedItem->id, 'feedId' => $feedItem->feed_id],
+            ['_name' => 'feedsubscriptions:viewitem', 'itemId' => $feedItem->id, 'id' => $feedSubscription->id],
         ) ?></p>
     <?php endif; ?>
 </div>

@@ -5,6 +5,7 @@ namespace App\Policy;
 
 use App\Model\Entity\FeedItem;
 use Authorization\IdentityInterface;
+use RuntimeException;
 
 /**
  * FeedItem policy
@@ -53,14 +54,9 @@ class FeedItemPolicy
      */
     public function canView(IdentityInterface $user, FeedItem $feedItem)
     {
-        // User has to be one of the subscribers. Generally
-        // this should be a loop of 1 item.
-        foreach ((array)$feedItem->feed_subscriptions as $sub) {
-            if ($sub->user_id == $user->id) {
-                return true;
-            }
+        if (empty($feedItem->feed_subscription)) {
+            throw new RuntimeException('Cannot authorize FeedItem without FeedSubscriptions relation');
         }
-
-        return false;
+        return $feedItem->feed_subscription->user_id == $user->id;
     }
 }

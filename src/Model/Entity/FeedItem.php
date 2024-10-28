@@ -21,7 +21,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime|null $modified
  *
  * @property \App\Model\Entity\Feed $feed
- * @property \App\Model\Entity\FeedSubscription[] $feed_subscriptions
+ * @property \App\Model\Entity\FeedSubscription $feed_subscription
  */
 class FeedItem extends Entity
 {
@@ -46,6 +46,6 @@ class FeedItem extends Entity
         'created' => false,
         'modified' => false,
         'feed' => false,
-        'feed_subscriptions' => false,
+        'feed_subscription' => false,
     ];
 }

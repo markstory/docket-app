@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\FeedCategoriesTable&\Cake\ORM\Association\BelongsTo $FeedCategories
  * @property \App\Model\Table\SavedFeedItemsTable&\Cake\ORM\Association\HasMany $SavedFeedItems
- * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\BelongsToMany $FeedItems
+ * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
  *
  * @method \App\Model\Entity\FeedSubscription newEmptyEntity()
  * @method \App\Model\Entity\FeedSubscription newEntity(array $data, array $options = [])
@@ -71,10 +71,13 @@ class FeedSubscriptionsTable extends Table
         $this->hasMany('SavedFeedItems', [
             'foreignKey' => 'feed_subscription_id',
         ]);
-        $this->belongsToMany('FeedItems', [
-            'foreignKey' => 'feed_subscription_id',
-            'targetForeignKey' => 'feed_item_id',
-            'joinTable' => 'feed_subscriptions_feed_items',
+
+        // Pass through relation to feeditems
+        // Allows bypassing the Feeds relation for reads.
+        $this->hasMany('FeedItems', [
+            'className' => FeedItemsTable::class,
+            'foreignKey' => 'feed_id',
+            'bindingKey' => 'feed_id',
         ]);
     }
 

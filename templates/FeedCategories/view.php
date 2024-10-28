@@ -32,6 +32,6 @@ $subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:add', '?'
 
 <div class="feed-items">
 <?php foreach ($feedItems as $item) : ?>
-    <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $item->feed_subscriptions[0]]) ?>
+    <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $item->feed_subscription]) ?>
 <?php endforeach; ?>
 </div>
