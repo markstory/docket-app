@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string $title
  * @property int $color
  * @property int $ranking
+ * @property bool $expanded
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *
@@ -36,6 +37,7 @@ class FeedCategory extends Entity
         'title' => true,
         'color' => true,
         'ranking' => true,
+        'expanded' => true,
         'created' => true,
         'modified' => true,
         'user' => false,

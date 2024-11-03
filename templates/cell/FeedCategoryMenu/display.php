@@ -22,7 +22,9 @@ declare(strict_types=1);
             <?= $this->element('icons/grabber24') ?>
         </button>
         <div>
+            <!-- item element needs a toggle for open/close the category -->
             <?= $this->element('feed_category_item', ['feedCategory' => $category]) ?>
+            <!-- read the category.open and conditionally render the menu -->
             <ul>
             <?php foreach ($category->feed_subscriptions as $subscription) : ?>
                 <li><?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?></li>

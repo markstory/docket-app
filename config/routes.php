@@ -333,6 +333,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedcategories:deleteconfirm')
             ->setPass(['id']);
         $builder->post('/reorder', ['action' => 'reorder'], 'feedcategories:reorder');
+        $builder->post('/{id}/toggle-expanded', ['action' => 'toggleExpanded'], 'feedcategories:toggleexpanded')
+            ->setPass(['id']);
     });
 });
 

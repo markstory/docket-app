@@ -147,4 +147,15 @@ class FeedCategoriesController extends AppController
         }
         $this->FeedCategories->reorder($ids);
     }
+
+    public function toggleExpanded(int $id): void
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $feedCategory = $this->FeedCategories->get($id);
+        $this->Authorization->authorize($feedCategory, 'edit');
+
+        $feedCategory->expanded = !$feedCategory->expanded;
+
+        $this->FeedCategories->saveOrFail($feedCategory);
+    }
 }

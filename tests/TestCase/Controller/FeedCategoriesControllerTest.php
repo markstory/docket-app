@@ -320,4 +320,33 @@ class FeedCategoriesControllerTest extends TestCase
             $this->assertEquals($id, $results[$i]->id);
         }
     }
+
+    public function testToggleExpanded()
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $this->assertNull($blogs->expanded);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/feeds/categories/{$blogs->id}/toggle-expanded");
+        $this->assertResponseOk();
+        $reload = $this->FeedCategories->get($blogs->id);
+        $this->assertTrue($reload->expanded);
+    }
+
+    /**
+     * Test delete_confirm method permissions
+     */
+    public function testToggleExpandedPermissions(): void
+    {
+        $category = $this->makeFeedCategory('Blogs', 2);
+
+        $this->login();
+        $this->post("/feeds/categories/{$category->id}/toggle-expanded");
+
+        $this->assertResponseCode(403);
+
+        $reload = $this->FeedCategories->get($category->id);
+        $this->assertFalse($reload->expanded);
+    }
 }
