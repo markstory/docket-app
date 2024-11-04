@@ -40,13 +40,9 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription);
 
-        // TODO add in subscription read state.
-        $identityId = $this->Authentication->getIdentity()->id;
-        // TODO This is a jank query as it re-reads the subscription
         $feedItems = $this->FeedSubscriptions->FeedItems->find(
             'feedItems',
-            subscriptionId: $feedSubscription->id,
-            userId: $identityId
+            subscription: $feedSubscription,
         );
         $feedItems = $this->paginate($feedItems);
 

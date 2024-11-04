@@ -145,13 +145,13 @@ class FeedItemsTable extends Table
     /**
      * Find all items in a subscription
      */
-    public function findFeedItems(SelectQuery $query, string|int $subscriptionId, string|int $userId): SelectQuery
+    public function findFeedItems(SelectQuery $query, FeedSubscription $subscription): SelectQuery
     {
         return $query
             ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
-                'FeedItemUsers.user_id' => $userId,
-                'FeedSubscriptions.id' => $subscriptionId,
+                'FeedItemUsers.user_id' => $subscription->user_id,
+                'FeedSubscriptions.id' => $subscription->id,
             ])
             ->orderByDesc('FeedItems.published_at');
     }
