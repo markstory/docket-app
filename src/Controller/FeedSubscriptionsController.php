@@ -67,17 +67,13 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription, 'view');
         $identity = $this->Authentication->getIdentity();
 
-        assert($identity !== null, 'User required');
-        $userId = (int)$identity->getIdentifier();
-
         $feedItem = $this->FeedSubscriptions->FeedItems->find(
             'feedItem',
-            subscriptionId: $feedSubscription->id,
+            subscription: $feedSubscription,
             id: $itemId,
-            userId: $userId,
         )->firstOrFail();
         $this->Authorization->authorize($feedItem, 'view');
-        $this->FeedSubscriptions->FeedItems->markRead($userId, $feedItem);
+        $this->FeedSubscriptions->FeedItems->markRead($feedSubscription->user_id, $feedItem);
 
         $this->set(compact('feedItem'));
     }

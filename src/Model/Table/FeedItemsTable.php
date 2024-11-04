@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Entity\FeedItem;
 use App\Model\Entity\FeedItemUser;
+use App\Model\Entity\FeedSubscription;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
@@ -126,16 +127,16 @@ class FeedItemsTable extends Table
     /**
      * Find a specific item in a feed that a user has a subscription to.
      */
-    public function findFeedItem(SelectQuery $query, string|int $subscriptionId, string|int $id, string|int $userId): SelectQuery
+    public function findFeedItem(SelectQuery $query, FeedSubscription $subscription, string|int $id): SelectQuery
     {
         return $query
             ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
                 'OR' => [
-                    'FeedItemUsers.user_id' => $userId,
+                    'FeedItemUsers.user_id' => $subscription->user_id,
                     'FeedItemUsers.user_id IS' => null,
                 ],
-                'FeedSubscriptions.id' => $subscriptionId,
+                'FeedSubscriptions.id' => $subscription->id,
                 'FeedItems.id' => $id,
             ])
             ->orderByDesc('FeedItems.published_at');
