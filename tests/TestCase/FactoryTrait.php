@@ -11,6 +11,7 @@ use App\Model\Entity\CalendarSubscription;
 use App\Model\Entity\Feed;
 use App\Model\Entity\FeedCategory;
 use App\Model\Entity\FeedItem;
+use App\Model\Entity\FeedSubscription;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
@@ -137,6 +138,23 @@ trait FactoryTrait
         $section = $sections->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $sections->saveOrFail($section);
+    }
+
+    protected function makeFeedSubscription($categoryId, $feedId, $userId = 1, $props = []): FeedSubscription
+    {
+        $subscriptions = $this->fetchTable('FeedSubscriptions');
+
+        $props = array_merge([
+            'user_id' => $userId,
+            'feed_id' => $feedId,
+            'feed_category_id' => $categoryId,
+            'alias' => 'news site',
+            'ranking' => 0,
+        ], $props);
+        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        $sub = $subscriptions->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $subscriptions->saveOrFail($sub);
     }
 
     protected function makeFeedCategory($name, $userId = 1, $props = []): FeedCategory

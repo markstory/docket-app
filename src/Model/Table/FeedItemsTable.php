@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\FeedItem;
+use App\Model\Entity\FeedItemUser;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -13,6 +16,7 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
  * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\BelongsToMany $FeedSubscriptions
+ * @property \App\Model\Table\FeedItemUsersTable&\Cake\ORM\Association\HasOne $FeedItemUsers
  *
  * @method \App\Model\Entity\FeedItem newEmptyEntity()
  * @method \App\Model\Entity\FeedItem newEntity(array $data, array $options = [])
@@ -59,6 +63,13 @@ class FeedItemsTable extends Table
         $this->belongsTo('FeedSubscriptions', [
             'foreignKey' => 'feed_id',
             'bindingKey' => 'feed_id',
+        ]);
+
+        // Useful in contain, but requires a userId condition
+        // to be set to actually be useful.
+        $this->hasOne('FeedItemUsers', [
+            'foreignKey' => 'feed_item_id',
+            'joinType' => 'LEFT',
         ]);
     }
 
@@ -115,11 +126,15 @@ class FeedItemsTable extends Table
     /**
      * Find a specific item in a feed that a user has a subscription to.
      */
-    public function findFeedItem(SelectQuery $query, string|int $subscriptionId, string|int $id): SelectQuery
+    public function findFeedItem(SelectQuery $query, string|int $subscriptionId, string|int $id, string|int $userId): SelectQuery
     {
         return $query
-            ->contain('FeedSubscriptions')
+            ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
+                'OR' => [
+                    'FeedItemUsers.user_id' => $userId,
+                    'FeedItemUsers.user_id IS' => null,
+                ],
                 'FeedSubscriptions.id' => $subscriptionId,
                 'FeedItems.id' => $id,
             ])
@@ -129,11 +144,12 @@ class FeedItemsTable extends Table
     /**
      * Find all items in a subscription
      */
-    public function findFeedItems(SelectQuery $query, string|int $subscriptionId): SelectQuery
+    public function findFeedItems(SelectQuery $query, string|int $subscriptionId, string|int $userId): SelectQuery
     {
         return $query
-            ->contain('FeedSubscriptions')
+            ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
+                'FeedItemUsers.user_id' => $userId,
                 'FeedSubscriptions.id' => $subscriptionId,
             ])
             ->orderByDesc('FeedItems.published_at');
@@ -141,13 +157,36 @@ class FeedItemsTable extends Table
 
     public function findForCategory(SelectQuery $query, string|int $categoryId, string|int $userId): SelectQuery
     {
+        // TODO use userId here to bind read state for user
         return $query
             ->innerJoinWith('FeedSubscriptions.FeedCategories')
-            ->contain('FeedSubscriptions')
+            ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
+                'FeedItemUsers.user_id' => $userId,
                 'FeedSubscriptions.user_id' => $userId,
                 'FeedCategories.id' => $categoryId,
             ])
             ->orderByDesc('FeedItems.published_at');
+    }
+
+    public function markRead(int $userId, FeedItem $feedItem): void
+    {
+        $entity = $this->FeedItemUsers->findOrCreate(
+            [
+                'user_id' => $userId,
+                'feed_item_id' => $feedItem->id,
+            ],
+            function (FeedItemUser $entity) {
+                // set read_at during creation
+                $entity->read_at = DateTime::now();
+
+                return $entity;
+            }
+        );
+        // If read_at somehow gets cleared set it back
+        if ($entity->read_at === null) {
+            $entity->read_at = DateTime::now();
+            $this->FeedItemUsers->saveOrFail($entity);
+        }
     }
 }

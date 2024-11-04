@@ -123,6 +123,28 @@ class FeedSubscriptionsControllerTest extends TestCase
     }
 
     /**
+     * Test that viewItem goes
+     */
+    public function testViewItem(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $item = $this->makeFeedItem($feed->id, ['title' => 'derpity']);
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/feeds/{$subscription->id}/items/{$item->id}");
+        $this->assertResponseOk();
+
+        // Read at state recorded
+        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $state = $feedItemUsers->findByUserId(1)->firstOrFail();
+        $this->assertNotEmpty($state->read_at);
+        $this->assertEquals($state->feed_item_id, $item->id);
+    }
+
+    /**
      * Test edit method
      *
      * @return void

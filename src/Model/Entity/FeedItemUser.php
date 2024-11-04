@@ -6,21 +6,18 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * FeedSubscriptionsFeedItem Entity
+ * FeedItemUser Entity
  *
  * @property int $id
- * @property int $feed_subscription_id
+ * @property int $user_id
  * @property int $feed_item_id
- * @property bool $is_read
- * @property bool $is_saved
- * @property bool $is_hidden
- * @property \Cake\I18n\DateTime $created
- * @property \Cake\I18n\DateTime|null $modified
+ * @property \Cake\I18n\DateTime $read_at
+ * @property \Cake\I18n\DateTime $saved_at
  *
- * @property \App\Model\Entity\FeedSubscription $feed_subscription
+ * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\FeedItem $feed_item
  */
-class FeedSubscriptionsFeedItem extends Entity
+class FeedItemUser extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -32,14 +29,11 @@ class FeedSubscriptionsFeedItem extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
-        'feed_subscription_id' => true,
+        'user_id' => true,
         'feed_item_id' => true,
-        'is_read' => true,
-        'is_saved' => true,
-        'is_hidden' => true,
-        'created' => true,
-        'modified' => true,
-        'feed_subscription' => true,
+        'read_at' => true,
+        'saved_at' => true,
+        'user' => true,
         'feed_item' => true,
     ];
 }

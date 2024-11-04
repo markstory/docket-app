@@ -65,15 +65,19 @@ class FeedSubscriptionsController extends AppController
     {
         $feedSubscription = $this->FeedSubscriptions->get($id);
         $this->Authorization->authorize($feedSubscription, 'view');
-
-        // TODO move this to feedsubscriptions. It is dumb to have a controller with a single action
         $identity = $this->Authentication->getIdentity();
+
+        assert($identity !== null, 'User required');
+        $userId = (int)$identity->getIdentifier();
+
         $feedItem = $this->FeedSubscriptions->FeedItems->find(
             'feedItem',
             subscriptionId: $feedSubscription->id,
             id: $itemId,
+            userId: $userId,
         )->firstOrFail();
         $this->Authorization->authorize($feedItem, 'view');
+        $this->FeedSubscriptions->FeedItems->markRead($userId, $feedItem);
 
         $this->set(compact('feedItem'));
     }
