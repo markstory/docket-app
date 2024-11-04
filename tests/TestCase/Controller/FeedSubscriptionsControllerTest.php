@@ -134,6 +134,7 @@ class FeedSubscriptionsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
+        $this->disableErrorHandlerMiddleware();
         $this->get("/feeds/{$subscription->id}/items/{$item->id}");
         $this->assertResponseOk();
 

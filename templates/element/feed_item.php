@@ -3,8 +3,12 @@
  * @var \App\Model\Entity\FeedSubscription $feedSubscription
  * @var \App\Model\Entity\FeedItem $feedItem
  */
+$class = 'feed-item';
+if ($feedItem->feed_item_user && $feedItem->feed_item_user->read_at) {
+    $class .= ' feed-item-read';
+}
 ?>
-<div class="feed-item">
+<div class="<?= h($class); ?>">
     <h2><?= h($feedItem->title) ?></h2>
     <p>
         <?= $this->Html->link($feedSubscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $feedSubscription->id]) ?> |

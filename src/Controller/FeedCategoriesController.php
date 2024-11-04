@@ -33,9 +33,8 @@ class FeedCategoriesController extends AppController
         $feedCategory = $this->FeedCategories->get($id);
         $this->Authorization->authorize($feedCategory);
 
-        $identityId = $this->Authentication->getIdentity()->id;
         $itemsTable = $this->fetchTable('FeedItems');
-        $itemsQuery = $itemsTable->find('forCategory', categoryId: $id, userId: $identityId);
+        $itemsQuery = $itemsTable->find('forCategory', category: $feedCategory);
         $result = $this->paginate($itemsQuery);
 
         $this->set('feedCategory', $feedCategory);

@@ -5,14 +5,23 @@ namespace App\Controller;
 
 use App\Model\Table\FeedSubscriptionsTable;
 use App\Service\FeedService;
+use Cake\Http\Exception\BadRequestException;
+use Cake\I18n\DateTime;
 
 /**
  * FeedSubscriptions Controller
  *
  * @property \App\Model\Table\FeedSubscriptionsTable $FeedSubscriptions
+ * @property \App\Model\Table\FeedItemsTable $FeedItems
  */
 class FeedSubscriptionsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->FeedItems = $this->fetchTable('FeedItems');
+    }
+
     /**
      * Index method
      *
@@ -40,8 +49,8 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription);
 
-        $feedItems = $this->FeedSubscriptions->FeedItems->find(
-            'feedItems',
+        $feedItems = $this->FeedItems->find(
+            'forSubscription',
             subscription: $feedSubscription,
         );
         $feedItems = $this->paginate($feedItems);
@@ -63,15 +72,53 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription, 'view');
         $identity = $this->Authentication->getIdentity();
 
-        $feedItem = $this->FeedSubscriptions->FeedItems->find(
-            'feedItem',
-            subscription: $feedSubscription,
-            id: $itemId,
-        )->firstOrFail();
+        $feedItem = $this->FeedItems
+            ->findById($itemId)
+            ->find('forSubscription', subscription: $feedSubscription)
+            ->firstOrFail();
         $this->Authorization->authorize($feedItem, 'view');
-        $this->FeedSubscriptions->FeedItems->markRead($feedSubscription->user_id, $feedItem);
 
+        $this->FeedSubscriptions->FeedItems->markRead(
+            $feedSubscription->user_id,
+            $feedItem
+        );
         $this->set(compact('feedItem'));
+    }
+
+    /**
+     * Bulk read endpoint
+     *
+     * Mark a list of items as read.
+     */
+    public function markItemsRead(int $id)
+    {
+        $this->request->allowMethod(['POST']);
+        $feedSubscription = $this->FeedSubscriptions->get($id);
+
+        // This is view because viewItem is as well
+        $this->Authorization->authorize($feedSubscription, 'view');
+        $query = $this->FeedItems->find(
+            'forSubscription',
+            subscription: $feedSubscription,
+        );
+        $ids = (array)$this->request->getData('id');
+        // TODO add validation
+
+        // Scope the ids to those in the subscription
+        $query = $query
+            ->select(['FeedItems.id'])
+            ->where(['FeedItems.id IN' => $ids]);
+
+        $allowedIds = $query->all()->extract('id')->toList();
+        if (count($allowedIds) !== count($ids)) {
+            throw new BadRequestException('Invalid records requested');
+        }
+        if (count($allowedIds) >= 100) {
+            throw new BadRequestException('Too many ids provided. Max is 100');
+        }
+        $this->FeedItems->markManyRead($feedSubscription->user_id, $allowedIds);
+
+        $this->redirect($this->referer());
     }
 
     /**

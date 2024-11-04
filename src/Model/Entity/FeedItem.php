@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
  *
  * @property \App\Model\Entity\Feed $feed
  * @property \App\Model\Entity\FeedSubscription $feed_subscription
+ * @property \App\Model\Entity\FeedItemUser $feed_item_user
  */
 class FeedItem extends Entity
 {
@@ -47,5 +48,6 @@ class FeedItem extends Entity
         'modified' => false,
         'feed' => false,
         'feed_subscription' => false,
+        'feed_item_user' => false,
     ];
 }

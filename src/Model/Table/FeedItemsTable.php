@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\FeedCategory;
 use App\Model\Entity\FeedItem;
 use App\Model\Entity\FeedItemUser;
 use App\Model\Entity\FeedSubscription;
@@ -125,9 +126,9 @@ class FeedItemsTable extends Table
     }
 
     /**
-     * Find a specific item in a feed that a user has a subscription to.
+     * Find all items in a subscription
      */
-    public function findFeedItem(SelectQuery $query, FeedSubscription $subscription, string|int $id): SelectQuery
+    public function findForSubscription(SelectQuery $query, FeedSubscription $subscription): SelectQuery
     {
         return $query
             ->contain(['FeedSubscriptions', 'FeedItemUsers'])
@@ -137,35 +138,22 @@ class FeedItemsTable extends Table
                     'FeedItemUsers.user_id IS' => null,
                 ],
                 'FeedSubscriptions.id' => $subscription->id,
-                'FeedItems.id' => $id,
             ])
             ->orderByDesc('FeedItems.published_at');
     }
 
-    /**
-     * Find all items in a subscription
-     */
-    public function findFeedItems(SelectQuery $query, FeedSubscription $subscription): SelectQuery
+    public function findForCategory(SelectQuery $query, FeedCategory $category): SelectQuery
     {
-        return $query
-            ->contain(['FeedSubscriptions', 'FeedItemUsers'])
-            ->where([
-                'FeedItemUsers.user_id' => $subscription->user_id,
-                'FeedSubscriptions.id' => $subscription->id,
-            ])
-            ->orderByDesc('FeedItems.published_at');
-    }
-
-    public function findForCategory(SelectQuery $query, string|int $categoryId, string|int $userId): SelectQuery
-    {
-        // TODO use userId here to bind read state for user
         return $query
             ->innerJoinWith('FeedSubscriptions.FeedCategories')
             ->contain(['FeedSubscriptions', 'FeedItemUsers'])
             ->where([
-                'FeedItemUsers.user_id' => $userId,
-                'FeedSubscriptions.user_id' => $userId,
-                'FeedCategories.id' => $categoryId,
+                'OR' => [
+                    'FeedItemUsers.user_id' => $category->user_id,
+                    'FeedItemUsers.user_id IS' => null,
+                ],
+                'FeedSubscriptions.user_id' => $category->user_id,
+                'FeedCategories.id' => $category->id,
             ])
             ->orderByDesc('FeedItems.published_at');
     }
@@ -188,6 +176,17 @@ class FeedItemsTable extends Table
         if ($entity->read_at === null) {
             $entity->read_at = DateTime::now();
             $this->FeedItemUsers->saveOrFail($entity);
+        }
+    }
+
+    public function markManyRead(int $userId, array $ids)
+    {
+        // TODO This is sloppy. This could be split into 2 queries
+        // 1. To find records that exist
+        // 2. Do an insert for records that don't exist.
+        // Because read state is on 'first' try there is no update.
+        foreach ($ids as $id) {
+            $this->markRead($userId, $id);
         }
     }
 }
