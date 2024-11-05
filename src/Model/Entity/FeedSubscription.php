@@ -8,6 +8,9 @@ use Cake\ORM\Entity;
 /**
  * FeedSubscription Entity
  *
+ * Contains all the persistent preferences for a user's subscription.
+ * Subscription view preferences are local to the subscription.
+ *
  * @property int $id
  * @property int $feed_id
  * @property int $user_id
