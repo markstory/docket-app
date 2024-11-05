@@ -317,7 +317,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedsubscriptions:deleteconfirm')
             ->setPass(['id']);
 
-        $builder->post('/{id}/items/mark-read', ['action' => 'markItemsRead'], 'feedsubscriptions:markitemsread')
+        $builder->post('/{id}/items/mark-read', ['action' => 'itemsMarkRead'], 'feedsubscriptions:itemsmarkread')
             ->setPass(['id']);
 
         $builder->get('{id}/items/{itemId}', ['action' => 'viewItem'], 'feedsubscriptions:viewitem')

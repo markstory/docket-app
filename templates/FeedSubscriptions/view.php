@@ -7,6 +7,9 @@
 $this->setLayout('feedreader');
 
 $this->assign('title', $feedSubscription->alias);
+
+$itemIds = $feedItems->extract('id')->toList();
+$itemCount = count($itemIds);
 ?>
 <div class="heading-actions">
     <div class="heading-actions-item">
@@ -15,7 +18,25 @@ $this->assign('title', $feedSubscription->alias);
             <?= h($feedSubscription->alias) ?>
         </h1>
     </div>
-    <?= $this->element('feed_subscription_menu', ['feedSubscription' => $feedSubscription]) ?>
+    <div class="button-bar-inline">
+        <?= $this->Form->postButton(
+            $this->element('icons/check16'),
+            ['_name' => 'feedsubscriptions:itemsmarkread', 'id' => $feedSubscription->id,  '_method' => 'post'],
+            [
+                'title' => __n(
+                    'mark {} item read',
+                    'mark {0} items read',
+                    $itemCount,
+                    [$itemCount]
+                ),
+                'class' => 'button-icon',
+                'data' => ['id' => $itemIds],
+                'escapeTitle' => false,
+            ]
+        );
+        ?>
+        <?= $this->element('feed_subscription_menu', ['feedSubscription' => $feedSubscription]) ?>
+    </div>
 </div>
 
 <div class="feed-items">

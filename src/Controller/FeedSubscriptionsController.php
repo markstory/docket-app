@@ -89,7 +89,7 @@ class FeedSubscriptionsController extends AppController
      *
      * Mark a list of items as read.
      */
-    public function markItemsRead(int $id)
+    public function itemsMarkRead(int $id)
     {
         $this->request->allowMethod(['POST']);
         $feedSubscription = $this->FeedSubscriptions->get($id);
