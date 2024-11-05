@@ -134,7 +134,6 @@ class FeedSubscriptionsControllerTest extends TestCase
 
         $this->login();
         $this->enableCsrfToken();
-        $this->disableErrorHandlerMiddleware();
         $this->get("/feeds/{$subscription->id}/items/{$item->id}");
         $this->assertResponseOk();
 
@@ -143,6 +142,100 @@ class FeedSubscriptionsControllerTest extends TestCase
         $state = $feedItemUsers->findByUserId(1)->firstOrFail();
         $this->assertNotEmpty($state->read_at);
         $this->assertEquals($state->feed_item_id, $item->id);
+    }
+
+    public function testViewItemPermissions(): void
+    {
+        $category = $this->makeFeedCategory('Blogs', 2);
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id, 2);
+        $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/feeds/{$subscription->id}/items/{$item->id}");
+        $this->assertResponseCode(403);
+    }
+
+    public function testMarkItemsRead(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
+        $otherItem = $this->makeFeedItem($feed->id, ['title' => 'also']);
+        $notIncluded = $this->makeFeedItem($feed->id, ['title' => 'nope']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $data = [
+            'id' => [$item->id, $otherItem->id],
+        ];
+        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->assertResponseCode(302);
+        $this->assertRedirect('/');
+
+        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $state = $feedItemUsers->findByFeedItemId($item->id)->first();
+        $this->assertNotEmpty($state);
+
+        $state = $feedItemUsers->findByFeedItemId($otherItem->id)->first();
+        $this->assertNotEmpty($state);
+
+        // No state for item not included.
+        $state = $feedItemUsers->findByFeedItemId($notIncluded->id)->first();
+        $this->assertNull($state);
+    }
+
+    public function testMarkItemsReadPermissions(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
+
+        $otherFeed = $this->makeFeed('https://example.org/feed.xml');
+        $this->makeFeedSubscription($category->id, $otherFeed->id);
+        $otherItem = $this->makeFeedItem($otherFeed->id, ['title' => 'derp']);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $data = [
+            'id' => [$item->id, $otherItem->id],
+        ];
+        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('Invalid records');
+    }
+
+    public function testMarkItemsNone(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $data = [];
+        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('required parameter');
+    }
+
+    public function testMarkItemsTooMany(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $data = [
+            'id' => array_fill(0, 101, 123),
+        ];
+        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('Too many ids');
     }
 
     /**

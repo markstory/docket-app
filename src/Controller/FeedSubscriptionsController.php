@@ -76,7 +76,6 @@ class FeedSubscriptionsController extends AppController
             ->findById($itemId)
             ->find('forSubscription', subscription: $feedSubscription)
             ->firstOrFail();
-        $this->Authorization->authorize($feedItem, 'view');
 
         $this->FeedSubscriptions->FeedItems->markRead(
             $feedSubscription->user_id,
@@ -97,12 +96,19 @@ class FeedSubscriptionsController extends AppController
 
         // This is view because viewItem is as well
         $this->Authorization->authorize($feedSubscription, 'view');
+
         $query = $this->FeedItems->find(
             'forSubscription',
             subscription: $feedSubscription,
         );
         $ids = (array)$this->request->getData('id');
-        // TODO add validation
+        // TODO more validation
+        if (count($ids) >= 100) {
+            throw new BadRequestException('Too many ids provided. Max is 100');
+        }
+        if (!$ids) {
+            throw new BadRequestException('Missing required parameter id');
+        }
 
         // Scope the ids to those in the subscription
         $query = $query
@@ -113,9 +119,7 @@ class FeedSubscriptionsController extends AppController
         if (count($allowedIds) !== count($ids)) {
             throw new BadRequestException('Invalid records requested');
         }
-        if (count($allowedIds) >= 100) {
-            throw new BadRequestException('Too many ids provided. Max is 100');
-        }
+
         $this->FeedItems->markManyRead($feedSubscription->user_id, $allowedIds);
 
         $this->redirect($this->referer());

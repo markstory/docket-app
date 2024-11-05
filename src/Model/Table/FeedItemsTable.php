@@ -181,12 +181,12 @@ class FeedItemsTable extends Table
 
     public function markManyRead(int $userId, array $ids)
     {
-        // TODO This is sloppy. This could be split into 2 queries
-        // 1. To find records that exist
-        // 2. Do an insert for records that don't exist.
-        // Because read state is on 'first' try there is no update.
-        foreach ($ids as $id) {
-            $this->markRead($userId, $id);
+        $items = $this->find()
+            ->where(['FeedItems.id IN' => $ids])
+            ->orderByDesc('FeedItems.published_at');
+
+        foreach ($items as $item) {
+            $this->markRead($userId, $item);
         }
     }
 }
