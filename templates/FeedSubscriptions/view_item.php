@@ -33,6 +33,7 @@ $menuId = 'feed-item-' . uniqid();
         $feedUrl,
     ) ?></span>
     <span class="feed-published-at"><?= $this->Time->nice($feedItem->published_at) ?></span>
+    by <span class="feed-author"><?= h($feedItem->author) ?></span>
 </div>
 <div class="feed-item-body">
     <?= $feedItem->content ?>
