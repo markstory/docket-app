@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string $title
  * @property string $summary
  * @property string $content
+ * @property string $author
  * @property \Cake\I18n\DateTime $published_at
  * @property string|null $thumbnail_image_url
  * @property \Cake\I18n\DateTime $created
@@ -42,6 +43,7 @@ class FeedItem extends Entity
         'title' => true,
         'summary' => true,
         'content' => true,
+        'author' => true,
         'published_at' => true,
         'thumbnail_image_url' => true,
         'created' => false,

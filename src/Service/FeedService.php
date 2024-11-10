@@ -139,6 +139,7 @@ class FeedService
             $item->title = (string)$xmlItem->title;
             $item->url = (string)$xmlItem->link;
             $item->summary = (string)$xmlItem->description;
+            $item->author = (string)$xmlItem->author;
             $item->content = '';
             $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
             $item->feed_id = $feed->id;

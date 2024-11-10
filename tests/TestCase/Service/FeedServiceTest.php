@@ -126,6 +126,7 @@ class FeedServiceTest extends TestCase
         $this->assertTrue(Validation::url($item->url));
         $this->assertNotEmpty($item->title);
         $this->assertNotEmpty($item->summary);
+        $this->assertNotEmpty($item->author);
         $this->assertNotEmpty($item->published_at);
         $this->assertEquals($feed->id, $item->feed_id);
     }
