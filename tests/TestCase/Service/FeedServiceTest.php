@@ -154,6 +154,7 @@ class FeedServiceTest extends TestCase
         $this->assertNotEmpty($item->guid);
         $this->assertTrue(Validation::url($item->url));
         $this->assertNotEmpty($item->title);
+        $this->assertNotEmpty($item->author);
         $this->assertNotEmpty($item->summary);
         $this->assertStringNotContainsString('&gt;', $item->content);
         $this->assertStringContainsString('<ul>', $item->content);

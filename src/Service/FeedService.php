@@ -114,6 +114,9 @@ class FeedService
             $item->summary = Text::truncate(strip_tags($safeHtml), 200);
             $item->content = $safeHtml;
 
+            if ($entry->author) {
+                $item->author = (string)$entry->author->name;
+            }
             $item->published_at = DateTime::parse((string)$entry->updated[0]);
             $item->feed_id = $feed->id;
 
