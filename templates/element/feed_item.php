@@ -13,6 +13,8 @@ if ($feedItem->feed_item_user && $feedItem->feed_item_user->read_at) {
     <p>
         <?= $this->Html->link($feedSubscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $feedSubscription->id]) ?> |
         <?= $this->Time->timeAgoInWords($feedItem->published_at) ?>
+        by
+        <?= h($feedItem->author) ?>
     </p>
     <p><?= h($feedItem->summary) ?></p>
     <?php if (!$feedItem->content) : ?>
