@@ -30,6 +30,7 @@ class Feed extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
+        'default_alias' => true,
         'url' => true,
         'refresh_interval' => true,
         'last_refresh' => true,

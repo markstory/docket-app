@@ -195,4 +195,42 @@ class FeedServiceTest extends TestCase
         $this->assertNotEmpty($refresh->published_at);
         $this->assertEquals($feed->id, $refresh->feed_id);
     }
+
+    public function testDiscoverFeedRss(): void
+    {
+        $client = new Client();
+        $url = 'https://example.org';
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: text/html'],
+            $this->readFeedFixture('mark-story-com.html')
+        );
+        $this->mockClientGet($url, $res);
+        $service = new FeedService($client, $this->cleaner);
+        $feeds = $service->discoverFeeds($url);
+        $this->assertCount(1, $feeds);
+        $feed = $feeds[0];
+        $this->assertInstanceOf(Feed::class, $feed);
+        $this->assertEquals('https://example.org/posts/archive.rss', $feed->url);
+        $this->assertEquals('Mark Story', $feed->default_alias);
+    }
+
+    public function testDiscoverFeedAtom(): void
+    {
+        $client = new Client();
+        $url = 'https://example.org';
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: text/html'],
+            $this->readFeedFixture('github-releases.html')
+        );
+        $this->mockClientGet($url, $res);
+        $service = new FeedService($client, $this->cleaner);
+        $feeds = $service->discoverFeeds($url);
+        $this->assertCount(2, $feeds);
+        $feed = $feeds[0];
+        $this->assertInstanceOf(Feed::class, $feed);
+        $this->assertEquals('asset_compress Release Notes', $feed->default_alias);
+        $this->assertEquals('https://github.com/markstory/asset_compress/releases.atom', $feed->url);
+    }
 }

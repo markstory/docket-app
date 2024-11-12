@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">    <title>Posts | Mark Story</title>
+
+    <meta name="twitter:card" content="summary"><meta name="twitter:title" content="Mark Story"><meta name="twitter:description" content="Home of Mark Story, developer and illustrator."><meta name="twitter:image" content="https://mark-story.com/img/mouth-icon-large.png">    <link href="/favicon.ico" type="image/x-icon" rel="icon"><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="alternate" type="application/rss+xml" title="Mark Story" href="/posts/archive.rss" />
+    <link rel="stylesheet" href="/cache/site.v1713762029.css">    <script src="/cache/app.v1713762029.js" defer="defer"></script>    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+    <header class="container header-container">
+        <div class="logo columns ten">
+            <div x-data="{show: false}">
+    <div class="search-box js-search-box" x-show="show">
+        <form method="post" accept-charset="utf-8" action="/search">            <input type="search" name="terms" placeholder="Search">            <button>Go</button>
+        </form>    </div>
+    <button class="nav-link search-trigger js-search-trigger" x-on:click="show = !show">
+        <img src="/img/musica-searcher.svg" width="24" height="24" alt="">    </button>
+</div>
+            <a href="/"><img src="/img/mouth-icon-large.png" height="128" width="128" alt=""></a>        </div>
+        <nav class="nav columns two">
+                    <ul class="nav-links">
+                            <li class="nav-link"><a href="/posts/archive">Writing</a></li>
+                            <li class="nav-link"><a href="/about">About</a></li>
+                        </ul>
+        </nav>
+    </header>
+
+    <div id="content" class="container">
+                <section id="main-content">
+            <div class="mini-bio">
+    Hi, I'm <strong>Mark Story</strong>. I'm a developer / illustrator. I work at
+    <a href="https://sentry.io">Sentry</a> during the day, and build
+    <a href="https://cakephp.org">CakePHP</a> at other <a href="https://github.com/markstory">open source</a> at night.
+    I work primarily in PHP, JavaScript and Python, but love to learn others.
+</div>
+
+<div class="posts">
+	<section class="node-list">
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/building-a-new-migrations-backend-for-cakephp">Building a new migrations backend for CakePHP</a></h4>
+        <div class="metadata">
+            <time datetime="2024-10-23T02:42:40+00:00">
+                <span class="month">Oct</span>
+                <span class="day">23</span>
+                <span class="year">2024</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/php" rel="tag">PHP</a>                </li>
+                            <li>
+                <a href="/tags/view/cakephp" rel="tag">CakePHP</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/open-source" rel="tag">Open Source</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>During the development of CakePHP, we also wanted to update migrations to be compatible. However, we had stumbled into a tedious dependency graph. Currently <code>phinx</code> relies on <code>cakephp/database</code>. While <code>cakephp/migrations</code> depends on <code>phinx</code>. In order to do a major release on <code>cakephp/migrations</code> (to provide CakePHP 5.</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/server-rendered-components-with-template-fragments-and-webcomponents">Server rendered components with template fragments and webcomponents</a></h4>
+        <div class="metadata">
+            <time datetime="2024-07-28T17:25:01+00:00">
+                <span class="month">Jul</span>
+                <span class="day">28</span>
+                <span class="year">2024</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/php" rel="tag">PHP</a>                </li>
+                            <li>
+                <a href="/tags/view/javascript" rel="tag">Javascript</a>                </li>
+                            <li>
+                <a href="/tags/view/cakephp" rel="tag">CakePHP</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/open-source" rel="tag">Open Source</a>                </li>
+                            <li>
+                <a href="/tags/view/htmx" rel="tag">htmx</a>                </li>
+                            <li>
+                <a href="/tags/view/webcomponents" rel="tag">webcomponents</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>As I use webcomponents more, I found myself wanting a way to define the <span class="caps">HTML</span> for webcomponents with a non-trivial amount of light <span class="caps">DOM</span> contents in a more reusable programatic way. So far, I&#8217;ve found that modelling webcomponents as template fragments is a reasonably ergonomic solution. It enables usage such as:</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/building-a-confirm-dialog-flow-with-htmx">Building a confirm dialog flow with htmx</a></h4>
+        <div class="metadata">
+            <time datetime="2024-06-16T03:49:06+00:00">
+                <span class="month">Jun</span>
+                <span class="day">16</span>
+                <span class="year">2024</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/php" rel="tag">PHP</a>                </li>
+                            <li>
+                <a href="/tags/view/javascript" rel="tag">Javascript</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/open-source" rel="tag">Open Source</a>                </li>
+                            <li>
+                <a href="/tags/view/docket" rel="tag">docket</a>                </li>
+                            <li>
+                <a href="/tags/view/htmx" rel="tag">htmx</a>                </li>
+                            <li>
+                <a href="/tags/view/webcomponents" rel="tag">webcomponents</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>When re-building docket with htmx, I wanted to retain the confirm dialog experience I had with react. Instead of taking on a dependency for this, I chose to build my own combining <span class="caps">HTMX</span> and Webcomponents. The resulting UX feels snappy and similar to a client rendered experience. My end result looks like this:</p>
+
+<p><img alt="" height="276" src="/files/confirm_delete_docket.png" width="467" /></p></img>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/building-a-responsive-sidebar-application-layout">Building a responsive sidebar application layout</a></h4>
+        <div class="metadata">
+            <time datetime="2024-03-17T01:33:41+00:00">
+                <span class="month">Mar</span>
+                <span class="day">17</span>
+                <span class="year">2024</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/css" rel="tag">CSS</a>                </li>
+                            <li>
+                <a href="/tags/view/web-design" rel="tag">Web Design</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/webcomponents" rel="tag">webcomponents</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>I wanted to share a <span class="caps">CSS</span> and webcomponent layout that I&#8217;ve been pretty happy with in a few projects. With webcomponents now widely supported, I was able to remove one of the last bit of inline scripts I had left in <a href="https://github.com/markstory/docket-app">docket</a> converting it to a webcomponent. The layout offers a layout with a 250px sidebar and content area.</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/building-my-first-htmx-application">Building my first htmx application</a></h4>
+        <div class="metadata">
+            <time datetime="2024-02-04T17:53:35+00:00">
+                <span class="month">Feb</span>
+                <span class="day">04</span>
+                <span class="year">2024</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/php" rel="tag">PHP</a>                </li>
+                            <li>
+                <a href="/tags/view/javascript" rel="tag">Javascript</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/docket" rel="tag">docket</a>                </li>
+                            <li>
+                <a href="/tags/view/htmx" rel="tag">htmx</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>After updating <a href="https://github.com/markstory/docket-app">docket</a> to use <a href="https://htmx.org">htmx</a>, I wanted to share my experience. First and most important, <span class="caps">HTMX</span> is more than just a client side framework. Instead of using a JavaScript library to render your application in the browser, you have incrementally load <span class="caps">HTML</span> as your application&#8217;s state changes.</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/webcomponents-and-cakephp-formhelper">Webcomponents and CakePHP FormHelper</a></h4>
+        <div class="metadata">
+            <time datetime="2023-12-30T04:44:01+00:00">
+                <span class="month">Dec</span>
+                <span class="day">30</span>
+                <span class="year">2023</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/javascript" rel="tag">Javascript</a>                </li>
+                            <li>
+                <a href="/tags/view/cakephp" rel="tag">CakePHP</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/open-source" rel="tag">Open Source</a>                </li>
+                            <li>
+                <a href="/tags/view/webcomponents" rel="tag">webcomponents</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>Webcomponents are starting to get more traction now that they are fully supported across browsers. I have recently been rebuilding my personal todo list software <a href="https://github.com/markstory/docket-app">Docket</a> with <span class="caps">HTMX</span> and Webcomponents.</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/bitfields-are-a-trap">Bitfields are a trap</a></h4>
+        <div class="metadata">
+            <time datetime="2023-11-26T00:52:25+00:00">
+                <span class="month">Nov</span>
+                <span class="day">26</span>
+                <span class="year">2023</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/php" rel="tag">PHP</a>                </li>
+                            <li>
+                <a href="/tags/view/web-development" rel="tag">Web Development</a>                </li>
+                            <li>
+                <a href="/tags/view/mysql" rel="tag">MySQL</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>I recently came across <a href="https://www.youtube.com/watch?v=Kf8SWqljM18&amp;si=osEodtoZbMGsQTTy">this video</a> on Youtube and while the author makes some convincing arguments for using bitfields. I&#8217;d like to share my experiences having worked with them in a few applications. A <a href="https://mark-story.com/posts/view/using-bitmasks-to-indicate-status">long time ago</a>, I also thought that bitfields were neat.</p>    </div>
+</article>
+					<article class="node post">
+    <header>
+        <h4><a href="/posts/view/my-upgrades-to-cakephp-4-5-0">My Upgrades to CakePHP 4.5.0</a></h4>
+        <div class="metadata">
+            <time datetime="2023-10-13T03:24:38+00:00">
+                <span class="month">Oct</span>
+                <span class="day">13</span>
+                <span class="year">2023</span>
+            </time>
+            <ul class="tags">
+                            <li>
+                <a href="/tags/view/open-source" rel="tag">Open Source</a>                </li>
+                        </ul>
+        </div>
+    </header>
+    <div class="abstract">
+        <p>A few months back I upgraded <a href="https://github.com/markstory/docket-app">docket</a> and this site to CakePHP 4.5 from an earlier 4.x release. I wanted to share my notes from the upgrade process so that if you&#8217;re considering an upgrade you have a better idea of what to expect.</p>    </div>
+</article>
+			</section>
+	<p><a href="/posts">more posts..</a></p>
+</div>
+
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="columns nine social">
+                    <h3>Follow</h3>
+                    <ul>
+                        <li><a href="https://github.com/markstory">
+                            <img src="/img/github-logo.svg" width="32" height="32" alt="">                        </a></li>
+                        <li><a href="https://mastodon.social/@markstory" rel="me">
+                            <img src="/img/mastodon-logo.svg" width="32" height="32" alt="">                        </a></li>
+                        <li><a href="/posts/rss">
+                            <img src="/img/rss-symbol.svg" width="32" height="32" alt="">                        </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <p class="copyright">Copyright 2003 - 2024 Mark Story <br />
+                    Designed &amp; Developed by Mark Story Powered by <a href="http://cakephp.org">CakePHP</a>
+                </p>
+            </div>
+
+        </div>
+    </footer>
+</div>
+    </body>
+</html>

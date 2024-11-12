@@ -9,9 +9,15 @@ use Cake\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
+use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use Cake\Utility\Xml;
+use DOMDocument;
+use DOMXPath;
+use Exception;
+use Laminas\Diactoros\Uri;
+use RuntimeException;
 use SimpleXMLElement;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
@@ -51,8 +57,64 @@ class FeedService
     }
 
     /**
-    * Import new FeedItems for all the unique items in a feed's current response
-    */
+     * Fetch a URL and parse the resulting HTML page for any /head/link elements
+     * that quack like a known feed type.
+     *
+     * @return array<\App\Model\Entity\Feed> Returns a list of pending Feed entities.
+     */
+    public function discoverFeeds(string $url): array
+    {
+        // Fetch the URL
+        $response = $this->fetchUrl($url);
+        $responseType = $response->getHeaderLine('Content-Type');
+        // Must claim to be HTML.
+        if (!str_contains($responseType, 'html')) {
+            throw new RuntimeException('That URL is not an HTML page. No feed could be found.');
+        }
+        try {
+            // Turn off errors because domdocument complains on html5
+            $dom = new DOMDocument();
+            $dom->loadHtml($response->getBody() . '', LIBXML_NOERROR);
+        } catch (Exception $e) {
+            throw new RuntimeException('That URL contains invalid HTML and could not be processed.', 0, $e);
+        }
+
+        // No user/pass support yet.
+        $uri = new Uri($url);
+        $baseUrl = $uri->getScheme() . '://' . $uri->getHost();
+        if ($uri->getPort() !== null) {
+            $baseUrl .= ':' . $uri->getPort();
+        }
+
+        /** @var array<\App\Model\Entity\Feed> $feeds */
+        $feeds = [];
+
+        // parse the HTML page looking for link elements
+        $xpath = new DOMXPath($dom);
+        /** @var \Traversable<\DOMElement> $links */
+        $links = $xpath->query('//head/link[@rel="alternate"]');
+        foreach ($links as $link) {
+            $linkType = $link->getAttribute('type');
+            $url = $link->getAttribute('href');
+            if ($url[0] == '/') {
+                $url = $baseUrl . $url;
+            }
+
+            // Atom and RSS work the same
+            if (str_contains($linkType, 'rss') || str_contains($linkType, 'atom')) {
+                $feeds[] = new Feed([
+                    'default_alias' => $link->getAttribute('title'),
+                    'url' => $url,
+                ]);
+            }
+        }
+
+        return $feeds;
+    }
+
+    /**
+     * Import new FeedItems for all the unique items in a feed's current response
+     */
     public function refreshFeed(Feed $feed): void
     {
         $res = $this->fetchUrl($feed->url);
