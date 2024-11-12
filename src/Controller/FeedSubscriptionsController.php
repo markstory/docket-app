@@ -13,6 +13,7 @@ use Cake\I18n\DateTime;
  *
  * @property \App\Model\Table\FeedSubscriptionsTable $FeedSubscriptions
  * @property \App\Model\Table\FeedItemsTable $FeedItems
+ * @property \App\Model\Table\FeedCategoriesTable $FeedCategories
  */
 class FeedSubscriptionsController extends AppController
 {
@@ -20,6 +21,7 @@ class FeedSubscriptionsController extends AppController
     {
         parent::initialize();
         $this->FeedItems = $this->fetchTable('FeedItems');
+        $this->FeedCategories = $this->fetchTable('FeedCategories');
     }
 
     /**
@@ -151,8 +153,29 @@ class FeedSubscriptionsController extends AppController
 
         $this->Authorization->authorize($feedSubscription);
         $referer = $this->request->referer();
+
+        // TODO this needs ACL
         $feedCategories = $this->FeedSubscriptions->FeedCategories->find('list', limit: 200)->all();
         $this->set(compact('feedSubscription', 'feedCategories', 'referer'));
+    }
+
+    public function discover(FeedService $feedService)
+    {
+        // Validate add permission with a throw away record
+        $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
+        $feedSubscription->user_id = (int)$this->Authentication->getIdentifier();
+        $this->Authorization->authorize($feedSubscription, 'add');
+
+        $feeds = [];
+        if ($this->request->is('post')) {
+            // TODO error handling!
+            $feeds = $feedService->discoverFeeds($this->request->getData('url'));
+        }
+        $query = $this->FeedCategories->find('list', limit: 200);
+        $feedCategories = $this->Authorization->applyScope($query, 'index');
+        $referer = $this->request->referer();
+
+        $this->set(compact('feeds', 'feedCategories', 'referer'));
     }
 
     /**

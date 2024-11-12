@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\FeedsTable;
 use App\Test\TestCase\FactoryTrait;
+use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -15,6 +16,7 @@ use Cake\TestSuite\TestCase;
  */
 class FeedSubscriptionsControllerTest extends TestCase
 {
+    use HttpClientTrait;
     use IntegrationTestTrait;
     use FactoryTrait;
 
@@ -61,6 +63,27 @@ class FeedSubscriptionsControllerTest extends TestCase
     public function testView(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    public function testDiscoverPostSuccess(): void
+    {
+        $url = 'https://example.org';
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: text/html'],
+            $this->readFeedFixture('mark-story-com.html')
+        );
+        $this->mockClientGet($url, $res);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post('/feeds/discover', [
+            'url' => 'https://example.org',
+        ]);
+        $this->assertResponseOk();
+        // debug($this->_response->getBody() . '');
+        $this->assertResponseContains('Mark Story');
+        $this->assertResponseContains('https://example.org/posts/archive.rss');
     }
 
     /**

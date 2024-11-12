@@ -46,16 +46,6 @@ class FeedServiceTest extends TestCase
         return $feedItems->find()->where(['FeedItems.feed_id' => $feed->id])->count();
     }
 
-    public function readFeedFixture(string $fileName): string
-    {
-        $contents = file_get_contents(TESTS . "Fixture/feeds/$fileName");
-        if (!$contents) {
-            throw new RuntimeException("Could not read feed fixture $fileName");
-        }
-
-        return $contents;
-    }
-
     public function testRefreshFeedEmptyResponse()
     {
         $client = new Client();

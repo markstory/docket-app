@@ -309,6 +309,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->post('/{id}/sync', ['action' => 'sync'], 'feedsubscriptions:sync')
             ->setPass(['id']);
         $builder->connect('/add', ['action' => 'add'], ['_name' => 'feedsubscriptions:add']);
+        $builder->connect('/discover', ['action' => 'discover'], ['_name' => 'feedsubscriptions:discover']);
         $builder->connect('/{id}/edit', ['action' => 'edit'], ['_name' => 'feedsubscriptions:edit'])
             ->setPass(['id']);
 

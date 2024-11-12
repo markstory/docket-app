@@ -20,6 +20,7 @@ use App\Model\Entity\User;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
+use RuntimeException;
 use VCR\VCR;
 
 trait FactoryTrait
@@ -288,6 +289,16 @@ trait FactoryTrait
         $subs->saveOrFail($sub);
 
         return $sub;
+    }
+
+    public function readFeedFixture(string $fileName): string
+    {
+        $contents = file_get_contents(TESTS . "Fixture/feeds/$fileName");
+        if (!$contents) {
+            throw new RuntimeException("Could not read feed fixture $fileName");
+        }
+
+        return $contents;
     }
 
     /**

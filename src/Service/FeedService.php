@@ -64,6 +64,9 @@ class FeedService
      */
     public function discoverFeeds(string $url): array
     {
+        // TODO there should be rate limiting on URLs to limit
+        // feed discovery from blasting a site.
+
         // Fetch the URL
         $response = $this->fetchUrl($url);
         $responseType = $response->getHeaderLine('Content-Type');
