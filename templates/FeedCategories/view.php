@@ -7,7 +7,7 @@
 $this->setLayout('feedreader');
 $this->assign('title', $feedCategory->title . ' Feeds');
 
-$subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:add', '?' => ['feed_category_id' => $feedCategory->id]]);
+$subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover', '?' => ['feed_category_id' => $feedCategory->id]]);
 ?>
 <div class="heading-actions">
     <div class="heading-actions-item">

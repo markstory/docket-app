@@ -6,13 +6,13 @@
 $this->setLayout('feedreader');
 $this->assign('title', 'All Feeds');
 
-$addUrl = $this->Url->build(['_name' => 'feedsubscriptions:add']);
+$addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
 ?>
 <h3 class="heading-icon">
     <?= __('Feeds') ?>
     <?= $this->Html->link(
         $this->element('icons/plus16'),
-        ['action' => 'add'],
+        $addUrl,
         [
             'escape' => false,
             'class' => 'button-icon-primary',

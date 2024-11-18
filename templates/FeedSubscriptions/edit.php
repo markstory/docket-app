@@ -17,7 +17,7 @@ if ($isHtmx) {
 $this->assign('title', 'Edit Feed');
 ?>
 <div class="modal-title">
-    <h2>Add feed</h2>
+    <h2>Edit feed</h2>
     <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
 <?php

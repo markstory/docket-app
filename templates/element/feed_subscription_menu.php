@@ -47,8 +47,9 @@ $feedSyncUrl = $this->Url->build([
                 'escape' => false,
                 'role' => 'menuitem',
                 'hx-get' => $this->Url->build($editUrl),
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
                 'hx-swap' => 'beforeend',
+                'dropdown-close' => true,
             ]
         ) ?>
         <?= $this->Html->link(

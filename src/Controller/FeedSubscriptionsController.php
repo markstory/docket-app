@@ -7,6 +7,7 @@ use App\Model\Table\FeedSubscriptionsTable;
 use App\Service\FeedService;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
+use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgumentException;
 
 /**
  * FeedSubscriptions Controller
@@ -166,16 +167,21 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription->user_id = (int)$this->Authentication->getIdentifier();
         $this->Authorization->authorize($feedSubscription, 'add');
 
+        $error = '';
         $feeds = [];
         if ($this->request->is('post')) {
-            // TODO error handling!
-            $feeds = $feedService->discoverFeeds($this->request->getData('url'));
+            try {
+                $feeds = $feedService->discoverFeeds($this->request->getData('url'));
+            } catch (DiactorosInvalidArgumentException $e) {
+                $error = $e->getMessage();
+                $this->Flash->error($error);
+            }
         }
         $query = $this->FeedCategories->find('list', limit: 200);
         $feedCategories = $this->Authorization->applyScope($query, 'index');
         $referer = $this->request->referer();
 
-        $this->set(compact('feeds', 'feedCategories', 'referer'));
+        $this->set(compact('error', 'feeds', 'feedCategories', 'referer'));
     }
 
     /**
