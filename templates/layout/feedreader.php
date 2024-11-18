@@ -5,7 +5,7 @@ declare(strict_types=1);
  *
  * @var \App\Model\Entity\User $identity
  */
-$feedAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:add']);
+$feedAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
 $categoryAddUrl = $this->Url->build(['_name' => 'feedcategories:add']);
 
 // If we're not handling an HX-Request wrap the layout
