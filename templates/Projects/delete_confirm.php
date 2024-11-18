@@ -2,13 +2,8 @@
 declare(strict_types=1);
 /**
  * @var \App\Model\Entity\Project $project
+ * @var \Cake\View\View $this
  */
-// configure layout
-$this->set('closable', false);
-$this->set('open', true);
-
-$this->setLayout('modal');
-
 echo $this->element('confirm_dialog', [
     'target' => ['_name' => 'projects:delete', 'slug' => $project->slug],
     'title' => 'Are you sure?',
