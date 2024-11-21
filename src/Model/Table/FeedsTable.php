@@ -98,4 +98,12 @@ class FeedsTable extends Table
 
         return $feed;
     }
+
+    public function findActiveSubscriptions(SelectQuery $query, array $options): SelectQuery
+    {
+        $query->innerJoinWith('FeedSubscriptions')
+            ->where(['FeedSubscriptions.id IS NOT' => null]);
+
+        return $query;
+    }
 }
