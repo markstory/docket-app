@@ -16,11 +16,11 @@ if ($feedItem->feed_item_user && $feedItem->feed_item_user->read_at) {
         by
         <?= h($feedItem->author) ?>
     </p>
-    <p><?= h($feedItem->summary) ?></p>
+    <p><?= $feedItem->summary ?></p>
     <?php if (!$feedItem->content) : ?>
         <p><?= $this->Html->link(
-            'Read more',
-            $feedItem->url,
+            'Visit',
+            ['_name' => 'feedsubscriptions:readvisit', 'id' => $feedSubscription->id, 'itemId' => $feedItem->id],
             ['noreferrer' => true, 'target' => '_blank']
         ) ?></p>
     <?php else : ?>

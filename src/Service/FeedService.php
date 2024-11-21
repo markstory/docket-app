@@ -28,10 +28,13 @@ class FeedService
     private FeedsTable $feeds;
     private Client $client;
     private HtmlSanitizerInterface $cleaner;
+
     /**
      * Timeout to fetch feeds in seconds
      */
     private int $fetchTimeout = 2;
+
+    private const SUMMARY_LENGTH = 475;
 
     public function __construct(Client $client, HtmlSanitizerInterface $cleaner)
     {
@@ -137,13 +140,6 @@ class FeedService
         if (!$body) {
             return [];
         }
-        $readValue = function (SimpleXMLElement $elem, string $xpath): string {
-            $found = $elem->xpath($xpath);
-            if ($found === false || $found === null) {
-                return '';
-            }
-            return (string)$found[0];
-        };
         switch ($contentType) {
             case 'application/atom+xml':
             case 'application/xml':
@@ -177,7 +173,7 @@ class FeedService
             // Assume HTML. If its not HTML, it will be >:^)
             $entryContent = (string)$entry->content;
             $safeHtml = $this->cleaner->sanitize($entryContent);
-            $item->summary = Text::truncate(strip_tags($safeHtml), 200);
+            $item->summary = Text::truncate($safeHtml, self::SUMMARY_LENGTH, ['html' => true]);
             $item->content = $safeHtml;
 
             if ($entry->author) {
@@ -207,9 +203,16 @@ class FeedService
             $item->guid = (string)$xmlItem->guid;
             $item->title = (string)$xmlItem->title;
             $item->url = (string)$xmlItem->link;
-            $item->summary = (string)$xmlItem->description;
             $item->author = (string)$xmlItem->author;
-            $item->content = '';
+
+            $content = '';
+            $summary = $this->cleaner->sanitize((string)$xmlItem->description);
+            if (mb_strlen($summary) > self::SUMMARY_LENGTH) {
+                $content = $summary;
+                $summary = Text::truncate($summary, self::SUMMARY_LENGTH, ['html' => true]);
+            }
+            $item->summary = $summary;
+            $item->content = $content;
             $item->published_at = DateTime::parse((string)$xmlItem->pubDate[0]);
             $item->feed_id = $feed->id;
 

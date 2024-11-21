@@ -323,6 +323,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
         $builder->get('{id}/items/{itemId}', ['action' => 'viewItem'], 'feedsubscriptions:viewitem')
             ->setPass(['id', 'itemId']);
+        $builder->get('/{id}/read-visit/{itemId}', ['action' => 'readVisit'], 'feedsubscriptions:readvisit')
+            ->setPass(['id', 'itemId']);
     });
 
     $builder->scope('/feeds/categories', ['controller' => 'FeedCategories'], function (RouteBuilder $builder) {

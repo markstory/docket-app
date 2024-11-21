@@ -88,6 +88,34 @@ class FeedSubscriptionsController extends AppController
     }
 
     /**
+     * Mark an item as read and visit the link
+     *
+     * @param int $id Feed Subscription id.
+     * @param int $itemId Feed Item id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function readVisit(int $id, int $itemId)
+    {
+        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $this->Authorization->authorize($feedSubscription, 'view');
+        $identity = $this->Authentication->getIdentity();
+
+        $feedItem = $this->FeedItems
+            ->findById($itemId)
+            ->find('forSubscription', subscription: $feedSubscription)
+            ->firstOrFail();
+
+        $this->FeedSubscriptions->FeedItems->markRead(
+            $feedSubscription->user_id,
+            $feedItem
+        );
+        // This is a semi-open redirect.
+        // But we're just link stealing
+        return $this->redirect($feedItem->url);
+    }
+
+    /**
      * Bulk read endpoint
      *
      * Mark a list of items as read.

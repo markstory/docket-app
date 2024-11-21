@@ -261,6 +261,35 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertResponseContains('Too many ids');
     }
 
+    public function testReadVisit(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
+        $this->login();
+        $this->get("/feeds/{$subscription->id}/read-visit/{$item->id}");
+
+        $this->assertRedirect($item->url);
+        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $state = $feedItemUsers->findByFeedItemId($item->id)->firstOrFail();
+        $this->assertNotEmpty($state);
+        $this->assertEquals($state->user_id, $category->user_id);
+    }
+
+    public function testReadVisitPermission(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
+        // Login as other user
+        $this->login(2);
+        $this->get("/feeds/{$subscription->id}/read-visit/{$item->id}");
+
+        $this->assertResponseCode(403);
+    }
+
     /**
      * Test edit method
      *

@@ -43,7 +43,12 @@ $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
                 ]);
                 ?>
             <tr>
-                <td><?= $feedSubscription->hasValue('feed_category') ? $this->Html->link($feedSubscription->feed_category->title, ['controller' => 'FeedCategories', 'action' => 'view', $feedSubscription->feed_category->id]) : '' ?></td>
+                <td>
+                    <?php if ($feedSubscription->feed_category) : ?>
+                        <?= $this->element('icons/directory16', ['color' => $feedSubscription->feed_category->color_hex]) ?>
+                    <?= $this->Html->link($feedSubscription->feed_category->title, ['_name' => 'feedcategories:view', 'id' => $feedSubscription->feed_category->id]) ?>
+                    <?php endif; ?>
+                </td>
                 <td><?= $this->Html->link($feedSubscription->alias, $viewUrl) ?></td>
                 <td class="actions">
                     <drop-down>
