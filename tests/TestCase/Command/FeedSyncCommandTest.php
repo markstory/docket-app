@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Command;
 
 use App\Command\FeedSyncCommand;
+use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -14,18 +16,24 @@ use Cake\TestSuite\TestCase;
  */
 class FeedSyncCommandTest extends TestCase
 {
+    use HttpClientTrait;
     use ConsoleIntegrationTestTrait;
+    use FactoryTrait;
 
     /**
-     * Test buildOptionParser method
+     * Fixtures
      *
-     * @return void
-     * @uses \App\Command\FeedSyncCommand::buildOptionParser()
+     * @var list<string>
      */
-    public function testBuildOptionParser(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+    protected array $fixtures = [
+        'app.FeedSubscriptions',
+        'app.Feeds',
+        'app.Users',
+        'app.FeedCategories',
+        'app.SavedFeedItems',
+        'app.FeedItems',
+        'app.FeedSubscriptionsFeedItems',
+    ];
 
     /**
      * Test execute method
@@ -35,6 +43,28 @@ class FeedSyncCommandTest extends TestCase
      */
     public function testExecute(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed');
+        $subOne = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $url = 'https://example.com/feed';
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss+xml'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet($url, $res);
+
+        $this->exec('feed_sync --verbose');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Sync start');
+        $this->assertOutputContains('Sync complete');
+        $this->assertOutputContains("Sync {$feed->url} start");
+        $this->assertOutputContains("Sync {$feed->url} end");
+
+        /** @var \App\Model\Entity\Feed $refresh */
+        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        $this->assertNotEmpty($refresh->last_refresh);
+        $this->assertNotEquals($refresh->last_refresh, $feed->last_refresh);
     }
 }

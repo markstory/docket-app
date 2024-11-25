@@ -60,6 +60,7 @@ class FeedSyncCommand extends Command
         $query = $feedsTable->find('activeSubscriptions');
         $paginator = new SimplePaginator();
 
+        $io->out('Sync start');
         $result = null;
         while (true) {
             $result = $paginator->paginate($query, ['limit' => $limit]);
@@ -73,5 +74,6 @@ class FeedSyncCommand extends Command
                 break;
             }
         }
+        $io->out('Sync complete');
     }
 }

@@ -81,7 +81,6 @@ class FeedSubscriptionsControllerTest extends TestCase
             'url' => 'https://example.org',
         ]);
         $this->assertResponseOk();
-        // debug($this->_response->getBody() . '');
         $this->assertResponseContains('Mark Story');
         $this->assertResponseContains('https://example.org/posts/archive.rss');
     }

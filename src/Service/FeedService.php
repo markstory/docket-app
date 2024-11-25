@@ -126,6 +126,8 @@ class FeedService
         $res = $this->fetchUrl($feed->url);
         $items = $this->parseResponse($res, $feed);
         $this->saveNewItems($items);
+        $feed->last_refresh = DateTime::now();
+        $this->feeds->saveOrFail($feed);
     }
 
     protected function parseResponse(Response $res, Feed $feed): array
