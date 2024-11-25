@@ -45,7 +45,7 @@ class FeedSyncCommandTest extends TestCase
     {
         $category = $this->makeFeedCategory('Blogs');
         $feed = $this->makeFeed('https://example.com/feed');
-        $subOne = $this->makeFeedSubscription($category->id, $feed->id);
+        $this->makeFeedSubscription($category->id, $feed->id);
 
         $url = 'https://example.com/feed';
         $res = $this->newClientResponse(
@@ -66,5 +66,27 @@ class FeedSyncCommandTest extends TestCase
         $refresh = $this->fetchTable('Feeds')->get($feed->id);
         $this->assertNotEmpty($refresh->last_refresh);
         $this->assertNotEquals($refresh->last_refresh, $feed->last_refresh);
+
+        $itemCount = $this->fetchTable('FeedItems')->find()->count();
+        $this->assertGreaterThan(2, $itemCount);
+    }
+
+    public function testExecuteNoSubscription(): void
+    {
+        $feed = $this->makeFeed('https://example.com/feed');
+
+        $this->exec('feed_sync --verbose');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Sync start');
+        $this->assertOutputContains('Sync complete');
+        $this->assertOutputNotContains("Sync {$feed->url} start");
+        $this->assertOutputNotContains("Sync {$feed->url} end");
+
+        /** @var \App\Model\Entity\Feed $refresh */
+        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        $this->assertEmpty($refresh->last_refresh);
+
+        $itemCount = $this->fetchTable('FeedItems')->find()->count();
+        $this->assertEquals(0, $itemCount);
     }
 }
