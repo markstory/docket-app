@@ -97,6 +97,13 @@ class FeedService
 
         // parse the HTML page looking for link elements
         $xpath = new DOMXPath($dom);
+
+        // Look for a favicon url
+        $favicon = $this->findFavicon($xpath);
+        if ($favicon[0] == '/') {
+            $favicon = $baseUrl . $favicon;
+        }
+
         /** @var \Traversable<\DOMElement> $links */
         $links = $xpath->query('//head/link[@rel="alternate"]');
         foreach ($links as $link) {
@@ -111,11 +118,29 @@ class FeedService
                 $feeds[] = new Feed([
                     'default_alias' => $link->getAttribute('title'),
                     'url' => $url,
+                    'favicon_url' => $favicon,
                 ]);
             }
         }
 
         return $feeds;
+    }
+
+    protected function findFavicon(DOMXPath $xpath): ?string
+    {
+        $selectors = [
+            '//head/link[@rel="apple-touch-icon"]',
+            '//head/link[@rel="icon"]',
+            '//head/link[@rel="shortcut icon"]',
+        ];
+        foreach ($selectors as $selector) {
+            $icons = $xpath->query($selector);
+            foreach ($icons as $icon) {
+                return $icon->getAttribute('href');
+            }
+        }
+
+        return null;
     }
 
     /**

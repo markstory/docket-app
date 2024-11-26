@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string $url
+ * @property string $favicon_url
  * @property int $refresh_interval
  * @property \Cake\I18n\DateTime|null $last_refresh
  * @property \Cake\I18n\DateTime $created
@@ -32,6 +33,7 @@ class Feed extends Entity
     protected array $_accessible = [
         'default_alias' => true,
         'url' => true,
+        'favicon_url' => true,
         'refresh_interval' => true,
         'last_refresh' => true,
         'created' => true,

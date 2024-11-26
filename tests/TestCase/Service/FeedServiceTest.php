@@ -203,6 +203,7 @@ class FeedServiceTest extends TestCase
         $this->assertInstanceOf(Feed::class, $feed);
         $this->assertEquals('https://example.org/posts/archive.rss', $feed->url);
         $this->assertEquals('Mark Story', $feed->default_alias);
+        $this->assertEquals('https://example.org/favicon.ico', $feed->favicon_url);
     }
 
     public function testDiscoverFeedAtom(): void
