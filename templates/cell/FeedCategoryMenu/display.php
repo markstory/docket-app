@@ -53,7 +53,10 @@ declare(strict_types=1);
             <?php if ($category->expanded) : ?>
                 <ul>
                 <?php foreach ($category->feed_subscriptions as $subscription) : ?>
-                    <li><?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?></li>
+                <li>
+                    <?= $this->Html->image($subscription->feed->favicon_url) ?>
+                    <?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?>
+                </li>
                 <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
