@@ -121,6 +121,7 @@ class FeedCategoriesTable extends Table
     {
         return $query
             ->contain('FeedSubscriptions')
+            ->contain('FeedSubscriptions.Feeds')
             ->orderByAsc('ranking');
     }
 }

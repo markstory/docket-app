@@ -15,7 +15,9 @@ $itemCount = count($itemIds);
     <div class="heading-actions-item">
         <h1 class="heading-icon">
             <?= $this->element('icons/rss16', ['color' => $feedSubscription->feed_category->color_hex]) ?>
-            <?= $this->Html->image($feedSubscription->feed->favicon_url) ?>
+            <?php if ($feedSubscription?->feed?->favicon_url) : ?>
+                <?= $this->Html->image($feedSubscription->feed->favicon_url) ?>
+            <?php endif; ?>
             <?= h($feedSubscription->alias) ?>
         </h1>
     </div>
