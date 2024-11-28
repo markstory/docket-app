@@ -263,7 +263,7 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->get($id);
         $this->Authorization->authorize($feedSubscription, 'delete');
 
-        $this->set('feedCategory', $feedSubscription);
+        $this->set('feedSubscription', $feedSubscription);
     }
 
     public function sync($id, FeedService $feedService)

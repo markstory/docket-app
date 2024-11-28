@@ -4,7 +4,6 @@ class ModalWindow extends HTMLElement {
     dialog.showModal();
 
     this.setupClose(dialog);
-    this.closeOnSubmit(dialog);
   }
 
   setupClose(dialog: HTMLDialogElement | null): void {
@@ -33,14 +32,6 @@ class ModalWindow extends HTMLElement {
     } else {
       this.remove();
     }
-  }
-
-  closeOnSubmit(dialog: HTMLDialogElement | null): void {
-    const form = this.querySelector('form');
-    if (!form || !dialog) {
-      return;
-    }
-    dialog.addEventListener('submit', () => this._close(dialog), false);
   }
 }
 
