@@ -144,7 +144,7 @@ class Application extends BaseApplication implements
             $csp = new CSPBuilder([
                 'font-src' => ['self' => true],
                 'form-action' => ['self' => true],
-                'img-src' => ['self' => true, 'data' => true, 'allow' => ['www.gravatar.com']],
+                'img-src' => ['self' => true, 'data' => true, 'allow' => ['*']],
                 'script-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
                 'style-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
                 'object-src' => [],

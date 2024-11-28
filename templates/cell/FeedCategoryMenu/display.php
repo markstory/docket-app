@@ -55,7 +55,7 @@ declare(strict_types=1);
                 <?php foreach ($category->feed_subscriptions as $subscription) : ?>
                 <li>
                     <?php if ($subscription->feed?->favicon_url) : ?>
-                        <?= $this->Html->image($subscription->feed->favicon_url) ?>
+                        <?= $this->Html->image($subscription->feed->favicon_url, ['width' => 16, 'height' => 16]) ?>
                     <?php endif; ?>
                     <?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?>
                 </li>
