@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Table\FeedCategoriesTable;
+use App\Model\Table\FeedItemsTable;
 use App\Model\Table\FeedSubscriptionsTable;
 use App\Service\FeedService;
 use Cake\Http\Exception\BadRequestException;
@@ -18,6 +20,9 @@ use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgu
  */
 class FeedSubscriptionsController extends AppController
 {
+    protected FeedCategoriesTable $FeedCategories;
+    protected FeedItemsTable $FeedItems;
+
     public function initialize(): void
     {
         parent::initialize();
@@ -167,11 +172,15 @@ class FeedSubscriptionsController extends AppController
         if ($this->request->is('post')) {
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             $feedSubscription->feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
+            if (!$feedSubscription->feed->favicon_url) {
+                // TODO: This could be abused in shared instances. Might need to fix this later
+                $feedSubscription->feed->favicon_url = $this->request->getData('favicon_url');
+            }
             $feedSubscription->user_id = $this->request->getAttribute('identity')->getIdentifier();
             $feedSubscription->ranking = $this->FeedSubscriptions->getNextRanking($feedSubscription->feed_category_id);
 
             $this->Authorization->authorize($feedSubscription);
-            if ($this->FeedSubscriptions->save($feedSubscription)) {
+            if ($this->FeedSubscriptions->save($feedSubscription, ['associated' => ['Feeds']])) {
                 $this->Flash->success(__('Feed subscription added'));
 
                 return $this->redirect(['action' => 'index']);
@@ -183,8 +192,9 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription);
         $referer = $this->request->referer();
 
-        // TODO this needs ACL
-        $feedCategories = $this->FeedSubscriptions->FeedCategories->find('list', limit: 200)->all();
+        $categoriesTable = $this->fetchTable('FeedCategories');
+        $query = $categoriesTable->find('list', limit: 200);
+        $feedCategories = $this->Authorization->applyScope($query)->all();
         $this->set(compact('feedSubscription', 'feedCategories', 'referer'));
     }
 

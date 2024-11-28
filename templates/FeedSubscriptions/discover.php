@@ -56,6 +56,7 @@ echo $this->Form->control('url', ['label' => 'Page or Domain']);
                     'options' => $feedCategories,
                     'value' => $this->request->getQuery('feed_category_id'),
                 ]);
+                echo $this->Form->control('favicon_url', ['value' => $feed->favicon_url, 'type' => 'hidden']);
                 echo $this->Form->control('url', ['value' => $feed->url, 'type' => 'hidden']);
                 echo $this->Form->control('alias', [
                     'value' => $feed->default_alias ?: $feed->url,

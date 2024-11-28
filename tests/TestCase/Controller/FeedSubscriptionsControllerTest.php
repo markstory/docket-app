@@ -131,6 +131,7 @@ class FeedSubscriptionsControllerTest extends TestCase
             'url' => $feed->url,
             'alias' => 'Example site',
             'feed_category_id' => $category->id,
+            'favicon_url' => 'https://example.com/favicon.ico',
         ]);
         $this->assertFlashMessage('Feed subscription added');
         $this->assertRedirect('/feeds');
@@ -142,6 +143,8 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertNotEmpty($sub);
         $this->assertEquals(1, $sub->user_id);
         $this->assertEquals('Example site', $sub->alias);
+        $refresh = $this->Feeds->get($feed->id);
+        $this->assertEquals('https://example.com/favicon.ico', $refresh->favicon_url);
     }
 
     /**

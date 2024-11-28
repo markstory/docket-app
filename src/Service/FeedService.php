@@ -136,7 +136,10 @@ class FeedService
         foreach ($selectors as $selector) {
             $icons = $xpath->query($selector);
             foreach ($icons as $icon) {
-                return $icon->getAttribute('href');
+                $type = $icon->getAttribute('type');
+                if (in_array(strtolower($type), ['image/png', 'image/jpeg', 'image/webp'])) {
+                    return $icon->getAttribute('href');
+                }
             }
         }
 

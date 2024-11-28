@@ -83,7 +83,7 @@ class FeedsTable extends Table
         return $validator;
     }
 
-    public function findByUrlOrNew(mixed $url): Feed
+    public function findByUrlOrNew(string $url): Feed
     {
         $existing = $this->findByUrl($url)->first();
         if ($existing) {
