@@ -2,13 +2,13 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\FeedSubscription $feedSubscription
- * @var array<\App\Model\Entity\FeedItem> $feedItems
+ * @var \Cake\Datasource\Paging\PaginatedResultSet<\App\Model\Entity\FeedItem> $feedItems
  */
 $this->setLayout('feedreader');
 
 $this->assign('title', $feedSubscription->alias);
 
-$itemIds = $feedItems->extract('id')->toList();
+$itemIds = $feedItems->items()->extract('id')->toList();
 $itemCount = count($itemIds);
 ?>
 <div class="heading-actions">
@@ -23,22 +23,24 @@ $itemCount = count($itemIds);
         </h1>
     </div>
     <div class="button-bar-inline">
-        <?= $this->Form->postButton(
-            $this->element('icons/check16'),
-            ['_name' => 'feedsubscriptions:itemsmarkread', 'id' => $feedSubscription->id,  '_method' => 'post'],
-            [
-                'title' => __n(
-                    'mark {} item read',
-                    'mark {0} items read',
-                    $itemCount,
-                    [$itemCount]
-                ),
-                'class' => 'button-icon',
-                'data' => ['id' => $itemIds],
-                'escapeTitle' => false,
-            ]
-        );
-        ?>
+        <?php if ($itemCount > 0) : ?>
+            <?= $this->Form->postButton(
+                $this->element('icons/check16'),
+                ['_name' => 'feedsubscriptions:itemsmarkread', 'id' => $feedSubscription->id, '_method' => 'post'],
+                [
+                    'title' => __n(
+                        'mark {0} item read',
+                        'mark {0} items read',
+                        $itemCount,
+                        [$itemCount]
+                    ),
+                    'class' => 'button-icon',
+                    'data' => ['id' => $itemIds],
+                    'escapeTitle' => false,
+                ]
+            );
+            ?>
+        <?php endif; ?>
         <?= $this->element('feed_subscription_menu', ['feedSubscription' => $feedSubscription]) ?>
     </div>
 </div>

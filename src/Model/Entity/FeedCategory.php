@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property int $user_id
  * @property string $title
  * @property int $color
+ * @property string $color_hex
  * @property int $ranking
  * @property bool $expanded
  * @property \Cake\I18n\DateTime $created

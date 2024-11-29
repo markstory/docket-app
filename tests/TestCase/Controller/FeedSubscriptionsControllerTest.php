@@ -51,7 +51,18 @@ class FeedSubscriptionsControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $otherfeed = $this->makeFeed('https://example.com/feed2.xml');
+        $other = $this->makeFeedSubscription($category->id, $otherfeed->id, 1, ['alias' => 'other feed']);
+
+        $this->login();
+        $this->get('/feeds');
+        $this->assertResponseOk();
+
+        $this->assertResponseContains($subscription->alias);
+        $this->assertResponseContains($other->alias);
     }
 
     /**
@@ -62,7 +73,16 @@ class FeedSubscriptionsControllerTest extends TestCase
      */
     public function testView(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id);
+
+        $this->login();
+        $this->get("/feeds/{$feed->id}/view");
+        $this->assertResponseOk();
+        $this->assertResponseContains($subscription->alias);
+        $this->assertResponseContains($item->title);
     }
 
     public function testDiscoverPostSuccess(): void
@@ -296,21 +316,61 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test edit method
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::edit()
      */
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+        $otherCategory = $this->makeFeedCategory('Film');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/feeds/{$subscription->id}/edit", [
+            'feed_category_id' => $otherCategory->id,
+            'alias' => 'updated alias',
+            'ranking' => 1,
+        ]);
+        $this->assertRedirect('/feeds');
+        $subscriptions = $this->fetchTable('FeedSubscriptions');
+        $refresh = $subscriptions->get($subscription->id);
+        $this->assertEquals($refresh->alias, 'updated alias');
+        $this->assertEquals($refresh->feed_category_id, $otherCategory->id);
     }
 
     /**
      * Test delete method
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::delete()
      */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/feeds/{$subscription->id}/delete");
+
+        $this->assertRedirect(['_name' => 'feedsubscriptions:index']);
+    }
+
+    /**
+     * Test delete permissions
+     *
+     * @return void
+     */
+    public function testDeletePermissions(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login(2);
+        $this->enableCsrfToken();
+        $this->post("/feeds/{$subscription->id}/delete");
+
+        $this->assertResponseCode(403);
     }
 }
