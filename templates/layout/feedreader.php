@@ -23,21 +23,9 @@ endif;
     <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
-                <?= $this->element('profile_menu') ?>
+                <?= $this->element('profile_menu', ['activeFocus' => 'feeds']) ?>
                 <div class="project-filter">
                     <ul class="links">
-                        <li class="icon-secondary">
-                            <?= $this->Html->link(
-                                $this->element('icons/clippy16') . ' Today',
-                                ['_name' => 'tasks:today'],
-                                [
-                                    'escape' => false,
-                                    'class' => 'button-muted button',
-                                    'data-hotkey' => 't',
-                                    'hx-boost' => '1',
-                                ]
-                            ) ?>
-                        </li>
                         <li class="icon-today">
                             <?= $this->Html->link(
                                 $this->element('icons/rss16') . ' All Feeds',
