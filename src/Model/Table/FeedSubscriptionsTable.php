@@ -157,6 +157,7 @@ class FeedSubscriptionsTable extends Table
             ->where([
                 'FeedItemUsers.user_id' => $subscription->user_id,
                 'FeedItems.feed_id' => $subscription->feed_id,
+                'FeedItemUsers.read_at IS NOT' => null,
             ])
             ->count();
         $subscription->unread_item_count = $itemCount - $readCount;
