@@ -132,6 +132,13 @@ class FeedSubscriptionsTable extends Table
         return $rules;
     }
 
+    public function findForFeed(SelectQuery $query, int $feedId): SelectQuery
+    {
+        return $query
+            ->contain('FeedCategories')
+            ->where(['FeedSubscriptions.feed_id' => $feedId]);
+    }
+
     public function getNextRanking(int $feedCategoryId): int
     {
         $query = $this->find();

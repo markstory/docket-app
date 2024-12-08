@@ -158,10 +158,7 @@ class FeedService
         $this->feeds->saveOrFail($feed);
 
         // TODO this will need pagination eventually
-        $subscriptions = $this->feeds->FeedSubscriptions->find()
-            ->contain('FeedCategories')
-            ->where(['FeedSubscriptions.feed_id' => $feed->id])
-            ->all();
+        $subscriptions = $this->feeds->FeedSubscriptions->find('forFeed', feedId: $feed->id);
 
         // So many queries.
         foreach ($subscriptions as $sub) {
