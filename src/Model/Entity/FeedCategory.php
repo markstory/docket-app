@@ -16,6 +16,7 @@ use Cake\ORM\Entity;
  * @property string $color_hex
  * @property int $ranking
  * @property bool $expanded
+ * @property int $unread_item_count
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *

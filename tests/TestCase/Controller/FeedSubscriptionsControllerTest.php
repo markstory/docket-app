@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\FeedsTable;
+use App\Model\Table\FeedSubscriptionsTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -206,7 +207,7 @@ class FeedSubscriptionsControllerTest extends TestCase
     {
         $category = $this->makeFeedCategory('Blogs');
         $feed = $this->makeFeed('https://example.com/feed.xml');
-        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id, 1, ['unread_item_count' => 2]);
         $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
         $otherItem = $this->makeFeedItem($feed->id, ['title' => 'also']);
         $notIncluded = $this->makeFeedItem($feed->id, ['title' => 'nope']);
@@ -230,6 +231,12 @@ class FeedSubscriptionsControllerTest extends TestCase
         // No state for item not included.
         $state = $feedItemUsers->findByFeedItemId($notIncluded->id)->first();
         $this->assertNull($state);
+
+        $sub = $this->fetchTable('FeedSubscriptions')->get(
+            $subscription->id,
+            contain: FeedSubscriptionsTable::VIEW_CONTAIN
+        );
+        $this->assertEquals(1, $sub->unread_item_count);
     }
 
     public function testMarkItemsReadPermissions(): void
@@ -287,7 +294,7 @@ class FeedSubscriptionsControllerTest extends TestCase
     {
         $category = $this->makeFeedCategory('Blogs');
         $feed = $this->makeFeed('https://example.com/feed.xml');
-        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id, 1, ['unread_item_count' => 1]);
         $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
         $this->login();
         $this->get("/feeds/{$subscription->id}/read-visit/{$item->id}");
@@ -297,6 +304,12 @@ class FeedSubscriptionsControllerTest extends TestCase
         $state = $feedItemUsers->findByFeedItemId($item->id)->firstOrFail();
         $this->assertNotEmpty($state);
         $this->assertEquals($state->user_id, $category->user_id);
+
+        $sub = $this->fetchTable('FeedSubscriptions')->get(
+            $subscription->id,
+            contain: FeedSubscriptionsTable::VIEW_CONTAIN
+        );
+        $this->assertEquals(0, $sub->unread_item_count);
     }
 
     public function testReadVisitPermission(): void

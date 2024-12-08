@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\FeedCategory;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -123,5 +124,16 @@ class FeedCategoriesTable extends Table
             ->contain('FeedSubscriptions')
             ->contain('FeedSubscriptions.Feeds')
             ->orderByAsc('ranking');
+    }
+
+    public function updateUnreadItemCount(FeedCategory $category): void
+    {
+        $query = $this->FeedSubscriptions->find();
+        $result = $query->select(['total' => $query->func()->sum('FeedSubscriptions.unread_item_count')])
+            ->where(['FeedSubscriptions.feed_category_id' => $category->id])
+            ->groupBy(['feed_category_id'])
+            ->firstOrFail();
+        $category->unread_item_count = $result->total;
+        $this->saveOrFail($category);
     }
 }

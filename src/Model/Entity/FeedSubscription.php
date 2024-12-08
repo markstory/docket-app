@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property int $feed_category_id
  * @property string $alias
  * @property int $ranking
+ * @property int $unread_item_count
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *
@@ -43,6 +44,7 @@ class FeedSubscription extends Entity
         'feed_category_id' => true,
         'alias' => true,
         'ranking' => true,
+        'unread_item_count' => false,
         'created' => false,
         'modified' => false,
         'feed' => false,

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\FeedSubscription;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -54,8 +55,6 @@ class FeedSubscriptionsTable extends Table
         $this->setDisplayField('alias');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
-
         $this->belongsTo('Feeds', [
             'foreignKey' => 'feed_id',
             'joinType' => 'INNER',
@@ -79,6 +78,8 @@ class FeedSubscriptionsTable extends Table
             'foreignKey' => 'feed_id',
             'bindingKey' => 'feed_id',
         ]);
+
+        $this->addBehavior('Timestamp');
     }
 
     /**
@@ -115,16 +116,6 @@ class FeedSubscriptionsTable extends Table
         return $validator;
     }
 
-    public function getNextRanking(int $feedCategoryId): int
-    {
-        $query = $this->find();
-        $query
-            ->select(['count' => $query->func()->count('*')])
-            ->where(['FeedSubscriptions.feed_category_id' => $feedCategoryId]);
-
-        return (int)$query->firstOrFail()->count;
-    }
-
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -139,5 +130,37 @@ class FeedSubscriptionsTable extends Table
         $rules->add($rules->existsIn(['feed_category_id'], 'FeedCategories'), ['errorField' => 'feed_category_id']);
 
         return $rules;
+    }
+
+    public function getNextRanking(int $feedCategoryId): int
+    {
+        $query = $this->find();
+        $query
+            ->select(['count' => $query->func()->count('*')])
+            ->where(['FeedSubscriptions.feed_category_id' => $feedCategoryId]);
+
+        return (int)$query->firstOrFail()->count;
+    }
+
+    /**
+     * Update the unread_item_count
+     */
+    public function updateUnreadItemCount(FeedSubscription $subscription): void
+    {
+        $itemCount = $this->FeedItems
+            ->find()
+            ->where(['FeedItems.feed_id' => $subscription->feed_id])
+            ->count();
+        $readCount = $this->FeedItems->FeedItemUsers
+            ->find()
+            ->innerJoinWith('FeedItems')
+            ->where([
+                'FeedItemUsers.user_id' => $subscription->user_id,
+                'FeedItems.feed_id' => $subscription->feed_id,
+            ])
+            ->count();
+        $subscription->unread_item_count = $itemCount - $readCount;
+
+        $this->saveOrFail($subscription);
     }
 }

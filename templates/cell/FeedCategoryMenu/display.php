@@ -58,6 +58,7 @@ declare(strict_types=1);
                         <?= $this->Html->image($subscription->feed->favicon_url, ['width' => 16, 'height' => 16]) ?>
                     <?php endif; ?>
                     <?= $this->Html->link($subscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $subscription->id]) ?>
+                    <span class="counter"><?= h($subscription->unread_item_count ?? 91) ?></span>
                 </li>
                 <?php endforeach; ?>
                 </ul>

@@ -102,7 +102,7 @@ class FeedSubscriptionsController extends AppController
      */
     public function readVisit(int $id, int $itemId)
     {
-        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription, 'view');
         $identity = $this->Authentication->getIdentity();
 
@@ -115,6 +115,9 @@ class FeedSubscriptionsController extends AppController
             $feedSubscription->user_id,
             $feedItem
         );
+        $this->FeedSubscriptions->updateUnreadItemCount($feedSubscription);
+        $this->FeedSubscriptions->FeedCategories->updateUnreadItemCount($feedSubscription->feed_category);
+
         // This is a semi-open redirect.
         // But we're just link stealing
         return $this->redirect($feedItem->url);
@@ -128,7 +131,7 @@ class FeedSubscriptionsController extends AppController
     public function itemsMarkRead(int $id)
     {
         $this->request->allowMethod(['POST']);
-        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
 
         // This is view because viewItem is as well
         $this->Authorization->authorize($feedSubscription, 'view');
@@ -155,8 +158,10 @@ class FeedSubscriptionsController extends AppController
         if (count($allowedIds) !== count($ids)) {
             throw new BadRequestException('Invalid records requested');
         }
-
         $this->FeedItems->markManyRead($feedSubscription->user_id, $allowedIds);
+
+        $this->FeedSubscriptions->updateUnreadItemCount($feedSubscription);
+        $this->FeedSubscriptions->FeedCategories->updateUnreadItemCount($feedSubscription->feed_category);
 
         $this->redirect($this->referer());
     }
