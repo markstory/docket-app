@@ -100,7 +100,7 @@ class FeedService
 
         // Look for a favicon url
         $favicon = $this->findFavicon($xpath);
-        if ($favicon[0] == '/') {
+        if ($favicon !== null && $favicon[0] == '/') {
             $favicon = $baseUrl . $favicon;
         }
 
