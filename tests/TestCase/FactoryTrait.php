@@ -11,6 +11,7 @@ use App\Model\Entity\CalendarSubscription;
 use App\Model\Entity\Feed;
 use App\Model\Entity\FeedCategory;
 use App\Model\Entity\FeedItem;
+use App\Model\Entity\FeedItemUser;
 use App\Model\Entity\FeedSubscription;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
@@ -200,6 +201,20 @@ trait FactoryTrait
             'published_at' => DateTime::parse('-3 days'),
         ], $props);
         /** @var \App\Model\Entity\FeedItem $item */
+        $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $items->saveOrFail($item);
+    }
+
+    protected function makeFeedItemUser(int $itemId, int $userId, $props = []): FeedItemUser
+    {
+        $items = $this->fetchTable('FeedItemUsers');
+        $props = array_merge([
+            'feed_item_id' => $itemId,
+            'user_id' => $userId,
+            'read_at' => DateTime::now(),
+        ], $props);
+        /** @var \App\Model\Entity\FeedItemUser $item */
         $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $items->saveOrFail($item);

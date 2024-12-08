@@ -186,6 +186,82 @@ class FeedServiceTest extends TestCase
         $this->assertEquals($feed->id, $refresh->feed_id);
     }
 
+    public function testRefreshFeedUpdateUnreadCount()
+    {
+        $client = new Client();
+        $url = 'https://example.org/rss';
+        $category = $this->makeFeedCategory('Blogs');
+        $otherCategory = $this->makeFeedCategory('Blogs', 2);
+        $feed = $this->makeFeed($url);
+        $sub = $this->makeFeedSubscription($category->id, $feed->id);
+        $otherSub = $this->makeFeedSubscription($otherCategory->id, $feed->id, 2);
+
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet($url, $res);
+
+        $service = new FeedService($client, $this->cleaner);
+        $service->refreshFeed($feed);
+
+        /** @var \App\Model\Table\FeedSubscriptionsTable $subs */
+        $subs = $this->fetchTable('FeedSubscriptions');
+
+        $refresh = $subs->get($sub->id);
+        $this->assertEquals(20, $refresh->unread_item_count);
+
+        $refresh = $subs->get($otherSub->id);
+        $this->assertEquals(20, $refresh->unread_item_count);
+
+        /** @var \App\Model\Table\FeedCategoriesTable $categories */
+        $categories = $this->fetchTable('FeedCategories');
+        $refresh = $categories->get($category->id);
+        $this->assertEquals(20, $refresh->unread_item_count);
+
+        $refresh = $categories->get($otherCategory->id);
+        $this->assertEquals(20, $refresh->unread_item_count);
+    }
+
+    public function testRefreshFeedUpdateUnreadCountExistingState()
+    {
+        $client = new Client();
+        $url = 'https://example.org/rss';
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed($url);
+        $sub = $this->makeFeedSubscription($category->id, $feed->id);
+        $item = $this->makeFeedItem($feed->id, [
+            'guid' => 'https://mark-story.com/posts/view/' .
+                'server-rendered-components-with-template-fragments-and-webcomponents?utm_source=rss',
+            'url' => 'https://mark-story.com/wrong',
+            'title' => 'replace me',
+            'summary' => 'replace me',
+        ]);
+        $state = $this->makeFeedItemUser($item->id, 1);
+
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet($url, $res);
+
+        $service = new FeedService($client, $this->cleaner);
+        $service->refreshFeed($feed);
+
+        /** @var \App\Model\Table\FeedSubscriptionsTable $subs */
+        $subs = $this->fetchTable('FeedSubscriptions');
+
+        $refresh = $subs->get($sub->id);
+        $this->assertEquals(19, $refresh->unread_item_count, 'Should account for existing read state');
+
+        /** @var \App\Model\Table\FeedCategoriesTable $categories */
+        $categories = $this->fetchTable('FeedCategories');
+        $refresh = $categories->get($category->id);
+        $this->assertEquals(19, $refresh->unread_item_count, 'Should account for existing read state');
+    }
+
     public function testDiscoverFeedRss(): void
     {
         $client = new Client();

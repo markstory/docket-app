@@ -156,6 +156,18 @@ class FeedService
         $this->saveNewItems($items);
         $feed->last_refresh = DateTime::now();
         $this->feeds->saveOrFail($feed);
+
+        // TODO this will need pagination eventually
+        $subscriptions = $this->feeds->FeedSubscriptions->find()
+            ->contain('FeedCategories')
+            ->where(['FeedSubscriptions.feed_id' => $feed->id])
+            ->all();
+
+        // So many queries.
+        foreach ($subscriptions as $sub) {
+            $this->feeds->FeedSubscriptions->updateUnreadItemCount($sub);
+            $this->feeds->FeedSubscriptions->FeedCategories->updateUnreadItemCount($sub->feed_category);
+        }
     }
 
     protected function parseResponse(Response $res, Feed $feed): array
