@@ -103,6 +103,8 @@ flutter_native_splash:
   image: assets/splash.png
 
 flutter_icons:
-  image_path: 'assets/docket-logo.png'
   android: true
   ios: true
+  image_path: 'assets/docket-logo.png'
+  adaptive_icon_foreground: 'assets/docket-logo.png'
+  adaptive_icon_background: '#a848a8'
