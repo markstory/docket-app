@@ -28,8 +28,8 @@ endif;
                     <ul class="links">
                         <li class="icon-today">
                             <?= $this->Html->link(
-                                $this->element('icons/rss16') . ' All Feeds',
-                                ['_name' => 'feedsubscriptions:index'],
+                                $this->element('icons/rss16') . " What's new",
+                                ['_name' => 'feedsubscriptions:home'],
                                 [
                                     'escape' => false,
                                     'class' => 'button-muted button',
