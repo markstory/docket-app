@@ -303,7 +303,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
     // Feeds routes
     $builder->scope('/feeds/', ['controller' => 'FeedSubscriptions'], function (RouteBuilder $builder) {
-        $builder->get('/', ['action' => 'index'], 'feedsubscriptions:index');
+        $builder->get('/', ['action' => 'home'], 'feedsubscriptions:home');
+        $builder->get('/list', ['action' => 'index'], 'feedsubscriptions:index');
         $builder->get('/{id}/view', ['action' => 'view'], 'feedsubscriptions:view')
             ->setPass(['id']);
         $builder->post('/{id}/sync', ['action' => 'sync'], 'feedsubscriptions:sync')

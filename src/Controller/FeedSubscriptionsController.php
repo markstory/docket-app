@@ -31,6 +31,30 @@ class FeedSubscriptionsController extends AppController
     }
 
     /**
+     * Home page for feeds.
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function home()
+    {
+        $query = $this->FeedSubscriptions->find()
+            ->select(['id'])
+            ->limit(500);
+        $query = $this->Authorization->applyScope($query, 'index');
+        $subIds = $query->all()->extract('id')->toList();
+
+        $identity = $this->Authentication->getIdentity();
+        $feedItems = $this->FeedSubscriptions->FeedItems->find(
+            'subscribed',
+            userId: $identity->id,
+            feedSubscriptionIds: $subIds
+        );
+        $feedItems = $this->paginate($feedItems);
+
+        $this->set(compact('feedItems'));
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view

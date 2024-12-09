@@ -125,13 +125,28 @@ class FeedItemsTable extends Table
         return $rules;
     }
 
+    public function findSubscribed(SelectQuery $query, int $userId, array $feedSubscriptionIds): SelectQuery
+    {
+        return $query
+            ->contain(['FeedItemUsers', 'FeedSubscriptions.FeedCategories'])
+            ->matching('FeedSubscriptions')
+            ->where([
+                'OR' => [
+                    'FeedItemUsers.user_id' => $userId,
+                    'FeedItemUsers.user_id IS' => null,
+                ],
+                'FeedSubscriptions.id IN' => $feedSubscriptionIds,
+            ])
+            ->orderByDesc('FeedItems.published_at');
+    }
+
     /**
      * Find all items in a subscription
      */
     public function findForSubscription(SelectQuery $query, FeedSubscription $subscription): SelectQuery
     {
         return $query
-            ->contain(['FeedSubscriptions', 'FeedItemUsers'])
+            ->contain(['FeedItemUsers', 'FeedSubscriptions'])
             ->where([
                 'OR' => [
                     'FeedItemUsers.user_id' => $subscription->user_id,
