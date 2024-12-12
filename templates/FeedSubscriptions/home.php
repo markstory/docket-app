@@ -38,9 +38,7 @@ endforeach;
     ) ?>
 </h3>
 <div class="feed-items">
-<?php
-foreach ($groupedItems as $group) :
-?>
+<?php foreach ($groupedItems as $group) : ?>
 <h3 class="heading-task-group">
     <span class="heading-feed-category">
         <?= $this->element('icons/directory16') ?>

@@ -8,6 +8,19 @@ $this->setLayout('feedreader');
 $this->assign('title', $feedCategory->title . ' Feeds');
 
 $subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover', '?' => ['feed_category_id' => $feedCategory->id]]);
+
+$groupedItems = [];
+foreach ($feedItems as $item) :
+    $sub = $item->feed_subscription;
+    $date = $item->published_at->format('Y-m-d');
+    if (!isset($groupedItems[$date])) :
+        $groupedItems[$date] = [
+            'date' => $item->published_at,
+            'items' => [],
+        ];
+    endif;
+    $groupedItems[$date]['items'][] = $item;
+endforeach;
 ?>
 <div class="heading-actions">
     <div class="heading-actions-item">
@@ -32,7 +45,19 @@ $subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover'
 </div>
 
 <div class="feed-items">
-<?php foreach ($feedItems as $item) : ?>
-    <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $item->feed_subscription]) ?>
-<?php endforeach; ?>
+<?php foreach ($groupedItems as $group) : ?>
+<h3 class="heading-task-group">
+    <time class="heading-feed-category" datetime="<?= h($group['date']->toDateString()) ?>">
+        <?= h($group['date']->timeAgoInWords()) ?>
+    </time>
+</h3>
+<?php
+    foreach ($group['items'] as $item) :
+        echo $this->element('feed_item', [
+            'feedItem' => $item,
+            'feedSubscription' => $item->feed_subscription,
+        ]);
+    endforeach;
+endforeach;
+?>
 </div>
