@@ -9,6 +9,8 @@
   border-radius: $border-radius;
   margin-bottom: 1px;
 
+  text-overflow: ellipsis;
+
   // Disable hover background on context menu button.
   > .button-default:hover {
     background: transparent;
@@ -41,6 +43,15 @@
   .counter {
     margin: 0 calc($space / 2);
   }
+
+  .button-icon,
+  .button-icon:hover {
+    background: transparent;
+  }
+}
+
+.project-filter .feed-category-item {
+  flex-grow: 1;
 }
 
 .feed-category-badge {
@@ -54,4 +65,18 @@
 
 .drag-ghost .feed-category-item {
     width: 200px;
+}
+
+.feed-category-feeds {
+  background: var(--color-bg-low-active);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding: $space $space $space calc($space * 2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
