@@ -9,7 +9,6 @@ use Cake\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
-use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use Cake\Utility\Xml;
@@ -18,7 +17,6 @@ use DOMXPath;
 use Exception;
 use Laminas\Diactoros\Uri;
 use RuntimeException;
-use SimpleXMLElement;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class FeedService
@@ -87,10 +85,6 @@ class FeedService
 
         // No user/pass support yet.
         $uri = new Uri($url);
-        $baseUrl = $uri->getScheme() . '://' . $uri->getHost();
-        if ($uri->getPort() !== null) {
-            $baseUrl .= ':' . $uri->getPort();
-        }
 
         /** @var array<\App\Model\Entity\Feed> $feeds */
         $feeds = [];
@@ -101,17 +95,14 @@ class FeedService
         // Look for a favicon url
         $favicon = $this->findFavicon($xpath);
         if ($favicon !== null && $favicon[0] == '/') {
-            $favicon = $baseUrl . $favicon;
+            $favicon = $this->applyBaseUrl($favicon, $uri);
         }
 
         /** @var \Traversable<\DOMElement> $links */
         $links = $xpath->query('//head/link[@rel="alternate"]');
         foreach ($links as $link) {
             $linkType = $link->getAttribute('type');
-            $url = $link->getAttribute('href');
-            if ($url[0] == '/') {
-                $url = $baseUrl . $url;
-            }
+            $url = $this->applyBaseUrl($link->getAttribute('href'), $uri);
 
             // Atom and RSS work the same
             if (str_contains($linkType, 'rss') || str_contains($linkType, 'atom')) {
@@ -124,6 +115,26 @@ class FeedService
         }
 
         return $feeds;
+    }
+
+    protected function applyBaseUrl(string $url, Uri $baseUri): string
+    {
+        try {
+            $uri = new Uri($url);
+        } catch (Exception) {
+            return $url;
+        }
+        if (!$uri->getHost()) {
+            $uri = $uri->withHost($baseUri->getHost());
+        }
+        if ($uri->getPort() === null && $baseUri->getPort() !== null) {
+            $uri = $uri->withPort($baseUri->getPort());
+        }
+        if (!$uri->getScheme()) {
+            $uri = $uri->withScheme($baseUri->getScheme());
+        }
+
+        return (string)$uri;
     }
 
     protected function findFavicon(DOMXPath $xpath): ?string
