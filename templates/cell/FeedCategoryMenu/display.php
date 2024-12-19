@@ -15,16 +15,16 @@ declare(strict_types=1);
     ]
 ) ?>
 <?php foreach ($feedCategories as $category) : ?>
-    <?php $itemId = 'category-item-' . uniqid(); ?>
+    <?php
+    $itemId = 'category-item-' . uniqid();
+    $viewUrl = $this->Url->build(['_name' => 'feedcategories:view', 'id' => $category->id]);
+    $toggleUrl = $this->Url->build(['_name' => 'feedcategories:toggleexpanded', 'id' => $category->id]);
+    ?>
     <div class="dnd-item" id="<?= h($itemId) ?>">
         <?= $this->Form->hidden('id[]', ['value' => $category->id]) ?>
         <button class="dnd-handle" role="button" aria-roledescription="sortable">
             <?= $this->element('icons/grabber24') ?>
         </button>
-        <?php
-        $viewUrl = $this->Url->build(['_name' => 'feedcategories:view', 'id' => $category->id]);
-        $toggleUrl = $this->Url->build(['_name' => 'feedcategories:toggleexpanded', 'id' => $category->id]);
-        ?>
         <div class="feed-category-item">
             <button
                 role="button"
