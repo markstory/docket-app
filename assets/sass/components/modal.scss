@@ -51,6 +51,10 @@
   max-width: 850px;
   min-height: 80%;
 }
+.modal-sheet.feed-subscriptions-edit {
+  max-width: 600px;
+  min-height: auto;
+}
 @media (max-width: $breakpoint-phone) {
   .modal-sheet {
     height: 95%;

@@ -1,0 +1,40 @@
+.feed-item {
+  h2 {
+    font-size: $font-size-large;
+    margin-bottom: $space;
+  }
+  h2 a {
+    text-decoration: none;
+    color: var(--color-gray-800);
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  margin-bottom: calc($space * 3);
+}
+
+.feed-item-byline {
+  font-size: $font-size-small;
+  color: var(--color-gray-500);
+  margin-bottom: $space;
+}
+.feed-item-byline a {
+  color: var(--color-gray-500);
+}
+.feed-item-summary {
+  color: var(--color-gray-800);
+  margin-bottom: $space;
+  padding-top: $space;
+
+  h2, h3, h4, h5, h6 {
+    color: var(--color-gray-600);
+    font-weight: normal;
+  }
+}
+
+.feed-item-read {
+  p, h2 {
+    opacity: 75%
+  }
+}

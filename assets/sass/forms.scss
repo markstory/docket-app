@@ -181,3 +181,19 @@ textarea {
   gap: calc($space * 2);
 
 }
+
+.form-modal {
+  max-width: 500px;
+  margin: 0 auto;
+
+  .form-control {
+    width: 100%;
+    padding: calc($space * 2) 0 ;
+    margin: 0;
+    justify-content: space-between;
+  }
+
+  .button-bar {
+    justify-content: flex-end;
+  }
+}
