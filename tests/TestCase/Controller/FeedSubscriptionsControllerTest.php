@@ -59,7 +59,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $other = $this->makeFeedSubscription($category->id, $otherfeed->id, 1, ['alias' => 'other feed']);
 
         $this->login();
-        $this->get('/feeds');
+        $this->get('/feeds/list');
         $this->assertResponseOk();
 
         $this->assertResponseContains($subscription->alias);
@@ -344,11 +344,40 @@ class FeedSubscriptionsControllerTest extends TestCase
             'alias' => 'updated alias',
             'ranking' => 1,
         ]);
-        $this->assertRedirect('/feeds');
+        $this->assertRedirect("/feeds/{$subscription->id}/view");
         $subscriptions = $this->fetchTable('FeedSubscriptions');
         $refresh = $subscriptions->get($subscription->id);
         $this->assertEquals($refresh->alias, 'updated alias');
         $this->assertEquals($refresh->feed_category_id, $otherCategory->id);
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
+    public function testEditUrl(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/feeds/{$subscription->id}/edit", [
+            'url' => 'https://example.com/feed.rss',
+            'alias' => 'updated alias',
+            'ranking' => 1,
+        ]);
+        $this->assertRedirect("/feeds/{$subscription->id}/view");
+        $subscriptions = $this->fetchTable('FeedSubscriptions');
+        $refresh = $subscriptions->get($subscription->id);
+        $this->assertEquals($refresh->alias, 'updated alias');
+
+        $this->assertNotEquals($refresh->feed_id, $feed->id, 'feed url should change');
+        $feeds = $this->fetchTable('Feeds');
+        $refreshFeed = $feeds->get($refresh->feed_id);
+        $this->assertEquals('https://example.com/feed.rss', $refreshFeed->url);
     }
 
     /**

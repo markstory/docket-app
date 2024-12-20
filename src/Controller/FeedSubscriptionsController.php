@@ -212,7 +212,7 @@ class FeedSubscriptionsController extends AppController
             if ($this->FeedSubscriptions->save($feedSubscription, ['associated' => ['Feeds']])) {
                 $this->Flash->success(__('Feed subscription added'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'home']);
             }
             $this->Flash->error(__('The feed subscription could not be saved. Please, try again.'));
         }
@@ -264,10 +264,18 @@ class FeedSubscriptionsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $this->Authorization->authorize($feedSubscription);
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
-            if ($this->FeedSubscriptions->save($feedSubscription)) {
+            if ($this->request->getData('url')) {
+                $feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
+                $feedSubscription->feed = $feed;
+                if ($feed->id) {
+                    $feedSubscription->feed_id = $feed->id;
+                }
+            }
+
+            if ($this->FeedSubscriptions->save($feedSubscription, ['associated' => ['Feeds']])) {
                 $this->Flash->success(__('The feed subscription has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', 'id' => $id]);
             }
             $this->Flash->error(__('The feed subscription could not be saved. Please, try again.'));
         }
