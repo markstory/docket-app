@@ -23,13 +23,13 @@ $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
         ]
     ) ?>
 </h3>
-<div class="table-responsive">
+<div class="table-responsive feed-subscriptions">
     <table>
         <thead>
             <tr>
-                <th><?= $this->Paginator->sort('feed_category_id') ?></th>
+                <th><?= $this->Paginator->sort('feed_category_id', 'Category') ?></th>
                 <th><?= $this->Paginator->sort('alias') ?></th>
-                <th class="actions"><?= __('Actions') ?></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -45,8 +45,10 @@ $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
             <tr>
                 <td>
                     <?php if ($feedSubscription->feed_category) : ?>
+                    <span class="feed-category-badge">
                         <?= $this->element('icons/directory16', ['color' => $feedSubscription->feed_category->color_hex]) ?>
-                    <?= $this->Html->link($feedSubscription->feed_category->title, ['_name' => 'feedcategories:view', 'id' => $feedSubscription->feed_category->id]) ?>
+                        <?= $this->Html->link($feedSubscription->feed_category->title, ['_name' => 'feedcategories:view', 'id' => $feedSubscription->feed_category->id]) ?>
+                    </span>
                     <?php endif; ?>
                 </td>
                 <td><?= $this->Html->link($feedSubscription->alias, $viewUrl) ?></td>

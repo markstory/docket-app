@@ -65,7 +65,7 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/rss16') . ' Feeds',
-            ['_name' => 'feedsubscriptions:index'],
+            ['_name' => 'feedsubscriptions:home'],
             [
                 'escape' => false,
                 'hx-boost' => '1',

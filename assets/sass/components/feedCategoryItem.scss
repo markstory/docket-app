@@ -26,9 +26,6 @@
     height: 40px;
     flex-grow: 1;
   }
-  .feed-category-badge svg {
-    margin: 0 4px;
-  }
 
   a {
     display: flex;
@@ -56,6 +53,7 @@
 
 .feed-category-badge {
   display: flex;
+  gap: calc($space / 2);
   align-items: center;
 
   // Nudge icon to the left so that it lines up with

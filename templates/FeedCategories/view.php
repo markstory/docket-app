@@ -46,7 +46,7 @@ endforeach;
 
 <div class="feed-items">
 <?php foreach ($groupedItems as $group) : ?>
-<h3 class="heading-task-group">
+<h3 class="heading-feed-group">
     <time class="heading-feed-category" datetime="<?= h($group['date']->toDateString()) ?>">
         <?= h($group['date']->timeAgoInWords()) ?>
     </time>

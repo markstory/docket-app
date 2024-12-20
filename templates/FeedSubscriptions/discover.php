@@ -10,7 +10,7 @@ $isHtmx = $this->request->is('htmx');
 
 $this->setLayout('feedreader');
 if ($isHtmx) {
-    $this->setLayout('sheet');
+    $this->setLayout('modal');
 }
 
 $this->assign('title', 'Discover Feeds');

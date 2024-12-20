@@ -39,9 +39,9 @@ endforeach;
 </h3>
 <div class="feed-items">
 <?php foreach ($groupedItems as $group) : ?>
-<h3 class="heading-task-group">
+<h3 class="heading-feed-group">
     <span class="heading-feed-category">
-        <?= $this->element('icons/directory16') ?>
+        <?= $this->element('icons/directory16', ['color' => $group['category']->color_hex]) ?>
         <?= h($group['category']->title) ?>
     </span>
 </h3>

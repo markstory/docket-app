@@ -35,7 +35,7 @@ $feedSyncUrl = $this->Url->build([
             [
                 'escape' => false,
                 'role' => 'menuitem',
-                'class' => 'icon-edit',
+                'class' => 'icon-complete',
                 'data-testid' => 'sync-feed',
             ]
         ) ?>

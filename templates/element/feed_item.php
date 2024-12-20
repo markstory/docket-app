@@ -22,7 +22,7 @@ if ($isRead) {
         <?php endif; ?>
     </p>
 
-    <?php if (!$isRead) : ?>
+    <?php if (!$isRead && $feedItem->summary) : ?>
         <?php // This should be a component that can be toggled. ?>
         <div class="feed-item-summary"><?= $feedItem->summary ?></div>
     <?php endif; ?>
