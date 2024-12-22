@@ -7,13 +7,9 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/markstory/docket-app/ci.yml?branch=master)](https://github.com/markstory/docket-app/actions)
 [![codecov](https://codecov.io/gh/markstory/docket-app/branch/master/graph/badge.svg?token=0dPEbBPsQ3)](https://codecov.io/gh/markstory/docket-app)
 
-A todo list application. This project began as an exercise in learning to use [Inertia.js](https://inertiajs.com/) (along with [CakePHP Adapter](https://github.com/ishanvyas22/cakephp-inertiajs)), [React](https://reactjs.org/) and [CakePHP](https://cakephp.org/) together, and to try a new approach to CSS.
-Heavily inspired in functionality and design by [Todoist](http://todoist.com)
-and [Things](http://culturedcode.com/things).
+A personal task list & feed reader application. This project is built with [cakephp](https://cakephp.org), [htmx](https://htmx.org), and webcomponents in an effort to learn about building interactive applications with simpler frontend tools. The task list functionality is inspired by [Todoist](http://todoist.com) and [Things](http://culturedcode.com/things).
 
-This project is great if you want to host and operate your personal todo lists
-in your personal cloud, where you know exactly what is being done with your
-data.
+This project is great if you want to host and operate your personal todo lists on your own servers, where you know exactly what is being done with your data.
 
 ## Installation & Getting Started
 
@@ -60,7 +56,7 @@ Then visit `http://localhost:8765` to see the landing page, and create your acco
 
 While you shouldn't need to configure much, if you do want to tweak settings,
 the `config/app_local.php` file is where you should make any changes specific to
-your setup. During application start, this file is loaded and merged onto the 
+your setup. During application start, this file is loaded and merged onto the
 defaults in `config/app.php`.
 
 ## Local Development
@@ -127,7 +123,7 @@ This command will iterate all the subscriptions that will expire in the next day
 ## Flutter + Google Auth
 
 When building the flutter application you need another OAuth Client ID for
-the flutter application. 
+the flutter application.
 
 1. Setup a keystore file. I [followed this tutorial](https://docs.flutter.dev/deployment/android#create-an-upload-keystore).
 2. Fill out `key.properties`. It should look like
