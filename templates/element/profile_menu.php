@@ -42,15 +42,19 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
 
 <drop-down class="focus-menu">
     <button
-        class="button-secondary"
+        class="button-muted"
         aria-haspopup="true"
         aria-controls="focus-menu"
         type="button"
     >
     <?php if ($activeFocus == "tasks") : ?>
-        <?= $this->element('icons/clippy16') . ' Tasks' ?>
+        <span class="icon-today">
+            <?= $this->element('icons/clippy16') . ' Tasks' ?>
+        </span>
     <?php elseif ($activeFocus == "feeds") : ?>
-        <?= $this->element('icons/rss16') . ' Feeds' ?>
+        <span class="icon-week">
+            <?= $this->element('icons/rss16') . ' Feeds' ?>
+        </span>
     <?php endif; ?>
     </button>
     <drop-down-menu id="focus-menu">
@@ -61,6 +65,7 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
                 'escape' => false,
                 'hx-boost' => '1',
                 'role' => 'menuitem',
+                'class' => 'icon-today',
             ]
         ) ?>
         <?= $this->Html->link(
@@ -70,6 +75,7 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
                 'escape' => false,
                 'hx-boost' => '1',
                 'role' => 'menuitem',
+                'class' => 'icon-week',
             ]
         ) ?>
     </drop-down-menu>

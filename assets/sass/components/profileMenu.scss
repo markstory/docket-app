@@ -1,5 +1,18 @@
-.profile-menu {
+.profile-menu-container {
+  display: flex;
+  gap: $space;
+  align-items: center;
   margin: 0 0 calc($space * 3) calc($space / 2);
+
+  .button-muted {
+    border: 1px solid var(--color-border);
+    &:hover {
+      border-color: var(--color-border-med);
+    }
+  }
+}
+
+.profile-menu {
   display: block;
 
   .avatar,

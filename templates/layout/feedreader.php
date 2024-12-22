@@ -23,10 +23,12 @@ endif;
     <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
-                <?= $this->element('profile_menu', ['activeFocus' => 'feeds']) ?>
+                <div class="profile-menu-container">
+                    <?= $this->element('profile_menu', ['activeFocus' => 'feeds']) ?>
+                </div>
                 <div class="project-filter">
                     <ul class="links">
-                        <li class="icon-today">
+                        <li class="icon-week">
                             <?= $this->Html->link(
                                 $this->element('icons/rss16') . " What's new",
                                 ['_name' => 'feedsubscriptions:home'],

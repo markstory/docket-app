@@ -29,7 +29,9 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
     <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>
-                <?= $this->element('profile_menu', ['activeFocus' => 'tasks']) ?>
+                <div class="profile-menu-container">
+                    <?= $this->element('profile_menu', ['activeFocus' => 'tasks']) ?>
+                </div>
                 <div class="project-filter">
                     <ul class="links">
                         <li class="icon-today">
