@@ -23,10 +23,10 @@ use Cake\Validation\Validator;
  * @method array<\App\Model\Entity\FeedCategory> patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\FeedCategory|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\FeedCategory saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedCategory>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedCategory> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedCategory>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedCategory> deleteManyOrFail(iterable $entities, array $options = [])
  * @method \Cake\ORM\SelectQuery findByUserId(int $userId)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

@@ -27,7 +27,7 @@ class FeedServiceTest extends TestCase
         'app.Feeds',
     ];
 
-    private ?HtmlSanitizerInterface $cleaner = null;
+    private HtmlSanitizerInterface $cleaner;
 
     public function setUp(): void
     {

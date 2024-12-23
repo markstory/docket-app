@@ -22,10 +22,10 @@ use Cake\Validation\Validator;
  * @method array<\App\Model\Entity\Feed> patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\Feed|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\Feed saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\Feed>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\Feed>| saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedsTable extends Table

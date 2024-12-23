@@ -15,10 +15,8 @@ class FeedCategoriesController extends AppController
 {
     /**
      * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index(): Response|null|null
+    public function index(): void
     {
         $query = $this->FeedCategories->find()
             ->contain(['Users']);
@@ -44,10 +42,8 @@ class FeedCategoriesController extends AppController
 
     /**
      * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add(): Response|null|null
+    public function add(): ?Response
     {
         $feedCategory = $this->FeedCategories->newEmptyEntity();
         if ($this->request->is('post')) {
@@ -65,16 +61,16 @@ class FeedCategoriesController extends AppController
 
         $referer = $this->request->referer();
         $this->set(compact('feedCategory', 'referer'));
+
+        return null;
     }
 
     /**
      * Edit method
      *
      * @param string|null $id Feed Category id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(?string $id = null): Response|null|null
+    public function edit(?string $id = null): ?Response
     {
         $feedCategory = $this->FeedCategories->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -91,13 +87,14 @@ class FeedCategoriesController extends AppController
 
         $referer = $this->request->referer();
         $this->set(compact('feedCategory', 'referer'));
+
+        return null;
     }
 
     /**
      * Delete confirmation
      *
      * @param string|null $id Feed Category id.
-     * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function deleteConfirm(?string $id = null): ?Response
@@ -106,6 +103,8 @@ class FeedCategoriesController extends AppController
         $this->Authorization->authorize($feedCategory, 'delete');
 
         $this->set('feedCategory', $feedCategory);
+
+        return null;
     }
 
     /**

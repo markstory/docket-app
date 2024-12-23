@@ -28,10 +28,10 @@ use Cake\Validation\Validator;
  * @method array<\App\Model\Entity\FeedItem> patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\FeedItem|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\FeedItem saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedItem>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedItem>false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedItemsTable extends Table
@@ -199,6 +199,7 @@ class FeedItemsTable extends Table
             ->orderByDesc('FeedItems.published_at');
 
         foreach ($items as $item) {
+            /** @var \App\Model\Entity\FeedItem $item */
             $this->markRead($userId, $item);
         }
     }

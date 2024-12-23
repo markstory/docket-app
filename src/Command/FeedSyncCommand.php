@@ -50,9 +50,9 @@ class FeedSyncCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null|void The exit code or null for success
+     * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): int|null|null
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $limit = (int)$args->getOption('limit');
 
@@ -75,5 +75,7 @@ class FeedSyncCommand extends Command
             }
         }
         $io->out('Sync complete');
+
+        return self::CODE_SUCCESS;
     }
 }
