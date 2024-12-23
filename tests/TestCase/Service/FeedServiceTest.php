@@ -21,10 +21,12 @@ class FeedServiceTest extends TestCase
     use HttpClientTrait;
 
     public array $fixtures = [
-        'app.FeedItems',
         'app.FeedItemUsers',
-        'app.Users',
+        'app.FeedItems',
+        'app.FeedSubscriptions',
+        'app.FeedCategories',
         'app.Feeds',
+        'app.Users',
     ];
 
     private HtmlSanitizerInterface $cleaner;
