@@ -50,6 +50,17 @@ class UsersControllerTest extends TestCase
         $this->assertSession('mark@example.com', 'Auth.email');
     }
 
+    public function testLoginRedirect()
+    {
+        $this->enableCsrfToken();
+        $this->post('/login?redirect=/feeds', [
+            'email' => 'mark@example.com',
+            'password' => 'password123',
+        ]);
+        $this->assertRedirect('/feeds');
+        $this->assertSession('mark@example.com', 'Auth.email');
+    }
+
     public function testLoginUpdateTimezone()
     {
         $this->enableCsrfToken();

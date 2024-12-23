@@ -165,6 +165,7 @@ class Application extends BaseApplication implements
     {
         $config = [
             'unauthenticatedRedirect' => '/login',
+            'queryParam' => 'redirect',
         ];
         // API token request. We don't want redirects.
         if ($request->hasHeader('Authorization')) {
