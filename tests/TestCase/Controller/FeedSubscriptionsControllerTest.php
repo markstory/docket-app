@@ -27,13 +27,14 @@ class FeedSubscriptionsControllerTest extends TestCase
      * @var list<string>
      */
     protected array $fixtures = [
+        'app.SavedFeedItems',
+        'app.FeedSubscriptionsFeedItems',
+        'app.FeedItemUsers',
+        'app.FeedItems',
         'app.FeedSubscriptions',
         'app.Feeds',
-        'app.Users',
         'app.FeedCategories',
-        'app.SavedFeedItems',
-        'app.FeedItems',
-        'app.FeedSubscriptionsFeedItems',
+        'app.Users',
     ];
 
     private FeedsTable $Feeds;

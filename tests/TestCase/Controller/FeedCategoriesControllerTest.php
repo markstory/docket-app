@@ -27,8 +27,8 @@ class FeedCategoriesControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.FeedCategories',
-        'app.Users',
         'app.FeedSubscriptions',
+        'app.Users',
     ];
 
     public function setUp(): void
