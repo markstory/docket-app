@@ -57,7 +57,7 @@ a {
 
 dialog {
   position: fixed;
-  padding: calc($space * 2) calc($space * 3);
+  padding: calc($space * 4) calc($space * 5);
   z-index: $z-modal;
 
   border-radius: $border-radius-large;

@@ -19,11 +19,15 @@
 @import 'components/dayPicker';
 @import 'components/dueOnPicker';
 @import 'components/dueOn';
+@import 'components/feedCategoryItem';
+@import 'components/feedItem';
+@import 'components/feedSubscriptions';
 @import 'components/flashMessage';
 @import 'components/icons';
 @import 'components/markdownText';
 @import 'components/modal';
 @import 'components/noProjects';
+@import 'components/paginator';
 @import 'components/profileMenu';
 @import 'components/projectBadge';
 @import 'components/projectFilter';
@@ -39,5 +43,6 @@
 @import 'pages/tasks/view.scss';
 @import 'pages/projects/view.scss';
 @import 'pages/calendars/add.scss';
+@import 'pages/feeds/feeditems.scss';
 
 @import 'utils'

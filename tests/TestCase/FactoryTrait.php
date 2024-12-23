@@ -8,6 +8,11 @@ use App\Model\Entity\CalendarItem;
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
 use App\Model\Entity\CalendarSubscription;
+use App\Model\Entity\Feed;
+use App\Model\Entity\FeedCategory;
+use App\Model\Entity\FeedItem;
+use App\Model\Entity\FeedItemUser;
+use App\Model\Entity\FeedSubscription;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
@@ -16,6 +21,7 @@ use App\Model\Entity\User;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
+use RuntimeException;
 use VCR\VCR;
 
 trait FactoryTrait
@@ -136,6 +142,84 @@ trait FactoryTrait
         return $sections->saveOrFail($section);
     }
 
+    protected function makeFeedSubscription($categoryId, $feedId, $userId = 1, $props = []): FeedSubscription
+    {
+        $subscriptions = $this->fetchTable('FeedSubscriptions');
+
+        $props = array_merge([
+            'user_id' => $userId,
+            'feed_id' => $feedId,
+            'feed_category_id' => $categoryId,
+            'alias' => 'news site',
+            'ranking' => 0,
+        ], $props);
+        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        $sub = $subscriptions->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $subscriptions->saveOrFail($sub);
+    }
+
+    protected function makeFeedCategory($name, $userId = 1, $props = []): FeedCategory
+    {
+        $categories = $this->fetchTable('FeedCategories');
+
+        $props = array_merge([
+            'user_id' => $userId,
+            'title' => $name,
+            'ranking' => 0,
+            'color' => 1,
+        ], $props);
+        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        $feedCategory = $categories->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $categories->saveOrFail($feedCategory);
+    }
+
+    protected function makeFeed(string $url, $props = []): Feed
+    {
+        $feeds = $this->fetchTable('Feeds');
+        $props = array_merge([
+            'url' => $url,
+            'refresh_interval' => 60 * 60 * 24,
+        ], $props);
+        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        $feed = $feeds->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $feeds->saveOrFail($feed);
+    }
+
+    protected function makeFeedItem(int $feedId, $props = []): FeedItem
+    {
+        $items = $this->fetchTable('FeedItems');
+        $props = array_merge([
+            'feed_id' => $feedId,
+            'guid' => md5((string)rand()),
+            'url' => 'http://example.org/blog/hello-world',
+            'title' => 'hello world',
+            'summary' => 'first post!',
+            'content' => '',
+            'published_at' => DateTime::parse('-3 days'),
+        ], $props);
+        /** @var \App\Model\Entity\FeedItem $item */
+        $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $items->saveOrFail($item);
+    }
+
+    protected function makeFeedItemUser(int $itemId, int $userId, $props = []): FeedItemUser
+    {
+        $items = $this->fetchTable('FeedItemUsers');
+        $props = array_merge([
+            'feed_item_id' => $itemId,
+            'user_id' => $userId,
+            'read_at' => DateTime::now(),
+        ], $props);
+        /** @var \App\Model\Entity\FeedItemUser $item */
+        $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
+
+        return $items->saveOrFail($item);
+    }
+
     protected function makeTask($title, $projectId, $order, $props = []): Task
     {
         $tasks = $this->fetchTable('Tasks');
@@ -220,6 +304,16 @@ trait FactoryTrait
         $subs->saveOrFail($sub);
 
         return $sub;
+    }
+
+    public function readFeedFixture(string $fileName): string
+    {
+        $contents = file_get_contents(TESTS . "Fixture/feeds/$fileName");
+        if (!$contents) {
+            throw new RuntimeException("Could not read feed fixture $fileName");
+        }
+
+        return $contents;
     }
 
     /**

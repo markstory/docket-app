@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Service\CalendarServiceProvider;
+use App\Service\FeedServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -37,6 +38,8 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use FeatureFlags\FeatureManagerInterface;
+use FeatureFlags\Simple\FeatureManager;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -141,7 +144,7 @@ class Application extends BaseApplication implements
             $csp = new CSPBuilder([
                 'font-src' => ['self' => true],
                 'form-action' => ['self' => true],
-                'img-src' => ['self' => true, 'data' => true, 'allow' => ['www.gravatar.com']],
+                'img-src' => ['self' => true, 'data' => true, 'allow' => ['*']],
                 'script-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
                 'style-src' => ['self' => true, 'unsafe-inline' => true, 'allow' => $allow],
                 'object-src' => [],
@@ -152,12 +155,17 @@ class Application extends BaseApplication implements
         });
 
         $container->addServiceProvider(new CalendarServiceProvider());
+        $container->addServiceProvider(new FeedServiceProvider());
+        $container->addShared(FeatureManagerInterface::class, function () {
+            return new FeatureManager(Configure::read('Features'));
+        });
     }
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
         $config = [
             'unauthenticatedRedirect' => '/login',
+            'queryParam' => 'redirect',
         ];
         // API token request. We don't want redirects.
         if ($request->hasHeader('Authorization')) {

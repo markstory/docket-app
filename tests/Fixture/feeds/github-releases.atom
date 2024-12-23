@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:https://github.com/markstory/asset_compress/releases</id>
+  <link type="text/html" rel="alternate" href="https://github.com/markstory/asset_compress/releases"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/markstory/asset_compress/releases.atom"/>
+  <title>Release notes from asset_compress</title>
+  <updated>2024-07-26T12:29:36Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/5.0.1</id>
+    <updated>2024-07-26T12:30:15Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/5.0.1"/>
+    <title>AssetCompress 5.0.1</title>
+    <content type="html">&lt;h2&gt;What&#39;s Changed&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update BuildCommand.php - fixed force param condition check by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/MarekSz88/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/MarekSz88&quot;&gt;@MarekSz88&lt;/a&gt; in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;2431880782&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/372&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/372/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/372&quot;&gt;#372&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;New Contributors&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/MarekSz88/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/MarekSz88&quot;&gt;@MarekSz88&lt;/a&gt; made their first contribution in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;2431880782&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/372&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/372/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/372&quot;&gt;#372&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Full Changelog&lt;/strong&gt;: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/markstory/asset_compress/compare/5.0.0...5.0.1&quot;&gt;&lt;tt&gt;5.0.0...5.0.1&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/5.0.0</id>
+    <updated>2023-09-29T22:52:16Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/5.0.0"/>
+    <title>AssetCompress 5.0.0</title>
+    <content type="html">&lt;h2&gt;What&#39;s Changed&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fix composer.json Indentation by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/amayer5125/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/amayer5125&quot;&gt;@amayer5125&lt;/a&gt; in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;1055522809&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/360&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/360/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/360&quot;&gt;#360&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Update for Cake 5 by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/ADmad/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/ADmad&quot;&gt;@ADmad&lt;/a&gt; in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;1301681263&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/365&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/365/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/365&quot;&gt;#365&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Upgrade to mini-asset 2.x by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/markstory/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/markstory&quot;&gt;@markstory&lt;/a&gt; in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;1314338666&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/366&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/366/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/366&quot;&gt;#366&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;5.x by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/ADmad/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/ADmad&quot;&gt;@ADmad&lt;/a&gt; in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;1918090398&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/371&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/371/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/371&quot;&gt;#371&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;New Contributors&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/amayer5125/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/amayer5125&quot;&gt;@amayer5125&lt;/a&gt; made their first contribution in &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;1055522809&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/markstory/asset_compress/issues/360&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/markstory/asset_compress/pull/360/hovercard&quot; href=&quot;https://github.com/markstory/asset_compress/pull/360&quot;&gt;#360&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Full Changelog&lt;/strong&gt;: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/markstory/asset_compress/compare/4.1.0...5.0.0&quot;&gt;&lt;tt&gt;4.1.0...5.0.0&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.1.0</id>
+    <updated>2021-09-07T19:43:48Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.1.0"/>
+    <title>AssetCompress 4.1.0</title>
+    <content type="html">&lt;ul&gt;
+&lt;li&gt;Added the &lt;code&gt;skip-plugins&lt;/code&gt; option to &lt;code&gt;asset_compress build&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Moved CI to GitHub actions.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.0.4</id>
+    <updated>2020-08-16T16:06:52Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.0.4"/>
+    <title>AssetCompress 4.0.4</title>
+    <content type="html">&lt;h2&gt;Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;AssetCompressMiddleware now correctly sets the mime type of svg files.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.0.3</id>
+    <updated>2020-08-15T02:38:42Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.0.3"/>
+    <title>AssetCompress 4.0.3</title>
+    <content type="html">&lt;h2&gt;Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update tests to use integration base classes.&lt;/li&gt;
+&lt;li&gt;Fixed the &lt;code&gt;--force&lt;/code&gt; flag on commands.&lt;/li&gt;
+&lt;li&gt;Updated to the new middleware interface in 4.0&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asset_compress clear&lt;/code&gt; will now clear all managed file types instead of only js and css files.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Internal Breaking Changes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Converted Shells to Command classes. If you have subclassed assetcompress tasks your application will be broken.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.0.2</id>
+    <updated>2020-03-18T01:45:31Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.0.2"/>
+    <title>AssetCompress 4.0.2</title>
+    <content type="html">&lt;h2&gt;Fixed&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Disabled unused plugin hook methods.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.0.1</id>
+    <updated>2019-12-28T18:02:17Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.0.1"/>
+    <title>AssetCompress 4.0.1</title>
+    <content type="html">&lt;h2&gt;Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed cake4 incompatibility in shell tasks.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/4.0.0</id>
+    <updated>2019-12-17T19:13:46Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/4.0.0"/>
+    <title>AssetCompress 4.0.0</title>
+    <content type="html">&lt;ul&gt;
+&lt;li&gt;Compatible with CakePHP 4.0&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/3.5.1</id>
+    <updated>2019-06-26T02:30:15Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/3.5.1"/>
+    <title>AssetCompress 3.5.1</title>
+    <content type="html">&lt;ul&gt;
+&lt;li&gt;Update suggested scssphp package.&lt;/li&gt;
+&lt;li&gt;Remove usage of deprecated class alias.&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/553608/3.5.0</id>
+    <updated>2018-12-20T02:13:44Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/markstory/asset_compress/releases/tag/3.5.0"/>
+    <title>Asset Compress 3.5.0</title>
+    <content type="html">&lt;ul&gt;
+&lt;li&gt;Discontinue using methods deprecated in 3.7&lt;/li&gt;
+&lt;li&gt;Require at least CakePHP 3.7.0&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>markstory</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=60&amp;v=4"/>
+  </entry>
+</feed>

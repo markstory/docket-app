@@ -1,0 +1,19 @@
+.paginator {
+  display: flex;
+  align-items: center;
+  gap: calc($space * 2);
+
+  p {
+    color: var(--color-gray-500);
+    font-size: $font-size-small;
+    margin-bottom: 0;
+  }
+}
+.pagination {
+  list-style: none;
+  margin: calc($space * 2) 0;
+  padding: 0;
+  display: flex;
+  gap: $space;
+  align-items: center;
+}

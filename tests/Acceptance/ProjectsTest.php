@@ -3,22 +3,21 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
+use App\Model\Table\ProjectsTable;
 use Symfony\Component\Panther\Client;
 
 class ProjectsTest extends AcceptanceTestCase
 {
-    /**
-     * @var \App\Model\Table\ProjectsTable
-     */
-    protected $Projects;
+    protected ProjectsTable $Projects;
 
     public function setUp(): void
     {
         parent::setUp();
+        /** @var \App\Model\Table\ProjectsTable $this->Projects */
         $this->Projects = $this->fetchTable('Projects');
     }
 
-    protected function openSectionMenu(Client $client)
+    protected function openSectionMenu(Client $client): void
     {
         $crawler = $client->getCrawler();
 
@@ -30,7 +29,7 @@ class ProjectsTest extends AcceptanceTestCase
         $client->waitFor('drop-down-menu');
     }
 
-    protected function openProjectMenu(Client $client)
+    protected function openProjectMenu(Client $client): void
     {
         $crawler = $client->getCrawler();
 
@@ -42,7 +41,7 @@ class ProjectsTest extends AcceptanceTestCase
         $client->waitFor('drop-down-menu');
     }
 
-    protected function confirmDialog(Client $client)
+    protected function confirmDialog(Client $client): void
     {
         // Click proceed in the modal.
         $crawler = $client->getCrawler();
@@ -51,7 +50,7 @@ class ProjectsTest extends AcceptanceTestCase
         $button->click();
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $client = $this->login();
         $client->get('/tasks/today');
@@ -71,7 +70,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals('New project', $project->name);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->makeProject('Home', 1);
         $client = $this->login();
@@ -91,7 +90,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals(0, $this->Projects->find()->count());
     }
 
-    public function testTasksRenderInSections()
+    public function testTasksRenderInSections(): void
     {
         $project = $this->makeProject('Home', 1);
         $movies = $this->makeProjectSection('movies', $project->id, 0);
@@ -115,7 +114,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals(3, count($tasks));
     }
 
-    public function testAddSection()
+    public function testAddSection(): void
     {
         $project = $this->makeProject('Home', 1);
 
@@ -138,7 +137,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertSame($project->id, $section->project_id);
     }
 
-    public function testEditSection()
+    public function testEditSection(): void
     {
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Books', $project->id);
@@ -165,7 +164,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertSame($project->id, $section->project_id);
     }
 
-    public function testDeleteSection()
+    public function testDeleteSection(): void
     {
         $project = $this->makeProject('Home', 1);
         $this->makeProjectSection('Books', $project->id);
@@ -185,7 +184,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertEquals(0, $this->Projects->Sections->find()->count());
     }
 
-    public function testDragTaskToSection()
+    public function testDragTaskToSection(): void
     {
         $this->markTestSkipped("Selenium doesn't support html5 drag and drop currently.");
 
@@ -217,7 +216,7 @@ class ProjectsTest extends AcceptanceTestCase
         $this->assertSame($section->id, $task->section_id);
     }
 
-    public function testAddTaskToSection()
+    public function testAddTaskToSection(): void
     {
         $project = $this->makeProject('Home', 1);
         $section = $this->makeProjectSection('Books', $project->id);
@@ -230,7 +229,7 @@ class ProjectsTest extends AcceptanceTestCase
         // Click add task in the section.
         $addTask = $crawler->filter('[data-testid="section-add-task"]')->first();
         $addTask->click();
-        $client->waitFor('.sheet-body');
+        $client->waitFor('.modal-sheet');
 
         $title = $crawler->filter('.task-title-input');
         $title->sendKeys('A new task');

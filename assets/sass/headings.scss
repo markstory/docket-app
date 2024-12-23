@@ -18,7 +18,7 @@
 
 .heading-icon {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: calc($space / 2);
 
   &.today svg {
@@ -61,6 +61,15 @@
     font-weight: normal;
     color: var(--color-low-emphasis);
   }
+}
+
+.heading-feed-group {
+  display: flex;
+  align-items: center;
+  gap: calc($space / 2);
+  margin: calc($space * 6) 0 $space 0;
+  padding-bottom: $space;
+  border-bottom: 1px solid var(--color-border-low);
 }
 
 .heading-actions {

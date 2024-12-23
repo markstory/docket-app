@@ -1,0 +1,81 @@
+// TODO Could be generalized with project-item
+.feed-category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space;
+  width: max-content;
+  padding-right: calc($space / 2);
+  border-radius: $border-radius;
+  margin-bottom: 1px;
+
+  text-overflow: ellipsis;
+
+  // Disable hover background on context menu button.
+  > .button-default:hover {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  &.active,
+  &:hover {
+    background: var(--color-bg-low-active);
+  }
+
+  .feed-category-badge {
+    height: 40px;
+    flex-grow: 1;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    color: var(--color-fg);
+    text-decoration: none;
+    padding-left: calc($space / 2);
+  }
+
+  .counter {
+    margin: 0 calc($space / 2);
+  }
+
+  .button-icon,
+  .button-icon:hover {
+    background: transparent;
+  }
+}
+
+.project-filter .feed-category-item {
+  flex-grow: 1;
+}
+
+.feed-category-badge {
+  display: flex;
+  gap: calc($space / 2);
+  align-items: center;
+
+  // Nudge icon to the left so that it lines up with
+  // any text above it.
+  margin-left: calc($space / 2 * -1);
+}
+
+.drag-ghost .feed-category-item {
+    width: 200px;
+}
+
+.feed-category-feeds {
+  box-shadow: var(--shadow-inset-light);
+  border-radius: $border-radius;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding: $space $space $space calc($space * 2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

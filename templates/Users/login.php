@@ -8,7 +8,7 @@ $this->assign('title', 'Login');
 </h1>
 <?= $this->Form->create(null, [
     'class' => 'form-narrow',
-    'url' => ['controller' => 'Users', 'action' => 'login'],
+    'url' => ['controller' => 'Users', 'action' => 'login', '?' => $this->getRequest()->getQueryParams()],
 ]) ?>
 <?= $this->Form->control('email', ['type' => 'email', 'required' => true]) ?>
 <?= $this->Form->control('password', ['type' => 'password', 'required' => true]) ?>

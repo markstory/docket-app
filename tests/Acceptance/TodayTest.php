@@ -75,9 +75,9 @@ class TodayTest extends AcceptanceTestCase
         // Open the add form
         $button = $crawler->filter('[data-testid="add-task"]');
         $button->click();
-        $client->waitFor('.sheet-body');
+        $client->waitFor('.modal-sheet');
 
-        $form = $crawler->filter('.sheet-body form')->form();
+        $form = $crawler->filter('.modal-sheet form')->form();
         $form->get('title')->setValue('A new task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
@@ -103,9 +103,9 @@ class TodayTest extends AcceptanceTestCase
         // Open the add form in the evening section.
         $button = $crawler->filter('[data-testid="add-task-evening"]');
         $button->click();
-        $client->waitFor('.sheet-body');
+        $client->waitFor('.modal-sheet');
 
-        $form = $crawler->filter('.sheet-body form')->form();
+        $form = $crawler->filter('.modal-sheet form')->form();
         $form->get('title')->setValue('evening task');
 
         $button = $client->getCrawler()->filter('[data-testid="save-task"]');
@@ -128,10 +128,10 @@ class TodayTest extends AcceptanceTestCase
         // Open the add form
         $button = $crawler->filter('[data-testid="add-task"]');
         $button->click();
-        $client->waitFor('.sheet-body');
+        $client->waitFor('.modal-sheet');
 
         // Fill out the task title
-        $form = $crawler->filter('.sheet-body form')->form();
+        $form = $crawler->filter('.modal-sheet form')->form();
         $form->get('title')->setValue('A new task');
 
         // Add a subtask

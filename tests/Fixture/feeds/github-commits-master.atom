@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:/markstory/docket-app/commits/master</id>
+  <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commits/master"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/markstory/docket-app/commits/master.atom"/>
+  <title>Recent Commits to docket-app:master</title>
+  <updated>2024-08-15T15:29:49Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/ec410ee4f7efb85d172bcb46a6388a09296ad0d3</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/ec410ee4f7efb85d172bcb46a6388a09296ad0d3"/>
+    <title>
+        Fix type better
+    </title>
+    <updated>2024-08-15T15:29:49Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix type better&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/35cc694490b432f2e97c0185b58d11149ce67930</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/35cc694490b432f2e97c0185b58d11149ce67930"/>
+    <title>
+        Fix psalm complaint
+    </title>
+    <updated>2024-08-15T14:30:07Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix psalm complaint&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/598fa5ef784bbaa8007c5b0ab8c600f65a5ec9a3</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/598fa5ef784bbaa8007c5b0ab8c600f65a5ec9a3"/>
+    <title>
+        Finish upgrade to cake5.1
+    </title>
+    <updated>2024-08-15T04:01:19Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Finish upgrade to cake5.1
+
+Was pretty smooth, found one rector I could add, and a simple backwards
+compat addition that made my upgrade smooth.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/dba25cdbf4d6adc90bad60370f93c0ab696279fb</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/dba25cdbf4d6adc90bad60370f93c0ab696279fb"/>
+    <title>
+        Upgrade to cakephp 5.1.0
+    </title>
+    <updated>2024-08-15T02:55:45Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Upgrade to cakephp 5.1.0
+
+I had one fatal error as I had implemented this method and the signature
+changed. I would count this as a regression as the change in cake was
+not backwards compatible.
+
+```
+PHP Fatal error:  Declaration of
+
+App\Error\SentryErrorLogger::log(
+    Throwable $exception,
+    ?Psr\Http\Message\ServerRequestInterface $request = null
+): bool
+
+must be compatible with
+
+Cake\Error\ErrorLogger::log(
+    $level,
+    Stringable|string $message,
+    array $context = []
+): void
+
+in /home/mark/code/docket-app/src/Error/SentryErrorLogger.php on line 54
+```
+
+Wrapped for readability.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/4cd58010606d5165a2411bc3b937ef4bfb72466f</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/4cd58010606d5165a2411bc3b937ef4bfb72466f"/>
+    <title>
+        Don&#39;t log 404s as errors
+    </title>
+    <updated>2024-07-28T17:46:30Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Don&amp;#39;t log 404s as errors&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/7a6e6a384f8f068c7a847e4cdbcdaa5855fdb3f2</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/7a6e6a384f8f068c7a847e4cdbcdaa5855fdb3f2"/>
+    <title>
+        Merge pull request #55 from cleptric/bump-sentry
+    </title>
+    <updated>2024-07-26T12:15:05Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Merge pull request #55 from cleptric/bump-sentry
+
+Replace `sentry/sdk` with `sentry/sentry`&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/3aa2451860c41a17d007524a915dc2498353dfc1</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/3aa2451860c41a17d007524a915dc2498353dfc1"/>
+    <title>
+        Exclude `/vendor` from being marked as in-app frames
+    </title>
+    <updated>2024-07-26T08:43:07Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/6617432?s=30&amp;v=4"/>
+    <author>
+      <name>cleptric</name>
+      <uri>https://github.com/cleptric</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Exclude `/vendor` from being marked as in-app frames&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/98dd3d7b9219935f1a5813e250427b58b2930d98</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/98dd3d7b9219935f1a5813e250427b58b2930d98"/>
+    <title>
+        Replace `sentry/sdk` with `sentry/sentry`
+    </title>
+    <updated>2024-07-26T08:42:35Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/6617432?s=30&amp;v=4"/>
+    <author>
+      <name>cleptric</name>
+      <uri>https://github.com/cleptric</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Replace `sentry/sdk` with `sentry/sentry`&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/b15b9da68d2d3c45a6a68d36acd15b7bc302b7ad</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/b15b9da68d2d3c45a6a68d36acd15b7bc302b7ad"/>
+    <title>
+        simplify
+    </title>
+    <updated>2024-06-15T05:01:57Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;simplify&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/1596267f51f3b273bdd3ac6c2e7aab43d3ed978d</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/1596267f51f3b273bdd3ac6c2e7aab43d3ed978d"/>
+    <title>
+        Fix redirect issue.
+    </title>
+    <updated>2024-05-19T04:25:59Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix redirect issue.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/e21997318ca0f9833d01025bf3091bcd841b34a3</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/e21997318ca0f9833d01025bf3091bcd841b34a3"/>
+    <title>
+        Remove more print calls
+    </title>
+    <updated>2024-05-19T03:38:13Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Remove more print calls&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/c3e0c4fb80bfe0347dcf9a83a0494201348c464f</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/c3e0c4fb80bfe0347dcf9a83a0494201348c464f"/>
+    <title>
+        Fix phpcs/psalm
+    </title>
+    <updated>2024-05-19T03:06:03Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix phpcs/psalm&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/b7a02ef89696843b005a6b58762e72587a09172e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/b7a02ef89696843b005a6b58762e72587a09172e"/>
+    <title>
+        Remove active style
+    </title>
+    <updated>2024-05-19T02:48:42Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Remove active style&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/30656923fc89ff7018a44ac5213b6ed4152cce61</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/30656923fc89ff7018a44ac5213b6ed4152cce61"/>
+    <title>
+        Fix calendar syncing
+    </title>
+    <updated>2024-05-18T05:12:40Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix calendar syncing&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/9b43fb38d3cad044ba8d1c263987450d992826b9</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/9b43fb38d3cad044ba8d1c263987450d992826b9"/>
+    <title>
+        Fix tests
+    </title>
+    <updated>2024-05-18T05:12:28Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix tests&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/db5159ff0de8dd63b274254fbeefc24f6739a4e0</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/db5159ff0de8dd63b274254fbeefc24f6739a4e0"/>
+    <title>
+        Remove debug logging
+    </title>
+    <updated>2024-05-18T04:44:45Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Remove debug logging&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d9963211384fdc01204b76c43020e9c91b587df8</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/d9963211384fdc01204b76c43020e9c91b587df8"/>
+    <title>
+        Track resourceId from calendar subscriptions
+    </title>
+    <updated>2024-05-18T04:04:51Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Track resourceId from calendar subscriptions
+
+This could be why subscription reset fails&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/da651b4d73505e9d6e963757560f87692b0ce12e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/da651b4d73505e9d6e963757560f87692b0ce12e"/>
+    <title>
+        Include config for ngrok
+    </title>
+    <updated>2024-05-18T03:50:19Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Include config for ngrok&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/18d856bb9dba84a5e4a9466308c83df46a15306e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/18d856bb9dba84a5e4a9466308c83df46a15306e"/>
+    <title>
+        Add more logging
+    </title>
+    <updated>2024-05-18T03:50:06Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Add more logging&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d74d38ce67aa291586ebc888a6e2600522e68f76</id>
+    <link type="text/html" rel="alternate" href="https://github.com/markstory/docket-app/commit/d74d38ce67aa291586ebc888a6e2600522e68f76"/>
+    <title>
+        Fix error rendering.
+    </title>
+    <updated>2024-05-18T03:30:22Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/24086?s=30&amp;v=4"/>
+    <author>
+      <name>markstory</name>
+      <uri>https://github.com/markstory</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix error rendering.&lt;/pre&gt;
+    </content>
+  </entry>
+</feed>

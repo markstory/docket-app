@@ -2,9 +2,7 @@
 declare(strict_types=1);
 ?>
 <modal-window open="1">
-<div class="sheet-overlay">
-    <div class="sheet-body">
-        <?= $this->fetch('content') ?>
-    </div>
-</div>
+    <dialog id="modal-window-dialog" class="modal-sheet <?= $this->get('sheet.class') ?>">
+    <?= $this->fetch('content') ?>
+    </dialog>
 </modal-window>

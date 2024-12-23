@@ -10,7 +10,6 @@ $isHtmx = $this->request->is('htmx');
 
 $this->setLayout('sidebar');
 if ($isHtmx) {
-    $this->set('closable', true);
     $this->setLayout('sheet');
 }
 

@@ -32,8 +32,8 @@
   display: flex;
   justify-content: center;
   position: relative;
-  top: -2px;
-  right: -5px;
+  top: -16px;
+  right: -16px;
 
   border: none;
   border-radius: 50%;
@@ -44,6 +44,22 @@
   padding: 5px;
   margin: 0;
   box-shadow: none;
+}
+
+.modal-sheet {
+  width: 75%;
+  max-width: 850px;
+  min-height: 80%;
+}
+.modal-sheet.feed-subscriptions-edit {
+  max-width: 600px;
+  min-height: auto;
+}
+@media (max-width: $breakpoint-phone) {
+  .modal-sheet {
+    height: 95%;
+    width: 95%;
+  }
 }
 
 .modal-contents {

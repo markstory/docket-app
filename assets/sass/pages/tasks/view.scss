@@ -70,9 +70,12 @@
   gap: calc($space * 4);
   flex-direction: row;
   flex-flow: wrap;
+  justify-content: space-between;
+  margin-bottom: calc($space * 3);
 
   .form-control {
     min-width: 200px;
+    margin-bottom: 0;
   }
 }
 @media (max-width: $breakpoint-phone) {
