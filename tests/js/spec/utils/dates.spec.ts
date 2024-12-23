@@ -97,6 +97,10 @@ describe('utils/dates', function () {
     it('accepts strings', function () {
       expect(formatCompactDate('2019-12-20')).toEqual('Dec 20 2019');
     });
+
+    it('formats never', function () {
+      expect(formatCompactDate('')).toEqual('No due date');
+    });
   });
 
   describe('formatDateHeading()', function () {

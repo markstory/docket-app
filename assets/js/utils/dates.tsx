@@ -77,6 +77,9 @@ export function getRangeInDays(start: Date, end: Date) {
 }
 
 export function formatCompactDate(date: Date | string): string {
+  if (date === '') {
+    return t('No due date');
+  }
   const input = parseDate(date);
   const delta = differenceInDays(input, getToday());
 
