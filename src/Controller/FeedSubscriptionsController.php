@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\User;
 use App\Model\Table\FeedCategoriesTable;
 use App\Model\Table\FeedItemsTable;
 use App\Model\Table\FeedSubscriptionsTable;
@@ -43,7 +44,7 @@ class FeedSubscriptionsController extends AppController
         $subIds = $query->all()->extract('id')->toList();
 
         $identity = $this->Authentication->getIdentity();
-        assert($identity !== null);
+        assert($identity instanceof User);
         $feedItems = $this->FeedSubscriptions->FeedItems->find(
             'subscribed',
             userId: $identity->id,
@@ -225,9 +226,12 @@ class FeedSubscriptionsController extends AppController
 
     public function discover(FeedService $feedService): void
     {
+        $identity = $this->Authentication->getIdentity();
+        assert($identity instanceof User);
+
         /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
-        $feedSubscription->user_id = (int)$this->Authentication->getIdentifier();
+        $feedSubscription->user_id = $identity->id;
 
         // Validate add permission with a throw away record
         $this->Authorization->authorize($feedSubscription, 'add');

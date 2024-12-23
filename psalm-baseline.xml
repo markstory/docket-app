@@ -29,11 +29,6 @@
       <code><![CDATA[fopen('php://stdin', 'r')]]></code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Controller/Api/CalendarProvidersController.php">
-    <UndefinedInterfaceMethod>
-      <code>toArray</code>
-    </UndefinedInterfaceMethod>
-  </file>
   <file src="src/Controller/Api/ProjectsController.php">
     <PropertyTypeCoercion>
       <code><![CDATA[$this->fetchTable('Projects')]]></code>
@@ -50,11 +45,6 @@
     <PossiblyNullArgument>
       <code>$value</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Controller/CalendarProvidersController.php">
-    <UndefinedInterfaceMethod>
-      <code>toArray</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="src/Controller/ErrorController.php">
     <ArgumentTypeCoercion>

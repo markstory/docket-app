@@ -14,6 +14,7 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class FeedServiceProvider extends ServiceProvider
 {
+    /** @var list<string> $provides */
     protected array $provides = [
         FeedService::class,
         FeedSyncCommand::class,
