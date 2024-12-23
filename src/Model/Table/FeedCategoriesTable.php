@@ -28,6 +28,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\ORM\SelectQuery findByUserId(int $userId)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

@@ -37,6 +37,51 @@ class FeedCategoriesControllerTest extends TestCase
         $this->FeedCategories = $this->fetchTable('FeedCategories');
     }
 
+    public function testIndex(): void
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $news = $this->makeFeedCategory('News', 1, ['ranking' => 1]);
+        $nope = $this->makeFeedCategory('Not Yours', 2, ['ranking' => 1]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get('/feeds/categories/');
+
+        $this->assertResponseOk();
+        $this->assertResponseContains($blogs->title);
+        $this->assertResponseContains($news->title);
+        $this->assertResponseNotContains($nope->title);
+    }
+
+    public function testView(): void
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 1, ['ranking' => 0]);
+        $feed = $this->makeFeed('https://example.com/feed.rss');
+        $sub = $this->makeFeedSubscription($blogs->id, $feed->id);
+        $item = $this->makeFeedItem($sub->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/feeds/categories/{$blogs->id}/view");
+
+        $this->assertResponseOk();
+        $this->assertResponseContains($blogs->title);
+        $this->assertResponseContains($item->title);
+    }
+
+    public function testViewPermissiong(): void
+    {
+        $blogs = $this->makeFeedCategory('Blogs', 2, ['ranking' => 0]);
+        $feed = $this->makeFeed('https://example.com/feed.rss');
+        $this->makeFeedSubscription($blogs->id, $feed->id, 2);
+
+        $this->login(1);
+        $this->enableCsrfToken();
+        $this->get("/feeds/categories/{$blogs->id}/view");
+
+        $this->assertResponseCode(403);
+    }
+
     /**
      * Test add forces user id to the current user.
      *
