@@ -189,11 +189,6 @@
       <code><![CDATA[$this->fetchTable('CalendarSubscriptions')]]></code>
     </PropertyTypeCoercion>
   </file>
-  <file src="src/Service/CalendarServiceProvider.php">
-    <NonInvariantDocblockPropertyType>
-      <code>$provides</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
   <file src="src/View/Widget/DueOnWidget.php">
     <UndefinedMagicPropertyFetch>
       <code><![CDATA[$this->view->Date]]></code>
