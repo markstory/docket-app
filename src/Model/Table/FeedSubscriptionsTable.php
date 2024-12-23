@@ -27,9 +27,9 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\FeedSubscription|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\FeedSubscription saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method iterable<\App\Model\Entity\FeedSubscription>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription>|saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedSubscription> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedSubscription>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription>|deleteManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\FeedSubscription> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedSubscriptionsTable extends Table

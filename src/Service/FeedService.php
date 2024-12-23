@@ -36,6 +36,7 @@ class FeedService
 
     public function __construct(Client $client, HtmlSanitizerInterface $cleaner)
     {
+        /** @var \App\Model\Table\FeedsTable $this->feeds */
         $this->feeds = $this->fetchTable('Feeds');
         $this->client = $client;
         $this->cleaner = $cleaner;
@@ -173,6 +174,7 @@ class FeedService
 
         // So many queries.
         foreach ($subscriptions as $sub) {
+            /** @var \App\Model\Entity\FeedSubscription $sub */
             $this->feeds->FeedSubscriptions->updateUnreadItemCount($sub);
             $this->feeds->FeedSubscriptions->FeedCategories->updateUnreadItemCount($sub->feed_category);
         }
@@ -214,6 +216,7 @@ class FeedService
             return [];
         }
         foreach ($xmlEntries as $entry) {
+            /** @var \App\Model\Entity\FeedItem $item */
             $item = $this->feeds->FeedItems->newEmptyEntity();
             // TODO add author byline
             $item->guid = (string)$entry->id;
@@ -249,6 +252,7 @@ class FeedService
             return [];
         }
         foreach ($xmlItems as $xmlItem) {
+            /** @var \App\Model\Entity\FeedItem $item */
             $item = $this->feeds->FeedItems->newEmptyEntity();
             $item->guid = (string)$xmlItem->guid;
             $item->title = (string)$xmlItem->title;
@@ -276,6 +280,7 @@ class FeedService
     {
         $this->feeds->getConnection()->transactional(function () use ($items): void {
             foreach ($items as $item) {
+                /** @var \App\Model\Entity\FeedItem|null $existing */
                 $existing = $this->feeds->FeedItems
                     ->find()
                     ->where([

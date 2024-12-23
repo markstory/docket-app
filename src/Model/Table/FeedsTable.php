@@ -23,9 +23,11 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Feed|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \App\Model\Entity\Feed saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method iterable<\App\Model\Entity\Feed>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>| saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\App\Model\Entity\Feed> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Feed> findByUrl(string $url)
+ * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Feed> findbyurl(string $url)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedsTable extends Table

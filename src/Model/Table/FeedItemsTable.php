@@ -32,6 +32,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedItem>false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeedItem> findById(int|string $id)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedItemsTable extends Table

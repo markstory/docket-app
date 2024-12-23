@@ -15,8 +15,6 @@ use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgu
  * FeedSubscriptions Controller
  *
  * @property \App\Model\Table\FeedSubscriptionsTable $FeedSubscriptions
- * @property \App\Model\Table\FeedItemsTable $FeedItems
- * @property \App\Model\Table\FeedCategoriesTable $FeedCategories
  */
 class FeedSubscriptionsController extends AppController
 {
@@ -26,7 +24,10 @@ class FeedSubscriptionsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
+        /** @var \App\Model\Table\FeedItemsTable $this->FeedItems */
         $this->FeedItems = $this->fetchTable('FeedItems');
+
+        /** @var \App\Model\Table\FeedCategoriesTable $this->FeedCategories */
         $this->FeedCategories = $this->fetchTable('FeedCategories');
     }
 
@@ -42,6 +43,7 @@ class FeedSubscriptionsController extends AppController
         $subIds = $query->all()->extract('id')->toList();
 
         $identity = $this->Authentication->getIdentity();
+        assert($identity !== null);
         $feedItems = $this->FeedSubscriptions->FeedItems->find(
             'subscribed',
             userId: $identity->id,
@@ -146,6 +148,7 @@ class FeedSubscriptionsController extends AppController
     public function itemsMarkRead(int $id): void
     {
         $this->request->allowMethod(['POST']);
+        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
 
         // This is view because viewItem is as well
@@ -186,8 +189,10 @@ class FeedSubscriptionsController extends AppController
      */
     public function add(): ?Response
     {
+        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         if ($this->request->is('post')) {
+            /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             $feedSubscription->feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
             if (!$feedSubscription->feed->favicon_url) {
@@ -220,9 +225,11 @@ class FeedSubscriptionsController extends AppController
 
     public function discover(FeedService $feedService): void
     {
-        // Validate add permission with a throw away record
+        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         $feedSubscription->user_id = (int)$this->Authentication->getIdentifier();
+
+        // Validate add permission with a throw away record
         $this->Authorization->authorize($feedSubscription, 'add');
 
         $error = '';
@@ -253,6 +260,7 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $this->Authorization->authorize($feedSubscription);
+            /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             if ($this->request->getData('url')) {
                 $feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
@@ -306,13 +314,15 @@ class FeedSubscriptionsController extends AppController
 
     public function sync($id, FeedService $feedService): ?Response
     {
-        // TODO add rate-limit/abuse
+        /** @var \App\Model\Entity\FeedSubscription $subscription */
         $subscription = $this->FeedSubscriptions->get($id, contain: ['Feeds']);
         $this->Authorization->authorize($subscription, 'view');
+        // TODO add rate-limit/abuse
 
         $feedService->refreshFeed($subscription->feed);
 
         $this->Flash->success(__('Feed refresh complete'));
+
         return $this->redirect(['action' => 'view', 'id' => $id]);
     }
 }

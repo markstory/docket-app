@@ -42,6 +42,7 @@ class FeedSubscriptionsControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        /** @var \App\Model\Table\FeedsTable $this->Feeds */
         $this->Feeds = $this->fetchTable('Feeds');
     }
 
