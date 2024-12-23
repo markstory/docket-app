@@ -223,7 +223,7 @@ class FeedSubscriptionsController extends AppController
 
         $categoriesTable = $this->fetchTable('FeedCategories');
         $query = $categoriesTable->find('list', limit: 200);
-        $feedCategories = $this->Authorization->applyScope($query)->all();
+        $feedCategories = $this->Authorization->applyScope($query, 'index')->all();
         $this->set(compact('feedSubscription', 'feedCategories', 'referer'));
     }
 

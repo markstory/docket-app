@@ -67,6 +67,32 @@ class FeedSubscriptionsControllerTest extends TestCase
     }
 
     /**
+     * Test home method
+     *
+     * @return void
+     */
+    public function testHome(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $item = $this->makeFeedItem($feed->id, ['title' => 'feed1 first post']);
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id, 1);
+
+        $otherfeed = $this->makeFeed('https://example.com/feed2.xml');
+        $otherItem = $this->makeFeedItem($feed->id, ['title' => 'feed2 first post']);
+        $this->makeFeedSubscription($category->id, $otherfeed->id, 1, ['alias' => 'other feed']);
+
+        $this->login();
+        $this->get('/feeds');
+        $this->assertResponseOk();
+
+        $this->assertResponseContains($category->title);
+        $this->assertResponseContains($subscription->alias);
+        $this->assertResponseContains($item->title);
+        $this->assertResponseContains($otherItem->title);
+    }
+
+    /**
      * Test view method
      *
      * @return void
@@ -104,6 +130,25 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Mark Story');
         $this->assertResponseContains('https://example.org/posts/archive.rss');
+    }
+
+    /**
+     * Test add get
+     *
+     * @return void
+     * @uses \App\Controller\FeedSubscriptionsController::add()
+     */
+    public function testAddGet(): void
+    {
+        $this->makeFeedCategory('Blogs');
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get('/feeds/add');
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Blogs');
+        $this->assertResponseContains('Add Feed');
     }
 
     /**
@@ -326,6 +371,28 @@ class FeedSubscriptionsControllerTest extends TestCase
     }
 
     /**
+     * Test edit get
+     *
+     * @return void
+     */
+    public function testEditGet(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $otherCategory = $this->makeFeedCategory('Film');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->get("/feeds/{$subscription->id}/edit");
+
+        $this->assertResponseOk();
+        $this->assertResponseContains($subscription->alias);
+        $this->assertResponseContains($category->title);
+        $this->assertResponseContains($otherCategory->title);
+    }
+
+    /**
      * Test edit method
      *
      * @return void
@@ -414,5 +481,37 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->post("/feeds/{$subscription->id}/delete");
 
         $this->assertResponseCode(403);
+    }
+
+    public function testDeleteConfirm(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+
+        $this->login();
+        $this->get("/feeds/{$subscription->id}/delete/confirm");
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Are you sure?');
+
+        $subs = $this->fetchTable('FeedSubscriptions');
+        $alive = $subs->get($subscription->id);
+        $this->assertNotEmpty($alive);
+    }
+
+    public function testDeleteConfirmPermissions(): void
+    {
+        $category = $this->makeFeedCategory('Blogs', 2);
+        $feed = $this->makeFeed('https://example.com/feed.xml');
+        $subscription = $this->makeFeedSubscription($category->id, $feed->id, 2);
+
+        $this->login(1);
+        $this->get("/feeds/{$subscription->id}/delete/confirm");
+
+        $this->assertResponseCode(403);
+        $subs = $this->fetchTable('FeedSubscriptions');
+        $alive = $subs->get($subscription->id);
+        $this->assertNotEmpty($alive);
     }
 }
