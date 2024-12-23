@@ -12,7 +12,6 @@ declare(strict_types=1);
 $this->setLayout('modal');
 
 $this->set('closable', false);
-$this->set('open', true);
 $this->set('dialogOptions', [
     'class' => 'confirm-dialog',
     'data-testid' => 'confirm-dialog',

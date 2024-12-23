@@ -5,7 +5,6 @@ declare(strict_types=1);
  */
 // configure layout
 $this->set('closable', false);
-$this->set('open', true);
 
 $this->setLayout('modal');
 

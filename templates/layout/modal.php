@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @var array|null $dialogOptions additional options for the dialog element. deletion-confirm uses this.
 */
 ?>
-<modal-window open="<?=h($open) ?>">
+<modal-window>
     <?= $this->Html->tag(
         'dialog',
         $this->fetch('content'),

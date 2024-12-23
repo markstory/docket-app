@@ -6,7 +6,6 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Project $project
  * @var string $referer
  */
-$this->set('open', true);
 $this->setLayout('modal');
 $this->assign('title', 'Create a section');
 ?>
