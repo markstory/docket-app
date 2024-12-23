@@ -39,9 +39,10 @@ endforeach;
     ) ?>
 </h3>
 <div class="feed-items">
-<?php if (true || empty($groupedItems)) : ?>
+<?php if (empty($groupedItems)) : ?>
     <?= $this->element('feeds_empty') ?>
 <?php endif; ?>
+
 <?php foreach ($groupedItems as $group) : ?>
 <h3 class="heading-feed-group">
     <span class="heading-feed-category">
@@ -59,6 +60,7 @@ endforeach;
 endforeach;
 ?>
 </div>
+
 <div class="paginator">
     <ul class="pagination">
         <?= $this->Paginator->prev('< ' . __('previous')) ?>
