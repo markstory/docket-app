@@ -126,6 +126,10 @@ class FeedItemsTable extends Table
 
     public function findSubscribed(SelectQuery $query, int $userId, array $feedSubscriptionIds): SelectQuery
     {
+        if (count($feedSubscriptionIds) == 0) {
+            return $query->where('1 = 0');
+        }
+
         return $query
             ->contain(['FeedItemUsers', 'FeedSubscriptions.FeedCategories'])
             ->matching('FeedSubscriptions')

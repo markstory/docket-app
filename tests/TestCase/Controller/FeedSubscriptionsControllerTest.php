@@ -95,6 +95,18 @@ class FeedSubscriptionsControllerTest extends TestCase
     }
 
     /**
+     * Test home method
+     *
+     * @return void
+     */
+    public function testHomeNoData(): void
+    {
+        $this->login();
+        $this->get('/feeds');
+        $this->assertResponseOk();
+    }
+
+    /**
      * Test view method
      *
      * @return void

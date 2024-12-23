@@ -21,6 +21,7 @@ foreach ($feedItems as $item) :
     endif;
     $groupedItems[$sub->feed_category_id]['items'][] = $item;
 endforeach;
+
 ?>
 <h3 class="heading-icon">
     <?= __("What's new") ?>
@@ -38,6 +39,9 @@ endforeach;
     ) ?>
 </h3>
 <div class="feed-items">
+<?php if (true || empty($groupedItems)) : ?>
+    <?= $this->element('feeds_empty') ?>
+<?php endif; ?>
 <?php foreach ($groupedItems as $group) : ?>
 <h3 class="heading-feed-group">
     <span class="heading-feed-category">

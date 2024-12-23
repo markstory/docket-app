@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 $createParams = $this->get('globalAddContext') ?? [];
 ?>
-<div class="tasks-empty">
+<div class="empty-state-container">
     <span class="hero-icon">
         <?= $this->element('icons/trophy16', ['size' => 48]) ?>
     </span>
