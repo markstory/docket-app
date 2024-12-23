@@ -18,7 +18,7 @@ class FeedSubscriptionPolicy
      * @param \App\Model\Entity\FeedSubscription $feedSubscription
      * @return bool
      */
-    public function canAdd(IdentityInterface $user, FeedSubscription $feedSubscription)
+    public function canAdd(IdentityInterface $user, FeedSubscription $feedSubscription): bool
     {
         return $feedSubscription->user_id == $user->id;
     }
@@ -30,7 +30,7 @@ class FeedSubscriptionPolicy
      * @param \App\Model\Entity\FeedSubscription $feedSubscription
      * @return bool
      */
-    public function canEdit(IdentityInterface $user, FeedSubscription $feedSubscription)
+    public function canEdit(IdentityInterface $user, FeedSubscription $feedSubscription): bool
     {
         return $feedSubscription->user_id == $user->id;
     }
@@ -42,7 +42,7 @@ class FeedSubscriptionPolicy
      * @param \App\Model\Entity\FeedSubscription $feedSubscription
      * @return bool
      */
-    public function canDelete(IdentityInterface $user, FeedSubscription $feedSubscription)
+    public function canDelete(IdentityInterface $user, FeedSubscription $feedSubscription): bool
     {
         return $feedSubscription->user_id == $user->id;
     }
@@ -54,7 +54,7 @@ class FeedSubscriptionPolicy
      * @param \App\Model\Entity\FeedSubscription $feedSubscription
      * @return bool
      */
-    public function canView(IdentityInterface $user, FeedSubscription $feedSubscription)
+    public function canView(IdentityInterface $user, FeedSubscription $feedSubscription): bool
     {
         return $feedSubscription->user_id == $user->id;
     }

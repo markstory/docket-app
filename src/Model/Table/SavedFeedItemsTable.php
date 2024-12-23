@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -12,7 +11,6 @@ use Cake\Validation\Validator;
  * SavedFeedItems Model
  *
  * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\BelongsTo $FeedSubscriptions
- *
  * @method \App\Model\Entity\SavedFeedItem newEmptyEntity()
  * @method \App\Model\Entity\SavedFeedItem newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\SavedFeedItem> newEntities(array $data, array $options = [])
@@ -26,7 +24,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\SavedFeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SavedFeedItem> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\SavedFeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SavedFeedItem>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\SavedFeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SavedFeedItem> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SavedFeedItemsTable extends Table
@@ -88,7 +85,10 @@ class SavedFeedItemsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['feed_subscription_id'], 'FeedSubscriptions'), ['errorField' => 'feed_subscription_id']);
+        $rules->add(
+            $rules->existsIn(['feed_subscription_id'], 'FeedSubscriptions'),
+            ['errorField' => 'feed_subscription_id']
+        );
 
         return $rules;
     }

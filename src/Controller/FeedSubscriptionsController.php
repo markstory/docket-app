@@ -8,7 +8,7 @@ use App\Model\Table\FeedItemsTable;
 use App\Model\Table\FeedSubscriptionsTable;
 use App\Service\FeedService;
 use Cake\Http\Exception\BadRequestException;
-use Cake\I18n\DateTime;
+use Cake\Http\Response;
 use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgumentException;
 
 /**
@@ -35,7 +35,7 @@ class FeedSubscriptionsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function home()
+    public function home(): Response|null|null
     {
         $query = $this->FeedSubscriptions->find()
             ->select(['id'])
@@ -59,7 +59,7 @@ class FeedSubscriptionsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(): Response|null|null
     {
         $query = $this->FeedSubscriptions->find()
             ->contain(['FeedCategories']);
@@ -76,7 +76,7 @@ class FeedSubscriptionsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null): Response|null|null
     {
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription);
@@ -98,11 +98,10 @@ class FeedSubscriptionsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function viewItem(int $id, int $itemId)
+    public function viewItem(int $id, int $itemId): Response|null|null
     {
         $feedSubscription = $this->FeedSubscriptions->get($id);
         $this->Authorization->authorize($feedSubscription, 'view');
-        $identity = $this->Authentication->getIdentity();
 
         $feedItem = $this->FeedItems
             ->findById($itemId)
@@ -124,11 +123,10 @@ class FeedSubscriptionsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function readVisit(int $id, int $itemId)
+    public function readVisit(int $id, int $itemId): Response|null|null
     {
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription, 'view');
-        $identity = $this->Authentication->getIdentity();
 
         $feedItem = $this->FeedItems
             ->findById($itemId)
@@ -152,7 +150,7 @@ class FeedSubscriptionsController extends AppController
      *
      * Mark a list of items as read.
      */
-    public function itemsMarkRead(int $id)
+    public function itemsMarkRead(int $id): void
     {
         $this->request->allowMethod(['POST']);
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
@@ -195,7 +193,7 @@ class FeedSubscriptionsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): Response|null|null
     {
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         if ($this->request->is('post')) {
@@ -227,7 +225,7 @@ class FeedSubscriptionsController extends AppController
         $this->set(compact('feedSubscription', 'feedCategories', 'referer'));
     }
 
-    public function discover(FeedService $feedService)
+    public function discover(FeedService $feedService): void
     {
         // Validate add permission with a throw away record
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
@@ -258,7 +256,7 @@ class FeedSubscriptionsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null): Response|null|null
     {
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -291,7 +289,7 @@ class FeedSubscriptionsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $feedSubscription = $this->FeedSubscriptions->get($id);
@@ -305,7 +303,7 @@ class FeedSubscriptionsController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-    public function deleteConfirm($id = null)
+    public function deleteConfirm($id = null): void
     {
         $feedSubscription = $this->FeedSubscriptions->get($id);
         $this->Authorization->authorize($feedSubscription, 'delete');
@@ -313,7 +311,7 @@ class FeedSubscriptionsController extends AppController
         $this->set('feedSubscription', $feedSubscription);
     }
 
-    public function sync($id, FeedService $feedService)
+    public function sync($id, FeedService $feedService): void
     {
         // TODO add rate-limit/abuse
         $subscription = $this->FeedSubscriptions->get($id, contain: ['Feeds']);

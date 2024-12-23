@@ -19,7 +19,6 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
  * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\BelongsToMany $FeedSubscriptions
  * @property \App\Model\Table\FeedItemUsersTable&\Cake\ORM\Association\HasOne $FeedItemUsers
- *
  * @method \App\Model\Entity\FeedItem newEmptyEntity()
  * @method \App\Model\Entity\FeedItem newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\FeedItem> newEntities(array $data, array $options = [])
@@ -33,7 +32,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedItemsTable extends Table
@@ -194,7 +192,7 @@ class FeedItemsTable extends Table
         }
     }
 
-    public function markManyRead(int $userId, array $ids)
+    public function markManyRead(int $userId, array $ids): void
     {
         $items = $this->find()
             ->where(['FeedItems.id IN' => $ids])

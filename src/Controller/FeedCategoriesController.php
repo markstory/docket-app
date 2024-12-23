@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 
 /**
  * FeedCategories Controller
@@ -17,7 +18,7 @@ class FeedCategoriesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(): Response|null|null
     {
         $query = $this->FeedCategories->find()
             ->contain(['Users']);
@@ -27,7 +28,7 @@ class FeedCategoriesController extends AppController
         $this->set(compact('feedCategories'));
     }
 
-    public function view($id = null)
+    public function view($id = null): void
     {
         // TODO add slug to feedcategory and use it
         $feedCategory = $this->FeedCategories->get($id);
@@ -46,7 +47,7 @@ class FeedCategoriesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): Response|null|null
     {
         $feedCategory = $this->FeedCategories->newEmptyEntity();
         if ($this->request->is('post')) {
@@ -73,7 +74,7 @@ class FeedCategoriesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null): Response|null|null
     {
         $feedCategory = $this->FeedCategories->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -99,7 +100,7 @@ class FeedCategoriesController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function deleteConfirm($id = null)
+    public function deleteConfirm(?string $id = null): ?Response
     {
         $feedCategory = $this->FeedCategories->get($id);
         $this->Authorization->authorize($feedCategory, 'delete');
@@ -114,7 +115,7 @@ class FeedCategoriesController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $feedCategory = $this->FeedCategories->get($id);

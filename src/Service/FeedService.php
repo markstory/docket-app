@@ -274,7 +274,7 @@ class FeedService
 
     protected function saveNewItems(array $items): void
     {
-        $this->feeds->getConnection()->transactional(function () use ($items) {
+        $this->feeds->getConnection()->transactional(function () use ($items): void {
             foreach ($items as $item) {
                 $existing = $this->feeds->FeedItems
                     ->find()

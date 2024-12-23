@@ -17,7 +17,6 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\FeedCategoriesTable&\Cake\ORM\Association\BelongsTo $FeedCategories
  * @property \App\Model\Table\SavedFeedItemsTable&\Cake\ORM\Association\HasMany $SavedFeedItems
  * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
- *
  * @method \App\Model\Entity\FeedSubscription newEmptyEntity()
  * @method \App\Model\Entity\FeedSubscription newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\FeedSubscription> newEntities(array $data, array $options = [])
@@ -31,7 +30,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\FeedSubscription>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedSubscription> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedSubscription>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedSubscription>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedSubscription>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedSubscription> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedSubscriptionsTable extends Table

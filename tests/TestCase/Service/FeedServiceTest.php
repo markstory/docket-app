@@ -11,9 +11,7 @@ use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
-use RuntimeException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerAction;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
@@ -239,7 +237,7 @@ class FeedServiceTest extends TestCase
             'title' => 'replace me',
             'summary' => 'replace me',
         ]);
-        $state = $this->makeFeedItemUser($item->id, 1);
+        $this->makeFeedItemUser($item->id, 1);
 
         $res = $this->newClientResponse(
             200,

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Command;
 
-use App\Command\FeedSyncCommand;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Http\TestSuite\HttpClientTrait;

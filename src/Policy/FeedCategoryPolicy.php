@@ -18,7 +18,7 @@ class FeedCategoryPolicy
      * @param \App\Model\Entity\FeedCategory $feedCategory
      * @return bool
      */
-    public function canAdd(IdentityInterface $user, FeedCategory $feedCategory)
+    public function canAdd(IdentityInterface $user, FeedCategory $feedCategory): bool
     {
         return true;
     }
@@ -30,7 +30,7 @@ class FeedCategoryPolicy
      * @param \App\Model\Entity\FeedCategory $feedCategory
      * @return bool
      */
-    public function canEdit(IdentityInterface $user, FeedCategory $feedCategory)
+    public function canEdit(IdentityInterface $user, FeedCategory $feedCategory): bool
     {
         return $user->id == $feedCategory->user_id;
     }
@@ -42,7 +42,7 @@ class FeedCategoryPolicy
      * @param \App\Model\Entity\FeedCategory $feedCategory
      * @return bool
      */
-    public function canDelete(IdentityInterface $user, FeedCategory $feedCategory)
+    public function canDelete(IdentityInterface $user, FeedCategory $feedCategory): bool
     {
         return $user->id == $feedCategory->user_id;
     }
@@ -54,7 +54,7 @@ class FeedCategoryPolicy
      * @param \App\Model\Entity\FeedCategory $feedCategory
      * @return bool
      */
-    public function canView(IdentityInterface $user, FeedCategory $feedCategory)
+    public function canView(IdentityInterface $user, FeedCategory $feedCategory): bool
     {
         return $user->id == $feedCategory->user_id;
     }

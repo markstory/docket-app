@@ -14,7 +14,6 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\HasMany $FeedSubscriptions
- *
  * @method \App\Model\Entity\FeedCategory newEmptyEntity()
  * @method \App\Model\Entity\FeedCategory newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\FeedCategory> newEntities(array $data, array $options = [])
@@ -29,7 +28,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\FeedCategory>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\FeedCategory> deleteManyOrFail(iterable $entities, array $options = [])
  * @method \Cake\ORM\SelectQuery findByUserId(int $userId)
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedCategoriesTable extends Table

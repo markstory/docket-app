@@ -5,7 +5,6 @@ namespace App\Model\Table;
 
 use App\Model\Entity\Feed;
 use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -14,7 +13,6 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
  * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\HasMany $FeedSubscriptions
- *
  * @method \App\Model\Entity\Feed newEmptyEntity()
  * @method \App\Model\Entity\Feed newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\Feed> newEntities(array $data, array $options = [])
@@ -28,7 +26,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Feed>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedsTable extends Table
