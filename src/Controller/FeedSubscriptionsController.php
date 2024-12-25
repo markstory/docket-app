@@ -11,6 +11,7 @@ use App\Service\FeedService;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgumentException;
+use RuntimeException;
 
 /**
  * FeedSubscriptions Controller
@@ -243,7 +244,8 @@ class FeedSubscriptionsController extends AppController
                 $feeds = $feedService->discoverFeeds($this->request->getData('url'));
             } catch (DiactorosInvalidArgumentException $e) {
                 $error = $e->getMessage();
-                $this->Flash->error($error);
+            } catch (RuntimeException $e) {
+                $error = $e->getMessage();
             }
         }
         $query = $this->FeedCategories->find('list', limit: 200);
@@ -251,6 +253,9 @@ class FeedSubscriptionsController extends AppController
         $referer = $this->request->referer();
 
         $this->set(compact('error', 'feeds', 'feedCategories', 'referer'));
+        if ($feeds && !$error) {
+            $this->viewBuilder()->setTemplate('discover_feeds');
+        }
     }
 
     /**

@@ -50,3 +50,7 @@
   height: 100%;
   overflow: auto;
 }
+
+modal-window .flash-message {
+  margin-bottom: calc($space * 3);
+}

@@ -1,0 +1,39 @@
+.discover-feeds {
+  margin: calc($space * 3) 0;
+
+  .empty {
+    color: var(--color-muted);
+  }
+
+}
+.discover-back {
+  display: flex;
+  gap: $space;
+  align-items: center;
+}
+.discover-feeds.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space;
+
+}
+.feed-list .feed-item {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: calc($space * 2);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin-bottom: calc($space / 2);
+  }
+  .url {
+    color: var(--color-muted);
+  }
+  form {
+    margin-top: $space;
+  }
+}

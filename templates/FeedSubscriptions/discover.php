@@ -1,9 +1,11 @@
 <?php
 /**
+ * Step 1 of feed discovery
+ *
+ * @var string $error
  * @var \App\View\AppView $this
  * @var array<\App\Model\Entity\Feed> $feeds
  */
-
 use App\Model\Entity\FeedSubscription;
 
 $isHtmx = $this->request->is('htmx');
@@ -19,6 +21,13 @@ $this->assign('title', 'Discover Feeds');
     <h2>Discover Feeds</h2>
     <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
+
+<?php if ($error) : ?>
+<div class="flash-message flash-error">
+    <?= $this->element('icons/alert16') ?>
+    <?= h($error) ?>
+</div>
+<?php endif; ?>
 <?php
 echo $this->Form->create(null, [
     'hx-post' => $this->Url->build(['_name' => 'feedsubscriptions:discover', '?' => $this->request->getQueryParams()]),
@@ -37,43 +46,8 @@ echo $this->Form->control('url', ['label' => 'Page or Domain']);
 
 <?php if ($this->request->getData('url')) : ?>
     <?php if (count($feeds) == 0) : ?>
-        <div class="discover-feeds feed-list">
+        <div class="discover-feeds">
             <p class="empty">No feeds. Provide a URL above to get started.</p>
-        </div>
-    <?php else : ?>
-        <div class="discover-feeds feed-list">
-            <?php foreach ($feeds as $feed) : ?>
-            <div class="feed-item feed-discovered">
-                <h4><?= h($feed->default_alias) ?></h4>
-                <span class="alias"><?= h($feed->default_alias) ?></span>
-                <span class="url"><?= h($feed->url) ?></span>
-                <?php
-                $feedSub = new FeedSubscription();
-                echo $this->Form->create($feedSub, [
-                    'url' => ['_name' => 'feedsubscriptions:add'],
-                ]);
-                echo $this->Form->control('feed_category_id', [
-                    'options' => $feedCategories,
-                    'value' => $this->request->getQuery('feed_category_id'),
-                ]);
-                echo $this->Form->control('favicon_url', ['value' => $feed->favicon_url, 'type' => 'hidden']);
-                echo $this->Form->control('url', ['value' => $feed->url, 'type' => 'hidden']);
-                echo $this->Form->control('alias', [
-                    'value' => $feed->default_alias ?: $feed->url,
-                    'type' => 'hidden',
-                ]);
-                echo $this->Form->button(
-                    $this->element('icons/plus16') . ' Add',
-                    [
-                        'type' => 'submit',
-                        'escapeTitle' => false,
-                        'class' => 'button-primary',
-                    ]
-                );
-                echo $this->Form->end();
-                ?>
-            </div>
-            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>

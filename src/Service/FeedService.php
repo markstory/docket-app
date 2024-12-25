@@ -48,6 +48,7 @@ class FeedService
     protected function fetchUrl(string $url): Response
     {
         // TODO prevent ssrf on internal networks.
+        // TODO follow redirects
         $res = $this->client->get($url, [], [
             'timeout' => $this->fetchTimeout,
         ]);
@@ -108,6 +109,7 @@ class FeedService
             // Atom and RSS work the same
             if (str_contains($linkType, 'rss') || str_contains($linkType, 'atom')) {
                 $feeds[] = new Feed([
+                    // TODO use page title, or fetch the feed and get the title from there?
                     'default_alias' => $link->getAttribute('title'),
                     'url' => $url,
                     'favicon_url' => $favicon,
