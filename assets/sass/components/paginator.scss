@@ -16,4 +16,9 @@
   display: flex;
   gap: $space;
   align-items: center;
+
+  .disabled a {
+    pointer-events: none;
+    color: var(--color-muted);
+  }
 }
