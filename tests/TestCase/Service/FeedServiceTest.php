@@ -279,7 +279,7 @@ class FeedServiceTest extends TestCase
         $feed = $feeds[0];
         $this->assertInstanceOf(Feed::class, $feed);
         $this->assertEquals('https://example.org/posts/archive.rss', $feed->url);
-        $this->assertEquals('Mark Story', $feed->default_alias);
+        $this->assertEquals('Posts | Mark Story', $feed->default_alias);
         $this->assertEquals('https://example.org/favicon.png', $feed->favicon_url);
     }
 
@@ -298,7 +298,7 @@ class FeedServiceTest extends TestCase
         $this->assertCount(2, $feeds);
         $feed = $feeds[0];
         $this->assertInstanceOf(Feed::class, $feed);
-        $this->assertEquals('asset_compress Release Notes', $feed->default_alias);
+        $this->assertEquals('Releases - markstory/asset_compress', $feed->default_alias);
         $this->assertEquals('https://github.com/markstory/asset_compress/releases.atom', $feed->url);
     }
 }

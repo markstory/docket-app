@@ -100,6 +100,14 @@ class FeedService
             $favicon = $this->applyBaseUrl($favicon, $uri);
         }
 
+        // Read the page title for feed alias.
+        $titleQuery = $xpath->query('//head/title');
+        $title = null;
+        foreach ($titleQuery as $titleEl) {
+            $title = $titleEl->textContent;
+            break;
+        }
+
         /** @var \Traversable<\DOMElement> $links */
         $links = $xpath->query('//head/link[@rel="alternate"]');
         foreach ($links as $link) {
@@ -109,8 +117,7 @@ class FeedService
             // Atom and RSS work the same
             if (str_contains($linkType, 'rss') || str_contains($linkType, 'atom')) {
                 $feeds[] = new Feed([
-                    // TODO use page title, or fetch the feed and get the title from there?
-                    'default_alias' => $link->getAttribute('title'),
+                    'default_alias' => $title ?? $link->getAttribute('title'),
                     'url' => $url,
                     'favicon_url' => $favicon,
                 ]);
