@@ -9,9 +9,10 @@ $feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscri
 $menuId = 'feed-item-' . uniqid();
 ?>
 <div class="heading-actions">
-    <div class="heading-actions-item">
-        <h1><?= h($feedItem->title) ?></h1>
-    </div>
+    <h1 class="feed-item-title"><?= h($feedItem->title) ?></h1>
+    <?php /* TODO add when items have actions for labelling
+    like 'read later' or 'saved'
+    ?>
     <drop-down>
         <button
             class="button-icon button-default"
@@ -26,18 +27,29 @@ $menuId = 'feed-item-' . uniqid();
             menu goes here?
         </drop-down-menu>
     </drop-down>
+    <?php */ ?>
 </div>
-<div class="feed-item-meta">
-    <span class="feed-name"><?= $this->Html->link(
+<div class="feed-item-byline">
+    <?= $this->Html->link(
         $feedItem->feed_subscription->alias,
         $feedUrl,
-    ) ?></span>
-    <span class="feed-published-at"><?= $this->Time->nice($feedItem->published_at) ?></span>
-    by <span class="feed-author"><?= h($feedItem->author) ?></span>
+    ) ?>
+    <?= $this->Time->timeAgoInWords($feedItem->published_at) ?>
+    <?php if ($feedItem->author) : ?>
+        by <?= h($feedItem->author) ?>
+    <?php endif; ?>
 </div>
+
+<?php if ($feedItem->summary !== "" && !$feedItem->content) : ?>
+<div class="feed-item-body">
+    <?= $feedItem->summary ?>
+</div>
+<?php else : ?>
 <div class="feed-item-body">
     <?= $feedItem->content ?>
 </div>
+<?php endif; ?>
+
 <div class="feed-item-footer">
     <?= $this->Html->link(
         'View website',
