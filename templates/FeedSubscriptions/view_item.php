@@ -20,7 +20,9 @@ if ($isRead) {
         <?= h($feedItem->title) ?>
         <?php if ($isRead) : ?>
             <span
-                title="You read this on <?= h($feedItem->feed_item_user->read_at->nice($identity->timezone)) ?>" >
+                title="You read this on <?= h($feedItem->feed_item_user->read_at->nice($identity->timezone)) ?>"
+                class="icon-complete"
+            >
                 <?= $this->element('icons/check16') ?>
             </span>
         <?php endif; ?>

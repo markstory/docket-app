@@ -2,6 +2,7 @@
 /**
  * @var \App\Model\Entity\FeedSubscription $feedSubscription
  * @var \App\Model\Entity\FeedItem $feedItem
+ * @var \App\Model\Entity\User $identity
  * @var \Cake\View\View $this
  */
 $class = 'feed-item';
@@ -13,6 +14,14 @@ if ($isRead) {
 <div class="<?= h($class); ?>">
     <h2>
         <?= $this->Html->link($feedItem->title, ['_name' => 'feedsubscriptions:viewitem', 'itemId' => $feedItem->id, 'id' => $feedSubscription->id]) ?>
+        <?php if ($isRead) : ?>
+            <span
+                title="You read this on <?= h($feedItem->feed_item_user->read_at->nice($identity->timezone)) ?>"
+                class="icon-complete"
+            >
+                <?= $this->element('icons/check16') ?>
+            </span>
+        <?php endif; ?>
     </h2>
     <p class="feed-item-byline">
         <?= $this->Html->link($feedSubscription->alias, ['_name' => 'feedsubscriptions:view', 'id' => $feedSubscription->id]) ?> |
