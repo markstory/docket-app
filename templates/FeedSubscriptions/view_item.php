@@ -7,9 +7,15 @@ $this->setLayout('feedreader');
 
 $feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscription->id];
 $menuId = 'feed-item-' . uniqid();
+
+$titleClass = 'feed-item-title';
+$isRead = $feedItem->feed_item_user && $feedItem->feed_item_user->read_at;
+if ($isRead) {
+    $titleClass .= ' feed-item-read';
+}
 ?>
 <div class="heading-actions">
-    <h1 class="feed-item-title"><?= h($feedItem->title) ?></h1>
+    <h1 class="<?= h($titleClass) ?>"><?= h($feedItem->title) ?></h1>
     <?php /* TODO add when items have actions for labelling
     like 'read later' or 'saved'
     ?>
@@ -53,7 +59,8 @@ $menuId = 'feed-item-' . uniqid();
 <div class="feed-item-footer">
     <?= $this->Html->link(
         'View website',
-        $feedItem->url,
+        ['_name' => 'feedsubscriptions:readvisit', 'id' => $feedItem->feed_subscription->id, 'itemId' => $feedItem->id],
+        // $feedItem->url,
         ['target' => '_blank']
     ) ?>
 </div>

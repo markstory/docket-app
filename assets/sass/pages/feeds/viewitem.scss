@@ -1,6 +1,11 @@
 .feed-item-title {
   margin-bottom: 0;
+
+  &.feed-item-read {
+    opacity: 75%
+  }
 }
+
 .feed-item-body {
   margin-bottom: calc($space * 2);
 }
