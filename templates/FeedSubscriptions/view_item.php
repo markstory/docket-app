@@ -58,20 +58,19 @@ if ($isRead) {
 </div>
 
 <?php if ($feedItem->summary !== "" && !$feedItem->content) : ?>
-<div class="feed-item-body">
-    <?= $feedItem->summary ?>
-</div>
+    <div class="feed-item-body">
+        <?= $feedItem->summary ?>
+    </div>
 <?php else : ?>
-<div class="feed-item-body">
-    <?= $feedItem->content ?>
-</div>
+    <div class="feed-item-body">
+        <?= $feedItem->content ?>
+    </div>
 <?php endif; ?>
 
 <div class="feed-item-footer">
     <?= $this->Html->link(
         'View website',
         ['_name' => 'feedsubscriptions:readvisit', 'id' => $feedItem->feed_subscription->id, 'itemId' => $feedItem->id],
-        // $feedItem->url,
         ['target' => '_blank']
     ) ?>
 </div>
