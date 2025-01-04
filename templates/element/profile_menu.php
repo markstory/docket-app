@@ -8,6 +8,11 @@ declare(strict_types=1);
  * @var string $activeFocus
  */
 $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&default=retro";
+
+$activeClass = match($activeFocus) {
+    'feeds' => 'icon-week',
+    'tasks' => 'icon-today',
+};
 ?>
 <drop-down class="profile-menu">
     <button
@@ -42,19 +47,17 @@ $avatarUrl = "https://www.gravatar.com/avatar/{$identity->avatar_hash}?s=50&defa
 
 <drop-down class="focus-menu">
     <button
-        class="button-muted"
+        class="button-muted <?= h($activeClass) ?>"
         aria-haspopup="true"
         aria-controls="focus-menu"
         type="button"
     >
     <?php if ($activeFocus == "tasks") : ?>
-        <span class="icon-today">
-            <?= $this->element('icons/clippy16') . ' Tasks' ?>
-        </span>
+        <?= $this->element('icons/clippy16') ?>
+        Tasks
     <?php elseif ($activeFocus == "feeds") : ?>
-        <span class="icon-week">
-            <?= $this->element('icons/rss16') . ' Feeds' ?>
-        </span>
+        <?= $this->element('icons/rss16') ?>
+        Feeds
     <?php endif; ?>
     </button>
     <drop-down-menu id="focus-menu">
