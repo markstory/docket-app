@@ -93,6 +93,34 @@ class FeedServiceTest extends TestCase
         $this->assertEquals(0, $this->feedItemCount($feed));
     }
 
+    public function testRefreshFeedFollowRedirect()
+    {
+        $client = new Client();
+        $url = 'https://example.org/feed';
+        $feed = $this->makeFeed($url);
+
+        // Redirect
+        $res = $this->newClientResponse(
+            302,
+            ['Location: https://example.org/rss'],
+            ''
+        );
+        $this->mockClientGet('https://example.org/feed', $res);
+
+        // Simple RSS
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet('https://example.org/rss', $res);
+
+        $service = new FeedService($client, $this->cleaner);
+        $service->refreshFeed($feed);
+
+        $this->assertEquals(20, $this->feedItemCount($feed));
+    }
+
     public function testRefreshFeedSuccessSimpleRss()
     {
         $client = new Client();
@@ -261,6 +289,36 @@ class FeedServiceTest extends TestCase
         $categories = $this->fetchTable('FeedCategories');
         $refresh = $categories->get($category->id);
         $this->assertEquals(19, $refresh->unread_item_count, 'Should account for existing read state');
+    }
+
+    public function testDiscoverFollowRedirect(): void
+    {
+        $client = new Client();
+
+        // Simulate a http -> https redirect
+        $res = $this->newClientResponse(
+            302,
+            ['Location: https://example.org'],
+            $this->readFeedFixture('mark-story-com.html')
+        );
+        $this->mockClientGet('http://example.org', $res);
+
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: text/html'],
+            $this->readFeedFixture('mark-story-com.html')
+        );
+        $this->mockClientGet('https://example.org', $res);
+
+        $service = new FeedService($client, $this->cleaner);
+        $feeds = $service->discoverFeeds('http://example.org');
+        $this->assertCount(1, $feeds);
+        $feed = $feeds[0];
+        $this->assertInstanceOf(Feed::class, $feed);
+        // TODO these should be https ideally.
+        $this->assertEquals('http://example.org/posts/archive.rss', $feed->url);
+        $this->assertEquals('Posts | Mark Story', $feed->default_alias);
+        $this->assertEquals('http://example.org/favicon.png', $feed->favicon_url);
     }
 
     public function testDiscoverFeedRss(): void

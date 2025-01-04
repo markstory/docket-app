@@ -48,9 +48,9 @@ class FeedService
     protected function fetchUrl(string $url): Response
     {
         // TODO prevent ssrf on internal networks.
-        // TODO follow redirects
         $res = $this->client->get($url, [], [
             'timeout' => $this->fetchTimeout,
+            'redirect' => 3,
         ]);
         if (!$res->isOk()) {
             throw new BadRequestException("Could not fetch $url");
@@ -72,6 +72,7 @@ class FeedService
 
         // Fetch the URL
         $response = $this->fetchUrl($url);
+
         $responseType = $response->getHeaderLine('Content-Type');
         // Must claim to be HTML.
         if (!str_contains($responseType, 'html')) {
@@ -84,6 +85,10 @@ class FeedService
         } catch (Exception $e) {
             throw new RuntimeException('That URL contains invalid HTML and could not be processed.', 0, $e);
         }
+
+        // TODO url isn't going to reflect domain redirects.
+        // If sites don't have absolute URLs, the generated paths will be wrong.
+        // See if this is a problem.
 
         // No user/pass support yet.
         $uri = new Uri($url);
