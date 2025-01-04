@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
+ * @var \App\Model\Entity\User $identity
  * @var \App\Model\Entity\FeedItem $feedItem
  */
 $this->setLayout('feedreader');
@@ -15,7 +16,15 @@ if ($isRead) {
 }
 ?>
 <div class="heading-actions">
-    <h1 class="<?= h($titleClass) ?>"><?= h($feedItem->title) ?></h1>
+    <h1 class="<?= h($titleClass) ?>">
+        <?= h($feedItem->title) ?>
+        <?php if ($isRead) : ?>
+            <span
+                title="You read this on <?= h($feedItem->feed_item_user->read_at->nice($identity->timezone)) ?>" >
+                <?= $this->element('icons/check16') ?>
+            </span>
+        <?php endif; ?>
+    </h1>
     <?php /* TODO add when items have actions for labelling
     like 'read later' or 'saved'
     ?>
