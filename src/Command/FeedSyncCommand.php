@@ -10,6 +10,8 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Datasource\Paging\SimplePaginator;
+use RuntimeException;
+use function Sentry\captureException;
 
 /**
  * FeedSync command.
@@ -66,8 +68,13 @@ class FeedSyncCommand extends Command
             $result = $paginator->paginate($query, ['limit' => $limit]);
             foreach ($result->items() as $feed) {
                 $io->verbose("Sync {$feed->url} start");
-                $this->feedService->refreshFeed($feed);
-                $io->verbose("Sync {$feed->url} end");
+                try {
+                    $this->feedService->refreshFeed($feed);
+                    $io->verbose("Sync {$feed->url} complete");
+                } catch (RuntimeException $e) {
+                    captureException($e);
+                    $io->error("Sync for {$feed->url} failed, error={$e->getMessage()}");
+                }
             }
 
             if (!$result->hasNextPage()) {
