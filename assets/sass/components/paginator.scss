@@ -21,4 +21,11 @@
     pointer-events: none;
     color: var(--color-muted);
   }
+
+  a {
+    @extend .button-muted;
+  }
+  .active a {
+    @extend .button-secondary;
+  }
 }
