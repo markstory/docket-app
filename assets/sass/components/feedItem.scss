@@ -38,3 +38,26 @@
     opacity: 75%
   }
 }
+
+.feed-item-body {
+  // Styles for the body of a feed item
+  img {
+    max-width: 100%;
+  }
+  hr {
+    border: 0;
+    border-bottom: 2px solid var(--color-border);
+  }
+  p {
+    line-height: 1.3rem;
+  }
+  blockquote {
+    background: var(--color-bg-low);
+    margin: $space calc($space * 2);
+    padding: $space;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
