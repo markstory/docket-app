@@ -227,9 +227,15 @@ class FeedService
             return [];
         }
         switch ($contentType) {
-            case 'application/atom+xml':
             case 'application/xml':
             case 'text/xml':
+                $items = $this->parseAtom($feed, $body);
+                if (!$items) {
+                    $items = $this->parseRss($feed, $body);
+                }
+
+                return $items;
+            case 'application/atom+xml':
                 return $this->parseAtom($feed, $body);
             case 'application/rss':
             case 'application/rss+xml':
