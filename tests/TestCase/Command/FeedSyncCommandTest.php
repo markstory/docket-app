@@ -59,7 +59,7 @@ class FeedSyncCommandTest extends TestCase
         $this->assertOutputContains('Sync start');
         $this->assertOutputContains('Sync complete');
         $this->assertOutputContains("Sync {$feed->url} start");
-        $this->assertOutputContains("Sync {$feed->url} end");
+        $this->assertOutputContains("Sync {$feed->url} complete");
 
         /** @var \App\Model\Entity\Feed $refresh */
         $refresh = $this->fetchTable('Feeds')->get($feed->id);
@@ -87,5 +87,32 @@ class FeedSyncCommandTest extends TestCase
 
         $itemCount = $this->fetchTable('FeedItems')->find()->count();
         $this->assertEquals(0, $itemCount);
+    }
+
+    public function testExecuteServerError(): void
+    {
+        $category = $this->makeFeedCategory('Blogs');
+        $feed = $this->makeFeed('https://example.com/feed');
+        $this->makeFeedSubscription($category->id, $feed->id);
+
+        $url = 'https://example.com/feed';
+        $res = $this->newClientResponse(
+            500,
+            ['Content-Type: text/html'],
+            'not good',
+        );
+        $this->mockClientGet($url, $res);
+
+        $this->exec('feed_sync --verbose');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Sync start');
+        $this->assertOutputContains('Sync complete');
+        $this->assertOutputContains("Sync {$feed->url} start");
+        $this->assertErrorContains("Sync for {$feed->url} failed");
+
+        /** @var \App\Model\Entity\Feed $refresh */
+        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        $this->assertEmpty($refresh->last_refresh);
+        $this->assertEquals($refresh->last_refresh, $feed->last_refresh);
     }
 }
