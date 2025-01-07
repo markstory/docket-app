@@ -359,4 +359,26 @@ class FeedServiceTest extends TestCase
         $this->assertEquals('Releases - markstory/asset_compress', $feed->default_alias);
         $this->assertEquals('https://github.com/markstory/asset_compress/releases.atom', $feed->url);
     }
+
+    public function testDiscoverFeedDirectFeedUrl(): void
+    {
+        // Feed discovery should work if a direct URL was provided.
+        $url = 'https://example.org/feed';
+        $res = $this->newClientResponse(
+            200,
+            ['Content-Type: application/rss; charset=utf-8'],
+            $this->readFeedFixture('mark-story-com.rss')
+        );
+        $this->mockClientGet($url, $res);
+        $client = new Client();
+
+        $service = new FeedService($client, $this->cleaner);
+        $feeds = $service->discoverFeeds($url);
+        $this->assertCount(1, $feeds);
+        $feed = $feeds[0];
+        $this->assertInstanceOf(Feed::class, $feed);
+        $this->assertEquals('https://example.org/feed', $feed->url);
+        $this->assertEquals($url, $feed->default_alias);
+        $this->assertEquals('', $feed->favicon_url);
+    }
 }

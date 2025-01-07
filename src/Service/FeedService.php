@@ -73,9 +73,25 @@ class FeedService
         // Fetch the URL
         $response = $this->fetchUrl($url);
 
-        $responseType = $response->getHeaderLine('Content-Type');
-        // Must claim to be HTML.
-        if (!str_contains($responseType, 'html')) {
+        /** @var array<\App\Model\Entity\Feed> $feeds */
+        $feeds = [];
+
+        $contentType = $this->getContentType($response);
+        $feedTypes = ['application/atom+xml', 'application/xml', 'text/xml', 'application/rss', 'application/rss+xml'];
+
+        // Feed URL provided
+        if (in_array($contentType, $feedTypes)) {
+            $feeds[] = new Feed([
+                'default_alias' => $url,
+                'url' => $url,
+                'favicon_url' => '',
+            ]);
+
+            return $feeds;
+        }
+
+        // If we didn't get a feed URL, or an HTML page abort.
+        if ($contentType != 'text/html') {
             throw new RuntimeException('That URL is not an HTML page. No feed could be found.');
         }
         try {
@@ -92,9 +108,6 @@ class FeedService
 
         // No user/pass support yet.
         $uri = new Uri($url);
-
-        /** @var array<\App\Model\Entity\Feed> $feeds */
-        $feeds = [];
 
         // parse the HTML page looking for link elements
         $xpath = new DOMXPath($dom);
@@ -172,6 +185,17 @@ class FeedService
         return null;
     }
 
+    protected function getContentType(Response $res): string
+    {
+        $contentType = $res->getHeaderLine('Content-Type');
+        $colonPos = strpos($contentType, ';');
+        if ($colonPos !== false) {
+            $contentType = substr($contentType, 0, $colonPos);
+        }
+
+        return $contentType;
+    }
+
     /**
      * Import new FeedItems for all the unique items in a feed's current response
      */
@@ -196,11 +220,7 @@ class FeedService
 
     protected function parseResponse(Response $res, Feed $feed): array
     {
-        $contentType = $res->getHeaderLine('Content-Type');
-        $colonPos = strpos($contentType, ';');
-        if ($colonPos !== false) {
-            $contentType = substr($contentType, 0, $colonPos);
-        }
+        $contentType = $this->getContentType($res);
         $body = (string)$res->getBody();
         // No items in an empty response.
         if (!$body) {

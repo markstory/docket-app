@@ -47,7 +47,7 @@ echo $this->Form->control('url', ['label' => 'Page or Domain']);
 <?php if ($this->request->getData('url')) : ?>
     <?php if (count($feeds) == 0) : ?>
         <div class="discover-feeds">
-            <p class="empty">No feeds. Provide a URL above to get started.</p>
+            <p class="empty">No feeds were found. Provide a URL above to get started.</p>
         </div>
     <?php endif; ?>
 <?php endif; ?>
