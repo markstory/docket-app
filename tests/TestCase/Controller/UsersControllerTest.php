@@ -180,8 +180,21 @@ class UsersControllerTest extends TestCase
         $this->assertFlashElement('flash/success');
         $user = $this->Users->get(1);
         $this->assertTrue($user->email_verified);
+        $this->assertEquals('dark', $user->theme);
 
         $this->assertMailCount(0);
+    }
+
+    public function testThemeSetsBodyClass(): void
+    {
+        $user = $this->Users->get(1);
+        $user->theme = 'dark';
+        $this->Users->saveOrFail($user);
+
+        $this->login();
+        $this->get('/users/profile');
+        $this->assertResponseOk();
+        $this->assertResponseContains('<body hx-ext="ajax-header" class="theme-dark"');
     }
 
     public function testUpdatePasswordRequiresLogin()
