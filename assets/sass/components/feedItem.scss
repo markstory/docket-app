@@ -5,7 +5,7 @@
   }
   h2 a {
     text-decoration: none;
-    color: var(--color-gray-800);
+    color: var(--color-fg);
     &:hover {
       text-decoration: underline;
     }
@@ -16,19 +16,21 @@
 
 .feed-item-byline {
   font-size: $font-size-small;
-  color: var(--color-gray-500);
-  margin-bottom: $space;
+  color: var(--color-muted);
+  margin-bottom: calc($space * 2);
 }
 .feed-item-byline a {
-  color: var(--color-gray-500);
+  color: var(--color-muted);
+  &:hover {
+    color: var(--color-low-emphasis);
+  }
 }
 .feed-item-summary {
-  color: var(--color-gray-800);
+  color: var(--color-feed-content);
   margin-bottom: $space;
-  padding-top: $space;
 
   h2, h3, h4, h5, h6 {
-    color: var(--color-gray-600);
+    color: var(--color-feed-content);
     font-weight: normal;
   }
 }

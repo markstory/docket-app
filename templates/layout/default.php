@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+
+$class = '';
+if (isset($identity)) :
+    $class = "theme-{$identity->theme}";
+endif;
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,7 +25,7 @@ declare(strict_types=1);
 
     <?= $this->element('frontend_assets') ?>
 </head>
-<body hx-ext="ajax-header">
+<body hx-ext="ajax-header" class="<?= h($class) ?>">
     <main class="main">
         <div class="flash-messages">
             <?= $this->Flash->render() ?>

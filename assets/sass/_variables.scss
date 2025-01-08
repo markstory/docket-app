@@ -103,6 +103,7 @@ body {
   --color-disabled: var(--color-gray-300);
   --color-muted: var(--color-gray-600);
   --color-low-emphasis: var(--color-gray-700);
+  --color-feed-content: var(--color-gray-800);
 
   --color-border: var(--color-gray-300);
   --color-border-low: var(--color-gray-100);
@@ -176,12 +177,14 @@ body.theme-dark {
   --color-disabled: var(--color-gray-700);
   --color-muted: var(--color-gray-500);
   --color-low-emphasis: var(--color-gray-600);
+  --color-feed-content: var(--color-gray-400);
 
   --color-border: var(--color-gray-600);
   --color-border-low: var(--color-gray-700);
   --color-border-med: var(--color-gray-500);
 
   --color-bg-level1: var(--color-gray-800);
+  --color-bg-level1-active: var(--color-gray-900);
   --color-bg-low: var(--color-gray-800);
   --color-bg-low-active: rgba(91, 91, 69, 0.3);
   --color-bg: var(--color-gray-900);
