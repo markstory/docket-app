@@ -44,6 +44,9 @@
 }
 
 .heading-evening-group {
+  display: flex;
+  align-items: center;
+  gap: calc($space / 2);
   margin: $space 0;
   line-height: 2;
   color: var(--color-low-emphasis);
