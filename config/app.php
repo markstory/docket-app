@@ -388,6 +388,10 @@ return [
 
     'DebugKit' => [
         'ignoreAuthorization' => true,
+        'panels' => [
+            'DebugKit.Packages' => false,
+            'DebugKit.Plugins' => false,
+        ],
     ],
 
     'Migrations' => [
