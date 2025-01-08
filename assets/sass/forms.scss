@@ -108,15 +108,25 @@ textarea {
 
 
 .form-standard {
+  $width: 275px;
   .form-label-group {
-    width: 275px;
+    width: $width;
+  }
+  .button-bar {
+    // Align with the right edge of .form-input
+    padding-left: calc($width + $space * 2);
   }
 }
 
 // Forms that pivots to a stacked layout in narrow viewports.
 .form-narrow {
+  $width: 100px;
   .form-label-group {
-    width: 100px;
+    width: $width;
+  }
+  .button-bar {
+    // Align with right edge of .form-input
+    padding-left: calc($width + $space * 2);
   }
 }
 @media (max-width: $breakpoint-phone) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
  */
 $menuId = 'feed-category-menu-' . uniqid();
 $deleteConfirm = ['_name' => 'feedcategories:deleteconfirm', 'id' => $feedCategory->id];
+$feedEdit = ['_name' => 'feedcategories:edit', 'id' => $feedCategory->id];
 ?>
 <drop-down>
     <button
@@ -19,8 +20,15 @@ $deleteConfirm = ['_name' => 'feedcategories:deleteconfirm', 'id' => $feedCatego
     <drop-down-menu id="<?= h($menuId) ?>" role="menu">
         <?= $this->Html->link(
             $this->element('icons/pencil16') . ' Edit Category',
-            ['_name' => 'feedcategories:edit', 'id' => $feedCategory->id],
-            ['class' => 'icon-edit', 'escape' => false, 'role' => 'menuitem']
+            $feedEdit,
+            [
+                'hx-get' => $this->Url->build($feedEdit),
+                'hx-target' => 'body',
+                'hx-swap' => 'beforeend',
+                'class' => 'icon-edit',
+                'escape' => false,
+                'role' => 'menuitem',
+            ]
         ) ?>
         <?= $this->Html->link(
             $this->element('icons/trash16') . ' Delete Category',

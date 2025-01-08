@@ -10,12 +10,12 @@ $isHtmx = $this->request->is('htmx');
 $this->setLayout('sidebar');
 if ($isHtmx) {
     $this->set('closable', true);
-    $this->setLayout('sheet');
+    $this->setLayout('modal');
 }
 
 ?>
 <div class="modal-title">
-    <h2>Create Category</h2>
+    <h2>Edit <?= h($feedCategory->title) ?> Category</h2>
     <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
 <?php

@@ -7,7 +7,7 @@ use Cake\Core\Configure;
 
 $isHtmx = $this->request->is('htmx');
 
-$this->setLayout('sidebar');
+$this->setLayout('feedreader');
 if ($isHtmx) {
     $this->setLayout('sheet');
 }
@@ -19,7 +19,7 @@ $this->assign('title', 'Create Category');
     <button class="modal-close" modal-close="true">&#x2715;</button>
 </div>
 <?php
-echo $this->Form->create($feedCategory);
+echo $this->Form->create($feedCategory, ['class' => 'form-narrow']);
 echo $this->Form->control('color', [
     'type' => 'colorpicker',
     'colors' => Configure::read('Colors'),

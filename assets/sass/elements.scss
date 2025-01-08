@@ -59,6 +59,7 @@ dialog {
   position: fixed;
   padding: calc($space * 4) calc($space * 5);
   z-index: $z-modal;
+  overflow: visible;
 
   border-radius: $border-radius-large;
   border: none;
