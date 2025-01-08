@@ -39,6 +39,7 @@
   }
 }
 
+.feed-item-summary,
 .feed-item-body {
   // Styles for the body of a feed item
   img {
@@ -46,7 +47,7 @@
   }
   hr {
     border: 0;
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: 2px solid var(--color-level1);
   }
   p {
     line-height: 1.3rem;

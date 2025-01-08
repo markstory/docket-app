@@ -6,8 +6,9 @@
 
   .button-muted {
     border: 1px solid var(--color-border);
+
     &:hover {
-      border-color: var(--color-border-med);
+      box-shadow: var(--shadow-button);
     }
   }
 }

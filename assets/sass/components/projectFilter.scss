@@ -27,7 +27,7 @@
 
     &.active,
     &:hover {
-      background: var(--color-bg-low-active);
+      background: var(--color-bg-level1-active);
     }
     svg {
       margin-right: $icon-gap;
@@ -35,7 +35,7 @@
   }
 
   .dnd-item {
-    background: var(--color-bg-low);
+    background: var(--color-bg-level1);
   }
 
   .dnd-dropper-left-offset {
@@ -72,7 +72,7 @@
     color: var(--color-muted);
 
     &:hover {
-      background: var(--color-bg-low-active);
+      background: var(--color-bg-level1-active);
       color: var(--color-low-emphasis);
     }
   }
