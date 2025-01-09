@@ -302,9 +302,11 @@ class FeedSubscriptionsController extends AppController
     public function delete(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
-        $feedSubscription = $this->FeedSubscriptions->get($id);
+        $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         $this->Authorization->authorize($feedSubscription);
         if ($this->FeedSubscriptions->delete($feedSubscription)) {
+            $this->FeedSubscriptions->FeedCategories->updateUnreadItemCount($feedSubscription->feed_category);
+
             $this->Flash->success(__('The feed subscription has been deleted.'));
         } else {
             $this->Flash->error(__('The feed subscription could not be deleted. Please, try again.'));

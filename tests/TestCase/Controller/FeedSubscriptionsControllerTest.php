@@ -466,9 +466,9 @@ class FeedSubscriptionsControllerTest extends TestCase
      *
      * @return void
      */
-    public function testDelete(): void
+    public function testDeleteUpdateCounters(): void
     {
-        $category = $this->makeFeedCategory('Blogs');
+        $category = $this->makeFeedCategory('Blogs', 1, ['unread_item_count' => 2]);
         $feed = $this->makeFeed('https://example.com/feed.xml');
         $subscription = $this->makeFeedSubscription($category->id, $feed->id);
 
@@ -477,6 +477,8 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->post("/feeds/{$subscription->id}/delete");
 
         $this->assertRedirect(['_name' => 'feedsubscriptions:index']);
+        $refresh = $this->fetchTable('FeedCategories')->get($category->id);
+        $this->assertEquals(0, $refresh->unread_item_count);
     }
 
     /**

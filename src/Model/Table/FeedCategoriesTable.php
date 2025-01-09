@@ -131,8 +131,15 @@ class FeedCategoriesTable extends Table
         $result = $query->select(['total' => $query->func()->sum('FeedSubscriptions.unread_item_count')])
             ->where(['FeedSubscriptions.feed_category_id' => $category->id])
             ->groupBy(['feed_category_id'])
-            ->firstOrFail();
-        $category->unread_item_count = $result->total;
+            ->first();
+
+        // result can be null when there are no subscriptions.
+        $total = 0;
+        if ($result !== null) {
+            $total = $result->total;
+        }
+        $category->unread_item_count = $total;
+
         $this->saveOrFail($category);
     }
 }
