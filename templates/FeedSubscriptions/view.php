@@ -6,7 +6,7 @@
  */
 $this->setLayout('feedreader');
 
-$this->assign('title', $feedSubscription->alias);
+$this->assign('title', 'Feed - ' . $feedSubscription->alias);
 
 $itemIds = $feedItems->items()->extract('id')->toList();
 $itemCount = count($itemIds);

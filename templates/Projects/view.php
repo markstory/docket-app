@@ -5,7 +5,7 @@ declare(strict_types=1);
  * @var \App\Model\Entity\Task[] $tasks
  */
 $this->setLayout('sidebar');
-$this->assign('title', $project->name . ' Project');
+$this->assign('title', 'Project - ' . $project->name);
 
 $this->set('showGlobalAdd', true);
 $this->set('globalAddContext', ['project_id' => $project->id]);
