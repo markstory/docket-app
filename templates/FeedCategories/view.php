@@ -7,9 +7,13 @@
 $this->setLayout('feedreader');
 $this->assign('title', 'Feed Category - ' . $feedCategory->title);
 
-$subscriptionAddUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover', '?' => ['feed_category_id' => $feedCategory->id]]);
+$subscriptionAddUrl = $this->Url->build([
+    '_name' => 'feedsubscriptions:discover',
+    '?' => ['feed_category_id' => $feedCategory->id]
+]);
 
 $groupedItems = [];
+$itemIds = [];
 foreach ($feedItems as $item) :
     $sub = $item->feed_subscription;
     $date = $item->published_at->format('Y-m-d');
@@ -20,7 +24,10 @@ foreach ($feedItems as $item) :
         ];
     endif;
     $groupedItems[$date]['items'][] = $item;
+    $itemIds[] = $item->id;
 endforeach;
+
+$itemCount = count($itemIds);
 ?>
 <div class="heading-actions">
     <div class="heading-actions-item">
@@ -41,7 +48,27 @@ endforeach;
             ]
         ) ?>
     </div>
-    <?= $this->element('feed_category_menu', ['feedCategory' => $feedCategory]) ?>
+    <div class="button-bar-inline">
+        <?php if ($itemCount > 0) : ?>
+            <?= $this->Form->postButton(
+                $this->element('icons/check16'),
+                ['_name' => 'feedsubscriptions:itemsmarkread', '_method' => 'post'],
+                [
+                    'title' => __n(
+                        'mark {0} item read',
+                        'mark {0} items read',
+                        $itemCount,
+                        [$itemCount]
+                    ),
+                    'class' => 'button-icon',
+                    'data' => ['id' => $itemIds],
+                    'escapeTitle' => false,
+                ]
+            );
+            ?>
+        <?php endif; ?>
+        <?= $this->element('feed_category_menu', ['feedCategory' => $feedCategory]) ?>
+    </div>
 </div>
 
 <div class="feed-items">
