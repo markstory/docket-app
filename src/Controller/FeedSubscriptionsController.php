@@ -147,10 +147,11 @@ class FeedSubscriptionsController extends AppController
      *
      * Mark a list of items as read.
      */
-    public function itemsMarkRead(int $id): void
+    public function itemsMarkRead(): void
     {
         $this->request->allowMethod(['POST']);
-        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
+        /*
+        /** @var \App\Model\Entity\FeedSubscription $feedSubscription * /
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
 
         // This is view because viewItem is as well
@@ -160,28 +161,40 @@ class FeedSubscriptionsController extends AppController
             'forSubscription',
             subscription: $feedSubscription,
         );
+        */
         $ids = (array)$this->request->getData('id');
         // TODO more validation
-        if (count($ids) >= 100) {
-            throw new BadRequestException('Too many ids provided. Max is 100');
-        }
         if (!$ids) {
             throw new BadRequestException('Missing required parameter id');
         }
+        if (count($ids) >= 100) {
+            throw new BadRequestException('Too many ids provided. Max is 100');
+        }
+        $query = $this->FeedItems->find('markReadBulk', ids: $ids);
 
-        // Scope the ids to those in the subscription
-        $query = $query
-            ->select(['FeedItems.id'])
-            ->where(['FeedItems.id IN' => $ids]);
+        /** @var \Cake\ORM\Query\SelectQuery $query */
+        // Authorization applies user + subscription filtering
+        $query = $this->Authorization->applyScope($query, 'markRead');
 
-        $allowedIds = $query->all()->extract('id')->toList();
+        $items = $query->all();
+        $allowedIds = $items->extract('id')->toList();
         if (count($allowedIds) !== count($ids)) {
             throw new BadRequestException('Invalid records requested');
         }
-        $this->FeedItems->markManyRead($feedSubscription->user_id, $allowedIds);
 
-        $this->FeedSubscriptions->updateUnreadItemCount($feedSubscription);
-        $this->FeedSubscriptions->FeedCategories->updateUnreadItemCount($feedSubscription->feed_category);
+        $identity = $this->Authentication->getIdentity();
+        assert($identity instanceof User);
+        $this->FeedItems->markManyRead($identity->id, $allowedIds);
+
+        $complete = [];
+        foreach ($items as $item) {
+            if (isset($complete[$item->feed_id])) {
+                continue;
+            }
+            $complete[$item->feed_id] = true;
+            $this->FeedSubscriptions->updateUnreadItemCount($item->feed_subscription);
+            $this->FeedSubscriptions->FeedCategories->updateUnreadItemCount($item->feed_subscription->feed_category);
+        }
 
         $this->redirect($this->referer());
     }

@@ -276,7 +276,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $data = [
             'id' => [$item->id, $otherItem->id],
         ];
-        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->post('/feeds/items/mark-read', $data);
         $this->assertResponseCode(302);
         $this->assertRedirect('/');
 
@@ -300,13 +300,14 @@ class FeedSubscriptionsControllerTest extends TestCase
 
     public function testMarkItemsReadPermissions(): void
     {
-        $category = $this->makeFeedCategory('Blogs');
+        $category = $this->makeFeedCategory('Blogs', 1);
         $feed = $this->makeFeed('https://example.com/feed.xml');
-        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $this->makeFeedSubscription($category->id, $feed->id, 1);
         $item = $this->makeFeedItem($feed->id, ['title' => 'yes']);
 
+        $otherCategory = $this->makeFeedCategory('News', 2);
         $otherFeed = $this->makeFeed('https://example.org/feed.xml');
-        $this->makeFeedSubscription($category->id, $otherFeed->id);
+        $this->makeFeedSubscription($otherCategory->id, $otherFeed->id, 2);
         $otherItem = $this->makeFeedItem($otherFeed->id, ['title' => 'derp']);
 
         $this->login();
@@ -314,7 +315,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $data = [
             'id' => [$item->id, $otherItem->id],
         ];
-        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->post('/feeds/items/mark-read', $data);
         $this->assertResponseCode(400);
         $this->assertResponseContains('Invalid records');
     }
@@ -328,7 +329,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $data = [];
-        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->post('/feeds/items/mark-read', $data);
         $this->assertResponseCode(400);
         $this->assertResponseContains('required parameter');
     }
@@ -344,7 +345,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $data = [
             'id' => array_fill(0, 101, 123),
         ];
-        $this->post("/feeds/{$subscription->id}/items/mark-read", $data);
+        $this->post('/feeds/items/mark-read', $data);
         $this->assertResponseCode(400);
         $this->assertResponseContains('Too many ids');
     }

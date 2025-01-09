@@ -26,7 +26,7 @@ $itemCount = count($itemIds);
         <?php if ($itemCount > 0) : ?>
             <?= $this->Form->postButton(
                 $this->element('icons/check16'),
-                ['_name' => 'feedsubscriptions:itemsmarkread', 'id' => $feedSubscription->id, '_method' => 'post'],
+                ['_name' => 'feedsubscriptions:itemsmarkread', '_method' => 'post'],
                 [
                     'title' => __n(
                         'mark {0} item read',

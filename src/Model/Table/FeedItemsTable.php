@@ -176,6 +176,14 @@ class FeedItemsTable extends Table
             ->orderByDesc('FeedItems.published_at');
     }
 
+    public function findMarkReadBulk(SelectQuery $query, array $ids): SelectQuery
+    {
+        return $query
+            ->select(['id', 'feed_id', 'FeedSubscriptions.id', 'FeedSubscriptions.feed_category_id'])
+            ->contain(['FeedSubscriptions.FeedCategories'])
+            ->where(['FeedItems.id IN' => $ids]);
+    }
+
     public function markRead(int $userId, FeedItem $feedItem): void
     {
         $entity = $this->FeedItemUsers->findOrCreate(

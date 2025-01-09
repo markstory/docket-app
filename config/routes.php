@@ -305,6 +305,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->scope('/feeds/', ['controller' => 'FeedSubscriptions'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'home'], 'feedsubscriptions:home');
         $builder->get('/list', ['action' => 'index'], 'feedsubscriptions:index');
+        $builder->post('/items/mark-read', ['action' => 'itemsMarkRead'], 'feedsubscriptions:itemsmarkread');
+
         $builder->get('/{id}/view', ['action' => 'view'], 'feedsubscriptions:view')
             ->setPass(['id']);
         $builder->post('/{id}/sync', ['action' => 'sync'], 'feedsubscriptions:sync')
@@ -317,9 +319,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->post('/{id}/delete', ['action' => 'delete'], 'feedsubscriptions:delete')
             ->setPass(['id']);
         $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'feedsubscriptions:deleteconfirm')
-            ->setPass(['id']);
-
-        $builder->post('/{id}/items/mark-read', ['action' => 'itemsMarkRead'], 'feedsubscriptions:itemsmarkread')
             ->setPass(['id']);
 
         $builder->get('{id}/items/{itemId}', ['action' => 'viewItem'], 'feedsubscriptions:viewitem')
