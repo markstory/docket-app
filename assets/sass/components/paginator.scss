@@ -17,6 +17,10 @@
   gap: $space;
   align-items: center;
 
+  li {
+    white-space: nowrap;
+  }
+
   .disabled a {
     pointer-events: none;
     color: var(--color-muted);
@@ -27,5 +31,16 @@
   }
   .active a {
     @extend .button-secondary;
+  }
+}
+
+@media (max-width: $breakpoint-phone) {
+  .pagination li {
+    display: none;
+  }
+  li.active,
+  li.next,
+  li.prev {
+    display: block;
   }
 }

@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\FeedSubscription $feedSubscription
  * @var \Cake\Datasource\Paging\PaginatedResultSet<\App\Model\Entity\FeedItem> $feedItems
+ * @property \Cake\View\Helper\PaginatorHelper $Paginator
  */
 $this->setLayout('feedreader');
 
