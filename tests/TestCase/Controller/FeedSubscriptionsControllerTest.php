@@ -324,7 +324,7 @@ class FeedSubscriptionsControllerTest extends TestCase
     {
         $category = $this->makeFeedCategory('Blogs');
         $feed = $this->makeFeed('https://example.com/feed.xml');
-        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $this->makeFeedSubscription($category->id, $feed->id);
 
         $this->login();
         $this->enableCsrfToken();
@@ -338,7 +338,7 @@ class FeedSubscriptionsControllerTest extends TestCase
     {
         $category = $this->makeFeedCategory('Blogs');
         $feed = $this->makeFeed('https://example.com/feed.xml');
-        $subscription = $this->makeFeedSubscription($category->id, $feed->id);
+        $this->makeFeedSubscription($category->id, $feed->id);
 
         $this->login();
         $this->enableCsrfToken();
