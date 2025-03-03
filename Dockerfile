@@ -32,21 +32,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
   && chmod +x /usr/local/bin/composer;
 
 # Copy application code in
-RUN mkdir /opt/docket-app;
-COPY . /opt/docket-app
+COPY . /opt/app
+COPY ./docker/run.sh /opt/app/run.sh
 
 # Install composer + php deps
-RUN cd /opt/docket-app && composer install --no-dev --no-plugins;
+RUN cd /opt/app && composer install --no-dev --no-plugins;
 
 # Build assets with nodejs
-RUN cd /opt/docket-app && \
+RUN cd /opt/app && \
     npm install && \
     npm run build;
 
 # Symlink application webroot to apache document root
-RUN ln -s /opt/docket-app/webroot /var/www/html
-
-STOPSIGNAL SIGTERM
+RUN ln -s /opt/app/webroot /var/www/html
 
 EXPOSE 5000
 
