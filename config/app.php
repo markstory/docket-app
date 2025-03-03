@@ -202,8 +202,8 @@ return [
      * Configuration for Sentry error handling
      */
     'Sentry' => [
-        'dsn' => '',
-        'environment' => 'dev',
+        'dsn' => env('SENTRY_DSN', ''),
+        'environment' => env('SENTRY_ENVIRONMENT', 'dev'),
         'release' => 'unknown',
         'in_app_exclude' => [
             ROOT . DS . 'vendor',
@@ -312,6 +312,9 @@ return [
              * which is the recommended value in production environments
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
+
+            // Container based deployment should use environment vars
+            'url' => env('DATABASE_URL'),
         ],
     ],
 
