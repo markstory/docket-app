@@ -153,7 +153,8 @@ commands:
 
 ```
 podman build -t docket-app
-````
+```
+
 The container can then run:
 
 ```
