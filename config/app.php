@@ -3,7 +3,6 @@
 use App\Error\SentryErrorLogger;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
-use Cake\Database\Driver\Mysql;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 
@@ -202,9 +201,9 @@ return [
      * Configuration for Sentry error handling
      */
     'Sentry' => [
-        'dsn' => '',
-        'environment' => 'dev',
-        'release' => 'unknown',
+        'dsn' => env('SENTRY_DSN', ''),
+        'environment' => env('SENTRY_ENVIRONMENT', 'dev'),
+        'release' => env('SENTRY_RELEASE', 'unknown'),
         'in_app_exclude' => [
             ROOT . DS . 'vendor',
         ],
@@ -276,21 +275,12 @@ return [
          */
         'default' => [
             'className' => Connection::class,
-            'driver' => Mysql::class,
+
+            // Container based deployment should use environment vars
+            'url' => env('DATABASE_URL'),
+
             'persistent' => false,
             'timezone' => 'UTC',
-
-            /*
-             * For MariaDB/MySQL the internal default changed from utf8 to utf8mb4, aka full utf-8 support, in CakePHP 3.6
-             */
-            //'encoding' => 'utf8mb4',
-
-            /*
-             * If your MySQL server is configured with `skip-character-set-client-handshake`
-             * then you MUST use the `flags` config to set your charset encoding.
-             * For e.g. `'flags' => [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4']`
-             */
-            'flags' => [],
             'cacheMetadata' => true,
             'log' => false,
 
@@ -303,15 +293,6 @@ return [
              * manipulated before being executed.
              */
             'quoteIdentifiers' => false,
-
-            /*
-             * During development, if using MySQL < 5.6, uncommenting the
-             * following line could boost the speed at which schema metadata is
-             * fetched from the database. It can also be set directly with the
-             * mysql configuration directive 'innodb_stats_on_metadata = 0'
-             * which is the recommended value in production environments
-             */
-            //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
     ],
 
@@ -377,7 +358,7 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
-        'cookie' => 'docketsession',
+        'cookie' => env('SESSION_COOKIE', 'docketsession'),
         'defaults' => 'php',
         'timeout' => 60 * 24 * 14, // 2 weeks
         'ini' => [
