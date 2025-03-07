@@ -146,4 +146,35 @@ You should now be able to generate an android build.
 This [video](https://www.youtube.com/watch?app=desktop&v=E5WgU6ERZzA) was fantastic and helped me
 get through the setup pain of this integration.
 
+# Docker
 
+You can build a docker image for docket by running the following
+commands:
+
+```
+podman build -t docket-app
+````
+The container can then run:
+
+```
+podman run --name docket -d -p 5000:5000 docket-app
+```
+
+This will start nginx+php-fpm in a container. You'll need to configure your application's database, and any other settings you want to use. See `app/config/app.php` for available configuration options. As required, more environment variable support will be added.
+
+Once you have a container running, you'll need to exec into the container to run database migrations and run maintenance tasks.
+
+```
+# run migrations
+podman exec -it docket /opt/app/bin/cake migrations migrate
+
+# update calendar subscriptions (daily)
+bin/cake calendar_subscription_renew
+
+# update feed subscriptions (daily)
+bin/cake feed_sync
+
+# run cleanup. Will delete old completed tasks.
+# Not necessary, but can help compact large instances.
+bin/cake cleanup
+```
