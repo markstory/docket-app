@@ -1,0 +1,24 @@
+---
+version: '3'
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+        DATABASE_URL: "mysql://docket:docket-secret@mysql/docket"
+    ports:
+      - 5000:5000
+    depends_on:
+      - mysql
+  mysql:
+    image: docker.io/library/mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root--secret
+      MYSQL_DATABASE: docket
+      MYSQL_USER: docket
+      MYSQL_PASSWORD: docket-secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
