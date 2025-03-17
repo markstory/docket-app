@@ -1,0 +1,11 @@
+drivers
+flutterapp
+vendor
+node_modules
+.git
+.github
+.phive
+.phpunit.cache
+.yarn
+config/app_local.php
+phpunit.xml
