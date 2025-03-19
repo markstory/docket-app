@@ -21,24 +21,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
   && chmod +x /usr/local/bin/composer;
 
 # Copy application code
-COPY ./README.md /opt/app/README.md
-COPY ./LICENSE /opt/app/LICENSE
-COPY ./index.php /opt/app/index.php
-COPY ./composer.json /opt/app/composer.json
-COPY ./composer.lock /opt/app/composer.lock
-COPY ./package.json /opt/app/package.json
-COPY ./package-lock.json /opt/app/package-lock.json
-COPY ./vite.config.ts /opt/app/vite.config.ts
-COPY ./docker/run.sh /opt/app/run.sh
-COPY ./assets /opt/app/assets
-COPY ./bin /opt/app/bin
-COPY ./config /opt/app/config
-COPY ./logs /opt/app/logs
-COPY ./plugins /opt/app/plugins
-COPY ./src /opt/app/src
-COPY ./templates /opt/app/templates
-COPY ./tmp /opt/app/tmp
-COPY ./webroot /opt/app/webroot
+COPY . /opt/app
 
 # Enable production mode
 ENV DEBUG=false
