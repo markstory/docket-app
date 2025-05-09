@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Routes configuration.
  *
@@ -277,25 +279,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['token']);
     });
 
-    $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function (RouteBuilder $builder) {
-        $builder->connect('/google/new', ['action' => 'createFromGoogle'], ['_name' => 'calendarproviders:createfromgoogle']);
-        $builder->connect('/', ['action' => 'index'], ['_name' => 'calendarproviders:index']);
-        $builder->connect('/{id}/delete', ['action' => 'delete'], ['_name' => 'calendarproviders:delete'])
-            ->setPass(['id']);
-        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarproviders:sync')
-            ->setPass(['id']);
-    });
-
-    $builder->scope('/calendars/{providerId}/sources', ['controller' => 'CalendarSources'], function (RouteBuilder $builder) {
-        $builder->connect('/add', ['action' => 'add'], ['_name' => 'calendarsources:add'])
-            ->setPass(['providerId']);
-        $builder->post('/{id}/delete', ['action' => 'delete'], 'calendarsources:delete');
-        $builder->get('/{id}/delete/confirm', ['action' => 'deleteConfirm'], 'calendarsources:deleteconfirm');
-        $builder->post('/{id}/edit', ['action' => 'edit'], 'calendarsources:edit');
-        $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync');
-        $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
-    });
-
     $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
         $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
         $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
@@ -343,6 +326,8 @@ $routes->scope('/', function (RouteBuilder $builder) {
         $builder->post('/{id}/toggle-expanded', ['action' => 'toggleExpanded'], 'feedcategories:toggleexpanded')
             ->setPass(['id']);
     });
+
+    $builder->loadPlugin('Calendar');
 });
 
 // Routes in this scope don't have CSRF protection.

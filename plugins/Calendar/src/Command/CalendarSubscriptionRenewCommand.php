@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Calendar\Command;
 
 use App\Model\Table\CalendarSubscriptionsTable;
 use App\Service\CalendarService;

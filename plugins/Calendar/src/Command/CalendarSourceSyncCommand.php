@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Calendar\Command;
 
 use App\Model\Table\CalendarSourcesTable;
 use App\Model\Table\UsersTable;
