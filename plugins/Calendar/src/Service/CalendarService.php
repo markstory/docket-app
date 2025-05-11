@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Calendar\Service;
 
-use App\Model\Entity\CalendarProvider;
-use App\Model\Entity\CalendarSource;
-use App\Model\Table\CalendarItemsTable;
-use App\Model\Table\CalendarProvidersTable;
-use App\Model\Table\CalendarSourcesTable;
-use App\Model\Table\CalendarSubscriptionsTable;
+use Calendar\Model\Entity\CalendarProvider;
+use Calendar\Model\Entity\CalendarSource;
+use Calendar\Model\Table\CalendarItemsTable;
+use Calendar\Model\Table\CalendarProvidersTable;
+use Calendar\Model\Table\CalendarSourcesTable;
+use Calendar\Model\Table\CalendarSubscriptionsTable;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -79,7 +79,7 @@ class CalendarService
      */
     public function setAccessToken(CalendarProvider $provider): void
     {
-        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
         $this->client->setAccessToken($provider->access_token);
 
         // If the token would expire soon, update it.
@@ -112,9 +112,9 @@ class CalendarService
         $existing = collection($provider->calendar_sources)->indexBy('provider_id')->toArray();
 
         /** @var \App\Model\Table\CalendarProvidersTable $this->CalendarProviders */
-        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
         /** @var \App\Model\Table\CalendarSourcesTable $this->CalendarSources */
-        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
 
         $this->CalendarProviders->getConnection()->transactional(
             function () use ($results, $existing, $provider): void {
@@ -212,7 +212,7 @@ class CalendarService
 
     public function getSourceForSubscription(string $identifier, string $verifier): CalendarSource
     {
-        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
         $source = $this->CalendarSources->find()
             ->innerJoinWith('CalendarSubscriptions')
             ->contain('CalendarProviders')
@@ -233,7 +233,7 @@ class CalendarService
      */
     public function createSubscription(CalendarSource $source)
     {
-        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
 
         /** @var \App\Model\Entity\CalendarSubscription $sub */
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
@@ -274,7 +274,7 @@ class CalendarService
      */
     public function cancelSubscriptions(CalendarSource $source): void
     {
-        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
 
         $subs = $this->CalendarSubscriptions
             ->find()
@@ -301,8 +301,8 @@ class CalendarService
      */
     public function syncEvents(CalendarSource $source): void
     {
-        $this->CalendarSources = $this->fetchTable('CalendarSources');
-        $this->CalendarItems = $this->fetchTable('CalendarItems');
+        $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
+        $this->CalendarItems = $this->fetchTable('Calendar.CalendarItems');
 
         $calendar = new Calendar($this->client);
 

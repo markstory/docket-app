@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Calendar\Controller;
 
 use App\Controller\AppController;
-use App\Model\Entity\CalendarSource;
+use Calendar\Model\Entity\CalendarSource;
 use Cake\Http\Response;
 use Cake\View\JsonView;
 use Calendar\Service\CalendarService;

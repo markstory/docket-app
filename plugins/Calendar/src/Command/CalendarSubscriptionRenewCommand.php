@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Calendar\Command;
 
-use App\Model\Table\CalendarSubscriptionsTable;
-use App\Service\CalendarService;
+use Calendar\Model\Table\CalendarSubscriptionsTable;
+use Calendar\Service\CalendarService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -58,7 +58,7 @@ class CalendarSubscriptionRenewCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
 
         $expiring = $this->CalendarSubscriptions->find('expiring')
             ->select(['CalendarSubscriptions.calendar_source_id']);

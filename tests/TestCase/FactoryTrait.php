@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use App\Model\Entity\ApiToken;
-use App\Model\Entity\CalendarItem;
-use App\Model\Entity\CalendarProvider;
-use App\Model\Entity\CalendarSource;
-use App\Model\Entity\CalendarSubscription;
+use Calendar\Model\Entity\CalendarItem;
+use Calendar\Model\Entity\CalendarProvider;
+use Calendar\Model\Entity\CalendarSource;
+use Calendar\Model\Entity\CalendarSubscription;
 use App\Model\Entity\Feed;
 use App\Model\Entity\FeedCategory;
 use App\Model\Entity\FeedItem;
@@ -250,8 +250,8 @@ trait FactoryTrait
 
     protected function makeCalendarProvider($userId, $identifier, $props = []): CalendarProvider
     {
-        $providers = $this->fetchTable('CalendarProviders');
-        /** @var \App\Model\Entity\CalendarProvider $provider */
+        $providers = $this->fetchTable('Calendar.CalendarProviders');
+        /** @var \Calendar\Model\Entity\CalendarProvider $provider */
         $provider = $providers->newEntity(array_merge([
             'user_id' => $userId,
             'kind' => 'google',
@@ -267,8 +267,8 @@ trait FactoryTrait
 
     protected function makeCalendarSource($providerId, $name = 'primary', $props = []): CalendarSource
     {
-        $sources = $this->fetchTable('CalendarSources');
-        /** @var \App\Model\Entity\CalendarSource $source */
+        $sources = $this->fetchTable('Calendar.CalendarSources');
+        /** @var \Calendar\Model\Entity\CalendarSource $source */
         $source = $sources->newEntity(array_merge([
             'calendar_provider_id' => $providerId,
             'provider_id' => $name,
@@ -281,7 +281,7 @@ trait FactoryTrait
 
     protected function makeCalendarItem($sourceId, $props = []): CalendarItem
     {
-        $items = $this->fetchTable('CalendarItems');
+        $items = $this->fetchTable('Calendar.CalendarItems');
         $item = $items->newEntity(array_merge([
             'calendar_source_id' => $sourceId,
             'start_time' => DateTime::parse('-1 day -1 hours')->format('Y-m-d H:i:s'),
@@ -293,8 +293,8 @@ trait FactoryTrait
 
     protected function makeCalendarSubscription($sourceId, $identifier = null, $verifier = null, $expires = null): CalendarSubscription
     {
-        $subs = $this->fetchTable('CalendarSubscriptions');
-        /** @var \App\Model\Entity\CalendarSubscription $sub */
+        $subs = $this->fetchTable('Calendar.CalendarSubscriptions');
+        /** @var \Calendar\Model\Entity\CalendarSubscription $sub */
         $sub = $subs->newEntity([
             'calendar_source_id' => $sourceId,
             'identifier' => $identifier ?? Text::uuid(),

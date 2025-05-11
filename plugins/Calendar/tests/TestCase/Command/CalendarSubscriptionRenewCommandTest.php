@@ -6,6 +6,7 @@ namespace Calendar\Test\TestCase\Command;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Calendar\Model\Table\CalendarSubscriptionsTable;
 
 /**
  * App\Command\CalendarSubscriptionRenewCommand Test Case
@@ -25,9 +26,9 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\CalendarSubscriptionsTable
+     * @var \Calendar\Model\Table\CalendarSubscriptionsTable
      */
-    private $CalendarSubscriptions;
+    private CalendarSubscriptionsTable $CalendarSubscriptions;
 
     /**
      * setUp method
@@ -37,7 +38,7 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->CalendarSubscriptions = $this->fetchTable('CalendarSubscriptions');
+        $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
     }
 
     /**

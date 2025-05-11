@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Calendar\Command;
 
-use App\Model\Table\CalendarSourcesTable;
 use App\Model\Table\UsersTable;
-use App\Service\CalendarService;
+use Calendar\Model\Table\CalendarSourcesTable;
+use Calendar\Service\CalendarService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -17,7 +17,7 @@ use Cake\Console\ConsoleOptionParser;
 class CalendarSourceSyncCommand extends Command
 {
     /**
-     * @var \App\Model\Table\CalendarSourcesTable
+     * @var \Calendar\Model\Table\CalendarSourcesTable
      */
     protected CalendarSourcesTable $CalendarSources;
 
@@ -68,7 +68,7 @@ class CalendarSourceSyncCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->CalendarSources = $this->fetchTable('CalendarSources');
+        $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
 
         $sourceId = $args->getArgument('calendarSourceId');
         $source = $this->CalendarSources->get($sourceId, contain: ['CalendarProviders']);

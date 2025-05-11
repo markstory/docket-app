@@ -102,7 +102,12 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
                     </ul>
                     <a href="#"
                         class="layout-show-help"
-                        hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
+                        hx-get="<?= $this->Url->build([
+                            'plugin' => false,
+                            'controller' => 'Pages',
+                            'action' => 'display',
+                            'help',
+                        ]) ?>"
                         hx-target="main.main"
                         hx-swap="beforeend"
                         data-hotkey="shift+?"
