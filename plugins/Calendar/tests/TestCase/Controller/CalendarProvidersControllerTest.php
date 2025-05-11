@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace Calendar\Test\TestCase\Controller;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;

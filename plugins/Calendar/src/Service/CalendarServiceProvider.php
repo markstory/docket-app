@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service;
+namespace Calendar\Service;
 
-use App\Command\CalendarSourceSyncCommand;
-use App\Command\CalendarSubscriptionRenewCommand;
 use Cake\Core\ContainerInterface;
 use Cake\Core\ServiceProvider;
 use Cake\Routing\Router;
+use Calendar\Command\CalendarSourceSyncCommand;
+use Calendar\Command\CalendarSubscriptionRenewCommand;
 use Google\Client as GoogleClient;
 use Google\Service\Calendar;
 use Google\Service\Oauth2;

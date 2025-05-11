@@ -154,7 +154,6 @@ class Application extends BaseApplication implements
             return $csp;
         });
 
-        $container->addServiceProvider(new CalendarServiceProvider());
         $container->addServiceProvider(new FeedServiceProvider());
         $container->addShared(FeatureManagerInterface::class, function () {
             return new FeatureManager(Configure::read('Features'));

@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Calendar\Controller;
 
+use App\Controller\AppController;
 use App\Model\Entity\CalendarSource;
-use App\Service\CalendarService;
 use Cake\Http\Response;
 use Cake\View\JsonView;
+use Calendar\Service\CalendarService;
 use Exception;
 use RuntimeException;
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service;
+namespace Calendar\Service;
 
 use App\Model\Entity\CalendarProvider;
 use App\Model\Entity\CalendarSource;
