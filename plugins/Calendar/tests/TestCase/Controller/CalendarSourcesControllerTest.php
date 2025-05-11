@@ -47,8 +47,8 @@ class CalendarSourcesControllerTest extends TestCase
     {
         parent::setUp();
         $this->Users = $this->fetchTable('Users');
-        $this->CalendarSources = $this->fetchTable('CalendarSources');
-        $this->CalendarItems = $this->fetchTable('CalendarItems');
+        $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
+        $this->CalendarItems = $this->fetchTable('Calendar.CalendarItems');
     }
 
     protected function tearDown(): void
@@ -228,7 +228,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertSame('calendar-1', $source->provider_id);
         $this->assertTrue($source->synced);
 
-        $subs = $this->fetchTable('CalendarSubscriptions');
+        $subs = $this->fetchTable('Calendar.CalendarSubscriptions');
         $this->assertNotEmpty($subs->findByCalendarSourceId($source->id)->first());
     }
 
@@ -258,7 +258,7 @@ class CalendarSourcesControllerTest extends TestCase
         $this->assertSame('original', $source->provider_id);
         $this->assertFalse($source->synced);
 
-        $subs = $this->fetchTable('CalendarSubscriptions');
+        $subs = $this->fetchTable('Calendar.CalendarSubscriptions');
         $this->assertEmpty($subs->findByCalendarSourceId($source->id)->first());
     }
 
