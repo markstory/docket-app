@@ -24,11 +24,16 @@
 
     <!-- Add any additional test suites you want to run here -->
     <testsuites>
-        <testsuite name="functional">
-            <directory>tests/TestCase/</directory>
-        </testsuite>
         <testsuite name="acceptance">
             <directory>tests/Acceptance/</directory>
+        </testsuite>
+
+        <testsuite name="functional">
+            <directory>tests/TestCase/</directory>
+            <directory>plugins/Calendar/tests/TestCase/</directory>
+        </testsuite>
+        <testsuite name="calendar">
+            <directory>plugins/Calendar/tests/TestCase/</directory>
         </testsuite>
     </testsuites>
 
