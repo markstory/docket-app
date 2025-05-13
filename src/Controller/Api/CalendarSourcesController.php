@@ -4,20 +4,22 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
-use App\Model\Entity\CalendarSource;
-use App\Service\CalendarService;
 use Cake\Http\Response;
 use Cake\View\JsonView;
+use Calendar\Model\Entity\CalendarSource;
+use Calendar\Service\CalendarService;
 use Exception;
 use RuntimeException;
 
 /**
  * CalendarSources Controller
  *
- * @property \App\Model\Table\CalendarSourcesTable $CalendarSources
+ * @property \Calendar\Model\Table\CalendarSourcesTable $CalendarSources
  */
 class CalendarSourcesController extends AppController
 {
+    protected ?string $defaultTable = 'Calendar.CalendarSources';
+
     public function viewClasses(): array
     {
         return [JsonView::class];

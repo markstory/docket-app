@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\GoogleOauthController;
-use App\Model\Table\CalendarProvidersTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Calendar\Model\Table\CalendarProvidersTable;
 
 /**
  * App\Controller\GoogleOauthController Test Case
@@ -33,7 +33,7 @@ class GoogleOauthControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
     }
 
     /**
@@ -71,6 +71,7 @@ class GoogleOauthControllerTest extends TestCase
      */
     public function testCallbackSuccess(): void
     {
+        $this->disableErrorHandlerMiddleware();
         $this->loadResponseMocks('googleoauth_callback.yml');
         $this->login();
         $this->get('/auth/google/callback?code=auth-code');

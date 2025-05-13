@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
-use App\Service\CalendarService;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\View\JsonView;
+use Calendar\Service\CalendarService;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
 use Google\Service\Oauth2 as GoogleOauth2;
@@ -21,6 +21,8 @@ use Google\Service\Oauth2 as GoogleOauth2;
  */
 class CalendarProvidersController extends AppController
 {
+    protected ?string $defaultTable = 'Calendar.CalendarProviders';
+
     public function viewClasses(): array
     {
         return [JsonView::class];

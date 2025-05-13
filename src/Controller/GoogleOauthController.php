@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Table\CalendarProvidersTable;
 use App\Model\Table\CalendarSourcesTable;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Exception\PersistenceFailedException;
+use Calendar\Model\Table\CalendarProvidersTable;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
 use Google\Service\Oauth2 as GoogleOauth2;
@@ -56,7 +56,7 @@ class GoogleOauthController extends AppController
 
     public function callback(GoogleClient $client)
     {
-        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
 
         $code = $this->request->getQuery('code');
         if (!is_string($code)) {

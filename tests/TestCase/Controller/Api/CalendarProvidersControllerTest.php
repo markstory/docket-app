@@ -29,7 +29,7 @@ class CalendarProvidersControllerTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\CalendarProvidersTable
+     * @var \Calendar\Model\Table\CalendarProvidersTable
      */
     protected $CalendarProviders;
 
@@ -37,7 +37,7 @@ class CalendarProvidersControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->CalendarProviders = $this->fetchTable('CalendarProviders');
+        $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
     }
 
     /**

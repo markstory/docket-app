@@ -16,7 +16,7 @@ use InvalidArgumentException;
  *
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
  * @property \App\Model\Table\TasksTable $Tasks
- * @property \App\Model\Table\CalendarItemsTable $CalendarItems
+ * @property \Calendar\Model\Table\CalendarItemsTable $CalendarItems
  */
 class TasksController extends AppController
 {
@@ -52,7 +52,7 @@ class TasksController extends AppController
      */
     public function daily(string $date)
     {
-        $calendarItems = $this->fetchTable('CalendarItems');
+        $calendarItems = $this->fetchTable('Calendar.CalendarItems');
         $overdue = (bool)$this->request->getQuery('overdue', false);
         if ($date === 'today') {
             $overdue = true;
@@ -108,7 +108,7 @@ class TasksController extends AppController
      */
     public function index(string $view = 'upcoming'): ?Response
     {
-        $calendarItemsTable = $this->fetchTable('CalendarItems');
+        $calendarItemsTable = $this->fetchTable('Calendar.CalendarItems');
 
         $identity = $this->request->getAttribute('identity');
         $timezone = $identity->timezone;

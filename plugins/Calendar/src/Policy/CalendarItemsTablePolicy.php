@@ -16,7 +16,7 @@ class CalendarItemsTablePolicy
 
     public function scopeIndex(User $user, Query $query): Query
     {
-        $sources = $this->fetchTable('CalendarSources');
+        $sources = $this->fetchTable('Calendar.CalendarSources');
 
         $sourceQuery = $sources
             ->subquery()

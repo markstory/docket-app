@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\CalendarService;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
+use Calendar\Service\CalendarService;
 
 /**
  * Receives push notifications from google calendar to sync events
