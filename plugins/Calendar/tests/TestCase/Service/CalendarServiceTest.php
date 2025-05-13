@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Service;
+namespace Calendar\Test\TestCase\Service;
 
-use App\Service\CalendarService;
-use App\Service\CalendarServiceProvider;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Core\Container;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
+use Calendar\Service\CalendarService;
+use Calendar\Service\CalendarServiceProvider;
 use RuntimeException;
 use function Cake\Collection\collection;
 
@@ -26,17 +26,17 @@ class CalendarServiceTest extends TestCase
     ];
 
     /**
-     * @var \App\Service\CalendarService
+     * @var \Calendar\Service\CalendarService
      */
     private $calendar;
 
     /**
-     * @var \App\Model\Table\CalendarSourcesTable
+     * @var \Calendar\Model\Table\CalendarSourcesTable
      */
     private $calendarSources;
 
     /**
-     * @var \App\Model\Table\CalendarProvidersTable
+     * @var \Calendar\Model\Table\CalendarProvidersTable
      */
     private $calendarItems;
 
@@ -48,8 +48,8 @@ class CalendarServiceTest extends TestCase
         $container = new Container();
         $container->addServiceProvider(new CalendarServiceProvider());
         $this->calendar = $container->get(CalendarService::class);
-        $this->calendarSources = $this->fetchTable('CalendarSources');
-        $this->calendarItems = $this->fetchTable('CalendarItems');
+        $this->calendarSources = $this->fetchTable('Calendar.CalendarSources');
+        $this->calendarItems = $this->fetchTable('Calendar.CalendarItems');
 
         DateTime::setTestNow('2032-07-11 12:13:14');
     }
@@ -134,7 +134,7 @@ class CalendarServiceTest extends TestCase
             'end_time' => '2019-01-01 13:13:14',
         ]);
         $this->calendar->syncEvents($source);
-        $updated = $this->fetchTable('CalendarSources')->get($source->id);
+        $updated = $this->fetchTable('Calendar.CalendarSources')->get($source->id);
         $this->assertNotNull($updated->last_sync);
 
         $items = $this->getItems($source);
