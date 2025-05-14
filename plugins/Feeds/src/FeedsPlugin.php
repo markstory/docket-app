@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Feeds;
 
-use App\Service\FeedServiceProvider;
 use Cake\Core\BasePlugin;
 use Cake\Core\ContainerInterface;
+use Feeds\Service\FeedServiceProvider;
 
 /**
  * Plugin for Feeds

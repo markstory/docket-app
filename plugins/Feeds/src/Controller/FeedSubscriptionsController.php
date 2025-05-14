@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Feeds\Controller;
 
+use App\Controller\AppController;
 use App\Model\Entity\User;
-use App\Model\Table\FeedCategoriesTable;
-use App\Model\Table\FeedItemsTable;
-use App\Model\Table\FeedSubscriptionsTable;
-use App\Service\FeedService;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use Feeds\Model\Table\FeedCategoriesTable;
+use Feeds\Model\Table\FeedItemsTable;
+use Feeds\Model\Table\FeedSubscriptionsTable;
+use Feeds\Service\FeedService;
 use Laminas\Diactoros\Exception\InvalidArgumentException as DiactorosInvalidArgumentException;
 use RuntimeException;
 
@@ -26,11 +27,11 @@ class FeedSubscriptionsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        /** @var \App\Model\Table\FeedItemsTable $this->FeedItems */
-        $this->FeedItems = $this->fetchTable('FeedItems');
+        /** @var \Feeds\Model\Table\FeedItemsTable $this->FeedItems */
+        $this->FeedItems = $this->fetchTable('Feeds.FeedItems');
 
-        /** @var \App\Model\Table\FeedCategoriesTable $this->FeedCategories */
-        $this->FeedCategories = $this->fetchTable('FeedCategories');
+        /** @var \Feeds\Model\Table\FeedCategoriesTable $this->FeedCategories */
+        $this->FeedCategories = $this->fetchTable('Feeds.FeedCategories');
     }
 
     /**
@@ -230,7 +231,7 @@ class FeedSubscriptionsController extends AppController
         $this->Authorization->authorize($feedSubscription);
         $referer = $this->request->referer();
 
-        $categoriesTable = $this->fetchTable('FeedCategories');
+        $categoriesTable = $this->fetchTable('Feeds.FeedCategories');
         $query = $categoriesTable->find('list', limit: 200);
         $feedCategories = $this->Authorization->applyScope($query, 'index')->all();
         $this->set(compact('feedSubscription', 'feedCategories', 'referer'));

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Table;
+namespace Feeds\Model\Table;
 
-use App\Model\Entity\Feed;
+use Feeds\Model\Entity\Feed;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -11,23 +11,23 @@ use Cake\Validation\Validator;
 /**
  * Feeds Model
  *
- * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
- * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\HasMany $FeedSubscriptions
- * @method \App\Model\Entity\Feed newEmptyEntity()
- * @method \App\Model\Entity\Feed newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\Feed> newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Feed get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\Feed findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \App\Model\Entity\Feed patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\Feed> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\Feed|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \App\Model\Entity\Feed saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
- * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Feed> findByUrl(string $url)
- * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Feed> findbyurl(string $url)
+ * @property \Feeds\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
+ * @property \Feeds\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\HasMany $FeedSubscriptions
+ * @method \Feeds\Model\Entity\Feed newEmptyEntity()
+ * @method \Feeds\Model\Entity\Feed newEntity(array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\Feed> newEntities(array $data, array $options = [])
+ * @method \Feeds\Model\Entity\Feed get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \Feeds\Model\Entity\Feed findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \Feeds\Model\Entity\Feed patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\Feed> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \Feeds\Model\Entity\Feed|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Feeds\Model\Entity\Feed saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\Feed>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\Feed> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\Feed>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\Feed> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\ORM\Query\SelectQuery<\Feeds\Model\Entity\Feed> findByUrl(string $url)
+ * @method \Cake\ORM\Query\SelectQuery<\Feeds\Model\Entity\Feed> findbyurl(string $url)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedsTable extends Table
@@ -49,9 +49,11 @@ class FeedsTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('FeedItems', [
+            'className' => 'Feeds.FeedItems',
             'foreignKey' => 'feed_id',
         ]);
         $this->hasMany('FeedSubscriptions', [
+            'className' => 'Feeds.FeedSubscriptions',
             'foreignKey' => 'feed_id',
         ]);
     }

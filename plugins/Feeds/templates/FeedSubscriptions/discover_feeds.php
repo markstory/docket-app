@@ -5,7 +5,7 @@
  * @var array<\App\Model\Entity\Feed> $feeds
  */
 
-use App\Model\Entity\FeedSubscription;
+use Feeds\Model\Entity\FeedSubscription;
 
 $isHtmx = $this->request->is('htmx');
 $discoverUrl = ['_name' => 'feedsubscriptions:discover'];

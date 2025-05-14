@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Table;
+namespace Feeds\Model\Table;
 
-use App\Model\Entity\FeedCategory;
-use App\Model\Entity\FeedItem;
-use App\Model\Entity\FeedItemUser;
-use App\Model\Entity\FeedSubscription;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Feeds\Model\Entity\FeedCategory;
+use Feeds\Model\Entity\FeedItem;
+use Feeds\Model\Entity\FeedItemUser;
+use Feeds\Model\Entity\FeedSubscription;
 
 /**
  * FeedItems Model
@@ -62,6 +62,7 @@ class FeedItemsTable extends Table
         // but is useful for applying read conditions to
         // scope read queries.
         $this->belongsTo('FeedSubscriptions', [
+            'className' => 'Feeds.FeedSubscriptions',
             'foreignKey' => 'feed_id',
             'bindingKey' => 'feed_id',
         ]);
@@ -69,6 +70,7 @@ class FeedItemsTable extends Table
         // Useful in contain, but requires a userId condition
         // to be set to actually be useful.
         $this->hasOne('FeedItemUsers', [
+            'className' => 'Feeds.FeedItemUsers',
             'foreignKey' => 'feed_item_id',
             'joinType' => 'LEFT',
         ]);

@@ -42,13 +42,13 @@ $itemCount = count($itemIds);
             );
             ?>
         <?php endif; ?>
-        <?= $this->element('feed_subscription_menu', ['feedSubscription' => $feedSubscription]) ?>
+        <?= $this->element('Feeds.feed_subscription_menu', ['feedSubscription' => $feedSubscription]) ?>
     </div>
 </div>
 
 <div class="feed-items">
 <?php foreach ($feedItems as $item) : ?>
-    <?= $this->element('feed_item', ['feedItem' => $item, 'feedSubscription' => $feedSubscription]) ?>
+    <?= $this->element('Feeds.feed_item', ['feedItem' => $item, 'feedSubscription' => $feedSubscription]) ?>
 <?php endforeach; ?>
 </div>
 <div class="paginator">

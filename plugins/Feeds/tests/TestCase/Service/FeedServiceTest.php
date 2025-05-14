@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Service;
+namespace Feeds\Test\TestCase\Service;
 
-use App\Model\Entity\Feed;
-use App\Service\FeedService;
-use App\Service\FeedSyncException;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Feeds\Model\Entity\Feed;
+use Feeds\Service\FeedService;
+use Feeds\Service\FeedSyncException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -42,7 +42,7 @@ class FeedServiceTest extends TestCase
 
     public function feedItemCount(Feed $feed): int
     {
-        $feedItems = $this->fetchTable('FeedItems');
+        $feedItems = $this->fetchTable('Feeds.FeedItems');
 
         return $feedItems->find()->where(['FeedItems.feed_id' => $feed->id])->count();
     }
@@ -138,7 +138,7 @@ class FeedServiceTest extends TestCase
         $service->refreshFeed($feed);
 
         $this->assertEquals(20, $this->feedItemCount($feed));
-        $feeditems = $this->fetchTable('FeedItems');
+        $feeditems = $this->fetchTable('Feeds.FeedItems');
         $item = $feeditems->find()->firstOrFail();
 
         $this->assertNotEmpty($item->guid);
@@ -167,7 +167,7 @@ class FeedServiceTest extends TestCase
         $service->refreshFeed($feed);
 
         $this->assertEquals(20, $this->feedItemCount($feed));
-        $feeditems = $this->fetchTable('FeedItems');
+        $feeditems = $this->fetchTable('Feeds.FeedItems');
         $item = $feeditems->find()->firstOrFail();
 
         $this->assertNotEmpty($item->guid);
@@ -196,7 +196,7 @@ class FeedServiceTest extends TestCase
         $service->refreshFeed($feed);
 
         $this->assertEquals(10, $this->feedItemCount($feed));
-        $feeditems = $this->fetchTable('FeedItems');
+        $feeditems = $this->fetchTable('Feeds.FeedItems');
         $item = $feeditems->find()->firstOrFail();
 
         $this->assertNotEmpty($item->guid);
@@ -233,7 +233,7 @@ class FeedServiceTest extends TestCase
         $service->refreshFeed($feed);
 
         $this->assertEquals(20, $this->feedItemCount($feed));
-        $feeditems = $this->fetchTable('FeedItems');
+        $feeditems = $this->fetchTable('Feeds.FeedItems');
         $refresh = $feeditems->findById($item->id)->firstOrFail();
 
         $this->assertEquals($item->guid, $refresh->guid);
@@ -264,8 +264,8 @@ class FeedServiceTest extends TestCase
         $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
-        /** @var \App\Model\Table\FeedSubscriptionsTable $subs */
-        $subs = $this->fetchTable('FeedSubscriptions');
+        /** @var \Feeds\Model\Table\FeedSubscriptionsTable $subs */
+        $subs = $this->fetchTable('Feeds.FeedSubscriptions');
 
         $refresh = $subs->get($sub->id);
         $this->assertEquals(20, $refresh->unread_item_count);
@@ -273,8 +273,8 @@ class FeedServiceTest extends TestCase
         $refresh = $subs->get($otherSub->id);
         $this->assertEquals(20, $refresh->unread_item_count);
 
-        /** @var \App\Model\Table\FeedCategoriesTable $categories */
-        $categories = $this->fetchTable('FeedCategories');
+        /** @var \Feeds\Model\Table\FeedCategoriesTable $categories */
+        $categories = $this->fetchTable('Feeds.FeedCategories');
         $refresh = $categories->get($category->id);
         $this->assertEquals(20, $refresh->unread_item_count);
 
@@ -308,14 +308,14 @@ class FeedServiceTest extends TestCase
         $service = new FeedService($client, $this->cleaner);
         $service->refreshFeed($feed);
 
-        /** @var \App\Model\Table\FeedSubscriptionsTable $subs */
-        $subs = $this->fetchTable('FeedSubscriptions');
+        /** @var \Feeds\Model\Table\FeedSubscriptionsTable $subs */
+        $subs = $this->fetchTable('Feeds.FeedSubscriptions');
 
         $refresh = $subs->get($sub->id);
         $this->assertEquals(19, $refresh->unread_item_count, 'Should account for existing read state');
 
-        /** @var \App\Model\Table\FeedCategoriesTable $categories */
-        $categories = $this->fetchTable('FeedCategories');
+        /** @var \Feeds\Model\Table\FeedCategoriesTable $categories */
+        $categories = $this->fetchTable('Feeds.FeedCategories');
         $refresh = $categories->get($category->id);
         $this->assertEquals(19, $refresh->unread_item_count, 'Should account for existing read state');
     }

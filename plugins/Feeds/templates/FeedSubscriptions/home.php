@@ -40,7 +40,7 @@ endforeach;
 </h3>
 <div class="feed-items">
 <?php if (empty($groupedItems)) : ?>
-    <?= $this->element('feeds_empty') ?>
+    <?= $this->element('Feeds.feeds_empty') ?>
 <?php endif; ?>
 
 <?php foreach ($groupedItems as $group) : ?>
@@ -52,7 +52,7 @@ endforeach;
 </h3>
 <?php
     foreach ($group['items'] as $item) :
-        echo $this->element('feed_item', [
+        echo $this->element('Feeds.feed_item', [
             'feedItem' => $item,
             'feedSubscription' => $item->feed_subscription,
         ]);

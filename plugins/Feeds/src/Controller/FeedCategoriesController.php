@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Feeds\Controller;
 
+use App\Controller\AppController;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 
 /**
  * FeedCategories Controller
  *
- * @property \App\Model\Table\FeedCategoriesTable $FeedCategories
+ * @property \Feeds\Model\Table\FeedCategoriesTable $FeedCategories
  */
 class FeedCategoriesController extends AppController
 {
@@ -32,7 +33,7 @@ class FeedCategoriesController extends AppController
         $feedCategory = $this->FeedCategories->get($id);
         $this->Authorization->authorize($feedCategory);
 
-        $itemsTable = $this->fetchTable('FeedItems');
+        $itemsTable = $this->fetchTable('Feeds.FeedItems');
         $itemsQuery = $itemsTable->find('forCategory', category: $feedCategory);
         $result = $this->paginate($itemsQuery);
 

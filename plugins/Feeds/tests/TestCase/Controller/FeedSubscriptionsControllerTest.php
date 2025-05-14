@@ -1,20 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace Feeds\Test\TestCase\Controller;
 
-use App\Model\Table\FeedsTable;
-use App\Model\Table\FeedSubscriptionsTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Feeds\Model\Table\FeedsTable;
+use Feeds\Model\Table\FeedSubscriptionsTable;
 
-/**
- * App\Controller\FeedSubscriptionsController Test Case
- *
- * @uses \App\Controller\FeedSubscriptionsController
- */
 class FeedSubscriptionsControllerTest extends TestCase
 {
     use HttpClientTrait;
@@ -42,8 +37,8 @@ class FeedSubscriptionsControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        /** @var \App\Model\Table\FeedsTable $this->Feeds */
-        $this->Feeds = $this->fetchTable('Feeds');
+        /** @var \Feeds\Model\Table\FeedsTable $this->Feeds */
+        $this->Feeds = $this->fetchTable('Feeds.Feeds');
     }
 
     /**
@@ -243,7 +238,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertResponseOk();
 
         // Read at state recorded
-        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $feedItemUsers = $this->fetchTable('Feeds.FeedItemUsers');
         $state = $feedItemUsers->findByUserId(1)->firstOrFail();
         $this->assertNotEmpty($state->read_at);
         $this->assertEquals($state->feed_item_id, $item->id);
@@ -280,7 +275,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertResponseCode(302);
         $this->assertRedirect('/');
 
-        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $feedItemUsers = $this->fetchTable('Feeds.FeedItemUsers');
         $state = $feedItemUsers->findByFeedItemId($item->id)->first();
         $this->assertNotEmpty($state);
 
@@ -291,7 +286,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $state = $feedItemUsers->findByFeedItemId($notIncluded->id)->first();
         $this->assertNull($state);
 
-        $sub = $this->fetchTable('FeedSubscriptions')->get(
+        $sub = $this->fetchTable('Feeds.FeedSubscriptions')->get(
             $subscription->id,
             contain: FeedSubscriptionsTable::VIEW_CONTAIN
         );
@@ -360,12 +355,12 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->get("/feeds/{$subscription->id}/read-visit/{$item->id}");
 
         $this->assertRedirect($item->url);
-        $feedItemUsers = $this->fetchTable('FeedItemUsers');
+        $feedItemUsers = $this->fetchTable('Feeds.FeedItemUsers');
         $state = $feedItemUsers->findByFeedItemId($item->id)->firstOrFail();
         $this->assertNotEmpty($state);
         $this->assertEquals($state->user_id, $category->user_id);
 
-        $sub = $this->fetchTable('FeedSubscriptions')->get(
+        $sub = $this->fetchTable('Feeds.FeedSubscriptions')->get(
             $subscription->id,
             contain: FeedSubscriptionsTable::VIEW_CONTAIN
         );
@@ -427,7 +422,7 @@ class FeedSubscriptionsControllerTest extends TestCase
             'ranking' => 1,
         ]);
         $this->assertRedirect("/feeds/{$subscription->id}/view");
-        $subscriptions = $this->fetchTable('FeedSubscriptions');
+        $subscriptions = $this->fetchTable('Feeds.FeedSubscriptions');
         $refresh = $subscriptions->get($subscription->id);
         $this->assertEquals($refresh->alias, 'updated alias');
         $this->assertEquals($refresh->feed_category_id, $otherCategory->id);
@@ -452,12 +447,12 @@ class FeedSubscriptionsControllerTest extends TestCase
             'ranking' => 1,
         ]);
         $this->assertRedirect("/feeds/{$subscription->id}/view");
-        $subscriptions = $this->fetchTable('FeedSubscriptions');
+        $subscriptions = $this->fetchTable('Feeds.FeedSubscriptions');
         $refresh = $subscriptions->get($subscription->id);
         $this->assertEquals($refresh->alias, 'updated alias');
 
         $this->assertNotEquals($refresh->feed_id, $feed->id, 'feed url should change');
-        $feeds = $this->fetchTable('Feeds');
+        $feeds = $this->fetchTable('Feeds.Feeds');
         $refreshFeed = $feeds->get($refresh->feed_id);
         $this->assertEquals('https://example.com/feed.rss', $refreshFeed->url);
     }
@@ -478,7 +473,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->post("/feeds/{$subscription->id}/delete");
 
         $this->assertRedirect(['_name' => 'feedsubscriptions:index']);
-        $refresh = $this->fetchTable('FeedCategories')->get($category->id);
+        $refresh = $this->fetchTable('Feeds.FeedCategories')->get($category->id);
         $this->assertEquals(0, $refresh->unread_item_count);
     }
 
@@ -512,7 +507,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Are you sure?');
 
-        $subs = $this->fetchTable('FeedSubscriptions');
+        $subs = $this->fetchTable('Feeds.FeedSubscriptions');
         $alive = $subs->get($subscription->id);
         $this->assertNotEmpty($alive);
     }
@@ -527,7 +522,7 @@ class FeedSubscriptionsControllerTest extends TestCase
         $this->get("/feeds/{$subscription->id}/delete/confirm");
 
         $this->assertResponseCode(403);
-        $subs = $this->fetchTable('FeedSubscriptions');
+        $subs = $this->fetchTable('Feeds.FeedSubscriptions');
         $alive = $subs->get($subscription->id);
         $this->assertNotEmpty($alive);
     }

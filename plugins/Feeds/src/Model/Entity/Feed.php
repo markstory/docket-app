@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Entity;
+namespace Feeds\Model\Entity;
 
 use Cake\ORM\Entity;
 
@@ -16,8 +16,8 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *
- * @property \App\Model\Entity\FeedItem[] $feed_items
- * @property \App\Model\Entity\FeedSubscription[] $feed_subscriptions
+ * @property \Feeds\Model\Entity\FeedItem[] $feed_items
+ * @property \Feeds\Model\Entity\FeedSubscription[] $feed_subscriptions
  */
 class Feed extends Entity
 {

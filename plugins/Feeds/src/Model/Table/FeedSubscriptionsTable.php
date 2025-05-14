@@ -1,35 +1,35 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Table;
+namespace Feeds\Model\Table;
 
-use App\Model\Entity\FeedSubscription;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Feeds\Model\Entity\FeedSubscription;
 
 /**
  * FeedSubscriptions Model
  *
- * @property \App\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
- * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- * @property \App\Model\Table\FeedCategoriesTable&\Cake\ORM\Association\BelongsTo $FeedCategories
- * @property \App\Model\Table\SavedFeedItemsTable&\Cake\ORM\Association\HasMany $SavedFeedItems
- * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
- * @method \App\Model\Entity\FeedSubscription newEmptyEntity()
- * @method \App\Model\Entity\FeedSubscription newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedSubscription> newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\FeedSubscription get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\FeedSubscription findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \App\Model\Entity\FeedSubscription patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedSubscription> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\FeedSubscription|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \App\Model\Entity\FeedSubscription saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedSubscription> deleteManyOrFail(iterable $entities, array $options = [])
+ * @property \Feeds\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
+ * @property \Feeds\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ * @property \Feeds\Model\Table\FeedCategoriesTable&\Cake\ORM\Association\BelongsTo $FeedCategories
+ * @property \Feeds\Model\Table\SavedFeedItemsTable&\Cake\ORM\Association\HasMany $SavedFeedItems
+ * @property \Feeds\Model\Table\FeedItemsTable&\Cake\ORM\Association\HasMany $FeedItems
+ * @method \Feeds\Model\Entity\FeedSubscription newEmptyEntity()
+ * @method \Feeds\Model\Entity\FeedSubscription newEntity(array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedSubscription> newEntities(array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedSubscription get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \Feeds\Model\Entity\FeedSubscription findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \Feeds\Model\Entity\FeedSubscription patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedSubscription> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedSubscription|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Feeds\Model\Entity\FeedSubscription saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedSubscription>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedSubscription> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedSubscription>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedSubscription> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedSubscriptionsTable extends Table
@@ -53,26 +53,29 @@ class FeedSubscriptionsTable extends Table
         $this->setDisplayField('alias');
         $this->setPrimaryKey('id');
 
-        $this->belongsTo('Feeds', [
-            'foreignKey' => 'feed_id',
-            'joinType' => 'INNER',
-        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
+        $this->belongsTo('Feeds', [
+            'className' => 'Feeds.Feeds',
+            'foreignKey' => 'feed_id',
+            'joinType' => 'INNER',
+        ]);
         $this->belongsTo('FeedCategories', [
+            'className' => 'Feeds.FeedCategories',
             'foreignKey' => 'feed_category_id',
             'joinType' => 'INNER',
         ]);
         $this->hasMany('SavedFeedItems', [
+            'className' => 'Feeds.SavedFeedItems',
             'foreignKey' => 'feed_subscription_id',
         ]);
 
         // Pass through relation to feeditems
         // Allows bypassing the Feeds relation for reads.
         $this->hasMany('FeedItems', [
-            'className' => FeedItemsTable::class,
+            'className' => 'Feeds.FeedItems',
             'foreignKey' => 'feed_id',
             'bindingKey' => 'feed_id',
         ]);

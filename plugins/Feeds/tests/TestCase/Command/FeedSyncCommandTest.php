@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Command;
+namespace Feeds\Test\TestCase\Command;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
@@ -61,12 +61,12 @@ class FeedSyncCommandTest extends TestCase
         $this->assertOutputContains("Sync {$feed->url} start");
         $this->assertOutputContains("Sync {$feed->url} complete");
 
-        /** @var \App\Model\Entity\Feed $refresh */
-        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        /** @var \Feeds\Model\Entity\Feed $refresh */
+        $refresh = $this->fetchTable('Feeds.Feeds')->get($feed->id);
         $this->assertNotEmpty($refresh->last_refresh);
         $this->assertNotEquals($refresh->last_refresh, $feed->last_refresh);
 
-        $itemCount = $this->fetchTable('FeedItems')->find()->count();
+        $itemCount = $this->fetchTable('Feeds.FeedItems')->find()->count();
         $this->assertGreaterThan(2, $itemCount);
     }
 
@@ -82,10 +82,10 @@ class FeedSyncCommandTest extends TestCase
         $this->assertOutputNotContains("Sync {$feed->url} end");
 
         /** @var \App\Model\Entity\Feed $refresh */
-        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        $refresh = $this->fetchTable('Feeds.Feeds')->get($feed->id);
         $this->assertEmpty($refresh->last_refresh);
 
-        $itemCount = $this->fetchTable('FeedItems')->find()->count();
+        $itemCount = $this->fetchTable('Feeds.FeedItems')->find()->count();
         $this->assertEquals(0, $itemCount);
     }
 
@@ -110,8 +110,8 @@ class FeedSyncCommandTest extends TestCase
         $this->assertOutputContains("Sync {$feed->url} start");
         $this->assertErrorContains("Sync for {$feed->url} failed");
 
-        /** @var \App\Model\Entity\Feed $refresh */
-        $refresh = $this->fetchTable('Feeds')->get($feed->id);
+        /** @var \Feeds\Model\Entity\Feed $refresh */
+        $refresh = $this->fetchTable('Feeds.Feeds')->get($feed->id);
         $this->assertEmpty($refresh->last_refresh);
         $this->assertEquals($refresh->last_refresh, $feed->last_refresh);
     }

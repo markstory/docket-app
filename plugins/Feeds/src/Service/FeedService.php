@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service;
+namespace Feeds\Service;
 
-use App\Model\Entity\Feed;
-use App\Model\Table\FeedsTable;
 use Cake\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\BadRequestException;
@@ -15,6 +13,8 @@ use Cake\Utility\Xml;
 use DOMDocument;
 use DOMXPath;
 use Exception;
+use Feeds\Model\Entity\Feed;
+use Feeds\Model\Table\FeedsTable;
 use Laminas\Diactoros\Uri;
 use RuntimeException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -36,8 +36,8 @@ class FeedService
 
     public function __construct(Client $client, HtmlSanitizerInterface $cleaner)
     {
-        /** @var \App\Model\Table\FeedsTable $this->feeds */
-        $this->feeds = $this->fetchTable('Feeds');
+        /** @var \Feeds\Model\Table\FeedsTable $this->feeds */
+        $this->feeds = $this->fetchTable('Feeds.Feeds');
         $this->client = $client;
         $this->cleaner = $cleaner;
     }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Entity;
+namespace Feeds\Model\Entity;
 
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
@@ -20,8 +20,8 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *
- * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\FeedSubscription[] $feed_subscriptions
+ * @property \Feeds\Model\Entity\User $user
+ * @property \Feeds\Model\Entity\FeedSubscription[] $feed_subscriptions
  */
 class FeedCategory extends Entity
 {

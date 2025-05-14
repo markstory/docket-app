@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Feeds\Command;
 
-use App\Service\FeedService;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Datasource\Paging\SimplePaginator;
+use Feeds\Service\FeedService;
 use RuntimeException;
 use function Sentry\captureException;
 
@@ -58,7 +58,7 @@ class FeedSyncCommand extends Command
     {
         $limit = (int)$args->getOption('limit');
 
-        $feedsTable = $this->fetchTable('Feeds');
+        $feedsTable = $this->fetchTable('Feeds.Feeds');
         $query = $feedsTable->find('activeSubscriptions');
         $paginator = new SimplePaginator();
 

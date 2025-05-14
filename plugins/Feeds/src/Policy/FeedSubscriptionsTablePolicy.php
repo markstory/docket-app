@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Policy;
+namespace Feeds\Policy;
 
 use App\Model\Entity\User;
 use Cake\ORM\Query\SelectQuery;

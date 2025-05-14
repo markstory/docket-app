@@ -8,11 +8,11 @@ use Calendar\Model\Entity\CalendarItem;
 use Calendar\Model\Entity\CalendarProvider;
 use Calendar\Model\Entity\CalendarSource;
 use Calendar\Model\Entity\CalendarSubscription;
-use App\Model\Entity\Feed;
-use App\Model\Entity\FeedCategory;
-use App\Model\Entity\FeedItem;
-use App\Model\Entity\FeedItemUser;
-use App\Model\Entity\FeedSubscription;
+use Feeds\Model\Entity\Feed;
+use Feeds\Model\Entity\FeedCategory;
+use Feeds\Model\Entity\FeedItem;
+use Feeds\Model\Entity\FeedItemUser;
+use Feeds\Model\Entity\FeedSubscription;
 use App\Model\Entity\Project;
 use App\Model\Entity\ProjectSection;
 use App\Model\Entity\Subtask;
@@ -144,7 +144,7 @@ trait FactoryTrait
 
     protected function makeFeedSubscription($categoryId, $feedId, $userId = 1, $props = []): FeedSubscription
     {
-        $subscriptions = $this->fetchTable('FeedSubscriptions');
+        $subscriptions = $this->fetchTable('Feeds.FeedSubscriptions');
 
         $props = array_merge([
             'user_id' => $userId,
@@ -161,7 +161,7 @@ trait FactoryTrait
 
     protected function makeFeedCategory($name, $userId = 1, $props = []): FeedCategory
     {
-        $categories = $this->fetchTable('FeedCategories');
+        $categories = $this->fetchTable('Feeds.FeedCategories');
 
         $props = array_merge([
             'user_id' => $userId,
@@ -177,7 +177,7 @@ trait FactoryTrait
 
     protected function makeFeed(string $url, $props = []): Feed
     {
-        $feeds = $this->fetchTable('Feeds');
+        $feeds = $this->fetchTable('Feeds.Feeds');
         $props = array_merge([
             'url' => $url,
             'refresh_interval' => 60 * 60 * 24,
@@ -190,7 +190,7 @@ trait FactoryTrait
 
     protected function makeFeedItem(int $feedId, $props = []): FeedItem
     {
-        $items = $this->fetchTable('FeedItems');
+        $items = $this->fetchTable('Feeds.FeedItems');
         $props = array_merge([
             'feed_id' => $feedId,
             'guid' => md5((string)rand()),
@@ -208,7 +208,7 @@ trait FactoryTrait
 
     protected function makeFeedItemUser(int $itemId, int $userId, $props = []): FeedItemUser
     {
-        $items = $this->fetchTable('FeedItemUsers');
+        $items = $this->fetchTable('Feeds.FeedItemUsers');
         $props = array_merge([
             'feed_item_id' => $itemId,
             'user_id' => $userId,

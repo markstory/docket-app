@@ -1,18 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller;
+namespace Feeds\Test\TestCase\Controller;
 
-use App\Model\Table\FeedCategoriesTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Feeds\Model\Table\FeedCategoriesTable;
 
-/**
- * App\Controller\FeedCategoriesController Test Case
- *
- * @uses \App\Controller\FeedCategoriesController
- */
 class FeedCategoriesControllerTest extends TestCase
 {
     use FactoryTrait;
@@ -34,7 +29,7 @@ class FeedCategoriesControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->FeedCategories = $this->fetchTable('FeedCategories');
+        $this->FeedCategories = $this->fetchTable('Feeds.FeedCategories');
     }
 
     public function testIndex(): void

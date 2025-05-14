@@ -22,7 +22,7 @@ $this->assign('title', 'Synced Calendars');
 <ul class="list-items">
     <?php foreach ($providers as $provider) : ?>
         <?= $this->element(
-            'calendarprovider_item',
+            'Calendar.calendarprovider_item',
             [
                 'provider' => $provider,
             ]

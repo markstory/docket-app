@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Table;
+namespace Feeds\Model\Table;
 
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -10,21 +10,21 @@ use Cake\Validation\Validator;
 /**
  * FeedItemUsers Model
  *
- * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- * @property \App\Model\Table\FeedItemsTable&\Cake\ORM\Association\BelongsTo $FeedItems
- * @method \App\Model\Entity\FeedItemUser newEmptyEntity()
- * @method \App\Model\Entity\FeedItemUser newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedItemUser> newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\FeedItemUser get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\FeedItemUser findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \App\Model\Entity\FeedItemUser patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedItemUser> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\FeedItemUser|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \App\Model\Entity\FeedItemUser saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItemUser>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItemUser> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItemUser>|false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItemUser> deleteManyOrFail(iterable $entities, array $options = [])
+ * @property \Feeds\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ * @property \Feeds\Model\Table\FeedItemsTable&\Cake\ORM\Association\BelongsTo $FeedItems
+ * @method \Feeds\Model\Entity\FeedItemUser newEmptyEntity()
+ * @method \Feeds\Model\Entity\FeedItemUser newEntity(array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedItemUser> newEntities(array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItemUser get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \Feeds\Model\Entity\FeedItemUser findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItemUser patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedItemUser> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItemUser|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItemUser saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItemUser>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItemUser> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItemUser>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItemUser> deleteManyOrFail(iterable $entities, array $options = [])
  */
 class FeedItemUsersTable extends Table
 {
@@ -47,6 +47,7 @@ class FeedItemUsersTable extends Table
             'joinType' => 'INNER',
         ]);
         $this->belongsTo('FeedItems', [
+            'className' => 'Feeds.FeedItems',
             'foreignKey' => 'feed_item_id',
             'joinType' => 'INNER',
         ]);
