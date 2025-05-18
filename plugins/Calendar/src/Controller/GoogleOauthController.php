@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Calendar\Controller;
 
-use App\Model\Table\CalendarSourcesTable;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Exception\PersistenceFailedException;
+use Calendar\Model\Table\CalendarSourcesTable;
 use Calendar\Model\Table\CalendarProvidersTable;
 use Google\Client as GoogleClient;
 use Google\Exception as GoogleException;
@@ -19,12 +19,12 @@ class GoogleOauthController extends AppController
     public const MOBILE_VIEW = 'oauth-mobile';
 
     /**
-     * @var \App\Model\Table\CalendarProvidersTable
+     * @var \Calendar\Model\Table\CalendarProvidersTable
      */
     protected CalendarProvidersTable $CalendarProviders;
 
     /**
-     * @var \App\Model\Table\CalendarSourcesTable
+     * @var \Calendar\Model\Table\CalendarSourcesTable
      */
     protected CalendarSourcesTable $CalendarSources;
 

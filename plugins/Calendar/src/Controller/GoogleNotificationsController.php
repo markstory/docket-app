@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Calendar\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
