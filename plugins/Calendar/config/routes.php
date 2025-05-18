@@ -25,4 +25,9 @@ $routes->plugin('Calendar', ['path' => '/'], function (RouteBuilder $builder) {
         $builder->post('/{id}/sync', ['action' => 'sync'], 'calendarsources:sync');
         $builder->get('/{id}/view', ['action' => 'view'], 'calendarsources:view');
     });
+
+    $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
+        $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
+        $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
+    });
 });

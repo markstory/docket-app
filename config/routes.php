@@ -279,10 +279,6 @@ $routes->scope('/', function (RouteBuilder $builder) {
             ->setPass(['token']);
     });
 
-    $builder->scope('/auth/google', ['controller' => 'GoogleOauth'], function ($builder) {
-        $builder->connect('/authorize', ['action' => 'authorize'], ['_name' => 'googleauth:authorize']);
-        $builder->connect('/callback', ['action' => 'callback'], ['_name' => 'googleauth:callback']);
-    });
 
     $builder->loadPlugin('Calendar');
     $builder->loadPlugin('Feeds');
@@ -290,5 +286,5 @@ $routes->scope('/', function (RouteBuilder $builder) {
 
 // Routes in this scope don't have CSRF protection.
 $routes->scope('/', function (RouteBuilder $builder) {
-    $builder->post('/google/calendar/notifications', 'GoogleNotifications::update', 'googlenotification:update');
+    $builder->post('/google/calendar/notifications', 'Calendar.GoogleNotifications::update', 'googlenotification:update');
 });
