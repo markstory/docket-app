@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Calendar\Controller;
 
+use App\Controller\AppController;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
