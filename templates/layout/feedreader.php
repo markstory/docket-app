@@ -42,7 +42,7 @@ endif;
                         </li>
                     </ul>
                     <h3>Categories</h3>
-                    <?= $this->cell('FeedCategoryMenu', ['identity' => $identity]) ?>
+                    <?= $this->cell('Feeds.FeedCategoryMenu', ['identity' => $identity]) ?>
 
                     <ul class="links">
                         <li>
