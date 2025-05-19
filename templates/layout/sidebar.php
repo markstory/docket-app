@@ -60,7 +60,7 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
                         </li>
                     </ul>
                     <h3>Projects</h3>
-                    <?= $this->cell('ProjectsMenu', ['identity' => $identity]) ?>
+                    <?= $this->cell('Tasks.ProjectsMenu', ['identity' => $identity]) ?>
 
                     <ul class="links">
                         <li>

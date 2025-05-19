@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use App\Model\Entity\ApiToken;
+use App\Model\Entity\User;
 use Calendar\Model\Entity\CalendarItem;
 use Calendar\Model\Entity\CalendarProvider;
 use Calendar\Model\Entity\CalendarSource;
@@ -13,15 +14,14 @@ use Feeds\Model\Entity\FeedCategory;
 use Feeds\Model\Entity\FeedItem;
 use Feeds\Model\Entity\FeedItemUser;
 use Feeds\Model\Entity\FeedSubscription;
-use App\Model\Entity\Project;
-use App\Model\Entity\ProjectSection;
-use App\Model\Entity\Subtask;
-use App\Model\Entity\Task;
-use App\Model\Entity\User;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use RuntimeException;
+use Tasks\Model\Entity\Project;
+use Tasks\Model\Entity\ProjectSection;
+use Tasks\Model\Entity\Subtask;
+use Tasks\Model\Entity\Task;
 use VCR\VCR;
 
 trait FactoryTrait
@@ -115,14 +115,14 @@ trait FactoryTrait
 
     protected function makeProject($name, $userId = 1, $ranking = 0, $props = []): Project
     {
-        $projects = $this->fetchTable('Projects');
+        $projects = $this->fetchTable('Tasks.Projects');
         $props = array_merge([
             'user_id' => $userId,
             'name' => $name,
             'color' => 1,
             'ranking' => $ranking,
         ], $props);
-        /** @var \App\Model\Entity\Project $project */
+        /** @var \Tasks\Model\Entity\Project $project */
         $project = $projects->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $projects->saveOrFail($project);
@@ -130,13 +130,13 @@ trait FactoryTrait
 
     protected function makeProjectSection($name, $projectId, $ranking = 0, $props = []): ProjectSection
     {
-        $sections = $this->fetchTable('ProjectSections');
+        $sections = $this->fetchTable('Tasks.ProjectSections');
         $props = array_merge([
             'project_id' => $projectId,
             'name' => $name,
             'ranking' => $ranking,
         ], $props);
-        /** @var \App\Model\Entity\ProjectSection $section */
+        /** @var \Tasks\Model\Entity\ProjectSection $section */
         $section = $sections->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $sections->saveOrFail($section);
@@ -153,7 +153,7 @@ trait FactoryTrait
             'alias' => 'news site',
             'ranking' => 0,
         ], $props);
-        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        /** @var \Feeds\Model\Entity\FeedCategory $feedCategory */
         $sub = $subscriptions->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $subscriptions->saveOrFail($sub);
@@ -169,7 +169,7 @@ trait FactoryTrait
             'ranking' => 0,
             'color' => 1,
         ], $props);
-        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        /** @var \Feeds\Model\Entity\FeedCategory $feedCategory */
         $feedCategory = $categories->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $categories->saveOrFail($feedCategory);
@@ -182,7 +182,7 @@ trait FactoryTrait
             'url' => $url,
             'refresh_interval' => 60 * 60 * 24,
         ], $props);
-        /** @var \App\Model\Entity\FeedCategory $feedCategory */
+        /** @var \Feeds\Model\Entity\FeedCategory $feedCategory */
         $feed = $feeds->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $feeds->saveOrFail($feed);
@@ -200,7 +200,7 @@ trait FactoryTrait
             'content' => '',
             'published_at' => DateTime::parse('-3 days'),
         ], $props);
-        /** @var \App\Model\Entity\FeedItem $item */
+        /** @var \Feeds\Model\Entity\FeedItem $item */
         $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $items->saveOrFail($item);
@@ -214,7 +214,7 @@ trait FactoryTrait
             'user_id' => $userId,
             'read_at' => DateTime::now(),
         ], $props);
-        /** @var \App\Model\Entity\FeedItemUser $item */
+        /** @var \Feeds\Model\Entity\FeedItemUser $item */
         $item = $items->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $items->saveOrFail($item);
@@ -222,14 +222,14 @@ trait FactoryTrait
 
     protected function makeTask($title, $projectId, $order, $props = []): Task
     {
-        $tasks = $this->fetchTable('Tasks');
+        $tasks = $this->fetchTable('Tasks.Tasks');
         $props = array_merge([
             'project_id' => $projectId,
             'title' => $title,
             'day_order' => $order,
             'child_order' => $order,
         ], $props);
-        /** @var \App\Model\Entity\Task $task */
+        /** @var \Tasks\Model\Entity\Task $task */
         $task = $tasks->newEntity($props, ['accessibleFields' => ['*' => true]]);
 
         return $tasks->saveOrFail($task);
@@ -237,8 +237,8 @@ trait FactoryTrait
 
     protected function makeSubtask($title, $taskId, $ranking, $props = []): Subtask
     {
-        $subtasks = $this->fetchTable('Subtasks');
-        /** @var \App\Model\Entity\Subtask $subtask */
+        $subtasks = $this->fetchTable('Tasks.Subtasks');
+        /** @var \Tasks\Model\Entity\Subtask $subtask */
         $subtask = $subtasks->newEntity(array_merge([
             'task_id' => $taskId,
             'title' => $title,
