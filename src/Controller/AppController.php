@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Table\ProjectsTable;
 use App\View\Widget\ColorPickerWidget;
 use App\View\Widget\DueOnWidget;
 use App\View\Widget\ProjectPickerWidget;
@@ -22,12 +21,9 @@ use Cake\Routing\Router;
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  * @property \Cake\Controller\Component\FlashComponent $Flash
- * @property \App\Model\Table\ProjectsTable $Projects
  */
 class AppController extends Controller
 {
-    public ProjectsTable $Projects;
-
     /**
      * Initialization hook method.
      *

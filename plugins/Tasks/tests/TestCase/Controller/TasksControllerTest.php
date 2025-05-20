@@ -8,6 +8,8 @@ use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Tasks\Model\Table\TasksTable;
+
 use function Cake\Collection\collection;
 
 /**
@@ -23,7 +25,7 @@ class TasksControllerTest extends TestCase
     /**
      * @var \Tasks\Model\Table\TasksTable
      */
-    protected $Tasks;
+    protected TasksTable $Tasks;
 
     /**
      * Fixtures
@@ -81,7 +83,6 @@ class TasksControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $this->disableErrorHandlerMiddleware();
         $tomorrow = new Date('tomorrow');
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0, ['due_on' => $tomorrow]);
@@ -503,6 +504,7 @@ class TasksControllerTest extends TestCase
         $project = $this->makeProject('work', 1);
         $first = $this->makeTask('first', $project->id, 0);
 
+        $this->disableErrorHandlerMiddleware();
         $this->login();
         $this->get("/tasks/{$first->id}/view");
         $this->assertResponseOk();

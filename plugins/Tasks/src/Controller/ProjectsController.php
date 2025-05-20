@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tasks\Controller;
 
+use App\Controller\AppController;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\View\JsonView;

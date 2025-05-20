@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Tasks\Model\Table;
 
-use Tasks\Model\Entity\Task;
-use Tasks\Model\Entity\User;
+use App\Model\Entity\User;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -16,6 +15,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
+use Tasks\Model\Entity\Task;
 
 /**
  * Tasks Model

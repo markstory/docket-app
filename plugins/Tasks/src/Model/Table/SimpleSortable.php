@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Table;
+namespace Tasks\Model\Table;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Table;
