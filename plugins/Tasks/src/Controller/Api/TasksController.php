@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Tasks\Controller\Api;
 
 use App\Controller\AppController;
-use App\Model\Entity\Task;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\I18n\Date;
 use Cake\View\JsonView;
 use Exception;
 use InvalidArgumentException;
+use Tasks\Model\Entity\Task;
 
 /**
  * Tasks Controller
