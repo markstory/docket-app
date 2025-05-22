@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller\Api;
+namespace Tasks\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\I18n\Date;
@@ -19,7 +19,7 @@ class TasksControllerTest extends TestCase
     use IntegrationTestTrait;
 
     /**
-     * @var \App\Model\Table\TasksTable
+     * @var \Tasks\Model\Table\TasksTable
      */
     protected $Tasks;
 
@@ -71,7 +71,7 @@ class TasksControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
     }
 
     /**

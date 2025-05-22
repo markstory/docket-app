@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace Tasks\Controller\Api;
 
 use App\Controller\AppController;
 use App\Model\Entity\Task;

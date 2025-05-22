@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller\Api;
+namespace Tasks\Test\TestCase\Controller\Api;
 
-use App\Model\Table\ProjectsTable;
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Tasks\Model\Table\ProjectsTable;
 
 /**
  * App\Controller\Api\ProjectsController Test Case
@@ -36,7 +36,7 @@ class ProjectsControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->Projects = $this->fetchTable('Projects');
+        $this->Projects = $this->fetchTable('Tasks.Projects');
     }
 
     public function testIndexPermissions(): void

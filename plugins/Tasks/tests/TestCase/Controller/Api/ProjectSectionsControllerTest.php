@@ -1,17 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller\Api;
+namespace Tasks\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
-/**
- * App\Controller\ProjectSectionsController Test Case
- *
- * @uses \App\Controller\ProjectSectionsController
- */
 class ProjectSectionsControllerTest extends TestCase
 {
     use FactoryTrait;
@@ -30,14 +25,14 @@ class ProjectSectionsControllerTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\ProjectSectionsTable
+     * @var \Tasks\Model\Table\ProjectSectionsTable
      */
     protected $ProjectSections;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ProjectSections = $this->fetchTable('ProjectSections');
+        $this->ProjectSections = $this->fetchTable('Tasks.ProjectSections');
     }
 
     public function testAdd()

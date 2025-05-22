@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\Controller\Api;
+namespace Tasks\Test\TestCase\Controller\Api;
 
 use App\Test\TestCase\FactoryTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\Api\SubtasksController Test Case
+ * Tasks\Controller\Api\SubtasksController Test Case
  */
 class SubtasksControllerTest extends TestCase
 {
@@ -16,7 +16,7 @@ class SubtasksControllerTest extends TestCase
     use IntegrationTestTrait;
 
     /**
-     * @var \App\Model\Table\SubtasksTable
+     * @var \Tasks\Model\Table\SubtasksTable
      */
     protected $Subtasks;
 
@@ -36,7 +36,7 @@ class SubtasksControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->Subtasks = $this->fetchTable('Subtasks');
+        $this->Subtasks = $this->fetchTable('Tasks.Subtasks');
     }
 
     /**

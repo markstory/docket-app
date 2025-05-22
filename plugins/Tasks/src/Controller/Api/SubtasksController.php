@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace Tasks\Controller\Api;
 
 use App\Controller\AppController;
-use App\Model\Entity\Task;
-use App\Model\Table\SubtasksTable;
-use App\Model\Table\TasksTable;
 use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
+use Tasks\Model\Entity\Task;
+use Tasks\Model\Table\SubtasksTable;
+use Tasks\Model\Table\TasksTable;
 
 /**
  * Subtasks Controller
@@ -25,8 +25,8 @@ class SubtasksController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->Tasks = $this->fetchTable('Tasks');
-        $this->Subtasks = $this->fetchTable('Subtasks');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
+        $this->Subtasks = $this->fetchTable('Tasks.Subtasks');
     }
 
     public function viewClasses(): array

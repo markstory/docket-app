@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace Calendar\Controller\Api;
 
 use App\Controller\AppController;
 use Cake\Http\Response;

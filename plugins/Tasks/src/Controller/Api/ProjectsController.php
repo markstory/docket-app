@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace Tasks\Controller\Api;
 
 use App\Controller\AppController;
-use App\Model\Entity\Project;
-use App\Model\Table\ProjectsTable;
-use App\Model\Table\TasksTable;
 use Cake\Http\Response;
 use Cake\View\JsonView;
 use InvalidArgumentException;
+use Tasks\Model\Entity\Project;
+use Tasks\Model\Table\ProjectsTable;
+use Tasks\Model\Table\TasksTable;
 
 /**
  * Projects Controller
@@ -22,8 +22,8 @@ class ProjectsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->Tasks = $this->fetchTable('Tasks');
-        $this->Projects = $this->fetchTable('Projects');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
+        $this->Projects = $this->fetchTable('Tasks.Projects');
     }
 
     public function viewClasses(): array
