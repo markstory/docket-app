@@ -44,7 +44,6 @@ class CalendarServiceTest extends TestCase
     {
         parent::setUp();
         $this->loadPlugins(['Calendar']);
-        $this->loadRoutes();
 
         $container = new Container();
         $container->addServiceProvider(new CalendarServiceProvider());

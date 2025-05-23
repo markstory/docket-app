@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\View\Cell;
+namespace Feeds\Test\TestCase\View\Cell;
 
-use App\View\Cell\FeedCategoryMenuCell;
 use Cake\TestSuite\TestCase;
+use Feeds\View\Cell\FeedCategoryMenuCell;
 
 /**
- * App\View\Cell\FeedCategoryMenuCell Test Case
+ * Feeds\View\Cell\FeedCategoryMenuCell Test Case
  */
 class FeedCategoryMenuCellTest extends TestCase
 {
@@ -28,7 +28,7 @@ class FeedCategoryMenuCellTest extends TestCase
     /**
      * Test subject
      *
-     * @var \App\View\Cell\FeedCategoryMenuCell
+     * @var \Feeds\View\Cell\FeedCategoryMenuCell
      */
     protected $FeedCategoryMenu;
 
@@ -61,7 +61,6 @@ class FeedCategoryMenuCellTest extends TestCase
      * Test display method
      *
      * @return void
-     * @uses \App\View\Cell\FeedCategoryMenuCell::display()
      */
     public function testDisplay(): void
     {

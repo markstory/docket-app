@@ -1,13 +1,27 @@
 <?php
 declare(strict_types=1);
+
 /**
  * @var \Cake\Routing\RouteBuilder $routes
  */
-
 use Cake\Routing\RouteBuilder;
 
+// Routes in the top scope don't have CSRF protection.
+$routes->scope('/', function (RouteBuilder $builder): void {
+    $builder->post(
+        '/google/calendar/notifications',
+        'Calendar.GoogleNotifications::update',
+        'googlenotification:update'
+    );
+});
+
 $routes->plugin('Calendar', ['path' => '/'], function (RouteBuilder $builder): void {
-    $builder->applyMiddleware('csrf');
+    // Tests using loadPlugins don't load application routes
+    // this makes it so middleware defined in the application cannot be used
+    // in a plugin.
+    if ($builder->getMiddleware()) {
+        $builder->applyMiddleware('csrf');
+    }
 
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function (RouteBuilder $builder): void {
         $builder->connect(

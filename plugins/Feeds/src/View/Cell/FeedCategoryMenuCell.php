@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\View\Cell;
+namespace Feeds\View\Cell;
 
 use App\Model\Entity\User;
 use Cake\View\Cell;

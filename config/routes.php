@@ -80,12 +80,3 @@ $routes->scope('/', function (RouteBuilder $builder): void {
 $routes->loadPlugin('Tasks');
 $routes->loadPlugin('Calendar');
 $routes->loadPlugin('Feeds');
-
-// Routes in this scope don't have CSRF protection.
-$routes->scope('/', function (RouteBuilder $builder): void {
-    $builder->post(
-        '/google/calendar/notifications',
-        'Calendar.GoogleNotifications::update',
-        'googlenotification:update'
-    );
-});

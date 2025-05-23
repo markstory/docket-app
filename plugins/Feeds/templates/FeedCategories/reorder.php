@@ -3,4 +3,4 @@ declare(strict_types=1);
 
 $this->setLayout('ajax');
 
-echo $this->cell('FeedCategoryMenu', ['identity' => $identity]);
+echo $this->cell('Feeds.FeedCategoryMenu', ['identity' => $identity]);
