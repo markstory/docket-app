@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace App;
 
-use App\Service\CalendarServiceProvider;
-use App\Service\FeedServiceProvider;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
