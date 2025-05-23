@@ -19,8 +19,9 @@ $routes->plugin('Calendar', ['path' => '/'], function (RouteBuilder $builder): v
     // Tests using loadPlugins don't load application routes
     // this makes it so middleware defined in the application cannot be used
     // in a plugin.
-    if ($builder->getMiddleware()) {
+    try {
         $builder->applyMiddleware('csrf');
+    } catch (Exception) {
     }
 
     $builder->scope('/calendars', ['controller' => 'CalendarProviders'], function (RouteBuilder $builder): void {

@@ -1,13 +1,18 @@
 <?php
 declare(strict_types=1);
+
 /**
  * @var \Cake\Routing\RouteBuilder $routes
  */
-
 use Cake\Routing\RouteBuilder;
 
 // Feeds routes
 $routes->plugin('Feeds', ['path' => '/'], function (RouteBuilder $builder): void {
+    try {
+        $builder->applyMiddleware('csrf');
+    } catch (Exception) {
+    }
+
     $builder->scope('/feeds/', ['controller' => 'FeedSubscriptions'], function (RouteBuilder $builder) {
         $builder->get('/', ['action' => 'home'], 'feedsubscriptions:home');
         $builder->get('/list', ['action' => 'index'], 'feedsubscriptions:index');
