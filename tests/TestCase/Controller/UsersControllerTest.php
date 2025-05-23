@@ -12,8 +12,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\UsersController Test Case
- *
- * @uses \App\Controller\UsersController
  */
 class UsersControllerTest extends TestCase
 {

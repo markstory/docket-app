@@ -10,8 +10,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\GoogleNotificationsController Test Case
- *
- * @uses \App\Controller\GoogleNotificationsController
  */
 class GoogleNotificationsControllerTest extends TestCase
 {

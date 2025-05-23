@@ -10,8 +10,6 @@ use Calendar\Model\Table\CalendarSubscriptionsTable;
 
 /**
  * App\Command\CalendarSubscriptionRenewCommand Test Case
- *
- * @uses \App\Command\CalendarSubscriptionRenewCommand
  */
 class CalendarSubscriptionRenewCommandTest extends TestCase
 {

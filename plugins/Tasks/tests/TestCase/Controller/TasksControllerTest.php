@@ -14,8 +14,6 @@ use function Cake\Collection\collection;
 
 /**
  * Tasks\Controller\TasksController Test Case
- *
- * @uses \Tasks\Controller\TasksController
  */
 class TasksControllerTest extends TestCase
 {

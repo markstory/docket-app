@@ -10,8 +10,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Command\CleanupCommand Test Case
- *
- * @uses \App\Command\CleanupCommand
  */
 class CleanupCommandTest extends TestCase
 {
@@ -38,7 +36,6 @@ class CleanupCommandTest extends TestCase
      * Test execute method
      *
      * @return void
-     * @uses \App\Command\CleanupCommand::execute()
      */
     public function testExecute(): void
     {

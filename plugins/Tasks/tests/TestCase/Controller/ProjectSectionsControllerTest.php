@@ -9,8 +9,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\ProjectSectionsController Test Case
- *
- * @uses \App\Controller\ProjectSectionsController
  */
 class ProjectSectionsControllerTest extends TestCase
 {

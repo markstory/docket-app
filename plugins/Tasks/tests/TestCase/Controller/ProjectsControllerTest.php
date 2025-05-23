@@ -10,8 +10,6 @@ use Tasks\Model\Table\ProjectsTable;
 
 /**
  * App\Controller\ProjectsController Test Case
- *
- * @uses \App\Controller\ProjectsController
  */
 class ProjectsControllerTest extends TestCase
 {

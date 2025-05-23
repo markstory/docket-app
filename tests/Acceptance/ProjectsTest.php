@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\Acceptance;
 
-use App\Model\Table\ProjectsTable;
 use Symfony\Component\Panther\Client;
+use Tasks\Model\Table\ProjectsTable;
 
 class ProjectsTest extends AcceptanceTestCase
 {
@@ -13,8 +13,8 @@ class ProjectsTest extends AcceptanceTestCase
     public function setUp(): void
     {
         parent::setUp();
-        /** @var \App\Model\Table\ProjectsTable $this->Projects */
-        $this->Projects = $this->fetchTable('Projects');
+        /** @var \Tasks\Model\Table\ProjectsTable $this->Projects */
+        $this->Projects = $this->fetchTable('Tasks.Projects');
     }
 
     protected function openSectionMenu(Client $client): void

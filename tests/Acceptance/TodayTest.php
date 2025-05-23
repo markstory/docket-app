@@ -11,7 +11,7 @@ use Cake\I18n\Date;
 class TodayTest extends AcceptanceTestCase
 {
     /**
-     * @var \App\Model\Table\TasksTable
+     * @var \Tasks\Model\Table\TasksTable
      */
     protected $Tasks;
 
@@ -19,7 +19,7 @@ class TodayTest extends AcceptanceTestCase
     {
         parent::setUp();
 
-        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
     }
 
     public function testTodayOnboarding()

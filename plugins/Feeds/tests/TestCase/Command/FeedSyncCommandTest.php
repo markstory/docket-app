@@ -10,8 +10,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Command\FeedSyncCommand Test Case
- *
- * @uses \App\Command\FeedSyncCommand
  */
 class FeedSyncCommandTest extends TestCase
 {
@@ -38,7 +36,6 @@ class FeedSyncCommandTest extends TestCase
      * Test execute method
      *
      * @return void
-     * @uses \App\Command\FeedSyncCommand::execute()
      */
     public function testExecute(): void
     {

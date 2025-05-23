@@ -10,8 +10,6 @@ use function Cake\Collection\collection;
 
 /**
  * App\Controller\CalendarProvidersController Test Case
- *
- * @uses \App\Controller\CalendarProvidersController
  */
 class CalendarProvidersControllerTest extends TestCase
 {

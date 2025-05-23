@@ -45,7 +45,6 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test index method
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::index()
      */
     public function testIndex(): void
     {
@@ -105,7 +104,6 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test view method
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::view()
      */
     public function testView(): void
     {
@@ -145,7 +143,6 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test add get
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::add()
      */
     public function testAddGet(): void
     {
@@ -164,7 +161,6 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test add method
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::add()
      */
     public function testAddSuccess(): void
     {
@@ -193,7 +189,6 @@ class FeedSubscriptionsControllerTest extends TestCase
      * Test add with existing feed
      *
      * @return void
-     * @uses \App\Controller\FeedSubscriptionsController::add()
      */
     public function testAddSuccessExistingFeed(): void
     {

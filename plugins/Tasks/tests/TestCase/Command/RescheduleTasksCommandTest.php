@@ -11,8 +11,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * App\Command\RescheduleTasksCommand Test Case
- *
- * @uses \App\Command\RescheduleTasksCommand
  */
 class RescheduleTasksCommandTest extends TestCase
 {

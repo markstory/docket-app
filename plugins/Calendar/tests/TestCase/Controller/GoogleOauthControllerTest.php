@@ -11,8 +11,6 @@ use Calendar\Model\Table\CalendarProvidersTable;
 
 /**
  * App\Controller\GoogleOauthController Test Case
- *
- * @uses \App\Controller\GoogleOauthController
  */
 class GoogleOauthControllerTest extends TestCase
 {

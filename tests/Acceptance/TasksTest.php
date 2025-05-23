@@ -10,7 +10,7 @@ use Symfony\Component\Panther\Client;
 class TasksTest extends AcceptanceTestCase
 {
     /**
-     * @var \App\Model\Table\TasksTable
+     * @var \Tasks\Model\Table\TasksTable
      */
     protected $Tasks;
 
@@ -18,7 +18,7 @@ class TasksTest extends AcceptanceTestCase
     {
         parent::setUp();
 
-        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
     }
 
     protected function setupTask()

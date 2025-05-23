@@ -84,7 +84,6 @@ class ProjectsMenuCellTest extends TestCase
      * Test display method
      *
      * @return void
-     * @uses \App\View\Cell\ProjectsMenuCell::display()
      */
     public function testDisplay(): void
     {
