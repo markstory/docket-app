@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 return [
     'FeatureFlags' => [],
-    'Api' => [],
     'Calendar' => [],
     'Tasks' => [],
     'Feeds' => [],

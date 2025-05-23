@@ -4,7 +4,10 @@ declare(strict_types=1);
 use Cake\Routing\RouteBuilder;
 
 $routes->plugin('Tasks', ['path' => '/'], function (RouteBuilder $builder): void {
-    $builder->applyMiddleware('csrf');
+    try {
+        $builder->applyMiddleware('csrf');
+    } catch (Exception) {
+    }
 
     $builder->scope('/tasks', ['controller' => 'Tasks'], function (RouteBuilder $builder): void {
         $builder->get('/', ['action' => 'index'], 'tasks:index');

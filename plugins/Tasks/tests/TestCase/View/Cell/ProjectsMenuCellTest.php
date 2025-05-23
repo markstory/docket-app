@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\TestCase\View\Cell;
+namespace Tasks\Test\TestCase\View\Cell;
 
 use App\Test\TestCase\FactoryTrait;
-use App\View\Cell\ProjectsMenuCell;
 use Authorization\AuthorizationService;
 use Authorization\Policy\OrmResolver;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Tasks\View\Cell\ProjectsMenuCell;
 
 /**
- * App\View\Cell\ProjectsMenuCell Test Case
+ * Tasks\View\Cell\ProjectsMenuCell Test Case
  */
 class ProjectsMenuCellTest extends TestCase
 {
@@ -38,7 +38,7 @@ class ProjectsMenuCellTest extends TestCase
     /**
      * Test subject
      *
-     * @var \App\View\Cell\ProjectsMenuCell
+     * @var \Tasks\View\Cell\ProjectsMenuCell
      */
     protected $ProjectsMenu;
 
@@ -50,7 +50,7 @@ class ProjectsMenuCellTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadRoutes();
+        $this->loadPlugins(['Tasks']);
 
         $this->request = new ServerRequest(['url' => '/']);
         $this->response = new Response();
@@ -65,6 +65,7 @@ class ProjectsMenuCellTest extends TestCase
             null,
             ['action' => 'display', 'args' => ['identity' => $this->user]],
         );
+        $this->ProjectsMenu->viewBuilder()->setPlugin('Tasks');
     }
 
     /**

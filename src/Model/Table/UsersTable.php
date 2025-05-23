@@ -13,7 +13,7 @@ use Exception;
 /**
  * Users Model
  *
- * @property \App\Model\Table\ProjectsTable&\Cake\ORM\Association\HasMany $Projects
+ * @property \Tasks\Model\Table\ProjectsTable&\Cake\ORM\Association\HasMany $Projects
  * @method \App\Model\Entity\User newEmptyEntity()
  * @method \App\Model\Entity\User newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
@@ -52,6 +52,7 @@ class UsersTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('Projects', [
+            'className' => 'Tasks.Projects',
             'foreignKey' => 'user_id',
         ]);
     }
