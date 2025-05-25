@@ -65,7 +65,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DATABASE_TEST_URL=$POSTGRES_URL; fi
 
         if [[ ${{ matrix.php-version }} == '8.1' ]]; then
-          export CODECOVERAGE=1 && vendor/bin/phpunit --coverage-clover=coverage.xml
+          export CODECOVERAGE=1 && vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-text
         else
           vendor/bin/phpunit
         fi
