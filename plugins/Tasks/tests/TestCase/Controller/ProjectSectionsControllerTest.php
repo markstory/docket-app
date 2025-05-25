@@ -22,9 +22,9 @@ class ProjectSectionsControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.Projects',
-        'app.ProjectSections',
-        'app.Tasks',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.ProjectSections',
+        'plugin.Tasks.Tasks',
     ];
 
     /**

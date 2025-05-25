@@ -27,7 +27,7 @@ class UsersControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.Projects',
+        'plugin.Tasks.Projects',
     ];
 
     public function setUp(): void

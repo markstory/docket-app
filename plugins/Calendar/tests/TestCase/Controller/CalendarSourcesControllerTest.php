@@ -25,7 +25,7 @@ class CalendarSourcesControllerTest extends TestCase
         'plugin.Calendar.CalendarSources',
         'plugin.Calendar.CalendarSubscriptions',
         'plugin.Calendar.CalendarItems',
-        'app.Projects',
+        'plugin.Tasks.Projects',
     ];
 
     /**

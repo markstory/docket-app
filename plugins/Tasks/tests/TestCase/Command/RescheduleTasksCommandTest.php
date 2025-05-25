@@ -19,8 +19,8 @@ class RescheduleTasksCommandTest extends TestCase
 
     public array $fixtures = [
         'app.Users',
-        'app.Projects',
-        'app.Tasks',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.Tasks',
     ];
 
     /**

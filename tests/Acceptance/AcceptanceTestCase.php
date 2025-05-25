@@ -18,10 +18,10 @@ abstract class AcceptanceTestCase extends TestCase
 
     protected array $fixtures = [
         'app.Users',
-        'app.Projects',
-        'app.ProjectSections',
-        'app.Tasks',
-        'app.Subtasks',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.ProjectSections',
+        'plugin.Tasks.Tasks',
+        'plugin.Tasks.Subtasks',
         'plugin.Calendar.CalendarProviders',
         'plugin.Calendar.CalendarSources',
         'plugin.Calendar.CalendarItems',

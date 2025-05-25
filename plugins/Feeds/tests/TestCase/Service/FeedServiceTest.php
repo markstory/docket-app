@@ -21,11 +21,11 @@ class FeedServiceTest extends TestCase
     use HttpClientTrait;
 
     public array $fixtures = [
-        'app.FeedItemUsers',
-        'app.FeedItems',
-        'app.FeedSubscriptions',
-        'app.FeedCategories',
-        'app.Feeds',
+        'plugin.Feeds.FeedItemUsers',
+        'plugin.Feeds.FeedItems',
+        'plugin.Feeds.FeedSubscriptions',
+        'plugin.Feeds.FeedCategories',
+        'plugin.Feeds.Feeds',
         'app.Users',
     ];
 

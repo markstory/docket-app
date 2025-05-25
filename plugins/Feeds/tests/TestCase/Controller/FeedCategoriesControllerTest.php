@@ -21,8 +21,8 @@ class FeedCategoriesControllerTest extends TestCase
      * @var list<string>
      */
     protected array $fixtures = [
-        'app.FeedCategories',
-        'app.FeedSubscriptions',
+        'plugin.Feeds.FeedCategories',
+        'plugin.Feeds.FeedSubscriptions',
         'app.Users',
     ];
 

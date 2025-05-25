@@ -24,7 +24,7 @@ class CalendarProvidersControllerTest extends TestCase
     protected array $fixtures = [
         'plugin.Calendar.CalendarSources',
         'plugin.Calendar.CalendarProviders',
-        'app.Projects',
+        'plugin.Tasks.Projects',
         'app.Users',
     ];
 

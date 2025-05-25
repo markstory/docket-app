@@ -32,10 +32,10 @@ class TasksControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.Tasks',
-        'app.Projects',
-        'app.ProjectSections',
-        'app.Subtasks',
+        'plugin.Tasks.Tasks',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.ProjectSections',
+        'plugin.Tasks.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
         'plugin.Calendar.CalendarProviders',
