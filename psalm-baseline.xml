@@ -1,193 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
+<files psalm-version="5.24.0@462c80e31c34e58cc4f750c656be3927e80e550e">
   <file src="src/Application.php">
     <MissingTemplateParam>
-      <code>Application</code>
+      <code><![CDATA[Application]]></code>
     </MissingTemplateParam>
-  </file>
-  <file src="src/Command/CalendarSourceSyncCommand.php">
-    <ArgumentTypeCoercion>
-      <code>$source</code>
-    </ArgumentTypeCoercion>
-    <NoInterfaceProperties>
-      <code><![CDATA[$source->calendar_provider]]></code>
-      <code><![CDATA[$source->id]]></code>
-      <code><![CDATA[$source->id]]></code>
-      <code><![CDATA[$source->sync_token]]></code>
-    </NoInterfaceProperties>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('CalendarSources')]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Command/CalendarSubscriptionRenewCommand.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('CalendarSubscriptions')]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="src/Console/Installer.php">
     <PossiblyInvalidArgument>
       <code><![CDATA[fopen('php://stdin', 'r')]]></code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Controller/Api/ProjectsController.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('Projects')]]></code>
-      <code><![CDATA[$this->fetchTable('Tasks')]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Controller/Api/SubtasksController.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('Subtasks')]]></code>
-      <code><![CDATA[$this->fetchTable('Tasks')]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Controller/Api/TasksController.php">
-    <PossiblyNullArgument>
-      <code>$value</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="src/Controller/ErrorController.php">
     <ArgumentTypeCoercion>
-      <code>$event</code>
+      <code><![CDATA[$event]]></code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Controller/GoogleOauthController.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('CalendarProviders')]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Controller/ProjectsController.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('Projects')]]></code>
-      <code><![CDATA[$this->fetchTable('Tasks')]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Controller/TasksController.php">
-    <PossiblyNullArgument>
-      <code>$value</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Model/Entity/ApiToken.php">
     <NonInvariantDocblockPropertyType>
-      <code>$_hidden</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/Model/Entity/CalendarItem.php">
-    <InvalidNullableReturnType>
-      <code>Date|DateTime</code>
-      <code>Date|DateTime</code>
-    </InvalidNullableReturnType>
-    <NonInvariantDocblockPropertyType>
-      <code>$_hidden</code>
-      <code>$_virtual</code>
-    </NonInvariantDocblockPropertyType>
-    <NullableReturnStatement>
-      <code><![CDATA[$this->end_time]]></code>
-      <code><![CDATA[$this->start_time]]></code>
-    </NullableReturnStatement>
-  </file>
-  <file src="src/Model/Entity/CalendarProvider.php">
-    <NonInvariantDocblockPropertyType>
-      <code>$_hidden</code>
-      <code>$_virtual</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/Model/Entity/CalendarSource.php">
-    <NonInvariantDocblockPropertyType>
-      <code>$_hidden</code>
+      <code><![CDATA[$_hidden]]></code>
     </NonInvariantDocblockPropertyType>
   </file>
   <file src="src/Model/Entity/User.php">
     <NonInvariantDocblockPropertyType>
-      <code>$_hidden</code>
-      <code>$_virtual</code>
+      <code><![CDATA[$_hidden]]></code>
+      <code><![CDATA[$_virtual]]></code>
     </NonInvariantDocblockPropertyType>
   </file>
   <file src="src/Model/Table/ApiTokensTable.php">
     <MethodSignatureMismatch>
-      <code>ApiTokensTable</code>
-      <code>ApiTokensTable</code>
+      <code><![CDATA[ApiTokensTable]]></code>
+      <code><![CDATA[ApiTokensTable]]></code>
     </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/CalendarItemsTable.php">
-    <MethodSignatureMismatch>
-      <code>CalendarItemsTable</code>
-      <code>CalendarItemsTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/CalendarProvidersTable.php">
-    <MethodSignatureMismatch>
-      <code>CalendarProvidersTable</code>
-      <code>CalendarProvidersTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/CalendarSourcesTable.php">
-    <MethodSignatureMismatch>
-      <code>CalendarSourcesTable</code>
-      <code>CalendarSourcesTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/CalendarSubscriptionsTable.php">
-    <MethodSignatureMismatch>
-      <code>CalendarSubscriptionsTable</code>
-      <code>CalendarSubscriptionsTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/ProjectSectionsTable.php">
-    <MethodSignatureMismatch>
-      <code>ProjectSectionsTable</code>
-      <code>ProjectSectionsTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/ProjectsTable.php">
-    <MethodSignatureMismatch>
-      <code>ProjectsTable</code>
-      <code>ProjectsTable</code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/Model/Table/SubtasksTable.php">
-    <MethodSignatureMismatch>
-      <code>SubtasksTable</code>
-      <code>SubtasksTable</code>
-    </MethodSignatureMismatch>
-    <NoInterfaceProperties>
-      <code><![CDATA[$result->max]]></code>
-    </NoInterfaceProperties>
-  </file>
-  <file src="src/Model/Table/TasksTable.php">
-    <InternalMethod>
-      <code>callFinder</code>
-    </InternalMethod>
-    <MethodSignatureMismatch>
-      <code>TasksTable</code>
-      <code>TasksTable</code>
-    </MethodSignatureMismatch>
-    <NoInterfaceProperties>
-      <code><![CDATA[$result->max]]></code>
-      <code><![CDATA[$result->max_child]]></code>
-    </NoInterfaceProperties>
-    <UndefinedMagicPropertyFetch>
-      <code><![CDATA[$result->max_day]]></code>
-    </UndefinedMagicPropertyFetch>
   </file>
   <file src="src/Model/Table/UsersTable.php">
     <MethodSignatureMismatch>
-      <code>UsersTable</code>
-      <code>UsersTable</code>
+      <code><![CDATA[UsersTable]]></code>
+      <code><![CDATA[UsersTable]]></code>
     </MethodSignatureMismatch>
     <UndefinedMagicPropertyFetch>
       <code><![CDATA[$entity->current_password]]></code>
     </UndefinedMagicPropertyFetch>
-  </file>
-  <file src="src/Service/CalendarService.php">
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->fetchTable('CalendarItems')]]></code>
-      <code><![CDATA[$this->fetchTable('CalendarProviders')]]></code>
-      <code><![CDATA[$this->fetchTable('CalendarSources')]]></code>
-      <code><![CDATA[$this->fetchTable('CalendarSources')]]></code>
-      <code><![CDATA[$this->fetchTable('CalendarSubscriptions')]]></code>
-      <code><![CDATA[$this->fetchTable('CalendarSubscriptions')]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="src/View/Widget/DueOnWidget.php">
     <UndefinedMagicPropertyFetch>

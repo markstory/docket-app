@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\View\Widget;
 
-use App\Model\Entity\Task;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\BasicWidget;
+use Tasks\Model\Entity\Task;
 
 class DueOnWidget extends BasicWidget
 {

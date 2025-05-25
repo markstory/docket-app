@@ -12,7 +12,7 @@ use Symfony\Component\Panther\Client;
 class UpcomingTest extends AcceptanceTestCase
 {
     /**
-     * @var \App\Model\Table\TasksTable
+     * @var \Tasks\Model\Table\TasksTable
      */
     protected $Tasks;
 
@@ -20,7 +20,7 @@ class UpcomingTest extends AcceptanceTestCase
     {
         parent::setUp();
 
-        $this->Tasks = $this->fetchTable('Tasks');
+        $this->Tasks = $this->fetchTable('Tasks.Tasks');
     }
 
     public function hoverRow(Client $client)

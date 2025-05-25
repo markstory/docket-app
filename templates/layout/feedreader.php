@@ -42,7 +42,7 @@ endif;
                         </li>
                     </ul>
                     <h3>Categories</h3>
-                    <?= $this->cell('FeedCategoryMenu', ['identity' => $identity]) ?>
+                    <?= $this->cell('Feeds.FeedCategoryMenu', ['identity' => $identity]) ?>
 
                     <ul class="links">
                         <li>
@@ -70,7 +70,7 @@ endif;
                     </ul>
                     <a href="#"
                         class="layout-show-help"
-                        hx-get="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'help']) ?>"
+                        hx-get="<?= $this->Url->build(['plugin' => false, 'controller' => 'Pages', 'action' => 'display', 'help']) ?>"
                         hx-target="main.main"
                         hx-swap="beforeend"
                         data-hotkey="shift+?"
