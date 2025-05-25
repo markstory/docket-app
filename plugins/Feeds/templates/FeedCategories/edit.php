@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\FeedCategory $feedCategory
+ * @var \Feeds\Model\Entity\FeedCategory $feedCategory
  */
 use Cake\Core\Configure;
 

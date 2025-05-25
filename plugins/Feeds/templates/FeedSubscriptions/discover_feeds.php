@@ -2,7 +2,7 @@
 /**
  * @var string $error
  * @var \App\View\AppView $this
- * @var array<\App\Model\Entity\Feed> $feeds
+ * @var array<\Feeds\Model\Entity\Feed> $feeds
  */
 
 use Feeds\Model\Entity\FeedSubscription;

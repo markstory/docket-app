@@ -11,7 +11,7 @@ use Tasks\Model\Entity\Project;
 /**
  * ProjectSections Controller
  *
- * @property \App\Model\Table\ProjectSectionsTable $ProjectSections
+ * @property \Tasks\Model\Table\ProjectSectionsTable $ProjectSections
  */
 class ProjectSectionsController extends AppController
 {
@@ -25,7 +25,7 @@ class ProjectSectionsController extends AppController
         $query = $this->ProjectSections->Projects->findBySlug($slug);
         $query = $this->Authorization->applyScope($query, 'index');
 
-        /** @var \App\Model\Entity\Project */
+        /** @var \Tasks\Model\Entity\Project */
         return $query->firstOrFail();
     }
 

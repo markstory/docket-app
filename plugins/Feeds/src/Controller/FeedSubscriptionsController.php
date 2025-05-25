@@ -17,7 +17,7 @@ use RuntimeException;
 /**
  * FeedSubscriptions Controller
  *
- * @property \App\Model\Table\FeedSubscriptionsTable $FeedSubscriptions
+ * @property \Feeds\Model\Table\FeedSubscriptionsTable $FeedSubscriptions
  */
 class FeedSubscriptionsController extends AppController
 {
@@ -152,7 +152,7 @@ class FeedSubscriptionsController extends AppController
     {
         $this->request->allowMethod(['POST']);
         /*
-        /** @var \App\Model\Entity\FeedSubscription $feedSubscription * /
+        /** @var \Feeds\Model\Entity\FeedSubscription $feedSubscription * /
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
 
         // This is view because viewItem is as well
@@ -205,10 +205,10 @@ class FeedSubscriptionsController extends AppController
      */
     public function add(): ?Response
     {
-        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
+        /** @var \Feeds\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         if ($this->request->is('post')) {
-            /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
+            /** @var \Feeds\Model\Entity\FeedSubscription $feedSubscription */
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             $feedSubscription->feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
             if (!$feedSubscription->feed->favicon_url) {
@@ -244,7 +244,7 @@ class FeedSubscriptionsController extends AppController
         $identity = $this->Authentication->getIdentity();
         assert($identity instanceof User);
 
-        /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
+        /** @var \Feeds\Model\Entity\FeedSubscription $feedSubscription */
         $feedSubscription = $this->FeedSubscriptions->newEmptyEntity();
         $feedSubscription->user_id = $identity->id;
 
@@ -283,7 +283,7 @@ class FeedSubscriptionsController extends AppController
         $feedSubscription = $this->FeedSubscriptions->get($id, contain: FeedSubscriptionsTable::VIEW_CONTAIN);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $this->Authorization->authorize($feedSubscription);
-            /** @var \App\Model\Entity\FeedSubscription $feedSubscription */
+            /** @var \Feeds\Model\Entity\FeedSubscription $feedSubscription */
             $feedSubscription = $this->FeedSubscriptions->patchEntity($feedSubscription, $this->request->getData());
             if ($this->request->getData('url')) {
                 $feed = $this->FeedSubscriptions->Feeds->findByUrlOrNew($this->request->getData('url'));
@@ -339,7 +339,7 @@ class FeedSubscriptionsController extends AppController
 
     public function sync($id, FeedService $feedService): ?Response
     {
-        /** @var \App\Model\Entity\FeedSubscription $subscription */
+        /** @var \Feeds\Model\Entity\FeedSubscription $subscription */
         $subscription = $this->FeedSubscriptions->get($id, contain: ['Feeds']);
         $this->Authorization->authorize($subscription, 'view');
         // TODO add rate-limit/abuse

@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Cake\Core\Configure;
 
 /**
- * @var \App\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\Project $project
  * @var string $referer
  */
 $this->setLayout('sidebar');

@@ -1,8 +1,8 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\FeedCategory $feedCategory
- * @var array<\App\Model\Entity\FeedItem> $feedItems
+ * @var \Feeds\Model\Entity\FeedCategory $feedCategory
+ * @var array<\Feeds\Model\Entity\FeedItem> $feedItems
  */
 $this->setLayout('feedreader');
 $this->assign('title', 'Feed Category - ' . $feedCategory->title);

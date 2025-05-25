@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * @var \App\Model\Entity\CalendarSource $source
+ * @var \Calendar\Model\Entity\CalendarSource $source
  * @var int $providerId
  * @var string $mode create or edit.
  */

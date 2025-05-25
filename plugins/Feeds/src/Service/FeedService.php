@@ -63,7 +63,7 @@ class FeedService
      * Fetch a URL and parse the resulting HTML page for any /head/link elements
      * that quack like a known feed type.
      *
-     * @return array<\App\Model\Entity\Feed> Returns a list of pending Feed entities.
+     * @return array<\Feeds\Model\Entity\Feed> Returns a list of pending Feed entities.
      */
     public function discoverFeeds(string $url): array
     {
@@ -73,7 +73,7 @@ class FeedService
         // Fetch the URL
         $response = $this->fetchUrl($url);
 
-        /** @var array<\App\Model\Entity\Feed> $feeds */
+        /** @var array<\Feeds\Model\Entity\Feed> $feeds */
         $feeds = [];
 
         $contentType = $this->getContentType($response);
@@ -212,7 +212,7 @@ class FeedService
 
         // So many queries.
         foreach ($subscriptions as $sub) {
-            /** @var \App\Model\Entity\FeedSubscription $sub */
+            /** @var \Feeds\Model\Entity\FeedSubscription $sub */
             $this->feeds->FeedSubscriptions->updateUnreadItemCount($sub);
             $this->feeds->FeedSubscriptions->FeedCategories->updateUnreadItemCount($sub->feed_category);
         }
@@ -256,7 +256,7 @@ class FeedService
             return [];
         }
         foreach ($xmlEntries as $entry) {
-            /** @var \App\Model\Entity\FeedItem $item */
+            /** @var \Feeds\Model\Entity\FeedItem $item */
             $item = $this->feeds->FeedItems->newEmptyEntity();
             // TODO add author byline
             $item->guid = (string)$entry->id;
@@ -292,7 +292,7 @@ class FeedService
             return [];
         }
         foreach ($xmlItems as $xmlItem) {
-            /** @var \App\Model\Entity\FeedItem $item */
+            /** @var \Feeds\Model\Entity\FeedItem $item */
             $item = $this->feeds->FeedItems->newEmptyEntity();
             $item->guid = (string)$xmlItem->guid;
             $item->title = (string)$xmlItem->title;
@@ -320,7 +320,7 @@ class FeedService
     {
         $this->feeds->getConnection()->transactional(function () use ($items): void {
             foreach ($items as $item) {
-                /** @var \App\Model\Entity\FeedItem|null $existing */
+                /** @var \Feeds\Model\Entity\FeedItem|null $existing */
                 $existing = $this->feeds->FeedItems
                     ->find()
                     ->where([

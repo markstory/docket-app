@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\CalendarProvider $provider
+ * @var \Calendar\Model\Entity\CalendarProvider $provider
  */
 $icon = null;
 if ($provider->kind === 'google') :

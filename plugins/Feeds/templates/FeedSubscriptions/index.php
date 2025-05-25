@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\FeedSubscription> $feedSubscriptions
+ * @var iterable<\Feeds\Model\Entity\FeedSubscription> $feedSubscriptions
  */
 $this->setLayout('feedreader');
 $this->assign('title', 'All Feeds');

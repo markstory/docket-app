@@ -26,8 +26,8 @@ use Cake\ORM\Entity;
  * @property string $color
  * @property string $color_hex
  *
- * @property \App\Model\Entity\CalendarSource $calendar_source
- * @property \App\Model\Entity\Provider $provider
+ * @property \Calendar\Model\Entity\CalendarSource $calendar_source
+ * @property \Calendar\Model\Entity\CalendarProvider $provider
  */
 class CalendarItem extends Entity
 {

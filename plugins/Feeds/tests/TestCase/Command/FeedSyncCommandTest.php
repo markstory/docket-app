@@ -78,7 +78,7 @@ class FeedSyncCommandTest extends TestCase
         $this->assertOutputNotContains("Sync {$feed->url} start");
         $this->assertOutputNotContains("Sync {$feed->url} end");
 
-        /** @var \App\Model\Entity\Feed $refresh */
+        /** @var \Feeds\Model\Entity\Feed $refresh */
         $refresh = $this->fetchTable('Feeds.Feeds')->get($feed->id);
         $this->assertEmpty($refresh->last_refresh);
 

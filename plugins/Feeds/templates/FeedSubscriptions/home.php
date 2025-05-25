@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * @var \Cake\View\View $this
- * @var array<\App\Model\Entity\FeedItem> $feedItems
+ * @var array<\Feeds\Model\Entity\FeedItem> $feedItems
  */
 $this->setLayout('feedreader');
 $this->assign('title', 'Feeds');

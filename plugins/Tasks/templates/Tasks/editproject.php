@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Task $task
- * @var Array<\App\Model\Entity\Project> $projects
+ * @var \Tasks\Model\Entity\Task $task
+ * @var Array<\Tasks\Model\Entity\Project> $projects
  * @var string $referer
  */
 $this->setLayout('ajax');

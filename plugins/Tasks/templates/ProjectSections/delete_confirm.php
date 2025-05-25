@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Project $project
- * @var \App\Model\Entity\ProjectSection $section
+ * @var \Tasks\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\ProjectSection $section
  * @var \Cake\View\View $this
  */
 echo $this->element('confirm_dialog', [

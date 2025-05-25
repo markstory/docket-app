@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\FeedCategory $feedCategory
+ * @var \Feeds\Model\Entity\FeedCategory $feedCategory
  */
 $menuId = 'feed-category-menu-' . uniqid();
 $deleteConfirm = ['_name' => 'feedcategories:deleteconfirm', 'id' => $feedCategory->id];

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\Project $project
  * @var bool $showDetailed
  */
 $menuId = 'project-menu-' . uniqid();

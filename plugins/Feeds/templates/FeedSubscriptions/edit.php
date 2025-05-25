@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\FeedSubscription $feedSubscription
+ * @var \Feeds\Model\Entity\FeedSubscription $feedSubscription
  * @var string[]|\Cake\Collection\CollectionInterface $feedCategories
  */
 $isHtmx = $this->request->is('htmx');

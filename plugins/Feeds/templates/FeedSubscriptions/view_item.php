@@ -2,7 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $identity
- * @var \App\Model\Entity\FeedItem $feedItem
+ * @var \Feeds\Model\Entity\FeedItem $feedItem
  */
 $this->setLayout('feedreader');
 

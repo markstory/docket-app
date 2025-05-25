@@ -16,11 +16,11 @@ use Feeds\Model\Entity\FeedCategory;
  * @property \Feeds\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\HasMany $FeedSubscriptions
  * @method \Feeds\Model\Entity\FeedCategory newEmptyEntity()
  * @method \Feeds\Model\Entity\FeedCategory newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedCategory> newEntities(array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedCategory> newEntities(array $data, array $options = [])
  * @method \Feeds\Model\Entity\FeedCategory get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \Feeds\Model\Entity\FeedCategory findOrCreate($search, ?callable $callback = null, array $options = [])
  * @method \Feeds\Model\Entity\FeedCategory patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedCategory> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedCategory> patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Feeds\Model\Entity\FeedCategory|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Feeds\Model\Entity\FeedCategory saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method iterable<\Feeds\Model\Entity\FeedCategory>|false saveMany(iterable $entities, array $options = [])

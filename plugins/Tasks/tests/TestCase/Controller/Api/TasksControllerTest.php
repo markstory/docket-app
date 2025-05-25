@@ -782,7 +782,7 @@ class TasksControllerTest extends TestCase
         ]);
 
         $this->assertResponseOk();
-        /** @var \App\Model\Entity\Task $updated */
+        /** @var \Tasks\Model\Entity\Task $updated */
         $updated = $this->viewVariable('task');
         $this->assertCount(2, $updated->subtasks);
         $this->assertEquals(2, $updated->subtask_count);

@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Project $project
- * @var \App\Model\Entity\Task[] $tasks
+ * @var \Tasks\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\Task[] $tasks
  */
 $this->setLayout('sidebar');
 $this->assign('title', $project->name . ' Completed Tasks');

@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Task[] $tasks
- * @var \App\Model\Entity\Project[] $projects
+ * @var \Tasks\Model\Entity\Task[] $tasks
+ * @var \Tasks\Model\Entity\Project[] $projects
  */
 $this->assign('title', 'Trash Bin');
 
