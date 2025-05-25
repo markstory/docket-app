@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\ApiToken newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken[] newEntities(array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken get($primaryKey, $options = [])
- * @method \App\Model\Entity\ApiToken findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\ApiToken findOrCreate($search, array|callable|null $callback = null, $options = [])
  * @method \App\Model\Entity\ApiToken patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \App\Model\Entity\ApiToken|false save(\Cake\Datasource\EntityInterface $entity, $options = [])

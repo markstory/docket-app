@@ -15,28 +15,28 @@
       <code><![CDATA[$event]]></code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Model/Entity/ApiToken.php">
-    <NonInvariantDocblockPropertyType>
-      <code><![CDATA[$_hidden]]></code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/Model/Entity/User.php">
-    <NonInvariantDocblockPropertyType>
-      <code><![CDATA[$_hidden]]></code>
-      <code><![CDATA[$_virtual]]></code>
-    </NonInvariantDocblockPropertyType>
-  </file>
   <file src="src/Model/Table/ApiTokensTable.php">
     <MethodSignatureMismatch>
       <code><![CDATA[ApiTokensTable]]></code>
       <code><![CDATA[ApiTokensTable]]></code>
     </MethodSignatureMismatch>
+    <MissingTemplateParam>
+      <code><![CDATA[ApiTokensTable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Model/Table/SavedFeedItemsTable.php">
+    <MissingTemplateParam>
+      <code><![CDATA[SavedFeedItemsTable]]></code>
+    </MissingTemplateParam>
   </file>
   <file src="src/Model/Table/UsersTable.php">
     <MethodSignatureMismatch>
       <code><![CDATA[UsersTable]]></code>
       <code><![CDATA[UsersTable]]></code>
     </MethodSignatureMismatch>
+    <MissingTemplateParam>
+      <code><![CDATA[UsersTable]]></code>
+    </MissingTemplateParam>
     <UndefinedMagicPropertyFetch>
       <code><![CDATA[$entity->current_password]]></code>
     </UndefinedMagicPropertyFetch>
