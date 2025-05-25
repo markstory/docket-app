@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\FeedCategory> $feedCategories
+ * @var iterable<\Feeds\Model\Entity\FeedCategory> $feedCategories
  */
 $this->setLayout('sidebar');
 

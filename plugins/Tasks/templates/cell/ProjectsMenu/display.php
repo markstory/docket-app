@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var Array<\App\Model\Entity\Project> $projects
+ * @var Array<\Tasks\Model\Entity\Project> $projects
  */
 ?>
 <?= $this->Form->create(

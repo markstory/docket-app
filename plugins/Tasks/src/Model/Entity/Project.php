@@ -21,7 +21,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Task[] $tasks
+ * @property \Tasks\Model\Entity\Task[] $tasks
  * @property \App\Model\Entity\Label[] $labels
  * @property \Tasks\Model\Entity\ProjectSection[] $sections
  */

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\CalendarSource $calendarSource
+ * @var \Calendar\Model\Entity\CalendarSource $calendarSource
  */
 // configure layout
 $this->set('closable', false);

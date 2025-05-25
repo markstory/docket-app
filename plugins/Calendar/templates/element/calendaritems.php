@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\CalendarItem[] $calendarItems
+ * @var \Calendar\Model\Entity\CalendarItem[] $calendarItems
  * @var \App\Model\Entity\User $identity
  */
 ?>

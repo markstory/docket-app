@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var Array<\App\Model\Entity\FeedCategory> $feedCategories
+ * @var Array<\Feeds\Model\Entity\FeedCategory> $feedCategories
  */
 ?>
 <?= $this->Form->create(

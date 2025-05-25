@@ -20,7 +20,7 @@ class ProjectSectionsController extends AppController
         $query = $this->ProjectSections->Projects->findBySlug($slug);
         $query = $this->Authorization->applyScope($query, 'index');
 
-        /** @var \App\Model\Entity\Project */
+        /** @var \Tasks\Model\Entity\Project */
         return $query->firstOrFail();
     }
 
@@ -38,7 +38,7 @@ class ProjectSectionsController extends AppController
             ->where(['ProjectSections.project_id' => $project->id])
             ->toArray();
         $this->set('sections', $sections);
-        $this->set('value', $sections);
+        $this->set('value', $project->section_id);
         $this->viewBuilder()->setLayout('ajax');
     }
 

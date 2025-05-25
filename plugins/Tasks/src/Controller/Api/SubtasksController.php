@@ -14,8 +14,8 @@ use Tasks\Model\Table\TasksTable;
 /**
  * Subtasks Controller
  *
- * @property \App\Model\Table\TasksTable $Tasks
- * @property \App\Model\Table\SubtasksTable $Subtasks
+ * @property \Feeds\Model\Table\TasksTable $Tasks
+ * @property \Feeds\Model\Table\SubtasksTable $Subtasks
  */
 class SubtasksController extends AppController
 {

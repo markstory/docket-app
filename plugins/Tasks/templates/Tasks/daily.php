@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Task[] $tasks
+ * @var \Tasks\Model\Entity\Task[] $tasks
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
  * @var \Cake\I18n\FrozenDate $date
  * @var \App\Model\Entity\User $identity

@@ -355,6 +355,8 @@ class TasksTable extends Table
         $current = $item->get($property);
 
         $item->set($property, $targetOffset);
+        $item->setDirty($property, true);
+
         foreach ($updateFields as $key => $value) {
             if ($item->get($key) !== $value) {
                 $item->set($key, $value);

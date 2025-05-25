@@ -16,23 +16,23 @@ use Feeds\Model\Entity\FeedSubscription;
 /**
  * FeedItems Model
  *
- * @property \App\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
- * @property \App\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\BelongsToMany $FeedSubscriptions
- * @property \App\Model\Table\FeedItemUsersTable&\Cake\ORM\Association\HasOne $FeedItemUsers
- * @method \App\Model\Entity\FeedItem newEmptyEntity()
- * @method \App\Model\Entity\FeedItem newEntity(array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedItem> newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\FeedItem get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\FeedItem findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \App\Model\Entity\FeedItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\App\Model\Entity\FeedItem> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\FeedItem|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \App\Model\Entity\FeedItem saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>|false saveMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem>false deleteMany(iterable $entities, array $options = [])
- * @method iterable<\App\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
- * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeedItem> findById(int|string $id)
+ * @property \Feeds\Model\Table\FeedsTable&\Cake\ORM\Association\BelongsTo $Feeds
+ * @property \Feeds\Model\Table\FeedSubscriptionsTable&\Cake\ORM\Association\BelongsToMany $FeedSubscriptions
+ * @property \Feeds\Model\Table\FeedItemUsersTable&\Cake\ORM\Association\HasOne $FeedItemUsers
+ * @method \Feeds\Model\Entity\FeedItem newEmptyEntity()
+ * @method \Feeds\Model\Entity\FeedItem newEntity(array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedItem> newEntities(array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItem get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \Feeds\Model\Entity\FeedItem findOrCreate($search, ?callable $callback = null, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method array<\Feeds\Model\Entity\FeedItem> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItem|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Feeds\Model\Entity\FeedItem saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItem>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItem> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItem>false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\Feeds\Model\Entity\FeedItem> deleteManyOrFail(iterable $entities, array $options = [])
+ * @method \Cake\ORM\Query\SelectQuery<\Feeds\Model\Entity\FeedItem> findById(int|string $id)
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeedItemsTable extends Table
@@ -214,7 +214,7 @@ class FeedItemsTable extends Table
             ->orderByDesc('FeedItems.published_at');
 
         foreach ($items as $item) {
-            /** @var \App\Model\Entity\FeedItem $item */
+            /** @var \Feeds\Model\Entity\FeedItem $item */
             $this->markRead($userId, $item);
         }
     }

@@ -17,7 +17,7 @@ use Google\Service\Oauth2 as GoogleOauth2;
 /**
  * CalendarProviders Controller
  *
- * @property \App\Model\Table\CalendarProvidersTable $CalendarProviders
+ * @property \Calendar\Model\Table\CalendarProvidersTable $CalendarProviders
  */
 class CalendarProvidersController extends AppController
 {

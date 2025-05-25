@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Task $task
+ * @var \Tasks\Model\Entity\Task $task
  * @var bool $showNull
  */
 if ($task->due_on) :

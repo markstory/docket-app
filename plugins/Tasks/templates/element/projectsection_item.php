@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\Project $project
- * @var \App\Model\Entity\ProjectSection $section
+ * @var \Tasks\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\ProjectSection $section
  */
 $taskAddUrl = $this->Url->build([
     '_name' => 'tasks:add',

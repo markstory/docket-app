@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\ProjectSection $section
- * @var \App\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\ProjectSection $section
+ * @var \Tasks\Model\Entity\Project $project
  * @var string $referer
  */
 $this->setLayout('modal');

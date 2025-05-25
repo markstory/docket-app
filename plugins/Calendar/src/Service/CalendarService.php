@@ -45,22 +45,22 @@ class CalendarService
     private GoogleClient $client;
 
     /**
-     * @var \App\Model\Table\CalendarSourcesTable
+     * @var \Calendar\Model\Table\CalendarSourcesTable
      */
     private CalendarSourcesTable $CalendarSources;
 
     /**
-     * @var \App\Model\Table\CalendarSubscriptionsTable
+     * @var \Calendar\Model\Table\CalendarSubscriptionsTable
      */
     private CalendarSubscriptionsTable $CalendarSubscriptions;
 
     /**
-     * @var \App\Model\Table\CalendarProvidersTable
+     * @var \Calendar\Model\Table\CalendarProvidersTable
      */
     private CalendarProvidersTable $CalendarProviders;
 
     /**
-     * @var \App\Model\Table\CalendarItemsTable
+     * @var \Calendar\Model\Table\CalendarItemsTable
      */
     private CalendarItemsTable $CalendarItems;
 
@@ -75,7 +75,7 @@ class CalendarService
      * This method will also check the token expiry and if the token
      * is close to being expired, a refresh token request will be made
      *
-     * @param \App\Model\Entity\CalendarProvider $provider
+     * @param \Calendar\Model\Entity\CalendarProvider $provider
      */
     public function setAccessToken(CalendarProvider $provider): void
     {
@@ -111,19 +111,19 @@ class CalendarService
         }
         $existing = collection($provider->calendar_sources)->indexBy('provider_id')->toArray();
 
-        /** @var \App\Model\Table\CalendarProvidersTable $this->CalendarProviders */
+        /** @var \Calendar\Model\Table\CalendarProvidersTable $this->CalendarProviders */
         $this->CalendarProviders = $this->fetchTable('Calendar.CalendarProviders');
-        /** @var \App\Model\Table\CalendarSourcesTable $this->CalendarSources */
+        /** @var \Calendar\Model\Table\CalendarSourcesTable $this->CalendarSources */
         $this->CalendarSources = $this->fetchTable('Calendar.CalendarSources');
 
         $this->CalendarProviders->getConnection()->transactional(
             function () use ($results, $existing, $provider): void {
-                /** @var array<\App\Model\Entity\CalendarSource> $newSources */
+                /** @var array<\Calendar\Model\Entity\CalendarSource> $newSources */
                 $newSources = [];
                 foreach ($results as $record) {
                     // Update or create
                     if (isset($existing[$record->id])) {
-                        /** @var \App\Model\Entity\CalendarSource $source */
+                        /** @var \Calendar\Model\Entity\CalendarSource $source */
                         $source = $existing[$record->id];
                         $source->name = $record->summary;
                         $this->CalendarSources->saveOrFail($source);
@@ -132,7 +132,7 @@ class CalendarService
                         unset($existing[$record->id]);
                         $newSources[] = $source;
                     } else {
-                        /** @var \App\Model\Entity\CalendarSource $source */
+                        /** @var \Calendar\Model\Entity\CalendarSource $source */
                         $source = $this->CalendarSources->newEntity([
                             'calendar_provider_id' => $provider->id,
                             'name' => $record->summary,
@@ -164,8 +164,8 @@ class CalendarService
      * This is used to build the list of calendars that the user can
      * add to their task views.
      *
-     * @param array<\App\Model\Entity\CalendarSource> $linked Existing calendar links for a provider.
-     * @return array<\App\Model\Entity\CalendarSource>
+     * @param array<\Calendar\Model\Entity\CalendarSource> $linked Existing calendar links for a provider.
+     * @return array<\Calendar\Model\Entity\CalendarSource>
      */
     public function listUnlinkedCalendars(array $linked): array
     {
@@ -222,7 +222,7 @@ class CalendarService
             ])
             ->firstOrFail();
 
-        /** @var \App\Model\Entity\CalendarSource */
+        /** @var \Calendar\Model\Entity\CalendarSource */
         return $source;
     }
 
@@ -235,7 +235,7 @@ class CalendarService
     {
         $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
 
-        /** @var \App\Model\Entity\CalendarSubscription $sub */
+        /** @var \Calendar\Model\Entity\CalendarSubscription $sub */
         $sub = $this->CalendarSubscriptions->newEmptyEntity();
         $sub->identifier = Text::uuid();
         $sub->verifier = Text::uuid();

@@ -20,8 +20,8 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \Calendar\Model\Entity\CalendarProvider $calendar_provider
- * @property \App\Model\Entity\CalendarItem[] $calendar_items
- * @property \App\Model\Entity\CalendarSubscription[] $calendar_subscriptions
+ * @property \Calendar\Model\Entity\CalendarItem[] $calendar_items
+ * @property \Calendar\Model\Entity\CalendarSubscription[] $calendar_subscriptions
  */
 class CalendarSource extends Entity
 {

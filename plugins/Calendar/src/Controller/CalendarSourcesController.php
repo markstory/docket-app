@@ -14,7 +14,7 @@ use RuntimeException;
 /**
  * CalendarSources Controller
  *
- * @property \App\Model\Table\CalendarSourcesTable $CalendarSources
+ * @property \Calendar\Model\Table\CalendarSourcesTable $CalendarSources
  */
 class CalendarSourcesController extends AppController
 {
@@ -34,7 +34,7 @@ class CalendarSourcesController extends AppController
                 'CalendarSources.id' => $this->request->getParam('id'),
             ]);
 
-        /** @var \App\Model\Entity\CalendarSource */
+        /** @var \Calendar\Model\Entity\CalendarSource */
         return $query->firstOrFail();
     }
 

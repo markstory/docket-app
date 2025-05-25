@@ -17,7 +17,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
- * @property \App\Model\Entity\Task $todo_item
+ * @property \Tasks\Model\Entity\Task $todo_item
  */
 class Subtask extends Entity
 {

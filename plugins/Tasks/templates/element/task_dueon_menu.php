@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Cake\I18n\FrozenDate;
 
 /**
- * @var \App\Model\Entity\Task $task
+ * @var \Tasks\Model\Entity\Task $task
  * @var \App\Model\Entity\User $identity
  * @var string $referer
  * @var \Closure $itemFormatter

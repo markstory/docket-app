@@ -1,7 +1,7 @@
 <?php
 /**
- * @var \App\Model\Entity\FeedSubscription $feedSubscription
- * @var \App\Model\Entity\FeedItem $feedItem
+ * @var \Feeds\Model\Entity\FeedSubscription $feedSubscription
+ * @var \Feeds\Model\Entity\FeedItem $feedItem
  * @var \App\Model\Entity\User $identity
  * @var \Cake\View\View $this
  */

@@ -16,8 +16,8 @@ use Tasks\Model\Entity\Task;
  * Tasks Controller
  *
  * @property \Authorization\Controller\Component\AuthorizationComponent $Authorization
- * @property \App\Model\Table\TasksTable $Tasks
- * @property \App\Model\Table\CalendarItemsTable $CalendarItems
+ * @property \Tasks\Model\Table\TasksTable $Tasks
+ * @property \Calendar\Model\Table\CalendarItemsTable $CalendarItems
  */
 class TasksController extends AppController
 {

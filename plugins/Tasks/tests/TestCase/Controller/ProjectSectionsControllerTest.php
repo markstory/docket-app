@@ -28,7 +28,7 @@ class ProjectSectionsControllerTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\ProjectSectionsTable
+     * @var \Tasks\Model\Table\ProjectSectionsTable
      */
     protected $ProjectSections;
 

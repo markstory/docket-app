@@ -29,7 +29,7 @@ class CalendarProvidersControllerTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\CalendarProvidersTable
+     * @var \Calendar\Model\Table\CalendarProvidersTable
      */
     protected $CalendarProviders;
 
@@ -143,7 +143,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/calendars/{$ownProvider->id}/sync");
         $this->assertRedirect('/calendars');
-        /** @var \App\Model\Entity\CalendarProvider $provider */
+        /** @var \Calendar\Model\Entity\CalendarProvider $provider */
         $provider = $this->viewVariable('provider');
 
         $this->assertCount(2, $provider->calendar_sources);
@@ -166,7 +166,7 @@ class CalendarProvidersControllerTest extends TestCase
         $this->disableErrorHandlerMiddleware();
         $this->post("/calendars/{$provider->id}/sync");
         $this->assertRedirect('/calendars');
-        /** @var \App\Model\Entity\CalendarProvider $provider */
+        /** @var \Calendar\Model\Entity\CalendarProvider $provider */
         $provider = $this->viewVariable('provider');
 
         $sources = $provider->calendar_sources;

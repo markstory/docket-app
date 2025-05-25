@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @var \App\Model\Entity\ProjectSection $projectSection
- * @var \App\Model\Entity\Project $project
+ * @var \Tasks\Model\Entity\ProjectSection $projectSection
+ * @var \Tasks\Model\Entity\Project $project
  */
 $this->setLayout('ajax');
 

@@ -20,7 +20,7 @@ class CalendarSubscriptionRenewCommand extends Command
     use ModelAwareTrait;
 
     /**
-     * @var \App\Model\Table\CalendarSubscriptionsTable
+     * @var \Calendar\Model\Table\CalendarSubscriptionsTable
      */
     protected CalendarSubscriptionsTable $CalendarSubscriptions;
 

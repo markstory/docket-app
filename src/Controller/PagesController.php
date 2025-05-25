@@ -43,7 +43,7 @@ class PagesController extends AppController
     public function beforeFilter(EventInterface $event): ?Response
     {
         if ($this->request->getUri()->getPath() == '/' && $this->request->getAttribute('identity')) {
-            return $this->redirect(['_name' => 'tasks:today']);
+            $event->setResult($this->redirect(['_name' => 'tasks:today']));
         }
 
         return null;

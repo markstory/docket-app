@@ -29,12 +29,12 @@ class CalendarSourcesControllerTest extends TestCase
     ];
 
     /**
-     * @var \App\Model\Table\CalendarItemsTable
+     * @var \Calendar\Model\Table\CalendarItemsTable
      */
     protected $CalendarItems;
 
     /**
-     * @var \App\Model\Table\CalendarSourcesTable
+     * @var \Calendar\Model\Table\CalendarSourcesTable
      */
     protected $CalendarSources;
 
