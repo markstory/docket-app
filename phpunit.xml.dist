@@ -58,7 +58,9 @@
     <source>
       <include>
         <directory suffix=".php">src/</directory>
-        <directory suffix=".php">plugins/*/src/</directory>
+        <directory suffix=".php">plugins/Calendar/src/</directory>
+        <directory suffix=".php">plugins/Feeds/src/</directory>
+        <directory suffix=".php">plugins/Tasks/src/</directory>
       </include>
       <exclude>
         <file>src/Console/Installer.php</file>
