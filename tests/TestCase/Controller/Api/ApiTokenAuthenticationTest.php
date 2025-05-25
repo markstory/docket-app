@@ -29,9 +29,9 @@ class ApiTokenAuthenticationTest extends TestCase
         'app.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarItems',
         'app.ApiTokens',
     ];
 

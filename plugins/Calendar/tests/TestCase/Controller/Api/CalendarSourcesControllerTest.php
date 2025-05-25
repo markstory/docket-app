@@ -21,10 +21,10 @@ class CalendarSourcesControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarSubscriptions',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarSubscriptions',
+        'plugin.Calendar.CalendarItems',
         'app.Projects',
     ];
 

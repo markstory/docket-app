@@ -22,9 +22,9 @@ abstract class AcceptanceTestCase extends TestCase
         'app.ProjectSections',
         'app.Tasks',
         'app.Subtasks',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarItems',
     ];
 
     /**

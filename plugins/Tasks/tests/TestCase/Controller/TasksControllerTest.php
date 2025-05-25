@@ -38,9 +38,9 @@ class TasksControllerTest extends TestCase
         'app.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarItems',
     ];
 
     protected function dayOrderedTasks(array $conditions = [])
