@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\FeedCategory $feedCategory
  * @var array<\App\Model\Entity\FeedItem> $feedItems
  */
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 $this->assign('title', 'Feed Category - ' . $feedCategory->title);
 
 $subscriptionAddUrl = $this->Url->build([

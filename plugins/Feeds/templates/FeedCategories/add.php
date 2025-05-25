@@ -7,7 +7,7 @@ use Cake\Core\Configure;
 
 $isHtmx = $this->request->is('htmx');
 
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 if ($isHtmx) {
     $this->setLayout('sheet');
 }

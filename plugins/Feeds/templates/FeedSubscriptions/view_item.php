@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\User $identity
  * @var \App\Model\Entity\FeedItem $feedItem
  */
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 
 $feedUrl = ['_name' => 'feedsubscriptions:view', 'id' => $feedItem->feed_subscription->id];
 $menuId = 'feed-item-' . uniqid();
