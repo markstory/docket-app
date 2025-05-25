@@ -59,8 +59,8 @@ class ProjectsController extends AppController
                ->contain('Projects')
                ->find('complete')
                ->where(['Projects.slug' => $slug])
-               ->orderDesc('Tasks.due_on')
-               ->orderAsc('title');
+               ->orderByDesc('Tasks.due_on')
+               ->orderByAsc('title');
             $tasks = $this->paginate($query, ['scope' => 'completed']);
 
             $this->viewBuilder()->setTemplate('completed');
