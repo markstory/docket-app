@@ -23,7 +23,7 @@ class GoogleOauthControllerTest extends TestCase
      * @var array
      */
     protected array $fixtures = [
-        'app.CalendarProviders',
+        'plugin.Calendar.CalendarProviders',
         'app.Users',
     ];
 

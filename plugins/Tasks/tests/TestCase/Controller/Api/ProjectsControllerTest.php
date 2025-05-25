@@ -25,10 +25,10 @@ class ProjectsControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.ApiTokens',
-        'app.Projects',
-        'app.ProjectSections',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.ProjectSections',
         'app.Users',
-        'app.Tasks',
+        'plugin.Tasks.Tasks',
         'app.Labels',
     ];
 

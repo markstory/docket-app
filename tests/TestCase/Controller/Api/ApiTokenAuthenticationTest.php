@@ -23,15 +23,15 @@ class ApiTokenAuthenticationTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.Tasks',
-        'app.Projects',
-        'app.ProjectSections',
-        'app.Subtasks',
+        'plugin.Tasks.Tasks',
+        'plugin.Tasks.Projects',
+        'plugin.Tasks.ProjectSections',
+        'plugin.Tasks.Subtasks',
         'app.LabelsTasks',
         'app.Labels',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarItems',
         'app.ApiTokens',
     ];
 

@@ -23,13 +23,13 @@ class FeedSyncCommandTest extends TestCase
      * @var list<string>
      */
     protected array $fixtures = [
-        'app.FeedSubscriptions',
-        'app.Feeds',
+        'plugin.Feeds.FeedSubscriptions',
+        'plugin.Feeds.Feeds',
         'app.Users',
-        'app.FeedCategories',
-        'app.SavedFeedItems',
-        'app.FeedItems',
-        'app.FeedSubscriptionsFeedItems',
+        'plugin.Feeds.FeedCategories',
+        'plugin.Feeds.SavedFeedItems',
+        'plugin.Feeds.FeedItems',
+        'plugin.Feeds.FeedSubscriptionsFeedItems',
     ];
 
     /**

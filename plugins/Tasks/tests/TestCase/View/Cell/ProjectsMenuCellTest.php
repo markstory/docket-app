@@ -18,7 +18,7 @@ class ProjectsMenuCellTest extends TestCase
 {
     use FactoryTrait;
 
-    protected array $fixtures = ['app.Users', 'app.Projects'];
+    protected array $fixtures = ['app.Users', 'plugin.Tasks.Projects'];
     /**
      * Request mock
      *

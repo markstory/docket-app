@@ -5,7 +5,7 @@ declare(strict_types=1);
  * @var \Cake\View\View $this
  * @var array<\Feeds\Model\Entity\FeedItem> $feedItems
  */
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 $this->assign('title', 'Feeds');
 
 $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);

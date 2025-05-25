@@ -10,7 +10,7 @@ use Feeds\Model\Entity\FeedSubscription;
 $isHtmx = $this->request->is('htmx');
 $discoverUrl = ['_name' => 'feedsubscriptions:discover'];
 
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 if ($isHtmx) {
     $this->setLayout('modal');
 }

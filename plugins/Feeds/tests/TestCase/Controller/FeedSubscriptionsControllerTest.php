@@ -22,13 +22,13 @@ class FeedSubscriptionsControllerTest extends TestCase
      * @var list<string>
      */
     protected array $fixtures = [
-        'app.SavedFeedItems',
-        'app.FeedSubscriptionsFeedItems',
-        'app.FeedItemUsers',
-        'app.FeedItems',
-        'app.FeedSubscriptions',
-        'app.Feeds',
-        'app.FeedCategories',
+        'plugin.Feeds.SavedFeedItems',
+        'plugin.Feeds.FeedSubscriptionsFeedItems',
+        'plugin.Feeds.FeedItemUsers',
+        'plugin.Feeds.FeedItems',
+        'plugin.Feeds.FeedSubscriptions',
+        'plugin.Feeds.Feeds',
+        'plugin.Feeds.FeedCategories',
         'app.Users',
     ];
 

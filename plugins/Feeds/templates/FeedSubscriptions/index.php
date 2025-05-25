@@ -3,7 +3,7 @@
  * @var \App\View\AppView $this
  * @var iterable<\Feeds\Model\Entity\FeedSubscription> $feedSubscriptions
  */
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 $this->assign('title', 'All Feeds');
 
 $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);

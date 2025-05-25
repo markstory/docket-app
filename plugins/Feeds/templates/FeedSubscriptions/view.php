@@ -5,7 +5,7 @@
  * @var \Cake\Datasource\Paging\PaginatedResultSet<\Feeds\Model\Entity\FeedItem> $feedItems
  * @property \Cake\View\Helper\PaginatorHelper $Paginator
  */
-$this->setLayout('feedreader');
+$this->setLayout('Feeds.feedreader');
 
 $this->assign('title', 'Feed - ' . $feedSubscription->alias);
 

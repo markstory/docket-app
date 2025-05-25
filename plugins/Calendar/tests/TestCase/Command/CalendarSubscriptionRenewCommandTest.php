@@ -18,9 +18,9 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
 
     public array $fixtures = [
         'app.Users',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarSubscriptions',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarSubscriptions',
     ];
 
     /**

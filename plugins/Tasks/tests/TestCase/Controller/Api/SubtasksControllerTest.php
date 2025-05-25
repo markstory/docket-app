@@ -26,9 +26,9 @@ class SubtasksControllerTest extends TestCase
      * @var array
      */
     protected array $fixtures = [
-        'app.Subtasks',
-        'app.Tasks',
-        'app.Projects',
+        'plugin.Tasks.Subtasks',
+        'plugin.Tasks.Tasks',
+        'plugin.Tasks.Projects',
         'app.Users',
     ];
 

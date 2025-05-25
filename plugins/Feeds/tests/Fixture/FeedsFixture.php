@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Test\Fixture;
+namespace Feeds\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * TasksFixture
+ * FeedsFixture
  */
-class TasksFixture extends TestFixture
+class FeedsFixture extends TestFixture
 {
 }

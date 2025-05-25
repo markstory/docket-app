@@ -19,10 +19,10 @@ class CalendarServiceTest extends TestCase
 
     public array $fixtures = [
         'app.Users',
-        'app.CalendarProviders',
-        'app.CalendarSources',
-        'app.CalendarSubscriptions',
-        'app.CalendarItems',
+        'plugin.Calendar.CalendarProviders',
+        'plugin.Calendar.CalendarSources',
+        'plugin.Calendar.CalendarSubscriptions',
+        'plugin.Calendar.CalendarItems',
     ];
 
     /**
