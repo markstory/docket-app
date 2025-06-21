@@ -314,7 +314,7 @@ class CalendarService
         // Check if the user has a sync token for this source.
         // If so use it to continue syncing.
         if ($source->sync_token) {
-            $options = ['syncToken' => $source->sync_token];
+            $options['syncToken'] = $source->sync_token;
         }
 
         try {
@@ -335,15 +335,19 @@ class CalendarService
                             if ($e->getCode() == 410) {
                                 // Start a full sync as our sync token was not good
                                 $options = $defaults;
+                                $results = null;
                                 continue;
                             }
                             throw $e;
                         }
+                        if ($results === null) {
+                            break;
+                        }
+
                         $instanceOpts = [
                             'timeMin' => $time->format(DateTime::RFC3339),
                             'timeMax' => $time->modify('+3 months')->format(DateTime::RFC3339),
                         ];
-                        assert($results instanceof GoogleEvents);
                         foreach ($results as $event) {
                             $instances = [$event];
                             if (!empty($event->getRecurrence())) {
@@ -353,25 +357,17 @@ class CalendarService
                                     $instanceOpts
                                 );
                             }
-                            foreach ($results as $event) {
-                                $instances = [$event];
-                                if (!empty($event->getRecurrence())) {
-                                    $instances = $calendar->events->instances(
-                                        $source->provider_id,
-                                        $event->id,
-                                        $instanceOpts
-                                    );
-                                }
-                                foreach ($instances as $instance) {
-                                    $this->syncEvent($source, $instance);
-                                }
+                            foreach ($instances as $instance) {
+                                $this->syncEvent($source, $instance);
                             }
                         }
                         $pageToken = $results->getNextPageToken();
                     } while ($pageToken !== null);
 
                     // Save the nextSyncToken for our next sync.
-                    $source->sync_token = $results->getNextSyncToken();
+                    if ($results) {
+                        $source->sync_token = $results->getNextSyncToken();
+                    }
                     $source->last_sync = DateTime::now();
                     $this->CalendarSources->saveOrFail($source);
 
