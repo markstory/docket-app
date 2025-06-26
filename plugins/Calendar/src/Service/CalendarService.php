@@ -314,7 +314,9 @@ class CalendarService
         // Check if the user has a sync token for this source.
         // If so use it to continue syncing.
         if ($source->sync_token) {
-            $options['syncToken'] = $source->sync_token;
+            $options = [
+                'syncToken' => $source->sync_token,
+            ];
         }
 
         try {

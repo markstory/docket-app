@@ -150,6 +150,30 @@ class CalendarServiceTest extends TestCase
         );
     }
 
+    public function testSyncWithSyncToken(): void
+    {
+        // The response mock URLs are load bearing here.
+        $this->loadResponseMocks('controller_calendarsources_sync_withsynctoken.yml');
+        $provider = $this->makeCalendarProvider(1, 'test@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'primary', [
+            'provider_id' => 'calendar-1',
+            'sync_token' => 'next-sync-token',
+        ]);
+        $existing = $this->makeCalendarItem($source->id, [
+            'provider_id' => 'calendar-event-1',
+            'title' => 'old',
+            'html_link' => 'old',
+            'start_time' => '2019-01-01 12:13:14',
+            'end_time' => '2019-01-01 13:13:14',
+        ]);
+        $this->calendar->syncEvents($source);
+        $updated = $this->fetchTable('Calendar.CalendarSources')->get($source->id);
+        $this->assertNotNull($updated->last_sync);
+
+        $items = $this->getItems($source);
+        $this->assertCount(3, $items);
+    }
+
     public function testSyncRemoveCancelled(): void
     {
         $this->loadResponseMocks('controller_calendarsources_sync.yml');
