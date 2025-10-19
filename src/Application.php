@@ -169,19 +169,24 @@ class Application extends BaseApplication implements
         }
         $service = new AuthenticationService($config);
 
+        // There are two possible login URLs. The default one is for HTML views.
+        // And the other is for the in-progress mobile app.
+        $loginUrl = '/login';
+        if (($request instanceof ServerRequest) && $request->getParam('prefix') == 'Api') {
+            $loginUrl = '/api/tokens/add';
+        }
+
         $fields = [
             AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
             AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
         ];
-        // Load identifiers
-        $service->loadIdentifier('Authentication.Password', [
+        $passwordIdentifier = [
+            'fields' => $fields,
             'resolver' => [
                 'className' => 'Authentication.Orm',
                 'userModel' => 'Users',
             ],
-            'fields' => $fields,
-        ]);
-        $service->loadIdentifier('ApiToken');
+        ];
 
         // Load the authenticators, you want session first
         $service->loadAuthenticator('Authentication.Session', [
@@ -189,28 +194,33 @@ class Application extends BaseApplication implements
             'fields' => [
                 AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
             ],
+            'identifier' => [
+                'Authentication.Password' => $passwordIdentifier,
+            ],
         ]);
         $service->loadAuthenticator('Authentication.Token', [
             'queryParam' => 'token',
             'header' => 'Authorization',
             'tokenPrefix' => 'Bearer',
+            'identifier' => [
+                'ApiToken' => [],
+                // Necessary for token creation.
+                'Authentication.Password' => $passwordIdentifier,
+            ],
         ]);
-        // There are two possible login URLs. The default one is for HTML views.
-        // And the other is for the in-progress mobile app.
-        $loginUrl = '/login';
-        if (($request instanceof ServerRequest) && $request->getParam('prefix') == 'Api') {
-            $loginUrl = '/api/tokens/add';
-        }
         $service->loadAuthenticator('Authentication.Form', [
+            'fields' => $fields,
             'loginUrl' => $loginUrl,
-            'fields' => [
-                AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
-                AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+            'identifier' => [
+                'Authentication.Password' => $passwordIdentifier,
             ],
         ]);
         $service->loadAuthenticator('Authentication.Cookie', [
             'fields' => $fields,
             'loginUrl' => '/login',
+            'identifier' => [
+                'Authentication.Password' => $passwordIdentifier,
+            ],
         ]);
 
         return $service;
