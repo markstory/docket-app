@@ -189,6 +189,6 @@ jobs:
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --ignore=tests/js src/ tests/
 
-    - name: Run psalm
+    - name: Run phpstan
       if: success() || failure()
-      run: tools/psalm --output-format=github
+      run: tools/phpstan analyse

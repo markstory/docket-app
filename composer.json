@@ -54,7 +54,10 @@
         ],
         "cs-check": "phpcs --colors -p  src/ tests/",
         "cs-fix": "phpcbf --colors -p src/ tests/",
-        "psalm": "tools/psalm --show-info=false",
+        "phpstan": "tools/phpstan analyse",
+        "stan": "@phpstan",
+        "stan-baseline": "tools/phpstan --generate-baseline",
+        "stan-setup": "phive install",
         "test": "phpunit --colors=always"
     },
     "config": {
