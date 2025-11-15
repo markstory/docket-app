@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class AddUnreadItemCountToFeedSubscriptions extends AbstractMigration
+class AddUnreadItemCountToFeedSubscriptions extends BaseMigration
 {
     /**
      * Change Method.

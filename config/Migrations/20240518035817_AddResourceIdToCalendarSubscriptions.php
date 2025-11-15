@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class AddResourceIdToCalendarSubscriptions extends AbstractMigration
+class AddResourceIdToCalendarSubscriptions extends BaseMigration
 {
     /**
      * Change Method.
