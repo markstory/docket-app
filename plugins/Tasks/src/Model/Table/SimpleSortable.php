@@ -63,14 +63,14 @@ class SimpleSortable
             // Move other items down, as the current item is going up
             // or is being moved from another group.
             $query
-                ->set([$field => $query->newExpr("{$field} + 1")])
+                ->set([$field => $query->expr("{$field} + 1")])
                 ->where(function ($exp) use ($current, $field, $targetOffset) {
                     return $exp->between($field, $targetOffset, $current);
                 });
         } elseif ($difference < 0) {
             // Move other items up, as current item is going down
             $query
-                ->set([$field => $query->newExpr("{$field} - 1")])
+                ->set([$field => $query->expr("{$field} - 1")])
                 ->where(function ($exp) use ($current, $field, $targetOffset) {
                     return $exp->between($field, $current, $targetOffset);
                 });

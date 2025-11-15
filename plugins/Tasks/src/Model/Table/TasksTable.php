@@ -374,20 +374,20 @@ class TasksTable extends Table
             // Moving an item to a new list. Shift the remainder of
             // the new list down.
             $query
-                ->set([$property => $query->newExpr($property . ' + 1')])
+                ->set([$property => $query->expr($property . ' + 1')])
                 ->where(["{$property} >=" => $targetOffset]);
         } elseif ($difference >= 0) {
             // Move other items down, as the current item is going up
             // or is being moved from another group.
             $query
-                ->set([$property => $query->newExpr($property . ' + 1')])
+                ->set([$property => $query->expr($property . ' + 1')])
                 ->where(function ($exp) use ($property, $current, $targetOffset) {
                     return $exp->between($property, $targetOffset, $current);
                 });
         } elseif ($difference < 0) {
             // Move other items up, as current item is going down
             $query
-                ->set([$property => $query->newExpr($property . ' - 1')])
+                ->set([$property => $query->expr($property . ' - 1')])
                 ->where(function ($exp) use ($property, $current, $targetOffset) {
                     return $exp->between($property, $current, $targetOffset);
                 });
