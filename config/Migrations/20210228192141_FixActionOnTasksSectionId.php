@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class FixActionOnTasksSectionId extends AbstractMigration
+class FixActionOnTasksSectionId extends BaseMigration
 {
     /**
      * Change Method.

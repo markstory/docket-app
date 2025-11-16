@@ -184,11 +184,11 @@ jobs:
       run: composer install --no-progress --ignore-platform-req=php
 
     - name: Install PHP tools with phive.
-      run: phive install --trust-gpg-keys '12CE0F1D262429A5'
+      run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --ignore=tests/js src/ tests/
 
-    - name: Run psalm
+    - name: Run phpstan
       if: success() || failure()
-      run: tools/psalm --output-format=github
+      run: tools/phpstan analyse

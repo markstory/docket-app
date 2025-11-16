@@ -1,0 +1,139 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Console/Installer.php
+
+		-
+			message: '#^Method App\\Controller\\Api\\ApiTokensController\:\:delete\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/Api/ApiTokensController.php
+
+		-
+			message: '#^Method App\\Controller\\AppController\:\:getReferer\(\) has parameter \$default with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/AppController.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$uid\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controller/UsersController.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$val\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controller/UsersController.php
+
+		-
+			message: '#^Method App\\Controller\\UsersController\:\:login\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/UsersController.php
+
+		-
+			message: '#^Method App\\Controller\\UsersController\:\:logout\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/UsersController.php
+
+		-
+			message: '#^Method App\\Controller\\UsersController\:\:verifyEmail\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/UsersController.php
+
+		-
+			message: '#^Method App\\Error\\SentryErrorLogger\:\:logMessage\(\) has parameter \$level with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Error/SentryErrorLogger.php
+
+		-
+			message: '#^Method App\\Model\\Behavior\\SluggableBehavior\:\:beforeSave\(\) has parameter \$entity with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Model/Behavior/SluggableBehavior.php
+
+		-
+			message: '#^PHPDoc tag @property for property App\\Model\\Entity\\SavedFeedItem\:\:\$feed_subscription contains unknown class App\\Model\\Entity\\FeedSubscription\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Model/Entity/SavedFeedItem.php
+
+		-
+			message: '#^Method App\\Model\\Entity\\User\:\:_getAvatarHash\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Model/Entity/User.php
+
+		-
+			message: '#^Method App\\Model\\Entity\\User\:\:setAuthorization\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Model/Entity/User.php
+
+		-
+			message: '#^Method App\\Model\\Entity\\User\:\:unverifiedEmailChecksum\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Model/Entity/User.php
+
+		-
+			message: '#^PHPDoc tag @property for property App\\Model\\Entity\\User\:\:\$projects contains unknown class App\\Model\\Entity\\Project\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Model/Entity/User.php
+
+		-
+			message: '#^Parameter \#1 \$string of function base64_encode expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Model/Entity/User.php
+
+		-
+			message: '#^Method App\\Model\\Table\\ApiTokensTable\:\:findByToken\(\) has parameter \$token with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Model/Table/ApiTokensTable.php
+
+		-
+			message: '#^Method App\\Model\\Table\\ApiTokensTable\:\:generateApiToken\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Model/Table/ApiTokensTable.php
+
+		-
+			message: '#^PHPDoc tag @property for property App\\Model\\Table\\ApiTokensTable\:\:\$Users contains unresolvable type\.$#'
+			identifier: propertyTag.unresolvableType
+			count: 1
+			path: src/Model/Table/ApiTokensTable.php
+
+		-
+			message: '#^PHPDoc tag @property for property App\\Model\\Table\\SavedFeedItemsTable\:\:\$FeedSubscriptions contains unknown class App\\Model\\Table\\FeedSubscriptionsTable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Model/Table/SavedFeedItemsTable.php
+
+		-
+			message: '#^Access to an undefined property App\\Model\\Entity\\User\:\:\$current_password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Model/Table/UsersTable.php
+
+		-
+			message: '#^PHPDoc tag @property for property App\\Model\\Table\\UsersTable\:\:\$Projects contains unresolvable type\.$#'
+			identifier: propertyTag.unresolvableType
+			count: 1
+			path: src/Model/Table/UsersTable.php
+
+		-
+			message: '#^Access to an undefined property Cake\\View\\View\:\:\$Date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/View/Widget/DueOnWidget.php

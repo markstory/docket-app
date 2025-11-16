@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 /**
  * Add the tables used for calendar syncing.
  */
-class AddCalendarModels extends AbstractMigration
+class AddCalendarModels extends BaseMigration
 {
     public function change()
     {
