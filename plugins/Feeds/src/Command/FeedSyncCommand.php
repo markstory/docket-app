@@ -9,6 +9,7 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Datasource\Paging\SimplePaginator;
+use Cake\Http\Exception\BadRequestException;
 use Feeds\Service\FeedService;
 use RuntimeException;
 use function Sentry\captureException;
@@ -71,6 +72,8 @@ class FeedSyncCommand extends Command
                 try {
                     $this->feedService->refreshFeed($feed);
                     $io->verbose("Sync {$feed->url} complete");
+                } catch (BadRequestException $e) {
+                    $io->error("Sync for {$feed->url} failed, error={$e->getMessage()}");
                 } catch (RuntimeException $e) {
                     captureException($e);
                     $io->error("Sync for {$feed->url} failed, error={$e->getMessage()}");
