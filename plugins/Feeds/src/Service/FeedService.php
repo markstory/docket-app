@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace Feeds\Service;
 
 use Cake\Http\Client;
+use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
+use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use Cake\Utility\Xml;
@@ -16,12 +18,14 @@ use Exception;
 use Feeds\Model\Entity\Feed;
 use Feeds\Model\Table\FeedsTable;
 use Laminas\Diactoros\Uri;
+use Psr\Log\LogLevel;
 use RuntimeException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class FeedService
 {
     use LocatorAwareTrait;
+    use LogTrait;
 
     private FeedsTable $feeds;
     private Client $client;
@@ -48,11 +52,17 @@ class FeedService
     protected function fetchUrl(string $url): Response
     {
         // TODO prevent ssrf on internal networks.
-        $res = $this->client->get($url, [], [
-            'timeout' => $this->fetchTimeout,
-            'redirect' => 3,
-        ]);
-        if (!$res->isOk()) {
+        try {
+            $res = $this->client->get($url, [], [
+                'timeout' => $this->fetchTimeout,
+                'redirect' => 3,
+            ]);
+            if (!$res->isOk()) {
+                throw new BadRequestException("Could not fetch $url");
+            }
+        } catch (NetworkException $e) {
+            $this->log("Failed to refresh {$url} {$e->getMessage()}", LogLevel::INFO);
+
             throw new BadRequestException("Could not fetch $url");
         }
 
