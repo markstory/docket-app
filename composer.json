@@ -13,7 +13,7 @@
         "cakephp/plugin-installer": "^2.0",
         "google/apiclient": "^2.0",
         "markstory/cakephp-feature-flags": "dev-main",
-        "paragonie/csp-builder": "^2.5",
+        "paragonie/csp-builder": "^3.0.0",
         "sentry/sentry": "^4.8",
         "symfony/html-sanitizer": "^6.4"
     },
@@ -24,8 +24,8 @@
         "cakephp/cakephp-codesniffer": "~5.1.0",
         "cakephp/debug_kit": "^5.0",
         "cakephp/repl": "^2.0",
-        "php-vcr/php-vcr": "^1.5",
-        "phpunit/phpunit": "^10.1.0 <=10.5.3",
+        "php-vcr/php-vcr": "^1.7.0",
+        "phpunit/phpunit": "^11.5.3",
         "symfony/panther": "^2.1.0"
     },
     "autoload": {
@@ -63,7 +63,7 @@
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "8.2.6"
+            "php": "8.2.29"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
