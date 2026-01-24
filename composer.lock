@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f3cbd681867fb600cfbd8fe64f2e62e",
+    "content-hash": "451e25db962120c95eb91520dc7f0efd",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -141,16 +141,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "dev-5.next",
+            "version": "5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "96495b8917b7476282462eb8bcfe810a1b22dc91"
+                "reference": "ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/96495b8917b7476282462eb8bcfe810a1b22dc91",
-                "reference": "96495b8917b7476282462eb8bcfe810a1b22dc91",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0",
+                "reference": "ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0",
                 "shasum": ""
             },
             "require": {
@@ -258,7 +258,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2025-11-10T07:16:18+00:00"
+            "time": "2026-01-14T05:03:03+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -321,27 +321,27 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "5.x-dev",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "93089cc7a5387d53275978af502f28c02c575464"
+                "reference": "5958b1480191de401701b81b24949e4e1ffc4b2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/93089cc7a5387d53275978af502f28c02c575464",
-                "reference": "93089cc7a5387d53275978af502f28c02c575464",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/5958b1480191de401701b81b24949e4e1ffc4b2e",
+                "reference": "5958b1480191de401701b81b24949e4e1ffc4b2e",
                 "shasum": ""
             },
             "require": {
-                "cakephp/cache": "dev-5.next as 5.3.0",
-                "cakephp/database": "dev-5.next as 5.3.0",
-                "cakephp/orm": "dev-5.next as 5.3.0",
+                "cakephp/cache": "^5.3.0",
+                "cakephp/database": "^5.3.0",
+                "cakephp/orm": "^5.3.0",
                 "php": ">=8.2"
             },
             "require-dev": {
                 "cakephp/bake": "^3.3",
-                "cakephp/cakephp": "dev-5.next as 5.3.0",
+                "cakephp/cakephp": "^5.3.0",
                 "cakephp/cakephp-codesniffer": "^5.0",
                 "phpunit/phpunit": "^11.5.3 || ^12.1.3"
             },
@@ -378,7 +378,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2025-11-13T04:25:02+00:00"
+            "time": "2026-01-21T04:03:20+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -431,16 +431,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.5.9",
+            "version": "1.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "1905981ee626e6f852448b7aaa978f8666c5bc54"
+                "reference": "961a5e4056dd2e4a2eedcac7576075947c28bf63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/1905981ee626e6f852448b7aaa978f8666c5bc54",
-                "reference": "1905981ee626e6f852448b7aaa978f8666c5bc54",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/961a5e4056dd2e4a2eedcac7576075947c28bf63",
+                "reference": "961a5e4056dd2e4a2eedcac7576075947c28bf63",
                 "shasum": ""
             },
             "require": {
@@ -487,7 +487,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.5.9"
+                "source": "https://github.com/composer/ca-bundle/tree/1.5.10"
             },
             "funding": [
                 {
@@ -499,7 +499,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-06T11:46:17+00:00"
+            "time": "2025-12-08T15:06:51+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -9046,24 +9046,9 @@
             "time": "2025-10-29T15:56:47+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "cakephp/cakephp",
-            "version": "dev-5.next",
-            "alias": "5.3.0",
-            "alias_normalized": "5.3.0.0"
-        },
-        {
-            "package": "cakephp/migrations",
-            "version": "5.9999999.9999999.9999999-dev",
-            "alias": "5.0.0",
-            "alias_normalized": "5.0.0.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cakephp/cakephp": 20,
-        "cakephp/migrations": 20,
         "markstory/cakephp-feature-flags": 20
     },
     "prefer-stable": false,
