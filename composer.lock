@@ -141,16 +141,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "5.3.1",
+            "version": "5.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0"
+                "reference": "f85d7a027178a08a32e590a8e3f3aa5dad5fa532"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0",
-                "reference": "ae91c0950fd1a4ee9b97b31a8db744721cdb9bd0",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/f85d7a027178a08a32e590a8e3f3aa5dad5fa532",
+                "reference": "f85d7a027178a08a32e590a8e3f3aa5dad5fa532",
                 "shasum": ""
             },
             "require": {
@@ -203,7 +203,7 @@
                 "mikey179/vfsstream": "^1.6.12",
                 "mockery/mockery": "^1.6",
                 "paragonie/csp-builder": "^2.3 || ^3.0",
-                "phpunit/phpunit": "^11.5.3 || ^12.1.3"
+                "phpunit/phpunit": "^11.5.3 || ^12.1.3 || ^13.0"
             },
             "suggest": {
                 "ext-curl": "To enable more efficient network calls in Http\\Client.",
@@ -213,7 +213,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-5.next": "5.3.x-dev"
+                    "dev-5.next": "5.4.x-dev"
                 }
             },
             "autoload": {
@@ -258,7 +258,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2026-01-14T05:03:03+00:00"
+            "time": "2026-03-19T02:50:02+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -321,21 +321,21 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "5.0.0",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "5958b1480191de401701b81b24949e4e1ffc4b2e"
+                "reference": "c8cfb9359cec6a880f67eb25210fb02f260a5bd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/5958b1480191de401701b81b24949e4e1ffc4b2e",
-                "reference": "5958b1480191de401701b81b24949e4e1ffc4b2e",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/c8cfb9359cec6a880f67eb25210fb02f260a5bd8",
+                "reference": "c8cfb9359cec6a880f67eb25210fb02f260a5bd8",
                 "shasum": ""
             },
             "require": {
                 "cakephp/cache": "^5.3.0",
-                "cakephp/database": "^5.3.0",
+                "cakephp/database": "^5.3.2",
                 "cakephp/orm": "^5.3.0",
                 "php": ">=8.2"
             },
@@ -378,7 +378,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2026-01-21T04:03:20+00:00"
+            "time": "2026-03-12T21:10:11+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
