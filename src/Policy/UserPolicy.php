@@ -19,7 +19,7 @@ class UserPolicy
      * @param \App\Model\Entity\User $user
      * @return bool
      */
-    public function canAdd(IdentityInterface | null $identity, User $user): bool
+    public function canAdd(?IdentityInterface $identity, User $user): bool
     {
         // TODO use DI container to get feature manager
         return Configure::read('Features.create-user') === true;
