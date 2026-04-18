@@ -21,6 +21,7 @@ class UserPolicy
      */
     public function canAdd(IdentityInterface | null $identity, User $user): bool
     {
+        // TODO use DI container to get feature manager
         return Configure::read('Features.create-user') === true;
     }
 
