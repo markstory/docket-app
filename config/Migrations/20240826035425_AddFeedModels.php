@@ -29,7 +29,7 @@ class AddFeedModels extends BaseMigration
                 'default' => null,
                 'null' => true,
             ])
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
         $table->create();
 
         // Items in each feed - shared by all users
@@ -47,7 +47,7 @@ class AddFeedModels extends BaseMigration
                 'null' => false,
             ])
             ->addColumn('thumbnail_image_url', 'string', ['null' => true])
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
 
         $table->addForeignKey(['feed_id'], 'feeds');
         $table->create();
@@ -68,7 +68,7 @@ class AddFeedModels extends BaseMigration
                 'null' => false,
                 'default' => 0,
             ])
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
         $table->addForeignKey(['user_id'], 'users');
         $table->create();
 
@@ -89,7 +89,7 @@ class AddFeedModels extends BaseMigration
             ->addColumn('ranking', 'integer', [
                 'null' => false,
             ])
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
         $table->addForeignKey(['feed_id'], 'feeds');
         $table->addForeignKey(['feed_category_id'], 'feed_categories');
         $table->addForeignKey(['user_id'], 'users');
@@ -115,7 +115,7 @@ class AddFeedModels extends BaseMigration
                 'null' => false,
                 'default' => false,
             ])
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
         $table->addForeignKey(['feed_subscription_id'], 'feed_subscriptions');
         $table->addForeignKey(['feed_item_id'], 'feed_items');
         $table->create();
@@ -127,7 +127,7 @@ class AddFeedModels extends BaseMigration
             ])
             ->addColumn('title', 'string')
             ->addColumn('body', 'text')
-            ->addTimestamps();
+            ->addTimestamps('created', 'modified');
         $table->addForeignKey(['feed_subscription_id'], 'feed_subscriptions');
         $table->create();
     }

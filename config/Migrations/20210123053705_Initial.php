@@ -172,7 +172,7 @@ class Initial extends BaseMigration
             ->addColumn('child_order', 'integer', [
                 'default' => '0',
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('day_order', 'integer', [
                 'default' => '0',
