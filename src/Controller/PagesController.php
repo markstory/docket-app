@@ -22,6 +22,7 @@ use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\View\Exception\MissingTemplateException;
+use FeatureFlags\FeatureManagerInterface;
 
 /**
  * Static content controller
@@ -50,18 +51,9 @@ class PagesController extends AppController
     }
 
     /**
-     * Displays a view
-     *
-     * @param string ...$path Path segments.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Http\Exception\ForbiddenException When a directory traversal attempt.
-     * @throws \Cake\View\Exception\MissingTemplateException When the view file could not
-     *   be found and in debug mode.
-     * @throws \Cake\Http\Exception\NotFoundException When the view file could not
-     *   be found and not in debug mode.
-     * @throws \Cake\View\Exception\MissingTemplateException In debug mode.
+     * Displays a static view page
      */
-    public function display(string ...$path): ?Response
+    public function display(FeatureManagerInterface $features, string ...$path): ?Response
     {
         if (!$path) {
             return $this->redirect('/');
@@ -77,7 +69,7 @@ class PagesController extends AppController
         if (!empty($path[1])) {
             $subpage = $path[1];
         }
-        $this->set(compact('page', 'subpage'));
+        $this->set(compact('page', 'subpage', 'features'));
 
         try {
             return $this->render(implode('/', $path));
