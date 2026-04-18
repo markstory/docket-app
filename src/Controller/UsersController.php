@@ -9,6 +9,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\View\JsonView;
+use FeatureFlags\FeatureManagerInterface;
 use RuntimeException;
 
 /**
@@ -209,7 +210,7 @@ class UsersController extends AppController
         $this->set('user', $user);
     }
 
-    public function login()
+    public function login(FeatureManagerInterface $features)
     {
         $this->Authorization->skipAuthorization();
 
@@ -234,6 +235,7 @@ class UsersController extends AppController
         if ($this->request->is('post') && !($result && $result->isValid())) {
             $this->Flash->error(__('Invalid username or password'));
         }
+        $this->set('canCreateUser', $features->has('create-user'));
     }
 
     public function logout()

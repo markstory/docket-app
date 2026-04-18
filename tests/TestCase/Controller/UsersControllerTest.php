@@ -49,6 +49,26 @@ class UsersControllerTest extends TestCase
         $this->assertSession('mark@example.com', 'Auth.email');
     }
 
+    public function testLoginGetWithCreateUser()
+    {
+        Configure::write('Features.create-user', true);
+
+        $this->get('/login');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Login');
+        $this->assertResponseContains('Sign up');
+    }
+
+    public function testLoginGetNoCreateUser()
+    {
+        Configure::write('Features.create-user', false);
+
+        $this->get('/login');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Login');
+        $this->assertResponseNotContains('Sign up');
+    }
+
     public function testLoginRedirect()
     {
         $this->enableCsrfToken();

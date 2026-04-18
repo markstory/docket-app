@@ -21,10 +21,12 @@ $this->assign('title', 'Login');
         ['class' => 'button button-muted']
     ) ?>
 </div>
+<?php if ($canCreateUser) : ?>
 <div class="button-bar">
     Don't have an account?
     <?= $this->Html->link('Sign up', ['_path' => 'Users::add'], ['class' => 'button button-muted']) ?>
 </div>
+<?php endif; ?>
 <?= $this->Form->end() ?>
 
 <?= $this->Html->scriptStart() ?>
