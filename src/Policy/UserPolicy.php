@@ -5,6 +5,7 @@ namespace App\Policy;
 
 use App\Model\Entity\User;
 use Authorization\IdentityInterface;
+use Cake\Core\Configure;
 
 /**
  * User policy
@@ -12,7 +13,19 @@ use Authorization\IdentityInterface;
 class UserPolicy
 {
     /**
-     * Check if $user can edit Task
+     * Check if $user can be created
+     *
+     * @param \App\Model\Entity\User|null  $identity The user.
+     * @param \App\Model\Entity\User $user
+     * @return bool
+     */
+    public function canAdd(IdentityInterface | null $identity, User $user): bool
+    {
+        return Configure::read('Features.create-user') === true;
+    }
+
+    /**
+     * Check if $user can be edited
      *
      * @param \App\Model\Entity\User  $identity The user.
      * @param \App\Model\Entity\User $user

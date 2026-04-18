@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\FactoryTrait;
+use Cake\Core\Configure;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -75,7 +76,7 @@ class UsersControllerTest extends TestCase
     }
 
     /**
-     * Test add method
+     * Test add with validation errors
      *
      * @return void
      */
@@ -94,6 +95,29 @@ class UsersControllerTest extends TestCase
         $this->assertFlashElement('flash/error');
         $this->assertNotEmpty($this->viewVariable('errors'));
         $this->assertMailCount(0);
+    }
+
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testAddCreateUserDisabled(): void
+    {
+        Configure::write('Features.create-user', false);
+
+        $this->enableCsrfToken();
+        $this->enableRetainFlashMessages();
+        $this->post('/users/add', [
+            'name' => 'Wally Example',
+            'email' => 'wally@example.com',
+            'password' => 'password123',
+            'confirm_password' => 'password123',
+            'timezone' => 'UTC',
+        ]);
+        $this->assertResponseCode(403);
+        $this->assertMailCount(0);
+        $this->assertEquals(0, $this->Users->findByEmail('wally@example.com')->count());
     }
 
     /**

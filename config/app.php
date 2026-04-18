@@ -401,4 +401,9 @@ return [
         ['id' => 16, 'name' => 'brick', 'code' => '#b60909'],
         ['id' => 17, 'name' => 'flame', 'code' => '#f14949'],
     ],
+
+    'Features' => [
+        // Whether or not new users can be created.
+        'create-user' => true,
+    ],
 ];

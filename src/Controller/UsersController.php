@@ -41,9 +41,9 @@ class UsersController extends AppController
      */
     public function add(): ?Response
     {
-        $this->Authorization->skipAuthorization();
-
         $user = $this->Users->newEmptyEntity();
+        $this->Authorization->authorize($user);
+
         if ($this->request->is('post')) {
             $user = $this->Users->newEntity($this->request->getData(), [
                 'fields' => ['name', 'email', 'password', 'timezone'],
