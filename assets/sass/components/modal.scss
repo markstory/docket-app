@@ -32,6 +32,8 @@
 
 .modal-sheet {
   width: 75%;
+  /* Dropdowns overflow the modal window in desktop */
+  overflow: visible;
   max-width: 850px;
   min-height: 80%;
 }
@@ -41,6 +43,7 @@
 }
 @media (max-width: $breakpoint-phone) {
   .modal-sheet {
+    overflow: scroll;
     height: 95%;
     width: 95%;
   }

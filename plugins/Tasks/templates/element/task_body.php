@@ -9,6 +9,6 @@
     'rows' => 1,
     'templates' => [
         'formGroup' => '{{label}}{{input}}{{error}}',
-        'inputContainer' => '<markdown-text>{{content}}</markdown-text>',
+        'inputContainer' => '<markdown-text maxheight="1000">{{content}}</markdown-text>',
     ],
 ]) ?>

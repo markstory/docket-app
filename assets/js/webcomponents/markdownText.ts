@@ -5,17 +5,20 @@ class MarkdownText extends HTMLElement {
   private previewElement: HTMLElement | null = null;
 
   connectedCallback() {
+    var maxheight = parseInt(this.getAttribute('maxheight') ?? '500', 10) ?? 500;
     var input = this.querySelector('textarea');
     if (!input) {
       console.error('Missing textarea element');
       return;
     }
+    var cappedHeight =
+      Math.min(window.innerHeight * 0.77, maxheight, input.scrollHeight) + 'px';
     // Setup input events.
-    input.style.height = input.scrollHeight + 'px';
+    input.style.height = cappedHeight;
     input.addEventListener('input', evt => {
       const el = evt.target as HTMLInputElement;
       el.style.height = '0';
-      el.style.height = el.scrollHeight + 'px';
+      el.style.height = cappedHeight;
     });
     input.addEventListener('blur', () => {
       this.showPreview = true;
@@ -26,7 +29,11 @@ class MarkdownText extends HTMLElement {
     preview.addEventListener('click', evt => {
       const target = evt.target;
       // Don't change modes on links
-      if (target instanceof HTMLElement && target.nodeName == 'A' && !target.classList.contains('button-focusreveal')) {
+      if (
+        target instanceof HTMLElement &&
+        target.nodeName == 'A' &&
+        !target.classList.contains('button-focusreveal')
+      ) {
         return;
       }
       // Toggle to update mode
