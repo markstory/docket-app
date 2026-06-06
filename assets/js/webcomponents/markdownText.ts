@@ -11,14 +11,17 @@ class MarkdownText extends HTMLElement {
       console.error('Missing textarea element');
       return;
     }
-    var cappedHeight =
-      Math.min(window.innerHeight * 0.77, maxheight, input.scrollHeight) + 'px';
+
+    var cappedHeight = (scrollHeight: number): string => {
+      return Math.min(window.innerHeight * 0.75, scrollHeight, maxheight) + 'px';
+    };
+
     // Setup input events.
-    input.style.height = cappedHeight;
+    input.style.height = cappedHeight(input.scrollHeight);
     input.addEventListener('input', evt => {
       const el = evt.target as HTMLInputElement;
       el.style.height = '0';
-      el.style.height = cappedHeight;
+      el.style.height = cappedHeight(el.scrollHeight);
     });
     input.addEventListener('blur', () => {
       this.showPreview = true;

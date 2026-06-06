@@ -46,6 +46,11 @@
     overflow: scroll;
     height: 95%;
     width: 95%;
+    padding: calc($space * 2) calc($space * 3);
+  }
+  .modal-close {
+    top: -8px;
+    right: -8px;
   }
 }
 
