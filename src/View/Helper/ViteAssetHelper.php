@@ -12,7 +12,7 @@ use RuntimeException;
 class ViteAssetHelper extends Helper
 {
     /**
-     * @var array<array-key, mixed>
+     * @var array<array-key, array<string, mixed>|string>
      */
     protected array $helpers = ['Html'];
 
