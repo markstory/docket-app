@@ -60,22 +60,18 @@ class CalendarSubscriptionRenewCommand extends Command
     {
         $this->CalendarSubscriptions = $this->fetchTable('Calendar.CalendarSubscriptions');
 
-        $expiring = $this->CalendarSubscriptions->find('expiring')
-            ->select(['CalendarSubscriptions.calendar_source_id']);
-
-        $results = $this->CalendarSubscriptions->CalendarSources
-            ->find()
-            ->where(['CalendarSources.id IN' => $expiring])
-            ->contain('CalendarProviders')
+        $results = $this->CalendarSubscriptions
+            ->find('expiring')
+            ->contain(['CalendarSources.CalendarProviders'])
             ->all();
 
         $io->verbose('Starting calendar subscription renewal');
         foreach ($results as $row) {
-            $io->out("Renewing subscription for source id={$row->id}");
-            $provider = $row->calendar_provider;
+            $io->out("Renewing subscription for source id={$row->calendar_source_id}");
+            $provider = $row->calendar_source->calendar_provider;
             $this->calendarService->setAccessToken($provider);
             try {
-                $this->calendarService->createSubscription($row);
+                $this->calendarService->createSubscription($row->calendar_source);
                 $io->verbose('New subscription created.');
             } catch (RuntimeException $e) {
                 $io->out('<error>Could not create subscription</error>');
