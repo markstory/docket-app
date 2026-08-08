@@ -89,8 +89,7 @@ class LocalDatabase {
       developer.log("! Using fake json_cache backend.");
       adapter = JsonCacheFake();
     } else {
-      final LocalStorage storage = LocalStorage(dbName);
-      adapter = JsonCacheLocalStorage(storage);
+      adapter = JsonCacheLocalStorage(localStorage);
     }
     _database = JsonCacheMem(adapter);
     return _database!;
@@ -105,7 +104,6 @@ class LocalDatabase {
   /// individually. Because our local database is view-based. We need
   /// custom logic to locate the views and then update those views.
   Set<TaskCollections> _taskViews(Task task) {
-    var now = DateUtils.dateOnly(clock.now());
     Set<TaskCollections> views = {};
 
     // If the task has a due date expire the task in the daily views
