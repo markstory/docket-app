@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -41,6 +42,8 @@ import 'viewmodels/userprofile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
   final themeMode = await AdaptiveTheme.getThemeMode();
   final database = LocalDatabase.instance();
 
@@ -48,7 +51,7 @@ Future<void> main() async {
   await database.apiToken.get();
   if (database.apiToken.hasToken) {
     await actions.updateTimezone(database.apiToken.token);
-  } 
+  }
 
   await SentryFlutter.init(
     (options) => {
