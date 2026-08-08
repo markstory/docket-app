@@ -34,8 +34,8 @@ dependencies:
   provider: ^6.0.0
   http: ^0.13.0
   path: ^1.8.1
-  json_cache: ^1.2.1
-  localstorage: ^4.0.0
+  json_cache: ^4.0.0
+  localstorage: ^5.0.0
   adaptive_theme: ^3.0.0
   intl: ^0.17.0
   flutter_mentions: ^2.0.1
