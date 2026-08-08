@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
 import 'package:docket/models/project.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/forms/task.dart';
 
-void main() {
+void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
 
   var home = Project(id: 1, slug: 'home', name: 'Home', color: 0, ranking: 0);
   var work = Project(
-    id: 2, 
+    id: 2,
     slug: 'work',
     name: 'Work',
     color: 1,
@@ -30,7 +34,7 @@ void main() {
   // Rendering helper.
   Widget renderForm(TaskAddViewModel viewmodel, GlobalKey<FormState> formKey) {
     return EntryPoint(
-      database: database, 
+      database: database,
       child: Scaffold(
         body: Portal(
           child: SingleChildScrollView(

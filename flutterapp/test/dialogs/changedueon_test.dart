@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
@@ -8,6 +10,7 @@ import 'package:docket/dialogs/changedueon.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
 
   Widget buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
     var database = LocalDatabase(inTest: true);
@@ -87,7 +90,7 @@ void main() {
 
     testWidgets('select future day', (tester) async {
       var callCount = 0;
-      void onUpdate(DateTime? dueOn, bool evening) { 
+      void onUpdate(DateTime? dueOn, bool evening) {
         expect(evening, isFalse);
         expect(dueOn, equals(futureDay));
         callCount += 1;
@@ -105,7 +108,7 @@ void main() {
 
     testWidgets('select future evening', (tester) async {
       var callCount = 0;
-      void onUpdate(DateTime? dueOn, bool evening) { 
+      void onUpdate(DateTime? dueOn, bool evening) {
         expect(evening, isTrue);
         expect(dueOn, equals(futureDay));
         callCount += 1;
@@ -128,7 +131,7 @@ void main() {
       }
 
       var callCount = 0;
-      void onUpdate(DateTime? dueOn, bool evening) { 
+      void onUpdate(DateTime? dueOn, bool evening) {
         expect(evening, isFalse);
         expect(dueOn, equals(selectedDay));
         callCount += 1;
