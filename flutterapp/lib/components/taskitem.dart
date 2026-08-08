@@ -75,7 +75,7 @@ class _TaskItemState extends State<TaskItem> {
     var theme = Theme.of(context);
     var customColors = getCustomColors(context);
 
-    var textStyle = theme.textTheme.bodyText2!;
+    var textStyle = theme.textTheme.bodyMedium!;
     if (completed) {
       textStyle = textStyle.copyWith(
         decoration: TextDecoration.lineThrough,
@@ -130,7 +130,7 @@ class TaskActions extends StatelessWidget {
     Future<void> handleDelete() async {
       var theme = Theme.of(context);
       showConfirmDelete(
-        context: context, 
+        context: context,
         content: "Are you sure you want to delete this task?",
         onConfirm: () async {
           var navigator = Navigator.of(context);

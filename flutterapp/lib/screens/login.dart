@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     const Image(image: AssetImage('assets/docket-logo.png'), width: 64, height: 64),
                     SizedBox(width: space(2)),
-                    Text('Login', style: theme.textTheme.headline5!.copyWith(color: theme.colorScheme.onPrimary)),
+                    Text('Login', style: theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onPrimary)),
                   ])
               ),
               Padding(
