@@ -22,7 +22,7 @@ void main() {
     late ProjectsProvider provider;
 
     setUp(() async {
-      var db = LocalDatabase();
+      var db = LocalDatabase(inTest: true);
       provider = ProjectsProvider(db);
       await db.projectMap.clearSilent();
       await db.apiToken.set(ApiToken.fake());
@@ -70,7 +70,7 @@ void main() {
       stale.name = 'Stale';
 
       var listener = CallCounter();
-      var db = LocalDatabase();
+      var db = LocalDatabase(inTest: true);
       await db.projectMap.set(stale);
       provider.addListener(listener);
 
@@ -105,7 +105,7 @@ void main() {
       });
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
-      var db = LocalDatabase();
+      var db = LocalDatabase(inTest: true);
       await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
 
       await provider.move(project, 2);
@@ -123,7 +123,7 @@ void main() {
       });
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
-      var db = LocalDatabase();
+      var db = LocalDatabase(inTest: true);
       await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
 
       await provider.update(project);
@@ -146,7 +146,7 @@ void main() {
       });
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
-      var db = LocalDatabase();
+      var db = LocalDatabase(inTest: true);
       await db.projectArchive.set([project]);
 
       await provider.unarchive(project);
