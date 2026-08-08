@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 
 import 'package:docket/components/appdrawer.dart';
 import 'package:docket/database.dart';
@@ -14,6 +16,7 @@ import 'package:docket/routes.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/profile.json');
   final profileResponse = file.readAsStringSync();
