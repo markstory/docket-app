@@ -129,6 +129,7 @@ class ProjectDetailsRepo extends Repository<ProjectWithTasks> {
   Future<void> remove(String slug) async {
     var data = await getMap() ?? {};
     data.remove(slug);
+    _lastUpdate.remove(slug);
     await setMap(data);
 
     notifyListeners();
