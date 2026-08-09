@@ -75,6 +75,7 @@ class _TodayScreenState extends State<TodayScreen> {
           child: TaskSorter(
                 taskLists: viewmodel.taskLists,
                 overdue: viewmodel.overdue,
+                showComplete: viewmodel.hasNoTasks(),
                 buildItem: (Task task) {
                   return TaskItem(key: ValueKey(task.id), task: task, showProject: true);
                 },
