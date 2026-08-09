@@ -68,7 +68,7 @@ class _TaskSorterState extends State<TaskSorter> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    if (widget.showComplete) {
+    if (widget.showComplete && widget.taskLists.isNotEmpty) {
         return buildComplete(widget.taskLists[0], theme);
     }
 
@@ -129,6 +129,7 @@ class _TaskSorterState extends State<TaskSorter> {
             ),
             Text("All Done", style: theme.textTheme.headlineMedium!.copyWith(
               color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w500,
             )),
             Text("Create a task for what's next, or take a break.", style: theme.textTheme.bodyMedium),
             FilledButton(
