@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:docket/models/apitoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 
 import 'package:docket/database.dart';
 import 'package:docket/formatters.dart' as formatters;
@@ -12,6 +14,8 @@ import 'package:docket/screens/upcoming.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 
 import 'package:docket/actions.dart' as actions;
 import 'package:docket/formatters.dart' as formatters;
@@ -16,6 +18,7 @@ import 'package:docket/screens/taskdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
   var file = File('test_resources/task_details.json');

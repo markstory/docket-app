@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 
 import 'package:docket/database.dart';
 import 'package:docket/main.dart';
@@ -8,6 +10,8 @@ import 'package:docket/forms/project.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+
   var database = LocalDatabase(inTest: true);
 
   Widget renderForm(Project project, Future<void> Function(Project project) onSave) {

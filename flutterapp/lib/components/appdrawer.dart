@@ -50,7 +50,7 @@ class _AppDrawerState extends State<AppDrawer> {
           selected: Routes.activeRoute == Routes.upcoming,
         ),
         ListTile(
-          title: Text('Projects', style: theme.textTheme.subtitle1),
+          title: Text('Projects', style: theme.textTheme.titleMedium),
         ),
         const ProjectSorter(),
         const Divider(),
