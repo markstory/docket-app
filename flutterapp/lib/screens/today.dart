@@ -73,21 +73,21 @@ class _TodayScreenState extends State<TodayScreen> {
       body = RefreshIndicator(
           onRefresh: () => viewmodel.refresh(),
           child: TaskSorter(
-                taskLists: viewmodel.taskLists,
-                overdue: viewmodel.overdue,
-                showComplete: viewmodel.hasNoTasks(),
-                buildItem: (Task task) {
-                  return TaskItem(key: ValueKey(task.id), task: task, showProject: true);
-                },
-                onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                  await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
-                },
-                onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                  var itemChild = newItem.child as TaskItem;
-                  var task = itemChild.task;
+            taskLists: viewmodel.taskLists,
+            overdue: viewmodel.overdue,
+            showComplete: viewmodel.hasNoTasks(),
+            buildItem: (Task task) {
+              return TaskItem(key: ValueKey(task.id), task: task, showProject: true);
+            },
+            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+              await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
+            },
+            onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+              var itemChild = newItem.child as TaskItem;
+              var task = itemChild.task;
 
-                  await viewmodel.moveOverdue(task, listIndex, itemIndex);
-                })
+              await viewmodel.moveOverdue(task, listIndex, itemIndex);
+            })
           );
     }
 
