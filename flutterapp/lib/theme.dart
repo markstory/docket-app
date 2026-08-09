@@ -42,6 +42,16 @@ Color getProjectColor(int colorId) {
   return _projectColors[0].color;
 }
 
+/// Color ids that require dark text colors
+const _darkTextColors = [1, 5, 7, 11];
+
+Color getProjectTextColor(int colorId) {
+  if (_darkTextColors.contains(colorId)) {
+    return DocketColors.black;
+  }
+  return DocketColors.white;
+}
+
 List<ProjectColor> getProjectColors() {
   return _projectColors;
 }
@@ -230,6 +240,7 @@ class DocketColors extends ThemeExtension<DocketColors> {
 final lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple500,
+    foregroundColor: DocketColors.white,
     systemOverlayStyle: SystemUiOverlayStyle(
       systemNavigationBarColor: DocketColors.white,
       systemNavigationBarIconBrightness: Brightness.dark
@@ -270,6 +281,7 @@ final lightTheme = ThemeData(
 final darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: DocketColors.purple700,
+    foregroundColor: DocketColors.white,
     systemOverlayStyle: SystemUiOverlayStyle(
       systemNavigationBarColor: DocketColors.gray900,
       systemNavigationBarIconBrightness: Brightness.light
