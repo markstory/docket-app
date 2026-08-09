@@ -108,6 +108,7 @@ class ProjectDetailsViewModel extends ChangeNotifier {
 
     _project = result.project;
     await _database.projectDetails.set(result);
+    await _database.projectMap.set(result.project);
 
     _buildTaskLists(result.tasks);
   }
