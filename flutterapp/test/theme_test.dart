@@ -27,10 +27,10 @@ void main() {
     });
 
     test('getProjectColor()', () {
-      var res = getProjectColor(1);
+      var res = getProjectColor(0);
       expect(res, equals(const Color(0xFF28aa48)));
 
-      res = getProjectColor(2);
+      res = getProjectColor(1);
       expect(res, equals(const Color(0xFF6fd19d)));
 
       // no out of bounds
