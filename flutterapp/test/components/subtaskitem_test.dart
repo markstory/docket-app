@@ -68,7 +68,13 @@ void main() {
       expect(
           tester.getSemantics(find.byType(Checkbox)),
           matchesSemantics(
-              hasTapAction: true, isEnabled: true, isFocusable: true, hasCheckedState: true, hasEnabledState: true));
+              hasTapAction: true,
+              hasFocusAction: true,
+              isEnabled: true,
+              isFocusable: true,
+              hasCheckedState: true,
+              hasEnabledState: true
+          ));
       expect(callCount, 1);
     });
 
