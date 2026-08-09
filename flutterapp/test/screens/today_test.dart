@@ -164,6 +164,7 @@ void main() {
           tester.getSemantics(find.byType(Checkbox).first),
           matchesSemantics(
             hasTapAction: true,
+            hasFocusAction: true,
             isChecked: true,
             isEnabled: true,
             isFocusable: true,
