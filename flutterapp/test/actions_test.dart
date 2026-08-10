@@ -36,7 +36,10 @@ void main() {
   group('ValidationError', () {
     test('fromResponseBody() decodes error key', () {
       var payload = utf8.encode('{"error":"Something bad"}');
-      var error = actions.ValidationError.fromResponseBody('failure message', payload);
+      var error = actions.ValidationError.fromResponseBody(
+        'failure message',
+        payload,
+      );
 
       expect(error.message, equals('failure message'));
       expect(error.errors.length, equals(1));
@@ -45,7 +48,10 @@ void main() {
 
     test('fromResponseBody() decodes errors list', () {
       var payload = utf8.encode('{"errors":["Something bad", "Another one"]}');
-      var error = actions.ValidationError.fromResponseBody('failure message', payload);
+      var error = actions.ValidationError.fromResponseBody(
+        'failure message',
+        payload,
+      );
 
       expect(error.message, equals('failure message'));
       expect(error.errors.length, equals(2));
@@ -54,8 +60,13 @@ void main() {
     });
 
     test('fromResponseBody() decodes errors map', () {
-      var payload = utf8.encode('{"errors": {"title": "Something bad", "body": "Another one"}}');
-      var error = actions.ValidationError.fromResponseBody('failure message', payload);
+      var payload = utf8.encode(
+        '{"errors": {"title": "Something bad", "body": "Another one"}}',
+      );
+      var error = actions.ValidationError.fromResponseBody(
+        'failure message',
+        payload,
+      );
 
       expect(error.message, equals('failure message'));
       expect(error.errors.length, equals(2));
@@ -65,7 +76,10 @@ void main() {
 
     test('fromResponseBody() handles empty string', () {
       var payload = utf8.encode('');
-      var error = actions.ValidationError.fromResponseBody('failure message', payload);
+      var error = actions.ValidationError.fromResponseBody(
+        'failure message',
+        payload,
+      );
 
       expect(error.message, equals('failure message'));
       expect(error.errors.length, equals(0));

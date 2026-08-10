@@ -7,7 +7,6 @@ import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 
-
 class UpcomingViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
@@ -93,56 +92,62 @@ class UpcomingViewModel extends ChangeNotifier {
 
       // Add day section
       metadata = TaskSortMetadata(
-          evening: false,
-          date: entry.key,
-          title: title,
-          subtitle: subtitle,
-          showButton: true,
-          buttonArgs: TaskSortButtonArgs(dueOn: entry.key),
-          tasks: taskView.dayTasks(),
-          calendarItems: taskView.calendarItems,
-          onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
-            Map<String, dynamic> updates = {
-              'day_order': newIndex,
-              'evening': false,
-            };
-            task.dayOrder = newIndex;
-            task.evening = false;
+        evening: false,
+        date: entry.key,
+        title: title,
+        subtitle: subtitle,
+        showButton: true,
+        buttonArgs: TaskSortButtonArgs(dueOn: entry.key),
+        tasks: taskView.dayTasks(),
+        calendarItems: taskView.calendarItems,
+        onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
+          Map<String, dynamic> updates = {
+            'day_order': newIndex,
+            'evening': false,
+          };
+          task.dayOrder = newIndex;
+          task.evening = false;
 
-            if (task.dueOn != meta.date) {
-              task.previousDueOn = task.dueOn;
-              task.dueOn = meta.date;
-              updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
-            }
+          if (task.dueOn != meta.date) {
+            task.previousDueOn = task.dueOn;
+            task.dueOn = meta.date;
+            updates['due_on'] = meta.date != null
+                ? formatters.dateString(meta.date!)
+                : null;
+          }
 
-            return updates;
-          });
+          return updates;
+        },
+      );
       _taskLists.add(metadata);
 
       // Evening sections only have a subtitle and no calendar items.
       var eveningTasks = taskView.eveningTasks();
       if (eveningTasks.isNotEmpty) {
         metadata = TaskSortMetadata(
-            evening: true,
-            date: entry.key,
-            subtitle: 'Evening',
-            tasks: eveningTasks,
-            onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
-              Map<String, dynamic> updates = {
-                'day_order': newIndex,
-                'evening': true,
-              };
-              task.dayOrder = newIndex;
-              task.evening = true;
+          evening: true,
+          date: entry.key,
+          subtitle: 'Evening',
+          tasks: eveningTasks,
+          onReceive: (Task task, int newIndex, TaskSortMetadata meta) {
+            Map<String, dynamic> updates = {
+              'day_order': newIndex,
+              'evening': true,
+            };
+            task.dayOrder = newIndex;
+            task.evening = true;
 
-              if (task.dueOn != meta.date) {
-                task.previousDueOn = task.dueOn;
-                task.dueOn = meta.date;
-                updates['due_on'] = meta.date != null ? formatters.dateString(meta.date!) : null;
-              }
+            if (task.dueOn != meta.date) {
+              task.previousDueOn = task.dueOn;
+              task.dueOn = meta.date;
+              updates['due_on'] = meta.date != null
+                  ? formatters.dateString(meta.date!)
+                  : null;
+            }
 
-              return updates;
-            });
+            return updates;
+          },
+        );
         _taskLists.add(metadata);
       }
     }
@@ -153,7 +158,12 @@ class UpcomingViewModel extends ChangeNotifier {
   }
 
   /// Re-order a task
-  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+  Future<void> reorderTask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  ) async {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.

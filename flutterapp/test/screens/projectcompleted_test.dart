@@ -13,7 +13,8 @@ import 'package:docket/screens/projectcompleted.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/project_details.json');
   final projectDetails = file.readAsStringSync();
@@ -29,10 +30,12 @@ void main() {
     });
 
     testWidgets('shows tasks', (tester) async {
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           child: ProjectCompletedScreen(viewdata.project),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('clean dishes'), findsOneWidget);
@@ -41,16 +44,18 @@ void main() {
 
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/view": (context) {
               navigated = true;
               return const Text("Task Details");
-            }
+            },
           },
           child: ProjectCompletedScreen(viewdata.project),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('clean dishes'));

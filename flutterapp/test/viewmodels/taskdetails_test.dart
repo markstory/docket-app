@@ -17,7 +17,10 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/task_details.json');
-  final taskResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final taskResponseFixture = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/subtask_update.json');
   final subtaskUpdateResponse = file.readAsStringSync();

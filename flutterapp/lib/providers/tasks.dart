@@ -5,10 +5,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
-enum ViewNames {
-  project,
-  trashbin,
-}
+enum ViewNames { project, trashbin }
 
 /// I'm trying to keep the update methods have a 1:1
 /// mapping with an `actions.` function. I think this
@@ -84,9 +81,17 @@ class TasksProvider extends ChangeNotifier {
     var index = task.subtasks.indexWhere((item) => item.id == subtask.id);
 
     if (subtask.id == null) {
-      subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
+      subtask = await actions.createSubtask(
+        _database.apiToken.token,
+        task,
+        subtask,
+      );
     } else {
-      subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
+      subtask = await actions.updateSubtask(
+        _database.apiToken.token,
+        task,
+        subtask,
+      );
     }
 
     task.subtasks[index] = subtask;
@@ -132,5 +137,6 @@ class TasksProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
   // }}}
 }

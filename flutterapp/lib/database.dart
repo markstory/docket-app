@@ -17,14 +17,12 @@ import 'package:docket/db/projectmap.dart';
 import 'package:docket/db/taskdetails.dart';
 import 'package:docket/db/trashbin.dart';
 
-enum TaskCollections {
-  projectDetails, trashBin, dailyTasks
-}
+enum TaskCollections { projectDetails, trashBin, dailyTasks }
 
 /// Utility class that makes testing listeners easier.
 class CallCounter {
   int callCount = 0;
-  CallCounter(): callCount = 0;
+  CallCounter() : callCount = 0;
 
   void call() {
     callCount += 1;
@@ -221,7 +219,6 @@ class LocalDatabase {
   }
   // }}}
 
-
   // Clearing methods {{{
   Future<List<void>> clearSilent() async {
     return Future.wait([
@@ -255,5 +252,6 @@ class LocalDatabase {
       completedTasks.clear(),
     ]);
   }
+
   // }}}
 }

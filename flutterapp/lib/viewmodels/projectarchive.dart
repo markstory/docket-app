@@ -4,7 +4,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 
-
 class ProjectArchiveViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
@@ -36,7 +35,8 @@ class ProjectArchiveViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     await fetchData();
-    if (!_loading && (_projects.isEmpty || !_database.projectArchive.isFresh())) {
+    if (!_loading &&
+        (_projects.isEmpty || !_database.projectArchive.isFresh())) {
       return refresh();
     }
   }

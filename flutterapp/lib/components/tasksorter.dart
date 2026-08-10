@@ -20,10 +20,17 @@ class TaskSorter extends StatefulWidget {
   final bool showComplete;
 
   /// Fired when an item moves from overdue to one of the other sections.
-  final void Function(DragAndDropItem newItem, int listIndex, int itemIndex) onItemAdd;
+  final void Function(DragAndDropItem newItem, int listIndex, int itemIndex)
+  onItemAdd;
 
   /// Fired when items are reordered.
-  final void Function(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) onItemReorder;
+  final void Function(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  )
+  onItemReorder;
 
   /// Used to render the task list item.
   final Widget Function(Task task) buildItem;
@@ -34,16 +41,17 @@ class TaskSorter extends StatefulWidget {
   /// Customize the header rendering.
   final Widget Function(TaskSortMetadata metadata)? buildHeader;
 
-  const TaskSorter(
-      {required this.taskLists,
-      required this.onItemAdd,
-      required this.onItemReorder,
-      required this.buildItem,
-      this.onListReorder,
-      this.overdue,
-      this.buildHeader,
-      this.showComplete = false,
-      super.key});
+  const TaskSorter({
+    required this.taskLists,
+    required this.onItemAdd,
+    required this.onItemReorder,
+    required this.buildItem,
+    this.onListReorder,
+    this.overdue,
+    this.buildHeader,
+    this.showComplete = false,
+    super.key,
+  });
 
   @override
   State<TaskSorter> createState() => _TaskSorterState();
@@ -69,18 +77,24 @@ class _TaskSorterState extends State<TaskSorter> {
     var theme = Theme.of(context);
 
     if (widget.showComplete && widget.taskLists.isNotEmpty) {
-        return buildComplete(widget.taskLists[0], theme);
+      return buildComplete(widget.taskLists[0], theme);
     }
 
     return DragAndDropLists(
       children: widget.taskLists.map((taskListMeta) {
-        var includeOverdue = (widget.overdue?.tasks.isNotEmpty ?? false) && widget.taskLists.indexOf(taskListMeta) == 0;
+        var includeOverdue =
+            (widget.overdue?.tasks.isNotEmpty ?? false) &&
+            widget.taskLists.indexOf(taskListMeta) == 0;
 
         late Widget header;
         if (widget.buildHeader != null) {
           header = widget.buildHeader!(taskListMeta);
         } else {
-          header = buildHeaderDefault(taskListMeta, theme, includeOverdue: includeOverdue);
+          header = buildHeaderDefault(
+            taskListMeta,
+            theme,
+            includeOverdue: includeOverdue,
+          );
         }
         return DragAndDropList(
           header: header,
@@ -95,7 +109,9 @@ class _TaskSorterState extends State<TaskSorter> {
       itemDecorationWhileDragging: itemDragBoxDecoration(theme),
       itemDragOnLongPress: true,
       onItemReorder: widget.onItemReorder,
-      onListReorder: widget.onListReorder ?? (int n, int o) => throw "provider onListReorder to sort lists.",
+      onListReorder:
+          widget.onListReorder ??
+          (int n, int o) => throw "provider onListReorder to sort lists.",
       onItemAdd: widget.onItemAdd,
       lastItemTargetHeight: space(3),
       scrollController: _scrollController,
@@ -112,40 +128,49 @@ class _TaskSorterState extends State<TaskSorter> {
     }
 
     return Padding(
-        padding: EdgeInsets.fromLTRB(space(1), space(4), space(1), 0),
-        child: Column(
-          spacing: space(1),
-          children: [
-            header,
-            Container(
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(space(5)),
-                child: Image.asset("assets/trophy.png", height: 175, width: 175),
-              )
+      padding: EdgeInsets.fromLTRB(space(1), space(4), space(1), 0),
+      child: Column(
+        spacing: space(1),
+        children: [
+          header,
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainer,
+              shape: BoxShape.circle,
             ),
-            Text("All Done", style: theme.textTheme.headlineMedium!.copyWith(
+            child: Padding(
+              padding: EdgeInsets.all(space(5)),
+              child: Image.asset("assets/trophy.png", height: 175, width: 175),
+            ),
+          ),
+          Text(
+            "All Done",
+            style: theme.textTheme.headlineMedium!.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w500,
-            )),
-            Text("Create a task for what's next, or take a break.", style: theme.textTheme.bodyMedium),
-            FilledButton(
-              onPressed: () {
-                var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
-
-                viewmodel.task.dueOn = taskListMeta.date;
-                viewmodel.task.evening = taskListMeta.evening;
-                viewmodel.task.projectId = null;
-
-                Navigator.pushNamed(context, Routes.taskAdd);
-              },
-              child: const Text('Add a Task'),
             ),
-          ]
-        ),
+          ),
+          Text(
+            "Create a task for what's next, or take a break.",
+            style: theme.textTheme.bodyMedium,
+          ),
+          FilledButton(
+            onPressed: () {
+              var viewmodel = Provider.of<TaskAddViewModel>(
+                context,
+                listen: false,
+              );
+
+              viewmodel.task.dueOn = taskListMeta.date;
+              viewmodel.task.evening = taskListMeta.evening;
+              viewmodel.task.projectId = null;
+
+              Navigator.pushNamed(context, Routes.taskAdd);
+            },
+            child: const Text('Add a Task'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -153,7 +178,13 @@ class _TaskSorterState extends State<TaskSorter> {
     var docketColors = theme.extension<DocketColors>()!;
     // TODO make contents dynamic based on the current metadata information
     // TODO figure out how to get this text aligned on the left
-    var contents = Text('No tasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText), textAlign: TextAlign.left);
+    var contents = Text(
+      'No tasks',
+      style: theme.textTheme.titleSmall!.copyWith(
+        color: docketColors.disabledText,
+      ),
+      textAlign: TextAlign.left,
+    );
 
     return Padding(
       padding: EdgeInsets.fromLTRB(0, space(4), 0, 0),
@@ -161,23 +192,43 @@ class _TaskSorterState extends State<TaskSorter> {
     );
   }
 
-  Widget buildOverdue(TaskSortMetadata taskMeta, ThemeData theme, DocketColors customColors) {
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      SizedBox(height: space(2)),
-      buildTitle(taskMeta, theme, customColors),
-      ...taskMeta.tasks.map((task) {
-        var taskItem = TaskItem(key: ValueKey(task.id), task: task, showDate: false, showProject: true);
-        return Draggable<DragAndDropItem>(
-          feedback: SizedBox(width: 300, height: 60, child: Material(child: taskItem)),
-          data: DragAndDropItem(child: taskItem),
-          child: taskItem,
-        );
-      }).toList()
-    ]);
+  Widget buildOverdue(
+    TaskSortMetadata taskMeta,
+    ThemeData theme,
+    DocketColors customColors,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: space(2)),
+        buildTitle(taskMeta, theme, customColors),
+        ...taskMeta.tasks.map((task) {
+          var taskItem = TaskItem(
+            key: ValueKey(task.id),
+            task: task,
+            showDate: false,
+            showProject: true,
+          );
+          return Draggable<DragAndDropItem>(
+            feedback: SizedBox(
+              width: 300,
+              height: 60,
+              child: Material(child: taskItem),
+            ),
+            data: DragAndDropItem(child: taskItem),
+            child: taskItem,
+          );
+        }).toList(),
+      ],
+    );
   }
 
   /// Render a header for a TaskSortMetadata instance
-  Widget buildHeaderDefault(TaskSortMetadata taskMeta, ThemeData theme, {includeOverdue = false}) {
+  Widget buildHeaderDefault(
+    TaskSortMetadata taskMeta,
+    ThemeData theme, {
+    includeOverdue = false,
+  }) {
     var docketColors = theme.extension<DocketColors>()!;
     List<Widget> children = [];
 
@@ -194,7 +245,11 @@ class _TaskSorterState extends State<TaskSorter> {
     return Column(mainAxisSize: MainAxisSize.min, children: children);
   }
 
-  Widget buildTitle(TaskSortMetadata taskMeta, ThemeData theme, DocketColors docketColors) {
+  Widget buildTitle(
+    TaskSortMetadata taskMeta,
+    ThemeData theme,
+    DocketColors docketColors,
+  ) {
     List<Widget> children = [];
     List<Widget> text = [];
 
@@ -223,36 +278,42 @@ class _TaskSorterState extends State<TaskSorter> {
       text.add(SizedBox(width: space(1)));
     }
     if (taskMeta.subtitle != null) {
-      text.add(Text(taskMeta.subtitle ?? '',
-          style: theme.textTheme.titleSmall!.copyWith(color: docketColors.secondaryText)));
+      text.add(
+        Text(
+          taskMeta.subtitle ?? '',
+          style: theme.textTheme.titleSmall!.copyWith(
+            color: docketColors.secondaryText,
+          ),
+        ),
+      );
     }
     if (text.isNotEmpty) {
-      children.add(Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: text,
-      ));
+      children.add(
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: text),
+      );
     }
 
     if (taskMeta.showButton == true) {
       var buttonArgs = taskMeta.buttonArgs ?? const TaskSortButtonArgs();
-      children.add(TaskAddButton(
-        projectId: buttonArgs.projectId,
-        sectionId: buttonArgs.sectionId,
-        dueOn: buttonArgs.dueOn,
-        evening: buttonArgs.evening,
-      ));
+      children.add(
+        TaskAddButton(
+          projectId: buttonArgs.projectId,
+          sectionId: buttonArgs.sectionId,
+          dueOn: buttonArgs.dueOn,
+          evening: buttonArgs.evening,
+        ),
+      );
     }
 
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: children);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: children,
+    );
   }
 }
 
 // Need to use this to set the icons instead of icon components.
-enum TaskSortIcon {
-  warning,
-  evening,
-  none,
-}
+enum TaskSortIcon { warning, evening, none }
 
 class TaskSortButtonArgs {
   final DateTime? dueOn;
@@ -260,13 +321,15 @@ class TaskSortButtonArgs {
   final int? projectId;
   final int? sectionId;
 
-  const TaskSortButtonArgs({this.dueOn, this.evening, this.projectId, this.sectionId});
+  const TaskSortButtonArgs({
+    this.dueOn,
+    this.evening,
+    this.projectId,
+    this.sectionId,
+  });
 }
 
-enum EmptyStateCategory {
-  congrats,
-  compactNoTasks
-}
+enum EmptyStateCategory { congrats, compactNoTasks }
 
 /// Metadata container for building sortable task lists.
 class TaskSortMetadata<T> {
@@ -307,7 +370,12 @@ class TaskSortMetadata<T> {
 
   /// Called when a task is moved into this list.
   /// Expected to return the map of data that needs to be sent to the server.
-  final Map<String, dynamic> Function(Task task, int newIndex, TaskSortMetadata<T> meta) onReceive;
+  final Map<String, dynamic> Function(
+    Task task,
+    int newIndex,
+    TaskSortMetadata<T> meta,
+  )
+  onReceive;
 
   TaskSortMetadata({
     required this.onReceive,
@@ -323,6 +391,6 @@ class TaskSortMetadata<T> {
     this.calendarItems = const [],
     this.canDrag = false,
     this.evening = false,
-    this.emptyState = EmptyStateCategory.compactNoTasks
+    this.emptyState = EmptyStateCategory.compactNoTasks,
   });
 }

@@ -55,10 +55,12 @@ Future<void> main() async {
 
   await SentryFlutter.init(
     (options) => {
-      options.dsn = 'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
+      options.dsn =
+          'https://43cccc99aabb4755bfa8ac28ed9e9992@o200338.ingest.sentry.io/5976713',
       options.tracesSampleRate = 0.2,
     },
-    appRunner: () => runApp(EntryPoint(database: database, themeMode: themeMode)),
+    appRunner: () =>
+        runApp(EntryPoint(database: database, themeMode: themeMode)),
   );
 }
 
@@ -68,17 +70,23 @@ class EntryPoint extends StatelessWidget {
   final AdaptiveThemeMode? themeMode;
   final Map<String, WidgetBuilder>? routes;
 
-  const EntryPoint({required this.database, this.child, this.routes, this.themeMode, super.key});
+  const EntryPoint({
+    required this.database,
+    this.child,
+    this.routes,
+    this.themeMode,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ProjectsProvider>(
-            create: (_) => ProjectsProvider(database),
+          create: (_) => ProjectsProvider(database),
         ),
         ChangeNotifierProvider<LoginViewModel>(
-            create: (_) => LoginViewModel(database),
+          create: (_) => LoginViewModel(database),
         ),
         ChangeNotifierProvider<ProjectArchiveViewModel>(
           create: (_) => ProjectArchiveViewModel(database),
@@ -139,104 +147,142 @@ class DocketApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-        light: app_theme.lightTheme,
-        dark: app_theme.darkTheme,
-        initial: themeMode ?? AdaptiveThemeMode.system,
-        builder: (theme, darkTheme) {
-          if (child != null) {
-            return MaterialApp(
-              theme: theme,
-              darkTheme: darkTheme,
-              home: child,
-              routes: routes ?? {},
-            );
-          }
-
+      light: app_theme.lightTheme,
+      dark: app_theme.darkTheme,
+      initial: themeMode ?? AdaptiveThemeMode.system,
+      builder: (theme, darkTheme) {
+        if (child != null) {
           return MaterialApp(
             theme: theme,
             darkTheme: darkTheme,
-            navigatorObservers: [SentryNavigatorObserver()],
-            onGenerateRoute: (settings) {
-              Routes.activeRoute = null;
-
-              // The named route and the default application route go to Today.
-              // Should the user not have a session they are directed to Login.
-              if (settings.name == Routes.today || settings.name == '/') {
-                Routes.activeRoute = Routes.today;
-                return MaterialPageRoute(builder: (context) => const LoginRequired(child: TodayScreen()));
-              }
-              // Upcoming tasks in the next 28 days.
-              if (settings.name == Routes.upcoming) {
-                Routes.activeRoute = Routes.upcoming;
-                return MaterialPageRoute(builder: (context) => const LoginRequired(child: UpcomingScreen()));
-              }
-              // Trashbin
-              if (settings.name == Routes.trashbin) {
-                Routes.activeRoute = Routes.trashbin;
-                return MaterialPageRoute(builder: (context) => const TrashbinScreen());
-              }
-              // Task Add
-              if (settings.name == Routes.taskAdd) {
-                return MaterialPageRoute(builder: (context) => const LoginRequired(child: TaskAddScreen()));
-              }
-              // Task Detailed View.
-              if (settings.name == Routes.taskDetails) {
-                final args = settings.arguments as TaskDetailsArguments;
-                var task = args.task;
-                if (task.id == null) {
-                  return unknownScreen(context);
-                }
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: TaskDetailsScreen(task)));
-              }
-
-              // Project Detailed View.
-              if (settings.name == Routes.projectDetails) {
-                var args = settings.arguments as ProjectDetailsArguments;
-                Routes.activeRoute = "${Routes.projectDetails}:${args.project.slug}";
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectDetailsScreen(args.project)));
-              }
-              if (settings.name == Routes.projectEdit) {
-                var args = settings.arguments as ProjectDetailsArguments;
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectEditScreen(args.project)));
-              }
-              if (settings.name == Routes.projectCompleted) {
-                var args = settings.arguments as ProjectDetailsArguments;
-
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectCompletedScreen(args.project)));
-              }
-              if (settings.name == Routes.projectAdd) {
-                Routes.activeRoute = Routes.projectAdd;
-                return MaterialPageRoute(builder: (context) => LoginRequired(child: ProjectAddScreen()));
-              }
-              if (settings.name == Routes.projectArchive) {
-                Routes.activeRoute = Routes.projectArchive;
-                return MaterialPageRoute(builder: (context) => const LoginRequired(child: ProjectArchiveScreen()));
-              }
-
-              // Login
-              if (settings.name == Routes.login) {
-                return MaterialPageRoute(builder: (context) => const LoginScreen());
-              }
-              // Profile settings
-              if (settings.name == Routes.profileSettings) {
-                return MaterialPageRoute(builder: (context) => const ProfileSettingsScreen());
-              }
-              if (settings.name == Routes.calendarList) {
-                Routes.activeRoute = Routes.calendarList;
-                return MaterialPageRoute(builder: (context) => const CalendarProviderListScreen());
-              }
-              if (settings.name == Routes.calendarDetails) {
-                Routes.activeRoute = Routes.calendarList;
-                var args = settings.arguments as CalendarDetailsArguments;
-                return MaterialPageRoute(builder: (context) => CalendarProviderDetailsScreen(args.provider));
-              }
-
-              return unknownScreen(context);
-            },
+            home: child,
+            routes: routes ?? {},
           );
-        });
+        }
+
+        return MaterialApp(
+          theme: theme,
+          darkTheme: darkTheme,
+          navigatorObservers: [SentryNavigatorObserver()],
+          onGenerateRoute: (settings) {
+            Routes.activeRoute = null;
+
+            // The named route and the default application route go to Today.
+            // Should the user not have a session they are directed to Login.
+            if (settings.name == Routes.today || settings.name == '/') {
+              Routes.activeRoute = Routes.today;
+              return MaterialPageRoute(
+                builder: (context) => const LoginRequired(child: TodayScreen()),
+              );
+            }
+            // Upcoming tasks in the next 28 days.
+            if (settings.name == Routes.upcoming) {
+              Routes.activeRoute = Routes.upcoming;
+              return MaterialPageRoute(
+                builder: (context) =>
+                    const LoginRequired(child: UpcomingScreen()),
+              );
+            }
+            // Trashbin
+            if (settings.name == Routes.trashbin) {
+              Routes.activeRoute = Routes.trashbin;
+              return MaterialPageRoute(
+                builder: (context) => const TrashbinScreen(),
+              );
+            }
+            // Task Add
+            if (settings.name == Routes.taskAdd) {
+              return MaterialPageRoute(
+                builder: (context) =>
+                    const LoginRequired(child: TaskAddScreen()),
+              );
+            }
+            // Task Detailed View.
+            if (settings.name == Routes.taskDetails) {
+              final args = settings.arguments as TaskDetailsArguments;
+              var task = args.task;
+              if (task.id == null) {
+                return unknownScreen(context);
+              }
+
+              return MaterialPageRoute(
+                builder: (context) =>
+                    LoginRequired(child: TaskDetailsScreen(task)),
+              );
+            }
+
+            // Project Detailed View.
+            if (settings.name == Routes.projectDetails) {
+              var args = settings.arguments as ProjectDetailsArguments;
+              Routes.activeRoute =
+                  "${Routes.projectDetails}:${args.project.slug}";
+
+              return MaterialPageRoute(
+                builder: (context) =>
+                    LoginRequired(child: ProjectDetailsScreen(args.project)),
+              );
+            }
+            if (settings.name == Routes.projectEdit) {
+              var args = settings.arguments as ProjectDetailsArguments;
+
+              return MaterialPageRoute(
+                builder: (context) =>
+                    LoginRequired(child: ProjectEditScreen(args.project)),
+              );
+            }
+            if (settings.name == Routes.projectCompleted) {
+              var args = settings.arguments as ProjectDetailsArguments;
+
+              return MaterialPageRoute(
+                builder: (context) =>
+                    LoginRequired(child: ProjectCompletedScreen(args.project)),
+              );
+            }
+            if (settings.name == Routes.projectAdd) {
+              Routes.activeRoute = Routes.projectAdd;
+              return MaterialPageRoute(
+                builder: (context) => LoginRequired(child: ProjectAddScreen()),
+              );
+            }
+            if (settings.name == Routes.projectArchive) {
+              Routes.activeRoute = Routes.projectArchive;
+              return MaterialPageRoute(
+                builder: (context) =>
+                    const LoginRequired(child: ProjectArchiveScreen()),
+              );
+            }
+
+            // Login
+            if (settings.name == Routes.login) {
+              return MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              );
+            }
+            // Profile settings
+            if (settings.name == Routes.profileSettings) {
+              return MaterialPageRoute(
+                builder: (context) => const ProfileSettingsScreen(),
+              );
+            }
+            if (settings.name == Routes.calendarList) {
+              Routes.activeRoute = Routes.calendarList;
+              return MaterialPageRoute(
+                builder: (context) => const CalendarProviderListScreen(),
+              );
+            }
+            if (settings.name == Routes.calendarDetails) {
+              Routes.activeRoute = Routes.calendarList;
+              var args = settings.arguments as CalendarDetailsArguments;
+              return MaterialPageRoute(
+                builder: (context) =>
+                    CalendarProviderDetailsScreen(args.provider),
+              );
+            }
+
+            return unknownScreen(context);
+          },
+        );
+      },
+    );
   }
 }

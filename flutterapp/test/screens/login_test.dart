@@ -14,7 +14,8 @@ import 'package:docket/screens/login.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/login.json');
   var loginResponse = file.readAsStringSync();
@@ -27,10 +28,9 @@ void main() {
     });
 
     testWidgets('shows form with no session', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const LoginScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const LoginScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('E-Mail'), findsOneWidget);
@@ -38,10 +38,9 @@ void main() {
     });
 
     testWidgets('shows validation errors on blank data', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const LoginScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const LoginScreen()),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Log in'));
@@ -55,14 +54,19 @@ void main() {
         return Response('{"errors": ["Authentication required"]}', 401);
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const LoginScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const LoginScreen()),
+      );
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('email')), 'mark@example.com');
-      await tester.enterText(find.byKey(const ValueKey('password')), 'password12');
+      await tester.enterText(
+        find.byKey(const ValueKey('email')),
+        'mark@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('password')),
+        'password12',
+      );
       await tester.tap(find.text('Log in'));
 
       await tester.pump();
@@ -82,20 +86,28 @@ void main() {
         }
         throw Exception('Unmocked URL ${request.url.path}');
       });
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/today": (context) {
               navigated = true;
               return const Text('Today screen');
-            }
+            },
           },
           child: const LoginScreen(),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('email')), 'mark@example.com');
-      await tester.enterText(find.byKey(const ValueKey('password')), 'password12');
+      await tester.enterText(
+        find.byKey(const ValueKey('email')),
+        'mark@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('password')),
+        'password12',
+      );
       await tester.tap(find.text('Log in'));
       await tester.pumpAndSettle();
 
@@ -114,19 +126,23 @@ void main() {
 
     testWidgets('show child with session', (tester) async {
       await db.apiToken.set(ApiToken.fake());
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: const LoginRequired(child: Text('Content Text'))
-        ));
+          child: const LoginRequired(child: Text('Content Text')),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Content Text'), findsOneWidget);
     });
 
     testWidgets('show Login without session', (tester) async {
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: const LoginRequired(child: Text('Content Text'))
-        ));
+          child: const LoginRequired(child: Text('Content Text')),
+        ),
+      );
       expect(find.text('Content Text'), findsNothing);
     });
   });

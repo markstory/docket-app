@@ -28,32 +28,35 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProfileViewModel>(builder: (context, viewmodel, child) {
-      Widget body;
-      if (viewmodel.loading) {
-        body = const LoadingIndicator();
-      } else {
-        body = SingleChildScrollView(padding: EdgeInsets.all(space(1)), 
-          child: Column(children: [
-            ProfileSettingsForm(
-              userprofile: viewmodel.profile,
-              onSave: (profile) {
-                viewmodel.update(profile);
-                AdaptiveTheme.of(context).setThemeMode(profile.themeMode);
-                Navigator.of(context).pop();
-              },
-            )
-          ]
-        ));
-      }
+    return Consumer<UserProfileViewModel>(
+      builder: (context, viewmodel, child) {
+        Widget body;
+        if (viewmodel.loading) {
+          body = const LoadingIndicator();
+        } else {
+          body = SingleChildScrollView(
+            padding: EdgeInsets.all(space(1)),
+            child: Column(
+              children: [
+                ProfileSettingsForm(
+                  userprofile: viewmodel.profile,
+                  onSave: (profile) {
+                    viewmodel.update(profile);
+                    AdaptiveTheme.of(context).setThemeMode(profile.themeMode);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
 
-      return Scaffold(
-          appBar: AppBar(
-            title: const Text('Profile Settings'),
-          ),
+        return Scaffold(
+          appBar: AppBar(title: const Text('Profile Settings')),
           drawer: const AppDrawer(),
           body: body,
         );
-    });
+      },
+    );
   }
 }

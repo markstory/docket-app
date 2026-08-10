@@ -57,53 +57,75 @@ class _TodayScreenState extends State<TodayScreen> {
         default:
           throw Exception("Invalid theme mode encountered");
       }
-      SystemChrome.setSystemUIOverlayStyle(theme.appBarTheme.systemOverlayStyle!);
+      SystemChrome.setSystemUIOverlayStyle(
+        theme.appBarTheme.systemOverlayStyle!,
+      );
     };
 
-    return Consumer<TodayViewModel>(
-      builder: buildScreen,
-    );
+    return Consumer<TodayViewModel>(builder: buildScreen);
   }
 
-  Widget buildScreen(BuildContext context, TodayViewModel viewmodel, Widget? _) {
+  Widget buildScreen(
+    BuildContext context,
+    TodayViewModel viewmodel,
+    Widget? _,
+  ) {
     Widget body;
     if (viewmodel.loading) {
       body = const LoadingIndicator();
     } else {
       body = RefreshIndicator(
-          onRefresh: () => viewmodel.refresh(),
-          child: TaskSorter(
-            taskLists: viewmodel.taskLists,
-            overdue: viewmodel.overdue,
-            showComplete: viewmodel.hasNoTasks(),
-            buildItem: (Task task) {
-              return TaskItem(key: ValueKey(task.id), task: task, showProject: true);
-            },
-            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-              await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
-            },
-            onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-              var itemChild = newItem.child as TaskItem;
-              var task = itemChild.task;
+        onRefresh: () => viewmodel.refresh(),
+        child: TaskSorter(
+          taskLists: viewmodel.taskLists,
+          overdue: viewmodel.overdue,
+          showComplete: viewmodel.hasNoTasks(),
+          buildItem: (Task task) {
+            return TaskItem(
+              key: ValueKey(task.id),
+              task: task,
+              showProject: true,
+            );
+          },
+          onItemReorder:
+              (
+                int oldItemIndex,
+                int oldListIndex,
+                int newItemIndex,
+                int newListIndex,
+              ) async {
+                await viewmodel.reorderTask(
+                  oldItemIndex,
+                  oldListIndex,
+                  newItemIndex,
+                  newListIndex,
+                );
+              },
+          onItemAdd:
+              (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                var itemChild = newItem.child as TaskItem;
+                var task = itemChild.task;
 
-              await viewmodel.moveOverdue(task, listIndex, itemIndex);
-            })
-          );
+                await viewmodel.moveOverdue(task, listIndex, itemIndex);
+              },
+        ),
+      );
     }
 
     if (viewmodel.loadError) {
       viewmodel.clearLoadError();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          errorSnackBar(context: context, text: 'Could not load data from server.')
+          errorSnackBar(
+            context: context,
+            text: 'Could not load data from server.',
+          ),
         );
       });
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Today'),
-      ),
+      appBar: AppBar(title: const Text('Today')),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingCreateTaskButton(dueOn: viewmodel.today),
       body: body,

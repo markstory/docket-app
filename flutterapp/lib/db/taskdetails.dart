@@ -8,7 +8,8 @@ import 'package:docket/models/task.dart';
 class TaskDetailsRepo extends Repository<Task> {
   static const String name = 'taskdetails';
 
-  TaskDetailsRepo(JsonCache database, Duration duration) : super(database, duration);
+  TaskDetailsRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {
@@ -21,14 +22,14 @@ class TaskDetailsRepo extends Repository<Task> {
   /// in addition to the task data.
   @override
   Future<void> set(Task task) async {
-     var current = await getMap() ?? {};
-     var taskId = task.id.toString();
-     current[taskId] = task.toMap();
-     current[taskId]['updatedAt'] = clock.now().toIso8601String();
+    var current = await getMap() ?? {};
+    var taskId = task.id.toString();
+    current[taskId] = task.toMap();
+    current[taskId]['updatedAt'] = clock.now().toIso8601String();
 
-     await setMap(current);
+    await setMap(current);
 
-     notifyListeners();
+    notifyListeners();
   }
 
   Future<Task?> get(int id) async {

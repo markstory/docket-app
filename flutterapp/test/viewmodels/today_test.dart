@@ -48,10 +48,14 @@ void main() {
   var twoDaysAgo = DateUtils.dateOnly(today.subtract(const Duration(days: 2)));
 
   var file = File('test_resources/tasks_today.json');
-  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
+  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    urlDate,
+  );
 
   file = File('test_resources/tasks_upcoming.json');
-  final tasksTodayWithOverdueResponseFixture = file.readAsStringSync()
+  final tasksTodayWithOverdueResponseFixture = file
+      .readAsStringSync()
       .replaceAll('__TODAY__', urlDate)
       .replaceAll('__TOMORROW__', formatters.dateString(twoDaysAgo));
 
@@ -59,7 +63,10 @@ void main() {
   final projectListResponseFixture = file.readAsStringSync();
 
   Future<void> setTodayView(LocalDatabase db, List<Task> tasks) async {
-    var taskView = TaskViewData(tasks: tasks, calendarItems: []).groupByDay(groupOverdue: true);
+    var taskView = TaskViewData(
+      tasks: tasks,
+      calendarItems: [],
+    ).groupByDay(groupOverdue: true);
     await db.dailyTasks.set(taskView);
   }
 
@@ -176,7 +183,9 @@ void main() {
       var viewmodel = TodayViewModel(db);
       await viewmodel.loadData();
 
-      var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
+      var initialOrder = viewmodel.taskLists[0].tasks
+          .map(extractTitle)
+          .toList();
       await viewmodel.reorderTask(0, 0, 1, 0);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();

@@ -30,12 +30,14 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UpcomingViewModel>(
-      builder: buildScreen,
-    );
+    return Consumer<UpcomingViewModel>(builder: buildScreen);
   }
 
-  Widget buildScreen(BuildContext context, UpcomingViewModel viewmodel, Widget? _) {
+  Widget buildScreen(
+    BuildContext context,
+    UpcomingViewModel viewmodel,
+    Widget? _,
+  ) {
     var theme = Theme.of(context);
     Widget body;
     if (viewmodel.loading) {
@@ -44,23 +46,44 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       body = RefreshIndicator(
         onRefresh: () => viewmodel.refresh(),
         child: TaskSorter(
-            taskLists: viewmodel.taskLists,
-            buildItem: (Task task) {
-              return TaskItem(key: ValueKey(task.id), task: task, showDate: false, showProject: true);
-            },
-            onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-              await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
-            },
-            onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-              var itemChild = newItem.child as TaskItem;
-              var task = itemChild.task;
-              await viewmodel.insertAt(task, listIndex, itemIndex);
-            }),
+          taskLists: viewmodel.taskLists,
+          buildItem: (Task task) {
+            return TaskItem(
+              key: ValueKey(task.id),
+              task: task,
+              showDate: false,
+              showProject: true,
+            );
+          },
+          onItemReorder:
+              (
+                int oldItemIndex,
+                int oldListIndex,
+                int newItemIndex,
+                int newListIndex,
+              ) async {
+                await viewmodel.reorderTask(
+                  oldItemIndex,
+                  oldListIndex,
+                  newItemIndex,
+                  newListIndex,
+                );
+              },
+          onItemAdd:
+              (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                var itemChild = newItem.child as TaskItem;
+                var task = itemChild.task;
+                await viewmodel.insertAt(task, listIndex, itemIndex);
+              },
+        ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: theme.colorScheme.secondary, title: const Text('Upcoming')),
+      appBar: AppBar(
+        backgroundColor: theme.colorScheme.secondary,
+        title: const Text('Upcoming'),
+      ),
       drawer: const AppDrawer(),
       // TODO add scroll tracking for sections and update add button.
       floatingActionButton: const FloatingCreateTaskButton(),

@@ -20,7 +20,6 @@ class ProjectEditScreen extends StatefulWidget {
 }
 
 class _ProjectEditScreenState extends State<ProjectEditScreen> {
-
   late ProjectEditViewModel viewmodel;
 
   @override
@@ -38,8 +37,11 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
       void complete(proj) {
         if (widget.project.slug != proj.slug) {
-          Navigator.pushReplacementNamed(context, Routes.projectDetails,
-              arguments: ProjectDetailsArguments(proj));
+          Navigator.pushReplacementNamed(
+            context,
+            Routes.projectDetails,
+            arguments: ProjectDetailsArguments(proj),
+          );
           return;
         }
         Navigator.pop(context);
@@ -47,38 +49,44 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
       try {
         await viewmodel.update(project);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Project updated'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Project updated'),
+        );
         complete(viewmodel.project);
       } catch (e, stacktrace) {
         developer.log("Failed to update project ${e.toString()} $stacktrace");
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to update project'));
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Failed to update project'),
+        );
       }
     }
 
-    return Consumer<ProjectEditViewModel>(builder: (context, viewmodel, child) {
-      Widget body;
-      int color;
-      if (viewmodel.loading) {
-        body = const LoadingIndicator();
-        color = 0;
-      } else {
-        body = ProjectForm(
-          project: viewmodel.project,
-          onSave: (updated) async => await _saveProject(context, updated),
-        );
-        color = viewmodel.project.color;
-      }
-      return Scaffold(
-        appBar: AppBar(
+    return Consumer<ProjectEditViewModel>(
+      builder: (context, viewmodel, child) {
+        Widget body;
+        int color;
+        if (viewmodel.loading) {
+          body = const LoadingIndicator();
+          color = 0;
+        } else {
+          body = ProjectForm(
+            project: viewmodel.project,
+            onSave: (updated) async => await _saveProject(context, updated),
+          );
+          color = viewmodel.project.color;
+        }
+        return Scaffold(
+          appBar: AppBar(
             backgroundColor: getProjectColor(color),
             foregroundColor: getProjectTextColor(color),
-            title: const Text('Update Project')
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(space(2)),
-          child: body,
-        ),
-      );
-    });
+            title: const Text('Update Project'),
+          ),
+          body: SingleChildScrollView(
+            padding: EdgeInsets.all(space(2)),
+            child: body,
+          ),
+        );
+      },
+    );
   }
 }

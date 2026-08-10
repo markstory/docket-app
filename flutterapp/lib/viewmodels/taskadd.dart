@@ -11,7 +11,6 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   late Task _task;
 
-
   TaskAddViewModel(LocalDatabase database) {
     _database = database;
     reset();
@@ -22,7 +21,6 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   @override
   bool get loading => _loading;
-
 
   Future<void> save() async {
     var updated = await actions.createTask(_database.apiToken.token, task);
@@ -43,9 +41,16 @@ class TaskAddViewModel extends ChangeNotifier implements TaskFormViewModel {
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
   @override
-  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-    assert(oldListIndex == newListIndex,
-      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
+  Future<void> reorderSubtask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  ) async {
+    assert(
+      oldListIndex == newListIndex,
+      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.",
+    );
     var item = _task.subtasks[oldItemIndex];
     item.ranking = newItemIndex;
 

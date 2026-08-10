@@ -8,7 +8,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/calendarprovider.dart';
 
-
 class CalendarProviderListViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
@@ -41,7 +40,8 @@ class CalendarProviderListViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await fetchData();
 
-    if (!_loading && (_providers.isEmpty || !_database.calendarList.isFresh())) {
+    if (!_loading &&
+        (_providers.isEmpty || !_database.calendarList.isFresh())) {
       return refresh();
     }
   }
@@ -71,7 +71,6 @@ class CalendarProviderListViewModel extends ChangeNotifier {
 
   /// Delete the provider from the server and notify.
   Future<void> delete(CalendarProvider provider) async {
-
     await actions.deleteCalendarProvider(_database.apiToken.token, provider);
     await _database.calendarList.remove(provider.id);
     await _database.calendarDetails.remove(provider.id);
@@ -98,13 +97,14 @@ class CalendarProviderListViewModel extends ChangeNotifier {
       AuthorizationTokenRequest(
         config.clientId,
         config.redirectUri,
-        discoveryUrl: 'https://accounts.google.com/.well-known/openid-configuration',
+        discoveryUrl:
+            'https://accounts.google.com/.well-known/openid-configuration',
         scopes: [
           'https://www.googleapis.com/auth/userinfo.email',
           'https://www.googleapis.com/auth/calendar.events.readonly',
           'https://www.googleapis.com/auth/calendar.readonly',
-        ]
-      )
+        ],
+      ),
     );
     if (result == null) {
       // TODO set an error?
@@ -114,7 +114,9 @@ class CalendarProviderListViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<CalendarProvider> createFromGoogle(AuthorizationTokenResponse token) async {
+  Future<CalendarProvider> createFromGoogle(
+    AuthorizationTokenResponse token,
+  ) async {
     var provider = await actions.createCalendarProviderFromGoogle(
       _database.apiToken.token,
       accessToken: token.accessToken,

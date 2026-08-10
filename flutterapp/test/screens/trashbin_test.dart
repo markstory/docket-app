@@ -17,12 +17,16 @@ import 'package:docket/screens/trashbin.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
-  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final todayResponse = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$TrashbinScreen', () {
@@ -44,10 +48,9 @@ void main() {
       });
       await db.trashbin.clearSilent();
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TrashbinScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TrashbinScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Trash Bin'), findsOneWidget);
@@ -55,10 +58,9 @@ void main() {
     });
 
     testWidgets('shows items', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TrashbinScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TrashbinScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Trash Bin'), findsOneWidget);
@@ -81,10 +83,9 @@ void main() {
         throw Exception('Request made to unmocked ${request.url.path}');
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const TrashbinScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TrashbinScreen()),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Trash Bin'), findsOneWidget);
 

@@ -70,7 +70,12 @@ void main() {
       });
 
       var profile = UserProfile(
-          name: 'mark', email: 'mark@example.com', timezone: 'America/New_York', theme: 'system', avatarHash: '');
+        name: 'mark',
+        email: 'mark@example.com',
+        timezone: 'America/New_York',
+        theme: 'system',
+        avatarHash: '',
+      );
       var viewmodel = UserProfileViewModel(db);
 
       await viewmodel.update(profile);

@@ -19,7 +19,10 @@ class GroupedItem {
   });
 }
 
-List<SectionWithTasks> groupTasksBySection(List<Section> sections, List<Task> tasks) {
+List<SectionWithTasks> groupTasksBySection(
+  List<Section> sections,
+  List<Task> tasks,
+) {
   Map<int, List<Task>> sectionTable = {};
   for (var task in tasks) {
     var sectionId = task.sectionId ?? Section.root;
@@ -31,16 +34,14 @@ List<SectionWithTasks> groupTasksBySection(List<Section> sections, List<Task> ta
   }
   List<SectionWithTasks> output = [];
   if (sectionTable.containsKey(Section.root)) {
-    output.add(SectionWithTasks(
-      section: null,
-      tasks: sectionTable[Section.root] ?? []
-    ));
+    output.add(
+      SectionWithTasks(section: null, tasks: sectionTable[Section.root] ?? []),
+    );
   }
   for (var section in sections) {
-    output.add(SectionWithTasks(
-        section: section,
-        tasks: sectionTable[section.id] ?? [],
-    ));
+    output.add(
+      SectionWithTasks(section: section, tasks: sectionTable[section.id] ?? []),
+    );
   }
   return output;
 }

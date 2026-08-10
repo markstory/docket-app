@@ -38,9 +38,7 @@ class LoginFormState extends State<LoginForm> {
           children: <Widget>[
             TextFormField(
               key: const ValueKey('email'),
-              decoration: const InputDecoration(
-                labelText: 'E-Mail',
-              ),
+              decoration: const InputDecoration(labelText: 'E-Mail'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'E-mail is required';
@@ -48,13 +46,14 @@ class LoginFormState extends State<LoginForm> {
                 return null;
               },
               onSaved: (value) => _email = value,
-              autofillHints: const [AutofillHints.username, AutofillHints.email],
+              autofillHints: const [
+                AutofillHints.username,
+                AutofillHints.email,
+              ],
             ),
             TextFormField(
               key: const ValueKey('password'),
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -67,25 +66,26 @@ class LoginFormState extends State<LoginForm> {
             ),
             SizedBox(height: space(2)),
             ElevatedButton(
-                child: _loading ? const Text('Loading') : const Text('Log in'),
-                onPressed: () async {
-                  if (!_formKey.currentState!.validate() || _loading) {
-                    return;
-                  }
-                  setState(() {
-                    _loading = true;
-                  });
-                  _formKey.currentState!.save();
+              child: _loading ? const Text('Loading') : const Text('Log in'),
+              onPressed: () async {
+                if (!_formKey.currentState!.validate() || _loading) {
+                  return;
+                }
+                setState(() {
+                  _loading = true;
+                });
+                _formKey.currentState!.save();
 
-                  await widget.onSubmit(_email, _password);
+                await widget.onSubmit(_email, _password);
 
-                  setState(() {
-                    _loading = false;
-                  });
-                })
+                setState(() {
+                  _loading = false;
+                });
+              },
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 }

@@ -17,7 +17,8 @@ import 'package:docket/viewmodels/projectdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var database = LocalDatabase(inTest: true);
   var file = File('test_resources/project_details.json');
@@ -27,14 +28,18 @@ void main() {
 
   Widget buildButton(ProjectDetailsViewModel viewmodel) {
     return EntryPoint(
-        database: database,
-        child: Builder(builder: (BuildContext context) {
+      database: database,
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
-              child: const Text('Open'),
-              onPressed: () async {
-                await showCreateSectionDialog(context, viewmodel);
-              });
-        }));
+            child: const Text('Open'),
+            onPressed: () async {
+              await showCreateSectionDialog(context, viewmodel);
+            },
+          );
+        },
+      ),
+    );
   }
 
   group('showCreateSectionDialog', () {
@@ -45,7 +50,8 @@ void main() {
       await database.apiToken.set(ApiToken(token: 'abc123'));
       await database.projectDetails.set(project);
 
-      viewmodel = ProjectDetailsViewModel(database)..setSlug(project.project.slug);
+      viewmodel = ProjectDetailsViewModel(database)
+        ..setSlug(project.project.slug);
       await viewmodel.loadData();
     });
 
@@ -68,7 +74,10 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('section-name')), 'New section');
+      await tester.enterText(
+        find.byKey(const ValueKey('section-name')),
+        'New section',
+      );
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 

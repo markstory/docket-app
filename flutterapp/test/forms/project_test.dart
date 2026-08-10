@@ -10,12 +10,21 @@ import 'package:docket/forms/project.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var database = LocalDatabase(inTest: true);
 
-  Widget renderForm(Project project, Future<void> Function(Project project) onSave) {
-    return EntryPoint(database: database, child: Scaffold(body: ProjectForm(project: project, onSave: onSave)));
+  Widget renderForm(
+    Project project,
+    Future<void> Function(Project project) onSave,
+  ) {
+    return EntryPoint(
+      database: database,
+      child: Scaffold(
+        body: ProjectForm(project: project, onSave: onSave),
+      ),
+    );
   }
 
   group('ProjectForm', () {
@@ -50,10 +59,13 @@ void main() {
       expect(onSaveCalled, equals(true));
     });
 
-    testWidgets('can display existing data and update a project', (tester) async {
+    testWidgets('can display existing data and update a project', (
+      tester,
+    ) async {
       Future<void> onSave(Project project) {
         return Future.value();
       }
+
       final project = Project.blank();
       project.name = 'Hobbies';
       project.color = 8;

@@ -40,54 +40,90 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectDetailsViewModel>(builder: (context, viewmodel, child) {
-      if (viewmodel.loading) {
-        return buildWrapper(
-          viewmodel: viewmodel,
-          project: widget.project,
-          child: const LoadingIndicator(),
-        );
-      }
+    return Consumer<ProjectDetailsViewModel>(
+      builder: (context, viewmodel, child) {
+        if (viewmodel.loading) {
+          return buildWrapper(
+            viewmodel: viewmodel,
+            project: widget.project,
+            child: const LoadingIndicator(),
+          );
+        }
 
-      return buildWrapper(
+        return buildWrapper(
           viewmodel: viewmodel,
           project: viewmodel.project,
           child: TaskSorter(
-              taskLists: viewmodel.taskLists,
-              buildItem: (Task task) {
-                return TaskItem(key: ValueKey(task.id), task: task, showDate: true);
-              },
-              buildHeader: (TaskSortMetadata metadata) {
-                var data = metadata.data as Section?;
-                if (data == null) {
-                  return const SizedBox(width: 0, height: 0);
-                }
-                return Padding(
-                    padding: EdgeInsets.only(left: space(2.5), right: space(1)),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Row(children: [
-                        Text(metadata.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        TaskAddButton(projectId: viewmodel.project.id, sectionId: data.id),
-                      ]),
-                      SectionActions(viewmodel, data),
-                    ]));
-              },
-              onListReorder: (int oldIndex, int newIndex) async {
-                await viewmodel.moveSection(oldIndex, newIndex);
-              },
-              onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-                await viewmodel.reorderTask(oldItemIndex, oldListIndex, newItemIndex, newListIndex);
-              },
-              onItemAdd: (DragAndDropItem newItem, int listIndex, int itemIndex) async {
-                var itemChild = newItem.child as TaskItem;
-                var task = itemChild.task;
+            taskLists: viewmodel.taskLists,
+            buildItem: (Task task) {
+              return TaskItem(
+                key: ValueKey(task.id),
+                task: task,
+                showDate: true,
+              );
+            },
+            buildHeader: (TaskSortMetadata metadata) {
+              var data = metadata.data as Section?;
+              if (data == null) {
+                return const SizedBox(width: 0, height: 0);
+              }
+              return Padding(
+                padding: EdgeInsets.only(left: space(2.5), right: space(1)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          metadata.title ?? '',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TaskAddButton(
+                          projectId: viewmodel.project.id,
+                          sectionId: data.id,
+                        ),
+                      ],
+                    ),
+                    SectionActions(viewmodel, data),
+                  ],
+                ),
+              );
+            },
+            onListReorder: (int oldIndex, int newIndex) async {
+              await viewmodel.moveSection(oldIndex, newIndex);
+            },
+            onItemReorder:
+                (
+                  int oldItemIndex,
+                  int oldListIndex,
+                  int newItemIndex,
+                  int newListIndex,
+                ) async {
+                  await viewmodel.reorderTask(
+                    oldItemIndex,
+                    oldListIndex,
+                    newItemIndex,
+                    newListIndex,
+                  );
+                },
+            onItemAdd:
+                (DragAndDropItem newItem, int listIndex, int itemIndex) async {
+                  var itemChild = newItem.child as TaskItem;
+                  var task = itemChild.task;
 
-                await viewmodel.moveInto(task, listIndex, itemIndex);
-              }));
-          });
+                  await viewmodel.moveInto(task, listIndex, itemIndex);
+                },
+          ),
+        );
+      },
+    );
   }
 
-  Widget buildWrapper({required Widget child, required Project project, required ProjectDetailsViewModel viewmodel}) {
+  Widget buildWrapper({
+    required Widget child,
+    required Project project,
+    required ProjectDetailsViewModel viewmodel,
+  }) {
     var actions = [ProjectActions(viewmodel)];
 
     return Scaffold(
@@ -128,32 +164,43 @@ class SectionActions extends StatelessWidget {
         content: "Are you sure you want to delete this section?",
         onConfirm: () async {
           try {
-            var snackbar = successSnackBar(context: context, text: 'Section Deleted');
+            var snackbar = successSnackBar(
+              context: context,
+              text: 'Section Deleted',
+            );
             await viewmodel.deleteSection(section);
             messenger.showSnackBar(snackbar);
           } catch (e) {
-            messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete section task'));
+            messenger.showSnackBar(
+              errorSnackBar(
+                context: context,
+                text: 'Could not delete section task',
+              ),
+            );
           }
-        });
+        },
+      );
     }
 
     Future<void> handleEdit() async {
       try {
-        var snackbar = successSnackBar(context: context, text: 'Section renamed');
+        var snackbar = successSnackBar(
+          context: context,
+          text: 'Section renamed',
+        );
         await showRenameSectionDialog(context, viewmodel, section);
         messenger.showSnackBar(snackbar);
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not rename section'));
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Could not rename section'),
+        );
       }
     }
 
     return PopupMenuButton<Menu>(
       key: const ValueKey('section-actions'),
       onSelected: (Menu item) {
-        var actions = {
-          Menu.edit: handleEdit,
-          Menu.delete: handleDelete,
-        };
+        var actions = {Menu.edit: handleEdit, Menu.delete: handleDelete};
         actions[item]?.call();
       },
       itemBuilder: (BuildContext context) {
@@ -173,6 +220,7 @@ class SectionActions extends StatelessWidget {
             ),
           ),
         ];
-      });
+      },
+    );
   }
 }

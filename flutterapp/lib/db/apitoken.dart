@@ -6,7 +6,8 @@ import 'package:docket/models/apitoken.dart';
 class ApiTokenRepo extends Repository<ApiToken> {
   static const String name = 'apitoken';
 
-  ApiTokenRepo(JsonCache database, Duration? duration) : super(database, duration);
+  ApiTokenRepo(JsonCache database, Duration? duration)
+    : super(database, duration);
 
   @override
   String keyName() {

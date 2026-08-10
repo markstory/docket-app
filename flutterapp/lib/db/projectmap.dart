@@ -7,7 +7,8 @@ import 'package:docket/models/project.dart';
 class ProjectMapRepo extends Repository<Project> {
   static const String name = 'projectmap';
 
-  ProjectMapRepo(JsonCache database, Duration duration) : super(database, duration);
+  ProjectMapRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {

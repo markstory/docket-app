@@ -90,7 +90,7 @@ void main() {
         'type',
         [],
         {},
-        {}
+        {},
       );
 
       var created = CallCounter();

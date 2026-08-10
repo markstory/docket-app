@@ -277,13 +277,18 @@ void main() {
           return Response(projectDetailsResponseFixture, 200);
         }
         deleteCount++;
-        expect(request.url.path, contains('/api/projects/home/sections/1/delete'));
+        expect(
+          request.url.path,
+          contains('/api/projects/home/sections/1/delete'),
+        );
         return Response("", 200);
       });
       var section = Section(id: 1, name: 'Repairs', ranking: 1);
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
-      await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+      await db.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: []),
+      );
 
       var viewmodel = ProjectDetailsViewModel(db)..setSlug('home');
       await viewmodel.loadData();

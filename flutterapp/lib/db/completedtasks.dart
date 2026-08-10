@@ -11,7 +11,8 @@ class CompletedTasksRepo extends Repository<ProjectWithTasks> {
 
   final Map<String, DateTime?> _lastUpdate = {};
 
-  CompletedTasksRepo(JsonCache database, Duration duration) : super(database, duration);
+  CompletedTasksRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {

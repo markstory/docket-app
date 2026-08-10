@@ -5,7 +5,6 @@ import 'package:docket/database.dart';
 import 'package:docket/models/calendarprovider.dart';
 import 'package:docket/models/calendarsource.dart';
 
-
 class CalendarProviderDetailsViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
@@ -68,7 +67,7 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
     if (!_loading && _provider == null) {
       return refresh();
     } else {
-        return refreshFromDatabase();
+      return refreshFromDatabase();
     }
   }
 
@@ -76,7 +75,10 @@ class CalendarProviderDetailsViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchCalendarProvider(_database.apiToken.token, id);
+    var result = await actions.fetchCalendarProvider(
+      _database.apiToken.token,
+      id,
+    );
     await _database.calendarDetails.set(result);
     _provider = result;
     _loading = false;

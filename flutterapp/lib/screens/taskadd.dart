@@ -43,7 +43,9 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
       navigator.pop();
     } catch (e, stacktrace) {
       developer.log("Failed to create task ${e.toString()} $stacktrace");
-      messenger.showSnackBar(errorSnackBar(context: context, text: 'Failed to create task.'));
+      messenger.showSnackBar(
+        errorSnackBar(context: context, text: 'Failed to create task.'),
+      );
     }
   }
 
@@ -52,30 +54,30 @@ class _TaskAddScreenState extends State<TaskAddScreen> {
     var theme = Theme.of(context);
 
     return Portal(
-        child: Scaffold(
-            appBar: AppBar(
-              title: const Text('New Task'),
-              actions: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.onPrimary,
-                  ),
-                  child: const Text('Save'),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate() && saving == false) {
-                      saving = true;
-                      _formKey.currentState!.save();
-                      await saveTask(context);
-                    }
-                  }
-                )
-              ]
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('New Task'),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: theme.colorScheme.onPrimary,
+              ),
+              child: const Text('Save'),
+              onPressed: () async {
+                if (_formKey.currentState!.validate() && saving == false) {
+                  saving = true;
+                  _formKey.currentState!.save();
+                  await saveTask(context);
+                }
+              },
             ),
-            body: SingleChildScrollView(
-                padding: EdgeInsets.all(space(2)),
-                child: TaskForm(
-                  formKey: _formKey,
-                  viewmodel: viewmodel,
-                ))));
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(space(2)),
+          child: TaskForm(formKey: _formKey, viewmodel: viewmodel),
+        ),
+      ),
+    );
   }
 }

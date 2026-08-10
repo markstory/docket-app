@@ -21,7 +21,8 @@ class CalendarProvider {
     List<CalendarSource> sources = [];
     if (json['calendar_sources'] != null &&
         (json['calendar_sources'].runtimeType == List ||
-            json['calendar_sources'].runtimeType == List<Map<String, Object?>>)) {
+            json['calendar_sources'].runtimeType ==
+                List<Map<String, Object?>>)) {
       for (var item in json['calendar_sources']) {
         sources.add(CalendarSource.fromMap(item));
       }
@@ -38,8 +39,11 @@ class CalendarProvider {
   }
 
   int _findSource(CalendarSource source) {
-    return sources
-        .indexWhere((item) => ((item.id != 0 && item.id == source.id) || item.providerId == source.providerId));
+    return sources.indexWhere(
+      (item) =>
+          ((item.id != 0 && item.id == source.id) ||
+          item.providerId == source.providerId),
+    );
   }
 
   /// Replace or append a source to the provider.

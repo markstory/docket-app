@@ -9,20 +9,25 @@ import 'package:docket/dialogs/confirmdelete.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var database = LocalDatabase(inTest: true);
 
   Widget buildButton(void Function() onConfirm) {
     return EntryPoint(
-        database: database,
-        child: Builder(builder: (BuildContext context) {
+      database: database,
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
-              child: const Text('Open'),
-              onPressed: () {
-                showConfirmDelete(context: context, onConfirm: onConfirm);
-              });
-        }));
+            child: const Text('Open'),
+            onPressed: () {
+              showConfirmDelete(context: context, onConfirm: onConfirm);
+            },
+          );
+        },
+      ),
+    );
   }
 
   group('showConfirmDelete', () {
@@ -31,6 +36,7 @@ void main() {
       void handleConfirm() {
         callCount += 1;
       }
+
       await tester.pumpWidget(buildButton(handleConfirm));
 
       // Open dialog.
@@ -48,6 +54,7 @@ void main() {
       void handleConfirm() {
         callCount += 1;
       }
+
       await tester.pumpWidget(buildButton(handleConfirm));
 
       // Open dialog.

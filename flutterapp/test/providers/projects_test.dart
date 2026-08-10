@@ -106,7 +106,9 @@ void main() {
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
       var db = LocalDatabase(inTest: true);
-      await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+      await db.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: []),
+      );
 
       await provider.move(project, 2);
 
@@ -124,7 +126,9 @@ void main() {
       var project = Project(id: 1, slug: 'home', name: 'Home');
 
       var db = LocalDatabase(inTest: true);
-      await db.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+      await db.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: []),
+      );
 
       await provider.update(project);
 

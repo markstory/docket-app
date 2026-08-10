@@ -5,12 +5,7 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/project.dart';
 
-enum ViewNames {
-  projectArchive,
-  projectDetails,
-  projectMap,
-  completedTasks,
-}
+enum ViewNames { projectArchive, projectDetails, projectMap, completedTasks }
 
 class ProjectsProvider extends ChangeNotifier {
   late LocalDatabase _database;
@@ -85,7 +80,9 @@ class ProjectsProvider extends ChangeNotifier {
     project = await actions.createProject(_database.apiToken.token, project);
 
     await _database.projectMap.set(project);
-    await _database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+    await _database.projectDetails.set(
+      ProjectWithTasks(project: project, tasks: []),
+    );
 
     _projects = await _database.projectMap.all();
     notifyListeners();

@@ -16,7 +16,8 @@ import 'package:docket/screens/projectedit.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/project_details.json');
   final projectDetails = file.readAsStringSync();
@@ -45,13 +46,15 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: ProjectEditScreen(viewdata.project),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: ProjectEditScreen(viewdata.project)),
+      );
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('project-name')), "New name");
+      await tester.enterText(
+        find.byKey(const ValueKey('project-name')),
+        "New name",
+      );
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 

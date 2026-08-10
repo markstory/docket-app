@@ -47,7 +47,12 @@ class Task {
     this.completeSubtaskCount = 0,
   });
 
-  factory Task.blank({DateTime? dueOn, int? projectId, int? sectionId, bool evening = false}) {
+  factory Task.blank({
+    DateTime? dueOn,
+    int? projectId,
+    int? sectionId,
+    bool evening = false,
+  }) {
     return Task(
       id: null,
       projectId: projectId,
@@ -103,7 +108,8 @@ class Task {
     }
     List<Subtask> subtasks = [];
     if (json['subtasks'] != null &&
-        (json['subtasks'].runtimeType == List || json['subtasks'].runtimeType == List<Map<String, Object?>>)) {
+        (json['subtasks'].runtimeType == List ||
+            json['subtasks'].runtimeType == List<Map<String, Object?>>)) {
       for (var item in json['subtasks']) {
         subtasks.add(Subtask.fromMap(item));
       }
@@ -240,14 +246,14 @@ class TaskViewData {
   }
 
   factory TaskViewData.fromMap(Map<String, dynamic> map) {
-    List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
-    List<CalendarItem> calendarItems =
-        (map['calendarItems'] as List? ?? []).map((data) => CalendarItem.fromMap(data)).toList();
+    List<Task> tasks = (map['tasks'] as List? ?? [])
+        .map((data) => Task.fromMap(data))
+        .toList();
+    List<CalendarItem> calendarItems = (map['calendarItems'] as List? ?? [])
+        .map((data) => CalendarItem.fromMap(data))
+        .toList();
 
-    return TaskViewData(
-      tasks: tasks,
-      calendarItems: calendarItems,
-    );
+    return TaskViewData(tasks: tasks, calendarItems: calendarItems);
   }
 
   String dateKey() {
@@ -337,7 +343,6 @@ class TaskViewData {
 // the start & end date and the task views in each 'slot'.
 typedef DailyTasksData = Map<String, TaskViewData>;
 
-
 /// Container type for a range of TaskViewData objects.
 /// This helps make UI logic simpler to operate.
 class TaskRangeView {
@@ -347,7 +352,13 @@ class TaskRangeView {
   final TaskViewData? overdue;
   final bool isFresh;
 
-  const TaskRangeView({required this.start, required this.days, required this.views, this.overdue, this.isFresh = true});
+  const TaskRangeView({
+    required this.start,
+    required this.days,
+    required this.views,
+    this.overdue,
+    this.isFresh = true,
+  });
 
   factory TaskRangeView.blank({required DateTime start, required int days}) {
     return TaskRangeView(start: start, days: days, views: []);
@@ -401,10 +412,12 @@ class TaskRangeView {
     var current = start;
     while (current.isBefore(end) || current == end) {
       var dateStr = formatters.dateString(current);
-      views.add(TaskViewData(
-        tasks: taskMap[dateStr] ?? [],
-        calendarItems: calendarMap[dateStr] ?? [],
-      ));
+      views.add(
+        TaskViewData(
+          tasks: taskMap[dateStr] ?? [],
+          calendarItems: calendarMap[dateStr] ?? [],
+        ),
+      );
       current = current.add(const Duration(days: 1));
     }
 

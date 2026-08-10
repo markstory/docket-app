@@ -18,7 +18,10 @@ class UserProfileViewModel extends ChangeNotifier {
 
   UserProfile get profile {
     var value = _profile;
-    assert(value != null, 'cannot access profile as it has not been loaded yet.');
+    assert(
+      value != null,
+      'cannot access profile as it has not been loaded yet.',
+    );
 
     return value!;
   }

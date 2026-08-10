@@ -9,7 +9,12 @@ abstract class TaskFormViewModel {
   Task get task;
   bool get loading;
 
-  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex);
+  Future<void> reorderSubtask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  );
 
   Future<void> saveSubtask(Task task, Subtask subtask);
 

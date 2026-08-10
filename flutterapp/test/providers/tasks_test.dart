@@ -44,13 +44,19 @@ void main() {
   var todayStr = formatters.dateString(today);
 
   var file = File('test_resources/tasks_today.json');
-  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final tasksTodayResponseFixture = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/project_details.json');
   final projectDetailsResponseFixture = file.readAsStringSync();
 
   file = File('test_resources/task_create_today.json');
-  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final taskCreateTodayResponseFixture = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/subtask_update.json');
   final subtaskUpdateResponse = file.readAsStringSync();
@@ -61,6 +67,7 @@ void main() {
     var taskView = TaskViewData(tasks: tasks, calendarItems: []);
     await db.dailyTasks.set(taskView.groupByDay());
   }
+
   late CallCounter listener;
 
   group('$TasksProvider', () {
@@ -103,7 +110,10 @@ void main() {
       var tasks = parseTaskList(tasksTodayResponseFixture);
       tasks[0].completed = true;
 
-      var taskView = ProjectWithTasks(tasks: tasks, project: Project(slug: 'home', name: 'Home'));
+      var taskView = ProjectWithTasks(
+        tasks: tasks,
+        project: Project(slug: 'home', name: 'Home'),
+      );
       await db.completedTasks.set(taskView);
 
       db.completedTasks.addListener(listener);
@@ -116,29 +126,32 @@ void main() {
       expect(completed.tasks.length, equals(1));
     });
 
-    test('toggleComplete() sends request to incomplete and expires data', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/api/tasks/1/incomplete'));
-        return Response('', 204);
-      });
+    test(
+      'toggleComplete() sends request to incomplete and expires data',
+      () async {
+        actions.client = MockClient((request) async {
+          expect(request.url.path, contains('/api/tasks/1/incomplete'));
+          return Response('', 204);
+        });
 
-      var task = Task.blank();
-      task.id = 1;
-      task.title = "fold the towels";
-      task.projectId = 1;
-      task.projectSlug = 'home';
-      task.dueOn = today;
-      task.completed = true;
+        var task = Task.blank();
+        task.id = 1;
+        task.title = "fold the towels";
+        task.projectId = 1;
+        task.projectSlug = 'home';
+        task.dueOn = today;
+        task.completed = true;
 
-      var provider = TasksProvider(db);
-      await provider.toggleComplete(task);
+        var provider = TasksProvider(db);
+        await provider.toggleComplete(task);
 
-      expect(db.dailyTasks.isDayExpired(today), isTrue);
-      expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
+        expect(db.dailyTasks.isDayExpired(today), isTrue);
+        expect(db.projectDetails.isFreshSlug(task.projectSlug), isFalse);
 
-      var todayData = await db.dailyTasks.get();
-      expect(todayData[todayStr]?.tasks.length, equals(1));
-    });
+        var todayData = await db.dailyTasks.get();
+        expect(todayData[todayStr]?.tasks.length, equals(1));
+      },
+    );
 
     test('deleteTask() removes task and clears local db', () async {
       actions.client = MockClient((request) async {
@@ -158,23 +171,29 @@ void main() {
       expect(db.dailyTasks.isDayExpired(tasks[0].dueOn!), isTrue);
     });
 
-    test('deleteTask() reduces the local project incomplete task count', () async {
-      actions.client = MockClient((request) async {
-        expect(request.url.path, contains('/api/tasks/1/delete'));
-        return Response('', 204);
-      });
+    test(
+      'deleteTask() reduces the local project incomplete task count',
+      () async {
+        actions.client = MockClient((request) async {
+          expect(request.url.path, contains('/api/tasks/1/delete'));
+          return Response('', 204);
+        });
 
-      var project = parseProjectDetails(projectDetailsResponseFixture);
-      db.projectMap.set(project);
+        var project = parseProjectDetails(projectDetailsResponseFixture);
+        db.projectMap.set(project);
 
-      var tasks = parseTaskList(tasksTodayResponseFixture);
-      await setTodayView(tasks);
+        var tasks = parseTaskList(tasksTodayResponseFixture);
+        await setTodayView(tasks);
 
-      var provider = TasksProvider(db);
-      await provider.deleteTask(tasks[0]);
-      var updated = await db.projectMap.get(project.slug);
-      expect(updated?.incompleteTaskCount, lessThan(project.incompleteTaskCount));
-    });
+        var provider = TasksProvider(db);
+        await provider.deleteTask(tasks[0]);
+        var updated = await db.projectMap.get(project.slug);
+        expect(
+          updated?.incompleteTaskCount,
+          lessThan(project.incompleteTaskCount),
+        );
+      },
+    );
 
     test('updateTask() call API and updates today view', () async {
       actions.client = MockClient((request) async {
@@ -307,7 +326,11 @@ void main() {
       task.projectId = 1;
       task.projectSlug = 'home';
       task.title = "fold the towels";
-      var subtask = Subtask(id: 2, title: 'replaced by server data', ranking: 3);
+      var subtask = Subtask(
+        id: 2,
+        title: 'replaced by server data',
+        ranking: 3,
+      );
       task.subtasks.add(subtask);
 
       await provider.moveSubtask(task, subtask);

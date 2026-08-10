@@ -69,7 +69,9 @@ ProjectColor? findProjectColor(int colorId) {
 @immutable
 class DocketColors extends ThemeExtension<DocketColors> {
   static const double iconSize = 24;
-  static const BorderRadius borderRadius = BorderRadius.all(Radius.circular(14));
+  static const BorderRadius borderRadius = BorderRadius.all(
+    Radius.circular(14),
+  );
 
   // Color values for docket theme.
   static const Color white = Color(0xFFffffff);
@@ -243,13 +245,11 @@ final lightTheme = ThemeData(
     foregroundColor: DocketColors.white,
     systemOverlayStyle: SystemUiOverlayStyle(
       systemNavigationBarColor: DocketColors.white,
-      systemNavigationBarIconBrightness: Brightness.dark
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   ),
   scaffoldBackgroundColor: Colors.white,
-  drawerTheme: const DrawerThemeData(
-    backgroundColor: DocketColors.gray000,
-  ),
+  drawerTheme: const DrawerThemeData(backgroundColor: DocketColors.gray000),
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: DocketColors.purple500,
@@ -284,7 +284,7 @@ final darkTheme = ThemeData(
     foregroundColor: DocketColors.white,
     systemOverlayStyle: SystemUiOverlayStyle(
       systemNavigationBarColor: DocketColors.gray900,
-      systemNavigationBarIconBrightness: Brightness.light
+      systemNavigationBarIconBrightness: Brightness.light,
     ),
   ),
   canvasColor: DocketColors.gray900,
@@ -311,17 +311,11 @@ final darkTheme = ThemeData(
     surfaceTint: DocketColors.purple900,
   ),
   dialogBackgroundColor: DocketColors.gray900,
-  drawerTheme: const DrawerThemeData(
-    backgroundColor: DocketColors.gray900,
-  ),
+  drawerTheme: const DrawerThemeData(backgroundColor: DocketColors.gray900),
   extensions: const [DocketColors.dark],
-  popupMenuTheme: const PopupMenuThemeData(
-    color: DocketColors.gray800,
-  ),
+  popupMenuTheme: const PopupMenuThemeData(color: DocketColors.gray800),
   scaffoldBackgroundColor: DocketColors.gray900,
-  snackBarTheme: const SnackBarThemeData(
-    backgroundColor: DocketColors.gray400,
-  ),
+  snackBarTheme: const SnackBarThemeData(backgroundColor: DocketColors.gray400),
 );
 
 /// Return a value based on the sizing unit of 8px
@@ -336,20 +330,23 @@ DocketColors getCustomColors(BuildContext context) {
 }
 
 BoxDecoration itemDragBoxDecoration(ThemeData theme) {
-  return BoxDecoration(color: theme.colorScheme.background, boxShadow: const [
-    BoxShadow(
-      color: Color.fromARGB(5, 63, 63, 68),
-      spreadRadius: 0,
-      blurRadius: 1,
-      offset: Offset(0, 0),
-    ),
-    BoxShadow(
-      color: Color.fromARGB(25, 34, 33, 81),
-      spreadRadius: 0,
-      blurRadius: 15,
-      offset: Offset(0, 15),
-    ),
-  ]);
+  return BoxDecoration(
+    color: theme.colorScheme.background,
+    boxShadow: const [
+      BoxShadow(
+        color: Color.fromARGB(5, 63, 63, 68),
+        spreadRadius: 0,
+        blurRadius: 1,
+        offset: Offset(0, 0),
+      ),
+      BoxShadow(
+        color: Color.fromARGB(25, 34, 33, 81),
+        spreadRadius: 0,
+        blurRadius: 15,
+        offset: Offset(0, 15),
+      ),
+    ],
+  );
 }
 
 TextStyle? completedStyle(BuildContext context, bool completed) {

@@ -6,7 +6,8 @@ import 'package:docket/models/calendarprovider.dart';
 class CalendarProviderDetailsRepo extends Repository<CalendarProvider> {
   static const String name = 'calendarproviderdetails';
 
-  CalendarProviderDetailsRepo(JsonCache database, Duration duration) : super(database, duration);
+  CalendarProviderDetailsRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {

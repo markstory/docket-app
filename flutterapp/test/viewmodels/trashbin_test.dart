@@ -27,7 +27,10 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/tasks_today.json');
-  final tasksResponseFixture = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final tasksResponseFixture = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   group('$TrashbinViewModel', () {
     var db = LocalDatabase(inTest: true);

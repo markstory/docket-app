@@ -42,4 +42,5 @@ class CalendarDetailsArguments {
 
   CalendarDetailsArguments(this.provider);
 }
+
 // }}}

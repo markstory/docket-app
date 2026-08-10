@@ -4,12 +4,12 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
-
 class ProjectCompletedViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
   /// Whether data is being refreshed from the server or local cache.
   bool _loading = false;
+
   /// Are we reloading without a spinner?
   bool _silentLoading = false;
 
@@ -77,7 +77,10 @@ class ProjectCompletedViewModel extends ChangeNotifier {
     assert(_slug.isNotEmpty, "A slug is required to load data");
 
     _loading = true;
-    var result = await actions.fetchCompletedTasks(_database.apiToken.token, _slug);
+    var result = await actions.fetchCompletedTasks(
+      _database.apiToken.token,
+      _slug,
+    );
     await _database.completedTasks.set(result);
     _loading = false;
     _tasks = result.tasks;
@@ -91,7 +94,10 @@ class ProjectCompletedViewModel extends ChangeNotifier {
 
     _loading = _silentLoading = true;
 
-    var result = await actions.fetchCompletedTasks(_database.apiToken.token, _slug);
+    var result = await actions.fetchCompletedTasks(
+      _database.apiToken.token,
+      _slug,
+    );
     await _database.completedTasks.set(result);
 
     _loading = _silentLoading = false;

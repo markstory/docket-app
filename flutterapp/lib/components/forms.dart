@@ -19,17 +19,24 @@ class FormIconRow extends StatelessWidget {
   Widget build(BuildContext context) {
     late Widget iconWidget;
     if (icon != null) {
-      iconWidget = Padding(padding: EdgeInsets.fromLTRB(space(1.2), space(1.2), space(2.3), 0), child: icon);
+      iconWidget = Padding(
+        padding: EdgeInsets.fromLTRB(space(1.2), space(1.2), space(2.3), 0),
+        child: icon,
+      );
     } else {
       iconWidget = const SizedBox(width: 48);
     }
 
     return Container(
-        padding: EdgeInsets.symmetric(vertical: space(1)),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      padding: EdgeInsets.symmetric(vertical: space(1)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           iconWidget,
           Expanded(child: child),
-        ]));
+        ],
+      ),
+    );
   }
 }
 
@@ -41,7 +48,13 @@ class DueOnInput extends StatelessWidget {
 
   final Function(DateTime? dueOn, bool evening) onUpdate;
 
-  const DueOnInput({required this.onUpdate, required this.dueOn, required this.evening, this.alignment, super.key});
+  const DueOnInput({
+    required this.onUpdate,
+    required this.dueOn,
+    required this.evening,
+    this.alignment,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +63,13 @@ class DueOnInput extends StatelessWidget {
       child = Align(alignment: alignment!, child: child);
     }
     return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
-      ),
+      style: TextButton.styleFrom(padding: EdgeInsets.zero),
       child: child,
       onPressed: () async {
         var result = await showChangeDueOnDialog(context, dueOn, evening);
         onUpdate(result.dueOn, result.evening);
-      });
+      },
+    );
   }
 }
 
@@ -69,7 +81,12 @@ class MarkdownInput extends StatefulWidget {
   final String label;
   final Function(String newText) onChange;
 
-  const MarkdownInput({required this.value, required this.onChange, this.label = "Notes", super.key});
+  const MarkdownInput({
+    required this.value,
+    required this.onChange,
+    this.label = "Notes",
+    super.key,
+  });
 
   @override
   State<MarkdownInput> createState() => _MarkdownInputState();
@@ -107,9 +124,13 @@ class _MarkdownInputState extends State<MarkdownInput> {
               color: theme.colorScheme.primary,
               backgroundColor: theme.colorScheme.surface,
             ),
-            blockquoteDecoration: BoxDecoration(color: theme.colorScheme.surface),
+            blockquoteDecoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+            ),
             blockquote: const TextStyle(fontStyle: FontStyle.italic),
-            codeblockDecoration: BoxDecoration(color: theme.colorScheme.surface),
+            codeblockDecoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+            ),
           ),
           key: const ValueKey('markdown-preview'),
           data: body,
@@ -120,27 +141,28 @@ class _MarkdownInputState extends State<MarkdownInput> {
               _editing = true;
             });
             inputFocus.requestFocus();
-          }));
+          },
+        ),
+      );
     }
 
     return TextFormField(
-        key: const ValueKey('markdown-input'),
-        keyboardType: TextInputType.multiline,
-        minLines: 1,
-        maxLines: null,
-        focusNode: inputFocus,
-        decoration: InputDecoration(
-          labelText: widget.label,
-        ),
-        initialValue: widget.value,
-        onSaved: (value) {
-          if (value != null) {
-            widget.onChange(value);
-            setState(() {
-              _editing = false;
-            });
-          }
-        });
+      key: const ValueKey('markdown-input'),
+      keyboardType: TextInputType.multiline,
+      minLines: 1,
+      maxLines: null,
+      focusNode: inputFocus,
+      decoration: InputDecoration(labelText: widget.label),
+      initialValue: widget.value,
+      onSaved: (value) {
+        if (value != null) {
+          widget.onChange(value);
+          setState(() {
+            _editing = false;
+          });
+        }
+      },
+    );
   }
 
   void _onTapLink(String url, String? x, String? y) async {

@@ -92,7 +92,10 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
+    var result = await actions.fetchProjectBySlug(
+      _database.apiToken.token,
+      slug,
+    );
 
     _project = result.project;
     await _database.projectDetails.set(result);
@@ -104,7 +107,10 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   Future<void> silentRefresh() async {
     _loading = _silentLoading = true;
 
-    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
+    var result = await actions.fetchProjectBySlug(
+      _database.apiToken.token,
+      slug,
+    );
 
     _project = result.project;
     await _database.projectDetails.set(result);
@@ -126,7 +132,6 @@ class ProjectDetailsViewModel extends ChangeNotifier {
     return project;
   }
 
-
   // Section Methods {{{
   /// Move a section up or down.
   Future<void> moveSection(int oldIndex, int newIndex) async {
@@ -142,7 +147,12 @@ class ProjectDetailsViewModel extends ChangeNotifier {
       return;
     }
     section.ranking = newIndex;
-    await actions.moveSection(_database.apiToken.token, project, section, newIndex);
+    await actions.moveSection(
+      _database.apiToken.token,
+      project,
+      section,
+      newIndex,
+    );
     _database.projectDetails.expireSlug(project.slug);
 
     notifyListeners();
@@ -201,7 +211,12 @@ class ProjectDetailsViewModel extends ChangeNotifier {
   }
 
   /// Re-order a task
-  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+  Future<void> reorderTask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  ) async {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.
@@ -224,24 +239,26 @@ class ProjectDetailsViewModel extends ChangeNotifier {
       late TaskSortMetadata<Section> metadata;
       if (group.section == null) {
         metadata = TaskSortMetadata(
-            title: group.section?.name ?? '',
-            tasks: group.tasks,
-            onReceive: (task, newIndex, meta) {
-              task.childOrder = newIndex;
-              task.sectionId = null;
-              return {'child_order': newIndex, 'section_id': null};
-            });
+          title: group.section?.name ?? '',
+          tasks: group.tasks,
+          onReceive: (task, newIndex, meta) {
+            task.childOrder = newIndex;
+            task.sectionId = null;
+            return {'child_order': newIndex, 'section_id': null};
+          },
+        );
       } else {
         metadata = TaskSortMetadata(
-            canDrag: true,
-            title: group.section?.name ?? '',
-            tasks: group.tasks,
-            data: group.section,
-            onReceive: (task, newIndex, meta) {
-              task.childOrder = newIndex;
-              task.sectionId = group.section?.id;
-              return {'child_order': newIndex, 'section_id': task.sectionId};
-            });
+          canDrag: true,
+          title: group.section?.name ?? '',
+          tasks: group.tasks,
+          data: group.section,
+          onReceive: (task, newIndex, meta) {
+            task.childOrder = newIndex;
+            task.sectionId = group.section?.id;
+            return {'child_order': newIndex, 'section_id': task.sectionId};
+          },
+        );
       }
       _taskLists.add(metadata);
     }

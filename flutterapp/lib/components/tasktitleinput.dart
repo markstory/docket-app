@@ -21,7 +21,10 @@ List<MentionData> generateMonth(String name, int end) {
     if (dateValue.isBefore(today)) {
       dateValue = dateValue.add(const Duration(days: 365));
     }
-    options.add({"id": "d:${formatters.dateString(dateValue)}", "display": value});
+    options.add({
+      "id": "d:${formatters.dateString(dateValue)}",
+      "display": value,
+    });
   }
   return options;
 }
@@ -69,14 +72,15 @@ class TaskTitleInput extends StatelessWidget {
   final String value;
   final bool autoFocus;
 
-  const TaskTitleInput(
-      {required this.projects,
-      required this.onChangeDate,
-      required this.onChangeProject,
-      required this.onChangeTitle,
-      required this.value,
-      this.autoFocus = false,
-      super.key});
+  const TaskTitleInput({
+    required this.projects,
+    required this.onChangeDate,
+    required this.onChangeProject,
+    required this.onChangeTitle,
+    required this.value,
+    this.autoFocus = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,65 +96,69 @@ class TaskTitleInput extends StatelessWidget {
       return {"id": "e${item['id']}", "display": item['display']};
     }).toList();
 
-    var inputTextStyle = TextStyle(backgroundColor: theme.colorScheme.surfaceTint, color: theme.colorScheme.primary);
+    var inputTextStyle = TextStyle(
+      backgroundColor: theme.colorScheme.surfaceTint,
+      color: theme.colorScheme.primary,
+    );
 
     // TODO this form should make sure title is not empty.
     return FlutterMentions(
-        key: const ValueKey('title'),
-        appendSpaceOnAdd: true,
-        autofocus: autoFocus,
-        enableInteractiveSelection: true,
-        suggestionPosition: SuggestionPosition.Bottom,
-        maxLines: 5,
-        minLines: 1,
-        defaultText: value,
-        onMarkupChanged: (value) {
-          var cleaned = _captureMarkup(value, ['#', '%', '&']);
-          onChangeTitle(cleaned);
-        },
-        onMentionAdd: (item) {
-          var parts = item['id'].toString().split(':');
-          assert(parts.length == 2);
-          var type = parts[0];
-          var value = parts[1];
-          switch (type) {
-            case 'p':
-              onChangeProject(int.parse(value));
-              break;
-            // relative dates
-            case 'r':
-            case 'er':
-              var dateValue = dateParser.parse(value);
-              onChangeDate(dateValue, type == 'er');
-              break;
-            // absolute dates
-            case 'd':
-            case 'ed':
-              var dateValue = dateParser.parse(value);
-              onChangeDate(dateValue, type == 'ed');
-              break;
-          }
-        },
-        mentions: [
-          Mention(
-            trigger: '#',
-            style: inputTextStyle,
-            data: projectOptions,
-            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
-          ),
-          Mention(
-            trigger: '%',
-            style: inputTextStyle,
-            data: dateOptions,
-            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
-          ),
-          Mention(
-            trigger: '&',
-            style: inputTextStyle,
-            data: eveningDateOptions,
-            suggestionBuilder: (data) => _suggestionBuilder(data, theme),
-          )
-        ]);
+      key: const ValueKey('title'),
+      appendSpaceOnAdd: true,
+      autofocus: autoFocus,
+      enableInteractiveSelection: true,
+      suggestionPosition: SuggestionPosition.Bottom,
+      maxLines: 5,
+      minLines: 1,
+      defaultText: value,
+      onMarkupChanged: (value) {
+        var cleaned = _captureMarkup(value, ['#', '%', '&']);
+        onChangeTitle(cleaned);
+      },
+      onMentionAdd: (item) {
+        var parts = item['id'].toString().split(':');
+        assert(parts.length == 2);
+        var type = parts[0];
+        var value = parts[1];
+        switch (type) {
+          case 'p':
+            onChangeProject(int.parse(value));
+            break;
+          // relative dates
+          case 'r':
+          case 'er':
+            var dateValue = dateParser.parse(value);
+            onChangeDate(dateValue, type == 'er');
+            break;
+          // absolute dates
+          case 'd':
+          case 'ed':
+            var dateValue = dateParser.parse(value);
+            onChangeDate(dateValue, type == 'ed');
+            break;
+        }
+      },
+      mentions: [
+        Mention(
+          trigger: '#',
+          style: inputTextStyle,
+          data: projectOptions,
+          suggestionBuilder: (data) => _suggestionBuilder(data, theme),
+        ),
+        Mention(
+          trigger: '%',
+          style: inputTextStyle,
+          data: dateOptions,
+          suggestionBuilder: (data) => _suggestionBuilder(data, theme),
+        ),
+        Mention(
+          trigger: '&',
+          style: inputTextStyle,
+          data: eveningDateOptions,
+          suggestionBuilder: (data) => _suggestionBuilder(data, theme),
+        ),
+      ],
+    );
   }
 
   Widget _suggestionBuilder(Map<String, dynamic> data, ThemeData theme) {
@@ -166,7 +174,9 @@ class TaskTitleInput extends StatelessWidget {
   /// Remove markup text and trigger special actions based on mentions
   String _captureMarkup(String value, List<String> triggers) {
     var triggerString = triggers.join('');
-    var pattern = RegExp(r'([' + triggerString + r'])\[__([^_]+)__\]\(__([^_]+)__\)');
+    var pattern = RegExp(
+      r'([' + triggerString + r'])\[__([^_]+)__\]\(__([^_]+)__\)',
+    );
     var cleaned = value.replaceAllMapped(pattern, (match) {
       return "";
     });

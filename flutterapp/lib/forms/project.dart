@@ -27,32 +27,41 @@ class _ProjectFormState extends State<ProjectForm> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           TextFormField(
-              key: const ValueKey("project-name"),
-              decoration: InputDecoration(
-                labelText: 'Name',
-                icon: Icon(Icons.folder_outlined, color: theme.colorScheme.primary),
+            key: const ValueKey("project-name"),
+            decoration: InputDecoration(
+              labelText: 'Name',
+              icon: Icon(
+                Icons.folder_outlined,
+                color: theme.colorScheme.primary,
               ),
-              validator: (String? value) {
-                return (value != null && value.isNotEmpty) ? null : 'Project name required';
-              },
-              initialValue: project.name,
-              onSaved: (value) {
-                if (value != null) {
-                  project.name = value;
-                }
-              }),
+            ),
+            validator: (String? value) {
+              return (value != null && value.isNotEmpty)
+                  ? null
+                  : 'Project name required';
+            },
+            initialValue: project.name,
+            onSaved: (value) {
+              if (value != null) {
+                project.name = value;
+              }
+            },
+          ),
           SizedBox(height: space(2)),
           DropdownButtonFormField(
             key: const ValueKey('color'),
             value: project.color,
             decoration: InputDecoration(
               labelText: 'Color',
-              icon: Icon(Icons.format_paint_outlined, color: theme.colorScheme.secondary),
+              icon: Icon(
+                Icons.format_paint_outlined,
+                color: theme.colorScheme.secondary,
+              ),
             ),
             onChanged: (int? value) {
               if (value != null) {
@@ -61,12 +70,15 @@ class _ProjectFormState extends State<ProjectForm> {
             },
             items: getProjectColors().map((item) {
               return DropdownMenuItem(
-                  value: item.id,
-                  child: Row(children: [
+                value: item.id,
+                child: Row(
+                  children: [
                     Icon(Icons.circle, color: item.color, size: 12),
                     SizedBox(width: space(1)),
                     Text(item.name),
-                  ]));
+                  ],
+                ),
+              );
             }).toList(),
           ),
           OverflowBar(
@@ -79,8 +91,12 @@ class _ProjectFormState extends State<ProjectForm> {
                     _formKey.currentState!.save();
                     await widget.onSave(project);
                   }
-                })
-          ])
-        ]));
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

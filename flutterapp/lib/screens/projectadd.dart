@@ -21,7 +21,9 @@ class ProjectAddScreen extends StatelessWidget {
       try {
         var navigator = Navigator.of(context);
         await projects.createProject(project);
-        messenger.showSnackBar(const SnackBar(content: Text('Project Created')));
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Project Created')),
+        );
 
         navigator.pop();
       } catch (e, stacktrace) {
@@ -33,12 +35,14 @@ class ProjectAddScreen extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(title: const Text('New Project')),
-        body: SingleChildScrollView(
-            padding: EdgeInsets.all(space(2)),
-            child: ProjectForm(
-              project: project,
-              onSave: (updated) async => await saveProject(context, updated),
-            )));
+      appBar: AppBar(title: const Text('New Project')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(space(2)),
+        child: ProjectForm(
+          project: project,
+          onSave: (updated) async => await saveProject(context, updated),
+        ),
+      ),
+    );
   }
 }

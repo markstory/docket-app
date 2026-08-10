@@ -47,7 +47,11 @@ void main() {
       withClock(Clock.fixed(expires), () async {
         var value = await database.projectMap.get('home');
         expect(value, isNotNull, reason: 'stale reads are ok');
-        expect(database.projectMap.isFresh(), isFalse, reason: 'no longer fresh.');
+        expect(
+          database.projectMap.isFresh(),
+          isFalse,
+          reason: 'no longer fresh.',
+        );
       });
     });
 
@@ -180,7 +184,7 @@ void main() {
       task.dayOrder = 1;
 
       await database.dailyTasks.set({
-        todayStr: TaskViewData(tasks: [other, task], calendarItems: [])
+        todayStr: TaskViewData(tasks: [other, task], calendarItems: []),
       });
 
       task.title = 'Updated pay bills';
@@ -208,7 +212,7 @@ void main() {
       task.projectSlug = 'home';
 
       await database.dailyTasks.set({
-        todayStr: TaskViewData(tasks: [other, task], calendarItems: [])
+        todayStr: TaskViewData(tasks: [other, task], calendarItems: []),
       });
 
       task.previousDueOn = task.dueOn;
@@ -304,7 +308,7 @@ void main() {
       task.projectSlug = 'home';
 
       await database.dailyTasks.set({
-        todayStr: TaskViewData(tasks: [other, task], calendarItems: [])
+        todayStr: TaskViewData(tasks: [other, task], calendarItems: []),
       });
 
       task.previousDueOn = task.dueOn;
@@ -349,7 +353,7 @@ void main() {
       task.dueOn = tomorrow;
 
       await database.dailyTasks.set({
-        tomorrowStr: TaskViewData(tasks: [task], calendarItems: [])
+        tomorrowStr: TaskViewData(tasks: [task], calendarItems: []),
       });
 
       // Simulate moving from upcoming -> none
@@ -371,11 +375,12 @@ void main() {
     });
 
     test('updateTask() inserts tasks into projectDetails', () async {
-      await database.projectDetails
-          .set(ProjectWithTasks(
-            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
-            tasks: []
-          ));
+      await database.projectDetails.set(
+        ProjectWithTasks(
+          project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+          tasks: [],
+        ),
+      );
 
       var task = Task.blank(projectId: project.id);
       task.id = 1;
@@ -400,16 +405,18 @@ void main() {
       task.projectId = 1;
       task.projectSlug = 'home';
 
-      await database.projectDetails
-          .set(ProjectWithTasks(
-            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
-            tasks: [task]
-          ));
-      await database.projectDetails
-          .set(ProjectWithTasks(
-            project: Project.fromMap({'slug': 'work', 'id': 2, 'name': 'work'}),
-            tasks: []
-          ));
+      await database.projectDetails.set(
+        ProjectWithTasks(
+          project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+          tasks: [task],
+        ),
+      );
+      await database.projectDetails.set(
+        ProjectWithTasks(
+          project: Project.fromMap({'slug': 'work', 'id': 2, 'name': 'work'}),
+          tasks: [],
+        ),
+      );
 
       // Simulate response data changes from update request.
       task.projectId = 2;
@@ -430,11 +437,12 @@ void main() {
     });
 
     test('projectDetails.remove() clears freshslug state', () async {
-      await database.projectDetails
-          .set(ProjectWithTasks(
-            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
-            tasks: []
-          ));
+      await database.projectDetails.set(
+        ProjectWithTasks(
+          project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+          tasks: [],
+        ),
+      );
       expect(database.projectDetails.isFreshSlug('home'), isTrue);
 
       await database.projectDetails.remove('home');
@@ -468,9 +476,14 @@ void main() {
       await database.dailyTasks.set({
         twoDaysAgoStr: TaskViewData(tasks: [older], calendarItems: []),
         yesterdayStr: TaskViewData(tasks: [old], calendarItems: []),
-        todayStr: TaskViewData(tasks: [task], calendarItems: [])
+        todayStr: TaskViewData(tasks: [task], calendarItems: []),
       });
-      var range = TaskRangeView.fromLists(tasks: [old, task], calendarItems: [], start: today, days: 1);
+      var range = TaskRangeView.fromLists(
+        tasks: [old, task],
+        calendarItems: [],
+        start: today,
+        days: 1,
+      );
       await database.dailyTasks.setRange(range);
 
       var taskData = await database.dailyTasks.getDate(today, overdue: true);
@@ -535,7 +548,9 @@ void main() {
       var project = Project.blank();
       project.id = 4;
       project.slug = 'home';
-      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+      await database.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: []),
+      );
 
       var task = Task.blank(projectId: project.id);
       task.title = 'Dig up potatoes';
@@ -563,7 +578,7 @@ void main() {
 
       await database.taskDetails.set(task);
       await database.dailyTasks.set({
-        todayStr: TaskViewData(tasks: [task], calendarItems: [])
+        todayStr: TaskViewData(tasks: [task], calendarItems: []),
       });
 
       await database.deleteTask(task);
@@ -582,7 +597,9 @@ void main() {
       task.projectId = 1;
       task.projectSlug = project.slug;
 
-      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: [task]));
+      await database.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: [task]),
+      );
 
       await database.deleteTask(task);
       var result = await database.projectDetails.get(project.slug);
@@ -598,7 +615,9 @@ void main() {
       task.projectId = 1;
       task.projectSlug = project.slug;
 
-      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: [task]));
+      await database.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: [task]),
+      );
 
       await database.deleteTask(task);
       expect(database.trashbin.isFresh(), isFalse);
@@ -614,7 +633,9 @@ void main() {
       task.projectSlug = project.slug;
       task.deletedAt = DateTime.now();
 
-      await database.projectDetails.set(ProjectWithTasks(project: project, tasks: []));
+      await database.projectDetails.set(
+        ProjectWithTasks(project: project, tasks: []),
+      );
 
       await database.undeleteTask(task);
       expect(database.trashbin.isExpired, isTrue);

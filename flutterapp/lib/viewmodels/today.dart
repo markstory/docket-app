@@ -7,7 +7,6 @@ import 'package:docket/models/task.dart';
 import 'package:docket/components/tasksorter.dart';
 import 'package:docket/formatters.dart' as formatters;
 
-
 class TodayViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 
@@ -54,11 +53,11 @@ class TodayViewModel extends ChangeNotifier {
   /// Detect if there are no remaining tasks for today.
   bool hasNoTasks() {
     if (_loading) {
-        return false;
+      return false;
     }
     var total = 0;
     for (var taskList in taskLists) {
-        total += taskList.tasks.length;
+      total += taskList.tasks.length;
     }
     return total == 0;
   }
@@ -85,7 +84,11 @@ class TodayViewModel extends ChangeNotifier {
     _loading = _silentLoading = true;
 
     try {
-      var rangeView = await actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true);
+      var rangeView = await actions.fetchDailyTasks(
+        _database.apiToken.token,
+        today,
+        overdue: true,
+      );
       _database.dailyTasks.setRange(rangeView);
       _buildTaskLists(rangeView);
     } catch (err) {
@@ -98,22 +101,28 @@ class TodayViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
     await Future.wait([
-      actions.fetchDailyTasks(_database.apiToken.token, today, overdue: true),
-      actions.fetchProjects(_database.apiToken.token),
-    ]).then((results) {
-      var rangeView = results[0] as TaskRangeView;
-      var projects = results[1] as List<Project>;
+          actions.fetchDailyTasks(
+            _database.apiToken.token,
+            today,
+            overdue: true,
+          ),
+          actions.fetchProjects(_database.apiToken.token),
+        ])
+        .then((results) {
+          var rangeView = results[0] as TaskRangeView;
+          var projects = results[1] as List<Project>;
 
-      return Future.wait([
-        _database.projectMap.replace(projects),
-        _database.dailyTasks.setRange(rangeView),
-      ]).then((results) {
-        return _buildTaskLists(rangeView);
-      });
-    }).onError((error, stack) {
-      _loadError = true;
-      notifyListeners();
-    });
+          return Future.wait([
+            _database.projectMap.replace(projects),
+            _database.dailyTasks.setRange(rangeView),
+          ]).then((results) {
+            return _buildTaskLists(rangeView);
+          });
+        })
+        .onError((error, stack) {
+          _loadError = true;
+          notifyListeners();
+        });
   }
 
   void _buildTaskLists(TaskRangeView rangeView) {
@@ -121,12 +130,13 @@ class TodayViewModel extends ChangeNotifier {
     var overdueData = rangeView.overdue;
     if (overdueData != null) {
       _overdue = TaskSortMetadata(
-          iconStyle: TaskSortIcon.warning,
-          title: 'Overdue',
-          tasks: overdueData.tasks,
-          onReceive: (task, newIndex, meta) {
-            throw Exception('Cannot move task to overdue');
-          });
+        iconStyle: TaskSortIcon.warning,
+        title: 'Overdue',
+        tasks: overdueData.tasks,
+        onReceive: (task, newIndex, meta) {
+          throw Exception('Cannot move task to overdue');
+        },
+      );
     }
 
     _taskLists = [];
@@ -134,39 +144,41 @@ class TodayViewModel extends ChangeNotifier {
       var taskView = entry.value;
 
       var dayTasks = TaskSortMetadata(
-          calendarItems: taskView.calendarItems,
-          title: _overdue != null ? 'Today' : null,
-          tasks: taskView.dayTasks(),
-          onReceive: (task, newIndex, meta) {
-            var updates = {'evening': false, 'day_order': newIndex};
-            task.evening = false;
-            task.dayOrder = newIndex;
+        calendarItems: taskView.calendarItems,
+        title: _overdue != null ? 'Today' : null,
+        tasks: taskView.dayTasks(),
+        onReceive: (task, newIndex, meta) {
+          var updates = {'evening': false, 'day_order': newIndex};
+          task.evening = false;
+          task.dayOrder = newIndex;
 
-            if (task.dueOn?.isBefore(today) ?? false) {
-              task.dueOn = today;
-              updates['due_on'] = formatters.dateString(today);
-            }
-            return updates;
-          });
+          if (task.dueOn?.isBefore(today) ?? false) {
+            task.dueOn = today;
+            updates['due_on'] = formatters.dateString(today);
+          }
+          return updates;
+        },
+      );
       _taskLists.add(dayTasks);
 
       var eveningTasks = TaskSortMetadata(
-          iconStyle: TaskSortIcon.evening,
-          title: 'This Evening',
-          showButton: true,
-          buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
-          tasks: taskView.eveningTasks(),
-          onReceive: (task, newIndex, meta) {
-            var updates = {'evening': true, 'day_order': newIndex};
-            task.evening = true;
-            task.dayOrder = newIndex;
+        iconStyle: TaskSortIcon.evening,
+        title: 'This Evening',
+        showButton: true,
+        buttonArgs: TaskSortButtonArgs(dueOn: today, evening: true),
+        tasks: taskView.eveningTasks(),
+        onReceive: (task, newIndex, meta) {
+          var updates = {'evening': true, 'day_order': newIndex};
+          task.evening = true;
+          task.dayOrder = newIndex;
 
-            if (task.dueOn?.isBefore(today) ?? false) {
-              task.dueOn = today;
-              updates['due_on'] = formatters.dateString(today);
-            }
-            return updates;
-          });
+          if (task.dueOn?.isBefore(today) ?? false) {
+            task.dueOn = today;
+            updates['due_on'] = formatters.dateString(today);
+          }
+          return updates;
+        },
+      );
       _taskLists.add(eveningTasks);
     }
 
@@ -198,7 +210,12 @@ class TodayViewModel extends ChangeNotifier {
 
   /// Reorder a task based on the protocol defined by
   /// the drag_and_drop_lists package.
-  Future<void> reorderTask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
+  Future<void> reorderTask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  ) async {
     var task = _taskLists[oldListIndex].tasks[oldItemIndex];
 
     // Get the changes that need to be made on the server.

@@ -11,23 +11,30 @@ class TaskAddButton extends StatelessWidget {
   final int? sectionId;
   final bool? evening;
 
-  const TaskAddButton({this.dueOn, this.projectId, this.sectionId, this.evening, super.key});
+  const TaskAddButton({
+    this.dueOn,
+    this.projectId,
+    this.sectionId,
+    this.evening,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return IconButton(
-        icon: const Icon(Icons.add),
-        color: theme.colorScheme.primary,
-        onPressed: () {
-          var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
+      icon: const Icon(Icons.add),
+      color: theme.colorScheme.primary,
+      onPressed: () {
+        var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
 
-          viewmodel.task.dueOn = dueOn;
-          viewmodel.task.sectionId = sectionId;
-          viewmodel.task.evening = evening ?? false;
-          viewmodel.task.projectId = projectId;
+        viewmodel.task.dueOn = dueOn;
+        viewmodel.task.sectionId = sectionId;
+        viewmodel.task.evening = evening ?? false;
+        viewmodel.task.projectId = projectId;
 
-          Navigator.pushNamed(context, Routes.taskAdd);
-        });
+        Navigator.pushNamed(context, Routes.taskAdd);
+      },
+    );
   }
 }

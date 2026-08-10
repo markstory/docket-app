@@ -18,7 +18,8 @@ import 'package:docket/models/task.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
 
@@ -26,13 +27,18 @@ void main() {
   var projectResponse = file.readAsStringSync();
 
   file = File('test_resources/task_details.json');
-  var taskDetails = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  var taskDetails = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   var db = LocalDatabase(inTest: true);
 
   group("$TaskItem", () {
     var decoded = jsonDecode(projectResponse);
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     decoded = jsonDecode(taskDetails);
     var task = Task.fromMap(decoded['task']);
@@ -43,21 +49,21 @@ void main() {
     });
 
     Future<void> renderWidget(WidgetTester tester, Task task) async {
-      return tester.pumpWidget(EntryPoint(
+      return tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: Scaffold(
-            body: TaskItem(task: task),
-          )
-      ));
+          child: Scaffold(body: TaskItem(task: task)),
+        ),
+      );
     }
 
     testWidgets('render showDate', (tester) async {
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: Scaffold(
-            body: TaskItem(task: task, showDate: true),
-          )
-      ));
+          child: Scaffold(body: TaskItem(task: task, showDate: true)),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Today'), findsOneWidget);
@@ -65,24 +71,24 @@ void main() {
     });
 
     testWidgets('render showProject', (tester) async {
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: Scaffold(
-            body: TaskItem(task: task, showProject: true),
-          )
-      ));
+          child: Scaffold(body: TaskItem(task: task, showProject: true)),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('home'), findsOneWidget);
     });
 
     testWidgets('render showRestore', (tester) async {
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
-          child: Scaffold(
-            body: TaskItem(task: task, showRestore: true),
-          )
-      ));
+          child: Scaffold(body: TaskItem(task: task, showRestore: true)),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Restore'), findsOneWidget);
@@ -107,7 +113,9 @@ void main() {
           callCount += 1;
           return Response(taskDetails, 200);
         }
-        throw Exception("Request received for ${request.url.path} but no mock was set");
+        throw Exception(
+          "Request received for ${request.url.path} but no mock was set",
+        );
       });
       await renderWidget(tester, task);
 
@@ -125,7 +133,9 @@ void main() {
           callCount += 1;
           return Response('', 200);
         }
-        throw Exception("Request received for ${request.url.path} but no mock was set");
+        throw Exception(
+          "Request received for ${request.url.path} but no mock was set",
+        );
       });
       await renderWidget(tester, task);
 
@@ -145,7 +155,9 @@ void main() {
       expect(callCount, equals(1));
     });
 
-    testWidgets('change project action shows dialog and sends request', (tester) async {
+    testWidgets('change project action shows dialog and sends request', (
+      tester,
+    ) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/api/tasks/1/edit') {
@@ -153,7 +165,9 @@ void main() {
           expect(request.body.contains('project_id":2'), isTrue);
           return Response(taskDetails, 200);
         }
-        throw Exception("Request received for ${request.url.path} but no mock was set");
+        throw Exception(
+          "Request received for ${request.url.path} but no mock was set",
+        );
       });
       await renderWidget(tester, task);
 
@@ -171,7 +185,9 @@ void main() {
       expect(callCount, equals(1));
     });
 
-    testWidgets('reschedule action shows dialog and sends request', (tester) async {
+    testWidgets('reschedule action shows dialog and sends request', (
+      tester,
+    ) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
         if (request.url.path == '/api/tasks/1/edit') {
@@ -179,7 +195,9 @@ void main() {
           expect(request.body.contains('evening":true'), isTrue);
           return Response(taskDetails, 200);
         }
-        throw Exception("Request received for ${request.url.path} but no mock was set");
+        throw Exception(
+          "Request received for ${request.url.path} but no mock was set",
+        );
       });
       await renderWidget(tester, task);
 

@@ -38,57 +38,61 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     try {
       await viewmodel.update(task);
       navigator.pop();
-      messenger.showSnackBar(successSnackBar(context: context, text: 'Task Updated'));
+      messenger.showSnackBar(
+        successSnackBar(context: context, text: 'Task Updated'),
+      );
     } catch (e) {
-      messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not update task'));
+      messenger.showSnackBar(
+        errorSnackBar(context: context, text: 'Could not update task'),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskDetailsViewModel>(builder: (context, view, child) {
-      var theme = Theme.of(context);
-      Widget body;
-      if (view.loading) {
-        body = const LoadingIndicator();
-      } else {
-        body = RefreshIndicator(
-          onRefresh: () => view.refresh(),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(space(1)),
-            child: Column(children: [
-              TaskForm(
-                formKey: _formKey,
-                viewmodel: viewmodel,
+    return Consumer<TaskDetailsViewModel>(
+      builder: (context, view, child) {
+        var theme = Theme.of(context);
+        Widget body;
+        if (view.loading) {
+          body = const LoadingIndicator();
+        } else {
+          body = RefreshIndicator(
+            onRefresh: () => view.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(space(1)),
+              child: Column(
+                children: [TaskForm(formKey: _formKey, viewmodel: viewmodel)],
               ),
-            ]),
-          ));
-      }
-      return Portal(
-        child: Scaffold(
-          appBar: AppBar(
-            actions: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: theme.colorScheme.onPrimary,
+            ),
+          );
+        }
+        return Portal(
+          child: Scaffold(
+            appBar: AppBar(
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.onPrimary,
+                  ),
+                  child: const Text('Save'),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate() && saving == false) {
+                      saving = true;
+                      _formKey.currentState!.save();
+                      await _onSave(context, viewmodel.task);
+                      saving = false;
+                    }
+                  },
                 ),
-                child: const Text('Save'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate() && saving == false) {
-                    saving = true;
-                    _formKey.currentState!.save();
-                    await _onSave(context, viewmodel.task);
-                    saving = false;
-                  }
-                }
-              )
-            ],
-            title: const Text('Task Details')
+              ],
+              title: const Text('Task Details'),
+            ),
+            body: body,
           ),
-          body: body,
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

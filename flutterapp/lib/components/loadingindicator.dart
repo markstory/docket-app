@@ -8,12 +8,12 @@ class LoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: space(4)),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-      SizedBox(
-        width: 60,
-        height: 60,
-        child: CircularProgressIndicator(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          SizedBox(width: 60, height: 60, child: CircularProgressIndicator()),
+        ],
       ),
-    ]));
+    );
   }
 }

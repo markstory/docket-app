@@ -28,9 +28,10 @@ class ProjectItem extends StatelessWidget {
 
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context,
+        Navigator.pushNamed(
+          context,
           Routes.projectDetails,
-          arguments: ProjectDetailsArguments(project)
+          arguments: ProjectDetailsArguments(project),
         );
       },
       leading: Icon(Icons.circle, color: getProjectColor(project.color)),
@@ -39,7 +40,7 @@ class ProjectItem extends StatelessWidget {
         project.incompleteTaskCount.toString(),
         style: TextStyle(color: theme.disabledColor),
       ),
-      selected: isActive
+      selected: isActive,
     );
   }
 }
@@ -70,15 +71,17 @@ class _ProjectSorterState extends State<ProjectSorter> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectsProvider>(
-      builder: buildContents,
-    );
+    return Consumer<ProjectsProvider>(builder: buildContents);
   }
 
-  Widget buildContents(BuildContext context, ProjectsProvider provider, Widget? _) {
+  Widget buildContents(
+    BuildContext context,
+    ProjectsProvider provider,
+    Widget? _,
+  ) {
     if (provider.loading) {
       return const LoadingIndicator();
-    } 
+    }
     var theme = Theme.of(context);
 
     return DragAndDropLists(
@@ -86,21 +89,25 @@ class _ProjectSorterState extends State<ProjectSorter> {
         DragAndDropList(
           canDrag: false,
           children: provider.projects.map((project) {
-            return DragAndDropItem(
-              child: ProjectItem(project: project),
-            );
+            return DragAndDropItem(child: ProjectItem(project: project));
           }).toList(),
-        )
+        ),
       ],
       disableScrolling: true,
       lastItemTargetHeight: 15,
       lastListTargetSize: 10,
       removeTopPadding: true,
       itemDragOnLongPress: true,
-      onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-        var project = provider.projects[oldItemIndex];
-        _onItemReorder(project, newItemIndex);
-      },
+      onItemReorder:
+          (
+            int oldItemIndex,
+            int oldListIndex,
+            int newItemIndex,
+            int newListIndex,
+          ) {
+            var project = provider.projects[oldItemIndex];
+            _onItemReorder(project, newItemIndex);
+          },
       onListReorder: (int oldIndex, int newIndex) {
         throw Exception('List reordering not supported');
       },

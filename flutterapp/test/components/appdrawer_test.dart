@@ -16,7 +16,8 @@ import 'package:docket/routes.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/profile.json');
   final profileResponse = file.readAsStringSync();
@@ -31,7 +32,9 @@ void main() {
     var profile = UserProfile.fromMap(decoded['user']);
 
     decoded = jsonDecode(projectListResponse);
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     setUp(() async {
       await database.profile.set(profile);
@@ -40,18 +43,21 @@ void main() {
 
     testWidgets('render drawer', (tester) async {
       final scaffoldKey = GlobalKey<ScaffoldState>();
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: database,
           routes: {
             Routes.projectDetails: (context) {
               return const Text('Project View');
-            }
+            },
           },
           child: Scaffold(
             key: scaffoldKey,
             body: const Text('Body'),
             drawer: const AppDrawer(),
-          )));
+          ),
+        ),
+      );
 
       await mockNetworkImagesFor(() async {
         scaffoldKey.currentState!.openDrawer();
@@ -87,22 +93,27 @@ void main() {
     testWidgets('project items navigate on tap', (tester) async {
       var navigated = false;
       final scaffoldKey = GlobalKey<ScaffoldState>();
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: database,
           routes: {
             Routes.projectDetails: (context) {
               navigated = true;
-              var arguments = ModalRoute.of(context)!.settings.arguments as ProjectDetailsArguments;
+              var arguments =
+                  ModalRoute.of(context)!.settings.arguments
+                      as ProjectDetailsArguments;
               expect(arguments.project.slug, equals('work'));
 
               return const Text('Project View');
-            }
+            },
           },
           child: Scaffold(
             key: scaffoldKey,
             body: const Text('Body'),
             drawer: const AppDrawer(),
-          )));
+          ),
+        ),
+      );
 
       await mockNetworkImagesFor(() async {
         scaffoldKey.currentState!.openDrawer();
@@ -117,19 +128,22 @@ void main() {
     testWidgets('profile navigates on tap', (tester) async {
       var navigated = false;
       final scaffoldKey = GlobalKey<ScaffoldState>();
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: database,
           routes: {
             Routes.profileSettings: (context) {
               navigated = true;
               return const Text('Profile settings');
-            }
+            },
           },
           child: Scaffold(
             key: scaffoldKey,
             body: const Text('Body'),
             drawer: const AppDrawer(),
-          )));
+          ),
+        ),
+      );
 
       await mockNetworkImagesFor(() async {
         scaffoldKey.currentState!.openDrawer();
@@ -148,18 +162,18 @@ void main() {
       var navigated = false;
       final scaffoldKey = GlobalKey<ScaffoldState>();
 
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: database,
           routes: {
             Routes.login: (context) {
               navigated = true;
               return const Text('Login');
-            }
+            },
           },
-          child: Scaffold(
-            key: scaffoldKey,
-            body: const AppDrawer(),
-          )));
+          child: Scaffold(key: scaffoldKey, body: const AppDrawer()),
+        ),
+      );
 
       await mockNetworkImagesFor(() async {
         scaffoldKey.currentState!.openDrawer();

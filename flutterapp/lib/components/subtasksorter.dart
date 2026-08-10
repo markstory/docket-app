@@ -8,16 +8,23 @@ class SubtaskSorter extends StatelessWidget {
   final List<Subtask> items;
 
   /// Fired when items are reordered.
-  final void Function(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) onItemReorder;
+  final void Function(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  )
+  onItemReorder;
 
   /// Used to render the task list item.
   final Widget Function(Subtask task) buildItem;
 
-  const SubtaskSorter(
-      {required this.items,
-      required this.onItemReorder,
-      required this.buildItem,
-      super.key});
+  const SubtaskSorter({
+    required this.items,
+    required this.onItemReorder,
+    required this.buildItem,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +36,14 @@ class SubtaskSorter extends StatelessWidget {
         DragAndDropList(
           header: Column(
             children: [
-              Row(children: [
-                const SizedBox(width: 10),
-                Text('Subtasks', style: theme.textTheme.titleLarge),
-              ]),
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Text('Subtasks', style: theme.textTheme.titleLarge),
+                ],
+              ),
               SizedBox(height: space(1)),
-            ]
+            ],
           ),
           contentsWhenEmpty: buildEmpty(theme),
           canDrag: false,
@@ -46,14 +55,20 @@ class SubtaskSorter extends StatelessWidget {
       itemDecorationWhileDragging: itemDragBoxDecoration(theme),
       itemDragOnLongPress: true,
       onItemReorder: onItemReorder,
-      onListReorder: (oldListIndex, newListIndex) => throw Exception("List ordering not supported."),
+      onListReorder: (oldListIndex, newListIndex) =>
+          throw Exception("List ordering not supported."),
       lastListTargetSize: 0,
     );
   }
 
   Widget buildEmpty(ThemeData theme) {
     var docketColors = theme.extension<DocketColors>()!;
-    var contents = Text('No subtasks', style: theme.textTheme.titleSmall!.copyWith(color: docketColors.disabledText));
+    var contents = Text(
+      'No subtasks',
+      style: theme.textTheme.titleSmall!.copyWith(
+        color: docketColors.disabledText,
+      ),
+    );
 
     return Container(
       alignment: Alignment.centerLeft,

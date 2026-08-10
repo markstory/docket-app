@@ -17,11 +17,15 @@ import 'package:docket/screens/taskadd.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
   var file = File('test_resources/task_create_today.json');
-  final taskDetails = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final taskDetails = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/project_list.json');
   final projectListResponse = file.readAsStringSync();
@@ -29,7 +33,9 @@ void main() {
 
   group('$TaskAddScreen', () {
     var db = LocalDatabase(inTest: true);
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     setUp(() async {
       await db.apiToken.set(ApiToken.fake());
@@ -51,15 +57,15 @@ void main() {
       });
 
       const child = TaskAddScreen();
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: child,
-      ));
+      await tester.pumpWidget(EntryPoint(database: db, child: child));
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
 
-      await tester.enterText(find.byKey(const ValueKey('title')), "Rake leaves");
+      await tester.enterText(
+        find.byKey(const ValueKey('title')),
+        "Rake leaves",
+      );
 
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();

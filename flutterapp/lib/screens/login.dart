@@ -13,42 +13,67 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Consumer<LoginViewModel>(builder: (context, viewmodel, child) {
-      var theme = Theme.of(context);
-      return Scaffold(
-        body: Column(
-          children: [
+    return Consumer<LoginViewModel>(
+      builder: (context, viewmodel, child) {
+        var theme = Theme.of(context);
+        return Scaffold(
+          body: Column(
+            children: [
               Container(
-                padding: EdgeInsets.fromLTRB(space(2), space(4), space(2), space(2)),
+                padding: EdgeInsets.fromLTRB(
+                  space(2),
+                  space(4),
+                  space(2),
+                  space(2),
+                ),
                 alignment: Alignment.centerLeft,
                 color: theme.colorScheme.primary,
                 child: Row(
                   children: [
-                    const Image(image: AssetImage('assets/docket-logo.png'), width: 64, height: 64),
+                    const Image(
+                      image: AssetImage('assets/docket-logo.png'),
+                      width: 64,
+                      height: 64,
+                    ),
                     SizedBox(width: space(2)),
-                    Text('Login', style: theme.textTheme.headlineSmall!.copyWith(color: theme.colorScheme.onPrimary)),
-                  ])
+                    Text(
+                      'Login',
+                      style: theme.textTheme.headlineSmall!.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: space(2), vertical: space(2)),
-                child: LoginForm(onSubmit: (String? email, String? password) async {
-                  var navigator = Navigator.of(context);
-                  var messenger = ScaffoldMessenger.of(context);
-                  var theme = Theme.of(context);
+                padding: EdgeInsets.symmetric(
+                  horizontal: space(2),
+                  vertical: space(2),
+                ),
+                child: LoginForm(
+                  onSubmit: (String? email, String? password) async {
+                    var navigator = Navigator.of(context);
+                    var messenger = ScaffoldMessenger.of(context);
+                    var theme = Theme.of(context);
 
-                  await viewmodel.login(email, password);
+                    await viewmodel.login(email, password);
 
-                  var error = viewmodel.loginError;
-                  if (error != null) {
-                    messenger.showSnackBar(errorSnackBar(text: error.toString(), theme: theme));
-                  } else {
-                    await navigator.pushNamed(Routes.today);
-                  }
-                }),
-              )
-          ])
+                    var error = viewmodel.loginError;
+                    if (error != null) {
+                      messenger.showSnackBar(
+                        errorSnackBar(text: error.toString(), theme: theme),
+                      );
+                    } else {
+                      await navigator.pushNamed(Routes.today);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         );
-    });
+      },
+    );
   }
 }
 
@@ -59,18 +84,17 @@ class LoginScreen extends StatelessWidget {
 class LoginRequired extends StatelessWidget {
   final Widget child;
 
-  const LoginRequired({
-    required this.child,
-    super.key,
-  });
+  const LoginRequired({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginViewModel>(builder: (context, viewmodel, _) {
-      if (viewmodel.hasToken) {
-        return child;
-      }
-      return const LoginScreen();
-    });
+    return Consumer<LoginViewModel>(
+      builder: (context, viewmodel, _) {
+        if (viewmodel.hasToken) {
+          return child;
+        }
+        return const LoginScreen();
+      },
+    );
   }
 }

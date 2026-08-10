@@ -10,7 +10,13 @@ class FloatingCreateTaskButton extends StatelessWidget {
   final int? sectionId;
   final bool? evening;
 
-  const FloatingCreateTaskButton({this.dueOn, this.projectId, this.sectionId, this.evening, super.key});
+  const FloatingCreateTaskButton({
+    this.dueOn,
+    this.projectId,
+    this.sectionId,
+    this.evening,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

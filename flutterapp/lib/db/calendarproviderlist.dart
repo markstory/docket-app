@@ -6,7 +6,8 @@ import 'package:docket/models/calendarprovider.dart';
 class CalendarProviderListRepo extends Repository<List<CalendarProvider>> {
   static const String name = 'calendarproviderlist';
 
-  CalendarProviderListRepo(JsonCache database, Duration duration) : super(database, duration);
+  CalendarProviderListRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {
@@ -38,10 +39,13 @@ class CalendarProviderListRepo extends Repository<List<CalendarProvider>> {
     if (items == null) {
       return null;
     }
-    if (items.runtimeType != List && items.runtimeType != List<Map<String, Object?>>) {
+    if (items.runtimeType != List &&
+        items.runtimeType != List<Map<String, Object?>>) {
       return null;
     }
-    return (items as List).map<CalendarProvider>((item) => CalendarProvider.fromMap(item)).toList();
+    return (items as List)
+        .map<CalendarProvider>((item) => CalendarProvider.fromMap(item))
+        .toList();
   }
 
   /// Remove a provider by id and notify.
@@ -53,4 +57,3 @@ class CalendarProviderListRepo extends Repository<List<CalendarProvider>> {
     notifyListeners();
   }
 }
-

@@ -17,7 +17,8 @@ import 'package:docket/viewmodels/projectdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var database = LocalDatabase(inTest: true);
   var file = File('test_resources/project_details.json');
@@ -27,14 +28,22 @@ void main() {
 
   Widget buildButton(ProjectDetailsViewModel viewmodel) {
     return EntryPoint(
-        database: database,
-        child: Builder(builder: (BuildContext context) {
+      database: database,
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
-              child: const Text('Open'),
-              onPressed: () async {
-                await showRenameSectionDialog(context, viewmodel, viewmodel.project.sections[0]);
-              });
-        }));
+            child: const Text('Open'),
+            onPressed: () async {
+              await showRenameSectionDialog(
+                context,
+                viewmodel,
+                viewmodel.project.sections[0],
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   group('showRenameSectionDialog', () {
@@ -44,7 +53,8 @@ void main() {
     setUp(() async {
       await database.apiToken.set(ApiToken(token: 'abc123'));
       await database.projectDetails.set(project);
-      viewmodel = ProjectDetailsViewModel(database)..setSlug(project.project.slug);
+      viewmodel = ProjectDetailsViewModel(database)
+        ..setSlug(project.project.slug);
       await viewmodel.loadData();
     });
 
@@ -68,7 +78,10 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('section-name')), 'Renamed');
+      await tester.enterText(
+        find.byKey(const ValueKey('section-name')),
+        'Renamed',
+      );
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 

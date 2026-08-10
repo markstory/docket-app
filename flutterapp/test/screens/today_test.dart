@@ -17,13 +17,17 @@ import 'package:docket/screens/today.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
   var urlDate = formatters.dateString(today);
 
   var file = File('test_resources/tasks_today.json');
-  final todayResponse = file.readAsStringSync().replaceAll('__TODAY__', urlDate);
+  final todayResponse = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    urlDate,
+  );
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
 
   group('$TodayScreen', () {
@@ -39,16 +43,18 @@ void main() {
 
     testWidgets('floating add button navigates to task add', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        routes: {
-          "/tasks/add": (context) {
-            navigated = true;
-            return const Text('Task add');
-          }
-        },
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          routes: {
+            "/tasks/add": (context) {
+              navigated = true;
+              return const Text('Task add');
+            },
+          },
+          child: const TodayScreen(),
+        ),
+      );
 
       // tap the floating add button. Should go to task add
       await tester.tap(find.byKey(const ValueKey('floating-task-add')));
@@ -64,10 +70,9 @@ void main() {
         return Response('{"error": "Server unavailable"}', 500);
       });
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TodayScreen()),
+      );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
@@ -75,10 +80,9 @@ void main() {
     });
 
     testWidgets('shows today tasks', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TodayScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('clean dishes'), findsOneWidget);
@@ -88,7 +92,8 @@ void main() {
     testWidgets('shows overdue tasks', (tester) async {
       var yesterday = today.subtract(const Duration(days: 2));
       var viewdata = TaskViewData.fromMap(decoded);
-      viewdata.tasks.add(Task(
+      viewdata.tasks.add(
+        Task(
           id: 3,
           projectId: 1,
           projectColor: 1,
@@ -101,7 +106,9 @@ void main() {
           dayOrder: 0,
           childOrder: 10,
           subtasks: [],
-          completed: false));
+          completed: false,
+        ),
+      );
       var rangeView = TaskRangeView.fromLists(
         tasks: viewdata.tasks,
         calendarItems: viewdata.calendarItems,
@@ -109,10 +116,9 @@ void main() {
       );
       await db.dailyTasks.setRange(rangeView);
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TodayScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('overdue item'), findsOneWidget);
@@ -122,16 +128,18 @@ void main() {
 
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        routes: {
-          "/tasks/view": (context) {
-            navigated = true;
-            return const Text("Task Details");
-          }
-        },
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          routes: {
+            "/tasks/view": (context) {
+              navigated = true;
+              return const Text("Task Details");
+            },
+          },
+          child: const TodayScreen(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('clean dishes'));
@@ -152,25 +160,25 @@ void main() {
         }
         throw Exception('Unmocked request to ${request.url.path}');
       });
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TodayScreen()),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(Checkbox).first);
       await tester.pump(const Duration(milliseconds: 250));
       expect(
-          tester.getSemantics(find.byType(Checkbox).first),
-          matchesSemantics(
-            hasTapAction: true,
-            hasFocusAction: true,
-            isChecked: true,
-            isEnabled: true,
-            isFocusable: true,
-            hasCheckedState: true,
-            hasEnabledState: true,
-          ));
+        tester.getSemantics(find.byType(Checkbox).first),
+        matchesSemantics(
+          hasTapAction: true,
+          hasFocusAction: true,
+          isChecked: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasCheckedState: true,
+          hasEnabledState: true,
+        ),
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       expect(requestCount, equals(1));
@@ -188,10 +196,9 @@ void main() {
         }
         throw Exception('Unmocked request to ${request.url.path}');
       });
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: const TodayScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const TodayScreen()),
+      );
       await tester.pumpAndSettle();
 
       // open action menu

@@ -12,7 +12,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   static const String name = 'dailytasks';
   final Map<String, DateTime> _lastUpdate = {};
 
-  DailyTasksRepo(JsonCache database, Duration duration) : super(database, duration);
+  DailyTasksRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {
@@ -99,7 +100,11 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     return result;
   }
 
-  TaskViewData? _getOverdue(Map<String, dynamic> data, DateTime start, {int limit = 14}) {
+  TaskViewData? _getOverdue(
+    Map<String, dynamic> data,
+    DateTime start, {
+    int limit = 14,
+  }) {
     List<Map<String, dynamic>> overdueTasks = [];
     var offset = 1;
     while (offset < limit) {
@@ -150,7 +155,11 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
   /// Get a list of dates starting from `start` and continuing for `days`
   /// If there are holes in the data, empty TaskViews will be inserted.
   /// If a day has been expired in the view, the isFresh attribute of TaskRangeView will be false
-  Future<TaskRangeView> getRange(DateTime start, {bool overdue = false, int days = 28}) async {
+  Future<TaskRangeView> getRange(
+    DateTime start, {
+    bool overdue = false,
+    int days = 28,
+  }) async {
     var end = start.add(Duration(days: days));
     var isFresh = true;
 
@@ -192,7 +201,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var data = await get();
 
     var taskDate = task.dateKey;
-    var dateView = data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
+    var dateView =
+        data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
     data[taskDate] = dateView;
 
     await set(data);
@@ -210,7 +220,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var previousDue = task.previousDueOn;
     if (previousDue != null) {
       var previousKey = formatters.dateString(previousDue);
-      var previousView = data[previousKey] ?? TaskViewData(tasks: [task], calendarItems: []);
+      var previousView =
+          data[previousKey] ?? TaskViewData(tasks: [task], calendarItems: []);
 
       // Moved between days, remove from old view.
       previousView.tasks.removeWhere((item) => item.id == task.id);
@@ -222,10 +233,13 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     if (dueOn != null) {
       changed = true;
       var taskDate = formatters.dateString(dueOn);
-      var dateView = data[taskDate] ?? TaskViewData(tasks: [], calendarItems: []);
+      var dateView =
+          data[taskDate] ?? TaskViewData(tasks: [], calendarItems: []);
 
       // Remove from the new view as we might not have a day change.
-      var currentIndex = dateView.tasks.indexWhere((item) => item.id == task.id);
+      var currentIndex = dateView.tasks.indexWhere(
+        (item) => item.id == task.id,
+      );
       if (currentIndex > -1) {
         dateView.tasks.removeAt(currentIndex);
       }
@@ -256,7 +270,8 @@ class DailyTasksRepo extends Repository<DailyTasksData> {
     var data = await get();
 
     var taskDate = task.dateKey;
-    var dateView = data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
+    var dateView =
+        data[taskDate] ?? TaskViewData(tasks: [task], calendarItems: []);
 
     var index = dateView.tasks.indexWhere((item) => item.id == task.id);
     if (index > -1) {

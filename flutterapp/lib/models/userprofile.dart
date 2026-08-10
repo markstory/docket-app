@@ -12,7 +12,7 @@ class UserProfile {
     required this.email,
     required this.theme,
     required this.timezone,
-    required this.avatarHash
+    required this.avatarHash,
   });
 
   factory UserProfile.fromMap(Map<String, dynamic> json) {

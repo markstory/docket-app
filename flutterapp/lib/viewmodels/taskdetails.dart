@@ -5,7 +5,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
-
 class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   late LocalDatabase _database;
   int? _id;
@@ -58,7 +57,8 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   Future<void> loadData() async {
     await fetchTask();
 
-    if (!_loading && (_task == null || !_database.taskDetails.isTaskFresh(id))) {
+    if (!_loading &&
+        (_task == null || !_database.taskDetails.isTaskFresh(id))) {
       return refresh();
     }
   }
@@ -89,8 +89,7 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
 
   /// Update a task.
   Future<void> update(Task task) async {
-    assert(task.id != 0,
-      'Cannot update new task. Use create() instead.');
+    assert(task.id != 0, 'Cannot update new task. Use create() instead.');
     var updated = await actions.updateTask(_database.apiToken.token, task);
     updated.previousDueOn = task.dueOn;
     updated.previousProjectSlug = task.projectSlug;
@@ -119,9 +118,16 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   /// Reorder a subtask based on the protocol defined by
   /// the drag_and_drop_lists package.
   @override
-  Future<void> reorderSubtask(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) async {
-    assert(oldListIndex == newListIndex,
-      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.");
+  Future<void> reorderSubtask(
+    int oldItemIndex,
+    int oldListIndex,
+    int newItemIndex,
+    int newListIndex,
+  ) async {
+    assert(
+      oldListIndex == newListIndex,
+      "Cannot move subtasks between lists $oldListIndex != $newListIndex, as there is only a single subtask collection on a task.",
+    );
     var item = task.subtasks[oldItemIndex];
     item.ranking = newItemIndex;
 
@@ -137,9 +143,17 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
   @override
   Future<void> saveSubtask(Task task, Subtask subtask) async {
     if (subtask.id == null) {
-      subtask = await actions.createSubtask(_database.apiToken.token, task, subtask);
+      subtask = await actions.createSubtask(
+        _database.apiToken.token,
+        task,
+        subtask,
+      );
     } else {
-      subtask = await actions.updateSubtask(_database.apiToken.token, task, subtask);
+      subtask = await actions.updateSubtask(
+        _database.apiToken.token,
+        task,
+        subtask,
+      );
     }
 
     // Get the index before updating the server so that we can
@@ -184,5 +198,6 @@ class TaskDetailsViewModel extends ChangeNotifier implements TaskFormViewModel {
 
     notifyListeners();
   }
+
   // }}}
 }

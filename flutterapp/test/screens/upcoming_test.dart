@@ -14,13 +14,15 @@ import 'package:docket/screens/upcoming.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
 
   var file = File('test_resources/tasks_upcoming.json');
-  final todayResponse = file.readAsStringSync()
+  final todayResponse = file
+      .readAsStringSync()
       .replaceAll('__TODAY__', formatters.dateString(today))
       .replaceAll('__TOMORROW__', formatters.dateString(tomorrow));
   var decoded = jsonDecode(todayResponse) as Map<String, dynamic>;
@@ -33,7 +35,7 @@ void main() {
       var rangeView = TaskRangeView.fromLists(
         tasks: viewdata.tasks,
         calendarItems: viewdata.calendarItems,
-        start: today
+        start: today,
       );
       db.dailyTasks.disableCache();
       await db.dailyTasks.setRange(rangeView);
@@ -42,16 +44,18 @@ void main() {
 
     testWidgets('floating add button navigates to task add', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/add": (context) {
               navigated = true;
               return const Text('Task add');
-            }
+            },
           },
           child: const UpcomingScreen(),
-      ));
+        ),
+      );
 
       // tap the floating add button. Should go to task add
       await tester.tap(find.byKey(const ValueKey('floating-task-add')));
@@ -61,10 +65,9 @@ void main() {
     });
 
     testWidgets('shows upcoming tasks', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const UpcomingScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const UpcomingScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('clean dishes'), findsOneWidget);
@@ -72,10 +75,9 @@ void main() {
     });
 
     testWidgets('shows calendar items', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const UpcomingScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const UpcomingScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Get haircut'), findsOneWidget);
@@ -83,7 +85,8 @@ void main() {
 
     testWidgets('shows upcoming tasks in evening', (tester) async {
       var viewdata = TaskViewData.fromMap(decoded);
-      viewdata.tasks.add(Task(
+      viewdata.tasks.add(
+        Task(
           id: 4,
           projectId: 1,
           projectColor: 1,
@@ -96,13 +99,14 @@ void main() {
           dayOrder: 0,
           childOrder: 10,
           subtasks: [],
-          completed: false));
+          completed: false,
+        ),
+      );
       await db.dailyTasks.set(viewdata.groupByDay());
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const UpcomingScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const UpcomingScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('evening item'), findsOneWidget);
@@ -112,16 +116,18 @@ void main() {
 
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/view": (context) {
               navigated = true;
               return const Text("Task Details");
-            }
+            },
           },
           child: const UpcomingScreen(),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('clean dishes'));

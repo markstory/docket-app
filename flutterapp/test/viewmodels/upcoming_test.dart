@@ -45,7 +45,8 @@ void main() {
   var today = DateUtils.dateOnly(DateTime.now());
   var tomorrow = today.add(const Duration(days: 1));
   var file = File('test_resources/tasks_upcoming.json');
-  final tasksResponseFixture = file.readAsStringSync()
+  final tasksResponseFixture = file
+      .readAsStringSync()
       .replaceAll('__TOMORROW__', formatters.dateString(tomorrow))
       .replaceAll('__TODAY__', formatters.dateString(today));
 
@@ -154,7 +155,9 @@ void main() {
       var viewmodel = UpcomingViewModel(db);
       await viewmodel.loadData();
 
-      var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
+      var initialOrder = viewmodel.taskLists[0].tasks
+          .map(extractTitle)
+          .toList();
       await viewmodel.reorderTask(0, 0, 0, 1);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
@@ -162,35 +165,38 @@ void main() {
     });
 
     test(
-      skip: 'need a fixture with a task in evening as you cannot drag into regions that do not exist',
-      'reorderTask() moves tasks into evening', () async {
-      actions.client = MockClient((request) async {
-        if (request.url.path == '/api/tasks/upcoming') {
-          return Response(tasksResponseFixture, 200);
-        }
-        if (request.url.path == '/api/tasks/1/move') {
-          var payload = jsonDecode(request.body);
-          expect(payload['day_order'], equals(0));
-          expect(payload['evening'], isTrue);
+      skip:
+          'need a fixture with a task in evening as you cannot drag into regions that do not exist',
+      'reorderTask() moves tasks into evening',
+      () async {
+        actions.client = MockClient((request) async {
+          if (request.url.path == '/api/tasks/upcoming') {
+            return Response(tasksResponseFixture, 200);
+          }
+          if (request.url.path == '/api/tasks/1/move') {
+            var payload = jsonDecode(request.body);
+            expect(payload['day_order'], equals(0));
+            expect(payload['evening'], isTrue);
 
-          return Response('', 200);
-        }
-        throw "Unknown request to ${request.url.path}";
-      });
+            return Response('', 200);
+          }
+          throw "Unknown request to ${request.url.path}";
+        });
 
-      var tasks = parseTaskList(tasksResponseFixture);
-      await setUpcomingView(db, tasks);
+        var tasks = parseTaskList(tasksResponseFixture);
+        await setUpcomingView(db, tasks);
 
-      var viewmodel = UpcomingViewModel(db);
-      await viewmodel.loadData();
+        var viewmodel = UpcomingViewModel(db);
+        await viewmodel.loadData();
 
-      equals(viewmodel.taskLists[0].tasks.length, 1);
-      equals(viewmodel.taskLists[1].tasks.length, 0);
-      await viewmodel.reorderTask(0, 0, 0, 1);
+        equals(viewmodel.taskLists[0].tasks.length, 1);
+        equals(viewmodel.taskLists[1].tasks.length, 0);
+        await viewmodel.reorderTask(0, 0, 0, 1);
 
-      equals(viewmodel.taskLists[0].tasks.length, 0);
-      equals(viewmodel.taskLists[1].tasks.length, 1);
-    });
+        equals(viewmodel.taskLists[0].tasks.length, 0);
+        equals(viewmodel.taskLists[1].tasks.length, 1);
+      },
+    );
 
     test('reorderTask() moves tasks between days', () async {
       actions.client = MockClient((request) async {
@@ -213,12 +219,14 @@ void main() {
       var viewmodel = UpcomingViewModel(db);
       await viewmodel.loadData();
 
-      var initialOrder = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
+      var initialOrder = viewmodel.taskLists[0].tasks
+          .map(extractTitle)
+          .toList();
       await viewmodel.reorderTask(0, 0, 0, 1);
 
       var updated = viewmodel.taskLists[0].tasks.map(extractTitle).toList();
       expect(updated, isNot(equals(initialOrder)));
-  });
+    });
 
     test('refresh() loads data from the server', () async {
       actions.client = MockClient((request) async {

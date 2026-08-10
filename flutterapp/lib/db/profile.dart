@@ -6,7 +6,8 @@ import 'package:docket/models/userprofile.dart';
 class ProfileRepo extends Repository<UserProfile> {
   static const String name = 'userprofile';
 
-  ProfileRepo(JsonCache database, Duration duration) : super(database, duration);
+  ProfileRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {
@@ -27,4 +28,3 @@ class ProfileRepo extends Repository<UserProfile> {
     return UserProfile.fromMap(data);
   }
 }
-

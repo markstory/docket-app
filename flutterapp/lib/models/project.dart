@@ -8,18 +8,10 @@ class Section {
   String name;
   int ranking;
 
-  Section({
-    required this.id,
-    required this.name,
-    required this.ranking,
-  });
+  Section({required this.id, required this.name, required this.ranking});
 
   factory Section.blank() {
-    return Section(
-      id: 0,
-      name: '',
-      ranking: 0,
-    );
+    return Section(id: 0, name: '', ranking: 0);
   }
 
   factory Section.fromMap(Map<String, dynamic> json) {
@@ -31,11 +23,7 @@ class Section {
   }
 
   Map<String, Object?> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'ranking': ranking,
-    };
+    return {'id': id, 'name': name, 'ranking': ranking};
   }
 }
 
@@ -68,7 +56,8 @@ class Project {
   factory Project.fromMap(Map<String, dynamic> json) {
     List<Section> sections = [];
     if (json['sections'] != null &&
-        (json['sections'].runtimeType == List || json['sections'].runtimeType == List<Map<String, Object?>>)) {
+        (json['sections'].runtimeType == List ||
+            json['sections'].runtimeType == List<Map<String, Object?>>)) {
       for (var item in json['sections']) {
         sections.add(Section.fromMap(item));
       }
@@ -137,16 +126,19 @@ class ProjectWithTasks {
   // Whether the view cache read succeeded and had content.
   final bool isEmpty;
 
-  ProjectWithTasks({required this.project, required this.tasks, this.isEmpty = false});
+  ProjectWithTasks({
+    required this.project,
+    required this.tasks,
+    this.isEmpty = false,
+  });
 
   factory ProjectWithTasks.fromMap(Map<String, dynamic> map) {
-    List<Task> tasks = (map['tasks'] as List? ?? []).map((data) => Task.fromMap(data)).toList();
+    List<Task> tasks = (map['tasks'] as List? ?? [])
+        .map((data) => Task.fromMap(data))
+        .toList();
     Project project = Project.fromMap(map['project'] ?? {});
 
-    return ProjectWithTasks(
-      project: project,
-      tasks: tasks,
-    );
+    return ProjectWithTasks(project: project, tasks: tasks);
   }
 
   Map<String, Object?> toMap() {

@@ -9,7 +9,8 @@ import 'package:docket/components/dueon.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   final today = DateUtils.dateOnly(DateTime.now());
   final tomorrow = today.add(const Duration(days: 1));
@@ -18,19 +19,37 @@ void main() {
   group('DueOn', () {
     testWidgets('Render for today', (tester) async {
       await tester.pumpWidget(
-          EntryPoint(database: database, child: Scaffold(body: DueOn(dueOn: today, evening: false, showNull: true))));
+        EntryPoint(
+          database: database,
+          child: Scaffold(
+            body: DueOn(dueOn: today, evening: false, showNull: true),
+          ),
+        ),
+      );
       expect(find.text('Today'), findsOneWidget);
     });
 
     testWidgets('Render for this evening', (tester) async {
       await tester.pumpWidget(
-          EntryPoint(database: database, child: Scaffold(body: DueOn(dueOn: today, evening: true, showNull: true))));
+        EntryPoint(
+          database: database,
+          child: Scaffold(
+            body: DueOn(dueOn: today, evening: true, showNull: true),
+          ),
+        ),
+      );
       expect(find.text('This evening'), findsOneWidget);
     });
 
     testWidgets('render for tomorrow', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: database, child: Scaffold(body: DueOn(dueOn: tomorrow, evening: false, showNull: true))));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: database,
+          child: Scaffold(
+            body: DueOn(dueOn: tomorrow, evening: false, showNull: true),
+          ),
+        ),
+      );
       expect(find.text('Tomorrow'), findsOneWidget);
     });
   });

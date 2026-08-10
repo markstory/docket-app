@@ -16,7 +16,8 @@ import 'package:docket/screens/profilesettings.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/profile.json');
   final profileResponseFixture = file.readAsStringSync();
@@ -34,10 +35,9 @@ void main() {
     });
 
     testWidgets('shows form', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const ProfileSettingsScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const ProfileSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Profile Settings'), findsOneWidget);
@@ -56,10 +56,9 @@ void main() {
         throw Exception('Request made to unmocked ${request.url.path}');
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const ProfileSettingsScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const ProfileSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byKey(const ValueKey('name')), 'New Name!');

@@ -16,7 +16,8 @@ import 'package:docket/screens/projectarchive.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/project_list.json');
   final projectList = file.readAsStringSync();
@@ -24,7 +25,9 @@ void main() {
 
   group('$ProjectArchiveScreen', () {
     var db = LocalDatabase(inTest: true);
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     setUp(() async {
       await db.apiToken.set(ApiToken.fake());
@@ -40,20 +43,18 @@ void main() {
         }
         throw Exception('Request made to unmocked ${request.url.path}');
       });
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const ProjectArchiveScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const ProjectArchiveScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('No archived projects'), findsOneWidget);
     });
 
     testWidgets('shows projects', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const ProjectArchiveScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const ProjectArchiveScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Home'), findsOneWidget);
@@ -76,10 +77,9 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: const ProjectArchiveScreen(),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: const ProjectArchiveScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Open context menu

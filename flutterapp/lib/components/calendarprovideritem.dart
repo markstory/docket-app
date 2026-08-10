@@ -23,7 +23,11 @@ class CalendarProviderItem extends StatelessWidget {
       dense: true,
       contentPadding: EdgeInsets.all(space(1)),
       onTap: () {
-        Navigator.pushNamed(context, Routes.calendarDetails, arguments: CalendarDetailsArguments(provider));
+        Navigator.pushNamed(
+          context,
+          Routes.calendarDetails,
+          arguments: CalendarDetailsArguments(provider),
+        );
       },
       title: Text(provider.displayName),
       leading: icon,
@@ -40,17 +44,24 @@ class ProviderActions extends StatelessWidget {
   const ProviderActions({required this.provider, super.key});
 
   void handleDelete(context) {
-    var viewmodel = Provider.of<CalendarProviderListViewModel>(context, listen: false);
+    var viewmodel = Provider.of<CalendarProviderListViewModel>(
+      context,
+      listen: false,
+    );
     var messenger = ScaffoldMessenger.of(context);
     var navigator = Navigator.of(context);
     showConfirmDelete(
       context: context,
-      content: 'Deleting this calendar account will remove all linked calendars.',
+      content:
+          'Deleting this calendar account will remove all linked calendars.',
       onConfirm: () async {
         await viewmodel.delete(provider);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Calendar provider deleted'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Calendar provider deleted'),
+        );
         navigator.pop();
-      });
+      },
+    );
   }
 
   @override
@@ -61,9 +72,7 @@ class ProviderActions extends StatelessWidget {
     return PopupMenuButton<Menu>(
       key: const ValueKey('provider-actions'),
       onSelected: (Menu item) {
-        var actions = {
-          Menu.delete: () => handleDelete(context),
-        };
+        var actions = {Menu.delete: () => handleDelete(context)};
         actions[item]?.call();
       },
       itemBuilder: (BuildContext context) {
@@ -76,6 +85,7 @@ class ProviderActions extends StatelessWidget {
             ),
           ),
         ];
-      });
+      },
+    );
   }
 }

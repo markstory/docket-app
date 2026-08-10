@@ -61,7 +61,8 @@ class ProjectEditViewModel extends ChangeNotifier {
   /// Load data. Should be called during initState()
   Future<void> loadData() async {
     await fetchProject();
-    if (!_loading && (_project == null || !_database.projectDetails.isFreshSlug(slug))) {
+    if (!_loading &&
+        (_project == null || !_database.projectDetails.isFreshSlug(slug))) {
       return refresh();
     }
   }
@@ -70,7 +71,10 @@ class ProjectEditViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     _loading = true;
 
-    var result = await actions.fetchProjectBySlug(_database.apiToken.token, slug);
+    var result = await actions.fetchProjectBySlug(
+      _database.apiToken.token,
+      slug,
+    );
     await _database.projectDetails.set(result);
     _project = result.project;
     _loading = false;

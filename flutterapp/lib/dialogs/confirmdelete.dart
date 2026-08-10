@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 void showConfirmDelete({
   required BuildContext context,
-  required void Function () onConfirm,
+  required void Function() onConfirm,
   String title = 'Are you sure?',
   String content = 'Are you sure you want to proceed?',
   String cancelButtonText = 'Cancel',
@@ -15,15 +15,15 @@ void showConfirmDelete({
         title: Text(title),
         content: Text(content),
         actions: [
-          TextButton(
-            onPressed: onConfirm,
-            child: Text(confirmButtonText),
+          TextButton(onPressed: onConfirm, child: Text(confirmButtonText)),
+          ElevatedButton(
+            child: Text(cancelButtonText),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          ElevatedButton(child: Text(cancelButtonText), onPressed: () {
-            Navigator.pop(context);
-          }),
-        ]
+        ],
       );
-    }
+    },
   );
 }

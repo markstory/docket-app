@@ -23,7 +23,7 @@ class TaskCheckbox extends StatelessWidget {
     this.onToggle,
     this.onChange,
     this.disabled = false,
-    super.key
+    super.key,
   });
 
   @override
@@ -52,10 +52,12 @@ class TaskCheckbox extends StatelessWidget {
             var text = task.completed ? 'Task Complete' : 'Task Incomplete';
             messenger.showSnackBar(successSnackBar(theme: theme, text: text));
           } catch (e) {
-            messenger.showSnackBar(errorSnackBar(theme: theme, text: 'Could not update task'));
+            messenger.showSnackBar(
+              errorSnackBar(theme: theme, text: 'Could not update task'),
+            );
           }
         });
-      }
+      },
     );
   }
 }

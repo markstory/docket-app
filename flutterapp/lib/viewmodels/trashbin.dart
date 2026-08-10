@@ -4,7 +4,6 @@ import 'package:docket/actions.dart' as actions;
 import 'package:docket/database.dart';
 import 'package:docket/models/task.dart';
 
-
 class TrashbinViewModel extends ChangeNotifier {
   late LocalDatabase _database;
 

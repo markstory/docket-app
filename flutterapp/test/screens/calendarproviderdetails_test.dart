@@ -16,7 +16,8 @@ import 'package:docket/screens/calendarproviderdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var file = File('test_resources/calendar_source.json');
   final calendarSourceResponse = file.readAsStringSync();
@@ -35,10 +36,12 @@ void main() {
     });
 
     testWidgets('render sources', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          child: CalendarProviderDetailsScreen(provider),
+        ),
+      );
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
@@ -52,17 +55,16 @@ void main() {
       broken.brokenAuth = true;
       await db.calendarDetails.set(broken);
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(broken),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: CalendarProviderDetailsScreen(broken)),
+      );
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
 
       expect(
         find.textContaining("This calendar account has been disconnected"),
-        findsOneWidget
+        findsOneWidget,
       );
     });
 
@@ -76,10 +78,12 @@ void main() {
         throw Exception('Request made to ${request.url.path} has no response');
       });
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          child: CalendarProviderDetailsScreen(provider),
+        ),
+      );
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
@@ -109,10 +113,12 @@ void main() {
         throw Exception('Request made to ${request.url.path} has no response');
       });
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          child: CalendarProviderDetailsScreen(provider),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Open menu
@@ -136,10 +142,12 @@ void main() {
         throw Exception('Request made to ${request.url.path} has no response');
       });
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          child: CalendarProviderDetailsScreen(provider),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Open menu
@@ -164,10 +172,12 @@ void main() {
         throw Exception('Request made to ${request.url.path} has no response');
       });
 
-      await tester.pumpWidget(EntryPoint(
-        database: db,
-        child: CalendarProviderDetailsScreen(provider),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(
+          database: db,
+          child: CalendarProviderDetailsScreen(provider),
+        ),
+      );
       await tester.runAsync(() async {
         await tester.pumpAndSettle();
       });
@@ -178,7 +188,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Choose a color option, for some reason colors are always offstage?
-      var menuOption = find.byKey(const ValueKey('color-green'), skipOffstage: false).first;
+      var menuOption = find
+          .byKey(const ValueKey('color-green'), skipOffstage: false)
+          .first;
       await tester.ensureVisible(menuOption);
       await tester.tap(menuOption, warnIfMissed: false);
       await tester.pumpAndSettle();

@@ -10,20 +10,29 @@ import 'package:docket/dialogs/changedueon.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
-  Widget buildButton(DateTime? dueOn, bool evening, Function(DateTime? x, bool y) onUpdate) {
+  Widget buildButton(
+    DateTime? dueOn,
+    bool evening,
+    Function(DateTime? x, bool y) onUpdate,
+  ) {
     var database = LocalDatabase(inTest: true);
     return EntryPoint(
-        database: database,
-        child: Builder(builder: (BuildContext context) {
+      database: database,
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
-              child: const Text('Open'),
-              onPressed: () async {
-                var result = await showChangeDueOnDialog(context, dueOn, evening);
-                onUpdate(result.dueOn, result.evening);
-              });
-        }));
+            child: const Text('Open'),
+            onPressed: () async {
+              var result = await showChangeDueOnDialog(context, dueOn, evening);
+              onUpdate(result.dueOn, result.evening);
+            },
+          );
+        },
+      ),
+    );
   }
 
   group('changeDueOnDialog()', () {
@@ -95,6 +104,7 @@ void main() {
         expect(dueOn, equals(futureDay));
         callCount += 1;
       }
+
       await tester.pumpWidget(buildButton(futureDay, true, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -113,6 +123,7 @@ void main() {
         expect(dueOn, equals(futureDay));
         callCount += 1;
       }
+
       await tester.pumpWidget(buildButton(futureDay, false, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -136,6 +147,7 @@ void main() {
         expect(dueOn, equals(selectedDay));
         callCount += 1;
       }
+
       await tester.pumpWidget(buildButton(today, false, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -193,6 +205,7 @@ void main() {
       void onUpdate(DateTime? dueOn, bool evening) {
         callCount++;
       }
+
       await tester.pumpWidget(buildButton(tomorrow, false, onUpdate));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();

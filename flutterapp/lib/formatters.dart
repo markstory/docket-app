@@ -46,7 +46,6 @@ DateTime parseToLocal(String input) {
   return parsed;
 }
 
-
 String dateString(DateTime value) {
   var month = value.month.toString();
   if (value.month < 10) {

@@ -37,38 +37,42 @@ class _ProjectArchiveScreenState extends State<ProjectArchiveScreen> {
       );
     }
     return ListView(
-          children: viewmodel.projects
-              .map((project) => ListTile(
-                    title: ProjectBadge(text: project.name, color: project.color),
-                    trailing: ArchivedProjectActions(project),
-                  ))
-              .toList(),
-        );
-    }
+      children: viewmodel.projects
+          .map(
+            (project) => ListTile(
+              title: ProjectBadge(text: project.name, color: project.color),
+              trailing: ArchivedProjectActions(project),
+            ),
+          )
+          .toList(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectArchiveViewModel>(builder: (context, viewmodel, child) {
-      var colors = getCustomColors(context);
-      Widget body;
-      if (viewmodel.loading) {
-        body = const LoadingIndicator();
-      } else {
-        body = RefreshIndicator(
-          onRefresh: () => viewmodel.refresh(),
-          child: itemList(context),
-        );
-      }
+    return Consumer<ProjectArchiveViewModel>(
+      builder: (context, viewmodel, child) {
+        var colors = getCustomColors(context);
+        Widget body;
+        if (viewmodel.loading) {
+          body = const LoadingIndicator();
+        } else {
+          body = RefreshIndicator(
+            onRefresh: () => viewmodel.refresh(),
+            child: itemList(context),
+          );
+        }
 
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: colors.disabledText,
-          title: const Text('Archived Projects'),
-        ),
-        drawer: const AppDrawer(),
-        body: body,
-      );
-    });
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: colors.disabledText,
+            title: const Text('Archived Projects'),
+          ),
+          drawer: const AppDrawer(),
+          body: body,
+        );
+      },
+    );
   }
 }
 
@@ -83,53 +87,68 @@ class ArchivedProjectActions extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var customColors = theme.extension<DocketColors>()!;
-    var projectsProvider = Provider.of<ProjectsProvider>(context, listen: false);
+    var projectsProvider = Provider.of<ProjectsProvider>(
+      context,
+      listen: false,
+    );
     var messenger = ScaffoldMessenger.of(context);
 
     Future<void> handleDelete() async {
       try {
         await projectsProvider.delete(project);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Project Deleted'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Project Deleted'),
+        );
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not delete project task'));
+        messenger.showSnackBar(
+          errorSnackBar(
+            context: context,
+            text: 'Could not delete project task',
+          ),
+        );
       }
     }
 
     Future<void> handleUnarchive() async {
       try {
         await projectsProvider.unarchive(project);
-        messenger.showSnackBar(successSnackBar(context: context, text: 'Project Unarchived'));
+        messenger.showSnackBar(
+          successSnackBar(context: context, text: 'Project Unarchived'),
+        );
       } catch (e) {
-        messenger.showSnackBar(errorSnackBar(context: context, text: 'Could not unarchive project'));
+        messenger.showSnackBar(
+          errorSnackBar(context: context, text: 'Could not unarchive project'),
+        );
       }
     }
 
     return PopupMenuButton<Menu>(
-        key: const ValueKey('archive-actions'),
-        onSelected: (Menu item) {
-          var actions = {
-            Menu.unarchive: handleUnarchive,
-            Menu.delete: handleDelete,
-          };
-          actions[item]?.call();
-        },
-        itemBuilder: (BuildContext context) {
-          return <PopupMenuEntry<Menu>>[
-            PopupMenuItem<Menu>(
-              value: Menu.unarchive,
-              child: ListTile(
-                leading: Icon(Icons.edit, color: customColors.actionEdit),
-                title: const Text('Un-archive'),
-              ),
+      key: const ValueKey('archive-actions'),
+      onSelected: (Menu item) {
+        var actions = {
+          Menu.unarchive: handleUnarchive,
+          Menu.delete: handleDelete,
+        };
+        actions[item]?.call();
+      },
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<Menu>>[
+          PopupMenuItem<Menu>(
+            value: Menu.unarchive,
+            child: ListTile(
+              leading: Icon(Icons.edit, color: customColors.actionEdit),
+              title: const Text('Un-archive'),
             ),
-            PopupMenuItem<Menu>(
-              value: Menu.delete,
-              child: ListTile(
-                leading: Icon(Icons.delete, color: customColors.actionDelete),
-                title: const Text('Delete'),
-              ),
+          ),
+          PopupMenuItem<Menu>(
+            value: Menu.delete,
+            child: ListTile(
+              leading: Icon(Icons.delete, color: customColors.actionDelete),
+              title: const Text('Delete'),
             ),
-          ];
-        });
+          ),
+        ];
+      },
+    );
   }
 }

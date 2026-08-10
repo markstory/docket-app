@@ -12,7 +12,11 @@ class ChangeDueOnResult {
 }
 
 /// Dialog sheet for changing a task due on.
-Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? dueOn, bool evening) {
+Future<ChangeDueOnResult> showChangeDueOnDialog(
+  BuildContext context,
+  DateTime? dueOn,
+  bool evening,
+) {
   var theme = Theme.of(context);
   var docketColors = theme.extension<DocketColors>()!;
 
@@ -43,93 +47,152 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
 
       List<Widget> items = [];
       if (!isToday) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
             leading: Icon(Icons.today, color: docketColors.dueToday),
             title: const Text('Today'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: today, evening: false));
+              completer.complete(
+                ChangeDueOnResult(dueOn: today, evening: false),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (!isTomorrow) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
-            leading: Icon(Icons.light_mode_outlined, color: docketColors.dueTomorrow),
+            leading: Icon(
+              Icons.light_mode_outlined,
+              color: docketColors.dueTomorrow,
+            ),
             title: const Text('Tomorrow'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: tomorrow, evening: evening));
+              completer.complete(
+                ChangeDueOnResult(dueOn: tomorrow, evening: evening),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (!isThisEvening) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
-            leading: Icon(Icons.bedtime_outlined, color: docketColors.dueEvening),
+            leading: Icon(
+              Icons.bedtime_outlined,
+              color: docketColors.dueEvening,
+            ),
             title: const Text('This evening'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: today, evening: true));
+              completer.complete(
+                ChangeDueOnResult(dueOn: today, evening: true),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (futureDue && isEvening) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
-            leading: Icon(Icons.calendar_today, color: docketColors.dueTomorrow),
+            leading: Icon(
+              Icons.calendar_today,
+              color: docketColors.dueTomorrow,
+            ),
             title: Text('${formatters.compactDate(currentValue)} day'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: currentValue, evening: false));
+              completer.complete(
+                ChangeDueOnResult(dueOn: currentValue, evening: false),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (futureDue && !isEvening) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
             leading: Icon(Icons.calendar_today, color: docketColors.dueEvening),
             title: Text('${formatters.compactDate(currentValue)} evening'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: currentValue, evening: true));
+              completer.complete(
+                ChangeDueOnResult(dueOn: currentValue, evening: true),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (isTodayFriday || isWeekend) {
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
-            leading: Icon(Icons.date_range_outlined, color: docketColors.dueFortnight),
+            leading: Icon(
+              Icons.date_range_outlined,
+              color: docketColors.dueFortnight,
+            ),
             title: const Text('On monday'),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: monday, evening: evening));
+              completer.complete(
+                ChangeDueOnResult(dueOn: monday, evening: evening),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
       if (dueOn != null && !isToday && !isTodayFriday) {
         var next = dueOn.add(const Duration(days: 1));
-        items.add(ListTile(
+        items.add(
+          ListTile(
             dense: true,
-            leading: Icon(Icons.date_range_outlined, color: docketColors.dueWeek),
+            leading: Icon(
+              Icons.date_range_outlined,
+              color: docketColors.dueWeek,
+            ),
             title: Text(formatters.compactDate(next)),
             onTap: () {
-              completer.complete(ChangeDueOnResult(dueOn: next, evening: evening));
+              completer.complete(
+                ChangeDueOnResult(dueOn: next, evening: evening),
+              );
               Navigator.of(context).pop();
-            }));
+            },
+          ),
+        );
       }
 
-      items.add(ListTile(
+      items.add(
+        ListTile(
           dense: true,
-          leading: Icon(Icons.watch_later_outlined, color: docketColors.dueNone),
+          leading: Icon(
+            Icons.watch_later_outlined,
+            color: docketColors.dueNone,
+          ),
           title: const Text('Later'),
           onTap: () {
-            completer.complete(ChangeDueOnResult(dueOn: null, evening: evening));
+            completer.complete(
+              ChangeDueOnResult(dueOn: null, evening: evening),
+            );
             Navigator.of(context).pop();
-          }));
+          },
+        ),
+      );
 
-      items.add(ListTile(
+      items.add(
+        ListTile(
           dense: true,
           leading: Icon(Icons.calendar_today, color: docketColors.dueFortnight),
           title: const Text('Choose a day'),
@@ -142,17 +205,18 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(BuildContext context, DateTime? 
               lastDate: today.add(const Duration(days: 365)),
               helpText: 'Remind me on',
             );
-            completer.complete(ChangeDueOnResult(dueOn: newValue, evening: evening));
+            completer.complete(
+              ChangeDueOnResult(dueOn: newValue, evening: evening),
+            );
             navigator.pop();
-          }));
+          },
+        ),
+      );
 
       return AlertDialog(
-          title: const Text('Select a day'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: items,
-            ),
-          ));
+        title: const Text('Select a day'),
+        content: SingleChildScrollView(child: ListBody(children: items)),
+      );
     },
   );
 

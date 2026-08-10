@@ -18,12 +18,16 @@ import 'package:docket/models/task.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/task_details.json');
-  var taskDetails = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  var taskDetails = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/subtask_update.json');
   var subtaskUpdate = file.readAsStringSync();
@@ -41,12 +45,23 @@ void main() {
       viewmodel.setId(task.id!);
     });
 
-    Future<int> renderWidget(WidgetTester tester, Task task, Subtask subtask) async {
-      await tester.pumpWidget(EntryPoint(
+    Future<int> renderWidget(
+      WidgetTester tester,
+      Task task,
+      Subtask subtask,
+    ) async {
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           child: Scaffold(
-            body: SubtaskItem(task: task, subtask: subtask, viewmodel: viewmodel),
-          )));
+            body: SubtaskItem(
+              task: task,
+              subtask: subtask,
+              viewmodel: viewmodel,
+            ),
+          ),
+        ),
+      );
 
       return tester.pumpAndSettle();
     }
@@ -58,7 +73,9 @@ void main() {
         if (request.url.path == '/api/tasks/1/subtasks/1/toggle') {
           return Response('', 200);
         }
-        throw Exception('Request to ${request.url.path} has no response defined');
+        throw Exception(
+          'Request to ${request.url.path} has no response defined',
+        );
       });
       await renderWidget(tester, task, task.subtasks[0]);
 
@@ -66,15 +83,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          tester.getSemantics(find.byType(Checkbox)),
-          matchesSemantics(
-              hasTapAction: true,
-              hasFocusAction: true,
-              isEnabled: true,
-              isFocusable: true,
-              hasCheckedState: true,
-              hasEnabledState: true
-          ));
+        tester.getSemantics(find.byType(Checkbox)),
+        matchesSemantics(
+          hasTapAction: true,
+          hasFocusAction: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasCheckedState: true,
+          hasEnabledState: true,
+        ),
+      );
       expect(callCount, 1);
     });
 
@@ -85,7 +103,9 @@ void main() {
         if (request.url.path == '/api/tasks/1/subtasks/1/edit') {
           return Response(subtaskUpdate, 200);
         }
-        throw Exception('Request to ${request.url.path} has no response defined');
+        throw Exception(
+          'Request to ${request.url.path} has no response defined',
+        );
       });
       await renderWidget(tester, task, task.subtasks[0]);
 
@@ -93,21 +113,28 @@ void main() {
       await tester.tap(find.text('vacuum'));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('subtask-title')), 'new title');
+      await tester.enterText(
+        find.byKey(const ValueKey('subtask-title')),
+        'new title',
+      );
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle();
 
       expect(callCount, 1);
     });
 
-    testWidgets('delete button shows confirm and sends request', (tester) async {
+    testWidgets('delete button shows confirm and sends request', (
+      tester,
+    ) async {
       var callCount = 0;
       actions.client = MockClient((request) async {
         callCount = 1;
         if (request.url.path == '/api/tasks/1/subtasks/1/delete') {
           return Response('', 200);
         }
-        throw Exception('Request to ${request.url.path} has no response defined');
+        throw Exception(
+          'Request to ${request.url.path} has no response defined',
+        );
       });
       await renderWidget(tester, task, task.subtasks[0]);
 

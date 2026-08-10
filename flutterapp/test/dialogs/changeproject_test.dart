@@ -12,7 +12,8 @@ import 'package:docket/dialogs/changeproject.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var database = LocalDatabase(inTest: true);
   var file = File('test_resources/project_list.json');
@@ -22,19 +23,25 @@ void main() {
 
   Widget buildButton(int? current, Function(int id) onUpdate) {
     return EntryPoint(
-        database: database,
-        child: Builder(builder: (BuildContext context) {
+      database: database,
+      child: Builder(
+        builder: (BuildContext context) {
           return TextButton(
-              child: const Text('Open'),
-              onPressed: () async {
-                var result = await showChangeProjectDialog(context, current);
-                onUpdate(result);
-              });
-        }));
+            child: const Text('Open'),
+            onPressed: () async {
+              var result = await showChangeProjectDialog(context, current);
+              onUpdate(result);
+            },
+          );
+        },
+      ),
+    );
   }
 
   group('showChangeProjectDialog', () {
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     setUp(() async {
       await database.projectMap.addMany(projects);

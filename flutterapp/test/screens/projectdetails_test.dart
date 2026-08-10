@@ -17,12 +17,16 @@ import 'package:http/testing.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
 
   var file = File('test_resources/project_details.json');
-  final detailsResponse = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final detailsResponse = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
   var decoded = jsonDecode(detailsResponse) as Map<String, dynamic>;
 
   group('$ProjectDetailsScreen', () {
@@ -36,16 +40,18 @@ void main() {
 
     testWidgets('floating add button navigates to task add', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/add": (context) {
               navigated = true;
               return const Text('Task add');
-            }
+            },
           },
           child: ProjectDetailsScreen(viewdata.project),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       // tap the floating add button. Should go to task add
@@ -56,10 +62,9 @@ void main() {
     });
 
     testWidgets('shows tasks', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: ProjectDetailsScreen(viewdata.project),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: ProjectDetailsScreen(viewdata.project)),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('clean dishes'), findsOneWidget);
@@ -68,16 +73,18 @@ void main() {
 
     testWidgets('task item navigates to task details', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/tasks/view": (context) {
               navigated = true;
               return const Text("Task Details");
-            }
+            },
           },
           child: ProjectDetailsScreen(viewdata.project),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('clean dishes'));
@@ -88,16 +95,18 @@ void main() {
 
     testWidgets('edit menu action navigates', (tester) async {
       var navigated = false;
-      await tester.pumpWidget(EntryPoint(
+      await tester.pumpWidget(
+        EntryPoint(
           database: db,
           routes: {
             "/projects/edit": (context) {
               navigated = true;
               return const Text("Project Edit");
-            }
+            },
           },
           child: ProjectDetailsScreen(viewdata.project),
-      ));
+        ),
+      );
       await tester.pumpAndSettle();
 
       // open menu
@@ -110,10 +119,9 @@ void main() {
     });
 
     testWidgets('add section shows dialog', (tester) async {
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: ProjectDetailsScreen(viewdata.project),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: ProjectDetailsScreen(viewdata.project)),
+      );
       await tester.pumpAndSettle();
 
       // open menu
@@ -141,10 +149,9 @@ void main() {
         throw Exception('Unmocked request to ${request.url.path} made');
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: ProjectDetailsScreen(viewdata.project),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: ProjectDetailsScreen(viewdata.project)),
+      );
       await tester.pumpAndSettle();
 
       // open menu
@@ -156,7 +163,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Fill out dialog
-      await tester.enterText(find.byKey(const ValueKey('section-name')), 'Renamed section');
+      await tester.enterText(
+        find.byKey(const ValueKey('section-name')),
+        'Renamed section',
+      );
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
@@ -174,10 +184,9 @@ void main() {
         throw Exception('Unmocked request to ${request.url.path} made');
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: ProjectDetailsScreen(viewdata.project),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: ProjectDetailsScreen(viewdata.project)),
+      );
       await tester.pumpAndSettle();
 
       // open menu

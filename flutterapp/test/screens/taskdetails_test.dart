@@ -18,11 +18,15 @@ import 'package:docket/screens/taskdetails.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var today = DateUtils.dateOnly(DateTime.now());
   var file = File('test_resources/task_details.json');
-  final taskDetails = file.readAsStringSync().replaceAll('__TODAY__', formatters.dateString(today));
+  final taskDetails = file.readAsStringSync().replaceAll(
+    '__TODAY__',
+    formatters.dateString(today),
+  );
 
   file = File('test_resources/project_list.json');
   final projectListResponse = file.readAsStringSync();
@@ -30,7 +34,9 @@ void main() {
   group('$TaskDetailsScreen', () {
     var db = LocalDatabase(inTest: true);
     var decoded = jsonDecode(projectListResponse);
-    var projects = (decoded['projects'] as List).map<Project>((item) => Project.fromMap(item)).toList();
+    var projects = (decoded['projects'] as List)
+        .map<Project>((item) => Project.fromMap(item))
+        .toList();
 
     decoded = jsonDecode(taskDetails);
     var task = Task.fromMap(decoded['task']);
@@ -55,13 +61,15 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: TaskDetailsScreen(task),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: TaskDetailsScreen(task)),
+      );
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(const ValueKey('title')), "Rake leaves");
+      await tester.enterText(
+        find.byKey(const ValueKey('title')),
+        "Rake leaves",
+      );
 
       var saveFinder = find.text('Save');
       await tester.ensureVisible(saveFinder);
@@ -85,10 +93,9 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: TaskDetailsScreen(task),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: TaskDetailsScreen(task)),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(Checkbox).first);
@@ -106,10 +113,9 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: TaskDetailsScreen(task),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: TaskDetailsScreen(task)),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('clean the house'), findsOneWidget);
@@ -130,17 +136,19 @@ void main() {
         throw "Unexpected request to ${request.url.path}";
       });
 
-      await tester.pumpWidget(EntryPoint(
-          database: db,
-          child: TaskDetailsScreen(task),
-      ));
+      await tester.pumpWidget(
+        EntryPoint(database: db, child: TaskDetailsScreen(task)),
+      );
       await tester.pumpAndSettle();
 
       // Ensure task is there.
       expect(find.text('vacuum'), findsOneWidget);
 
       // Tap checkbox.
-      var checkbox =find.descendant(of: find.byKey(const ValueKey('subtask-1')), matching: find.byType(Checkbox));
+      var checkbox = find.descendant(
+        of: find.byKey(const ValueKey('subtask-1')),
+        matching: find.byType(Checkbox),
+      );
       await tester.tap(checkbox);
       await tester.pumpAndSettle();
 

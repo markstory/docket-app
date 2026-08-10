@@ -14,7 +14,8 @@ import 'package:docket/forms/task.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  SharedPreferencesAsyncPlatform.instance =
+      InMemorySharedPreferencesAsync.empty();
 
   var home = Project(id: 1, slug: 'home', name: 'Home', color: 0, ranking: 0);
   var work = Project(
@@ -38,18 +39,22 @@ void main() async {
       child: Scaffold(
         body: Portal(
           child: SingleChildScrollView(
-            child: TaskForm(viewmodel: viewmodel, formKey: formKey)
-          )
-        )
-      )
+            child: TaskForm(viewmodel: viewmodel, formKey: formKey),
+          ),
+        ),
+      ),
     );
   }
 
   setUpAll(() async {
     await database.clearProjects();
     await database.projectMap.addMany([home, work]);
-    await database.projectDetails.set(ProjectWithTasks(project: home, tasks: []));
-    await database.projectDetails.set(ProjectWithTasks(project: work, tasks: []));
+    await database.projectDetails.set(
+      ProjectWithTasks(project: home, tasks: []),
+    );
+    await database.projectDetails.set(
+      ProjectWithTasks(project: work, tasks: []),
+    );
   });
 
   group('$TaskForm', () {
@@ -71,7 +76,10 @@ void main() async {
       await tester.ensureVisible(bodyFinder);
       await tester.tap(bodyFinder);
       await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const ValueKey('markdown-input')), 'Use lots of soap');
+      await tester.enterText(
+        find.byKey(const ValueKey('markdown-input')),
+        'Use lots of soap',
+      );
 
       // Open the project dropdown and select home
       await tester.tap(find.byKey(const ValueKey('project')));
@@ -173,7 +181,10 @@ void main() async {
       await tester.ensureVisible(bodyFinder);
       await tester.tap(bodyFinder);
       await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const ValueKey('markdown-input')), 'Use lots of soap');
+      await tester.enterText(
+        find.byKey(const ValueKey('markdown-input')),
+        'Use lots of soap',
+      );
 
       // Open the project dropdown and select home
       await tester.tap(find.byKey(const ValueKey('project')));
@@ -259,7 +270,11 @@ void main() async {
       expect(find.byKey(const ValueKey('section')), findsNothing);
 
       formKey.currentState!.save();
-      expect(task.sectionId, isNull, reason: 'Task section should be removed on project change');
+      expect(
+        task.sectionId,
+        isNull,
+        reason: 'Task section should be removed on project change',
+      );
     });
 
     testWidgets('can add substasks to new task', (tester) async {

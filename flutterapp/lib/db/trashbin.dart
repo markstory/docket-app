@@ -6,7 +6,8 @@ import 'package:docket/models/task.dart';
 class TrashbinRepo extends Repository<TaskViewData> {
   static const String name = 'trashbin';
 
-  TrashbinRepo(JsonCache database, Duration duration) : super(database, duration);
+  TrashbinRepo(JsonCache database, Duration duration)
+    : super(database, duration);
 
   @override
   String keyName() {

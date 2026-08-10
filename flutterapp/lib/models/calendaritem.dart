@@ -25,7 +25,7 @@ class CalendarItem {
     this.endDate,
     this.allDay = false,
     this.htmlLink = '',
-  }); 
+  });
 
   factory CalendarItem.fromMap(Map<String, dynamic> json) {
     DateTime? startTime;
