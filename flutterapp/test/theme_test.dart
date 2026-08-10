@@ -25,5 +25,25 @@ void main() {
 
       expect(updated.disabledText, equals(light.disabledText));
     });
+
+    test('getProjectColor()', () {
+      var res = getProjectColor(0);
+      expect(res, equals(const Color(0xFF28aa48)));
+
+      res = getProjectColor(1);
+      expect(res, equals(const Color(0xFF6fd19d)));
+
+      // no out of bounds
+      res = getProjectColor(99);
+      expect(res, equals(const Color(0xFF28aa48)));
+    });
+
+    test('getProjectTextColor()', () {
+      var res = getProjectTextColor(1);
+      expect(res, equals(DocketColors.black));
+
+      res = getProjectTextColor(2);
+      expect(res, equals(DocketColors.white));
+    });
   });
 }

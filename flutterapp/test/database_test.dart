@@ -429,6 +429,17 @@ void main() {
       expect(database.projectDetails.isFreshSlug('work'), isFalse);
     });
 
+    test('projectDetails.remove() clears freshslug state', () async {
+      await database.projectDetails
+          .set(ProjectWithTasks(
+            project: Project.fromMap({'slug': 'home', 'id': 1, 'name': 'home'}),
+            tasks: []
+          ));
+      expect(database.projectDetails.isFreshSlug('home'), isTrue);
+
+      await database.projectDetails.remove('home');
+      expect(database.projectDetails.isFreshSlug('home'), isFalse);
+    });
 
     test('setRange() removes overdue data', () async {
       var twoDaysAgo = today.subtract(const Duration(days: 2));

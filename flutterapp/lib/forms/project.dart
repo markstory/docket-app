@@ -28,7 +28,9 @@ class _ProjectFormState extends State<ProjectForm> {
     var theme = Theme.of(context);
     return Form(
         key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           TextFormField(
               key: const ValueKey("project-name"),
               decoration: InputDecoration(
@@ -67,8 +69,10 @@ class _ProjectFormState extends State<ProjectForm> {
                   ]));
             }).toList(),
           ),
-          ButtonBar(children: [
-            ElevatedButton(
+          OverflowBar(
+            alignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
                 child: const Text('Save'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {

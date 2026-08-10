@@ -102,11 +102,11 @@ flutter:
 flutter_native_splash:
   color: "#ffffff"
   color_dark: "#2a1813"
-  image: assets/splash.png
+  image: "assets/splash.png"
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: 'assets/docket-logo.png'
-  adaptive_icon_foreground: 'assets/docket-logo.png'
-  adaptive_icon_background: '#a848a8'
+  android_12:
+    color: "#ffffff"
+    color_dark: "#2a1813"
+    image: "assets/splash-transparent.png"
+    icon_background_color: "#a848a8"
+

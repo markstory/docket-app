@@ -2,7 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:json_cache/json_cache.dart';
 
-/// Abstract class that will act as the base of the Repository 
+/// Abstract class that will act as the base of the Repository
 /// based database implementation.
 ///
 /// Listeners will be notified when this view cache is cleared.
@@ -27,7 +27,7 @@ abstract class Repository<T> extends ChangeNotifier {
   Map<String, dynamic>? get state => _state;
 
   /// Check if the local data is within the cache duration.
-  /// Stale data will be returned by _get(). Use this method 
+  /// Stale data will be returned by _get(). Use this method
   /// to see if a server refresh should be performed.
   bool isFresh() {
     var state = _state;
@@ -72,6 +72,7 @@ abstract class Repository<T> extends ChangeNotifier {
   }
 
   /// Update local database and in-process state as well.
+  /// Callers are expected to notify listeners as doing so here creates cycles.
   Future<void> setMap(Map<String, dynamic> data) async {
     var payload = {'updatedAt': clock.now().toIso8601String(), 'data': data};
     _state = payload;

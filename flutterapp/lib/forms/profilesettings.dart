@@ -78,16 +78,18 @@ class _ProfileSettingsFormState extends State<ProfileSettingsForm> {
                   userprofile.theme = value;
                 }
               }),
-          ButtonBar(children: [
-            ElevatedButton(
-                child: const Text('Save'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    widget.onSave(userprofile);
-                  }
-                })
-          ])
+          OverflowBar(
+            alignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
+                  child: const Text('Save'),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      widget.onSave(userprofile);
+                    }
+                  })
+            ])
         ]));
   }
 }

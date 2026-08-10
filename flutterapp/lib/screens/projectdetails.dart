@@ -89,9 +89,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Widget buildWrapper({required Widget child, required Project project, required ProjectDetailsViewModel viewmodel}) {
     var actions = [ProjectActions(viewmodel)];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: getProjectColor(project.color),
+        foregroundColor: getProjectTextColor(project.color),
         title: Text(project.name),
         actions: actions,
       ),
@@ -122,7 +124,7 @@ class SectionActions extends StatelessWidget {
 
     Future<void> handleDelete() async {
       showConfirmDelete(
-        context: context, 
+        context: context,
         content: "Are you sure you want to delete this section?",
         onConfirm: () async {
           try {

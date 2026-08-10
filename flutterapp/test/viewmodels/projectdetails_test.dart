@@ -35,6 +35,7 @@ void main() {
 
   Future<void> setViewdata(LocalDatabase db, ProjectWithTasks data) async {
     await db.projectDetails.set(data);
+    await db.projectMap.set(data.project);
   }
 
   group('$ProjectDetailsViewModel', () {
@@ -97,6 +98,29 @@ void main() {
       expect(viewmodel.loading, isFalse);
       expect(viewmodel.project, isNotNull);
       expect(viewmodel.taskLists.length, equals(3));
+    });
+
+    test('silentRefresh() sets projectMap and projectDetails', () async {
+      actions.client = MockClient((request) async {
+        if (request.url.path == '/api/projects/home') {
+          return Response(projectDetailsResponseFixture, 200);
+        }
+        if (request.url.path == '/api/projects') {
+          return Response(projectListResponseFixture, 200);
+        }
+        throw "Unexpected request to ${request.url.path}";
+      });
+
+      var slug = 'home';
+      var viewmodel = ProjectDetailsViewModel(db)..setSlug(slug);
+
+      await viewmodel.silentRefresh();
+      expect(viewmodel.loading, isFalse);
+      expect(viewmodel.project, isNotNull);
+      expect(viewmodel.taskLists.length, equals(3));
+
+      expect(db.projectDetails.isFreshSlug(slug), isTrue);
+      expect(await db.projectMap.get(slug), isNotNull);
     });
 
     test('reorderTask() updates state', () async {
@@ -177,6 +201,9 @@ void main() {
 
     test('archive() makes API request and expires local db', () async {
       actions.client = MockClient((request) async {
+        if (request.url.path == '/api/projects/home') {
+          return Response(projectDetailsResponseFixture, 200);
+        }
         expect(request.url.path, contains('/api/projects/home/archive'));
         return Response("", 200);
       });

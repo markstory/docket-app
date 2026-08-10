@@ -1,3 +1,5 @@
+import 'package:docket/routes.dart';
+import 'package:docket/viewmodels/taskadd.dart';
 import 'package:flutter/material.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
@@ -7,11 +9,15 @@ import 'package:docket/components/calendaritemlist.dart';
 import 'package:docket/models/calendaritem.dart';
 import 'package:docket/models/task.dart';
 import 'package:docket/theme.dart';
+import 'package:provider/provider.dart';
 
 class TaskSorter extends StatefulWidget {
   final List<TaskSortMetadata> taskLists;
 
   final TaskSortMetadata? overdue;
+
+  /// Enabled by views that want to show an 'all done' message.
+  final bool showComplete;
 
   /// Fired when an item moves from overdue to one of the other sections.
   final void Function(DragAndDropItem newItem, int listIndex, int itemIndex) onItemAdd;
@@ -36,6 +42,7 @@ class TaskSorter extends StatefulWidget {
       this.onListReorder,
       this.overdue,
       this.buildHeader,
+      this.showComplete = false,
       super.key});
 
   @override
@@ -61,6 +68,10 @@ class _TaskSorterState extends State<TaskSorter> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
+    if (widget.showComplete && widget.taskLists.isNotEmpty) {
+        return buildComplete(widget.taskLists[0], theme);
+    }
+
     return DragAndDropLists(
       children: widget.taskLists.map((taskListMeta) {
         var includeOverdue = (widget.overdue?.tasks.isNotEmpty ?? false) && widget.taskLists.indexOf(taskListMeta) == 0;
@@ -73,7 +84,7 @@ class _TaskSorterState extends State<TaskSorter> {
         }
         return DragAndDropList(
           header: header,
-          contentsWhenEmpty: buildEmpty(theme),
+          contentsWhenEmpty: buildEmptyListItem(theme),
           canDrag: taskListMeta.canDrag,
           children: taskListMeta.tasks.map((task) {
             return DragAndDropItem(child: widget.buildItem(task));
@@ -92,7 +103,53 @@ class _TaskSorterState extends State<TaskSorter> {
     );
   }
 
-  Widget buildEmpty(ThemeData theme) {
+  Widget buildComplete(TaskSortMetadata taskListMeta, ThemeData theme) {
+    late Widget header;
+    if (widget.buildHeader != null) {
+      header = widget.buildHeader!(taskListMeta);
+    } else {
+      header = buildHeaderDefault(taskListMeta, theme, includeOverdue: false);
+    }
+
+    return Padding(
+        padding: EdgeInsets.fromLTRB(space(1), space(4), space(1), 0),
+        child: Column(
+          spacing: space(1),
+          children: [
+            header,
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(space(5)),
+                child: Image.asset("assets/trophy.png", height: 175, width: 175),
+              )
+            ),
+            Text("All Done", style: theme.textTheme.headlineMedium!.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            )),
+            Text("Create a task for what's next, or take a break.", style: theme.textTheme.bodyMedium),
+            FilledButton(
+              onPressed: () {
+                var viewmodel = Provider.of<TaskAddViewModel>(context, listen: false);
+
+                viewmodel.task.dueOn = taskListMeta.date;
+                viewmodel.task.evening = taskListMeta.evening;
+                viewmodel.task.projectId = null;
+
+                Navigator.pushNamed(context, Routes.taskAdd);
+              },
+              child: const Text('Add a Task'),
+            ),
+          ]
+        ),
+    );
+  }
+
+  Widget buildEmptyListItem(ThemeData theme) {
     var docketColors = theme.extension<DocketColors>()!;
     // TODO make contents dynamic based on the current metadata information
     // TODO figure out how to get this text aligned on the left
@@ -265,7 +322,7 @@ class TaskSortMetadata<T> {
     this.tasks = const [],
     this.calendarItems = const [],
     this.canDrag = false,
-    this.evening = false, 
+    this.evening = false,
     this.emptyState = EmptyStateCategory.compactNoTasks
   });
 }

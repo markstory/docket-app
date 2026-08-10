@@ -57,16 +57,23 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
 
     return Consumer<ProjectEditViewModel>(builder: (context, viewmodel, child) {
       Widget body;
+      int color;
       if (viewmodel.loading) {
         body = const LoadingIndicator();
+        color = 0;
       } else {
         body = ProjectForm(
           project: viewmodel.project,
           onSave: (updated) async => await _saveProject(context, updated),
         );
+        color = viewmodel.project.color;
       }
       return Scaffold(
-        appBar: AppBar(title: const Text('Update Project')),
+        appBar: AppBar(
+            backgroundColor: getProjectColor(color),
+            foregroundColor: getProjectTextColor(color),
+            title: const Text('Update Project')
+        ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(space(2)),
           child: body,

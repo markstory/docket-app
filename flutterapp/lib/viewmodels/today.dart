@@ -51,6 +51,18 @@ class TodayViewModel extends ChangeNotifier {
     _loadError = false;
   }
 
+  /// Detect if there are no remaining tasks for today.
+  bool hasNoTasks() {
+    if (_loading) {
+        return false;
+    }
+    var total = 0;
+    for (var taskList in taskLists) {
+        total += taskList.tasks.length;
+    }
+    return total == 0;
+  }
+
   /// Load data. Should be called during initState()
   /// or when database events are received.
   Future<void> loadData() async {

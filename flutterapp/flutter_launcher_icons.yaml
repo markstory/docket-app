@@ -17,18 +17,3 @@ flutter_launcher_icons:
   # image_path_ios_tinted_grayscale: "assets/icon/icon_tinted.png"
   # desaturate_tinted_to_grayscale_ios: true
   # background_color_ios: "#ffffff"
-
-  web:
-    generate: true
-    image_path: "assets/docket-logo.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
-
-  windows:
-    generate: true
-    image_path: "assets/docket-logo.png"
-    icon_size: 48 # min:48, max:256, default: 48
-
-  macos:
-    generate: true
-    image_path: "assets/docket-logo.png"
