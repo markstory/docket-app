@@ -72,13 +72,12 @@ abstract class Repository<T> extends ChangeNotifier {
   }
 
   /// Update local database and in-process state as well.
+  /// Callers are expected to notify listeners as doing so here creates cycles.
   Future<void> setMap(Map<String, dynamic> data) async {
     var payload = {'updatedAt': clock.now().toIso8601String(), 'data': data};
     _state = payload;
     _expiredAt = null;
     await _database.refresh(keyName(), payload);
-    // WAT - creates an infinite loop
-    // notifyListeners();
   }
 
   /// Fetch raw map data from in-process or local database.

@@ -20,7 +20,10 @@ class ProjectMapRepo extends Repository<Project> {
     var current = await getMap() ?? {};
     current[project.slug] = project.toMap();
 
-    return setMap(current);
+    var result = setMap(current);
+    notifyListeners();
+
+    return result;
   }
 
   /// Replace all projects in the mapping.
