@@ -77,7 +77,8 @@ abstract class Repository<T> extends ChangeNotifier {
     _state = payload;
     _expiredAt = null;
     await _database.refresh(keyName(), payload);
-    notifyListeners();
+    // WAT - creates an infinite loop
+    // notifyListeners();
   }
 
   /// Fetch raw map data from in-process or local database.
