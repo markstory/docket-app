@@ -34,7 +34,8 @@ Future<void> showRenameSectionDialog(
                 }
               },
             ),
-            ButtonBar(
+            OverflowBar(
+              alignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   child: const Text('Cancel'),
@@ -42,7 +43,7 @@ Future<void> showRenameSectionDialog(
                     Navigator.pop(context);
                   },
                 ),
-                ElevatedButton(
+                FilledButton(
                   child: const Text('Save'),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {

@@ -34,7 +34,8 @@ Future<void> showCreateSectionDialog(
                 }
               },
             ),
-            ButtonBar(
+            OverflowBar(
+              alignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   child: const Text('Cancel'),
@@ -42,7 +43,7 @@ Future<void> showCreateSectionDialog(
                     Navigator.pop(context);
                   },
                 ),
-                ElevatedButton(
+                FilledButton(
                   child: const Text('Save'),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {

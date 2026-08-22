@@ -65,7 +65,7 @@ class LoginFormState extends State<LoginForm> {
               onSaved: (value) => _password = value,
             ),
             SizedBox(height: space(2)),
-            ElevatedButton(
+            FilledButton(
               child: _loading ? const Text('Loading') : const Text('Log in'),
               onPressed: () async {
                 if (!_formKey.currentState!.validate() || _loading) {

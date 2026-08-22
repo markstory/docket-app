@@ -16,7 +16,7 @@ void showConfirmDelete({
         content: Text(content),
         actions: [
           TextButton(onPressed: onConfirm, child: Text(confirmButtonText)),
-          ElevatedButton(
+          FilledButton(
             child: Text(cancelButtonText),
             onPressed: () {
               Navigator.pop(context);
