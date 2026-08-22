@@ -2,12 +2,13 @@
 flutter_launcher_icons:
   image_path: "assets/docket-logo.png"
 
-  android: "launcher_icon"
+  android: true
   # image_path_android: "assets/icon/icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
-  # adaptive_icon_background: "assets/icon/background.png"
-  # adaptive_icon_foreground: "assets/icon/foreground.png"
-  # adaptive_icon_foreground_inset: 16
+
+  adaptive_icon_background: "#a848a8"
+  adaptive_icon_foreground: "assets/docket-logo.png"
+  adaptive_icon_foreground_inset: 20
   # adaptive_icon_monochrome: "assets/icon/monochrome.png"
 
   ios: true
