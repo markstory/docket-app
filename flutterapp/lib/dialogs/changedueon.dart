@@ -109,10 +109,10 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
           ListTile(
             dense: true,
             leading: Icon(
-              Icons.bedtime_outlined,
+              Icons.light_mode_outlined,
               color: docketColors.dueTomorrow,
             ),
-            title: Text('${formatters.compactDate(currentValue)} day xx'),
+            title: Text('${formatters.compactDate(currentValue)} day'),
             onTap: () {
               completer.complete(
                 ChangeDueOnResult(dueOn: currentValue, evening: false),
@@ -127,7 +127,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
         items.add(
           ListTile(
             dense: true,
-            leading: Icon(Icons.calendar_today, color: docketColors.dueEvening),
+            leading: Icon(Icons.bedtime_outlined, color: docketColors.dueEvening),
             title: Text('${formatters.compactDate(currentValue)} evening'),
             onTap: () {
               completer.complete(
@@ -160,14 +160,16 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
 
       if (dueOn != null && !isToday && !isTodayFriday) {
         var next = dueOn.add(const Duration(days: 1));
+        var icon = isEvening ? Icons.bedtime_outlined : Icons.date_range_outlined;
+        var suffix = isEvening ? " evening" : "";
         items.add(
           ListTile(
             dense: true,
             leading: Icon(
-              Icons.date_range_outlined,
+              icon,
               color: docketColors.dueWeek,
             ),
-            title: Text(formatters.compactDate(next)),
+            title: Text("${formatters.compactDate(next)}$suffix"),
             onTap: () {
               completer.complete(
                 ChangeDueOnResult(dueOn: next, evening: evening),
