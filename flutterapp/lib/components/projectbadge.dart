@@ -22,7 +22,8 @@ class ProjectBadge extends StatelessWidget {
     var icon = isActive ? Icons.star : Icons.circle;
 
     return Wrap(
-      spacing: space(1.1),
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: space(0.5),
       children: [
         Icon(icon, color: projectColor, size: 14),
         Text(text, style: TextStyle(color: docketColors.secondaryText)),

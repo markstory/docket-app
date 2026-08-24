@@ -71,6 +71,7 @@ class _TaskItemState extends State<TaskItem> {
     if (widget.task.subtaskCount > 0) {
       attributes.add(
         Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
           spacing: space(0.25),
           children: [
             const Icon(Icons.done, color: Colors.grey, size: 14),

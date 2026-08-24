@@ -64,6 +64,7 @@ class DueOn extends StatelessWidget {
       children.add(Text(text, style: TextStyle(color: color)));
     }
     return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       spacing: space(0.5),
       runAlignment: WrapAlignment.center,
       children: children,
