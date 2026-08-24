@@ -280,9 +280,10 @@ class _TaskSorterState extends State<TaskSorter> {
     if (taskMeta.subtitle != null) {
       text.add(
         Text(
-          taskMeta.subtitle ?? '',
-          style: theme.textTheme.titleSmall!.copyWith(
+          taskMeta.subtitle ?? "",
+          style: theme.textTheme.titleMedium!.copyWith(
             color: docketColors.secondaryText,
+            fontWeight: const FontWeight(400),
           ),
         ),
       );

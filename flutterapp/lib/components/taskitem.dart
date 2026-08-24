@@ -86,6 +86,7 @@ class _TaskItemState extends State<TaskItem> {
     Widget? subtitle;
     if (attributes.isNotEmpty) {
       subtitle = Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
         runAlignment: WrapAlignment.start,
         spacing: space(1),
         children: attributes,

@@ -211,6 +211,7 @@ class _TaskFormState extends State<TaskForm> {
                     return DropdownMenuItem(
                       value: item.id,
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(Icons.circle, color: color, size: 12),
                           SizedBox(width: space(1)),
