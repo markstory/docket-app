@@ -204,7 +204,7 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 child: DropdownButtonFormField(
                   key: const ValueKey('project'),
-                  value: task.projectId,
+                  initialValue: task.projectId,
                   items: projects.map((item) {
                     var color = getProjectColor(item.color);
 
@@ -265,7 +265,7 @@ class _TaskFormState extends State<TaskForm> {
                     ),
                     child: DropdownButtonFormField<int?>(
                       key: const ValueKey('section'),
-                      value: task.sectionId,
+                      initialValue: task.sectionId,
                       items: selectedProject.sections.map((item) {
                         return DropdownMenuItem(
                           value: item.id,

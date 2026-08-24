@@ -28,6 +28,9 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
       final today = DateUtils.dateOnly(DateTime.now());
       final tomorrow = today.add(const Duration(days: 1));
 
+      // Each of these is a 'matcher' and 'createItem' callback that each smart choice provides its item.
+      // These are implementation details though. The public API is a collection of matchers, that has
+      // `apply(date, evening) -> Widget[]`.
       final isToday = dueOn == today && evening == false;
       final isTodayFriday = dueOn == today && today.weekday == DateTime.friday;
       final isWeekend = [6, 7].contains(today.weekday);
@@ -45,6 +48,7 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
         monday = today.add(Duration(days: 8 - today.weekday));
       }
 
+      // This logic is complex, and should be refactored, as there is an a rules based abstraction here.
       List<Widget> items = [];
       if (!isToday) {
         items.add(
@@ -105,10 +109,10 @@ Future<ChangeDueOnResult> showChangeDueOnDialog(
           ListTile(
             dense: true,
             leading: Icon(
-              Icons.calendar_today,
+              Icons.bedtime_outlined,
               color: docketColors.dueTomorrow,
             ),
-            title: Text('${formatters.compactDate(currentValue)} day'),
+            title: Text('${formatters.compactDate(currentValue)} day xx'),
             onTap: () {
               completer.complete(
                 ChangeDueOnResult(dueOn: currentValue, evening: false),
