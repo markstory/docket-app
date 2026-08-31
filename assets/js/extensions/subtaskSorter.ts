@@ -3,15 +3,9 @@ import Sortable from 'sortablejs';
 import {SortableJsEvent} from 'app/types';
 
 (function () {
-  htmx.defineExtension('subtask-sorter', {
-    onEvent: function (name, evt) {
-      if (name !== 'htmx:afterProcessNode') {
-        return;
-      }
-      const element = evt.target as HTMLElement;
-      if (element.getAttribute('hx-ext') !== 'subtask-sorter') {
-        return;
-      }
+  htmx.registerExtension('subtask-sorter', {
+    htmx_after_process: function (event: Event) {
+      const element = event.target as HTMLElement;
 
       new Sortable(element, {
         group: 'subtasks',

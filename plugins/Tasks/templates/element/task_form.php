@@ -69,7 +69,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         Sub-tasks
     </h3>
 
-    <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter" id="subtask-list">
+    <ul class="task-subtask-list dnd-dropper-left-offset" hx-subtask-sorter id="subtask-list">
         <?= $this->Form->hidden('subtasks', ['value' => '']) ?>
     <?php foreach ($task->subtasks as $i => $subtask) : ?>
         <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
@@ -90,7 +90,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'value' => $subtask->id,
                     'class' => 'icon-overdue button-icon',
                     'escapeTitle' => false,
-                    'hx-ext' => 'remove-row',
+                    'hx-remove-row' => true,
                     'remove-row-target' => '.task-subtask',
                 ]) ?>
             </div>
@@ -126,7 +126,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'value' => '',
                     'class' => 'icon-overdue button-icon',
                     'escapeTitle' => false,
-                    'hx-ext' => 'remove-row',
+                    'hx-remove-row' => true,
                 ]) ?>
             </div>
         </script>

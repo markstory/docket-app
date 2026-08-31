@@ -3,16 +3,9 @@ import Sortable from 'sortablejs';
 import {SortableJsEvent} from 'app/types';
 
 (function () {
-  htmx.defineExtension('task-sorter', {
-    onEvent: function (name, evt) {
-      if (name !== 'htmx:afterProcessNode') {
-        return;
-      }
-      const element = evt.target as HTMLElement;
-      // Not sure why this happens, but it does.
-      if (element.getAttribute('hx-ext') !== 'task-sorter') {
-        return;
-      }
+  htmx.registerExtension('task-sorter', {
+    htmx_after_process: function (event: Event) {
+      const element = event.target as HTMLElement;
       const putAttr = element.getAttribute('task-sorter-put');
       let group: Sortable.SortableOptions['group'] = 'tasks';
       if (putAttr === 'false') {

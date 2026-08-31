@@ -1,11 +1,8 @@
 import htmx from 'htmx.org';
 
 (function () {
-  htmx.defineExtension('remove-row', {
-    onEvent: function (name, event) {
-      if (name !== 'htmx:afterProcessNode') {
-        return;
-      }
+  htmx.registerExtension('remove-row', {
+    htmx_after_process: function (event: Event) {
       const element = event.target as HTMLElement;
       element.addEventListener('click', function () {
         const selector = element.getAttribute('remove-row-target');

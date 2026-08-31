@@ -19,7 +19,7 @@ if ($this->request->is('htmx')) : ?>
     $this->extend('default');
 endif;
 ?>
-<div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
+<div class="layout-three-quarter" data-testid="loggedin" hx-hotkeys>
     <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>

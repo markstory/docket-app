@@ -3,16 +3,9 @@ import Sortable from 'sortablejs';
 import {SortableJsEvent} from 'app/types';
 
 (function () {
-  htmx.defineExtension('section-sorter', {
-    onEvent: function (name, evt) {
-      if (name !== 'htmx:afterProcessNode') {
-        return;
-      }
-      const element = evt.target as HTMLElement;
-      if (element.getAttribute('hx-ext') !== 'section-sorter') {
-        return;
-      }
-
+  htmx.registerExtension('section-sorter', {
+    htmx_after_process: function (event: Event) {
+      const element = event.target as HTMLElement;
       const projectSlug = element.getAttribute('section-sorter-slug');
       if (!projectSlug) {
         console.error('Missing required attr `section-sorter-slug`');

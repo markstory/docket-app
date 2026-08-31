@@ -78,7 +78,7 @@ endforeach;
         </h5>
         <div
             class="task-group dnd-dropper-left-offset"
-            hx-ext="task-sorter"
+            hx-task-sorter
             task-sorter-attr="day_order"
             task-sorter-dueon="<?= $dateStr ?>"
             task-sorter-evening="1"
@@ -118,7 +118,7 @@ endforeach;
         ?>
         <div
             class="task-group dnd-dropper-left-offset"
-            hx-ext="task-sorter"
+            hx-task-sorter
             task-sorter-attr="day_order"
             task-sorter-dueon="<?= $dateStr ?>"
             task-sorter-evening="0"

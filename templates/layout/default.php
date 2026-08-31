@@ -25,7 +25,7 @@ endif;
 
     <?= $this->element('frontend_assets') ?>
 </head>
-<body hx-ext="ajax-header" class="<?= h($class) ?>">
+<body class="<?= h($class) ?>" hx-ajax-header>
     <main class="main">
         <div class="flash-messages">
             <?= $this->Flash->render() ?>

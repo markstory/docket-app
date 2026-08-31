@@ -59,7 +59,7 @@ foreach ($tasks as $task) {
     <?php // Tasks with no section ?>
     <div
         class="task-group dnd-dropper-left-offset"
-        hx-ext="task-sorter"
+        hx-task-sorter
         task-sorter-attr="child_order"
         task-sorter-section=""
     >
@@ -70,7 +70,7 @@ foreach ($tasks as $task) {
     ?>
     </div>
 
-    <div hx-ext="section-sorter" section-sorter-slug="<?= h($project->slug) ?>">
+    <div hx-section-sorter section-sorter-slug="<?= h($project->slug) ?>">
         <?php // Tasks in sections ?>
         <?php foreach ($project->sections as $section) : ?>
         <div class="section-container" data-testid="section" data-id="<?= h($section->id) ?>">
@@ -82,7 +82,7 @@ foreach ($tasks as $task) {
             </div>
             <div
                 class="task-group dnd-dropper-left-offset"
-                hx-ext="task-sorter"
+                hx-task-sorter
                 task-sorter-attr="child_order"
                 task-sorter-section="<?= h($section->id) ?>"
             >

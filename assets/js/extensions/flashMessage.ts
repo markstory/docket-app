@@ -8,11 +8,8 @@ import htmx from 'htmx.org';
     element.dataset.timer = String(timerId);
   }
 
-  htmx.defineExtension('flash-message', {
-    onEvent: function (name, event) {
-      if (name !== 'htmx:afterProcessNode') {
-        return;
-      }
+  htmx.registerExtension('flash-message', {
+    htmx_after_process: function (event: Event) {
       const element = event.target as HTMLElement;
       element.addEventListener('mouseleave', function () {
         clearTimeout(Number(element.dataset.timer));
