@@ -93,15 +93,12 @@ type Hotkey = {
     return true;
   }
 
-  htmx.registerExtension('hotkeys', {
-    htmx_after_process: function (event: Event) {
-      const element = event.detail.elt;
-      // Only process nodes that have the extension set.
-      if (element.getAttribute && element.getAttribute('hx-hotkeys') === null) {
-        return;
+  htmx.registerExtension('hx-hotkeys', {
+    htmx_after_process: function (element: HTMLElement, detail) {
+      for (const item of element.querySelectorAll('[hx-hotkeys]')) {
+        processHotkeys(item);
+        addListener();
       }
-      processHotkeys(element);
-      addListener();
     },
   });
 })();
