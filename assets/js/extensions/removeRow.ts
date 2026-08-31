@@ -3,7 +3,7 @@ import htmx from 'htmx.org';
 (function () {
   htmx.registerExtension('hx-remove-row', {
     htmx_after_process: function (element: HTMLElement, _detail) {
-      for (const item in element.querySelectorAll('[hx-remove-row]')) {
+      for (const item of element.querySelectorAll('[hx-remove-row]')) {
         item.addEventListener('click', function () {
           const selector = this.getAttribute('remove-row-target');
           let row: HTMLElement | null = null;

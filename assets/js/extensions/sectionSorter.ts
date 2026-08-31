@@ -41,7 +41,7 @@ import {SortableJsEvent} from 'app/types';
 
   htmx.registerExtension('hx-section-sorter', {
     htmx_after_process: function (element: HTMLElement, _detail) {
-      for (const item in element.querySelectorAll('[hx-section-sorter]')) {
+      for (const item of element.querySelectorAll('[hx-section-sorter]')) {
         processItem(item);
       }
     },

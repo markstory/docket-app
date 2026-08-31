@@ -39,7 +39,7 @@ import {SortableJsEvent} from 'app/types';
 
   htmx.registerExtension('hx-subtask-sorter', {
     htmx_after_process: function (element: HTMLElement, _detail) {
-      for (const item in element.querySelectorAll('[hx-subtask-sorter]')) {
+      for (const item of element.querySelectorAll('[hx-subtask-sorter]')) {
         processItem(item);
       }
     },

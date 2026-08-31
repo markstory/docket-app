@@ -24,7 +24,7 @@ import htmx from 'htmx.org';
 
   htmx.registerExtension('hx-flash-message', {
     htmx_after_process: function (element: HTMLElement, _detail) {
-      for (const item in element.querySelectorAll('[hx-flash-message]')) {
+      for (const item of element.querySelectorAll('[hx-flash-message]')) {
         processItem(item);
       }
     },

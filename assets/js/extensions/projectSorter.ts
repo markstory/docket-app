@@ -4,7 +4,7 @@ import Sortable from 'sortablejs';
 (function () {
   htmx.registerExtension('hx-project-sorter', {
     htmx_after_process: function (element: HTMLElement, _detail) {
-      for (const item in element.querySelectorAll('[hx-project-sorter]')) {
+      for (const item of element.querySelectorAll('[hx-project-sorter]')) {
         // Implementing elements listen to the `end` event
         // triggered on this element and submits a form.
         new Sortable(item, {
