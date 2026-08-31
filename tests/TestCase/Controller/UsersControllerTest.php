@@ -236,7 +236,7 @@ class UsersControllerTest extends TestCase
         $this->login();
         $this->get('/users/profile');
         $this->assertResponseOk();
-        $this->assertResponseContains('<body hx-ext="ajax-header" class="theme-dark"');
+        $this->assertResponseContains('<body class="theme-dark" hx-ajax-header');
     }
 
     public function testUpdatePasswordRequiresLogin()

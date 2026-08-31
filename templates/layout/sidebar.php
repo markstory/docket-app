@@ -25,7 +25,7 @@ $todayActive = str_contains($this->request->getPath(), '/tasks/today');
 $upcomingActive = str_contains($this->request->getPath(), '/tasks/upcoming');
 $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
 ?>
-<div class="layout-three-quarter" data-testid="loggedin" hx-ext="hotkeys">
+<div class="layout-three-quarter" data-testid="loggedin" hx-hotkeys>
     <side-bar class="sidebar" data-expanded="false">
         <div class="menu">
             <div>

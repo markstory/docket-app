@@ -56,7 +56,7 @@ foreach ($tasks as $task) {
     </h2>
     <div
         class="task-group dnd-dropper-left-offset"
-        hx-ext="task-sorter"
+        hx-task-sorter
         task-sorter-put="false"
         task-sorter-attr="day_order"
     >
@@ -101,7 +101,7 @@ endif;
 
 <div
     class="task-group dnd-dropper-left-offset"
-    hx-ext="task-sorter"
+    hx-task-sorter
     task-sorter-attr="day_order"
     task-sorter-dueon="<?= $dateStr ?>"
     task-sorter-evening="0"
@@ -133,7 +133,7 @@ endforeach;
     </h2>
     <div
         class="task-group dnd-dropper-left-offset"
-        hx-ext="task-sorter"
+        hx-task-sorter
         task-sorter-attr="day_order"
         task-sorter-evening="1"
         task-sorter-dueon="<?= $dateStr ?>"

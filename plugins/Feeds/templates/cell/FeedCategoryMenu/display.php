@@ -8,7 +8,7 @@ declare(strict_types=1);
     null,
     [
         'class' => 'dnd-dropper-left-offset',
-        'hx-ext' => 'project-sorter',
+        'hx-project-sorter' => true,
         'hx-trigger' => 'end',
         'hx-post' => $this->Url->build(['_name' => 'feedcategories:reorder']),
         'hx-swap' => 'outerHTML',

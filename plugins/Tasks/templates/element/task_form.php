@@ -69,7 +69,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
         Sub-tasks
     </h3>
 
-    <ul class="task-subtask-list dnd-dropper-left-offset" hx-ext="subtask-sorter" id="subtask-list">
+    <ul class="task-subtask-list dnd-dropper-left-offset" hx-subtask-sorter id="subtask-list">
         <?= $this->Form->hidden('subtasks', ['value' => '']) ?>
     <?php foreach ($task->subtasks as $i => $subtask) : ?>
         <li class="task-subtask dnd-item" data-id="<?= h($subtask->id) ?>">
@@ -90,7 +90,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'value' => $subtask->id,
                     'class' => 'icon-overdue button-icon',
                     'escapeTitle' => false,
-                    'hx-ext' => 'remove-row',
+                    'hx-remove-row' => true,
                     'remove-row-target' => '.task-subtask',
                 ]) ?>
             </div>
@@ -126,11 +126,13 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                     'value' => '',
                     'class' => 'icon-overdue button-icon',
                     'escapeTitle' => false,
-                    'hx-ext' => 'remove-row',
+                    'hx-remove-row' => true,
+                    'remove-row-target' => '.task-subtask',
                 ]) ?>
             </div>
         </script>
         <?= $this->Html->scriptStart(['type' => 'module']) ?>
+        // TODO move this to an hx extension?
         (function () {
             const button = document.getElementById('subtask-add');
             button.addEventListener('click', function (event) {
@@ -141,6 +143,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
 
                 let template = document.getElementById('subtask-template').textContent;
                 template = template.replaceAll('{index}', index).replaceAll('{value}', input.value);
+
                 const item = document.createElement('li');
                 item.classList = 'task-subtask dnd-item';
                 item.innerHTML = template;
@@ -148,6 +151,7 @@ $newSubtaskIndex = count($task->subtasks) + 1;
                 list.appendChild(item);
                 input.value = '';
                 input.focus();
+                htmx.process(item);
             });
         }());
         <?= $this->Html->scriptEnd() ?>
