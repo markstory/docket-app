@@ -173,6 +173,7 @@ return [
             'Cake\Routing\Exception\MissingRouteException',
         ],
         'ignoredDeprecationPaths' => [
+            'vendor/cakephp/authentication/src/AuthenticationService.php',
             'vendor/ishanvyas22/asset-mix/config/routes.php',
             'vendor/cakephp/cakephp/src/Routing/Router.php',
             'vendor/php-vcr/',
