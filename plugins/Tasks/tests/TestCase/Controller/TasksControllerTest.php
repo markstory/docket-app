@@ -48,8 +48,9 @@ class TasksControllerTest extends TestCase
         return $this->Tasks
             ->find()
             ->where($conditions)
-            ->orderByAsc('evening')
-            ->orderByAsc('day_order')
+            ->orderByAsc('Tasks.evening')
+            ->orderByAsc('Tasks.day_order')
+            ->orderByAsc('Tasks.title')
             ->toArray();
     }
 
@@ -1391,6 +1392,29 @@ class TasksControllerTest extends TestCase
 
         $results = $this->dayOrderedTasks();
         $expected = [$first->id, $fourth->id, $second->id, $third->id];
+        $this->assertOrder($expected, $results);
+    }
+
+    public function testMoveDownOrderValueGap()
+    {
+        $today = Date::today();
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 3, ['evening' => true, 'due_on' => $today]);
+        $second = $this->makeTask('second', $project->id, 4, ['evening' => true, 'due_on' => $today]);
+        $third = $this->makeTask('third', $project->id, 5, ['evening' => true, 'due_on' => $today]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$first->id}/move", [
+            'evening' => '1',
+            'day_order' => '2',
+            // Bug is related to due_on being present.
+            'due_on' => $today->format('Y-m-d'),
+        ]);
+        $this->assertRedirect(['_name' => 'tasks:today']);
+
+        $results = $this->dayOrderedTasks();
+        $expected = [$second->id, $third->id, $first->id];
         $this->assertOrder($expected, $results);
     }
 
