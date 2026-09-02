@@ -358,7 +358,11 @@ class TasksTable extends Table
         $item->setDirty($property, true);
 
         foreach ($updateFields as $key => $value) {
-            if ($item->get($key) !== $value) {
+            $current = $item->get($key);
+            if ($current instanceof Date && is_string($value)) {
+                $current = $current->format('Y-m-d');
+            }
+            if ($current !== $value) {
                 $item->set($key, $value);
             }
         }
