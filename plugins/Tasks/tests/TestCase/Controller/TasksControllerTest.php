@@ -1688,7 +1688,7 @@ class TasksControllerTest extends TestCase
         $this->login();
         $this->enableCsrfToken();
         $this->post("/tasks/{$first->id}/move", [
-            'child_order' => 2,
+            'child_order' => 3,
             'section_id' => null,
         ]);
         $this->assertRedirect('/tasks/today');
