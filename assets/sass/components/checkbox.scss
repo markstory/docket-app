@@ -17,11 +17,19 @@ $checkbox-size: 16px;
   input:checked ~ .box {
     border-color: var(--color-success-fg);
   }
-
   input:active ~ .box,
   input:focus ~ .box {
     border-color: var(--color-input-focus-border);
     box-shadow: var(--color-input-focus-shadow) 0 0 0 3px;
+  }
+
+  /* disabled box is not interactive */
+  .box.disabled,
+  input:active ~ .box.disabled,
+  input:focus ~ .box.disabled {
+    border-color: var(--color-disabled);
+    box-shadow: none;
+    pointer-events: none;
   }
 
   // Hide the input without removing tabindex.
