@@ -366,7 +366,7 @@ class TasksTable extends Table
                 $item->set($key, $value);
             }
         }
-        $difference = $current - $item->get($property);
+        $difference = (int)$current - (int)$item->get($property);
 
         if ($appendToBottom === true) {
             // No records to update.
