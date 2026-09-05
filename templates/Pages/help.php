@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 $isHtmx = $this->request->is('htmx');
 
 $this->setLayout('sidebar');
@@ -9,10 +11,7 @@ if ($isHtmx) {
 }
 
 $this->assign('title', 'Docket Help');
-
-if ($isHtmx) : ?>
-<dialog>
-<?php endif ?>
+?>
 <div class="modal-title">
     <h2>Keyboard shortcuts</h2>
     <button class="modal-close" modal-close="true">&#x2715;</button>
@@ -47,6 +46,3 @@ if ($isHtmx) : ?>
         <dd>Complete current task</dd>
     </dl>
 </div>
-<?php if ($isHtmx) : ?>
-</dialog>
-<?php endif ?>
