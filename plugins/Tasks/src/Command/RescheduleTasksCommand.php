@@ -20,6 +20,14 @@ class RescheduleTasksCommand extends Command
     use LocatorAwareTrait;
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Reschedule overdue tasks to be within the next 0-14 days';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
      * @see https://book.cakephp.org/4/en/console-commands/commands.html#defining-arguments-and-options
