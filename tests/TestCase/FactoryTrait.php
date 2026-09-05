@@ -30,9 +30,8 @@ trait FactoryTrait
 
     protected function login($userId = 1)
     {
-        $user = $this->fetchTable('Users')->get($userId);
         $this->session([
-            'Auth' => $user,
+            'Auth' => $userId,
         ]);
     }
 

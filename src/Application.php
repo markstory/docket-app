@@ -189,15 +189,17 @@ class Application extends BaseApplication implements
         ];
 
         // Load the authenticators, you want session first
-        $service->loadAuthenticator('Authentication.Session', [
-            'identify' => true,
-            'fields' => [
-                AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
-            ],
+        $service->loadAuthenticator('Authentication.PrimaryKeySession', [
+            'idField' => 'id',
+            'dataField' => 'key',
             'identifier' => [
-                'Authentication.Password' => $passwordIdentifier,
+                'Authentication.Token' => [
+                    'tokenField' => 'id',
+                    'dataField' => 'key',
+                ],
             ],
         ]);
+
         $service->loadAuthenticator('Authentication.Token', [
             'queryParam' => 'token',
             'header' => 'Authorization',
