@@ -1405,7 +1405,7 @@ class TasksControllerTest extends TestCase
         $this->loginApi(1);
 
         $this->post("/api/tasks/{$first->id}/move", [
-            'child_order' => 2,
+            'child_order' => 3,
             'section_id' => null,
         ]);
 
