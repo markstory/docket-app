@@ -1423,7 +1423,6 @@ class TasksControllerTest extends TestCase
                 'child_order' => 1,
                 'day_order' => 1,
             ]],
-            /*
             // Can't use due_on with child.
             [[
                 'child_order' => 1,
@@ -1439,7 +1438,6 @@ class TasksControllerTest extends TestCase
                 'child_order' => 1,
                 'section_id' => 'no',
             ]],
-            */
         ];
     }
 
