@@ -94,7 +94,7 @@ class GoogleOauthControllerTest extends TestCase
         $this->loadResponseMocks('googleoauth_callback.yml');
         $user = $this->fetchTable('Users')->get(1);
         $this->session([
-            'Auth' => $user,
+            'Auth' => $user->id,
             GoogleOauthController::MOBILE_VIEW => true,
         ]);
         $this->get('/auth/google/callback?code=auth-code');

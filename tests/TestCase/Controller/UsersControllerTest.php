@@ -46,7 +46,7 @@ class UsersControllerTest extends TestCase
             'password' => 'password123',
         ]);
         $this->assertRedirect('/tasks/today');
-        $this->assertSession('mark@example.com', 'Auth.email');
+        $this->assertSession(1, 'Auth');
     }
 
     public function testLoginGetWithCreateUser()
@@ -77,7 +77,7 @@ class UsersControllerTest extends TestCase
             'password' => 'password123',
         ]);
         $this->assertRedirect('/feeds');
-        $this->assertSession('mark@example.com', 'Auth.email');
+        $this->assertSession(1, 'Auth');
     }
 
     public function testLoginUpdateTimezone()
@@ -89,7 +89,7 @@ class UsersControllerTest extends TestCase
             'timezone' => 'America/New_York',
         ]);
         $this->assertRedirect('/tasks/today');
-        $this->assertSession('mark@example.com', 'Auth.email');
+        $this->assertSession(1, 'Auth');
 
         $user = $this->Users->get(1);
         $this->assertSame('America/New_York', $user->timezone);
