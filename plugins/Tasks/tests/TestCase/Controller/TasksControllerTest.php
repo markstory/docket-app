@@ -1328,6 +1328,7 @@ class TasksControllerTest extends TestCase
         $expected = [$third->id, $first->id, $second->id];
         $this->post("/tasks/{$third->id}/move", [
             'day_order' => 0,
+            'evening' => 0,
         ]);
         $this->assertRedirect(['_name' => 'tasks:today']);
         $results = $this->dayOrderedTasks();
@@ -1335,6 +1336,28 @@ class TasksControllerTest extends TestCase
         foreach ($expected as $i => $id) {
             $this->assertNull($results[$i]->due_on);
         }
+    }
+
+    public function testMoveUpEveningAndDate()
+    {
+        $today = Date::today();
+        $project = $this->makeProject('work', 1);
+        $first = $this->makeTask('first', $project->id, 3, ['evening' => true, 'due_on' => $today]);
+        $second = $this->makeTask('second', $project->id, 4, ['evening' => true, 'due_on' => $today]);
+        $third = $this->makeTask('third', $project->id, 5, ['evening' => true, 'due_on' => $today]);
+
+        $this->login();
+        $this->enableCsrfToken();
+        $this->post("/tasks/{$second->id}/move", [
+            'day_order' => '0',
+            'due_on' => $today->format('Y-m-d'),
+            'evening' => '1',
+        ]);
+        $this->assertRedirect(['_name' => 'tasks:today']);
+
+        $results = $this->dayOrderedTasks();
+        $expected = [$second->id, $first->id, $third->id];
+        $this->assertOrder($expected, $results);
     }
 
     public function testMoveDownSameDay()
@@ -1349,6 +1372,7 @@ class TasksControllerTest extends TestCase
         $expected = [$second->id, $third->id, $first->id];
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 2,
+            'evening' => 0,
         ]);
         $this->assertRedirect(['_name' => 'tasks:today']);
 
@@ -1368,6 +1392,7 @@ class TasksControllerTest extends TestCase
         $expected = [$second->id, $third->id, $first->id];
         $this->post("/tasks/{$first->id}/move", [
             'day_order' => 1000,
+            'evening' => 0,
         ]);
         $this->assertRedirect(['_name' => 'tasks:today']);
 
@@ -1387,6 +1412,7 @@ class TasksControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->post("/tasks/{$fourth->id}/move", [
             'day_order' => 1,
+            'evening' => 0,
         ]);
         $this->assertRedirect(['_name' => 'tasks:today']);
 
