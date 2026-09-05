@@ -7,7 +7,6 @@ class ModalWindow extends HTMLElement {
     }
 
     dialog.showModal();
-
     this.setupClose(dialog);
 
     const selectbox = this.querySelector('select-box');
@@ -24,7 +23,7 @@ class ModalWindow extends HTMLElement {
     }
   }
 
-  setupClose(dialog: HTMLDialogElement | null): void {
+  setupClose(dialog: HTMLDialogElement): void {
     const closer = this.querySelector('[modal-close]');
     if (!closer) {
       return;
@@ -43,13 +42,9 @@ class ModalWindow extends HTMLElement {
     );
   }
 
-  _close(dialog: HTMLDialogElement | null): void {
-    if (dialog) {
-      dialog.close();
-      dialog.remove();
-    } else {
-      this.remove();
-    }
+  _close(dialog: HTMLDialogElement): void {
+    dialog.close();
+    dialog.remove();
   }
 }
 
