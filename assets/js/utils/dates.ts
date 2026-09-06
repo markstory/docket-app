@@ -1,5 +1,4 @@
 import {differenceInDays, addDays, format, parse} from 'date-fns';
-import {t} from 'app/locale';
 
 export const ONE_DAY_IN_MS = 60 * 60 * 24 * 1000;
 
@@ -78,7 +77,7 @@ export function getRangeInDays(start: Date, end: Date) {
 
 export function formatCompactDate(date: Date | string): string {
   if (date === '') {
-    return t('No due date');
+    return 'No due date';
   }
   const input = parseDate(date);
   const delta = differenceInDays(input, getToday());
@@ -91,9 +90,9 @@ export function formatCompactDate(date: Date | string): string {
     return format(input, 'MMM d');
   }
   if (delta < 1) {
-    return t('Today');
+    return 'Today';
   } else if (delta < 2) {
-    return t('Tomorrow');
+    return 'Tomorrow';
   }
   if (delta < 7) {
     return format(input, 'iiii');
@@ -112,9 +111,9 @@ export function formatDateHeading(
 
   const shortDate = format(input, 'MMM d');
   if (delta < 1) {
-    return [t('Today'), shortDate];
+    return ['Today', shortDate];
   } else if (delta < 2) {
-    return [t('Tomorrow'), shortDate];
+    return ['Tomorrow', shortDate];
   } else if (delta < 7) {
     return [format(input, 'EEEE'), shortDate];
   }

@@ -15,7 +15,7 @@ export default defineConfig({
 
     rollupOptions: {
       // Use a custom non-html entry point
-      input: path.resolve(projectRootDir, './assets/js/app.tsx'),
+      input: path.resolve(projectRootDir, './assets/js/app.ts'),
     },
   },
   resolve: {

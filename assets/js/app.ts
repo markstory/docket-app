@@ -20,11 +20,11 @@ import 'app/extensions/subtaskSorter';
 import 'app/extensions/removeRow';
 
 // Webcomponents
-import 'app/webcomponents/dropDown.ts';
-import 'app/webcomponents/dueOn.ts';
+import 'app/webcomponents/dropDown';
+import 'app/webcomponents/dueOn';
 import 'app/webcomponents/keyboardList';
-import 'app/webcomponents/markdownText.ts';
-import 'app/webcomponents/modalWindow.ts';
-import 'app/webcomponents/reloadAfter.ts';
-import 'app/webcomponents/selectBox.ts';
-import 'app/webcomponents/sideBar.ts';
+import 'app/webcomponents/markdownText';
+import 'app/webcomponents/modalWindow';
+import 'app/webcomponents/reloadAfter';
+import 'app/webcomponents/selectBox';
+import 'app/webcomponents/sideBar';
