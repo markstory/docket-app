@@ -44,7 +44,7 @@ $menuItem = $itemFormatter ?? function (
         'role' => 'menuitem',
         'url' => $taskEditUrl,
         'hx-post' => $this->Url->build($taskEditUrl),
-        'hx-target' => 'main.main',
+        'hx-target' => 'body',
     ]);
     foreach ($data as $field => $value) {
         echo $this->Form->hidden($field, ['value' => $value]);
@@ -64,7 +64,7 @@ $menuItem = $itemFormatter ?? function (
     <?= $this->Form->create($task, [
         'hx-post' => $this->Url->build($taskEditUrl),
         'url' => $taskEditUrl,
-        'hx-target' => 'main.main',
+        'hx-target' => 'body',
     ]) ?>
     <?= $this->Form->hidden('redirect', ['value' => $referer]) ?>
 <?php endif; ?>
@@ -172,7 +172,7 @@ if ($renderForms) :
     echo $this->Form->create($task, [
         'url' => $taskEditUrl,
         'hx-post' => $this->Url->build($taskEditUrl),
-        'hx-target' => 'main.main',
+        'hx-target' => 'body',
         'class' => 'day-picker',
     ]);
     echo $this->Form->hidden('redirect', ['value' => $referer]);

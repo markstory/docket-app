@@ -19,7 +19,7 @@ echo $this->Form->create($section, [
         'projectSlug' => $project->slug,
         'id' => $section->id,
     ]),
-    'hx-target' => 'main.main',
+    'hx-target' => 'body',
 ]);
 ?>
 <div class="title">

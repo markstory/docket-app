@@ -32,7 +32,7 @@ import {SortableJsEvent} from 'app/types';
       // URL could be attribute driven if that makes sense
       // in the future.
       htmx.ajax('POST', `/projects/${projectSlug}/sections/${sectionId}/move`, {
-        target: 'main.main',
+        target: 'body',
         swap: 'innerHTML',
         values: updateData,
       });

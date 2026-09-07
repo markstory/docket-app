@@ -103,7 +103,7 @@ endforeach;
                     'class' => 'button-icon-primary',
                     'data-testid' => 'add-task',
                     'hx-get' => $taskAddUrl,
-                    'hx-target' => 'main.main',
+                    'hx-target' => 'body',
                     'hx-swap' => 'beforeend',
                 ]
             ) ?>

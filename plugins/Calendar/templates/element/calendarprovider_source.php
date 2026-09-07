@@ -21,7 +21,7 @@ $editUrl = ['_name' => 'calendarsources:edit', 'providerId' => $providerId, 'id'
                 'type' => 'post',
                 'hx-post' => $this->Url->build($editUrl),
                 'hx-trigger' => 'selected',
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
             ]) ?>
             <?= $this->Form->control('color', [
                 'class' => 'select-box-mini',

@@ -28,7 +28,7 @@ $taskCheckboxUrl = $this->Url->build([
             'attrs' => [
                 'value' => 1,
                 'hx-post' => $taskCheckboxUrl,
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
              ],
         ]) ?>
         <a href="<?= h($taskUrl) ?>" hx-boost="1">

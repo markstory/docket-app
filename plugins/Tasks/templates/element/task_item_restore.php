@@ -35,6 +35,6 @@ $className = 'task-row';
     <?= $this->Form->postButton('Restore', $taskRestoreUrl, [
         'class' => 'button button-secondary',
         'hx-post' => $taskRestoreUrl,
-        'hx-target' => 'main.main',
+        'hx-target' => 'body',
     ]) ?>
 </div>

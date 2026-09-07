@@ -10,7 +10,7 @@ $categoryAddUrl = $this->Url->build(['_name' => 'feedcategories:add']);
 
 // If we're not handling an HX-Request wrap the layout
 // in page chrome. When we're handling htmx requests,
-// we swap main.main.
+// we swap body
 if ($this->request->is('htmx')) : ?>
 <div class="flash-messages">
     <?= $this->Flash->render() ?>
@@ -49,7 +49,7 @@ endif;
                             <a class="action-primary"
                                 href="<?= $feedAddUrl ?>"
                                 hx-get="<?= $feedAddUrl ?>"
-                                hx-target="main.main"
+                                hx-target="body"
                                 hx-swap="beforeend"
                             >
                                 <?= $this->element('icons/plus16') ?>
@@ -60,7 +60,7 @@ endif;
                             <a class="action-secondary"
                                href="<?= $categoryAddUrl ?>"
                                hx-get="<?= $categoryAddUrl ?>"
-                               hx-target="main.main"
+                               hx-target="body"
                                hx-swap="beforeend"
                             >
                                 <?= $this->element('icons/directory16') ?>
@@ -71,7 +71,7 @@ endif;
                     <a href="#"
                         class="layout-show-help"
                         hx-get="<?= $this->Url->build(['plugin' => false, 'controller' => 'Pages', 'action' => 'display', 'help']) ?>"
-                        hx-target="main.main"
+                        hx-target="body"
                         hx-swap="beforeend"
                         data-hotkey="shift+?"
                     >

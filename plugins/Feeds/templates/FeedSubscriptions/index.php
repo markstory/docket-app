@@ -18,7 +18,7 @@ $addUrl = $this->Url->build(['_name' => 'feedsubscriptions:discover']);
             'class' => 'button-icon-primary',
             'data-testid' => 'add-task',
             'hx-get' => $addUrl,
-            'hx-target' => 'main.main',
+            'hx-target' => 'body',
             'hx-swap' => 'beforeend',
         ]
     ) ?>

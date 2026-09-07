@@ -50,7 +50,7 @@ $this->assign('title', 'Discover Feeds');
                 $discoverUrl,
                 [
                     'hx-get' => $this->Url->build($discoverUrl),
-                    'hx-target' => 'main.main',
+                    'hx-target' => 'body',
                     'hx-swap' => 'beforeend',
                 ]
             ) ?>

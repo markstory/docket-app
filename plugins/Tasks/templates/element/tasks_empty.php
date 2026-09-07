@@ -17,7 +17,7 @@ $createParams = $this->get('globalAddContext') ?? [];
                 'escape' => false,
                 'class' => 'button-primary',
                 'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $createParams]),
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
                 'hx-swap' => 'beforeend',
             ]
         ) ?>

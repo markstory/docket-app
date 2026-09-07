@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 // If we're not handling an HX-Request wrap the layout
 // in page chrome. When we're handling htmx requests,
-// we swap main.main.
+// we swap body
 if ($this->request->is('htmx')) : ?>
 <div class="flash-messages">
     <?= $this->Flash->render() ?>
@@ -108,7 +108,7 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
                             'action' => 'display',
                             'help',
                         ]) ?>"
-                        hx-target="main.main"
+                        hx-target="body"
                         hx-swap="beforeend"
                         data-hotkey="shift+?"
                     >
@@ -134,7 +134,7 @@ $trashActive = str_contains($this->request->getPath(), '/tasks/deleted');
                     'data-testid' => 'global-task-add',
                     'data-hotkey' => 'c',
                     'hx-get' => $this->Url->build(['_name' => 'tasks:add', '?' => $globalAddContext ?? []]),
-                    'hx-target' => 'main.main',
+                    'hx-target' => 'body',
                     'hx-swap' => 'beforeend',
                 ]
             ) ?>

@@ -20,7 +20,7 @@ $feedAddUrl = ['_name' => 'feedsubscriptions:discover'];
                 'escape' => false,
                 'class' => 'button-primary',
                 'hx-get' => $this->Url->build($categoryAddUrl),
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
                 'hx-swap' => 'beforeend',
             ]
         ) ?>
@@ -31,7 +31,7 @@ $feedAddUrl = ['_name' => 'feedsubscriptions:discover'];
                 'escape' => false,
                 'class' => 'button-primary',
                 'hx-get' => $this->Url->build($feedAddUrl),
-                'hx-target' => 'main.main',
+                'hx-target' => 'body',
                 'hx-swap' => 'beforeend',
             ]
         ) ?>

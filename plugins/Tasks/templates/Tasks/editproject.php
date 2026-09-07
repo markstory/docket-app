@@ -26,7 +26,7 @@ echo $this->Form->hidden('redirect', ['value' => $referer]);
             // menu from the dom
             'hx-post' => $this->Url->build($taskEditUrl),
             'hx-trigger' => 'selected',
-            'hx-target' => 'main.main',
+            'hx-target' => 'body',
         ]) ?>
     </div>
 <?= $this->Form->end() ?>
