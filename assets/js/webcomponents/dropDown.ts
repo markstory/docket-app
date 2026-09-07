@@ -41,9 +41,9 @@ class DropDown extends HTMLElement {
       if (this.revealBackup && clonemenu === 'true') {
         portal.innerHTML = ' ';
         reveal = this.revealBackup.cloneNode(true) as HTMLElement;
-        htmx.process(reveal);
         attachRevealEvents(reveal);
         this.appendChild(reveal);
+        htmx.process(reveal);
       } else {
         this.appendChild(reveal);
       }
