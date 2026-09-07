@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 $this->setLayout('ajax');
 
-$this->response = $this->response->withHeader('Hx-Trigger-After-Swap', 'reposition');
+$this->response = $this->response->withHeader('Hx-Trigger', 'reposition');
 
 $taskEditUrl = ['_name' => 'tasks:edit', 'id' => $task->id];
 
