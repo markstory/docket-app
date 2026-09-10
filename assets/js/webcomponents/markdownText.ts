@@ -3,9 +3,16 @@ import {marked} from 'marked';
 class MarkdownText extends HTMLElement {
   private showPreview = true;
   private previewElement: HTMLElement | null = null;
+  private defaultMaxHeight = 500;
+
+  maxheight() {
+    const maxheight =
+      parseInt(this.getAttribute('maxheight') ?? String(this.defaultMaxHeight), 10) ??
+      this.defaultMaxHeight;
+    return maxheight;
+  }
 
   connectedCallback() {
-    var maxheight = parseInt(this.getAttribute('maxheight') ?? '500', 10) ?? 500;
     var input = this.querySelector('textarea');
     if (!input) {
       console.error('Missing textarea element');
@@ -13,7 +20,7 @@ class MarkdownText extends HTMLElement {
     }
 
     var cappedHeight = (scrollHeight: number): string => {
-      return Math.min(window.innerHeight * 0.75, scrollHeight, maxheight) + 'px';
+      return Math.min(window.innerHeight * 0.75, scrollHeight, this.maxheight()) + 'px';
     };
 
     // Setup input events.
@@ -56,6 +63,7 @@ class MarkdownText extends HTMLElement {
 
   async update() {
     const input = this.querySelector('textarea');
+    const maxheight = this.maxheight();
     const preview = this.querySelector('.markdown-text-preview') as HTMLElement;
     if (!input || !preview) {
       console.error('Missing preview or input element');
@@ -80,9 +88,13 @@ class MarkdownText extends HTMLElement {
       }
       preview.innerHTML = contents;
       preview.style.display = 'block';
+      preview.style.overflowY =
+        preview.getBoundingClientRect().height > maxheight ? 'scroll' : 'auto';
+      preview.style.maxHeight = `${maxheight}px`;
       input.style.display = 'none';
     } else {
       preview.style.display = 'none';
+      preview.style.overflowY = 'auto';
       input.style.display = 'block';
       input.focus();
     }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 /**
  * @var \Tasks\Model\Entity\Task $task
+ * @var \Cake\View\View $this
  */
 $menuId = 'task-menu-' . uniqid();
 $deleteConfirmUrl = ['_name' => 'tasks:deleteconfirm', 'id' => $task->id];

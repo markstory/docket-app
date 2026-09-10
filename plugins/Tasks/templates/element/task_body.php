@@ -8,7 +8,7 @@
     'type' => 'textarea',
     'rows' => 1,
     'templates' => [
-        'formGroup' => '{{label}}{{input}}{{error}}',
-        'inputContainer' => '<markdown-text maxheight="600">{{content}}</markdown-text>',
+        'formGroup' => '{{input}}{{error}}',
+        'inputContainer' => '{{label}}<markdown-text maxheight="600">{{content}}</markdown-text>',
     ],
 ]) ?>
