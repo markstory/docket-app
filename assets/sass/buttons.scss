@@ -1,7 +1,7 @@
 @use "variables";
 
 // Base mixin for buttons to get sizing and spacing
-.button-bare {
+@mixin button-bare {
   display: flex;
   align-items: center;
 
@@ -34,9 +34,14 @@
   }
 }
 
+.button-bare {
+  @include button-bare;
+}
+
 // Add borders, background
 button {
-  @extend .button-bare;
+  @include button-bare;
+
   color: var(--color-button-fg);
   background: var(--color-button-default-bg);
   border: 1px solid var(--color-border-med);
@@ -58,7 +63,7 @@ button {
 // Button Variants {{{
 // bright background with reverse text.
 .button-primary {
-  @extend .button-bare;
+  @include button-bare;
 
   color: var(--color-button-primary-fg);
   background: var(--color-button-primary-bg);
@@ -74,7 +79,7 @@ button {
 
 // background blend, bordered with accent color on hover
 .button-secondary {
-  @extend .button-bare;
+  @include button-bare;
 
   color: var(--color-button-fg);
   background: var(--color-bg);
@@ -91,7 +96,7 @@ button {
 
 // Background blend no border, mild hover effect
 .button-muted {
-  @extend .button-bare;
+  @include button-bare;
 
   background: none;
   color: var(--color-low-emphasis);
@@ -105,7 +110,8 @@ button {
 }
 
 .button-danger {
-  @extend .button-bare;
+  @include button-bare;
+
   background: var(--color-button-danger-bg);
   color: var(--color-bg);
 
@@ -192,7 +198,7 @@ button,
 
 
 // Button Containers {{{
-.button-bar {
+@mixin button-bar {
   display: flex;
   align-items: center;
   gap: variables.$space;
@@ -201,8 +207,12 @@ button,
   padding-top: variables.$space;
 }
 
+.button-bar {
+  @include button-bar
+}
+
 .button-bar-right {
-  @extend .button-bar;
+  @include button-bar;
 
   display: flex;
   justify-content: flex-end;
@@ -221,7 +231,7 @@ button,
 
 // Inline button bars used in inline forms.
 .button-bar-inline {
-  @extend .button-bar;
+  @include button-bar;
 
   display: flex;
   margin: 0 0 0 calc(variables.$space * 2);
