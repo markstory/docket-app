@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .feed-item-title {
   margin-bottom: 0;
 
@@ -7,5 +9,5 @@
 }
 
 .feed-item-body {
-  margin-bottom: calc($space * 2);
+  margin-bottom: calc(variables.$space * 2);
 }

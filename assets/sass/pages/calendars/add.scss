@@ -1,5 +1,7 @@
+@use "../../variables";
+
 .calendar-name {
   display: flex;
   align-items: center;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
 }

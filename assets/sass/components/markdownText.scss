@@ -1,21 +1,23 @@
+@use "../variables";
+
 markdown-text {
   width: 100%;
-  padding-bottom: calc($space * 3);
+  padding-bottom: calc(variables.$space * 3);
 
   textarea {
     height: auto;
     max-width: 100%;
-    width: calc(100% - $form-icon-input-margin);
+    width: calc(100% - variables.$form-icon-input-margin);
     resize: none;
 
-    margin-top: $space;
+    margin-top: variables.$space;
     min-height: 36px;
   }
 }
 
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   markdown-text {
-    padding-bottom: $space;
+    padding-bottom: variables.$space;
   }
 }
 
@@ -26,7 +28,7 @@ markdown-text {
   }
   ul, ol {
     margin-left: 0;
-    padding-left: calc($space * 2);
+    padding-left: calc(variables.$space * 2);
   }
 }
 
@@ -35,7 +37,7 @@ markdown-text {
 
   .button-focusreveal {
     position: absolute;
-    right: $space;
+    right: variables.$space;
     bottom: -24px;
   }
 }

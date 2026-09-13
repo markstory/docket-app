@@ -1,3 +1,5 @@
+@use "../variables";
+
 .dnd-item {
   display: flex;
   align-items: center;
@@ -12,7 +14,7 @@
   cursor: grab;
   height: 30px;
   width: 30px;
-  margin-right: calc($space / 2);
+  margin-right: calc(variables.$space / 2);
   line-height: 1;
   border: none;
   padding: 3px;
@@ -32,7 +34,7 @@
   box-shadow: var(--shadow-drag);
   background: var(--color-bg);
   position: relative;
-  z-index: $z-active-ui;
+  z-index: variables.$z-active-ui;
 
   .dnd-handle {
     color: var(--color-primary);
@@ -53,13 +55,13 @@
   visibility: visible;
 }
 
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .dnd-handle {
     visibility: visible;
   }
 }
 
 .dnd-ghost {
-  z-index: $z-bg;
+  z-index: variables.$z-bg;
   opacity: 0.4;
 }

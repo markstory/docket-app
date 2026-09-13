@@ -1,12 +1,14 @@
+@use "../variables";
+
 // TODO Could be generalized with project-item
 .feed-category-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: $space;
+  gap: variables.$space;
   width: max-content;
-  padding-right: calc($space / 2);
-  border-radius: $border-radius;
+  padding-right: calc(variables.$space / 2);
+  border-radius: variables.$border-radius;
   margin-bottom: 1px;
 
   text-overflow: ellipsis;
@@ -34,11 +36,11 @@
 
     color: var(--color-fg);
     text-decoration: none;
-    padding-left: calc($space / 2);
+    padding-left: calc(variables.$space / 2);
   }
 
   .counter {
-    margin: 0 calc($space / 2);
+    margin: 0 calc(variables.$space / 2);
   }
 
   .button-icon,
@@ -53,12 +55,12 @@
 
 .feed-category-badge {
   display: flex;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
   align-items: center;
 
   // Nudge icon to the left so that it lines up with
   // any text above it.
-  margin-left: calc($space / 2 * -1);
+  margin-left: calc(variables.$space / 2 * -1);
 }
 
 .drag-ghost .feed-category-item {
@@ -67,13 +69,13 @@
 
 .feed-category-feeds {
   background: var(--color-bg);
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   list-style: none;
   margin: 0;
   padding: 0;
 
   li {
-    padding: $space $space $space calc($space * 2);
+    padding: variables.$space variables.$space variables.$space calc(variables.$space * 2);
     display: flex;
     align-items: center;
     justify-content: space-between;

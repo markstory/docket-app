@@ -1,11 +1,13 @@
+@use "../variables";
+
 .section-container {
-  margin-top: calc($space * 5);
+  margin-top: calc(variables.$space * 5);
 
   .controls {
     display: flex;
     justify-content: space-between;
 
-    margin-bottom: $space;
+    margin-bottom: variables.$space;
     border-bottom: 1px solid var(--color-border);
 
     drop-down {
@@ -28,6 +30,6 @@
   }
 
   .section-quickform {
-    margin-bottom: $space;
+    margin-bottom: variables.$space;
   }
 }

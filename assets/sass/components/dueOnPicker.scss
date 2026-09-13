@@ -1,19 +1,21 @@
+@use "../variables";
+
 due-on {
   display: flex;
-  gap: $space;
+  gap: variables.$space;
 }
 
 // Custom UI component for doing day/evening
 .due-on-evening {
   display: flex;
-  gap: $space;
+  gap: variables.$space;
   align-items: center;
 
   background: var(--color-bg-level1);
   border: 1px solid var(--color-border);
-  border-radius: $space;
+  border-radius: variables.$space;
   box-shadow: var(--shadow-inset);
-  padding: calc($space / 2);
+  padding: calc(variables.$space / 2);
   min-width: auto;
 
   // Hide the input without removing tabindex.
@@ -25,9 +27,9 @@ due-on {
   .toggle-evening,
   .toggle-day {
     cursor: pointer;
-    padding: calc($space / 2);
+    padding: calc(variables.$space / 2);
     border: 1px solid transparent;
-    border-radius: calc($space);
+    border-radius: calc(variables.$space);
     box-shadow: none;
     height: 26px;
   }

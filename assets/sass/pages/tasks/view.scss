@@ -1,17 +1,19 @@
+@use "../../variables";
+
 .task-view {
   height: 100%;
   max-width: 800px;
-  padding-left: $space * 2;
+  padding-left: variables.$space * 2;
 
   .task-quickform {
-    margin: 0 0 $space * 2;
+    margin: 0 0 variables.$space * 2;
   }
   .task-quickform {
     padding-top: 0;
   }
 
   .task-title-input {
-    font-size: $font-size-med;
+    font-size: variables.$font-size-med;
     font-weight: bold;
     width: 100%;
   }
@@ -19,21 +21,21 @@
     display: flex;
     align-items: center;
 
-    margin-bottom: calc($space * 3);
+    margin-bottom: calc(variables.$space * 3);
   }
 
   .form-section-heading {
     display: flex;
-    gap: $space;
+    gap: variables.$space;
   }
   .button-bar {
     flex-direction: row-reverse;
   }
 }
 
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .task-view {
-    padding-left: $space;
+    padding-left: variables.$space;
     height: 120%;
   }
 }
@@ -51,7 +53,7 @@
   }
 
   .checkbox {
-    margin-right: $space;
+    margin-right: variables.$space;
   }
 
   .attributes {
@@ -60,27 +62,27 @@
     color: var(--color-low-emphasis);
 
     > * + * {
-      margin-left: $space * 2;
+      margin-left: variables.$space * 2;
     }
   }
 }
 
 .task-attributes {
   display: flex;
-  gap: calc($space * 4);
+  gap: calc(variables.$space * 4);
   flex-direction: row;
   flex-flow: wrap;
   justify-content: space-between;
-  margin-bottom: calc($space * 3);
+  margin-bottom: calc(variables.$space * 3);
 
   .form-control {
     min-width: 200px;
     margin-bottom: 0;
   }
 }
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .task-attributes {
-    gap: $space;
+    gap: variables.$space;
   }
 }
 
@@ -88,24 +90,24 @@
   display: flex;
   flex-direction: column;
   line-height: 1.5;
-  margin-left: $form-icon-group-margin;
+  margin-left: variables.$form-icon-group-margin;
 
   .form-input {
     width: 97%;
   }
   .markdown-text-preview,
   textarea {
-    margin-left: $form-icon-input-margin;
+    margin-left: variables.$form-icon-input-margin;
   }
   .markdown-text-preview {
-    margin-top: $space;
+    margin-top: variables.$space;
   }
 }
 
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .task-view .task-quickform {
     margin-right: 0;
-    margin-bottom: $space * 3;
+    margin-bottom: variables.$space * 3;
   }
   .task-attributes {
     flex-direction: column;
@@ -117,7 +119,7 @@
   align-items: stretch;
 }
 .task-subtasks .form-section-heading {
-  margin-bottom: calc($space * 2 - $space);
+  margin-bottom: calc(variables.$space * 2 - variables.$space);
 }
 .task-subtask-list {
   list-style: none;
@@ -128,14 +130,14 @@
   li {
     list-style: none;
     padding-left: 0;
-    margin-bottom: $space;
+    margin-bottom: variables.$space;
   }
 }
 
 .task-subtask {
   display: flex;
   align-items: center;
-  gap: $space;
+  gap: variables.$space;
 
   .dnd-handle {
     margin-right: 0;
@@ -151,7 +153,7 @@
 
 .subtask-item {
   display: flex;
-  gap: $space;
+  gap: variables.$space;
   align-items: center;
   flex-grow: 1;
 
@@ -161,10 +163,10 @@
 }
 
 .subtask-addform {
-  margin: 0 0 calc($space * 3) 30px;
+  margin: 0 0 calc(variables.$space * 3) 30px;
   display: flex;
   flex: 1;
-  gap: $space;
+  gap: variables.$space;
 
   input[type="text"] {
     flex-grow: 1;

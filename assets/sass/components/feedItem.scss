@@ -1,7 +1,9 @@
+@use "../variables";
+
 .feed-item {
   h2 {
-    font-size: $font-size-large;
-    margin-bottom: $space;
+    font-size: variables.$font-size-large;
+    margin-bottom: variables.$space;
   }
   h2 a {
     text-decoration: none;
@@ -11,13 +13,13 @@
     }
   }
 
-  margin-bottom: calc($space * 3);
+  margin-bottom: calc(variables.$space * 3);
 }
 
 .feed-item-byline {
-  font-size: $font-size-small;
+  font-size: variables.$font-size-small;
   color: var(--color-muted);
-  margin-bottom: calc($space * 2);
+  margin-bottom: calc(variables.$space * 2);
 }
 .feed-item-byline a {
   color: var(--color-muted);
@@ -27,7 +29,7 @@
 }
 .feed-item-summary {
   color: var(--color-feed-content);
-  margin-bottom: $space;
+  margin-bottom: variables.$space;
 
   h2, h3, h4, h5, h6 {
     color: var(--color-feed-content);
@@ -56,8 +58,8 @@
   }
   blockquote {
     background: var(--color-bg-low);
-    margin: $space calc($space * 2);
-    padding: $space;
+    margin: variables.$space calc(variables.$space * 2);
+    padding: variables.$space;
 
     p:last-child {
       margin-bottom: 0;

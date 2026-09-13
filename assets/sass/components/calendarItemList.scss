@@ -1,15 +1,17 @@
+@use "../variables";
+
 .calendar-item-list {
-  padding: $space;
+  padding: variables.$space;
   background: var(--color-bg-level1);
-  border-radius: $border-radius;
-  margin-bottom: calc($space * 1.5);
+  border-radius: variables.$border-radius;
+  margin-bottom: calc(variables.$space * 1.5);
 }
 
 .calendar-item {
   // Expects a `--calendar-color` CSS property to be set.
   display: flex;
   align-items: center;
-  margin-bottom: $space;
+  margin-bottom: variables.$space;
 
   &:last-child {
     margin-bottom: 0;
@@ -18,18 +20,18 @@
   &.all-day:before {
     display: inline-block;
     content: '';
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     background: var(--calendar-color);
     width: 4px;
     height: 1.2em;
-    margin-right: calc($space / 2);
+    margin-right: calc(variables.$space / 2);
   }
 
   time {
     color: var(--calendar-color);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    margin-right: calc($space / 2);
+    margin-right: calc(variables.$space / 2);
   }
 
   a {

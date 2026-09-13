@@ -1,3 +1,5 @@
+@use "../variables";
+
 drop-down {
   position: relative;
 }
@@ -18,11 +20,11 @@ drop-down-menu {
 drop-down-menu {
   width: max-content;
   position: relative;
-  z-index: $z-menu;
+  z-index: variables.$z-menu;
 
   background: var(--color-bg);
   border: 1px solid var(--color-border-med);
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   box-shadow: var(--shadow-med);
 
   .separator {
@@ -45,7 +47,7 @@ drop-down-menu [role="menuitem"],
   color: var(--color-foreground);
   border-radius: 0;
   box-shadow: none;
-  padding: $space calc($space * 1.5);
+  padding: variables.$space calc(variables.$space * 1.5);
   text-align: left;
   height: auto;
   width: 100%;
@@ -64,7 +66,7 @@ drop-down-menu [role="menuitem"],
 .dropdown-item-header {
   line-height: 1.2;
 
-  padding: $space calc($space * 1.5);
+  padding: variables.$space calc(variables.$space * 1.5);
   margin: 0;
 }
 
@@ -74,7 +76,7 @@ drop-down-menu [role="menuitem"] {
     background: var(--color-menu-hover);
   }
   & svg {
-    margin-right: $space;
+    margin-right: variables.$space;
   }
 
   // Form buttons inside menu items are special

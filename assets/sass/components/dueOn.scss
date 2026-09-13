@@ -1,10 +1,12 @@
+@use "../variables";
+
 // TODO refactor element/task_due_on to use more shared CSS
 .due-on {
   display: flex;
   align-items: center;
 
   svg {
-    margin-right: calc($space / 2);
+    margin-right: calc(variables.$space / 2);
   }
 
   &.none {

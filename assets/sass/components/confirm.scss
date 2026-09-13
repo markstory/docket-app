@@ -1,3 +1,5 @@
+@use "../variables";
+
 .confirm-dialog {
   position: fixed;
   top: 80px;
@@ -5,20 +7,20 @@
   right: 25%;
   bottom: auto;
   padding-top: 20px;
-  z-index: $z-modal;
+  z-index: variables.$z-modal;
 
-  border-radius: $border-radius-large;
+  border-radius: variables.$border-radius-large;
   border: none;
   box-shadow: var(--shadow-high);
 }
 
 
 .confirm-dialog h2 {
-  font-size: $font-size-large;
+  font-size: variables.$font-size-large;
   font-weight: bold;
-  margin: 0 0 $space * 2 0;
+  margin: 0 0 variables.$space * 2 0;
 }
 .confirm-dialog p {
-  margin-bottom: $space;
+  margin-bottom: variables.$space;
 }
 

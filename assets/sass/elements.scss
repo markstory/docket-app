@@ -1,3 +1,5 @@
+@use "variables";
+
 * {
   box-sizing: border-box;
 }
@@ -6,7 +8,7 @@ body, html, #app {
   background: var(--color-bg);
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
-  font-size: $font-size-normal;
+  font-size: variables.$font-size-normal;
   color: var(--color-fg);
 }
 
@@ -17,15 +19,15 @@ body, html, #app {
 
 // Headings
 h1, h2, h3, h4, h5 {
-  margin: $space * 2 0;
+  margin: variables.$space * 2 0;
   color: var(--color-fg);
 }
 
 h1, h2 {
-  font-size: $font-size-xlarge;
+  font-size: variables.$font-size-xlarge;
 }
 h3, h4, h5 {
-  font-size: $font-size-med;
+  font-size: variables.$font-size-med;
 }
 
 h1:first-child,
@@ -37,7 +39,7 @@ h5:first-child {
 }
 
 p {
-  margin: 0 0 $space * 2 0;
+  margin: 0 0 variables.$space * 2 0;
 }
 
 a {
@@ -53,10 +55,10 @@ a {
 
 dialog {
   position: fixed;
-  padding: calc($space * 4) calc($space * 5);
-  z-index: $z-modal;
+  padding: calc(variables.$space * 4) calc(variables.$space * 5);
+  z-index: variables.$z-modal;
 
-  border-radius: $border-radius-large;
+  border-radius: variables.$border-radius-large;
   border: none;
   box-shadow: var(--shadow-high);
 }

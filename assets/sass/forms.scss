@@ -1,3 +1,5 @@
+@use "variables";
+
 .form-input-like,
 select,
 textarea,
@@ -5,11 +7,11 @@ input[type=text],
 input[type=number],
 input[type=password],
 input[type=email] {
-  height: $button-med-height;
-  padding: calc($space / 2) $space;
+  height: variables.$button-med-height;
+  padding: calc(variables.$space / 2) variables.$space;
   color: var(--color-fg);
   background: var(--color-bg);
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   border: 1px solid var(--color-border-med);
   outline: none;
   box-shadow: var(--shadow-inset);
@@ -39,7 +41,7 @@ input[type=radio] {
 }
 
 label {
-  margin-right: $space;
+  margin-right: variables.$space;
   min-width: 100px;
 }
 
@@ -51,14 +53,14 @@ textarea {
 
 .form-error {
   color: var(--color-error-fg);
-  margin-top: calc($space / 2);
+  margin-top: calc(variables.$space / 2);
 }
 
 .form-control {
   display: flex;
   align-items: center;
 
-  margin-bottom: calc($space * 2);
+  margin-bottom: calc(variables.$space * 2);
 
   &.required label:after,
   label[data-required="true"]:after {
@@ -66,7 +68,7 @@ textarea {
     display: inline;
     font-size: 10px;
     color: var(--color-input-required);
-    margin-left: calc($space / 2);
+    margin-left: calc(variables.$space / 2);
   }
 
   &.is-error input {
@@ -75,10 +77,10 @@ textarea {
 }
 
 .form-label-group {
-  margin-right: calc($space * 2);
+  margin-right: calc(variables.$space * 2);
   display: flex;
   flex-direction: column;
-  gap: calc($space);
+  gap: calc(variables.$space);
 
   label {
     flex-grow: 1;
@@ -91,7 +93,7 @@ textarea {
 }
 
 .form-help {
-  font-size: $font-size-small;
+  font-size: variables.$font-size-small;
   color: var(--color-muted);
   margin: 0;
 }
@@ -114,7 +116,7 @@ textarea {
   }
   .button-bar {
     // Align with the right edge of .form-input
-    padding-left: calc($width + $space * 2);
+    padding-left: calc($width + variables.$space * 2);
   }
 }
 
@@ -126,10 +128,10 @@ textarea {
   }
   .button-bar {
     // Align with right edge of .form-input
-    padding-left: calc($width + $space * 2);
+    padding-left: calc($width + variables.$space * 2);
   }
 }
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .form-control {
     flex-direction: column;
     align-items: flex-start;
@@ -140,7 +142,7 @@ textarea {
     }
     label {
       width: auto;
-      margin-bottom: calc($space / 2);
+      margin-bottom: calc(variables.$space / 2);
     }
     input,
     select,
@@ -158,12 +160,12 @@ textarea {
 .form-stacked {
   .form-control {
     flex-direction: column;
-    gap: calc($space);
+    gap: calc(variables.$space);
     align-items: start;
-    margin-bottom: calc($space * 2);
+    margin-bottom: calc(variables.$space * 2);
   }
   .form-section-heading {
-    font-size: $font-size-med;
+    font-size: variables.$font-size-med;
     font-weight: normal;
     margin-bottom: 0;
   }
@@ -181,17 +183,17 @@ textarea {
 .form-icon-headers {
   .task-header,
   .form-control {
-    margin-left: $form-icon-group-margin;
+    margin-left: variables.$form-icon-group-margin;
   }
   .form-input {
-    margin-left: $form-icon-input-margin;
+    margin-left: variables.$form-icon-input-margin;
   }
 }
 
 .form-dueon-control {
   display: flex;
   align-items: center;
-  gap: calc($space * 2);
+  gap: calc(variables.$space * 2);
 
 }
 
@@ -201,7 +203,7 @@ textarea {
 
   .form-control {
     width: 100%;
-    padding: calc($space * 2) 0 ;
+    padding: calc(variables.$space * 2) 0 ;
     margin: 0;
     justify-content: space-between;
   }

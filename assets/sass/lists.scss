@@ -1,16 +1,18 @@
+@use "variables";
+
 .list-items {
   margin: 0;
   padding: 0;
 
   li {
     display: flex;
-    gap: $space;
+    gap: variables.$space;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
 
     list-style: none;
-    padding: $space 0;
+    padding: variables.$space 0;
     margin: 0;
 
     border-bottom: 1px solid var(--color-border-low);
@@ -23,7 +25,7 @@
   li.list-item-error,
   li.list-item-empty {
     border-bottom: 0;
-    padding: calc($space * 2);
+    padding: calc(variables.$space * 2);
     justify-content: center;
 
     svg {
@@ -43,14 +45,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: $space;
+  gap: variables.$space;
 }
 
 .shortcut-list {
   display: grid;
   grid-template-columns: 30px auto;
   grid-auto-rows: 1;
-  gap: $space;
+  gap: variables.$space;
 
   dt,
   dd {
@@ -59,9 +61,9 @@
   }
 
   kbd {
-    padding: calc($space / 4) $space;
+    padding: calc(variables.$space / 4) variables.$space;
     background: var(--color-bg-low);
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
   }
 }
 
@@ -70,11 +72,11 @@
 // Gross selector to override .list-items li
 .list-items li.list-item-panel {
   border: 1px solid var(--color-border);
-  border-radius: $border-radius;
-  padding: $space;
+  border-radius: variables.$border-radius;
+  padding: variables.$space;
   align-items: flex-start;
   flex-direction: column;
-  margin-bottom: calc($space * 2);
+  margin-bottom: calc(variables.$space * 2);
 }
 
 // Item within a panel that has horizontal layout.
@@ -86,6 +88,6 @@
   justify-content: space-between;
 }
 .list-item-panel-header + .list-item-panel-item{
-  padding-top: calc($space / 2);
+  padding-top: calc(variables.$space / 2);
   border-top: 2px solid var(--color-border-med);
 }

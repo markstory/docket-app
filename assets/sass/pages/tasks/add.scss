@@ -1,3 +1,5 @@
+@use "../../variables";
+
 // Page specific CSS for task add modal.
 // TODO all of this can be deleted!
 .sheet-overlay {
@@ -17,19 +19,19 @@
   width: 85%;
   max-width: 850px;
   bottom: auto;
-  padding: calc($space * 3) calc($space * 6);
+  padding: calc(variables.$space * 3) calc(variables.$space * 6);
   overflow-y: auto;
-  z-index: $z-modal;
+  z-index: variables.$z-modal;
 
-  border-radius: $border-radius-large;
+  border-radius: variables.$border-radius-large;
   border: none;
   box-shadow: var(--shadow-high);
 }
 
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .sheet-body {
     width: 95%;
-    margin-left: calc($space * 2);
-    margin-right: calc($space * 2);
+    margin-left: calc(variables.$space * 2);
+    margin-right: calc(variables.$space * 2);
   }
 }

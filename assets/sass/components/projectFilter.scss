@@ -1,6 +1,8 @@
+@use "../variables";
+
 .project-filter {
   $item-height: 40px;
-  $icon-gap: calc($space * 0.75);
+  $icon-gap: calc(variables.$space * 0.75);
 
   h3 {
     color: var(--color-low-emphasis);
@@ -11,7 +13,7 @@
     list-style: none;
     padding: 0;
     margin-top: 0;
-    margin-bottom: $space * 2;
+    margin-bottom: variables.$space * 2;
   }
 
   // Should be similar to .project-item as well.
@@ -19,10 +21,10 @@
     height: $item-height;
     display: flex;
     align-items: center;
-    padding: $space 0 $space calc($space / 2);
-    margin: 0 $space * 2 1px 0;
+    padding: variables.$space 0 variables.$space calc(variables.$space / 2);
+    margin: 0 variables.$space * 2 1px 0;
     text-decoration: none;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     color: var(--color-fg);
 
     &.active,
@@ -39,7 +41,7 @@
   }
 
   .dnd-dropper-left-offset {
-    margin-right: calc($space * 2);
+    margin-right: calc(variables.$space * 2);
   }
 
   .feed-category-item,
@@ -52,7 +54,7 @@
     align-items: center;
 
     height: $item-height;
-    padding: $space 4px;
+    padding: variables.$space 4px;
     text-decoration: none;
     margin-bottom: 1px;
     color: var(--color-button-primary-bg);

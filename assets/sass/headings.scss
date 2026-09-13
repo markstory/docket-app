@@ -1,14 +1,16 @@
+@use "variables";
+
 .heading-button {
   display: flex;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
   align-items: center;
-  margin-bottom: $space;
+  margin-bottom: variables.$space;
 
   // Accomodate button sizes.
   min-height: 38px;
 
   button {
-    margin-left: $space;
+    margin-left: variables.$space;
   }
 
   > svg {
@@ -19,7 +21,7 @@
 .heading-icon {
   display: flex;
   align-items: center;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
 
   &.today svg {
     color: var(--color-due-today);
@@ -39,18 +41,18 @@
   display: flex;
   align-items: center;
   img {
-    margin-right: $space;
+    margin-right: variables.$space;
   }
 }
 
 .heading-evening-group {
   display: flex;
   align-items: center;
-  gap: calc($space / 2);
-  margin: $space 0;
+  gap: calc(variables.$space / 2);
+  margin: variables.$space 0;
   line-height: 2;
   color: var(--color-low-emphasis);
-  font-size: $font-size-normal;
+  font-size: variables.$font-size-normal;
   font-weight: normal;
   border-bottom: 1px solid var(--color-border-low);
 }
@@ -58,7 +60,7 @@
 .heading-task-group {
   display: flex;
   align-items: center;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
 
   .minor {
     font-weight: normal;
@@ -69,9 +71,9 @@
 .heading-feed-group {
   display: flex;
   align-items: center;
-  gap: calc($space / 2);
-  margin: calc($space * 6) 0 $space 0;
-  padding-bottom: $space;
+  gap: calc(variables.$space / 2);
+  margin: calc(variables.$space * 6) 0 variables.$space 0;
+  padding-bottom: variables.$space;
   border-bottom: 1px solid var(--color-border-low);
 }
 
@@ -79,11 +81,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: calc($space * 2);
+  margin-bottom: calc(variables.$space * 2);
 }
 .heading-actions-item {
   display: flex;
-  gap: calc($space / 2);
+  gap: calc(variables.$space / 2);
 }
 
 .heading-back {

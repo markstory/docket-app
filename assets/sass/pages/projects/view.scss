@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .project-view .heading-actions {
   &[data-archived="true"] {
     color: var(--color-muted);
@@ -13,5 +15,5 @@
 
 // Completed task list
 .project-view .task-list {
-  margin-top: $space * 5;
+  margin-top: variables.$space * 5;
 }

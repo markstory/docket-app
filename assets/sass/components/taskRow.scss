@@ -1,14 +1,16 @@
+@use "../variables";
+
 
 .task-row {
   position: relative;
   display: flex;
-  gap: $space;
+  gap: variables.$space;
   align-items: flex-start;
   width: 100%;
 
-  padding-top: $space;
-  padding-left: calc($space / 4);
-  padding-bottom: $space;
+  padding-top: variables.$space;
+  padding-left: calc(variables.$space / 4);
+  padding-bottom: variables.$space;
   border-bottom: 1px solid var(--color-border-low);
   background: var(--color-bg);
 
@@ -17,7 +19,7 @@
   }
 
   > input[type="checkbox"] {
-    margin: 1px $space 0 0;
+    margin: 1px variables.$space 0 0;
   }
 
   > a {
@@ -37,14 +39,14 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    row-gap: calc($space / 2);
+    row-gap: calc(variables.$space / 2);
 
-    font-size: $font-size-normal;
+    font-size: variables.$font-size-normal;
     color: var(--color-low-emphasis);
-    margin-top: calc($space * 0.75);
+    margin-top: calc(variables.$space * 0.75);
 
     > * + * {
-      margin-left: calc($space * 1.5);
+      margin-left: calc(variables.$space * 1.5);
     }
   }
 
@@ -53,16 +55,16 @@
     display: flex;
     align-items: center;
     position: absolute;
-    top: calc($space * 0.75);
+    top: calc(variables.$space * 0.75);
     right: 0;
 
     background: var(--color-bg);
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
 
     visibility: hidden;
   }
   .actions > * + * {
-    margin-left: $space;
+    margin-left: variables.$space;
   }
 
   drop-down {
@@ -87,14 +89,14 @@
   transition: opacity 500ms ease-out;
 }
 
-@media(max-width: $breakpoint-phone) {
+@media(max-width: variables.$breakpoint-phone) {
   .task-row .actions {
     visibility: visible;
   }
 
   // Pad in so that task actions don't overlap with text.
   .task-row > a {
-    padding-right: calc($space * 3);
+    padding-right: calc(variables.$space * 3);
   }
 }
 

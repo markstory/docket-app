@@ -1,8 +1,10 @@
+@use "variables";
+
 // Used to give hover to editable regions.
 .editable {
-  border-radius: $border-radius;
-  padding: calc($space / 4) calc($space / 2);
-  margin-left: calc(($space / 2) * -1);
+  border-radius: variables.$border-radius;
+  padding: calc(variables.$space / 4) calc(variables.$space / 2);
+  margin-left: calc((variables.$space / 2) * -1);
 
   &:hover {
     background: var(--color-disabled);
@@ -16,9 +18,9 @@
 
 // Counters displayed beside other content.
 .counter {
-  font-size: $font-size-normal;
+  font-size: variables.$font-size-normal;
   color: var(--color-muted);
   svg {
-    margin-right: calc($space / 2);
+    margin-right: calc(variables.$space / 2);
   }
 }

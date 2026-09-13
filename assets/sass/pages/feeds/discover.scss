@@ -1,5 +1,7 @@
+@use "../../variables";
+
 .discover-feeds {
-  margin: calc($space * 3) 0;
+  margin: calc(variables.$space * 3) 0;
 
   .empty {
     color: var(--color-muted);
@@ -8,18 +10,18 @@
 }
 .discover-back {
   display: flex;
-  gap: $space;
+  gap: variables.$space;
   align-items: center;
 }
 .discover-feeds.feed-list {
   display: flex;
   flex-direction: column;
-  gap: $space;
+  gap: variables.$space;
 
 }
 .feed-list .feed-item {
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: calc($space * 2);
+  padding-bottom: calc(variables.$space * 2);
 
   &:last-child {
     border-bottom: none;
@@ -28,12 +30,12 @@
   }
 
   h4 {
-    margin-bottom: calc($space / 2);
+    margin-bottom: calc(variables.$space / 2);
   }
   .url {
     color: var(--color-muted);
   }
   form {
-    margin-top: $space;
+    margin-top: variables.$space;
   }
 }

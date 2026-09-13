@@ -1,9 +1,11 @@
+@use "../variables";
+
 .modal-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: calc($space * 3);
+  margin-bottom: calc(variables.$space * 3);
 
   h1, h2, h3, h4 {
     margin: 0;
@@ -21,8 +23,8 @@
 
   border: none;
   border-radius: 50%;
-  font-size: $font-size-large;
-  line-height: $font-size-large;
+  font-size: variables.$font-size-large;
+  line-height: variables.$font-size-large;
   height: 30px;
   width: 30px;
   padding: 5px;
@@ -41,13 +43,13 @@
   max-width: 600px;
   min-height: auto;
 }
-@media (max-width: $breakpoint-phone) {
+@media (max-width: variables.$breakpoint-phone) {
   .modal-sheet {
     overflow: scroll;
     height: 95%;
     max-height: 95%;
     width: 95%;
-    padding: calc($space * 2) calc($space * 3);
+    padding: calc(variables.$space * 2) calc(variables.$space * 3);
   }
   .modal-close {
     top: -8px;
@@ -61,5 +63,5 @@
 }
 
 modal-window .flash-message {
-  margin-bottom: calc($space * 3);
+  margin-bottom: calc(variables.$space * 3);
 }

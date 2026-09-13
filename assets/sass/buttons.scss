@@ -1,9 +1,11 @@
+@use "variables";
+
 // Base mixin for buttons to get sizing and spacing
 .button-bare {
   display: flex;
   align-items: center;
 
-  font-size: $font-size-normal;
+  font-size: variables.$font-size-normal;
   line-height: 1.1;
 
   text-decoration: none;
@@ -13,13 +15,13 @@
 
   border: 1px solid transparent;
   margin-bottom: 0;
-  padding: $space calc($space * 1.5);
-  border-radius: $border-radius;
-  height: $button-med-height;
+  padding: variables.$space calc(variables.$space * 1.5);
+  border-radius: variables.$border-radius;
+  height: variables.$button-med-height;
 
   // Space icons away from button text.
   & > svg:first-child {
-    margin-right: calc($space / 2);
+    margin-right: calc(variables.$space / 2);
   }
 
   outline: none;
@@ -129,7 +131,7 @@ button,
 .button-narrow {
   padding-top: 4px;
   padding-bottom: 4px;
-  height: $button-narrow-height;
+  height: variables.$button-narrow-height;
 }
 
 // Buttons that only show on focus for accessibility
@@ -152,7 +154,7 @@ button,
   justify-content: center;
 
   border: none;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   box-shadow: none;
   background: transparent;
   padding: 2px;
@@ -175,12 +177,12 @@ button,
 
 .button-global-add {
   position: fixed;
-  bottom: calc($space * 3.5);
-  right: calc($space * 3.5);
-  z-index: $z-modal;
+  bottom: calc(variables.$space * 3.5);
+  right: calc(variables.$space * 3.5);
+  z-index: variables.$z-modal;
   border-radius: 50%;
-  width: calc($space * 7);
-  height: calc($space * 7);
+  width: calc(variables.$space * 7);
+  height: calc(variables.$space * 7);
 
   > svg:first-child {
     margin: 0;
@@ -193,10 +195,10 @@ button,
 .button-bar {
   display: flex;
   align-items: center;
-  gap: $space;
+  gap: variables.$space;
 
-  margin-top: $space;
-  padding-top: $space;
+  margin-top: variables.$space;
+  padding-top: variables.$space;
 }
 
 .button-bar-right {
@@ -208,7 +210,7 @@ button,
 
 .button-bar-vertical {
   display: flex;
-  gap: $space;
+  gap: variables.$space;
   flex-direction: column;
   align-items: flex-start;
 
@@ -222,7 +224,7 @@ button,
   @extend .button-bar;
 
   display: flex;
-  margin: 0 0 0 calc($space * 2);
+  margin: 0 0 0 calc(variables.$space * 2);
   padding: 0;
 }
 // }}}

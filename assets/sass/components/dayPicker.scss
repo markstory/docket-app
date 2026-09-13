@@ -1,5 +1,7 @@
+@use "../variables";
+
 .day-picker-menuitem {
-  padding: 0 calc($space / 2) $space;
+  padding: 0 calc(variables.$space / 2) variables.$space;
   &:hover {
     background: none;
   }
@@ -9,7 +11,7 @@
   background: var(--color-bg);
   padding: 0 8px;
   position: relative;
-  font-size: $font-size-normal;
+  font-size: variables.$font-size-normal;
 }
 
 .day-picker-month {
@@ -31,13 +33,13 @@
   margin-bottom: 0.5em;
   padding: 0 0.5em;
   text-align: left;
-  font-size: $font-size-small;
+  font-size: variables.$font-size-small;
   font-weight: bold;
 }
 
 
 .day-picker-weekdays th {
-  padding-bottom: calc($space / 2);
+  padding-bottom: calc(variables.$space / 2);
 }
 
 .day-picker-weekdays th {
@@ -82,7 +84,7 @@ abbr[title].day-picker-weekday {
   padding: 0.5em;
   color: var(--color-low-emphasis);
   text-align: center;
-  font-size: $font-size-small;
+  font-size: variables.$font-size-small;
   font-weight: normal;
 
   border-bottom: none;

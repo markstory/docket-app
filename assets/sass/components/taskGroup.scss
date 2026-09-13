@@ -1,5 +1,7 @@
+@use "../variables";
+
 .task-group .add-task {
-  margin-top: $space;
+  margin-top: variables.$space;
 }
 .task-group .dnd-item:last-child .task-row {
   border-bottom: 0;
@@ -7,7 +9,7 @@
 
 .task-group + .heading-icon,
 .task-group + .heading-task-group {
-  margin-top: calc($space * 5);
+  margin-top: calc(variables.$space * 5);
 }
 
 .empty-state-container {
@@ -18,7 +20,7 @@
   .hero-icon {
     background: var(--color-bg-low);
     border-radius: 50%;
-    padding: calc($space * 3);
+    padding: calc(variables.$space * 3);
 
     color: var(--color-success-fg);
   }
