@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use Cake\Core\Configure;
+
 /**
  * @var \Tasks\Model\Entity\Project $project
  * @var \Tasks\Model\Entity\Task[] $tasks
@@ -17,7 +20,7 @@ foreach ($tasks as $task) {
     $groupedTasks[$task->section_id ?? ''][] = $task;
 }
 ?>
-<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
+<reload-after duration="<?= Configure::read('Ui.reloadAfter') ?>"></reload-after>
 
 <keyboard-list
     class="project-view"

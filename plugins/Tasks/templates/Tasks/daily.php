@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use Cake\Core\Configure;
+
 /**
  * @var \Tasks\Model\Entity\Task[] $tasks
  * @var \App\Model\Entity\CalendarItem[] $calendarItems
@@ -41,7 +44,7 @@ foreach ($tasks as $task) {
     $groupedTasks[$key][] = $task;
 }
 ?>
-<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
+<reload-after duration="<?= Configure::read('Ui.reloadAfter') ?>"></reload-after>
 
 <keyboard-list
     itemselector=".task-row"

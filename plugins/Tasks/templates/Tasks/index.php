@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Cake\Core\Configure;
 use Cake\I18n\FrozenDate;
 
 /**
@@ -47,7 +48,7 @@ endforeach;
 ?>
 <h1>Upcoming</h1>
 
-<reload-after timestamp="<?= strtotime('+30 minutes') ?>"></reload-after>
+<reload-after duration="<?= Configure::read('Ui.reloadAfter') ?>"></reload-after>
 
 <keyboard-list
     itemselector=".task-row"

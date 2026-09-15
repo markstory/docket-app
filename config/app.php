@@ -407,4 +407,9 @@ return [
         // Whether or not new users can be created.
         'create-user' => true,
     ],
+
+    'Ui' => [
+        // The number of seconds after which blurred views should reload on re-focus.
+        'reloadAfter' => 60 * 30,
+    ],
 ];
