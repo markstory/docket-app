@@ -295,10 +295,18 @@ class CalendarService
     }
 
     /**
-     * Attempt to find a source by resource id
+     * Attempt to find a source by resource URI from an event notification
      */
-    public function getSourceByResourceId(string $resourceId): ?CalendarSource
+    public function getSourceByResourceUri(string $resourceUri): ?CalendarSource
     {
+        // Google notifications have resource URI like
+        // https://www.googleapis.com/calendar/v3/calendars/{$identifier}/events?alt=json
+        // But our local DB only has the identifier part.
+        preg_match('#/calendars/([^\/]+)/events#', $resourceUri, $matches);
+        if (!$matches) {
+            return null;
+        }
+        $resourceId = $matches[1];
         $sources = $this->fetchTable('Calendar.CalendarSources');
         $source = $sources->find()
             ->contain('CalendarProviders')
@@ -314,8 +322,16 @@ class CalendarService
      *
      * @see https://developers.google.com/calendar/v3/reference/channels/stop
      */
-    public function cancelSubscriptionById(string $subscriptionId, string $resourceId): void
+    public function cancelSubscriptionById(string $subscriptionId, string $resourceUri): void
     {
+        preg_match('#/calendars/([^\/]+)/events#', $resourceUri, $matches);
+        if (!$matches) {
+            Log::info("Could not extract resourceId from resourceUri {$resourceUri}");
+
+            return;
+        }
+        $resourceId = $matches[1];
+
         Log::info("Cancelling subscription {$subscriptionId} for {$resourceId}");
         $calendar = new Calendar($this->client);
         $channel = new GoogleChannel();

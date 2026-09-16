@@ -73,7 +73,7 @@ class GoogleNotificationsControllerTest extends TestCase
             'headers' => [
                 'X-Goog-Channel-ID' => 'not-real',
                 'X-Goog-Channel-Token' => 'no',
-                'X-Google-Channel-Expiration' => 1234,
+                'X-Goog-Channel-Expiration' => 1234,
             ],
         ]);
         $this->post('/google/calendar/notifications');
@@ -90,9 +90,10 @@ class GoogleNotificationsControllerTest extends TestCase
         $this->configRequest([
             'headers' => [
                 'X-Goog-Channel-ID' => 'not-real',
-                'X-Goog-Resource-ID' => $source->provider_id,
+                'X-Goog-Resource-ID' => 'some-nonsense-that-is-not-useful',
                 'X-Goog-Channel-Token' => 'verifier=not-real',
-                'X-Google-Channel-Expiration' => 1234,
+                'X-Goog-Channel-Expiration' => 1234,
+                'X-Goog-Resource-URI' => "https://www.googleapis.com/calendar/v3/calendars/{$source->provider_id}/events?alt=json",
             ],
         ]);
         $this->post('/google/calendar/notifications');
