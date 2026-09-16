@@ -295,6 +295,40 @@ class CalendarService
     }
 
     /**
+     * Attempt to find a source by resource id
+     */
+    public function getSourceByResourceId(string $resourceId): ?CalendarSource
+    {
+        $sources = $this->fetchTable('Calendar.CalendarSources');
+        $source = $sources->find()
+            ->contain('CalendarProviders')
+            ->where(['CalendarSources.provider_id' => $resourceId])
+            ->first();
+
+        /** @var ?\Calendar\Model\Entity\CalendarSource */
+        return $source;
+    }
+
+    /**
+     * Used to clean up invalid subscriptions when webhooks are received.
+     *
+     * @see https://developers.google.com/calendar/v3/reference/channels/stop
+     */
+    public function cancelSubscriptionById(string $subscriptionId, string $resourceId): void
+    {
+        Log::info("Cancelling subscription {$subscriptionId} for {$resourceId}");
+        $calendar = new Calendar($this->client);
+        $channel = new GoogleChannel();
+        $channel->setId($subscriptionId);
+        $channel->setResourceId($resourceId);
+        try {
+            $calendar->channels->stop($channel);
+        } catch (GoogleException $e) {
+            Log::warning("Could not stop calendar subscription error={$e->getMessage()}");
+        }
+    }
+
+    /**
      * Sync events from google.
      *
      * @see https://developers.google.com/calendar/api/guides/sync

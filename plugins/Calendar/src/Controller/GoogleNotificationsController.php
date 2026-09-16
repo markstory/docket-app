@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Calendar\Controller;
 
 use App\Controller\AppController;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
@@ -28,26 +29,32 @@ class GoogleNotificationsController extends AppController
         $this->Authorization->skipAuthorization();
         $subscriptionId = $this->request->getHeaderLine('X-Goog-Channel-ID');
         $token = $this->request->getHeaderLine('X-Goog-Channel-Token');
-        $expiration = $this->request->getHeaderLine('X-Goog-Channel-Expiration');
+        $resourceId = $this->request->getHeaderLine('X-Goog-Resource-ID');
         if (!$subscriptionId || !$token) {
-            throw new BadRequestException('Missing channel-id');
+            throw new BadRequestException('Missing channel-id or token');
         }
         $tokenData = [];
         parse_str($token, $tokenData);
         if (!isset($tokenData['verifier'])) {
-            throw new BadRequestException('Missing channel-id');
+            throw new BadRequestException('Missing verifier');
         }
-        Log::info("Receive update from google for subscriptionId={$subscriptionId} verifier={$tokenData['verifier']}");
+        Log::info("Receive update from google for resource={$resourceId} subscriptionId={$subscriptionId} verifier={$tokenData['verifier']}");
 
-        $source = $service->getSourceForSubscription($subscriptionId, $tokenData['verifier']);
+        try {
+            $source = $service->getSourceForSubscription($subscriptionId, $tokenData['verifier']);
+        } catch (RecordNotFoundException $e) {
+            // If we've received an invalid/stale subscription delete from google.
+            $source = $service->getSourceByResourceId($resourceId);
+            if ($source) {
+                $service->setAccessToken($source->calendar_provider);
+                $service->cancelSubscriptionById($subscriptionId, $resourceId);
+            }
+
+            return $this->response->withStringBody('ok');
+        }
+
         $service->setAccessToken($source->calendar_provider);
         $service->syncEvents($source);
-
-        $expires = DateTime::parse($expiration);
-        $soon = DateTime::parse('+1 hour');
-        if ($expires->lessThan($soon)) {
-            $service->createSubscription($source);
-        }
 
         return $this->response->withStringBody('ok');
     }
