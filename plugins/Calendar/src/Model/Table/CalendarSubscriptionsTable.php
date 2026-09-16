@@ -105,6 +105,7 @@ class CalendarSubscriptionsTable extends Table
 
         return $query->where([
             'CalendarSubscriptions.expires_at <=' => $tomorrow,
-        ]);
+        ])
+        ->orderByAsc('CalendarSubscriptions.id');
     }
 }

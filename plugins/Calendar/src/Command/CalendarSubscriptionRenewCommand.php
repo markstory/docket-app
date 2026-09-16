@@ -66,21 +66,29 @@ class CalendarSubscriptionRenewCommand extends Command
             ->all();
 
         $io->verbose('Starting calendar subscription renewal');
+        $renewed = [];
         foreach ($results as $row) {
             $io->out("Renewing subscription for source id={$row->calendar_source_id}");
+            if (in_array($row->calendar_source_id, $renewed, true)) {
+                $io->verbose("Skipping subscription {$row->id}. Source already has renewed subscription.");
+                continue;
+            }
+
             $provider = $row->calendar_source->calendar_provider;
             $this->calendarService->setAccessToken($provider);
             try {
                 $this->calendarService->createSubscription($row->calendar_source);
-                $io->verbose('New subscription created.');
+                $io->verbose("New subscription created for source={$row->calendar_source->id}.");
+
+                $this->CalendarSubscriptions->delete($row);
+                $io->out("Previous subscription deleted. id={$row->id}");
+
+                $renewed[] = $row->calendar_source_id;
             } catch (RuntimeException $e) {
                 $io->out('<error>Could not create subscription</error>');
                 $io->out('Error was:');
                 $io->out($e->getMessage());
             }
-
-            $this->CalendarSubscriptions->delete($row);
-            $io->out("Previous subscription deleted. id={$row->id}");
         }
 
         $results = $this->CalendarSubscriptions->CalendarSources->find('missingSubscription')

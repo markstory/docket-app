@@ -83,12 +83,12 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
     /**
      * Test execute method will not create duplicates
      */
-    public function testExecuteNoDuplicates(): void
+    public function testExecuteSkipFresh(): void
     {
         $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
         $provider = $this->makeCalendarProvider(1, 'me@example.com');
         $source = $this->makeCalendarSource($provider->id, 'calendar-1');
-        $this->makeCalendarSubscription($source->id, 'abc123', 'verifier-val');
+        $this->makeCalendarSubscription($source->id, 'abc123', 'verifier-val', strtotime('+1 day +1 hour'));
 
         $this->exec('calendar_subscription_renew');
 
@@ -98,5 +98,28 @@ class CalendarSubscriptionRenewCommandTest extends TestCase
 
         $subs = $this->CalendarSubscriptions->find()->all();
         $this->assertCount(1, $subs, 'Should create a new subscription.');
+    }
+
+    /**
+     * Test execute method will skip duplicate subscriptions for the same source
+     */
+    public function testExecuteSkipExistingDuplicates(): void
+    {
+        $this->loadResponseMocks('calendarservice_createsubscription_success.yml');
+        $provider = $this->makeCalendarProvider(1, 'me@example.com');
+        $source = $this->makeCalendarSource($provider->id, 'calendar-1');
+        $this->makeCalendarSubscription($source->id, 'abc123', 'verifier-val', strtotime('-6 hours'));
+        $this->makeCalendarSubscription($source->id, 'def456', 'verifier-val-2', strtotime('-5 hours'));
+
+        $this->exec('calendar_subscription_renew --verbose');
+
+        $this->assertExitSuccess();
+        $this->assertErrorEmpty();
+        $this->assertOutputContains('Renewing subscription');
+        $this->assertOutputContains('New subscription created');
+
+        $subs = $this->CalendarSubscriptions->find()->all();
+        // One is created/deleted and the other is skipped.
+        $this->assertCount(2, $subs, 'Should not change number of subscriptions');
     }
 }
