@@ -29,7 +29,6 @@ class GoogleNotificationsController extends AppController
         $this->Authorization->skipAuthorization();
         $subscriptionId = $this->request->getHeaderLine('X-Goog-Channel-ID');
         $token = $this->request->getHeaderLine('X-Goog-Channel-Token');
-        $resourceUri = $this->request->getHeaderLine('X-Goog-Resource-URI');
         if (!$subscriptionId || !$token) {
             throw new BadRequestException('Missing channel-id or token');
         }
@@ -38,19 +37,13 @@ class GoogleNotificationsController extends AppController
         if (!isset($tokenData['verifier'])) {
             throw new BadRequestException('Missing verifier');
         }
-        Log::info("Receive update from google for resource={$resourceUri} subscriptionId={$subscriptionId} verifier={$tokenData['verifier']}");
 
         try {
             $source = $service->getSourceForSubscription($subscriptionId, $tokenData['verifier']);
         } catch (RecordNotFoundException $e) {
-            // If we've received an invalid/stale subscription delete from google.
-            $source = $service->getSourceByResourceUri($resourceUri);
-            if ($source) {
-                $service->setAccessToken($source->calendar_provider);
-                $service->cancelSubscriptionById($subscriptionId, $resourceUri);
-            }
-
-            return $this->response->withStringBody('ok');
+            return $this->response
+                ->withStatus(404)
+                ->withStringBody('not found');
         }
 
         $service->setAccessToken($source->calendar_provider);

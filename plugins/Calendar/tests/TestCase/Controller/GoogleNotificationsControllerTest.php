@@ -80,24 +80,4 @@ class GoogleNotificationsControllerTest extends TestCase
 
         $this->assertResponseCode(400);
     }
-
-    public function testUpdateUnknownSubscription(): void
-    {
-        $this->loadResponseMocks('controller_googlenotifications_update_unknown_subscription.yml');
-        $provider = $this->makeCalendarProvider(1, 'test@example.com');
-        $source = $this->makeCalendarSource($provider->id);
-
-        $this->configRequest([
-            'headers' => [
-                'X-Goog-Channel-ID' => 'not-real',
-                'X-Goog-Resource-ID' => 'some-nonsense-that-is-not-useful',
-                'X-Goog-Channel-Token' => 'verifier=not-real',
-                'X-Goog-Channel-Expiration' => 1234,
-                'X-Goog-Resource-URI' => "https://www.googleapis.com/calendar/v3/calendars/{$source->provider_id}/events?alt=json",
-            ],
-        ]);
-        $this->post('/google/calendar/notifications');
-
-        $this->assertResponseCode(200);
-    }
 }
