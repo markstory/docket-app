@@ -7,6 +7,7 @@ use App\Controller\AppController;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\I18n\DateTime;
+use Cake\Log\Log;
 use Calendar\Service\CalendarService;
 
 /**
@@ -36,6 +37,8 @@ class GoogleNotificationsController extends AppController
         if (!isset($tokenData['verifier'])) {
             throw new BadRequestException('Missing channel-id');
         }
+        Log::info("Receive update from google for subscriptionId={$subscriptionId} verifier={$tokenData['verifier']}");
+
         $source = $service->getSourceForSubscription($subscriptionId, $tokenData['verifier']);
         $service->setAccessToken($source->calendar_provider);
         $service->syncEvents($source);
