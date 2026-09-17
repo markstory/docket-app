@@ -65,7 +65,7 @@ class CalendarSubscriptionRenewCommand extends Command
             ->contain(['CalendarSources.CalendarProviders'])
             ->all();
 
-        $io->verbose('Starting calendar subscription renewal');
+        $io->info('Starting calendar subscription renewal');
         $renewed = [];
         foreach ($results as $row) {
             $io->out("Renewing subscription for source id={$row->calendar_source_id}");
@@ -109,7 +109,7 @@ class CalendarSubscriptionRenewCommand extends Command
                 $io->out($e->getMessage());
             }
         }
-        $io->verbose('All Done.');
+        $io->info('Done calendar subscription renewal');
 
         return static::CODE_SUCCESS;
     }
