@@ -10,6 +10,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Datasource\ModelAwareTrait;
+use Psr\Log\LogLevel;
 use RuntimeException;
 
 /**
@@ -65,10 +66,11 @@ class CalendarSubscriptionRenewCommand extends Command
             ->contain(['CalendarSources.CalendarProviders'])
             ->all();
 
-        $io->info('Starting calendar subscription renewal');
+        $this->log('Starting calendar subscription renewal', LogLevel::INFO);
         $renewed = [];
         foreach ($results as $row) {
-            $io->out("Renewing subscription for source id={$row->calendar_source_id}");
+            /** @var \Calendar\Model\Entity\CalendarSubscription $row **/
+            $this->log("Renewing subscription for source id={$row->calendar_source_id}", LogLevel::INFO);
             if (in_array($row->calendar_source_id, $renewed, true)) {
                 $io->verbose("Skipping subscription {$row->id}. Source already has renewed subscription.");
                 continue;
@@ -81,13 +83,12 @@ class CalendarSubscriptionRenewCommand extends Command
                 $io->verbose("New subscription created for source={$row->calendar_source->id}.");
 
                 $this->CalendarSubscriptions->delete($row);
-                $io->out("Previous subscription deleted. id={$row->id}");
+                $this->log("Previous subscription deleted. id={$row->id}", LogLevel::INFO);
 
                 $renewed[] = $row->calendar_source_id;
             } catch (RuntimeException $e) {
-                $io->out('<error>Could not create subscription</error>');
-                $io->out('Error was:');
-                $io->out($e->getMessage());
+                $this->log('Could not create subscription');
+                $this->log('Error was:' . $e->getMessage());
             }
         }
 
@@ -97,19 +98,18 @@ class CalendarSubscriptionRenewCommand extends Command
 
         $io->verbose('Creating missing subscriptions');
         foreach ($results as $row) {
-            $io->out("Creating new subscription for source id={$row->id}");
+            $this->log("Creating new subscription for source id={$row->id}", LogLevel::INFO);
             $provider = $row->calendar_provider;
             $this->calendarService->setAccessToken($provider);
             try {
                 $this->calendarService->createSubscription($row);
                 $io->verbose('New subscription created.');
             } catch (RuntimeException $e) {
-                $io->out('<error>Could not create subscription</error>');
-                $io->out('Error was:');
-                $io->out($e->getMessage());
+                $this->log('Could not create subscription');
+                $this->log('Error was:' . $e->getMessage());
             }
         }
-        $io->info('Done calendar subscription renewal');
+        $this->log('Done calendar subscription renewal', LogLevel::INFO);
 
         return static::CODE_SUCCESS;
     }
