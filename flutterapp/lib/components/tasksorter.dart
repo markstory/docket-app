@@ -128,7 +128,7 @@ class _TaskSorterState extends State<TaskSorter> {
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(space(1), space(4), space(1), 0),
+      padding: EdgeInsets.fromLTRB(space(0), space(0), space(0), 0),
       child: Column(
         spacing: space(1),
         children: [
