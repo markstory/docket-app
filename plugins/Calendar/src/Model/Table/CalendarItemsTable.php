@@ -75,8 +75,7 @@ class CalendarItemsTable extends Table
         $validator
             ->scalar('title')
             ->maxLength('title', 255)
-            ->requirePresence('title', 'create')
-            ->notEmptyString('title');
+            ->requirePresence('title', 'create');
 
         $validator
             ->dateTime('start_time', ['iso8601'])

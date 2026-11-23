@@ -433,7 +433,7 @@ class CalendarService
         $record = $this->CalendarItems->patchEntity($record, [
             'calendar_source_id' => $source->id,
             'provider_id' => $event->id,
-            'title' => $event->summary,
+            'title' => $event->summary ?? '',
             'start_date' => $datetimes[0],
             'end_date' => $datetimes[1],
             'start_time' => $datetimes[2],
